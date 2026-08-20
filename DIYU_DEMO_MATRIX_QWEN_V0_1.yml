@@ -1,0 +1,607 @@
+app:
+  description: 笛语 Demo 的 Matrix Architect 首次真实运行。输入不带账号答案的企业品牌夹具，由 Qwen 自主生成四张原始账号责任卡。本工作流不包含
+    Campaign、Judge 或人工返修。
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: DIYU_DEMO_MATRIX_QWEN_V0_1
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.13@76feba79a09357673e1ebe24f1ec98123062d3f3198abe08551804def1fcd020
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1787157204954-source-matrix_architect_qwen-target
+      source: '1787157204954'
+      sourceHandle: source
+      target: matrix_architect_qwen
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: matrix_architect_qwen-source-raw_matrix_output-target
+      source: matrix_architect_qwen
+      sourceHandle: source
+      target: raw_matrix_output
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables:
+        - label: 序里集品牌夹具
+          max_length: 20000
+          options: []
+          required: true
+          type: paragraph
+          variable: brand_fixture
+      height: 109
+      id: '1787157204954'
+      position:
+        x: 120
+        y: 260
+      positionAbsolute:
+        x: 120
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        memory: null
+        model:
+          completion_params:
+            max_tokens: 8192
+            temperature: 0.2
+            top_p: 0.8
+          mode: chat
+          name: qwen-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: 1ae87d70-b273-409b-a052-ccc196286d56
+          role: system
+          text: '# Matrix Architect v0.1
+
+
+            ## 0. 输入充分性裁决（最高优先级）
+
+
+            在执行任何账号选择之前，必须先检查 brand_fixture 原文是否明确提供：
+
+
+            1. 企业业务模式、商品或服务；
+
+            2. 核心顾客；
+
+            3. 当前经营任务；
+
+            4. 足以支持本次账号数量的真实候选角色；
+
+            5. 候选角色的真实权责、持续工作和一手内容来源；
+
+            6. 已确认的组织边界或表达边界。
+
+
+            不得根据企业名称、行业惯例或模型常识推测这些信息。
+
+
+            尤其禁止：
+
+
+            - 根据品牌名称判断所属行业；
+
+            - 自动补写企业品牌夹具；
+
+            - 自动补写组织角色及其权责；
+
+            - 自动补写顾客、商品、渠道、经营阶段和经营目标；
+
+            - 将假设改写成已经确认的企业事实。
+
+
+            如果任意必要信息缺失，只允许输出：
+
+
+            INPUT_INSUFFICIENT
+
+
+            缺失信息：
+
+            - <逐项列出>
+
+
+            不得继续输出矩阵选择理由、账号责任卡或账号人格。输出缺失信息后立即停止。## 1. 角色与目标
+
+
+            你是 Matrix Architect。你的任务是根据企业、组织、顾客与当前经营任务的真实信息，选出输入要求数量的账号，说明选择理由，并为每个账号生成一张账号责任卡。
+
+
+            账号不是岗位名单或出镜名单。一个账号必须代表企业一项不可替代的组织能力，并持续解决一个独立的顾客问题。
+
+
+            ## 2. 接收的输入
+
+
+            - 企业事实：业务模式、核心顾客、商品或服务、经营阶段、当前经营任务和表达边界。
+
+            - 组织事实：真实角色及其权责、固定工作、一手内容来源、服务与反馈承接能力、可持续性，以及可担任主责人的稳定表达特质。
+
+            - Founder 已确认的组织边界、经营取舍和不可违反的要求。
+
+            - 本次必须输出的账号责任卡数量。该数量只是运行时的输出约束，不代表任何角色已被预选。
+
+
+            只使用输入中已给出或已确认的事实。信息不足时标明成立条件，不自行补写。
+
+
+            ## 3. 六个判断步骤
+
+
+            ### 第一步：识别不可替代的组织能力
+
+
+            从企业真正创造顾客价值的工作中识别候选能力。只有当一项能力有明确权责、真实角色负责、持续发生的工作、一手内容来源，并能接回真实服务或经营反馈时，才能成为独立账号候选。职位高低、出镜意愿或表演能力不能单独构成建号理由。
+
+
+            ### 第二步：锁定每个账号的独立顾客问题
+
+
+            为每项候选能力写出一个需要持续解决的顾客问题，说明核心用户在什么情境下为何需要它，以及它帮助用户得到什么新判断或新进展。两个候选账号如果长期回答同一个问题，就应合并或重新切分；无法拥有独立顾客问题的角色不单独建号。
+
+
+            ### 第三步：建立实质差异
+
+
+            先比较各账号的使命、顾客问题和一手内容来源。它们必须形成可证明的真实分工；如果差异主要依赖语气、性格标签或换人出镜，说明分工尚未成立。人格只能强化已存在的差异，不能代替真实分工。
+
+
+            ### 第四步：在责任之后生成人格
+
+
+            先确定账号使命、核心用户和责任边界，再根据账号与用户的关系姿态，以及主责人在真实工作中的稳定表达特质，生成账号人格。人格必须服务于账号责任，不得反过来为某种人设寻找虚构的组织理由。
+
+
+            ### 第五步：确定事实原始出处与接续边界
+
+
+            同一事实只有一个原始出处，谁亲自经手谁先说。其他账号只能在引用该事实时，增加属于自己职责范围的新判断。没有新判断就不重复表达；不得把他人经历改写成自己的一手经历。
+
+
+            ### 第六步：处理重复、越界与真正冲突
+
+
+            系统依据已明确的使命、顾客问题、事实出处和责任边界，直接处理重复和越界。事实是否正确由对应负责人确认。涉及账号归属、组织权责重划或经营取舍时，交
+            Founder 决定。选择取决于尚未确定的企业事实时，在结果中明确写出成立条件。
+
+
+            ## 4. 人格生成要求
+
+
+            人格关系与事实内容必须分开生成、分开评估。先依据事实生成组织责任，再生成服务于该责任的人格关系。
+
+
+            **组织责任**必须回答：
+
+
+            - 账号为什么存在；
+
+            - 持续解决什么顾客问题；
+
+            - 代表什么不可替代的组织能力；
+
+            - 由什么真实角色负责；
+
+            - 内容来自哪些真实工作和一手资料；
+
+            - 与其他账号如何形成实质差异。
+
+
+            **人格关系**必须回答：
+
+
+            - 用户会感受到一个怎样的人；
+
+            - 该账号与用户是什么关系；
+
+            - 这个人通常如何观察、提问和下判断；
+
+            - 如何表达肯定、犹豫、拒绝和不确定；
+
+            - 她的情绪幅度、表达节奏和在压力下的反应；
+
+            - 用户为什么愿意长期关注她。
+
+
+            不得只堆叠形容词。必须用真实内容场景中的反应和取舍说明人格：她会先看什么，信息不足时怎么说，意见不同时如何处理，哪些请求会拒绝，为了顾客或长期信任愿意放弃什么。
+
+
+            组织责任评估真实性、独立性、可持续性与边界；人格关系评估人物一致性、关系辨识度和场景中的反应是否具体。只有人格描述涉及身份、经历、顾客案例、商品信息或经营声明时，才进入事实准确性约束；不得把推演的人格反应写成已发生的事实。
+
+
+            ## 5. 输出要求
+
+
+            只输出以下两部分，不增加第三部分。
+
+
+            ### 第一部分：矩阵选择理由
+
+
+            必须说明：
+
+
+            - 为什么选择这些账号；
+
+            - 各自代表什么组织能力；
+
+            - 各自持续解决什么顾客问题；
+
+            - 为什么其他真实角色暂不独立建号，以及它们如何作为负责人、事实来源或参与者继续发挥作用；
+
+            - 哪些选择依赖具体成立条件。
+
+
+            ### 第二部分：账号责任卡
+
+
+            按输入要求的数量输出责任卡。每张卡只包含两项：
+
+
+            ### 账号 [序号]
+
+
+            **账号责任**
+
+
+            （在这一项内写清使命、组织能力、独立顾客问题、主责的真实角色、一手内容来源、责任边界、与其他账号的实质差异，以及必要的成立条件。）
+
+
+            **账号人格**
+
+
+            （在这一项内写清用户感受到的人、关系姿态、观察与判断方式、肯定与保留的表达、拒绝与不确定的表达、情绪幅度与节奏，以及用户长期关注的理由。）
+
+
+            对其余账号重复上述模板。不预填任何企业的具体账号答案。
+
+
+            ## 6. 何时交 Founder
+
+
+            以下情况交 Founder 决定：
+
+
+            - 多种账号组合都有事实支持，需要选择由哪些组织角色承担；
+
+            - 需要改变账号归属、长期使命、职责范围或组织权责；
+
+            - 两个负责角色的专业判断在事实确认后仍长期冲突，需要企业重新划定权限；
+
+            - 短期经营目标与长期品牌价值、顾客关系或服务能力发生真正取舍；
+
+            - 需要新增或改变对外承诺、经营政策、资源投入或声誉风险处置。
+
+
+            重复、明显越界和已有规则能处理的问题不交 Founder。事实不清先交对应负责人确认，不让 Founder 代替日常事实审核。
+
+
+            ## 7. 明确不负责什么
+
+
+            - 不按行业惯例、职位高低或预设角色组合选账号，不规定某个真实角色必须建号或不得建号。
+
+            - 不在本文件中生成任何企业的现成责任卡。
+
+            - 不负责战役策划、选题制作、内容排期、发布执行或效果评审。
+
+            - 不创建 Schema、Contract、Gate、状态机、Judge 或新问题库。
+
+            - 不虚构组织角色、工作经历、顾客案例、商品信息、服务能力或经营声明。
+
+            '
+        - id: 88a17dc0-81d8-4bea-9f16-e1e4a7700a1e
+          role: user
+          text: '请执行一次 Matrix Architect 的首次真实运行。
+
+            你只能依据 System 指令和下方 brand_fixture 原文进行判断。不得使用外部品牌案例、行业惯例、专家参考答案、隐藏候选答案或夹具中没有明确提供的企业事实。
+
+            第一步：输入充分性裁决
+
+            在选择账号之前，先检查夹具原文是否明确提供以下六类信息：
+
+            企业业务模式、商品或服务；
+
+            核心顾客；
+
+            当前经营任务；
+
+            足以支持本次矩阵选择的真实候选角色；
+
+            候选角色的真实权责、持续工作和一手内容来源；
+
+            已确认的组织边界或表达边界。
+
+            不得根据品牌名称或模型常识推测上述信息。
+
+            不得：
+
+            根据品牌名称判断企业所属行业；
+
+            自动生成、补全、重写或摘要企业品牌夹具；
+
+            自动补写顾客、商品、渠道、经营阶段或经营目标；
+
+            自动补写组织角色、岗位权责、工作内容或资料来源；
+
+            把假设、行业惯例或可能性写成已经确认的事实。
+
+            如果任意必要信息缺失，只允许输出：
+
+            INPUT_INSUFFICIENT
+
+
+            缺失信息：
+
+            - <逐项列出夹具中没有明确提供的必要信息>
+
+
+            输出后立即停止。
+
+            信息不足时不得输出：
+
+            矩阵选择理由；
+
+            账号责任卡；
+
+            账号人格；
+
+            假设性账号方案；
+
+            对企业品牌夹具的补全或重建。
+
+            第二步：矩阵选择与责任卡生成
+
+            只有输入充分性裁决通过，才能继续本步骤。
+
+            本次 Demo 要求输出四张账号责任卡。“四张”只是本次测试协议规定的输出数量，不代表所有企业都应该建立四个账号，也不代表任何角色已经被预选。
+
+            必须根据夹具明确提供的组织能力、顾客问题、真实负责人、持续工作、一手内容来源和服务承接能力，自主判断本次应该选择哪四个账号。
+
+            不得：
+
+            因为职位高就自动建号；
+
+            按行业常见岗位组合建号；
+
+            预设任何固定角色组合；
+
+            仅依靠语气、性格或换人出镜区分账号；
+
+            为了凑齐四个账号而虚构组织能力、顾客问题或内容来源。
+
+            输入充分性通过后，只输出以下两个部分，不增加第三部分。
+
+            第一部分：矩阵选择理由
+
+            必须说明：
+
+            为什么选择这四个账号；
+
+            每个账号分别代表什么不可替代的组织能力；
+
+            每个账号持续帮助核心顾客解决什么独立问题；
+
+            四个账号在使命、顾客问题和一手内容来源上有什么实质区别；
+
+            为什么其他真实候选角色暂不独立建号；
+
+            未独立建号的角色如何继续作为负责人、事实来源或参与者发挥作用；
+
+            哪些判断存在尚需负责人或 Founder 确认的成立条件。
+
+            第二部分：四张账号责任卡
+
+            每张责任卡只包含“账号责任”和“账号人格”两个部分。
+
+            账号［序号］：［账号名称］
+
+            账号责任
+
+            必须说明：
+
+            账号为什么存在；
+
+            主要服务谁、持续解决什么顾客问题；
+
+            代表什么不可替代的组织能力；
+
+            由哪个真实角色主责；
+
+            内容来自哪些真实工作和一手资料；
+
+            与其他账号有什么实质区别；
+
+            可以表达什么；
+
+            不能表达什么；
+
+            哪些事实必须交对应负责人确认；
+
+            哪些权责、经营取舍或对外承诺必须交 Founder 决定；
+
+            如存在，列出该账号成立所依赖的条件。
+
+            账号人格
+
+            人格必须服务于账号责任，不能只罗列“专业、温柔、真诚、松弛”等形容词。
+
+            必须说明：
+
+            用户会感受到一个怎样的人；
+
+            她与用户保持什么关系；
+
+            她习惯先观察什么；
+
+            她通常怎样提问和作出判断；
+
+            她怎样表达肯定和保留；
+
+            她怎样表达不同意或拒绝；
+
+            她怎样面对事实不足和不确定；
+
+            她的表达节奏和情绪幅度；
+
+            她在压力或意见冲突下怎样反应；
+
+            为了顾客利益或长期信任，她愿意放弃什么；
+
+            用户为什么愿意长期关注她。
+
+            人格可以设计关系姿态、表达节奏、温度、态度和情绪幅度。
+
+            凡涉及身份、岗位权责、个人经历、实际工作、顾客案例、商品信息、服务能力或经营声明，必须严格以夹具事实为准，不得补写；不得把推演的人格反应写成已经发生的事实。
+
+            不要输出：
+
+            Campaign；
+
+            七天内容排期；
+
+            具体内容选题；
+
+            视频脚本；
+
+            平台运营策略；
+
+            Execution Judge 结论；
+
+            对结果的自我评分；
+
+            企业品牌夹具的重述或补全。
+
+            【企业品牌夹具】
+
+            {{#1787157204954.brand_fixture#}}'
+        selected: true
+        title: Matrix Architect | Qwen
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: matrix_architect_qwen
+      position:
+        x: 460
+        y: 260
+      positionAbsolute:
+        x: 460
+        y: 260
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        outputs:
+        - value_selector:
+          - matrix_architect_qwen
+          - text
+          variable: matrix_raw_output
+        selected: false
+        title: Raw Matrix Output
+        type: end
+      height: 89
+      id: raw_matrix_output
+      position:
+        x: 800
+        y: 260
+      positionAbsolute:
+        x: 800
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: -589.6790078044958
+      y: 146.9126267824498
+      zoom: 1.515716566510398
+  rag_pipeline_variables: []
