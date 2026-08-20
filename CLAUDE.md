@@ -39,7 +39,7 @@
 
 不得并行扩建外围系统。
 
-当前进度：`Matrix Architect v0.1.1` RUN_002 仍命中硬问题；当前停止在 Matrix；不得进入 Campaign；未经 Founder 新授权不得进行 RUN_003。
+当前进度：`Matrix Architect v0.1.2` 最终候选待 Codex 预运行审查；审查通过后执行最后一次 RUN_003。
 
 v0.1.1 针对当前最强原因假设，对重复 Prompt 和诱错字段进行了最小替换式修正。
 
