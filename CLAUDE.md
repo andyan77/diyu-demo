@@ -39,7 +39,7 @@
 
 不得并行扩建外围系统。
 
-当前进度：DEMO-05 已确认，当前进入 DEMO-06。
+当前进度：`CAMPAIGN_C1_C6_ARCHIVED_READY_FOR_ORCHESTRATOR_PREP` —— DEMO-06 Campaign C1—C6 已由 Founder 逐题确认并完成归档；新增 Founder 待决项：无；当前下一步：Campaign Orchestrator v0.1 的规划侧整理与预运行审查；Campaign Orchestrator 尚未创建、尚未运行。
 
 v0.1.1 针对当前最强原因假设，对重复 Prompt 和诱错字段进行了最小替换式修正。
 
