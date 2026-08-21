@@ -152,6 +152,23 @@ Skill 正文：`Content_Brief_Architect_v0.1.md`，SHA-256 `a0268a211a235b5b4df5
 | 2026-08-21T10:51:42 | `judge_campaign` | succeeded | [models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by NameResolutionError("HTTPSConnection(host='api.de |
 | 2026-08-21T11:02:49 | `v1_chat_llm` | succeeded | [models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHI |
 
+### 7.1 错误分类与事后归因（2026-08-21 补记）
+
+上表 40 条运行期错误按成因分为三类：
+
+| 类别 | 条数 | 状态 |
+|---|---|---|
+| `SSLEOFError`（TLS 握手被中断） | 26 | **未定位，仍开放** |
+| `NameResolutionError`（DNS 解析失败） | 9 | **已定位并修复** |
+| `Failed to parse structured output` | 3 | 已在第 4—5 次构建中修复（见 EVAL 第 F 节） |
+
+**DNS 一类的根因**：容器 DNS 链路为 `127.0.0.11`（Docker 内置解析器）→ `192.168.65.7`（Docker Desktop 虚拟机）→ Windows 网卡 `WLAN 2` 的 `1.1.1.1` / `8.8.8.8`。实测 `1.1.1.1` 30/30 全超时（完全不通），`8.8.8.8` 丢包 7%—30%、平均 183 ms。容器 `resolv.conf` 原未设 `timeout` / `attempts`，走 glibc 默认 5 秒 × 2 次，故失败节点耗时恒为约 10.0 秒。`api.deepseek.com` 经 CNAME 指向腾讯 EdgeOne，只有 A 记录无 AAAA；glibc 双栈查询时若 A 应答丢失而 AAAA 返回空，即报 `[Errno -5] No address associated with hostname`——与实际报文完全一致。
+
+**处置**：本次运行**之后**，在 `dify/docker/docker-compose.override.yaml` 为 `plugin_daemon` / `api` / `worker` / `ssrf_proxy` 指定 `dns: [223.5.5.5, 119.29.29.29, 223.6.6.6]` 与 `dns_opt: [timeout:2, attempts:2, single-request-reopen]`，并重建这四个容器。修复后实测 60 次解析 0 失败、最慢 59 ms。**本节第 1 节所记录的运行环境是十场景实际运行时的状态，不含此项变更。**
+
+**TLS 一类**：现仍可复现，实测握手失败率在 0%—10% 之间随时间波动。已用 240 次并发对照排除容器 MTU 因素——同一时间窗内 MTU 1420 为 120/120 全通，MTU 1400 为 117/120，中位耗时 492 ms 对 487 ms，无差异。宿主实测到 `43.242.198.77` 的路径 MTU 为 1420，与容器当前设置一致。根因未定位，按开放项处理。
+
+
 ## 8. 仓库新增文件 SHA-256
 
 | 文件 | 字节 | SHA-256 |
@@ -159,7 +176,7 @@ Skill 正文：`Content_Brief_Architect_v0.1.md`，SHA-256 `a0268a211a235b5b4df5
 | `V1_DEMO_INTEGRATION_CONTRACT_v0.1.md` | 18851 | `cf670c61aef4fa57fff3fe62fc3c828d9f9f29bf3341d31224b48b06a177cce4` |
 | `V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` | 8091 | `6839b20546ff7d4b381a92293c992ac1b2007a8fddabec970e4ba1a0317171fa` |
 | `V1_NATURAL_LANGUAGE_TEST_CATALOG_v0.1.md` | 14083 | `07f30d6ce919dfdc9d3d8debbbca4cb41d6d7ac679766f3cf623e99fca46aa73` |
-| `V1_PRODUCTION_GAP_REGISTER_v0.1.md` | 8971 | `4d4c3bfc2d460b4c0e7c86a2ffad6ee65ad2e03e68effa3e167e6a3fff24f077` |
+| `V1_PRODUCTION_GAP_REGISTER_v0.1.md` | 10354 | `e3d971b9a5f3ef648a00fa1b4deac861d21c4f4487c7e175c29ef8bea6b7886e` |
 | `V1_SCENARIO_INPUTS_v0.1.md` | 7931 | `cd7eb0ad78736e54045371b3d0cf8d4fcea9b97d0b0fc2252870de7403ccd460` |
 | `DIYU_DEMO_V1_MAIN_CHATFLOW_v0.1.yml` | 312193 | `b667dc13cf0f8d92b1478b29b903756155afbc4d126924289376ce89f40115c2` |
 | `DIYU_DEMO_V1_TOOL_MATRIX_v0.1.yml` | 32694 | `dbc6b400aa1d7d7d1f43a374ab9cc1e7cb00eb5b7834576c2e38639453e451cc` |
@@ -169,7 +186,7 @@ Skill 正文：`Content_Brief_Architect_v0.1.md`，SHA-256 `a0268a211a235b5b4df5
 | `V1_RUN_001_FINAL.md` | 23124 | `8c13dff6c873d970054e9da1dd06588ec94784036f1af8a392fde6fce15ff312` |
 | `V1_RUN_001_TRACE.md` | 63287 | `a7353e27444fc3d6600585a8d0a09423680351a7ce1e90049c7d9a8a2be8852f` |
 | `V1_RUN_001_EVAL.md` | 21334 | `590916c3abc3abb7cb8a25a51583921e84a84c6079bbb0b58fed4238cc14f64e` |
-| `V1_DIFY_RUN_MANIFEST_v0.1.md` | 20746 | `9a5a712860fd4032e763638016d76bb7135ba0b34b77218953d79328f633d31d` |
+| `V1_DIFY_RUN_MANIFEST_v0.1.md` | —— | ——（自指，见 git blob） |
 | `v1_demo_verify.py` | 45254 | `02d6f5958289858bad3afa99b3c9d5ba8ac6efb76feb3bf21314dc2d798bbfa0` |
 
 > `V1_DIFY_RUN_MANIFEST_v0.1.md` 自身的 SHA 不在表内（自指），以提交后的 git blob 为准。
