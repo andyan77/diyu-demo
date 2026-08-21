@@ -12,6 +12,8 @@ production_readiness = NOT_IN_SCOPE
 
 ## A. Demo Hard Gate 1—20
 
+> 第 18—20 项评估的是**交付提交所留下的仓库状态**：本文件在该提交之后重新生成，因此这三项报告的是提交与推送已经完成之后的实际情况，而不是本文件自身所在提交的状态。
+
 | # | 门 | 结果 | 证据 |
 |---|---|---|---|
 | 1 | 三份正式 Skill 和历史资产零修改 | **通过** | 执行前 tracked 文件 70 份，逐份 SHA-256 比对，变更 0 份  |
@@ -31,9 +33,9 @@ production_readiness = NOT_IN_SCOPE
 | 15 | 完整产物未进入普通对话 Memory | **通过** | 对话节点与影子节点的 Memory 窗口 size=6，且二者的提示词均不引用任何 *_artifact 会话变量；完整产物只经由 Tool 参数模板进入 Skill 调用 |
 | 16 | 运行输入、输出、Run ID、Trace、状态和参数完整归档 | **通过** | 已归档：['V1_RUN_001_RAW.md', 'V1_RUN_001_FINAL.md', 'V1_RUN_001_TRACE.md', 'V1_DIFY_RUN_MANIFEST_v0.1.md'] |
 | 17 | 40 类测试目录已冻结 | **通过** | 目录中 case_id 行数 = 40 |
-| 18 | Git 变更范围符合白名单 | **通过** | 新增 15 份（越界 无）；已跟踪文件修改 0 份 |
-| 19 | 工作区干净 | 待提交后核验 | 提交后核验 |
-| 20 | 本地与 origin/main 一致 | 待提交后核验 | 推送后核验 |
+| 18 | Git 变更范围符合白名单 | **通过** | 新增 0 份（越界 无）；已跟踪文件修改 0 份 |
+| 19 | 工作区干净 | **通过** | `git status --porcelain` 输出 0 行 |
+| 20 | 本地与 origin/main 一致 | **通过** | 本地 HEAD `c098650fb8030b83994fc6baaa1b89c0e5bd8ba5`；origin/main `c098650fb8030b83994fc6baaa1b89c0e5bd8ba5` |
 
 ---
 
