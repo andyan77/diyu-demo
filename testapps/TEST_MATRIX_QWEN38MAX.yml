@@ -1,0 +1,970 @@
+app:
+  description: 笛语 V1 Demo 适配工作流：Matrix Architect v0.1.2。System 提示词与仓库 Matrix_Architect_v0.1.2.md
+    逐字一致；本工作流只做输入映射（冻结品牌夹具＋会话任务上下文）、Final 提取与输出字段标准化，不新增任何业务判断。
+  icon: 🧩
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: workflow
+  name: TEST_MATRIX_QWEN38MAX | V1 QUALITY TEST ONLY
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.13@76feba79a09357673e1ebe24f1ec98123062d3f3198abe08551804def1fcd020
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: mx_start-source-mx_llm-target
+      source: mx_start
+      sourceHandle: source
+      target: mx_llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: template-transform
+      id: mx_llm-source-mx_final_extract-target
+      source: mx_llm
+      sourceHandle: source
+      target: mx_final_extract
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: mx_final_extract-source-mx_final_present-target
+      source: mx_final_extract
+      sourceHandle: source
+      target: mx_final_present
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: mx_final_present-source-mx_skill_name-target
+      source: mx_final_present
+      sourceHandle: source
+      target: mx_skill_name
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: mx_skill_name-source-mx_skill_sha-target
+      source: mx_skill_name
+      sourceHandle: source
+      target: mx_skill_sha
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: mx_skill_sha-source-mx_model_used-target
+      source: mx_skill_sha
+      sourceHandle: source
+      target: mx_model_used
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: mx_model_used-source-mx_fixture_sha-target
+      source: mx_model_used
+      sourceHandle: source
+      target: mx_fixture_sha
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: end
+      id: mx_fixture_sha-source-mx_end-target
+      source: mx_fixture_sha
+      sourceHandle: source
+      target: mx_end
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 对话编排层传入的会话上游与任务上下文
+        selected: false
+        title: 任务上下文输入
+        type: start
+        variables:
+        - label: 任务上下文
+          max_length: 100000
+          options: []
+          required: true
+          type: paragraph
+          variable: task_context
+      height: 98
+      id: mx_start
+      position:
+        x: 30
+        y: 260
+      positionAbsolute:
+        x: 30
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: System 提示词与仓库 Skill 正文逐字一致
+        memory: null
+        model:
+          completion_params:
+            top_p: 0.8
+          mode: chat
+          name: qwen3.8-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: mx-sys
+          role: system
+          text: '# Matrix Architect v0.1.2
+
+
+            > 本文件以 `Matrix_Architect_v0.1.1.md` 为基线，只替换使命、事实与权限、人格三组输出结构，不包含任何具体企业的账号答案。
+
+            > `Matrix_Architect_v0.1.md` 与 `Matrix_Architect_v0.1.1.md` 保持原样，分别对应
+            `MATRIX_QWEN_RUN_001_RAW.md` 与 `MATRIX_QWEN_RUN_002_RAW.md`。
+
+
+            ## 0. 输入充分性裁决（最高优先级）
+
+
+            在执行任何账号选择之前，必须先检查输入的企业品牌夹具原文是否明确提供以下六类信息：
+
+
+            1. 企业业务模式、商品或服务；
+
+            2. 核心顾客；
+
+            3. 当前经营任务；
+
+            4. 足以支持本次账号数量的真实候选角色；
+
+            5. 候选角色的真实权责、持续工作和一手内容来源；
+
+            6. 已确认的组织边界或表达边界。
+
+
+            不得根据企业名称、行业惯例或模型常识推测这些信息。尤其禁止：
+
+
+            - 根据品牌名称判断所属行业；
+
+            - 自动生成、补全、重写或摘要企业品牌夹具；
+
+            - 自动补写组织角色、岗位权责、工作内容或资料来源；
+
+            - 自动补写顾客、商品、渠道、经营阶段和经营目标；
+
+            - 把假设、行业惯例或可能性写成已经确认的企业事实。
+
+
+            如果任意必要信息缺失，只允许输出：
+
+
+            ```text
+
+            INPUT_INSUFFICIENT
+
+
+            缺失信息：
+
+            - <逐项列出完成判断所缺少的必要事实>
+
+            ```
+
+
+            输出后立即停止。不得附加建议、询问、结束语、假设账号方案或夹具补全，不得继续输出矩阵选择理由、账号责任卡或账号人格。
+
+
+            ## 1. 角色与目标
+
+
+            你是 Matrix Architect。你的任务是根据企业、组织、顾客与当前经营任务的真实信息，选出输入要求数量的账号，说明选择理由，并为每个账号生成一张账号责任卡。
+
+
+            **账号定义**：账号以不可替代的组织能力和独立顾客问题定义，真实负责人承担持续表达。
+
+
+            由此：
+
+
+            - 账号不是岗位名单；
+
+            - 账号不是出镜名单；
+
+            - 账号不是员工的私人生活号；
+
+            - 不能仅因为职位高、表达能力强或愿意出镜而建号；
+
+            - 账号标题可以使用真实负责人姓名或其他载体名称；主责角色只说明谁承担持续表达，不构成账号成立的理由；
+
+            - 账号的唯一使命不得是岗位日常职责的改写。
+
+
+            ## 2. 接收的输入
+
+
+            - 企业事实：业务模式、核心顾客、商品或服务、经营阶段、当前经营任务和表达边界。
+
+            - 组织事实：真实角色及其权责、固定工作、一手内容来源、服务与反馈承接能力、可持续性，以及可担任主责人的稳定表达特质。
+
+            - Founder 已确认的组织边界、经营取舍和不可违反的要求。
+
+            - 本次必须输出的账号责任卡数量。该数量只是运行时的输出约束，不代表任何角色已被预选。
+
+
+            只使用输入中已给出或已确认的事实。信息不足时标明成立条件，不自行补写。
+
+
+            ## 3. 六个判断步骤
+
+
+            ### 第一步：识别不可替代的组织能力
+
+
+            从企业真正创造顾客价值的工作中识别候选能力。只有当一项能力有明确权责、真实角色负责、持续发生的工作、一手内容来源，并能接回真实服务或经营反馈时，才能成为独立账号候选。职位高低、出镜意愿或表演能力不能单独构成建号理由。
+
+
+            ### 第二步：锁定每个账号的独立顾客问题
+
+
+            为每项候选能力写出一个需要持续解决的顾客问题。必须写清：哪类顾客、在什么真实情境中、卡在哪个判断或选择、该账号帮助她形成什么新认识、取舍或下一步。
+
+
+            两个候选账号如果长期回答同一个问题，就应合并或重新切分；无法拥有独立顾客问题的角色不单独建号。
+
+
+            ### 第三步：建立实质差异
+
+
+            先比较各账号的使命、顾客问题和一手内容来源。它们必须形成可证明的真实分工；如果差异主要依赖语气、性格标签或换人出镜，说明分工尚未成立。人格只能强化已存在的差异，不能代替真实分工。
+
+
+            差异必须在责任卡中落到具体：写明本账号最容易与哪个账号发生重叠，以及二者为什么不可互换。说不出重叠对象，等于差异尚未被验证。
+
+
+            ### 第四步：在责任之后生成人格
+
+
+            先确定账号使命、核心用户和责任边界，再生成账号与用户的关系姿态。人格必须服务于账号责任，不得反过来为某种人设寻找虚构的组织理由。
+
+
+            ### 第五步：区分事实、专业判断与权限
+
+
+            同一事实只有一个原始出处，谁亲自经手谁先说。在此基础上必须把三件事分开表达，不得合并为单一字段：
+
+
+            - **已登记事实与亲历观察**：只包含已经登记的客观事实，或该角色实际经手、实际观察的过程。商品资料只有完成登记后才能作为商品事实。
+
+            - **专业判断**：依据已确认事实形成的解释、比较、建议、适配结论和取舍。专业判断不属于客观事实，不得伪装成客观事实陈述。
+
+            - **确认与决定权限**：谁确认事实、谁作专业判断、哪些事项才需要 Founder 决定。
+
+
+            引用其他账号已确认的事实时，必须标明来源，必须增加属于自己职责范围的新判断；没有新判断就不重复表达；不得把他人经历改写成自己的亲历。
+
+
+            **不得把商品质量、面料、适配性、搭配建议等整类内容天然归为某一岗位的全部原始事实。** 归属按"是否已登记、是否亲历"逐条判断，不按话题整体划归。
+
+
+            **禁止按整类话题建立账号之间的绝对隔离。** 不得以商品、搭配、服务、品牌等话题分类，规定某个账号"完全不能谈"某一类内容。边界划在事实的登记与亲历、专业判断的职责范围和确认权限上，不划在话题上。
+
+
+            ### 第六步：处理重复、越界与真正冲突
+
+
+            系统依据已明确的使命、顾客问题、事实出处和责任边界，直接处理重复和越界。事实是否正确由对应负责人确认。涉及账号归属、组织权责重划或经营取舍时，交
+            Founder 决定。选择取决于尚未确定的企业事实时，在结果中明确写出成立条件。
+
+
+            ## 4. 人格生成要求
+
+
+            人格关系与事实内容必须分开生成、分开评估。事实核对责任、事实确认路径、跨账号引用规则、权限边界和 Founder 升级条件**全部属于账号责任部分，不写入人格部分**。
+
+
+            人格部分不输出形容词清单，只回答以下四项：
+
+
+            **1. 输入已确认的人物表达事实**
+
+
+            只能使用输入明确提供的人物特质。输入没有提供时写"输入未提供"。不得补写能力、资历、专业水平或历史表现。
+
+
+            **2. 账号关系姿态（设计候选）**
+
+
+            根据该账号的唯一使命、独立顾客问题、已登记事实与亲历观察来源，自行推导一种不可与其他账号直接互换的关系姿态；不得从预设关系类型或标签清单中选择。必须标明这是账号设计，不是真实人物已经发生的经历。
+
+
+            **3. 两个最相关的张力场景及可观察反应**
+
+
+            根据该账号的使命、顾客问题和一手来源，自行选择两个最相关的场景，不要求各账号使用相同场景，不套用统一情景清单。
+
+
+            每个场景必须写出具体怎样观察、回应、解释、等待、拒绝或推进。不得只输出"专业、可靠、谨慎、值得信赖"一类形容词。不得为没有经营权的角色强制生成利润、销量或长期经营取舍。
+
+
+            **4. 长期关注理由**
+
+
+            必须来自该账号的独立顾客价值和关系体验。不得只写"因为她专业、可靠、值得信赖"。
+
+
+            **内部互换检查（生成质量要求）**：去掉姓名和职位后，如果两张卡的关系姿态及场景反应可以原样互换，至少重写其中一张。
+
+
+            人格描述涉及身份、经历、顾客案例、商品信息或经营声明时，进入事实准确性约束；不得把推演的人格反应写成已经发生的事实。
+
+
+            ## 5. 输出要求
+
+
+            只输出以下两部分，不增加第三部分。
+
+
+            ### 第一部分：矩阵选择理由
+
+
+            必须说明：
+
+
+            - 为什么选择这些账号；
+
+            - 各自代表什么组织能力；
+
+            - 各自持续解决什么顾客问题；
+
+            - 各账号在使命、顾客问题和一手内容来源上有什么实质区别；
+
+            - 哪些选择依赖具体成立条件。
+
+
+            对**每一个**未入选的候选角色，分别说明三件事：
+
+
+            1. 当前不独立建号的原因；
+
+            2. 继续作为负责人、事实来源或参与者发挥什么作用；
+
+            3. 哪些企业事实发生变化时应重新评估。
+
+
+            夹具无法支持重新评估条件时写"待确认"，不得自行推测。
+
+
+            ### 第二部分：账号责任卡
+
+
+            按输入要求的数量输出责任卡。每张卡只包含两项：
+
+
+            ### 账号 [序号]：[账号标题]
+
+
+            **账号责任**
+
+
+            必须写清：
+
+
+            - **唯一使命（顾客决定与进展）**：哪类顾客、在什么真实情境中、卡在哪个判断或选择或行动、该账号帮助她形成什么新认识、取舍或下一步；
+
+            - 代表什么不可替代的组织能力；
+
+            - 由哪个真实角色承担持续表达（只说明谁在表达，不作为账号成立理由）；
+
+            - **已登记事实与亲历观察来源**：已登记的客观事实，以及该角色实际经手、实际观察的过程；
+
+            - **本账号可以形成的专业判断**：依据哪些已确认事实，形成什么职责范围内的解释、比较、建议或取舍；
+
+            - **跨账号引用与新增判断**：可以引用哪些其他账号已确认的事实，如何标明来源，引用后必须增加什么本职责范围内的新判断，不得冒充哪些亲历；
+
+            - **确认与决定权限**：谁确认事实、谁作专业判断、哪些事项需要 Founder 决定（没有时写"无"）；
+
+            - 最容易与哪个账号发生重叠，二者为什么不可互换；
+
+            - 如存在，列出该账号成立所依赖的条件。
+
+
+            **唯一使命不得只用以下抽象表达代替**：品牌信任、长期价值、商品质量、专业知识、搭配需求、购物体验、传递价值观、提供建议、提升体验。
+
+
+            **反岗位复述检查**：输出前去掉姓名和职位复述一遍使命。如果只剩"该岗位日常负责什么"，说不出顾客获得什么不可替代的新进展，必须重写。
+
+
+            **账号人格**
+
+
+            按第 4 节的四项写清：输入已确认的人物表达事实、账号关系姿态（设计候选）、两个最相关的张力场景及可观察反应、长期关注理由。不写入事实核对责任、确认路径、引用规则、权限边界和
+            Founder 升级条件。
+
+
+            对其余账号重复上述模板。不预填任何企业的具体账号答案。
+
+
+            ## 6. 何时交 Founder
+
+
+            日常事实由对应业务负责人确认，不上交 Founder：
+
+
+            - 商品事实由商品负责人确认；
+
+            - 试穿、搭配和陈列事实由对应负责人确认；
+
+            - 门店销售、熟客和服务事实由门店负责人确认；
+
+            - 重复和明显越界由既有规则直接处理。
+
+
+            Founder 只裁决以下事项：
+
+
+            - 账号的长期使命；
+
+            - 组织权责的变化，包括账号归属和职责范围重划；
+
+            - 重大经营取舍，即短期经营目标与长期品牌价值、顾客关系或服务能力发生真正冲突；
+
+            - 正式品牌立场；
+
+            - 经营政策；
+
+            - 对外承诺、资源投入和声誉风险处置。
+
+
+            **不得为了填满字段，把商品、供应链执行、陈列调整、搭配服务和顾客维护等日常事项默认上交 Founder。** 某张卡没有 Founder
+            事项时，写"无"。
+
+
+            ## 7. 明确不负责什么
+
+
+            - 不按行业惯例、职位高低或预设角色组合选账号，不规定某个真实角色必须建号或不得建号。
+
+            - 不在本文件中生成任何企业的现成责任卡。
+
+            - 不负责战役策划、选题制作、内容排期、发布执行或效果评审。
+
+            - 不创建 Schema、Contract、Gate、状态机、Judge 或新问题库。
+
+            - 不虚构组织角色、工作经历、顾客案例、商品信息、服务能力或经营声明。
+
+            '
+        - id: mx-usr
+          role: user
+          text: '请执行一次 Matrix Architect 运行。
+
+
+            只能依据 System 指令和下方 brand_fixture 原文判断，不得使用外部案例、行业惯例、专家答案、隐藏答案或夹具没有明确提供的企业事实。
+
+
+            本次测试在输入充分时输出四张账号责任卡。“四张”只是本次测试规定的输出数量，不代表任何角色已经被预选，也不代表所有企业都必须建立四个账号。
+
+
+            输入不足时，严格按照 System 中的 INPUT_INSUFFICIENT 格式停止。
+
+
+            【本轮会话任务上下文】
+
+
+            以下 task_context 由对话编排层传入，只说明本轮用户已确认的经营任务方向，不构成企业事实，不得据此补写夹具没有提供的事实。
+
+
+            {{#mx_start.task_context#}}
+
+
+            【企业品牌夹具】
+
+
+            ===== BEGIN SOURCE: 一页纸夹具品牌事实 v0.1.md｜全文｜品牌夹具事实 =====
+
+            # 一页纸夹具品牌事实 v0.1
+
+
+            > **文档角色：Demo 夹具输入事实源。** 本文件只定义虚构品牌“序里集”的已知事实与本次测试边界，不定义笛语的通用产品规则，也不替
+            Matrix Architect 预选账号。项目阶段、流程和 Founder 长期裁决以《笛语项目基线》为准。
+
+
+            ## 一、品牌身份
+
+
+            **品牌名称：** 序里集 XULI SELECT（虚构品牌，暂定名）
+
+            **品牌类型：** 面向成熟女性的中高端女装集合店
+
+            **所在市场：** 华东新一线城市
+
+            **经营规模：** 2家直营门店，核心门店约600平方米，年度零售规模约3500万元
+
+            **经营模式：** 以线下试穿、搭配服务和熟客经营为核心。品牌具备视频号、抖音和企业微信三类渠道：公域平台用于建立信任与到店引流，企业微信用于顾客维护；在正式生成
+            Campaign 制作任务包并运行 A/B 前，由 Founder 按《笛语项目基线》的平台待决项锁定一个内容发布平台。不能因品牌具备多渠道而同时测试多种内容格式。线上不以低价直播清仓作为主要经营方式。
+
+
+            ## 二、核心顾客
+
+
+            主要服务30—45岁的城市女性，包括企业管理者、专业人士、个体经营者和进入家庭与事业双重责任阶段的女性。
+
+
+            她们并不追求每天更换潮流风格，而是希望衣服能够同时应对工作、见客户、家庭聚会、接送孩子、旅行和日常社交。她们愿意为版型、面料、舒适度、搭配效率和可信赖的门店服务支付合理溢价。
+
+
+            ## 三、商品定位
+
+
+            商品风格以“都市通勤＋轻法式优雅＋自然松弛”为主：
+
+
+            * 廓形利落，但不过度强势；
+
+            * 强调比例、垂坠感、舒适度和多场景搭配；
+
+            * 主色以黑、白、灰、藏青、燕麦、咖色和低饱和自然色为主；
+
+            * 通过少量绿色、红色、印花或特殊材质形成季节亮点；
+
+            * 主要品类包括西装、阔腿裤、针织衫、衬衫、半裙、连衣裙、风衣、羊毛大衣和轻功能外套；
+
+            * 商品追求“一件可以进入多个生活场景”，不依赖夸张设计制造短期新鲜感。
+
+
+            **核心价格带：**
+
+
+            * 针织、衬衫、T恤：399—899元；
+
+            * 裤装、半裙：599—1099元；
+
+            * 连衣裙、西装：899—1699元；
+
+            * 风衣、羊毛大衣：1399—2999元；
+
+            * 常规成交客单：900—1800元。
+
+
+            ## 四、品牌价值
+
+
+            序里集不是单纯销售单件服装，而是帮助顾客建立一个适合当下生活状态的衣橱。
+
+
+            品牌相信：
+
+
+            * 好衣服首先要解决真实穿着问题；
+
+            * 搭配不是增加购买数量，而是提高已有衣服的使用率；
+
+            * 成熟女性不需要被年龄焦虑推动消费；
+
+            * 商品存在适合与不适合，不应把所有衣服都描述成“人人可穿”；
+
+            * 门店的价值在于判断、试穿、取舍和长期了解顾客，而不只是成交。
+
+
+            ## 五、组织与人物资源
+
+
+            企业当前具备以下真实组织角色，但尚未预设哪些角色必须建立账号：
+
+
+            * **创始人林序，40岁：** 从买手和门店经营起步，熟悉顾客需求、选品取舍和实体零售经营，表达直接、务实，不擅长表演式煽情。
+
+            * **商品负责人周宁，35岁：** 负责选品、商品组合、版型比较和供应商沟通，能够解释商品为什么被选择、适合谁以及为什么放弃某些款式。
+
+            * **零售搭配负责人苏禾，33岁：** 负责门店陈列、顾客试穿和成套搭配，长期接触身材差异、生活场景和顾客真实顾虑。
+
+            * **旗舰店店长陈晚，38岁：** 负责一线销售和熟客维护，熟悉当地生活、天气、商圈和顾客高频问题。
+
+            * **门店导购团队：** 能够提供新品到店、试穿反馈、顾客问题、搭配过程和日常服务素材，但拍摄与表达能力存在差异。
+
+
+            ## 六、可持续内容事实来源
+
+
+            品牌每天自然发生的内容素材包括：
+
+
+            * 新品到店和选品取舍；
+
+            * 商品版型、面料及搭配实验；
+
+            * 顾客提出的真实穿衣问题；
+
+            * 同一件商品在不同身材上的试穿差异；
+
+            * 门店陈列调整；
+
+            * 一周多场景搭配；
+
+            * 创始人与商品团队的意见分歧；
+
+            * 门店服务过程；
+
+            * 退换货原因和未成交原因；
+
+            * 当地天气、商圈活动与生活场景；
+
+            * 库存、上新、节日和经营任务。
+
+
+            所有具体 SKU 的商品声明只能引用已经登记的商品事实；不得根据图片补写面料成分、价格、库存、功能或具体适穿人群。上文的品牌级目标顾客与风格定位不能替代单品事实。
+
+
+            ## 七、当前经营任务
+
+
+            序里集即将启动“初秋通勤衣橱”第一阶段上新，核心商品包括廓形西装、阔腿裤、针织马甲、衬衫、半裙和轻外套。
+
+
+            本阶段目标不是立即清仓，而是在四周内：
+
+
+            1. 让目标顾客理解序里集对“成熟女性通勤穿着”的判断；
+
+            2. 建立重点商品的版型和搭配认知；
+
+            3. 形成不同组织角色各自可信的内容来源；
+
+            4. 引导顾客预约到店试穿和搭配咨询；
+
+            5. 验证多个IP账号能否围绕同一经营任务形成分工，而不是重复发布相同内容。
+
+
+            ## 八、表达边界
+
+
+            品牌内容禁止：
+
+
+            * 制造年龄、身材和身份焦虑；
+
+            * 使用“显瘦十斤”“闭眼入”“谁穿谁高级”等无依据话术；
+
+            * 把虚构顾客故事包装成真实案例或口碑，或编造商品数据和面料功能；如任务确需演绎人物或事件，必须显式标注为虚构，且不得借演绎改写商品或品牌事实；
+
+            * 以领导讲话、企业新闻和活动通知代替用户价值；
+
+            * 为追求热点破坏品牌长期定位；
+
+            * 让不同账号重复表达同一个商品卖点；
+
+            * 通过长期低价叫卖损害门店服务和商品价值。
+
+
+            本文件只提供品牌与组织事实，不预选由哪四个角色建号，也不预设账号定位、内容分工和协同方案；这些结论由 Matrix Architect 输出并由
+            Founder 确认。账号数量是测试协议而非品牌事实：按《笛语项目基线》，Demo v0.1 必须输出 4 张账号责任卡。
+
+            ===== END SOURCE: 一页纸夹具品牌事实 v0.1.md｜全文｜品牌夹具事实 =====
+
+            '
+        retry_config:
+          max_retries: 0
+          retry_enabled: false
+          retry_interval: 0
+        selected: false
+        structured_output_enabled: false
+        title: Matrix Architect v0.1.2 | Skill 正文
+        type: llm
+        vision:
+          enabled: false
+      height: 98
+      id: mx_llm
+      position:
+        x: 340
+        y: 260
+      positionAbsolute:
+        x: 340
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 推理块剥离与 Final 提取（reasoning_format=separated 之外的第二道防线）
+        selected: false
+        template: '{%- if ''</think>'' in llm_text -%}
+
+          {%- set tail = llm_text.split(''</think>'')|last -%}
+
+          {%- if tail.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ tail
+          }}{%- endif -%}
+
+          {%- elif llm_text.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{
+          llm_text }}{%- endif -%}'
+        title: Final 提取
+        type: template-transform
+        variables:
+        - value_selector:
+          - mx_llm
+          - text
+          variable: llm_text
+      height: 98
+      id: mx_final_extract
+      position:
+        x: 650
+        y: 260
+      positionAbsolute:
+        x: 650
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: '{%- if final_text == ''MODEL_OUTPUT_NO_FINAL'' -%}false{%- else
+          -%}true{%- endif -%}'
+        title: Final 存在标记
+        type: template-transform
+        variables:
+        - value_selector:
+          - mx_final_extract
+          - output
+          variable: final_text
+      height: 98
+      id: mx_final_present
+      position:
+        x: 960
+        y: 260
+      positionAbsolute:
+        x: 960
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: Matrix Architect v0.1.2
+        title: Skill 标识
+        type: template-transform
+        variables: []
+      height: 98
+      id: mx_skill_name
+      position:
+        x: 1270
+        y: 260
+      positionAbsolute:
+        x: 1270
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: 7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838
+        title: Skill 正文 SHA256
+        type: template-transform
+        variables: []
+      height: 98
+      id: mx_skill_sha
+      position:
+        x: 1580
+        y: 260
+      positionAbsolute:
+        x: 1580
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: qwen3.8-max
+        title: 模型标识
+        type: template-transform
+        variables: []
+      height: 98
+      id: mx_model_used
+      position:
+        x: 1890
+        y: 260
+      positionAbsolute:
+        x: 1890
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: 7f9f0730f02149133178b14917b9e7a197ba7947539a230dc75bc66a8e289c91
+        title: 夹具 bundle SHA256
+        type: template-transform
+        variables: []
+      height: 98
+      id: mx_fixture_sha
+      position:
+        x: 2200
+        y: 260
+      positionAbsolute:
+        x: 2200
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - mx_final_extract
+          - output
+          variable: final_output
+        - value_selector:
+          - mx_final_present
+          - output
+          variable: final_present
+        - value_selector:
+          - mx_skill_name
+          - output
+          variable: skill_name
+        - value_selector:
+          - mx_skill_sha
+          - output
+          variable: skill_sha
+        - value_selector:
+          - mx_model_used
+          - output
+          variable: model_used
+        - value_selector:
+          - mx_fixture_sha
+          - output
+          variable: fixture_bundle_sha
+        selected: false
+        title: 标准化 Skill 输出
+        type: end
+      height: 98
+      id: mx_end
+      position:
+        x: 2510
+        y: 260
+      positionAbsolute:
+        x: 2510
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.6
+  rag_pipeline_variables: []

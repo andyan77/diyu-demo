@@ -1,0 +1,554 @@
+{
+  "pre_registration_commit": "00fc94e6c39bc161d33a3df7df260abb7d37b9ec",
+  "rule": "h=sha256(pre_registration_commit+pair_id); int(h[:8],16)%2==0 -> 甲=X 否则 甲=Y",
+  "mapping": {
+    "A1": {
+      "axis": "集成",
+      "skill": "matrix",
+      "Y": {
+        "label": "独立 Workflow 直接调用",
+        "arm_id": null,
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": null
+      },
+      "X": {
+        "label": "主 Chatflow 集成调用",
+        "arm_id": "matrix|integrated",
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": "32a0c0830c900069bf1fb5ae5e72cb6574aeb499830319695b458e7d496ff2d7"
+      }
+    },
+    "A2": {
+      "axis": "集成",
+      "skill": "campaign",
+      "X": {
+        "label": "独立 Workflow 直接调用",
+        "arm_id": "campaign|deepseek",
+        "app_id": "a0d92232-0afe-4b77-abb4-5356fd04bc7b",
+        "workflow_run_id": "79e30b3c-4620-49b6-984e-fd6de860bdc7",
+        "final_sha256": "2be0d671356439743a16a4f53ff62ff27c601cd27e53fa3ad90cde3a209f1454"
+      },
+      "Y": {
+        "label": "主 Chatflow 集成调用",
+        "arm_id": "campaign|integrated",
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": "9303a0427b650f47a0ce03fe8d90213a094ca46ebaaebaedf15b09ced7ca7cfe"
+      }
+    },
+    "A3": {
+      "axis": "集成",
+      "skill": "content_brief",
+      "X": {
+        "label": "独立 Workflow 直接调用",
+        "arm_id": null,
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": null
+      },
+      "Y": {
+        "label": "主 Chatflow 集成调用",
+        "arm_id": "content_brief|integrated",
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": "b04a56988213575cfc532b9a584dbc3e209cbdbf9fc7fdfd3ddc420332d6cf3c"
+      }
+    },
+    "B1": {
+      "axis": "模型",
+      "skill": "matrix",
+      "X": {
+        "label": "DeepSeek V4 Flash",
+        "arm_id": null,
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": null
+      },
+      "Y": {
+        "label": "Qwen3.8 Max",
+        "arm_id": "matrix|qwen",
+        "app_id": "ced1566c-d83e-49d8-a3c0-7da45fdb8a84",
+        "workflow_run_id": "47ab607d-2396-4508-9499-9a1bef03f57c",
+        "final_sha256": "fc5f4285b7eb4f6ad4b76f4c7bc9a83a73ac28f18e73bd00326cf9623091246b"
+      }
+    },
+    "B2": {
+      "axis": "模型",
+      "skill": "campaign",
+      "Y": {
+        "label": "DeepSeek V4 Flash",
+        "arm_id": "campaign|deepseek",
+        "app_id": "a0d92232-0afe-4b77-abb4-5356fd04bc7b",
+        "workflow_run_id": "79e30b3c-4620-49b6-984e-fd6de860bdc7",
+        "final_sha256": "2be0d671356439743a16a4f53ff62ff27c601cd27e53fa3ad90cde3a209f1454"
+      },
+      "X": {
+        "label": "Qwen3.8 Max",
+        "arm_id": "campaign|qwen",
+        "app_id": "aad728f0-3b69-4241-a122-7ba83c6f8d23",
+        "workflow_run_id": "7108a474-2a11-4f1b-a3c3-775cd1ba1c1a",
+        "final_sha256": "e73f1fb8d5f4a16ce0ea85a6bd4f98db07f8b15be36f4021012ba0268f28453f"
+      }
+    },
+    "B3": {
+      "axis": "模型",
+      "skill": "content_brief",
+      "Y": {
+        "label": "DeepSeek V4 Flash",
+        "arm_id": null,
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": null
+      },
+      "X": {
+        "label": "Qwen3.8 Max",
+        "arm_id": "content_brief|qwen",
+        "app_id": "86e48b41-864c-4ff2-bcae-158f4396d3ae",
+        "workflow_run_id": "c1474a96-d8e7-442b-a536-51dfe7aede49",
+        "final_sha256": "c24eb63ec414cc696292e33a7944a73186c49af62e7ce4ed3716dc6c2d62a001"
+      }
+    },
+    "C1": {
+      "axis": "Skill",
+      "skill": "matrix",
+      "Y": {
+        "label": "Skill System Prompt",
+        "arm_id": null,
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": null
+      },
+      "X": {
+        "label": "No-Skill 强基线",
+        "arm_id": "matrix|noskill",
+        "app_id": "87eb2e0b-65cd-4aa4-9752-5ba741972bd8",
+        "workflow_run_id": "c90f6130-d46e-4eec-9fd7-6f0c6c16af98",
+        "final_sha256": "4972d277f40248a21ed3dbf768d31e18f04531252c32ec0e37294fdcd4532ca1"
+      }
+    },
+    "C2": {
+      "axis": "Skill",
+      "skill": "campaign",
+      "Y": {
+        "label": "Skill System Prompt",
+        "arm_id": "campaign|deepseek",
+        "app_id": "a0d92232-0afe-4b77-abb4-5356fd04bc7b",
+        "workflow_run_id": "79e30b3c-4620-49b6-984e-fd6de860bdc7",
+        "final_sha256": "2be0d671356439743a16a4f53ff62ff27c601cd27e53fa3ad90cde3a209f1454"
+      },
+      "X": {
+        "label": "No-Skill 强基线",
+        "arm_id": "campaign|noskill",
+        "app_id": "a42c9cf0-fbaf-47a3-9961-eb9786f5d1ee",
+        "workflow_run_id": "32dbf2c8-987c-4e98-b5f7-abf5b55027db",
+        "final_sha256": "9685bae82005b71d25244076b346f916f44c248a930117178ae3cfb714cb8716"
+      }
+    },
+    "C3": {
+      "axis": "Skill",
+      "skill": "content_brief",
+      "X": {
+        "label": "Skill System Prompt",
+        "arm_id": null,
+        "app_id": null,
+        "workflow_run_id": null,
+        "final_sha256": null
+      },
+      "Y": {
+        "label": "No-Skill 强基线",
+        "arm_id": "content_brief|noskill",
+        "app_id": "1b7b4023-5f82-49e6-9d35-4e9ae38985b9",
+        "workflow_run_id": "1104a138-45bb-4110-8a2f-f16366784ea0",
+        "final_sha256": "3d849ff01607446a3806b037a8ef23afd797936f51226bd3a4386bc53b68a25e"
+      }
+    }
+  },
+  "hard_gate": {
+    "A1": {
+      "Y": [
+        [
+          "0 该侧未产出可比较正文",
+          false,
+          "run_status=failed error=[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by NameResol"
+        ]
+      ],
+      "X": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=8881"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          null,
+          "集成侧输入由状态机现场组装，SHA 另在 A 轴专项比对"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "A2": {
+      "X": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=9334"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 875bb24d3aacc7d9 / 冻结 875bb24d3aacc7d9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ],
+      "Y": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=9106"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          null,
+          "集成侧输入由状态机现场组装，SHA 另在 A 轴专项比对"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "A3": {
+      "X": [
+        [
+          "0 该侧未产出可比较正文",
+          false,
+          "run_status=failed error=[deepseek] Error: req_id: 574d8603a0 PluginDaemonInternalServerError: killed by timeout"
+        ]
+      ],
+      "Y": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=9627"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          null,
+          "集成侧输入由状态机现场组装，SHA 另在 A 轴专项比对"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "B1": {
+      "X": [
+        [
+          "0 该侧未产出可比较正文",
+          false,
+          "run_status=failed error=[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by NameResol"
+        ]
+      ],
+      "Y": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=8938"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 3750637a6d437077 / 冻结 3750637a6d437077"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "B2": {
+      "Y": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=9334"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 875bb24d3aacc7d9 / 冻结 875bb24d3aacc7d9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ],
+      "X": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=7783"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 875bb24d3aacc7d9 / 冻结 875bb24d3aacc7d9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "B3": {
+      "Y": [
+        [
+          "0 该侧未产出可比较正文",
+          false,
+          "run_status=failed error=[deepseek] Error: req_id: 574d8603a0 PluginDaemonInternalServerError: killed by timeout"
+        ]
+      ],
+      "X": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=15239"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 370086596c5cb1c9 / 冻结 370086596c5cb1c9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "C1": {
+      "Y": [
+        [
+          "0 该侧未产出可比较正文",
+          false,
+          "run_status=failed error=[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by NameResol"
+        ]
+      ],
+      "X": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=2278"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 3750637a6d437077 / 冻结 3750637a6d437077"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "C2": {
+      "Y": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=9334"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 875bb24d3aacc7d9 / 冻结 875bb24d3aacc7d9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ],
+      "X": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=3707"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 875bb24d3aacc7d9 / 冻结 875bb24d3aacc7d9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    },
+    "C3": {
+      "X": [
+        [
+          "0 该侧未产出可比较正文",
+          false,
+          "run_status=failed error=[deepseek] Error: req_id: 574d8603a0 PluginDaemonInternalServerError: killed by timeout"
+        ]
+      ],
+      "Y": [
+        [
+          "1 Final 存在且非空",
+          true,
+          "final_present=true chars=4641"
+        ],
+        [
+          "2 输入事实 SHA 与冻结值一致",
+          true,
+          "实际 370086596c5cb1c9 / 冻结 370086596c5cb1c9"
+        ],
+        [
+          "6 输出合同关键章节齐全",
+          true,
+          "缺失 无"
+        ],
+        [
+          "8 无 think / 内部状态泄漏",
+          true,
+          "命中 无"
+        ],
+        [
+          "9 Skill 失败却声称完成",
+          true,
+          "final_present=true"
+        ]
+      ]
+    }
+  }
+}
