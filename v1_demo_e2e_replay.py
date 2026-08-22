@@ -46,13 +46,20 @@ NO_RETRY_PAT = re.compile(
 
 
 def api_key():
-    k = os.environ.get("DIFY_API_KEY")
+    """显式传入的 DIFY_API_KEY_FILE 优先于环境里可能残留的 DIFY_API_KEY。
+
+    修复记录：首版把 `DIFY_API_KEY` 排在前面，而本机 profile 中本就存在一个属于
+    别的应用的同名变量，导致首次冒烟以 HTTP 401 全轮失败（原始失败记录保留为
+    `replay_scenarios.FAILED_401_UNAUTHORIZED.jsonl`）。显式参数必须压过隐式环境。
+    """
+    k = None
+    p = os.environ.get("DIFY_API_KEY_FILE")
+    if p and os.path.exists(p):
+        k = open(p, encoding="utf-8").read().strip()
     if not k:
-        p = os.environ.get("DIFY_API_KEY_FILE")
-        if p and os.path.exists(p):
-            k = open(p, encoding="utf-8").read().strip()
+        k = os.environ.get("DIFY_API_KEY")
     if not k:
-        sys.exit("缺少凭据：请设置 DIFY_API_KEY 或 DIFY_API_KEY_FILE。")
+        sys.exit("缺少凭据：请设置 DIFY_API_KEY_FILE 或 DIFY_API_KEY。")
     return k
 
 
@@ -161,23 +168,43 @@ def run_facts(message_id):
     return out
 
 
+def tail_message_error(conversation_id):
+    """流被截断、拿不到 message_id 时，回后台取该会话最后一条消息的错误文本。
+
+    修复记录：首版在 `message_id` 缺失时直接把整轮记成 SEMANTIC，错误文本随流一起丢失，
+    于是一次 `Read timed out` 这类**已登记的传输失败**被误判为语义失败、不予重试。
+    显式回查后台可恢复真实错误，分类才不会失真。
+    """
+    if not conversation_id:
+        return ""
+    try:
+        rows = psql("select coalesce(status,'')||' | '||coalesce(replace(error,chr(10),' '),'') "
+                    "from messages where conversation_id='%s' "
+                    "order by created_at desc limit 1;" % conversation_id)
+        return rows.strip()
+    except Exception:
+        return ""
+
+
 def conv_state(conversation_id):
     """会话变量里的权威落定状态（Artifact 状态在状态机之后才写）。"""
     res = {"task_snapshot": None, "artifacts": {}}
-    rows = psql("select (data::json->>'name')||chr(9)||coalesce(data::json->>'value','') "
-                "from workflow_conversation_variables where conversation_id='%s';"
-                % conversation_id)
-    for ln in rows.splitlines():
-        if "\t" not in ln:
-            continue
-        name, val = ln.split("\t", 1)
-        if name == "task_snapshot_json":
-            try:
-                res["task_snapshot"] = json.loads(val)
-            except Exception:
-                res["task_snapshot"] = {"_unparsable": val[:300]}
-        elif name.endswith("_artifact"):
-            res["artifacts"][name[:-9]] = {"chars": len(val), "sha256": sha(val) if val else None}
+    # 逐个变量单独查：Artifact 正文含换行，整表一次查再按行切会把正文截成第一行。
+    snapv = psql("select data::json->>'value' from workflow_conversation_variables "
+                 "where conversation_id='%s' and data::json->>'name'='task_snapshot_json';"
+                 % conversation_id).strip()
+    if snapv:
+        try:
+            res["task_snapshot"] = json.loads(snapv)
+        except Exception:
+            res["task_snapshot"] = {"_unparsable": snapv[:300]}
+    for slot in ("matrix", "campaign", "content_brief"):
+        val = psql("select data::json->>'value' from workflow_conversation_variables "
+                   "where conversation_id='%s' and data::json->>'name'='%s_artifact';"
+                   % (conversation_id, slot))
+        val = val[:-1] if val.endswith("\n") else val
+        if val:
+            res["artifacts"][slot] = {"chars": len(val), "sha256": sha(val)}
     snap = res["task_snapshot"] or {}
     arts = snap.get("artifacts") or {}
     for k in ("matrix", "campaign", "content_brief"):
@@ -219,8 +246,11 @@ def run_conversation(key, label, turns, markers, outf, resume_done):
                 "leak_hits": leak_scan(ans, markers),
             }
             rec.update(facts)
+            recovered = "" if mid else tail_message_error(cid2 or cid)
+            if recovered:
+                rec["recovered_backend_error"] = recovered[:600]
             blob = (err or "") + json.dumps(facts.get("node_errors", []), ensure_ascii=False) + \
-                   (facts.get("run_error") or "")
+                   (facts.get("run_error") or "") + recovered
             turn_failed = bool(err) or facts.get("run_status") == "failed" or not mid
             infra = bool(INFRA_PAT.search(blob)) and not NO_RETRY_PAT.search(blob)
             rec["failure_class"] = ("INFRA" if infra else "SEMANTIC") if turn_failed else None
