@@ -83,3 +83,24 @@
 | `testapps/TEST_CONTENT_BRIEF_NOSKILL.yml` | 48188 | `02ebb042088812c0584e6749b484e2082e1eaea80da0a6bca785d5857b29d8a0` |
 
 > 本清单自身的 SHA 不在表内（自指），以提交后的 git blob 为准。
+
+---
+
+## 6. 阶段 8：揭盲与结论（补记）
+
+| 项 | 值 |
+|---|---|
+| 匿名映射表 SHA-256（揭盲时实测） | `39df1008a8b88bac781e4fe3fc46487397d7c9a42673f9da1bf95bdee07f3a59` |
+| 与第 2 节盲审前承诺是否一致 | **一致** |
+| 映射表归档位置 | `V1_QUALITY_BLIND_MAPPING_v0.1.json`（本次提交移入仓库） |
+| 实际进入盲审的组 | `A2` / `B2` / `C2`（3 / 9） |
+| 无法盲审的组 | `A1` `A3` `B1` `B3` `C1` `C3`（各有一侧零产出） |
+| 无法盲审根因 | 两个 arm 失败（`matrix\|deepseek` 域名解析失败；`content_brief\|deepseek` 插件超时被杀），每个 arm 同时充当三轴甲方 |
+| Founder 裁决 | 2026-08-21「不补跑，就盲审这 3 组」 |
+| 集成轴 | `INCONCLUSIVE` |
+| 模型轴 | `INCONCLUSIVE` |
+| Skill 轴 | `SKILL_VALUE_INCONCLUSIVE` |
+| E2E 轴 | `FULL_E2E_PASS` 不成立；`E2E_CONTROL_LAYER_DEFECTS_FOUND` |
+| 总任务状态 | `PARTIAL` |
+| `V1_DECISION_CHAIN_QUALITY_VALIDATED` | **不可冻结** |
+| 结论文件 | `V1_QUALITY_FOUNDER_REVIEW_v0.1.md` |

@@ -303,3 +303,39 @@
 | `SK-05` | `must_not_fabricate_price_stock_or_customer_quote` |
 | `SK-06` | `answer_must_say_rerun_required` |
 | `SK-06` | `dialogue_layer_must_not_produce_professional_conclusion` |
+
+---
+
+## G. Founder 裁决与盲审结果（阶段 8 补记）
+
+### G.1 Founder 关于失败 arm 的裁决
+
+2026-08-21，九组质量对照中 `matrix|deepseek`（域名解析失败，4.2s）与 `content_brief|deepseek`
+（`PluginDaemonInternalServerError: killed by timeout`，600.5s）各已按预注册第 6 节允许重试集合
+重试一次仍失败。执行方向 Founder 提出可授权有界补跑，Founder 裁定：
+
+> **「不补跑，就盲审这 3 组」**
+
+本轮据此收口，严格按预注册执行，不再追加尝试。两份失败原样保留于
+`replay_scenarios.FAILED_401_UNAUTHORIZED.jsonl` 与 `replay_e2e.FAILED_500_PRIVATE_KEY_NOT_FOUND.jsonl`
+之外的 `cmp/comparison_runs.jsonl`，未删除、未用成功 Run 替换。
+
+因两个失败 arm 各自同时充当三个轴的甲方，九组中六组（`A1` `A3` `B1` `B3` `C1` `C3`）判为
+**无法盲审**，仅 `A2` / `B2` / `C2` 三组进入 Founder 盲审。
+
+### G.2 盲审与揭盲结论
+
+完整揭盲对照、盲法完整性核验、三轴逐条判定与局限声明见
+**`V1_QUALITY_FOUNDER_REVIEW_v0.1.md`**。此处只登记结论：
+
+| 轴 | 结论 |
+|---|---|
+| 集成 | `INCONCLUSIVE`（1/3 组可判；该组集成侧未被判实质更差） |
+| 模型 | `INCONCLUSIVE`（1/3 组可判；该组 DeepSeek 侧被偏好，严重错误判在 Qwen 侧） |
+| Skill | `SKILL_VALUE_INCONCLUSIVE` |
+| E2E | `FULL_E2E_PASS` **不成立**；分项 `E2E_CONTROL_LAYER_DEFECTS_FOUND`（12 项真实失败，其中 4 项安全关键） |
+| 总任务状态 | `PARTIAL` |
+| `V1_DECISION_CHAIN_QUALITY_VALIDATED` | **不可冻结** |
+
+映射表 SHA-256 揭盲时实测 `39df1008a8b88bac781e4fe3fc46487397d7c9a42673f9da1bf95bdee07f3a59`，
+与 Commit 2 中承诺值一致，盲法未被破坏。
