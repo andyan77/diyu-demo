@@ -33,6 +33,8 @@
 | **决策链 V1 当前状态（含已知问题与能力边界）** | [decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md) |
 | **内容生产链入口（当前主线）** | [content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md](content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md) |
 | 三份决策 Skill 正文 | [decision-chain/skills/](decision-chain/skills/) |
+| **内容生产三份 Skill（活跃主线）** | Creative Script → [content-production/skills/writing-creative-scripts/](content-production/skills/writing-creative-scripts/)<br>Production Director → [content-production/skills/directing-content-production/](content-production/skills/directing-content-production/)<br>Publishing & Packaging → [content-production/skills/packaging-content-for-release/](content-production/skills/packaging-content-for-release/) |
+| **共享 references 正式主本** | [content-production/references/](content-production/references/) |
 | V1 集成合同 | [decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md](decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md) |
 | 品牌夹具（序里集） | [decision-chain/fixtures/](decision-chain/fixtures/) |
 | V1 全部运行证据与盲审材料 | [decision-chain/evidence/](decision-chain/evidence/) |
@@ -53,3 +55,7 @@
 10. 如果现有分类已经能够快速找到文件，**不再继续细分目录**。
 
 **不建立**复杂的文档状态机、登记表、审批流或多层索引。历史依靠 Git 追溯，不建 archive 体系。
+
+### Skill 与 references 维护
+
+三份 Skill 各自保持自包含；共享 references 的正式主本位于 `content-production/references/`。修改 references 时，必须在同一提交中同步三个 Skill 内副本并核对哈希。

@@ -13,5 +13,6 @@
 - **[PROJECT_INDEX.md](PROJECT_INDEX.md)** —— 资产索引与文档管理规则
 - **[决策链 V1 阶段基线](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md)** —— V1 已完成什么、未完成什么、已知问题与能力边界
 - **[内容生产链 PRD](content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md)** —— 当前主线入口
+- **[内容生产三份 Skill](content-production/skills/)** —— Creative Script（`writing-creative-scripts`）、Production Director（`directing-content-production`）、Publishing & Packaging（`packaging-content-for-release`），各自自包含，可独立安装
 - [笛语项目基线.md](笛语项目基线.md) —— 项目定位与 Founder 已裁决事项
 - [CLAUDE.md](CLAUDE.md) —— 协作规则与硬约束
