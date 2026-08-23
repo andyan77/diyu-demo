@@ -182,3 +182,67 @@ realization_manifest
 
 Publishing & Packaging 在 `PRE` 模式下不得声称已验证 `realized_payoff`，
 不得伪造 `realization_manifest`，不得把 PRE 包装写成正式成片已经完成。
+
+---
+
+## 5. reference 固定投影表
+
+本节对应任务 `CONTENT-PRODUCTION-RUNTIME-P02` 第四节的 4.1／4.2／4.3。
+因本文件第 4 节已占用 4.1—4.3 编号（九槽位／人工回改／plan 与 manifest），此处顺延为第 5 节，内容一致。
+
+**这张表是确定性的。执行侧按表查，不作判断，不得自行扩大或缩小范围。**
+
+### 5.1 platforms.md
+
+| Skill | 固定加载 |
+|---|---|
+| Creative Script | 第二节「结构性参数」 |
+| Production Director | 第三节「画面安全区」 |
+| Publishing & Packaging | 第一节「入口形态」＋第四节「字数与展示长度」＋第五节「表里没有什么」 |
+
+v0.6 的 `platforms.md` 小节标题本身即写明归属（「—— Creative Script 也读这一节」「—— Production Director 读这一节」
+「—— Publishing & Packaging 读这一节」），本表与原文一致。未列出的小节一律排除。
+
+### 5.2 industry-conditions.md
+
+先按 `subject_domain` **精确字符串匹配**选出唯一行业块，未匹配则不加载任何行业段落，
+**不得选择「最相近行业」**。选中行业块后，再按固定行名投影：
+
+| 行名 | CS | PD | PP |
+|---|---|---|---|
+| 常见素材形态 | 加载 | 加载 | 排除 |
+| 哪一类真的带信息 | 加载 | 加载 | 加载 |
+| 可用的真实摩擦 | 加载 | 排除 | 排除 |
+| 特有淘汰项 | 加载 | 加载 | 加载 |
+| 拍摄条件 | 加载 | 加载 | 排除 |
+| 包装差异 | 排除 | 排除 | 加载 |
+
+**跨行业提醒**（`一条跨行业的提醒`）只有在输入**明确说明**表达主体属于 Founder 或个人 IP 时才加载。
+**不得从 `expression_subject = NATURAL_PERSON` 自行推导**——自然人不等于 Founder 或个人 IP。
+
+### 5.3 examples.md
+
+三个 Workflow **默认均不加载**。只有显式输入 `example_reference_requested = true` 才允许加载。
+
+### 5.4 投影必须可核验
+
+每个 Workflow 的 Reference Projection 必须输出：
+`loaded_reference_sections[]` / `excluded_reference_sections[]` / `reference_hashes{}` / `projection_reason[]`。
+
+这些字段进运行证据，**不进入用户可见 Final**。
+
+投影只能由确定性节点（Template Transform 或 If/Else）完成：
+**不使用知识库，不由任何 LLM 决定加载范围。**
+被排除的内容应当嵌在模板里再由查表排掉，使「排除」是真排除、可在后台逐字复核。
+
+---
+
+## 6. platform 的 PROBE_ONLY 口径
+
+当 `platform` 取自 `PROBE_ONLY` 值（正式 Content Brief 记为 `RUNTIME_REQUIRED`、最终发布平台未确认、
+由 Founder 锁定）时：
+
+- 该值**只用于打通链路与验证 reference 投影**；
+- **不构成正式发布平台裁决**；
+- 据此产出的 `platform_variants[]` 与任何平台适配**一律为草案**，不得在后续轮次中被当作已确认的平台方案继续使用；
+- 该口径必须写进运行证据，并随产物一起传递给下游。

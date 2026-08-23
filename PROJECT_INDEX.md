@@ -12,6 +12,12 @@
 |---|---|
 | [decision-chain/](decision-chain/) | 决策链：Matrix Architect、Campaign Orchestrator、Content Brief Architect。**已冻结，非活跃主线** |
 | [content-production/](content-production/) | 内容生产链：Creative Script、Production Director、Publishing & Packaging。**当前唯一活跃主线** |
+
+> **内容生产链三 Skill v0.6 能力资产包**，由 Creative Script、Production Director、Publishing & Packaging 三份核心 Skill，以及配套的行业条件、平台事实和端到端案例参考资产组成。
+>
+> 正式运行资产就是这一个包：三份 `SKILL.md` ＋ `platforms.md` ＋ `industry-conditions.md` ＋ `examples.md`。
+> 「6—8 张创意操作卡 ＋ 8—10 张视听实现卡 ＋ 4 个黄金案例 ＋ 动态平台参考包」只表示 v0.6 正向能力补强研究的**原始交付目标**，不是当前的独立文件清单。
+> **不得再把 Skill 与 references 称为两套并列资产。**
 | [tools/](tools/) | 通用辅助脚本 |
 
 每个模块下最多五类：

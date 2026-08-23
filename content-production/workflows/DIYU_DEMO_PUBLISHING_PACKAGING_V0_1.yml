@@ -1,0 +1,679 @@
+app:
+  description: 内容生产链第三段正式独立 Workflow：Publishing & Packaging v0.6。输入含逐字传入的 CS Final 与 PD Final。mode 由 Skill 自行推导并写出依据，不由提示词预填。reference 按运行合同固定投影表加载（platforms 第一／四／五节；industry 三行；examples 不加载）。
+  icon: 🎬
+  icon_background: '#E4FBCC'
+  icon_type: emoji
+  mode: workflow
+  name: DIYU Demo Publishing Packaging v0.1
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: template-transform
+      id: 1788000000001-source-ref_projection-target
+      source: '1788000000001'
+      sourceHandle: source
+      target: ref_projection
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: ref_projection-source-projection_record-target
+      source: ref_projection
+      sourceHandle: source
+      target: projection_record
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: llm
+      id: projection_record-source-skill_llm-target
+      source: projection_record
+      sourceHandle: source
+      target: skill_llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: template-transform
+      id: skill_llm-source-final_extract-target
+      source: skill_llm
+      sourceHandle: source
+      target: final_extract
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: final_extract-source-final_present-target
+      source: final_extract
+      sourceHandle: source
+      target: final_present
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: final_present-source-model_used-target
+      source: final_present
+      sourceHandle: source
+      target: model_used
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: end
+      id: model_used-source-end_node-target
+      source: model_used
+      sourceHandle: source
+      target: end_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 输入
+        type: start
+        variables:
+        - label: Creative Script 完整 Final（逐字）
+          max_length: 80000
+          options: []
+          required: true
+          type: paragraph
+          variable: cs_final
+        - label: Production Director 完整 Final（逐字，含 realization_plan）
+          max_length: 120000
+          options: []
+          required: true
+          type: paragraph
+          variable: pd_final
+        - label: 原 Content Brief 正文
+          max_length: 60000
+          options: []
+          required: true
+          type: paragraph
+          variable: content_brief
+        - label: platform（本轮 PROBE_ONLY）
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: platform
+        - label: cta_contract
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: cta_contract
+        - label: account_positioning
+          max_length: 4000
+          options: []
+          required: true
+          type: paragraph
+          variable: account_positioning
+        - label: subject_domain
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: subject_domain
+        - label: duration_band
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: duration_band
+        - label: constraints[]
+          max_length: 8000
+          options: []
+          required: true
+          type: paragraph
+          variable: constraints
+        - label: fact_refs[]
+          max_length: 20000
+          options: []
+          required: true
+          type: paragraph
+          variable: fact_refs
+        - label: example_reference_requested（固定 false）
+          max_length: 16
+          options: []
+          required: true
+          type: text-input
+          variable: example_reference_requested
+      height: 88
+      id: '1788000000001'
+      position:
+        x: 120
+        y: 260
+      positionAbsolute:
+        x: 120
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 确定性查表投影（运行合同 4.1／4.2／4.3）。不使用知识库，不由 LLM 决定加载范围。
+        selected: false
+        template: '## 参考投影 · platforms.md
+
+
+          ## 一、入口形态 —— 决定封面和首帧谁承担第一眼
+
+
+          这一节是**机制判断**，不是可查的数字。判据是「用户是怎么遇到你的」，打开 App 就能自己确认，比数字稳定得多。
+
+
+          | 平台 | 主要入口 | 谁承担第一眼 | 封面还有什么用 |
+
+          |---|---|---|---|
+
+          | **抖音**（视频） | 单列全屏、自动播放 → **刷到型** | **首帧 ＋ 开头几秒** | 主页九宫格。它决定「点进主页之后看不看下一条」，不决定推荐流里的第一眼 |
+
+          | **抖音**（长图文） | 同样进单列推荐流，但**不自动翻页**——第一张停在那儿等你划 → **刷到型，第一眼由一张静图承担** | **第一张图** | 同上 |
+
+          | **小红书** | 双列瀑布流、必须点开才展开 → **点击型** | **封面 ＋ 标题** | 决定生死。封面不成立，正文写得再好也没人看到 |
+
+          | **视频号** | 推荐流是单列全屏（刷到型），但「朋友在看／朋友点赞」是**社交带出型** | 分两路：刷到时是首帧；被朋友带出时是**首帧 ＋ 描述第一行 ＋ 那个朋友的名字** | 低 |
+
+
+          **视频号那一行是这张表里最容易被忽略的一条**：同一条内容有两个入口，且**社交带出的那一路，观众先看到的是「谁转的」**。这会改变转发语的写法——见 SKILL.md「作者转发语」。
+
+
+          > **「好友推荐」是与「算法推荐」并列的独立机制**，有官方级出处：中央网信办《中央网信办持续加强信息推荐算法治理》原文「微信视频号完善『好友推荐』和『算法推荐』双重机制」。`cac.gov.cn/2025-05/22/c_1749536203490537.htm`，发布 2025-05-22，核对 2026-08-22。
+
+          > **这条出处只证明「两条机制都存在」，不证明好友信号的分发权重**——权重仍未公开，不得据此写任何权重结论。
+
+
+          ## 四、字数与展示长度 —— Publishing & Packaging 读这一节
+
+
+          | 平台 | 标题建议长度 | 信息流截断长度 | 单屏字幕字数 | `as_of` | 来源 |
+
+          |---|---|---|---|---|---|
+
+          | **抖音** | ≤15 字 | 未核实 | 未核实 | 2026-06-02 | 色彩韵设计规格文档 |
+
+          | **小红书** | **未核实** ⚠️ | 未核实 | 未核实 | — | — |
+
+
+          ⚠️ **小红书那一格容易踩的坑**：常查到的「10–15 字」是**封面上压的那行字**的长度，不是**笔记标题**的长度。两者不是一回事——封面文字是你自己排上去的，标题是笔记的标题栏。**这张表问的是标题，所以小红书这一格是「未核实」。**（封面文字 10–15 字，`as_of` 2026-05-30，色彩韵设计规格文档——它属于封面设计，不属于本节。）
+
+          | **视频号** | 未核实 | 未核实 | 未核实 | — | 官方未公布 |
+
+
+          **这一节大面积「未核实」是本表当前最大的缺口。** 按 SKILL.md 的规定，数值型参数拿不到时**给保守下限并标注**，不要留空：
+
+
+          - 标题：按 **≤15 字**做母版，超过的部分不得承载缺口那一句
+
+          - 单屏字幕：按 **≤12 字**做母版
+
+          - 两项都写进 `missing[]`，注明定稿前必须实测
+
+
+          **实测方法比查表可靠**：发一条测试内容，截图信息流里的实际显示，量一遍。平台文档常年落后于线上表现。
+
+
+          ## 五、这张表里没有的东西
+
+
+          **别在这里找，找不到不是遗漏，是设计如此：**
+
+
+          - **推荐权重、完播率阈值、流量池分级** —— 这些是平台不公布、第三方互相矛盾、且改得最快的东西。把它们写进表里，等于把三份 Skill 的判断建在一堆传闻上。
+
+          - **「什么内容在这个平台更容易火」** —— 那是内容判断，在 SKILL.md 里，不在参数表里。
+
+          - **发布时间、话题标签、活动入口** —— 运营动作，不属于这三份 Skill。
+
+
+          **这张表只回答一个问题：这个平台的物理限制是什么。** 判断留在 SKILL.md，数字留在这里，两者不互相搬家。
+
+
+          ## 参考投影 · industry-conditions.md（按 subject_domain 精确匹配 → 再按固定行名投影）
+
+
+          {%- if subject_domain == ''服装 / 门店零售'' -%}
+
+          ## 服装 / 门店零售
+
+
+          | | |
+
+          |---|---|
+
+          | **哪一类真的带信息** | **只有试穿视频**。棚拍商品图在信息流里和所有服装广告长得一样，基本只能当背景 |
+
+          | **特有淘汰项** | **① 用成分推性能**——"70% 羊毛所以垂感好、不起球"。成分是事实，性能是结论，中间那一步没有来源。要说垂感，只能用试穿时观察到的动作（手一松塌不塌）<br>**② 无条件推荐**——"必买""闭眼入"<br>**③ 把条件句写成否决句**——"取决于内搭体积"不是"我劝你别买" |
+
+          | **包装差异** | 封面用**穿着状态**不用平铺；在点击型平台上，封面里那件衣服要能一眼看出是什么品类——认不出品类的封面等于没有封面 |
+
+          {%- elif subject_domain == ''餐饮 / 门店'' -%}
+
+          ## 餐饮 / 门店
+
+
+          | | |
+
+          |---|---|
+
+          | **哪一类真的带信息** | **备料过程**。成品图是这个行业最没有区分度的素材——所有餐饮内容的成品图都长一样 |
+
+          | **特有淘汰项** | **① 无来源的工艺形容**——"秘制""古法""匠心"<br>**② 把后厨拍干净**——干净到不像在用的后厨反而不可信<br>**③ 用别家的成品图**<br>**④ 把"好吃"当成可证明的事实**——它是 `SUBJECTIVE`，不得用画面强化 |
+
+          | **包装差异** | 首帧用**过程**不用成品；收藏动机来自"我也想试试这个做法"，转发动机来自"带你去吃"——两者的标题写法不同 |
+
+          {%- elif subject_domain == ''知识付费 / 课程'' -%}
+
+          ## 知识付费 / 课程
+
+
+          | | |
+
+          |---|---|
+
+          | **哪一类真的带信息** | **改稿痕迹本身**——第几版改了什么。这个行业真正的素材是文字，不是画面 |
+
+          | **特有淘汰项** | **① 学员成果当成方法有效的证明**——那是幸存者，不是验证<br>**② 时间承诺**——"三天学会"<br>**③ 把讲师的判断包装成行业共识**<br>**④ 访谈还没做就先写好学员会说什么**——这是最常见也最难发现的一种，因为写出来的稿子看上去完全正常 |
+
+          | **包装差异** | 长档为主，收藏动机来自**可复用的信息**（"存下来照着做"）｜标题**不能承诺结果，只能承诺方法**——承诺结果就落进上面第②条 |
+
+          {%- elif subject_domain == ''动漫 / 原创 IP'' -%}
+
+          ## 动漫 / 原创 IP
+
+
+          | | |
+
+          |---|---|
+
+          | **哪一类真的带信息** | **废弃分镜**。它是这个行业唯一天然带"真实摩擦"的素材——一个被否掉的版本，本身就是一次可展示的取舍 |
+
+          | **特有淘汰项** | **① 两层事实不分层**——设定层的"真"和现实层的"真"必须在画面上分开，否则观众把创作决策当成剧情<br>**② 用"世界观宏大"代替具体设定**<br>**③ 角色一致性断裂**——同一角色在两个单元里不像同一个人。这是这个行业的头号废片原因，且**在分镜阶段就要设一致性锚点**，不能留到成片才发现 |
+
+          | **包装差异** | 封面必须出现角色，且是**已定稿的那一版**（用废弃版做封面＝对外承诺了一个不存在的角色）｜转发驱动是"这说的是我"（Identity），不是"有用"（Utility） |
+
+          {%- elif subject_domain == ''户外 / 露营（爱好垂类）'' -%}
+
+          ## 户外 / 露营（爱好垂类）
+
+
+          | | |
+
+          |---|---|
+
+          | **哪一类真的带信息** | **评论区提问**。这个行业大量内容本来就是从别人的问题里长出来的——那是客场，见 PP-5 |
+
+          | **特有淘汰项** | **① 把自己的参数当成对方的答案**——"充绒 400g、舒适温标 −2℃"是我的参数，不是你该带多厚的答案。这是这个行业最高频的一种超额承诺<br>**② 装备推荐不说使用条件**<br>**③ 把一次好天气的体验当成常态** |
+
+          | **包装差异** | 评论区是主场景，客场情况下置顶要落**两处**（新内容下 ＋ 原提问那条下面）｜必须准备一个诚实的"我答不出"，代答就是编造 |
+
+          {%- else -%}
+
+          （未匹配到行业。按规则不加载任何行业段落，也不选择「最相近行业」。按通用处理。）
+
+          {%- endif -%}
+
+
+          ## 参考投影 · examples.md
+
+
+          （example_reference_requested = {{ example_reference_requested }}；本轮固定 false，examples.md 未加载，正文亦未嵌入本工作流。）
+
+          '
+        title: Reference Projection
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - subject_domain
+          variable: subject_domain
+        - value_selector:
+          - '1788000000001'
+          - example_reference_requested
+          variable: example_reference_requested
+      height: 100
+      id: ref_projection
+      position:
+        x: 420
+        y: 260
+      positionAbsolute:
+        x: 420
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 投影清单，进运行证据。
+        selected: false
+        template: "{%- set INDS = [\"服装 / 门店零售\", \"餐饮 / 门店\", \"知识付费 / 课程\", \"动漫 / 原创 IP\", \"户外 / 露营（爱好垂类）\"] -%}\n{\n  \"skill\": \"PP\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 全文（始终加载）\",\n    \"platforms.md :: 一、入口形态 —— 决定封面和首帧谁承担第一眼\",\n    \"platforms.md :: 四、字数与展示长度 —— Publishing & Packaging 读这一节\",\n    \"platforms.md :: 五、这张表里没有的东西\"{%- if subject_domain in INDS %},\n    \"industry-conditions.md :: {{ subject_domain }} :: 行 哪一类真的带信息 / 特有淘汰项 / 包装差异\"{%- endif %}\n  ],\n  \"excluded_reference_sections\": [\n    \"platforms.md :: 二、结构性参数 —— Creative Script 也读这一节\",\n    \"platforms.md :: 三、画面安全区 —— Production Director 读这一节\",\n    \"platforms.md :: 更新这张表的规则\",\n    \"industry-conditions.md :: 本行业 :: 行 常见素材形态\",\n    \"industry-conditions.md :: 本行业 :: 行 可用的真实摩擦\",\n    \"industry-conditions.md :: 本行业 :: 行 拍摄条件\"{%- for k in INDS %}{%- if k != subject_domain %},\n    \"industry-conditions.md :: {{ k }} :: 整块\"{%- endif %}{%- endfor %},\n    \"industry-conditions.md :: 一条跨行业的提醒（仅当表达主体为 Founder／个人 IP 时加载；本轮样本为苏禾，不加载）\",\n    \"examples.md :: 全文\"\n  ],\n  \"reference_hashes\": {\n    \"SKILL.md\": \"08ff34ffbdd3e9524cd234ca2fc866dd9268fffc4623994096227e533dd7dfaf\",\n    \"platforms.md\": \"98fa083c36710fc65f7d5fcf58fb6c33f14d3f984e07c014d7ab47fafe641d2d\",\n    \"industry-conditions.md\": \"b085f1218a561adb500980464325c4356413187ee6e45be5430d5d1334fb7f6d\",\n    \"examples.md\": \"635c86e11ab9bd4e6e1b1fb721b2e3929f8a57c8a18c64f57dc81d743228f3e5\",\n    \"projected_text_sha256_note\": \"见 reference_projection_text 输出，可对该串独立复算\"\n  },\n  \"projection_reason\": [\n    \"SKILL.md 始终加载。\",\n    \"platforms.md 按运行合同 4.1 固定表加载：一、入口形态 —— 决定封面和首帧谁承担第一眼 ／ 四、字数与展示长度 —— Publishing & Packaging 读这一节 ／ 五、这张表里没有的东西。其余小节按表排除，执行侧不作判断。\",\n    \"industry-conditions.md 先按 subject_domain 精确匹配唯一行业块（本次 = {{ subject_domain }}），再按运行合同 4.2 固定行名投影：加载 哪一类真的带信息 / 特有淘汰项 / 包装差异；排除 常见素材形态 / 可用的真实摩擦 / 拍摄条件。\",\n    \"一条跨行业的提醒 不加载：只有输入明确说明表达主体属于 Founder 或个人 IP 时才加载，不得从 NATURAL_PERSON 自行推导。本轮样本为苏禾。\",\n    \"examples.md 不加载：example_reference_requested 固定 false，且正文未嵌入工作流，物理上无法加载。\",\n    \"全部投影由 Template Transform 查表完成，未使用知识库，未由任何 LLM 决定加载范围。\"\n  ]\n}\n"
+        title: Projection Record
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - subject_domain
+          variable: subject_domain
+      height: 100
+      id: projection_record
+      position:
+        x: 700
+        y: 260
+      positionAbsolute:
+        x: 700
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        memory: null
+        model:
+          completion_params:
+            max_tokens: 384000
+            reasoning_effort: high
+            thinking: true
+            top_p: 0.8
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: sys-1
+          role: system
+          text: "---\nname: packaging-content-for-release\ndescription: Builds the release package for a finished piece of content — titles, cover, first frame, publish copy, caption rules, music and sound placement, comment-section design, CTA surfacing, and per-platform adaptation for Douyin, WeChat Channels, and Xiaohongshu. Use whenever the user needs a 标题 / 封面 / 首帧 / 发布文案 / 字幕规则, asks how to publish something on a specific platform, wants to know why a piece isn't getting clicks, or asks to adapt one piece across platforms — including when they just say \"帮我起个标题\" or \"这条发小红书要改什么\". Runs in PRE mode from a script and shot plan, or FINAL mode from actual footage.\n---\n\n# Publishing & Packaging\n\n把成片变成**能在平台上打得动的发布包**。\n\n**不做**：重写脚本或分镜（要改走「回改建议」）。\n\n---\n\n## mode 是推出来的，不是填的\n\n**不要先问\"这条算 PRE 还是 FINAL\"。** 只看一件事：**上游交没交来 beat 级的 `realization_manifest`。**\n\n| 手上有什么 | mode | 能输出 |\n|---|---|---|\n| 有 manifest，**每条 beat 都在里面** | **FINAL** | **可正式发布**的最终包装 |\n| 有 manifest，**只覆盖了一部分 beat** | **MIXED** | 覆盖到的部分正式，其余标草案 |\n| **没有 manifest**（手上只有 `realization_plan`） | **PRE** | 全部标注为草案，**不得声称已验证 `realized_payoff`** |\n\n**为什么看 manifest，不看别的**：`script_beats[]` 里的「素材」那一栏是**开拍前写下的计划值**，素材回来之后没有人负责回去改写它。拿计划值判断现实，正是「计划 ≠ 实际」要挡的那件事。manifest 不一样——它按定义只在素材回来、并且对上 beat 之后才存在，**它在不在，本身就是答案。**\n\n**这一条同时解决两个麻烦**：单元的「素材」比 beat 更细时按谁算（不用算，manifest 本来就是 beat 级的）；「待检索」什么时候翻成「已确认」（不用翻，检索完就产出 manifest）。\n\n**混合来源的例外（必须先看这一条）**：一条内容同时含\"已有素材检索\"和\"还没拍\"两种来源时，**检索先做完是常态**——那一刻已有素材那几条 beat 就有了真实的 manifest，按上表字面读＝MIXED。**这是错的：整条片子一个镜头都还没拍，任何一部分都不能定稿。**\n\n**规则**：`content_origin_mode[]` 里只要还有一种来源的素材**尚不存在**（待拍、待画、待生成、待采集），**整条走 PRE**，不看已经检索完了多少。\nMIXED 只用于一种情况：**所有来源的素材都已经存在**，只是 manifest 覆盖不全（拍了但有的没拍到、检索了但有的没找到）。\n\n一句话分辨：**MIXED 是\"拍完了，有的没拍到\"；PRE 是\"还没拍完\"。** 检索完成度再高也不改变这一点。\n\n**资产级的清单不是 manifest。** 上游只交「拍了 42 分钟」「有 36 张图」，说明它没告诉你哪条 beat 被覆盖——**按\"没有 manifest\"处理，走 PRE**。回退 Production Director 要 beat 级的，不要自己按分钟数猜。\n\n**\"没有新拍\"不是走 PRE 的理由。** 已有素材剪辑模式下素材两个月前就存在，检索完、对上 beat 就是真实的 manifest，走 FINAL——一律降级会把包装上限无谓压低。反过来，**\"素材名义上有\"也不是走 FINAL 的理由**：没检索、没对位，manifest 就不存在。\n\n**MIXED 的处理**：按 manifest **覆盖到的部分**归纳 `realized_payoff`，包装上限取它；未覆盖的部分产出的一切标草案，且**不得作为标题或封面的缺口兑现物**。\n\n**FINAL 模式的第一步不是写标题，是归纳 `realized_payoff`：**\n\n1. 读 **beat 级**的 `realization_manifest`——哪条 beat 由哪段素材覆盖（对位是上游做的，不在这里重做）\n2. 逐条比对 `script_beats[]`：**哪些 beat 在 manifest 里没有对应项**——那就是没拍到的\n3. 逐条比对 `fact_refs[]`：**哪些事实真有画面支撑，哪些只剩口说**\n4. 归纳出 `realized_payoff` = 这条片子**实际兑现了什么**\n5. **然后**才开始做包装，上限是第 4 步的结论\n\n这一步由这份 Skill 负责，不需要额外的环节。跳过它直接写标题，等于对着一个还没看过的片子做承诺。\n\n> **为什么**：拿拍摄计划当现实去写标题，等于对一个还不存在的片子做承诺。关键镜头没拍到，标题就变成了标题党——而你到发布那天才发现。\n\n---\n\n## 输入\n\n**缺了不要卡住，也不要闷头猜。** 对话里被调用就问；工作流里被调用就用默认并在 `assumptions[]` 声明。\n\n| 槽位 | 缺了怎么办 |\n|---|---|\n| `script_beats[]` ＋ `content_promise` | **无法工作**，回退上游 |\n| `realization_manifest` 或 `realization_plan` | **mode 就看这一格**：有 beat 级 manifest 走 FINAL／MIXED，只有 plan 走 PRE。资产级的清单不算 manifest |\n| `subject_domain` 行业／赛道 | 由上游原样透传。**决定加载 `references/industry-conditions.md` 的哪一段**——缺了就按通用处理并在 `assumptions[]` 声明，**不要挑一个\"最像的\"套上去** |\n| `expression_subject` 五类之一 | **问**／默认从脚本口吻反推，标为推断。不同类型的\"人物一致性\"判据不同 |\n| `audience_shift` | 从 `content_promise` 反推，声明是推断。**三段共用一个落点** |\n| `fact_refs[]` | 无来源的事实**不得写进标题和封面**——标题是承诺，承诺不能建在没有出处的说法上 |\n| `platform` | **问**／默认出平台中立母版，不出正式平台包装 |\n| `account_positioning` 对标什么类型账号 | 自选并声明，同时给出\"换一种定位会怎样\" |\n| `cta_contract` 有无 CTA、动作是什么 | 默认无 CTA —— **不得自己创造业务动作** |\n| `key_frame` 可截图帧 | 从单元清单里挑一个，标为推断 |\n| `duration_band` 短（≤60s）／长（>60s） | **问**／默认短档。长档的完播、收藏、\"会不会存下来\"逻辑与短档完全不同——长档的收藏动机通常来自可复用的信息，短档来自一句能复述的话 |\n| `explicit_non_promise[]` | 只读继承。**包装阶段是最容易把承诺加回来的地方**——上游明说不给结论，标题就不能暗示有结论 |\n| `constraints[]` | 只读继承。第三方入镜边界同样约束封面与首帧选帧 |\n| `content_origin_mode[]` ＋ `fact_refs[]` | 按 type 区别对待，见下 |\n\n---\n\n## 母版制\n\n**先出一套母版包装，再出平台改写，每一处改动必须写明为了应对该平台的哪个机制。**\n\n没被改的部分＝通用包装能力；被改的部分＝平台知识；改动理由＝判断本身。\n\n**没改的项要写\"不变\"并说明为什么。** 一项\"不变\"都没有＝在为改而改；全都\"不变\"＝没做适配。\n\n平台的具体规格、权重、时长、入口形态**不写在这里**，全部在 `references/platforms.md`，每条带 `as_of` 与来源。**过期时不得用记忆补。**\n\n**三种拿不到的情况，处置不同：**\n\n| 情况 | 怎么办 |\n|---|---|\n| 平台未锁定 | 只出母版，不出任何平台改写。**这是正常状态，不是缺陷** |\n| 平台锁定了，但 `references/platforms.md` 不可得 | **出条件式改写**：「若该平台属于刷到型 → 资源压首帧；若属于点击型 → 资源压封面」。两条分支都写完整，并在 `missing[]` 注明定稿前必须查表。**不要交白卷，也不要凭记忆选一支** |\n| 表里有该平台，但条目已过期 | 按上一行处理，并在 `missing[]` 写明过期项 |\n\n自检第 5 条（改了几项／不变几项）在第二三种情况下按**条件式改写**计数，不判为\"没做适配\"。\n\n**条件式改写只对\"分支型\"参数有效**（入口形态、封面 vs 首帧的资源分配——它们是两条路，两条都写得完整）。\n**对\"数值型\"参数无效**（单屏字数上限、标题展示长度、图片张数上限——它们是一个数，没有两条分支）。数值型拿不到时：**给一个保守下限并标注为保守值，写进 `missing[]`，注明定稿前必须查表**。不要留空，留空会让下游以为这一项不需要。\n\n**结构级参数要提前问**（图文的图片张数上限决定 beat 拆几段）——它影响的不是包装而是内容结构。这一项 Creative Script 也读 `references/platforms.md`；到了这里才发现超出上限，是回退上游改结构，不是在这里删图。\n\n---\n\n## 核心判断\n\n### PP-1 · 标题不是摘要\n\n**摘要让人觉得\"我已经知道了\"，标题要让人觉得\"我还差一点\"。**\n\n**候选数由可用的入口类型数决定，不是先定一个数再凑。** 每种可用类型至少出一个，每个标明是哪一种：\n\n| 入口类型 | 承诺的是 |\n|---|---|\n| `INFORMATION` 信息 | 你会**得到**一条信息 |\n| `RESULT` 结果 | 你会**得到**一个结果 |\n| `IDENTITY` 身份 | 你会**得到**一个归属 |\n| `CONTRADICTION` 矛盾 | 你会**得到**一个矛盾的解 |\n| **`SITUATION` 情境** | 你会**看到**一个场景 |\n| **`QUOTABLE_LINE` 金句** | 你会**看到**一句话 |\n\n前四类都预设**正文有可带走物**。判据是这个，不是\"有没有结论\"——**两者会分家**：一条明说不给结论的内容，可以有很实在的可带走物（三个要你自己填的格子、一次改动的完整经过）。这时前四类仍然合法。\n\n**真正不合法的情况是：正文没有任何可带走物。** 这时用前四类构成超额承诺——观众看完发现手上什么都没有。\n\n**怎么判**：把正文能给的东西写成一句「看完你会拿到 ____」。填不出来的，只有后两类合法。\n\n**同义替换不构成新的标题家族。** 三个候选如果入口类型相同，等于只有一个候选。\n\n**所以没有结论的内容只出两个候选是正常的**——可用类型只剩后两类，硬凑第三个必然是同义替换，凑出来反而不合格。**类型有几种，候选就是几个。**\n\n推荐理由**必须指名正文的哪一处**，不得写\"更抓人\"\"更有网感\"。\n\n**示例**\n\n> ❌ 「初秋通勤六件单品搭配分享」——看完标题就不用看了，是摘要。\n> ❌ 三个候选：「通勤六件」「秋季通勤必备六件」「初秋通勤六件推荐」——同义替换，只有一个候选。\n> ✅ `CONTRADICTION`「多穿一层就挤，挤的不是衣服」\n> `QUOTABLE_LINE`「'上班要正式，接孩子不想太用力'」\n> `IDENTITY`「一周开三次会以上的看这条」\n> 推荐第一个，理由：**正文第 2 段给出了挤在哪三处，且画面上手真的碰到了那三处**——标题的缺口在正文有对应兑现。\n>\n> ⚠️ 推荐理由必须指名**输入里真实存在的**兑现处。如果输入只记了\"马甲成立与否取决于内搭体积和袖窿空间\"（条件句），就不能写成\"我劝你别买\"（否决句）——那是 CS-7 意义上的编造，而且编在标题上代价最大。\n\n---\n\n### PP-2 · 标题、封面、首帧不得三处重复\n\n三者关系只能是：**互补｜证明｜分工** —— 明确标出用的是哪一种。\n\n**首帧和封面不是同一件事**，即使某些平台上它们看起来是同一张图。判断依据是**这个平台的用户是怎么遇到你的**：\n\n| 用户遇到你的方式 | 谁承担第一眼 | 封面的作用 |\n|---|---|---|\n| 刷到，不用点就在播 | **首帧 ＋ 开头几秒** | 低 |\n| 必须先点才播 | **封面 ＋ 标题** | 决定生死 |\n| 朋友点赞／转发后带出 | 看带出的是首帧还是封面 | 取决于入口形态 |\n\n**哪个平台属于哪一种，查 `references/platforms.md`**（每条带 `as_of` 与来源）。平台入口形态会变，正文不写死具体平台的结论。\n\n封面文字层级：\n- 第一行是缺口那句，字号明显大\n- 第二行是限定条件（谁看、什么场合），小\n- 文字不压脸、不压主体动作\n- **行数按缩略图尺寸定**——在实际展示尺寸下读不出来的字，等于没写\n\n**示例**\n\n> ❌ 标题「三层同穿，挤在这三处」＋ 封面大字「挤在三处」＋ 首帧同一画面\n> ——三处说同一句话，浪费了两个入口。\n> ✅ 标题给**缺口**（是哪三处）｜封面给**情境**（穿着三层的实拍 ＋ 小字\"初秋通勤\"）｜首帧给**证明**（手停在领口那一处，还没动）\n\n### PP-3 · 包装的承诺上限取实际成片\n\n`single_distribution_promise ≤ realized_payoff`\n\n**不得**为了让包装成立而修改上游的 `content_promise`。发现成片弱于原承诺时：\n\n1. `realized_payoff` 记录实际兑现了什么\n2. 包装按 `realized_payoff` 做，不按 `content_promise` 做\n3. **如果正文语义必须正式改**，走 `return_to_script`，由 Creative Script 发新版本\n\n**只降标题是不够的。** 正文的开场和主体可能仍在超额承诺——观众看到第 8 秒才发现兑现不了，完播和收藏一起崩。\n\n**PRE 模式下**：`realized_payoff` 尚不存在，包装以 `content_promise` 为上限，**且全部标注为草案**。\n\n> **为什么**：所有内容系统都从脚本写标题。但成片才是观众真正看到的东西——脚本承诺了对比实验，实际只拍到一组，标题写\"三组对比\"就是骗点击。\n\n---\n\n### PP-4 · 发布文案是第二个入口，不是标题的展开\n\n- 开头三行必须能**独立成立**——很多人只看到这三行\n- **不复制口播稿。** 写片子里没放进去的那一句\n- 结尾放一个**能一句话回答的具体问题**，不是\"你怎么看\"\n\n**示例**\n\n> ❌ 「今天给大家分享初秋通勤的六件单品，分别是……」——口播稿的复述。\n> ✅ 「片子里没说的是：马甲那一件我们内部争了两周。」\n> 「有人认为它是叠穿必备，也有人认为它只在特定内搭下成立。」\n> 「最后保留它，是因为温差，不是因为好看。」\n> 「你衣柜里有没有那种'买了但一年只穿三次'的单品？」\n\n---\n\n### PP-5 · 评论区是设计出来的，不是等来的\n\n- **第一条自己写**，写一条**能被追问的**，不是\"感谢支持\"\n- 预埋 2 个可能被问到的问题，先准备好答案\n- 作者回复要**给新信息**\n\n**先分清主场还是客场：**\n\n| | 主场 | 客场 |\n|---|---|---|\n| 情况 | 议题由这条内容自己设定 | 内容是**从别处的评论／提问长出来的** |\n| 置顶落点 | 一处：新内容下 | **两处**：新内容下，**以及原提问所在的那条下面** |\n| 已有讨论 | 无 | 已经存在，且**你可能不知道里面说了什么**——不得引用、概括或形容它的内容 |\n\n**准备一个诚实的\"我答不出\"。** 有些内容最可能被问的恰恰是作者答不出的（\"孩子后来知道了吗\"\"那我到底该带多厚的睡袋\"）。这种问题**不得代答**——代答就是编造。准备的是一句诚实的边界说明，加上你确实能给的那部分。\n\n**示例**\n\n> ❌ 置顶「谢谢大家支持，有问题欢迎留言～」\n> ✅ 置顶「被否掉的那件是马甲。想知道为什么可以问我。」\n> 预埋问答：① 马甲到底值不值得买 → \"取决于你内搭的体积和袖窿空间\" ② 六件的价格 → 逐件报，不含糊\n> ✅ 诚实边界式：「那我该带多厚的睡袋？」→「我这只是充绒 400g、舒适温标 -2℃。**这是我的参数，不是你的答案**——温标写在标签上，你那晚的风和温差没写在任何标签上。」\n\n### 作者转发语\n\n入口形态含**社交带出型**的平台上（哪些平台，查 `references/platforms.md` 第一节），**作者自己转发时说的那句话，比标题更早被读到**——它是内容进入熟人流的第一句。其余平台这一项可选。\n\n写一句，规则同 PP-1：不是摘要，且不能承诺正文没有的东西。\n\n---\n\n## 发布前成片检查\n\n五条，逐条看，不是流程：\n\n1. **静音播放一遍**——看得懂吗？看不懂的话，在无声环境下刷到就是划走\n2. **只看首帧 1 秒**——知道这是关于什么的吗？\n3. **只看封面＋标题**——想点吗？是因为哪一句？\n4. **看完之后**——我会存下来吗？存来干什么用？\n   **答\"不会\"也是合格答案。** 有些内容天生不是收藏型（情绪、共鸣、一次性的场景）。这一条问的是\"知不知道自己靠什么留存\"，不是\"必须能被收藏\"——**不要为了让这一条通过而反向修改内容**。答\"不会\"时，第 5 条就是主判据。\n5. **转发想象**——我会转给谁？转的时候我说一句什么？说不出来就不要指望转发\n   **入口形态含社交带出型的平台上，这是主判据。** 转发一条给结论的内容，转发者背书的是一个**立场**（成本高）；转发一条没有结论的，背书的是一个**承认**（成本低，但暴露度高）。两者的转发驱动完全不同。\n\n---\n\n## 非视频形态的字段映射\n\n**不适用的字段要写 `NOT_APPLICABLE` 并说明**，不要留空——留空下游读成\"忘了做\"。\n\n| 字段 | 图文 | 纯音频 | 纯文字 |\n|---|---|---|---|\n| `cover` | **首图**——它同时是封面和首帧 | 静态封面，唯一视觉入口 | 无图时**首行文字**承担全部 |\n| `first_frame` | 与 `cover` 合一。**PP-2 的\"三处不重复\"变成两处**（标题 ＋ 首图），空出来的第三个位置由**首行文字**补上，不是少做一项 | NOT_APPLICABLE | NOT_APPLICABLE |\n| `caption_rules` | 换成**图内文字规则**：每张图上几行、放在哪、会不会被下一张的翻页控件遮住 | 换成**章节点／文字稿**：听众靠什么定位到某一段 | NOT_APPLICABLE |\n| `sound_placement` | **先查平台**：图文形态在部分平台带音轨。不带＝NOT_APPLICABLE；带＝按「它承担什么」填，且**揭晓页不得加音效**（那会把读者刚做完的一次判断变成节目效果）。<br>**「没有现场声」不等于「没有音轨」** | **它是主体不是配角**——进出点定的是内容结构，不是氛围 | NOT_APPLICABLE |\n| `duration_band` | **换成\"翻几屏\"**：短＝一屏读完的量，长＝要连续翻的量。<br>它不是可跳过的字段——**检查④（会不会存下来）和 PP-1 的候选取向都挂在它上面**。图文按可复看的信息型内容处理时取长档，并在 `assumptions[]` 写明这是类比不是换算 | 按**听完要多久**填，判据不变 | 换成**读完要多久** |\n| `key_frame` | **不一定是首图。** 首图是**入口**（要留悬念），可截图帧是**转发件**（要能独立成立）——图文里这两者最容易分离，仍按原判据选：单独发给一个没看过全文的人，他看得懂吗 | 静态封面（纯音频唯一的可截图物） | 可截图的**那一段文字** |\n| 检查①（静音看一遍） | 换成**只看图不看字**，读得懂吗。<br>**允许答\"部分不合格\"**——叠字在图文里往往是主通道，恒不合格是正常的。修补必须落在**不承载表达的版式元件**上（序号、进度、位置标识），**不得靠加文案**——用主通道补主通道，加完还是关掉就看不懂 | 换成**只听不看**，跟得上吗 | NOT_APPLICABLE |\n| 检查②（只看首帧 1 秒） | 只看首图 | 只看标题 ＋ 封面 | 只看首行 |\n| 检查③④⑤（封面＋标题／会不会存／会转给谁） | 照常 | 照常 | 照常 |\n| 标题、发布文案、评论区、转发语 | **全部照常** | 照常 | 照常 |\n\n**这张表的重点是最后两行**：换所指的只有画面相关的几项，PP-1 到 PP-5 的判断本身不因形态改变。**不要因为\"这次是图文\"就整块跳过包装。**\n\n---\n\n## 关于数据\n\n公开可核验的数据（播放、点赞、收藏比）可作为**现象参考**引用，标明来源与时间。\n\n**但不得把播放量直接当成创意质量。** 高播放可能来自投放、蹭热点、账号存量；低播放可能只是发布时间不对。**数据用来提问，不用来下结论。**\n\n---\n\n## 默认失败模式对照\n\n| 默认动作 | 对应判断 |\n|---|---|\n| 标题写成内容摘要 | PP-1 |\n| 三个候选是同一句话的三种说法 | PP-1 |\n| 封面和标题说同一件事；首帧直接用封面 | PP-2 |\n| 拿脚本承诺写标题，不看成片实际拍到了什么 | PP-3 |\n| 成片不够时只把标题降一档，不管开场仍在超额承诺 | PP-3 |\n| 发布文案是口播稿的复述 | PP-4 |\n| 评论区置顶写\"感谢支持\" | PP-5 |\n\n---\n\n## 输出\n\n```\nmode                      PRE | MIXED | FINAL —— **推导得出，不是填的**：看有没有 beat 级\n                          `realization_manifest`（全覆盖＝FINAL｜部分＝MIXED｜没有＝PRE）。\n                          必须写出推导依据：manifest 在不在、覆盖了哪几条 beat\nrealized_payoff           **FINAL 模式必填** —— 从 manifest 归纳：哪些 beat 被覆盖、哪些事实有画面支撑\nuncovered_beats[]         FINAL 模式必填 —— 计划里有、实际没拍到的\npackaging_routes[]        3 套路线：靠什么机制建立点击动机 | 什么条件下失效\nmaster_package            母版（不分平台）\n  cover                   画面描述 + 文字层级\n  first_frame             + 与封面的关系：互补/证明/分工\n  titles[]                **每种可用入口类型至少一个**，各标 entry_type。\n                          数量由类型数决定，不设下限也不设上限——**没有可带走物的内容\n                          只出两个是正常的**，硬凑第三个必然是同义替换\n  recommended_title       + 指名正文哪一处兑现它\n  publish_copy            全文，开头三行单列\n  caption_rules           按呼吸断句（不按标点）、关键词单独一屏、允许省略语气词；单屏字数上限查 references/platforms.md\n  sound_placement         接住导演包，标最终进出点\n  comment_design          置顶首条 + 2 组预埋问答\n  cta_surface             承接 cta_contract，不创造新业务动作\n                          cta_contract 可取 KNOWN_BUT_NOT_AUTHORIZED —— 知道存在业务动作\n                          但本条未获授权使用。这是权限不全，不是信息不全\n  author_share_line       作者转发语（**入口形态含社交带出型的平台必填**，查 platforms.md\n                          第一节；其余平台可选，写了也不算错）\nplatform_variants[]       逐项：改了什么 → 应对什么机制 / 不变 → 为什么\nrelease_check             五条各自的实际结论\nsingle_distribution_promise   ≤ realized_payoff（PRE 模式下 ≤ content_promise 且标草案）\nreturn_to_script[]        回改建议\nreturn_to_production[]    补拍/补录建议\nfailure_case              会没人点或点了就走的包装 + 为什么\n                          **包装超额承诺的不只是信息量，也可以是情绪**——给一条不给安慰的内容\n                          做治愈系包装，同样是 PP-3 意义上的超额\nassumptions[]             用了哪些默认值、作废了哪些不适用的上游输入\nmissing[]                 还缺什么才能继续\n```\n\n---\n\n## 自检\n\n1. 标题是摘要还是缺口？——摘要就重写\n2. 候选覆盖了几种入口类型？——**只有一种等于只有一个候选**；类型数与候选数对得上吗\n3. 封面和标题是不是在说同一件事？——是就浪费了一半\n4. 刷到型平台的首帧和点击型平台的封面，是同一张吗？——是就说明没做平台适配\n5. 平台改写里标了几项\"不变\"？——一项没有＝为改而改；全都不变＝没做适配\n6. 发布文案开头三行单独拿出来，成立吗？\n6b. **逐句比对发布文案正文和逐字稿**——有几句是口播稿的搬运？**一句都不该有**。自己声称\"没有复述\"不算数，要真的比对过\n7. mode 是**看 manifest 在不在**推出来的，还是拍脑袋填的？PRE／MIXED 的产出有没有全部标注为草案？\n8. FINAL 模式下，`realized_payoff` 是从 **beat 级** manifest 归纳出来的，还是拿一句\"拍了 42 分钟\"当依据？\n9. `explicit_non_promise[]` 里的东西，标题、封面、置顶评论有没有把它悄悄承诺回来？\n9b. 上游 `constraints[]` 里的禁令，**封面和首帧的选帧**守住了吗？——第三方入镜、未成年人不露正脸这类禁令，最容易在封面上破功\n10. 平台规格拿不到时，出的是**条件式改写**还是白卷？\n\n---\n\n## 参考文件\n\n- `references/platforms.md` — 抖音／视频号／小红书的规格与机制，每条带 `as_of`\n- `references/industry-conditions.md` — 五个行业的包装差异\n- `references/examples.md` — 端到端黄金案例\n\n**参考文件拿不到时**：`platforms.md` 按「母版制」那三种情况处置。**另两份直接跳过，照常产出，写进 `missing[]` 就够了**——它们是示范和背景，不是参数，**不要凭记忆补一个案例或一条行业惯例上去**。\n\n\n---\n\n# 本次运行注入的参考文件片段\n\n以下片段由确定性投影节点按运行合同的固定表选出。**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**\n\n{{#ref_projection.output#}}\n"
+        - id: usr-1
+          role: user
+          text: '# 本次运行输入
+
+
+            ## 上游 Creative Script 完整 Final（逐字传入，未经改写）
+
+
+            {{#1788000000001.cs_final#}}
+
+
+            ---
+
+
+            ## 上游 Production Director 完整 Final（逐字传入，未经改写；`realization_plan` 包含在其中）
+
+
+            {{#1788000000001.pd_final#}}
+
+
+            ---
+
+
+            ## 生产槽位
+
+
+            - `platform`：{{#1788000000001.platform#}}
+
+            - `cta_contract`：{{#1788000000001.cta_contract#}}
+
+            - `account_positioning`：{{#1788000000001.account_positioning#}}
+
+            - `subject_domain`：{{#1788000000001.subject_domain#}}
+
+            - `duration_band`：{{#1788000000001.duration_band#}}
+
+            - `constraints[]`：{{#1788000000001.constraints#}}
+
+
+            ## fact_refs[]
+
+
+            {{#1788000000001.fact_refs#}}
+
+
+
+            > **platform 口径**：本轮 `platform` 为 `PROBE_ONLY` 值。正式 Content Brief 记「最终发布平台未确认，由 Founder 锁定」。该值只用于打通链路与验证 reference 投影，**不构成正式发布平台裁决**；据此产出的任何平台适配均为草案，不得当作已确认平台方案。
+
+
+            ## 原 Content Brief
+
+
+            {{#1788000000001.content_brief#}}
+
+
+            ---
+
+
+            按 Publishing & Packaging 的输出契约产出。
+
+
+            **`mode` 由你自行推导，并写出推导依据**——依据只看上游交没交来 beat 级 `realization_manifest`，以及 `content_origin_mode[]` 里是否还有来源的素材尚不存在。**不要因为本提示词提到某个值就填某个值。**
+
+            推导出什么就写什么；如果推导结果不是 PRE，照实写出实际值和依据，不要改成 PRE。
+
+            '
+        selected: false
+        title: DIYU Demo Publishing Packaging v0.1
+        type: llm
+        vision:
+          enabled: false
+      height: 100
+      id: skill_llm
+      position:
+        x: 980
+        y: 260
+      positionAbsolute:
+        x: 980
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: reasoning 分离：取 </think> 之后的正文。
+        selected: false
+        template: '{%- if ''</think>'' in llm_text -%}
+
+          {%- set tail = llm_text.split(''</think>'')|last -%}
+
+          {%- if tail.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ tail }}{%- endif -%}
+
+          {%- elif llm_text.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ llm_text }}{%- endif -%}'
+        title: Final Extract
+        type: template-transform
+        variables:
+        - value_selector:
+          - skill_llm
+          - text
+          variable: llm_text
+      height: 100
+      id: final_extract
+      position:
+        x: 1260
+        y: 260
+      positionAbsolute:
+        x: 1260
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: '{%- if final_text == ''MODEL_OUTPUT_NO_FINAL'' -%}false{%- else -%}true{%- endif -%}'
+        title: Final 存在标记
+        type: template-transform
+        variables:
+        - value_selector:
+          - final_extract
+          - output
+          variable: final_text
+      height: 100
+      id: final_present
+      position:
+        x: 1540
+        y: 260
+      positionAbsolute:
+        x: 1540
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: deepseek-v4-flash
+        title: 模型标识
+        type: template-transform
+        variables: []
+      height: 100
+      id: model_used
+      position:
+        x: 1820
+        y: 260
+      positionAbsolute:
+        x: 1820
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - final_extract
+          - output
+          variable: final_output
+        - value_selector:
+          - final_present
+          - output
+          variable: final_present
+        - value_selector:
+          - model_used
+          - output
+          variable: model_used
+        - value_selector:
+          - projection_record
+          - output
+          variable: reference_projection
+        - value_selector:
+          - ref_projection
+          - output
+          variable: reference_projection_text
+        selected: false
+        title: 结束
+        type: end
+      height: 88
+      id: end_node
+      position:
+        x: 2100
+        y: 260
+      positionAbsolute:
+        x: 2100
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.6
+  rag_pipeline_variables: []
