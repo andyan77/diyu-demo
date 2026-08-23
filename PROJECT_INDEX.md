@@ -41,7 +41,9 @@
 | 三份决策 Skill 正文 | [decision-chain/skills/](decision-chain/skills/) |
 | **内容生产三份 Skill（活跃主线）** | Creative Script → [content-production/skills/writing-creative-scripts/](content-production/skills/writing-creative-scripts/)<br>Production Director → [content-production/skills/directing-content-production/](content-production/skills/directing-content-production/)<br>Publishing & Packaging → [content-production/skills/packaging-content-for-release/](content-production/skills/packaging-content-for-release/) |
 | **共享 references 正式主本** | [content-production/references/](content-production/references/) |
-| **内容生产运行合同（九槽位／人工回改／manifest）** | [content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md](content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md) |
+| **内容生产运行合同（九槽位／人工回改／manifest／运行时限／回改结构化出口／chain_status）** | [content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md](content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md) |
+| **拍摄前生产链（两段式父工作流 ＋ 控制器）** | Stage 1 CS→PD → [content-production/workflows/DIYU_DEMO_CONTENT_PRODUCTION_PRE_CHAIN_STAGE1_V0_1.yml](content-production/workflows/DIYU_DEMO_CONTENT_PRODUCTION_PRE_CHAIN_STAGE1_V0_1.yml)<br>Stage 2 PP·PRE → [content-production/workflows/DIYU_DEMO_CONTENT_PRODUCTION_PRE_CHAIN_STAGE2_V0_1.yml](content-production/workflows/DIYU_DEMO_CONTENT_PRODUCTION_PRE_CHAIN_STAGE2_V0_1.yml)<br>段间控制器 → [tools/content_production_pre_chain_controller.py](tools/content_production_pre_chain_controller.py) |
+| **两条运行时限（1200 s 工作流 ／ 600 s 单次 LLM 调用）** | 运行合同 [第 7.1 节](content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md) —— **每次运行前必查，不得凭印象** |
 | V1 集成合同 | [decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md](decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md) |
 | 品牌夹具（序里集） | [decision-chain/fixtures/](decision-chain/fixtures/) |
 | V1 全部运行证据与盲审材料 | [decision-chain/evidence/](decision-chain/evidence/) |

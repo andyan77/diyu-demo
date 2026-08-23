@@ -246,3 +246,273 @@ v0.6 的 `platforms.md` 小节标题本身即写明归属（「—— Creative S
 - **不构成正式发布平台裁决**；
 - 据此产出的 `platform_variants[]` 与任何平台适配**一律为草案**，不得在后续轮次中被当作已确认的平台方案继续使用；
 - 该口径必须写进运行证据，并随产物一起传递给下游。
+
+---
+
+## 7. 拍摄前生产链的串联形态
+
+### 7.1 运行时限预检
+
+本机实测值，来源逐项可复核，**不使用默认印象**：
+
+| 时限项 | 实际值 | 来源 |
+|---|---|---|
+| Workflow 总执行时限 | **1200 s** | `.env` 未设置该项 → 走代码默认 `dify_config.WORKFLOW_MAX_EXECUTION_TIME`；api 与 worker 容器均无环境变量覆盖 |
+| 超时判定方式 | **只在节点边界判定** | `graphon/graph_engine/layers/execution_limits.py`：仅在 `NodeRunSucceededEvent` / `NodeRunFailedEvent` 上检查，**不在节点执行中途中断** |
+| Workflow Tool 单次调用时限 | **无独立时限**；子流经 `WorkflowAppGenerator.generate()` **进程内**调起，另获一份完整 1200 s 预算 | `core/tools/workflow_as_tool/tool.py` |
+| **单次 LLM 调用时限** | **600 s，硬顶** —— 超时报 `PluginDaemonInternalServerError: killed by timeout` | `.env:240` `PLUGIN_MAX_EXECUTION_TIMEOUT=600`，compose 传给 `plugin_daemon`；Run 001 实测在 600.2 s 被杀，逐字复核 |
+| Workflow Tool 调用本身是否经插件守护进程 | **否**（进程内）—— 但**子流内部的 LLM 节点经守护进程调模型，受上一行 600 s 约束** | `core/tools/workflow_as_tool/tool.py` |
+| 调用深度上限 | `WORKFLOW_CALL_MAX_DEPTH = 5`（本链深度 1） | `dify_config` |
+| 步数上限 | `WORKFLOW_MAX_EXECUTION_STEPS = 500`（本链 ≤ 12） | `dify_config` |
+| 单变量大小上限 | `MAX_VARIABLE_SIZE = 204800`（最大产物 17,564 字符） | `dify_config` |
+| API 请求时限 | `GUNICORN_TIMEOUT=360`，但 `SERVER_WORKER_CLASS=gevent` → 是 **worker 心跳超时**、不是请求超时 | `.env`；P02 已实证单次 505 s 请求成功 |
+| 反向代理 | `NGINX_PROXY_READ_TIMEOUT` / `SEND_TIMEOUT` 均 `3600s` | `.env` |
+| Worker（Celery） | blocking 模式的工作流运行不走 Celery | — |
+| Code 节点 | `SANDBOX_WORKER_TIMEOUT=15`、`CODE_EXECUTION_READ_TIMEOUT=60`、`CODE_MAX_STRING_LENGTH=400000` | `.env` |
+
+**任何修改 Dify 服务配置来放宽时限的做法，不在本合同授权范围内。**
+**任何通过降低模型参数来压缩耗时以求「跑通」的做法，同样禁止。**
+
+> **两条时限是并列的，不能只看一条：**
+> 一条是 **1200 s 的工作流总时限**（决定一个父流能串几段），
+> 另一条是 **600 s 的单次 LLM 调用硬顶**（决定单个 Skill 跑不跑得完）。
+> 后者与分段方式无关——**再怎么拆父流，也拆不掉任何一次 LLM 调用头上的 600 s**。
+>
+> P02 三段的 LLM 节点实测 504.9 / 558.9 / 403.4 s，最紧的 PD **只剩 41 s 余量**，
+> 当时没有被识别出来。P03 Run 001 的 CS 就撞上了这条线（600.2 s 被杀）。
+> **这条约束必须写进每一次运行前的预检，不得再遗漏。**
+
+### 7.2 为什么是两段，不是一条链
+
+P02 三段实测墙钟：CS 505.7 s ＋ PD 559.6 s ＋ PP 403.9 s ＝ **1469.3 s**，超出 1200 s 上限。
+
+因为超时只在节点边界判定，单链的实际结局是**最坏的一种**：
+
+| 时点 | 事件 | 边界判定 |
+|---|---|---|
+| t ≈ 506 s | CS Tool 完成 | 506 < 1200，放行 |
+| t ≈ 1066 s | PD Tool 完成 | 1066 < 1200，放行 |
+| t ≈ 1470 s | PP Tool 完成 | **1470 > 1200 → abort** |
+
+即：三段 token 全部烧完（P02 量级约 19 万），**汇总节点与 End 都不执行，产出为零**。
+故不建设单链——建设一条明知跑不完的链，不是「尽力而为」，是把成本花在必然的失败上。
+
+**两段式：**
+
+| 段 | 内容 | 实测耗时 | 余量 |
+|---|---|---|---|
+| Stage 1 | CS → PD | 1065.4 s | 134.6 s（11.2%） |
+| Stage 2 | PP（PRE） | 403.9 s | 796.1 s（66.3%） |
+
+Stage 1 余量偏紧，须如实记录。两点缓解事实：
+
+1. 即使 Stage 1 在 PD 完成后的边界被 abort，**两个子流各有独立预算、已各自跑完并落库**，
+   产物与 run 记录不会丢失，可从 Dify 后台取回。
+2. 因为单次 LLM 调用被 600 s 硬顶，Stage 1 的两段之和**在物理上就跨不过 1200 s 太多**
+   （最坏 ≈ 600 ＋ 600）；真正的风险不是「慢慢超时」，而是**某一段单独撞上 600 s 被杀**。
+   后者由 `fail-branch` 干净兜住，并由控制器发起一次全新运行重试。
+
+切点同时对齐业务边界：**PP 本就要跑两次**——现在出 PRE，真实素材回来后出 FINAL。
+把 PP 单独切出来不是为了凑时限，是这条链本来就该有的形状；父流少一段，失败处置也更简单。
+
+### 7.3 两段的边界与各自输入
+
+**Stage 1（CS → PD）Start 输入 13 项**：
+`content_brief`、九槽位中的 `production_profile` / `expression_subject` / `content_origin_mode` /
+`subject_domain` / `duration_band` / `platform` / `cta_contract` / `account_positioning` / `constraints[]`，
+以及 `available_assets`、`fact_refs[]`、`example_reference_requested`。
+
+**Stage 2（PP · PRE）Start 输入**，其中传给 PP Workflow Tool 的实际参数为 11 项：
+
+| 参数 | 来源 | 缺了会怎样 |
+|---|---|---|
+| `cs_final` | Stage 1 产物，逐字 | 无上游 |
+| `pd_final` | Stage 1 产物，逐字 | 无上游 |
+| `content_brief` | 原始输入 | 无事实源 |
+| `platform` | 原始输入（本轮 `PROBE_ONLY`） | 无入口形态判断 |
+| `cta_contract` | 原始输入 | 无承接契约 |
+| `account_positioning` | 原始输入 | 无账号口径 |
+| **`subject_domain`** | 原始输入 | **Reference Projection 选不出行业块，投影节点空跑**（见 5.2：PP 需加载 industry-conditions 三行） |
+| **`duration_band`** | 原始输入 | **PP-1 的候选取向只能反推**，并被迫在 `assumptions[]` 挂一条本不必要的假设 |
+| `constraints[]` | 原始输入 | 禁令失效 |
+| `fact_refs[]` | 原始输入 | 无事实锚点 |
+| `example_reference_requested` | 固定 `false` | — |
+
+> **`subject_domain` 与 `duration_band` 是 PP 的硬输入，不是可选项。**
+> 这一条在 P02 已经裁定并落进 PP 的独立 Workflow（Start 变量与 user prompt 均含此二项）；
+> P03 任务书 7.3 的清单是**文档侧回退**，运行侧未回退。
+> 现已把它们焊进 `diyu_content_publishing_packaging` Workflow Tool 的**参数签名**——
+> 少传即工具调用失败，不再依赖文档约定。
+
+### 7.4 段间转运纪律
+
+段间由确定性控制器搬运（`tools/content_production_pre_chain_controller.py`），规则：
+
+- Stage 1 的 `creative_script_artifact` / `realization_plan_artifact` **逐字**进 Stage 2，不摘录、不重排、不改写；
+- 数组以 JSON 编码原样转运；
+- 控制器**独立复算** SHA-256 与 Stage 1 自报哈希比对，不一致即 `INPUT_BLOCKED`，不进 Stage 2；
+- Stage 2 的 Input Check **再次独立复算**一遍，两侧都过才调用 PP Tool；
+- 三份 Skill 一律经 Workflow Tool 在 Dify 内部调用，**控制器不接触 Skill 正文，也不在段间人工搬运模型输出**。
+
+### 7.5 失败处置
+
+| 情况 | 分支 | 输出 |
+|---|---|---|
+| 输入缺失／上游哈希不符 | `gate_input` false 分支 | `INPUT_BLOCKED` ＋ `missing_inputs[]`，**不调用任何 Tool** |
+| Tool 调用失败 | 该 Tool 的 `fail-branch` | `TOOL_FAILED` ＋ `failed_stage`，**不调用下游**，已产生的上游产物保留在输出中 |
+| 回改块解析失败 | 该段的 `gate_*` false 分支 | `RETURN_PARSE_FAILED`，**不调用下游**，产物保留 |
+
+每个 Tool 节点配 `error_strategy: fail-branch`，但**不配节点级重试**（`retry_enabled: false`）。
+
+**重试放在控制器层，不放在 Tool 节点上。** 理由是实测出来的，不是偏好：
+
+节点级重试会把那 600 s 的失败**叠进父流同一份 1200 s 预算里**。
+Run 001 即如此——CS 600.2 s 失败 → 节点内重试 → 父流跑到 1000 s 仍未进 PD，
+成功路径已被物理挤掉。改由控制器重发后，重试是一次**全新的父流运行**，
+另获完整 1200 s 预算，且第一次失败的 run 记录原样留在 Dify 里、不被覆盖。
+
+控制器只重试一次，且**只针对基础设施失败**；
+**不因内容原因重跑，也不因产生回改而重跑。**
+
+**任一失败分支都不得输出「生产包已完成」。**
+
+### 7.6 每次发起长链之前的两项现场检查
+
+两项都过才发起。任一不过就等，不要硬发——发出去也是烧 token 换一个已知的失败。
+
+**（一）容器内 DNS 是否处于健康窗口**
+
+```
+docker exec docker-plugin_daemon-1 sh -c \
+  'for i in $(seq 1 10); do getent hosts api.deepseek.com >/dev/null 2>&1 \
+   && echo -n O || echo -n x; done; echo'
+```
+
+要求 **`OOOOOOOOOO`（10/10）**。出现 `x` 就是抖动窗口，等过去再发。
+
+本机实测过的故障形态：容器 `resolv.conf` 是 `nameserver 127.0.0.11` ＋
+`options timeout:2 attempts:2`（**总预算恰好 4 s**），而宿主自己解析 `api.deepseek.com`
+经常要 5–10 s。上游一慢，容器 4 s 就放弃，模型调用侧报
+`NameResolutionError: Failed to resolve` 或 `Read timed out`，**几秒内就失败**。
+
+**这不是 MTU 那一类故障**——宿主与各容器 MTU 实测均为 1420、四处一致。
+区分判据：**几秒内失败且报解析／读超时 = DNS；600 s 整被杀 = 插件时限。**
+
+**（二）上一轮各段耗时距 600 s 还剩多少**
+
+`600 − 最近一次实测耗时`。低于 60 s 就要预期这一段随时会越线，
+并在发起前想清楚越线之后怎么办（当前应对只有控制器那一次重试）。
+
+---
+
+## 8. 回改的结构化出口
+
+### 8.1 不建解析器，改输出结构
+
+v0.6 三份 Skill 输出的是 **Markdown 正文**，不是结构化数据。Skill 里写的是
+「要输出 `return_to_script[]` 这个字段」，**没有规定它怎么序列化**。
+
+若照原样上解析器，只有两条路，且都不可接受：
+
+1. **正则捞自由文本**——模型换一种写法就 `RETURN_PARSE_FAILED`；
+2. **执行侧偷偷上第二个 LLM 解析**——明令禁止。
+
+因此采取第三条：**不加解析器，改输出结构**。
+
+在三个 Workflow 的 **user prompt 末尾**追加一条格式要求。
+**System Prompt 中的 Skill 正文一字不动**（三份的 System Prompt 相对基线 `2ec2ba1` 逐字节一致，可复核），
+故这不构成修改 Skill。
+
+### 8.2 `---RETURNS---` 块
+
+```
+---RETURNS---
+mode: <仅 Publishing & Packaging 有此行；写该 Skill 自行推导出的值本身>
+return_to_script: <逐条列出，每条独占一行以 `- ` 开头；无则写 NONE>
+return_to_production: <同上>
+advisory_notes: <同上>
+```
+
+- `---RETURNS---` 只出现一次，排在全部产出之后；解析取**最后一次**出现，防正文引用干扰。
+- 标签必须全部出现、各占一行、顺序不变；**即使内容为 NONE 也不得省略标签行**。
+- 本块之后不再输出任何内容。
+
+`mode` 这一行**只要求写出结论，不给出结论**。PP 仍须在正文里自行推导并写出依据；
+本块不得改变正文推导出的结果。推导出 PRE 以外的值，照实写，**不得被任何一侧掰成 PRE**。
+
+### 8.2.1 标签作用域：每个 Skill 只判断指向它上游的那些标签
+
+三个标签在三份 Workflow 里**全部出现、格式统一**（缺任一仍判 `RETURN_PARSE_FAILED`），
+但**哪些需要真正判断，取决于该 Skill 在链中的位置**：
+
+| Skill | `return_to_script` | `return_to_production` | `advisory_notes` |
+|---|---|---|---|
+| **Creative Script**（链头） | **恒 `NONE`** —— 「退回 Creative Script」，而它就是 CS | **恒 `NONE`** —— PD 在它**下游** | 需判断 |
+| **Production Director** | 需判断 —— 可退回 CS | **恒 `NONE`** —— 「退回 Production Director」，而它就是 PD | 需判断 |
+| **Publishing & Packaging** | 需判断 | 需判断 | 需判断 |
+
+恒为 `NONE` 的标签，user prompt 里必须**明写「直接写 NONE，不要为这一项回看正文」**。
+
+**这不是省事，是纠错。** 让一个 Skill 去判断它结构上不可能产生的东西，本身就是错的。
+而且代价是实打实的：在 `reasoning_effort = high` 下，模型会为这些不可能的标签认真回看整篇产物再写下 `NONE`。
+
+实测：CS 的产物 7,510 字符，为两个不可能的标签回看一趟约多花 95 s，
+直接把 CS 从 P02 的 504.9 s 推过 **600 s 的单次 LLM 调用硬顶**——
+三次运行（`a64e33b4` / `80da7ada` / `1269b6cb`）全部 `killed by timeout`。
+PD 在 P02 为 558.9 s、仅余 41 s，加同样负担同样越线。
+
+**任何为某个 Skill 新增输出要求之前，先确认它在链中的位置能不能产生这个东西。**
+
+### 8.3 适配器：纯字符串切分
+
+每个 Workflow 在 Final Extract 之后接一个 **Returns Adapter（Code 节点）**，
+只做字符串切分与标签查找，**无判断、无第二个 LLM**：
+
+| 情形 | 判定 | 理由 |
+|---|---|---|
+| 找不到 `---RETURNS---` | `RETURN_PARSE_FAILED` | 结构缺失 |
+| 找到块，但缺任一必需标签 | `RETURN_PARSE_FAILED` | **解析失败不得当成空数组** |
+| PP 的 `mode` 行在但取不出值 | `RETURN_PARSE_FAILED` | 同上 |
+| 标签在，值为 `NONE` / `无` | **`OK` ＋ 空数组** | 显式声明「没有」是成功解析，不是失败 |
+
+> 「**缺标签**」与「**显式写 NONE**」必须区分：前者是解析失败，后者是空数组。
+> 二者混为一谈，等于把「没读到」伪装成「确实没有」。
+
+适配器同时把 `---RETURNS---` 之前的正文切出来作为 `final_output`（产物）——
+**下游收到的、以及被哈希的，都是这段正文**，不含结构块。
+
+### 8.4 正式回改与普通备注不得互换
+
+- `return_to_script[]` / `return_to_production[]` **只放正式回改项**：必须由上游改动才能解决的问题；
+- 可选的、仅供参考的、不改也能交付的，一律进 `advisory_notes[]`；
+- 汇总节点**只搬运不升格**，也不降格；条目按来源打标（`[creative_script]` / `[production_director]` / `[publishing_packaging]`）。
+
+本轮到人工评审出口为止：**不自动接受回改、不自动重跑上游、不给任何产物盖 `USER_ACCEPTED`、
+不因产生回改而立即把下游标 `STALE`。**
+`STALE` 仍只在「上游重跑后正文哈希实际变化」时触发（见 4.2）。
+
+---
+
+## 9. chain_status
+
+| 取值 | 条件 |
+|---|---|
+| `PRE_PACKAGE_READY_FOR_REVIEW` | 三个正式回改数组全空，且 `advisory_notes[]` 也为空 |
+| `PRE_PACKAGE_READY_FOR_REVIEW (N advisory)` | 正式回改数组全空，但有 N 条普通备注 |
+| `HUMAN_REVIEW_REQUIRED (N return)` | 有 N 条正式回改，无普通备注 |
+| `HUMAN_REVIEW_REQUIRED (N return, M advisory)` | 有 N 条正式回改与 M 条普通备注 |
+| `TOOL_FAILED` | 任一 Workflow Tool 调用失败 |
+| `INPUT_BLOCKED` | 输入缺失，或上游产物与哈希核对不通过 |
+| `RETURN_PARSE_FAILED` | 回改块解析失败 |
+
+**计数是必需的，不是装饰。** `advisory_notes[]` 非空却只报
+`PRE_PACKAGE_READY_FOR_REVIEW`，字面意思是「可以评审了」，
+而备注里其实有实质内容要看——状态名会让人以为没事了。计数把这件事摆到状态行上。
+
+### 用户可见输出的边界
+
+父工作流最终输出**不得包含**：`<think>` 内容、内部 reference 投影全文、
+任何凭据、Dify 节点调试信息。
+
+reference 投影的**记录**（`loaded_reference_sections[]` 等）按 5.4 进运行证据，
+不进父工作流的用户可见输出。

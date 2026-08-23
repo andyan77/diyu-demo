@@ -1,5 +1,5 @@
 app:
-  description: 内容生产链第二段正式独立 Workflow：Production Director v0.6。输入含逐字传入的 Creative Script Final。拍摄前只产出 realization_plan，不虚构 realization_manifest。reference 按运行合同固定投影表加载（platforms 第三节；industry 四行；examples 不加载）。
+  description: 内容生产链第二段正式独立 Workflow：Production Director v0.6。输入含逐字传入的 Creative Script Final。拍摄前只产出 realization_plan，不虚构 realization_manifest。reference 按运行合同固定投影表加载（platforms 第三节；industry 四行；examples 不加载）。 v0.2 增加确定性 Returns Adapter，产出可被下游直接读取的回改数组。
   icon: 🎬
   icon_background: '#E4FBCC'
   icon_type: emoji
@@ -114,18 +114,6 @@ workflow:
         isInLoop: false
         sourceType: template-transform
         targetType: template-transform
-      id: final_extract-source-final_present-target
-      source: final_extract
-      sourceHandle: source
-      target: final_present
-      targetHandle: target
-      type: custom
-      zIndex: 0
-    - data:
-        isInIteration: false
-        isInLoop: false
-        sourceType: template-transform
-        targetType: template-transform
       id: final_present-source-model_used-target
       source: final_present
       sourceHandle: source
@@ -142,6 +130,28 @@ workflow:
       source: model_used
       sourceHandle: source
       target: end_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: template-transform
+        targetType: code
+      id: final_extract-source-returns_adapter-target
+      source: final_extract
+      sourceHandle: source
+      target: returns_adapter
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: template-transform
+      id: returns_adapter-source-final_present-target
+      source: returns_adapter
+      sourceHandle: source
+      target: final_present
       targetHandle: target
       type: custom
       zIndex: 0
@@ -499,6 +509,44 @@ workflow:
 
             不得输出标题、封面、发布文案等 Publishing & Packaging 交付物。
 
+
+            ---
+
+
+            ## 输出格式补充要求（只规定末尾附加块，不改变以上任何判断和产出内容）
+
+
+            完整产出结束之后，**另起一行**，追加下面这个结构块，供下游确定性读取：
+
+
+            ---RETURNS---
+
+            return_to_script: <见下方规则；无则写 NONE>
+
+            return_to_production: <见下方规则；无则写 NONE>
+
+            advisory_notes: <见下方规则；无则写 NONE>
+
+
+            填写规则：
+
+
+            - `---RETURNS---` 这一行原样照抄，只出现一次，且必须排在全部产出之后。
+
+            - 上列标签**必须全部出现、各占一行、顺序不变**；标签名原样小写，不加粗、不加编号、不改写、不翻译。
+
+            - 有内容时：每条独占一行，以 `- ` 开头，写在该标签的下一行起。
+
+            - 确实没有时：在该标签的冒号后写 `NONE`，**不得省略整行标签**。
+
+            - `return_to_script` / `return_to_production` 只放**正式回改项**——必须由上游改动才能解决的问题。可选的、仅供参考的、不改也能交付的，一律放 `advisory_notes`，不要升格成回改。
+
+            - **`return_to_production` 直接写 `NONE`，不要为这一项回看正文、不要推敲。**它的意思是「退回 Production Director」，而你就是 Production Director，退不回自己。
+
+            - **`return_to_script` 与 `advisory_notes` 是你在本块里需要真正判断的两项。**`return_to_script` 指你在做实现计划时发现的、必须由 Creative Script 改动才能解决的问题。
+
+            - 本块之后不再输出任何内容。
+
             '
         selected: false
         title: DIYU Demo Production Director v0.1
@@ -553,21 +601,21 @@ workflow:
     - data:
         desc: ''
         selected: false
-        template: '{%- if final_text == ''MODEL_OUTPUT_NO_FINAL'' -%}false{%- else -%}true{%- endif -%}'
+        template: '{%- if final_text.strip() == '''' or final_text.strip() == ''MODEL_OUTPUT_NO_FINAL'' -%}false{%- else -%}true{%- endif -%}'
         title: Final 存在标记
         type: template-transform
         variables:
         - value_selector:
-          - final_extract
-          - output
+          - returns_adapter
+          - artifact
           variable: final_text
       height: 100
       id: final_present
       position:
-        x: 1540
+        x: 1820
         y: 260
       positionAbsolute:
-        x: 1540
+        x: 1820
         y: 260
       selected: false
       sourcePosition: right
@@ -585,10 +633,10 @@ workflow:
       height: 100
       id: model_used
       position:
-        x: 1820
+        x: 2100
         y: 260
       positionAbsolute:
-        x: 1820
+        x: 2100
         y: 260
       selected: false
       sourcePosition: right
@@ -600,8 +648,8 @@ workflow:
         desc: ''
         outputs:
         - value_selector:
-          - final_extract
-          - output
+          - returns_adapter
+          - artifact
           variable: final_output
         - value_selector:
           - final_present
@@ -619,17 +667,96 @@ workflow:
           - ref_projection
           - output
           variable: reference_projection_text
+        - value_selector:
+          - returns_adapter
+          - returns_raw
+          variable: returns_raw
+        - value_selector:
+          - returns_adapter
+          - returns_status
+          variable: returns_status
+        - value_selector:
+          - returns_adapter
+          - parse_note
+          variable: returns_parse_note
+        - value_selector:
+          - returns_adapter
+          - declared_mode
+          variable: declared_mode
+        - value_selector:
+          - returns_adapter
+          - return_to_script
+          variable: return_to_script
+        - value_selector:
+          - returns_adapter
+          - return_to_production
+          variable: return_to_production
+        - value_selector:
+          - returns_adapter
+          - advisory_notes
+          variable: advisory_notes
         selected: false
         title: 结束
         type: end
       height: 88
       id: end_node
       position:
-        x: 2100
+        x: 2380
         y: 260
       positionAbsolute:
-        x: 2100
+        x: 2380
         y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "def main(final_text: str) -> dict:\n    MARK = \"---RETURNS---\"\n    LABELS = [\"mode\", \"return_to_script\", \"return_to_production\", \"advisory_notes\"]\n    REQUIRED = [\"return_to_script\", \"return_to_production\", \"advisory_notes\"]\n    REQUIRE_MODE = False\n    KNOWN_MODES = [\"PRE\", \"MIXED\", \"FINAL\"]\n\n    def blank():\n        return {\"artifact\": \"\", \"returns_raw\": \"\", \"returns_status\": \"RETURN_PARSE_FAILED\",\n                \"parse_note\": \"\", \"declared_mode\": \"NOT_APPLICABLE\",\n                \"return_to_script\": [], \"return_to_production\": [], \"advisory_notes\": []}\n\n    text = final_text or \"\"\n    if MARK not in text:\n        r = blank()\n        r[\"artifact\"] = text.strip()\n        r[\"parse_note\"] = \"未找到 \" + MARK + \" 标记\"\n        return r\n\n    head, tail = text.rsplit(MARK, 1)\n    artifact = head.rstrip()\n    while artifact.endswith(\"-\") or artifact.endswith(\"*\"):\n        artifact = artifact[:-1].rstrip()\n    raw = tail.strip()\n\n    def norm(s):\n        t = s.replace(\"*\", \"\").replace(\"`\", \"\").replace(\"#\", \"\").strip()\n        while t[:1] in (\"-\", \"+\", \">\"):\n            t = t[1:].strip()\n        return t\n\n    buckets = {}\n    cur = None\n    for line in raw.split(\"\\n\"):\n        n = norm(line)\n        low = n.lower()\n        hit = None\n        for lb in LABELS:\n            if low.startswith(lb + \":\") or low.startswith(lb + \"\\uff1a\") or low == lb:\n                hit = lb\n                break\n        if hit is not None:\n            cur = hit\n            if hit not in buckets:\n                buckets[hit] = []\n            rest = \"\"\n            for sep in (\":\", \"\\uff1a\"):\n                if sep in n:\n                    rest = n.split(sep, 1)[1].strip()\n                    break\n            if rest:\n                buckets[hit].append(rest)\n        elif cur is not None:\n            s = line.strip()\n            if s:\n                buckets[cur].append(s)\n\n    missing = [lb for lb in REQUIRED if lb not in buckets]\n\n    def items(lb):\n        out = []\n        for v in (buckets.get(lb) or []):\n            t = v.strip()\n            while t[:1] in (\"-\", \"*\", \"+\", \"\\u2022\"):\n                t = t[1:].strip()\n            i = 0\n            while i < len(t) and t[i].isdigit():\n                i += 1\n            if 0 < i < len(t) and t[i] in (\".\", \")\", \"\\u3001\"):\n                t = t[i + 1:].strip()\n            t = t.strip().strip(\"<>\").strip()\n            if not t:\n                continue\n            if t.upper().rstrip(\".\\u3002\") in (\"NONE\", \"\\u65e0\"):\n                continue\n            out.append(t)\n        return out\n\n    r = blank()\n    r[\"artifact\"] = artifact\n    r[\"returns_raw\"] = raw\n    r[\"return_to_script\"] = items(\"return_to_script\")\n    r[\"return_to_production\"] = items(\"return_to_production\")\n    r[\"advisory_notes\"] = items(\"advisory_notes\")\n\n    mode_items = items(\"mode\")\n    if REQUIRE_MODE:\n        if not mode_items:\n            r[\"declared_mode\"] = \"\"\n        else:\n            line = mode_items[0]\n            up = line.upper()\n            pos = [(up.find(k), k) for k in KNOWN_MODES if up.find(k) >= 0]\n            # 命中已知枚举就取最先出现的那个；一个都不命中就原样保留模型写的值，不代它归一\n            r[\"declared_mode\"] = sorted(pos)[0][1] if pos else line[:80]\n    else:\n        r[\"declared_mode\"] = \"NOT_APPLICABLE\"\n\n    notes = []\n    if missing:\n        notes.append(\"缺少标签: \" + \",\".join(missing))\n    if REQUIRE_MODE and not r[\"declared_mode\"]:\n        notes.append(\"mode 行存在但取不出值\")\n    if notes:\n        r[\"returns_status\"] = \"RETURN_PARSE_FAILED\"\n        r[\"parse_note\"] = \"; \".join(notes)\n    else:\n        r[\"returns_status\"] = \"OK\"\n        r[\"parse_note\"] = \"OK\"\n    return r\n"
+        code_language: python3
+        desc: 确定性字符串切分：把正文与 ---RETURNS--- 块分开，并解析三/四个固定标签。无 LLM 参与；缺标签返回 RETURN_PARSE_FAILED，不当成空数组。
+        outputs:
+          advisory_notes:
+            children: null
+            type: array[string]
+          artifact:
+            children: null
+            type: string
+          declared_mode:
+            children: null
+            type: string
+          parse_note:
+            children: null
+            type: string
+          return_to_production:
+            children: null
+            type: array[string]
+          return_to_script:
+            children: null
+            type: array[string]
+          returns_raw:
+            children: null
+            type: string
+          returns_status:
+            children: null
+            type: string
+        selected: false
+        title: Returns Adapter
+        type: code
+        variables:
+        - value_selector:
+          - final_extract
+          - output
+          variable: final_text
+      height: 100
+      id: returns_adapter
+      position:
+        x: 1400
+        y: 420
+      positionAbsolute:
+        x: 1400
+        y: 420
       selected: false
       sourcePosition: right
       targetPosition: left
