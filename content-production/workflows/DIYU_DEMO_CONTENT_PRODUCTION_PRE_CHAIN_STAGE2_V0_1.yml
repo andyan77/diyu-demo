@@ -1,5 +1,6 @@
 app:
-  description: 拍摄前生产链第 2 段：经 Workflow Tool 调用 Publishing & Packaging（PRE），核对上游哈希、汇总正式回改与备注、产出 chain_status 与完整 PRE 生产包。PP 单独成段亦对齐业务边界：PP 本就要跑两次（现在 PRE，素材回来后 FINAL）。
+  description: 拍摄前生产链第 2 段：经 Workflow Tool 调用 Publishing & Packaging（PRE），核对上游哈希、汇总正式回改与备注、产出
+    chain_status 与完整 PRE 生产包。PP 单独成段亦对齐业务边界：PP 本就要跑两次（现在 PRE，素材回来后 FINAL）。
   icon: 📦
   icon_background: '#E4FBCC'
   icon_type: emoji
@@ -290,9 +291,53 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import hashlib, json\n\ndef main(cs_final: str, cs_hash: str, pd_final: str, pd_hash: str,\n         pd_return_to_script: str, pd_return_to_production: str, pd_advisory_notes: str,\n         stage1_models: str, stage1_run_status: str,\n         content_brief: str, platform: str, cta_contract: str, account_positioning: str,\n         subject_domain: str, duration_band: str, constraints: str, fact_refs: str,\n         example_reference_requested: str) -> dict:\n    req = {\"cs_final\": cs_final, \"cs_hash\": cs_hash, \"pd_final\": pd_final, \"pd_hash\": pd_hash,\n           \"content_brief\": content_brief, \"platform\": platform, \"cta_contract\": cta_contract,\n           \"account_positioning\": account_positioning, \"subject_domain\": subject_domain,\n           \"duration_band\": duration_band, \"constraints\": constraints, \"fact_refs\": fact_refs,\n           \"example_reference_requested\": example_reference_requested}\n    missing = [k for k, v in req.items() if not str(v or \"\").strip()]\n\n    def jarr(s):\n        t = str(s or \"\").strip()\n        if not t:\n            return []\n        try:\n            v = json.loads(t)\n        except Exception:\n            return [\"__PARSE_FAILED__\"]\n        return [str(i) for i in v] if isinstance(v, list) else [\"__PARSE_FAILED__\"]\n\n    rts, rtp = jarr(pd_return_to_script), jarr(pd_return_to_production)\n    adv = jarr(pd_advisory_notes)\n    models, rstatus = jarr(stage1_models), jarr(stage1_run_status)\n    bad = [n for n, a in ((\"pd_return_to_script\", rts), (\"pd_return_to_production\", rtp),\n                          (\"pd_advisory_notes\", adv), (\"stage1_models\", models),\n                          (\"stage1_run_status\", rstatus)) if \"__PARSE_FAILED__\" in a]\n\n    cs_got = hashlib.sha256(str(cs_final or \"\").encode(\"utf-8\")).hexdigest()\n    pd_got = hashlib.sha256(str(pd_final or \"\").encode(\"utf-8\")).hexdigest()\n    cs_ok = cs_got == str(cs_hash or \"\").strip()\n    pd_ok = pd_got == str(pd_hash or \"\").strip()\n    verdicts = [\n        \"creative_script -> publishing_packaging : \" + (\"MATCH\" if cs_ok else \"MISMATCH\")\n        + \" (recomputed \" + cs_got[:16] + \" / expected \" + str(cs_hash or \"\")[:16] + \")\",\n        \"production_director -> publishing_packaging : \" + (\"MATCH\" if pd_ok else \"MISMATCH\")\n        + \" (recomputed \" + pd_got[:16] + \" / expected \" + str(pd_hash or \"\")[:16] + \")\",\n    ]\n\n    notes = []\n    if missing:\n        notes.append(\"缺失输入: \" + \", \".join(missing))\n    if bad:\n        notes.append(\"上游数组解析失败: \" + \", \".join(bad))\n    if not cs_ok:\n        notes.append(\"cs_final 与 cs_hash 不一致\")\n    if not pd_ok:\n        notes.append(\"pd_final 与 pd_hash 不一致\")\n\n    return {\n        \"status\": \"OK\" if not notes else \"INPUT_BLOCKED\",\n        \"missing\": missing,\n        \"note\": \"上游产物与哈希核对通过，九槽位齐备\" if not notes else \"; \".join(notes),\n        \"upstream_handoff\": verdicts,\n        \"pd_return_to_script\": [] if bad else rts,\n        \"pd_return_to_production\": [] if bad else rtp,\n        \"pd_advisory_notes\": [] if bad else adv,\n        \"stage_models\": [] if bad else models,\n        \"stage_run_status\": [] if bad else rstatus,\n    }\n"
+        code: "import hashlib, json\n\ndef main(cs_final: str, cs_hash: str, pd_final:\
+          \ str, pd_hash: str,\n         pd_return_to_script: str, pd_return_to_production:\
+          \ str, pd_advisory_notes: str,\n         stage1_models: str, stage1_run_status:\
+          \ str,\n         content_brief: str, platform: str, cta_contract: str, account_positioning:\
+          \ str,\n         subject_domain: str, duration_band: str, constraints: str,\
+          \ fact_refs: str,\n         example_reference_requested: str) -> dict:\n\
+          \    req = {\"cs_final\": cs_final, \"cs_hash\": cs_hash, \"pd_final\":\
+          \ pd_final, \"pd_hash\": pd_hash,\n           \"content_brief\": content_brief,\
+          \ \"platform\": platform, \"cta_contract\": cta_contract,\n           \"\
+          account_positioning\": account_positioning, \"subject_domain\": subject_domain,\n\
+          \           \"duration_band\": duration_band, \"constraints\": constraints,\
+          \ \"fact_refs\": fact_refs,\n           \"example_reference_requested\"\
+          : example_reference_requested}\n    missing = [k for k, v in req.items()\
+          \ if not str(v or \"\").strip()]\n\n    def jarr(s):\n        t = str(s\
+          \ or \"\").strip()\n        if not t:\n            return []\n        try:\n\
+          \            v = json.loads(t)\n        except Exception:\n            return\
+          \ [\"__PARSE_FAILED__\"]\n        return [str(i) for i in v] if isinstance(v,\
+          \ list) else [\"__PARSE_FAILED__\"]\n\n    rts, rtp = jarr(pd_return_to_script),\
+          \ jarr(pd_return_to_production)\n    adv = jarr(pd_advisory_notes)\n   \
+          \ models, rstatus = jarr(stage1_models), jarr(stage1_run_status)\n    bad\
+          \ = [n for n, a in ((\"pd_return_to_script\", rts), (\"pd_return_to_production\"\
+          , rtp),\n                          (\"pd_advisory_notes\", adv), (\"stage1_models\"\
+          , models),\n                          (\"stage1_run_status\", rstatus))\
+          \ if \"__PARSE_FAILED__\" in a]\n\n    cs_got = hashlib.sha256(str(cs_final\
+          \ or \"\").encode(\"utf-8\")).hexdigest()\n    pd_got = hashlib.sha256(str(pd_final\
+          \ or \"\").encode(\"utf-8\")).hexdigest()\n    cs_ok = cs_got == str(cs_hash\
+          \ or \"\").strip()\n    pd_ok = pd_got == str(pd_hash or \"\").strip()\n\
+          \    verdicts = [\n        \"creative_script -> publishing_packaging : \"\
+          \ + (\"MATCH\" if cs_ok else \"MISMATCH\")\n        + \" (recomputed \"\
+          \ + cs_got[:16] + \" / expected \" + str(cs_hash or \"\")[:16] + \")\",\n\
+          \        \"production_director -> publishing_packaging : \" + (\"MATCH\"\
+          \ if pd_ok else \"MISMATCH\")\n        + \" (recomputed \" + pd_got[:16]\
+          \ + \" / expected \" + str(pd_hash or \"\")[:16] + \")\",\n    ]\n\n   \
+          \ notes = []\n    if missing:\n        notes.append(\"缺失输入: \" + \", \"\
+          .join(missing))\n    if bad:\n        notes.append(\"上游数组解析失败: \" + \",\
+          \ \".join(bad))\n    if not cs_ok:\n        notes.append(\"cs_final 与 cs_hash\
+          \ 不一致\")\n    if not pd_ok:\n        notes.append(\"pd_final 与 pd_hash 不一致\"\
+          )\n\n    return {\n        \"status\": \"OK\" if not notes else \"INPUT_BLOCKED\"\
+          ,\n        \"missing\": missing,\n        \"note\": \"上游产物与哈希核对通过，九槽位齐备\"\
+          \ if not notes else \"; \".join(notes),\n        \"upstream_handoff\": verdicts,\n\
+          \        \"pd_return_to_script\": [] if bad else rts,\n        \"pd_return_to_production\"\
+          : [] if bad else rtp,\n        \"pd_advisory_notes\": [] if bad else adv,\n\
+          \        \"stage_models\": [] if bad else models,\n        \"stage_run_status\"\
+          : [] if bad else rstatus,\n    }\n"
         code_language: python3
-        desc: 重算 cs_final / pd_final 的 SHA-256 与 Stage 1 交来的哈希比对；不一致即 INPUT_BLOCKED，不调用 PP Tool。
+        desc: 重算 cs_final / pd_final 的 SHA-256 与 Stage 1 交来的哈希比对；不一致即 INPUT_BLOCKED，不调用
+          PP Tool。
         outputs:
           missing:
             children: null
@@ -506,7 +551,41 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import hashlib, json\n\ndef main(tool_text: str) -> dict:\n    def blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\": \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"reference_projection\": \"\", \"returns_raw\": \"\",\n                \"declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\": [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\": note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\" + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\") or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\":\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\" + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n            \"model_used\": str(o.get(\"model_used\") or \"\"),\n            \"reference_projection\": str(o.get(\"reference_projection\") or \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\") or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"return_to_production\") or [])],\n            \"advisory_notes\": [str(x) for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n        # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n        return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"OK\"\n    return base\n"
+        code: "import hashlib, json\n\ndef _core(tool_text: str) -> dict:\n    def\
+          \ blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\"\
+          : \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"\
+          reference_projection\": \"\", \"returns_raw\": \"\",\n                \"\
+          declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\"\
+          : [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\"\
+          : note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except\
+          \ Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\"\
+          \ + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"\
+          TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\"\
+          ) or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n\
+          \    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\"\
+          :\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\"\
+          \ + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n\
+          \    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"\
+          artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n\
+          \            \"model_used\": str(o.get(\"model_used\") or \"\"),\n     \
+          \       \"reference_projection\": str(o.get(\"reference_projection\") or\
+          \ \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"\
+          ),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"\
+          ),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\"\
+          ) or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"\
+          return_to_production\") or [])],\n            \"advisory_notes\": [str(x)\
+          \ for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n\
+          \        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"\
+          ] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n  \
+          \      # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"\
+          return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n  \
+          \      return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"\
+          OK\"\n    return base\n\n\ndef main(tool_text: str) -> dict:\n    \"\"\"\
+          透传子流的用户交付块。父流不解释、不改写、不补写。\"\"\"\n    r = _core(tool_text)\n    try:\n  \
+          \      o = json.loads(tool_text or \"\")\n        if not isinstance(o, dict):\n\
+          \            o = {}\n    except Exception:\n        o = {}\n    r[\"user_delivery\"\
+          ] = str(o.get(\"user_delivery\") or \"\")\n    r[\"user_delivery_status\"\
+          ] = str(o.get(\"user_delivery_status\") or \"\")\n    return r\n"
         code_language: python3
         desc: 确定性取字段并算 SHA-256
         outputs:
@@ -544,6 +623,12 @@ workflow:
             children: null
             type: array[string]
           returns_raw:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_status:
             children: null
             type: string
         selected: false
@@ -598,7 +683,30 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "def main(pd_rts: list, pd_rtp: list, pd_adv: list,\n         pp_rts: list, pp_rtp: list, pp_adv: list,\n         pp_mode: str, pp_model: str, pp_hash: str, pp_len: str,\n         stage_models: list, stage_run_status: list, upstream_handoff: list) -> dict:\n    def L(x):\n        return [str(i) for i in x] if isinstance(x, list) else ([str(x)] if str(x or \"\").strip() else [])\n\n    # 只有正式数组进 return_to_*；普通备注一律进 advisory_notes，不升格\n    # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n    rts = L(pd_rts) + [\"[publishing_packaging] \" + s for s in L(pp_rts)]\n    rtp = L(pd_rtp) + [\"[publishing_packaging] \" + s for s in L(pp_rtp)]\n    adv = L(pd_adv) + [\"[publishing_packaging] \" + s for s in L(pp_adv)]\n\n    formal = len(rts) + len(rtp)\n    n_adv = len(adv)\n    if formal > 0:\n        status = \"HUMAN_REVIEW_REQUIRED (\" + str(formal) + \" return\"\n        status += (\", \" + str(n_adv) + \" advisory)\") if n_adv else \")\"\n    else:\n        status = \"PRE_PACKAGE_READY_FOR_REVIEW\"\n        if n_adv:\n            status += \" (\" + str(n_adv) + \" advisory)\"\n\n    models = L(stage_models) + [\"publishing_packaging=\" + str(pp_model)]\n    rstat = L(stage_run_status) + [\"publishing_packaging=SUCCEEDED\"]\n    return {\n        \"chain_status\": status,\n        \"return_to_script\": rts,\n        \"return_to_production\": rtp,\n        \"advisory_notes\": adv,\n        \"formal_return_count\": formal,\n        \"advisory_count\": n_adv,\n        \"stage_models\": models,\n        \"stage_run_status\": rstat,\n        \"upstream_handoff\": L(upstream_handoff) +\n            [\"publishing_pre_hash=\" + str(pp_hash) + \" len=\" + str(pp_len)],\n        \"final_present\": \"true\",\n        \"pp_mode\": str(pp_mode or \"\"),\n    }\n"
+        code: "def main(pd_rts: list, pd_rtp: list, pd_adv: list,\n         pp_rts:\
+          \ list, pp_rtp: list, pp_adv: list,\n         pp_mode: str, pp_model: str,\
+          \ pp_hash: str, pp_len: str,\n         stage_models: list, stage_run_status:\
+          \ list, upstream_handoff: list) -> dict:\n    def L(x):\n        return\
+          \ [str(i) for i in x] if isinstance(x, list) else ([str(x)] if str(x or\
+          \ \"\").strip() else [])\n\n    # 只有正式数组进 return_to_*；普通备注一律进 advisory_notes，不升格\n\
+          \    # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n    rts = L(pd_rts) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_rts)]\n    rtp = L(pd_rtp) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_rtp)]\n    adv = L(pd_adv) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_adv)]\n\n    formal = len(rts) + len(rtp)\n    n_adv\
+          \ = len(adv)\n    if formal > 0:\n        status = \"HUMAN_REVIEW_REQUIRED\
+          \ (\" + str(formal) + \" return\"\n        status += (\", \" + str(n_adv)\
+          \ + \" advisory)\") if n_adv else \")\"\n    else:\n        status = \"\
+          PRE_PACKAGE_READY_FOR_REVIEW\"\n        if n_adv:\n            status +=\
+          \ \" (\" + str(n_adv) + \" advisory)\"\n\n    models = L(stage_models) +\
+          \ [\"publishing_packaging=\" + str(pp_model)]\n    rstat = L(stage_run_status)\
+          \ + [\"publishing_packaging=SUCCEEDED\"]\n    return {\n        \"chain_status\"\
+          : status,\n        \"return_to_script\": rts,\n        \"return_to_production\"\
+          : rtp,\n        \"advisory_notes\": adv,\n        \"formal_return_count\"\
+          : formal,\n        \"advisory_count\": n_adv,\n        \"stage_models\"\
+          : models,\n        \"stage_run_status\": rstat,\n        \"upstream_handoff\"\
+          : L(upstream_handoff) +\n            [\"publishing_pre_hash=\" + str(pp_hash)\
+          \ + \" len=\" + str(pp_len)],\n        \"final_present\": \"true\",\n  \
+          \      \"pp_mode\": str(pp_mode or \"\"),\n    }\n"
         code_language: python3
         desc: 只汇总正式回改数组；普通备注一律进 advisory_notes 不升格；chain_status 带计数。本轮不接受、不拒绝、不触发重跑。
         outputs:
@@ -776,6 +884,14 @@ workflow:
           - return_agg
           - upstream_handoff
           variable: upstream_handoff
+        - value_selector:
+          - pp_extract
+          - user_delivery
+          variable: publishing_user_delivery
+        - value_selector:
+          - pp_extract
+          - user_delivery_status
+          variable: publishing_user_delivery_status
         selected: false
         title: PRE 生产包结束
         type: end
@@ -830,7 +946,10 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\", \"failed_stage\": \"publishing_packaging\", \"note\": \"Publishing & Packaging Workflow Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起）；上游 CS / PD 产物保留在本输出中，不输出生产包。\"}\n"
+        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\"\
+          , \"failed_stage\": \"publishing_packaging\", \"note\": \"Publishing & Packaging\
+          \ Workflow Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起）；上游 CS / PD 产物保留在本输出中，不输出生产包。\"\
+          }\n"
         code_language: python3
         desc: ''
         outputs:

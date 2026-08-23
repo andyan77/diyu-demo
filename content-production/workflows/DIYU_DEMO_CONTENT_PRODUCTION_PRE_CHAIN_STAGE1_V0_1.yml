@@ -1,5 +1,7 @@
 app:
-  description: 拍摄前生产链第 1 段：经 Workflow Tool 串联 Creative Script → Production Director。父流不复制任何 Skill 或 reference 正文，只做确定性哈希、字段检查与回改汇总。两段式拆分原因：Dify WORKFLOW_MAX_EXECUTION_TIME=1200s，单链实测需 1469s 放不下。
+  description: 拍摄前生产链第 1 段：经 Workflow Tool 串联 Creative Script → Production Director。父流不复制任何
+    Skill 或 reference 正文，只做确定性哈希、字段检查与回改汇总。两段式拆分原因：Dify WORKFLOW_MAX_EXECUTION_TIME=1200s，单链实测需
+    1469s 放不下。
   icon: 🔗
   icon_background: '#E4FBCC'
   icon_type: emoji
@@ -337,7 +339,29 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import hashlib\n\nREQUIRED = [\"content_brief\", \"production_profile\", \"expression_subject\", \"content_origin_mode\",\n            \"subject_domain\", \"duration_band\", \"platform\", \"cta_contract\",\n            \"account_positioning\", \"constraints\", \"available_assets\", \"fact_refs\",\n            \"example_reference_requested\"]\n\ndef main(content_brief: str, production_profile: str, expression_subject: str,\n         content_origin_mode: str, subject_domain: str, duration_band: str,\n         platform: str, cta_contract: str, account_positioning: str, constraints: str,\n         available_assets: str, fact_refs: str, example_reference_requested: str) -> dict:\n    slots = {\n        \"content_brief\": content_brief, \"production_profile\": production_profile,\n        \"expression_subject\": expression_subject, \"content_origin_mode\": content_origin_mode,\n        \"subject_domain\": subject_domain, \"duration_band\": duration_band,\n        \"platform\": platform, \"cta_contract\": cta_contract,\n        \"account_positioning\": account_positioning, \"constraints\": constraints,\n        \"available_assets\": available_assets, \"fact_refs\": fact_refs,\n        \"example_reference_requested\": example_reference_requested,\n    }\n    missing = [k for k in REQUIRED if not str(slots.get(k) or \"\").strip()]\n    ok = not missing\n    return {\n        \"status\": \"OK\" if ok else \"INPUT_BLOCKED\",\n        \"missing\": missing,\n        \"note\": \"九槽位与链路输入齐备\" if ok else (\"缺失输入: \" + \", \".join(missing)),\n        \"brief_hash\": hashlib.sha256(str(content_brief or \"\").encode(\"utf-8\")).hexdigest(),\n        \"brief_length\": len(str(content_brief or \"\")),\n    }\n"
+        code: "import hashlib\n\nREQUIRED = [\"content_brief\", \"production_profile\"\
+          , \"expression_subject\", \"content_origin_mode\",\n            \"subject_domain\"\
+          , \"duration_band\", \"platform\", \"cta_contract\",\n            \"account_positioning\"\
+          , \"constraints\", \"available_assets\", \"fact_refs\",\n            \"\
+          example_reference_requested\"]\n\ndef main(content_brief: str, production_profile:\
+          \ str, expression_subject: str,\n         content_origin_mode: str, subject_domain:\
+          \ str, duration_band: str,\n         platform: str, cta_contract: str, account_positioning:\
+          \ str, constraints: str,\n         available_assets: str, fact_refs: str,\
+          \ example_reference_requested: str) -> dict:\n    slots = {\n        \"\
+          content_brief\": content_brief, \"production_profile\": production_profile,\n\
+          \        \"expression_subject\": expression_subject, \"content_origin_mode\"\
+          : content_origin_mode,\n        \"subject_domain\": subject_domain, \"duration_band\"\
+          : duration_band,\n        \"platform\": platform, \"cta_contract\": cta_contract,\n\
+          \        \"account_positioning\": account_positioning, \"constraints\":\
+          \ constraints,\n        \"available_assets\": available_assets, \"fact_refs\"\
+          : fact_refs,\n        \"example_reference_requested\": example_reference_requested,\n\
+          \    }\n    missing = [k for k in REQUIRED if not str(slots.get(k) or \"\
+          \").strip()]\n    ok = not missing\n    return {\n        \"status\": \"\
+          OK\" if ok else \"INPUT_BLOCKED\",\n        \"missing\": missing,\n    \
+          \    \"note\": \"九槽位与链路输入齐备\" if ok else (\"缺失输入: \" + \", \".join(missing)),\n\
+          \        \"brief_hash\": hashlib.sha256(str(content_brief or \"\").encode(\"\
+          utf-8\")).hexdigest(),\n        \"brief_length\": len(str(content_brief\
+          \ or \"\")),\n    }\n"
         code_language: python3
         desc: 确定性必填校验，缺任一项即 INPUT_BLOCKED，不进入任何 Tool 调用。
         outputs:
@@ -521,7 +545,41 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import hashlib, json\n\ndef main(tool_text: str) -> dict:\n    def blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\": \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"reference_projection\": \"\", \"returns_raw\": \"\",\n                \"declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\": [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\": note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\" + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\") or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\":\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\" + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n            \"model_used\": str(o.get(\"model_used\") or \"\"),\n            \"reference_projection\": str(o.get(\"reference_projection\") or \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\") or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"return_to_production\") or [])],\n            \"advisory_notes\": [str(x) for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n        # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n        return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"OK\"\n    return base\n"
+        code: "import hashlib, json\n\ndef _core(tool_text: str) -> dict:\n    def\
+          \ blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\"\
+          : \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"\
+          reference_projection\": \"\", \"returns_raw\": \"\",\n                \"\
+          declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\"\
+          : [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\"\
+          : note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except\
+          \ Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\"\
+          \ + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"\
+          TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\"\
+          ) or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n\
+          \    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\"\
+          :\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\"\
+          \ + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n\
+          \    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"\
+          artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n\
+          \            \"model_used\": str(o.get(\"model_used\") or \"\"),\n     \
+          \       \"reference_projection\": str(o.get(\"reference_projection\") or\
+          \ \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"\
+          ),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"\
+          ),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\"\
+          ) or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"\
+          return_to_production\") or [])],\n            \"advisory_notes\": [str(x)\
+          \ for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n\
+          \        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"\
+          ] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n  \
+          \      # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"\
+          return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n  \
+          \      return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"\
+          OK\"\n    return base\n\n\ndef main(tool_text: str) -> dict:\n    \"\"\"\
+          透传子流的用户交付块。父流不解释、不改写、不补写。\"\"\"\n    r = _core(tool_text)\n    try:\n  \
+          \      o = json.loads(tool_text or \"\")\n        if not isinstance(o, dict):\n\
+          \            o = {}\n    except Exception:\n        o = {}\n    r[\"user_delivery\"\
+          ] = str(o.get(\"user_delivery\") or \"\")\n    r[\"user_delivery_status\"\
+          ] = str(o.get(\"user_delivery_status\") or \"\")\n    return r\n"
         code_language: python3
         desc: 从 Tool 的 text（子流 End 的 JSON）确定性取字段并算 SHA-256
         outputs:
@@ -559,6 +617,12 @@ workflow:
             children: null
             type: array[string]
           returns_raw:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_status:
             children: null
             type: string
         selected: false
@@ -613,7 +677,13 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import hashlib\n\ndef main(bound_text: str, expected_hash: str) -> dict:\n    b = str(bound_text or \"\")\n    got = hashlib.sha256(b.encode(\"utf-8\")).hexdigest()\n    exp = str(expected_hash or \"\").strip()\n    ok = (got == exp and exp != \"\")\n    return {\"bound_hash\": got, \"bound_length\": len(b),\n            \"verdict\": \"MATCH\" if ok else \"MISMATCH\",\n            \"note\": (\"父流绑定文本哈希与上游产物一致\" if ok\n                     else \"父流绑定文本哈希与上游产物不一致 got=\" + got[:16] + \" exp=\" + exp[:16])}\n"
+        code: "import hashlib\n\ndef main(bound_text: str, expected_hash: str) ->\
+          \ dict:\n    b = str(bound_text or \"\")\n    got = hashlib.sha256(b.encode(\"\
+          utf-8\")).hexdigest()\n    exp = str(expected_hash or \"\").strip()\n  \
+          \  ok = (got == exp and exp != \"\")\n    return {\"bound_hash\": got, \"\
+          bound_length\": len(b),\n            \"verdict\": \"MATCH\" if ok else \"\
+          MISMATCH\",\n            \"note\": (\"父流绑定文本哈希与上游产物一致\" if ok\n        \
+          \             else \"父流绑定文本哈希与上游产物不一致 got=\" + got[:16] + \" exp=\" + exp[:16])}\n"
         code_language: python3
         desc: 父流侧核对：绑给 PD Tool 的那串文本重算 SHA-256，与 creative_script_hash 比对
         outputs:
@@ -724,7 +794,41 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import hashlib, json\n\ndef main(tool_text: str) -> dict:\n    def blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\": \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"reference_projection\": \"\", \"returns_raw\": \"\",\n                \"declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\": [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\": note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\" + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\") or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\":\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\" + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n            \"model_used\": str(o.get(\"model_used\") or \"\"),\n            \"reference_projection\": str(o.get(\"reference_projection\") or \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\") or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"return_to_production\") or [])],\n            \"advisory_notes\": [str(x) for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n        # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n        return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"OK\"\n    return base\n"
+        code: "import hashlib, json\n\ndef _core(tool_text: str) -> dict:\n    def\
+          \ blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\"\
+          : \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"\
+          reference_projection\": \"\", \"returns_raw\": \"\",\n                \"\
+          declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\"\
+          : [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\"\
+          : note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except\
+          \ Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\"\
+          \ + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"\
+          TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\"\
+          ) or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n\
+          \    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\"\
+          :\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\"\
+          \ + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n\
+          \    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"\
+          artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n\
+          \            \"model_used\": str(o.get(\"model_used\") or \"\"),\n     \
+          \       \"reference_projection\": str(o.get(\"reference_projection\") or\
+          \ \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"\
+          ),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"\
+          ),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\"\
+          ) or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"\
+          return_to_production\") or [])],\n            \"advisory_notes\": [str(x)\
+          \ for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n\
+          \        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"\
+          ] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n  \
+          \      # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"\
+          return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n  \
+          \      return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"\
+          OK\"\n    return base\n\n\ndef main(tool_text: str) -> dict:\n    \"\"\"\
+          透传子流的用户交付块。父流不解释、不改写、不补写。\"\"\"\n    r = _core(tool_text)\n    try:\n  \
+          \      o = json.loads(tool_text or \"\")\n        if not isinstance(o, dict):\n\
+          \            o = {}\n    except Exception:\n        o = {}\n    r[\"user_delivery\"\
+          ] = str(o.get(\"user_delivery\") or \"\")\n    r[\"user_delivery_status\"\
+          ] = str(o.get(\"user_delivery_status\") or \"\")\n    return r\n"
         code_language: python3
         desc: 同上：确定性取字段并算 SHA-256
         outputs:
@@ -762,6 +866,12 @@ workflow:
             children: null
             type: array[string]
           returns_raw:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_status:
             children: null
             type: string
         selected: false
@@ -816,7 +926,34 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "import json\n\ndef main(cs_hash: str, cs_len: str, cs_model: str, cs_proj: str,\n         cs_rts: list, cs_rtp: list, cs_adv: str,\n         pd_hash: str, pd_len: str, pd_model: str, pd_proj: str,\n         pd_rts: list, pd_rtp: list, pd_adv: str,\n         handoff_verdict: str) -> dict:\n    def arr(x):\n        if isinstance(x, list):\n            return [str(i) for i in x]\n        s = str(x or \"\").strip()\n        if not s:\n            return []\n        try:\n            v = json.loads(s)\n            return [str(i) for i in v] if isinstance(v, list) else [s]\n        except Exception:\n            return [s]\n    cs_a, pd_a = arr(cs_adv), arr(pd_adv)\n    adv = [\"[creative_script] \" + x for x in cs_a] + [\"[production_director] \" + x for x in pd_a]\n    rts = [\"[production_director] \" + str(x) for x in arr(pd_rts)]\n    rtp = [\"[production_director] \" + str(x) for x in arr(pd_rtp)]\n    # CS 是链条起点，其 return_to_* 若非空要如实带出（正常应为空）\n    rts = [\"[creative_script] \" + str(x) for x in arr(cs_rts)] + rts\n    rtp = [\"[creative_script] \" + str(x) for x in arr(cs_rtp)] + rtp\n    stage_models = [\"creative_script=\" + str(cs_model), \"production_director=\" + str(pd_model)]\n    stage_status = [\"creative_script=SUCCEEDED\", \"production_director=SUCCEEDED\"]\n    return {\n        \"stage1_status\": \"STAGE1_OK_PENDING_STAGE2\",\n        \"return_to_script\": rts,\n        \"return_to_production\": rtp,\n        \"advisory_notes\": adv,\n        \"stage_models\": stage_models,\n        \"stage_run_status\": stage_status,\n        \"handoff_report\": [\"cs_final -> production_director : \" + str(handoff_verdict)],\n        \"hash_report\": [\"creative_script_hash=\" + str(cs_hash) + \" len=\" + str(cs_len),\n                        \"production_plan_hash=\" + str(pd_hash) + \" len=\" + str(pd_len)],\n        \"projection_report\": [\"creative_script: \" + str(cs_proj)[:1200],\n                              \"production_director: \" + str(pd_proj)[:1200]],\n    }\n"
+        code: "import json\n\ndef main(cs_hash: str, cs_len: str, cs_model: str, cs_proj:\
+          \ str,\n         cs_rts: list, cs_rtp: list, cs_adv: str,\n         pd_hash:\
+          \ str, pd_len: str, pd_model: str, pd_proj: str,\n         pd_rts: list,\
+          \ pd_rtp: list, pd_adv: str,\n         handoff_verdict: str) -> dict:\n\
+          \    def arr(x):\n        if isinstance(x, list):\n            return [str(i)\
+          \ for i in x]\n        s = str(x or \"\").strip()\n        if not s:\n \
+          \           return []\n        try:\n            v = json.loads(s)\n   \
+          \         return [str(i) for i in v] if isinstance(v, list) else [s]\n \
+          \       except Exception:\n            return [s]\n    cs_a, pd_a = arr(cs_adv),\
+          \ arr(pd_adv)\n    adv = [\"[creative_script] \" + x for x in cs_a] + [\"\
+          [production_director] \" + x for x in pd_a]\n    rts = [\"[production_director]\
+          \ \" + str(x) for x in arr(pd_rts)]\n    rtp = [\"[production_director]\
+          \ \" + str(x) for x in arr(pd_rtp)]\n    # CS 是链条起点，其 return_to_* 若非空要如实带出（正常应为空）\n\
+          \    rts = [\"[creative_script] \" + str(x) for x in arr(cs_rts)] + rts\n\
+          \    rtp = [\"[creative_script] \" + str(x) for x in arr(cs_rtp)] + rtp\n\
+          \    stage_models = [\"creative_script=\" + str(cs_model), \"production_director=\"\
+          \ + str(pd_model)]\n    stage_status = [\"creative_script=SUCCEEDED\", \"\
+          production_director=SUCCEEDED\"]\n    return {\n        \"stage1_status\"\
+          : \"STAGE1_OK_PENDING_STAGE2\",\n        \"return_to_script\": rts,\n  \
+          \      \"return_to_production\": rtp,\n        \"advisory_notes\": adv,\n\
+          \        \"stage_models\": stage_models,\n        \"stage_run_status\":\
+          \ stage_status,\n        \"handoff_report\": [\"cs_final -> production_director\
+          \ : \" + str(handoff_verdict)],\n        \"hash_report\": [\"creative_script_hash=\"\
+          \ + str(cs_hash) + \" len=\" + str(cs_len),\n                        \"\
+          production_plan_hash=\" + str(pd_hash) + \" len=\" + str(pd_len)],\n   \
+          \     \"projection_report\": [\"creative_script: \" + str(cs_proj)[:1200],\n\
+          \                              \"production_director: \" + str(pd_proj)[:1200]],\n\
+          \    }\n"
         code_language: python3
         desc: 汇总 CS/PD 的正式回改与备注，按来源打标；不接受、不拒绝、不触发重跑
         outputs:
@@ -984,6 +1121,22 @@ workflow:
           - stage1_agg
           - hash_report
           variable: hash_report
+        - value_selector:
+          - cs_extract
+          - user_delivery
+          variable: creative_script_user_delivery
+        - value_selector:
+          - cs_extract
+          - user_delivery_status
+          variable: creative_script_user_delivery_status
+        - value_selector:
+          - pd_extract
+          - user_delivery
+          variable: production_plan_user_delivery
+        - value_selector:
+          - pd_extract
+          - user_delivery_status
+          variable: production_plan_user_delivery_status
         selected: false
         title: Stage 1 结束
         type: end
@@ -1034,7 +1187,9 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\", \"failed_stage\": \"creative_script\", \"note\": \"Creative Script Workflow Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起），已停止调用下游，不输出生产包。\"}\n"
+        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\"\
+          , \"failed_stage\": \"creative_script\", \"note\": \"Creative Script Workflow\
+          \ Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起），已停止调用下游，不输出生产包。\"}\n"
         code_language: python3
         desc: ''
         outputs:
@@ -1134,7 +1289,10 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\", \"failed_stage\": \"production_director\", \"note\": \"Production Director Workflow Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起），已停止调用下游；上游 Creative Script 产物保留在本输出中。\"}\n"
+        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\"\
+          , \"failed_stage\": \"production_director\", \"note\": \"Production Director\
+          \ Workflow Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起），已停止调用下游；上游 Creative Script\
+          \ 产物保留在本输出中。\"}\n"
         code_language: python3
         desc: ''
         outputs:
