@@ -1,11 +1,12 @@
 app:
-  description: 拍摄前生产链第 2 段：经 Workflow Tool 调用 Publishing & Packaging（PRE），核对上游哈希、汇总正式回改与备注、产出
-    chain_status 与完整 PRE 生产包。PP 单独成段亦对齐业务边界：PP 本就要跑两次（现在 PRE，素材回来后 FINAL）。
+  description: 发布包装段（通用，非 PRE 专用）：经 Workflow Tool 调用 Publishing & Packaging，核对上游哈希、汇总正式回改与备注、产出
+    chain_status 与完整生产包。realization_manifest 为可选输入：不传＝PP 按第一级判据走 PRE；传入 beat 级覆盖记录时，由
+    PP 自行推导 MIXED 或 FINAL。父流不预填 mode。
   icon: 📦
   icon_background: '#E4FBCC'
   icon_type: emoji
   mode: workflow
-  name: DIYU Demo Content Production PRE Chain v0.1 · Stage 2
+  name: DIYU Demo Content Production Publishing Stage 2 v0.1
   use_icon_as_answer_icon: false
 dependencies: []
 kind: app
@@ -276,6 +277,12 @@ workflow:
           required: true
           type: text-input
           variable: example_reference_requested
+        - label: realization_manifest（beat 级拍后覆盖记录，可空；空＝PRE）
+          max_length: 48000
+          options: []
+          required: false
+          type: paragraph
+          variable: realization_manifest
       height: 100
       id: '1788000000001'
       position:
@@ -532,6 +539,9 @@ workflow:
           platform:
             type: mixed
             value: '{{#1788000000001.platform#}}'
+          realization_manifest:
+            type: mixed
+            value: '{{#1788000000001.realization_manifest#}}'
           subject_domain:
             type: mixed
             value: '{{#1788000000001.subject_domain#}}'
@@ -695,18 +705,22 @@ workflow:
           \ \" + s for s in L(pp_adv)]\n\n    formal = len(rts) + len(rtp)\n    n_adv\
           \ = len(adv)\n    if formal > 0:\n        status = \"HUMAN_REVIEW_REQUIRED\
           \ (\" + str(formal) + \" return\"\n        status += (\", \" + str(n_adv)\
-          \ + \" advisory)\") if n_adv else \")\"\n    else:\n        status = \"\
-          PRE_PACKAGE_READY_FOR_REVIEW\"\n        if n_adv:\n            status +=\
-          \ \" (\" + str(n_adv) + \" advisory)\"\n\n    models = L(stage_models) +\
-          \ [\"publishing_packaging=\" + str(pp_model)]\n    rstat = L(stage_run_status)\
-          \ + [\"publishing_packaging=SUCCEEDED\"]\n    return {\n        \"chain_status\"\
-          : status,\n        \"return_to_script\": rts,\n        \"return_to_production\"\
-          : rtp,\n        \"advisory_notes\": adv,\n        \"formal_return_count\"\
-          : formal,\n        \"advisory_count\": n_adv,\n        \"stage_models\"\
-          : models,\n        \"stage_run_status\": rstat,\n        \"upstream_handoff\"\
-          : L(upstream_handoff) +\n            [\"publishing_pre_hash=\" + str(pp_hash)\
-          \ + \" len=\" + str(pp_len)],\n        \"final_present\": \"true\",\n  \
-          \      \"pp_mode\": str(pp_mode or \"\"),\n    }\n"
+          \ + \" advisory)\") if n_adv else \")\"\n    else:\n        # 本段已不再是 PRE\
+          \ 专用：状态按 PP 自行推导出的 mode 取值。\n        # PRE 分支的字面值与改造前完全一致，已登记的 PRE 行为不受影响；\n\
+          \        # MIXED / FINAL 是运行合同原本就没覆盖的两档。\n        m = str(pp_mode or \"\"\
+          ).strip().upper()\n        prefix = m if m in (\"PRE\", \"MIXED\", \"FINAL\"\
+          ) else \"UNKNOWN_MODE\"\n        status = prefix + \"_PACKAGE_READY_FOR_REVIEW\"\
+          \n        if n_adv:\n            status += \" (\" + str(n_adv) + \" advisory)\"\
+          \n\n    models = L(stage_models) + [\"publishing_packaging=\" + str(pp_model)]\n\
+          \    rstat = L(stage_run_status) + [\"publishing_packaging=SUCCEEDED\"]\n\
+          \    return {\n        \"chain_status\": status,\n        \"return_to_script\"\
+          : rts,\n        \"return_to_production\": rtp,\n        \"advisory_notes\"\
+          : adv,\n        \"formal_return_count\": formal,\n        \"advisory_count\"\
+          : n_adv,\n        \"stage_models\": models,\n        \"stage_run_status\"\
+          : rstat,\n        \"upstream_handoff\": L(upstream_handoff) +\n        \
+          \    [\"publishing_artifact_hash=\" + str(pp_hash) + \" len=\" + str(pp_len)],\n\
+          \        \"final_present\": \"true\",\n        \"pp_mode\": str(pp_mode\
+          \ or \"\"),\n    }\n"
         code_language: python3
         desc: 只汇总正式回改数组；普通备注一律进 advisory_notes 不升格；chain_status 带计数。本轮不接受、不拒绝、不触发重跑。
         outputs:
@@ -893,7 +907,7 @@ workflow:
           - user_delivery_status
           variable: publishing_user_delivery_status
         selected: false
-        title: PRE 生产包结束
+        title: 生产包结束
         type: end
       height: 100
       id: end_ok
