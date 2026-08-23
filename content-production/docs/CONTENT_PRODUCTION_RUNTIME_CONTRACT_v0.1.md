@@ -497,13 +497,44 @@ PD 在 P02 为 558.9 s、仅余 41 s，加同样负担同样越线。
 
 | 取值 | 条件 |
 |---|---|
-| `PRE_PACKAGE_READY_FOR_REVIEW` | 三个正式回改数组全空，且 `advisory_notes[]` 也为空 |
-| `PRE_PACKAGE_READY_FOR_REVIEW (N advisory)` | 正式回改数组全空，但有 N 条普通备注 |
+| `PRE_PACKAGE_READY_FOR_REVIEW` | 正式回改数组全空，且 `advisory_notes[]` 也为空，**且 PP 推导出的 mode 为 `PRE`** |
+| `MIXED_PACKAGE_READY_FOR_REVIEW` | 同上，但 mode 为 `MIXED` |
+| `FINAL_PACKAGE_READY_FOR_REVIEW` | 同上，但 mode 为 `FINAL` |
+| 以上三个 ＋ ` (N advisory)` | 正式回改数组全空，但有 N 条普通备注 |
+| `USER_DELIVERY_BLOCKED_FACT_CHECK` | **完整 Artifact 产出成功，但用户交付块未通过事实检查** |
 | `HUMAN_REVIEW_REQUIRED (N return)` | 有 N 条正式回改，无普通备注 |
 | `HUMAN_REVIEW_REQUIRED (N return, M advisory)` | 有 N 条正式回改与 M 条普通备注 |
 | `TOOL_FAILED` | 任一 Workflow Tool 调用失败 |
 | `INPUT_BLOCKED` | 输入缺失，或上游产物与哈希核对不通过 |
 | `RETURN_PARSE_FAILED` | 回改块解析失败 |
+
+**前三个状态由 PP 自行推导出的 mode 决定**，不由调用方指定。
+`PRE_PACKAGE_READY_FOR_REVIEW` 的字面值与本节登记之前完全一致，
+已按该值登记过的历史运行不受影响。
+
+### `USER_DELIVERY_BLOCKED_FACT_CHECK`
+
+**它挡的是「产出成功」和「可以交付」之间的那一步。**
+完整 Artifact 跑出来了、mode 也推对了，不等于那份用户交付块可以交到执行人手上。
+
+触发条件（确定性检查，任一命中即阻断）：
+
+| 检查 | 命中什么 |
+|---|---|
+| 事实编号 | `used_fact_refs[]` 里出现简写、自造编号、或 `fact_refs[]` 中不存在的编号 |
+| 假绿 | 产出声称某句「已删除／已剔除」，但那句话仍出现在用户交付块里 |
+| 内部过程语言 | 用户交付块出现「已删除」「审查发现」「修正后」「原方案」「上一版」「未核实，不得使用」等 |
+| CTA 越界 | `cta_contract` 为无 CTA，而用户交付块出现奖励、领取、关注、私信、购买或预约引导 |
+
+**被阻断时**：完整 Artifact、`used_fact_refs[]`、失败的用户交付块与全部运行证据
+**继续原样保存**，一个字都不删 —— 它们是判断问题出在哪儿的依据。
+
+**被阻断时不得做的事**：不得把已知含错误的用户交付块当作正式交付；
+不得人工删掉问题句之后，把同一次运行改判为通过。**要通过就重新跑一次。**
+
+> **为什么单独设这个状态**：模型会在自检里写「已删除」「已核实」。
+> 那是自述，不是证据。这个状态的存在，就是为了让「它说它处理好了」和
+> 「确实处理好了」这两件事不再混为一谈 —— 判定只看用户交付块的实际文本。
 
 **计数是必需的，不是装饰。** `advisory_notes[]` 非空却只报
 `PRE_PACKAGE_READY_FOR_REVIEW`，字面意思是「可以评审了」，

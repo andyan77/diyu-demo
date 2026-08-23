@@ -567,21 +567,22 @@ workflow:
           reference_projection\": \"\", \"returns_raw\": \"\",\n                \"\
           declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\"\
           : [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\"\
-          : note}\n    try:\n        o = json.loads(tool_text or \"\")\n    except\
-          \ Exception as e:\n        return blank(\"TOOL_FAILED\", \"Tool 返回不是 JSON：\"\
-          \ + str(e)[:150])\n    if not isinstance(o, dict):\n        return blank(\"\
-          TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"final_output\"\
-          ) or \"\")\n    present = str(o.get(\"final_present\", \"\")).strip().lower()\n\
-          \    if present != \"true\" or not art.strip() or art.strip() == \"MODEL_OUTPUT_NO_FINAL\"\
-          :\n        return blank(\"TOOL_FAILED\", \"上游 Final 缺失或为空（final_present=\"\
-          \ + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n\
-          \    rstat = str(o.get(\"returns_status\", \"\")).strip()\n    base = {\"\
-          artifact\": art, \"artifact_hash\": h, \"artifact_length\": len(art),\n\
-          \            \"model_used\": str(o.get(\"model_used\") or \"\"),\n     \
-          \       \"reference_projection\": str(o.get(\"reference_projection\") or\
-          \ \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or \"\"\
-          ),\n            \"declared_mode\": str(o.get(\"declared_mode\") or \"\"\
-          ),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\"\
+          : note,\n                \"user_delivery_fact_gate\": \"\", \"user_delivery_gate_note\"\
+          : \"\", \"used_fact_ids\": []}\n    try:\n        o = json.loads(tool_text\
+          \ or \"\")\n    except Exception as e:\n        return blank(\"TOOL_FAILED\"\
+          , \"Tool 返回不是 JSON：\" + str(e)[:150])\n    if not isinstance(o, dict):\n\
+          \        return blank(\"TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"\
+          final_output\") or \"\")\n    present = str(o.get(\"final_present\", \"\"\
+          )).strip().lower()\n    if present != \"true\" or not art.strip() or art.strip()\
+          \ == \"MODEL_OUTPUT_NO_FINAL\":\n        return blank(\"TOOL_FAILED\", \"\
+          上游 Final 缺失或为空（final_present=\" + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"\
+          utf-8\")).hexdigest()\n    rstat = str(o.get(\"returns_status\", \"\")).strip()\n\
+          \    base = {\"artifact\": art, \"artifact_hash\": h, \"artifact_length\"\
+          : len(art),\n            \"model_used\": str(o.get(\"model_used\") or \"\
+          \"),\n            \"reference_projection\": str(o.get(\"reference_projection\"\
+          ) or \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or\
+          \ \"\"),\n            \"declared_mode\": str(o.get(\"declared_mode\") or\
+          \ \"\"),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\"\
           ) or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"\
           return_to_production\") or [])],\n            \"advisory_notes\": [str(x)\
           \ for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n\
@@ -595,7 +596,11 @@ workflow:
           \      o = json.loads(tool_text or \"\")\n        if not isinstance(o, dict):\n\
           \            o = {}\n    except Exception:\n        o = {}\n    r[\"user_delivery\"\
           ] = str(o.get(\"user_delivery\") or \"\")\n    r[\"user_delivery_status\"\
-          ] = str(o.get(\"user_delivery_status\") or \"\")\n    return r\n"
+          ] = str(o.get(\"user_delivery_status\") or \"\")\n    # 子流四道确定性闸的判定，父流只透传，不解释、不改写、不代为放行\n\
+          \    r[\"user_delivery_fact_gate\"] = str(o.get(\"user_delivery_fact_gate\"\
+          ) or \"\")\n    r[\"user_delivery_gate_note\"] = str(o.get(\"user_delivery_gate_note\"\
+          ) or \"\")\n    r[\"used_fact_ids\"] = [str(x) for x in (o.get(\"used_fact_ids\"\
+          ) or [])]\n    return r\n"
         code_language: python3
         desc: 确定性取字段并算 SHA-256
         outputs:
@@ -635,7 +640,16 @@ workflow:
           returns_raw:
             children: null
             type: string
+          used_fact_ids:
+            children: null
+            type: array[string]
           user_delivery:
+            children: null
+            type: string
+          user_delivery_fact_gate:
+            children: null
+            type: string
+          user_delivery_gate_note:
             children: null
             type: string
           user_delivery_status:
@@ -696,30 +710,35 @@ workflow:
         code: "def main(pd_rts: list, pd_rtp: list, pd_adv: list,\n         pp_rts:\
           \ list, pp_rtp: list, pp_adv: list,\n         pp_mode: str, pp_model: str,\
           \ pp_hash: str, pp_len: str,\n         stage_models: list, stage_run_status:\
-          \ list, upstream_handoff: list) -> dict:\n    def L(x):\n        return\
-          \ [str(i) for i in x] if isinstance(x, list) else ([str(x)] if str(x or\
-          \ \"\").strip() else [])\n\n    # 只有正式数组进 return_to_*；普通备注一律进 advisory_notes，不升格\n\
-          \    # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n    rts = L(pd_rts) + [\"[publishing_packaging]\
-          \ \" + s for s in L(pp_rts)]\n    rtp = L(pd_rtp) + [\"[publishing_packaging]\
-          \ \" + s for s in L(pp_rtp)]\n    adv = L(pd_adv) + [\"[publishing_packaging]\
-          \ \" + s for s in L(pp_adv)]\n\n    formal = len(rts) + len(rtp)\n    n_adv\
-          \ = len(adv)\n    if formal > 0:\n        status = \"HUMAN_REVIEW_REQUIRED\
-          \ (\" + str(formal) + \" return\"\n        status += (\", \" + str(n_adv)\
-          \ + \" advisory)\") if n_adv else \")\"\n    else:\n        # 本段已不再是 PRE\
-          \ 专用：状态按 PP 自行推导出的 mode 取值。\n        # PRE 分支的字面值与改造前完全一致，已登记的 PRE 行为不受影响；\n\
-          \        # MIXED / FINAL 是运行合同原本就没覆盖的两档。\n        m = str(pp_mode or \"\"\
-          ).strip().upper()\n        prefix = m if m in (\"PRE\", \"MIXED\", \"FINAL\"\
-          ) else \"UNKNOWN_MODE\"\n        status = prefix + \"_PACKAGE_READY_FOR_REVIEW\"\
-          \n        if n_adv:\n            status += \" (\" + str(n_adv) + \" advisory)\"\
-          \n\n    models = L(stage_models) + [\"publishing_packaging=\" + str(pp_model)]\n\
-          \    rstat = L(stage_run_status) + [\"publishing_packaging=SUCCEEDED\"]\n\
-          \    return {\n        \"chain_status\": status,\n        \"return_to_script\"\
-          : rts,\n        \"return_to_production\": rtp,\n        \"advisory_notes\"\
-          : adv,\n        \"formal_return_count\": formal,\n        \"advisory_count\"\
-          : n_adv,\n        \"stage_models\": models,\n        \"stage_run_status\"\
-          : rstat,\n        \"upstream_handoff\": L(upstream_handoff) +\n        \
-          \    [\"publishing_artifact_hash=\" + str(pp_hash) + \" len=\" + str(pp_len)],\n\
-          \        \"final_present\": \"true\",\n        \"pp_mode\": str(pp_mode\
+          \ list, upstream_handoff: list,\n         pp_fact_gate: str, pp_gate_note:\
+          \ str) -> dict:\n    def L(x):\n        return [str(i) for i in x] if isinstance(x,\
+          \ list) else ([str(x)] if str(x or \"\").strip() else [])\n\n    # 只有正式数组进\
+          \ return_to_*；普通备注一律进 advisory_notes，不升格\n    # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n\
+          \    rts = L(pd_rts) + [\"[publishing_packaging] \" + s for s in L(pp_rts)]\n\
+          \    rtp = L(pd_rtp) + [\"[publishing_packaging] \" + s for s in L(pp_rtp)]\n\
+          \    adv = L(pd_adv) + [\"[publishing_packaging] \" + s for s in L(pp_adv)]\n\
+          \n    formal = len(rts) + len(rtp)\n    n_adv = len(adv)\n    if formal\
+          \ > 0:\n        status = \"HUMAN_REVIEW_REQUIRED (\" + str(formal) + \"\
+          \ return\"\n        status += (\", \" + str(n_adv) + \" advisory)\") if\
+          \ n_adv else \")\"\n    else:\n        # 本段已不再是 PRE 专用：状态按 PP 自行推导出的 mode\
+          \ 取值。\n        # PRE 分支的字面值与改造前完全一致，已登记的 PRE 行为不受影响；\n        # MIXED /\
+          \ FINAL 是运行合同原本就没覆盖的两档。\n        m = str(pp_mode or \"\").strip().upper()\n\
+          \        prefix = m if m in (\"PRE\", \"MIXED\", \"FINAL\") else \"UNKNOWN_MODE\"\
+          \n        status = prefix + \"_PACKAGE_READY_FOR_REVIEW\"\n        if n_adv:\n\
+          \            status += \" (\" + str(n_adv) + \" advisory)\"\n    # 完整 Artifact\
+          \ 成功 ≠ 这份交付块可以交。四道确定性闸任一命中即阻断，\n    # 且**不删模型正文**：Artifact、交付块与全部证据原样保留在本输出里。\n\
+          \    if str(pp_fact_gate or \"\").strip().upper() == \"BLOCKED\":\n    \
+          \    status = \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\n\n    models = L(stage_models)\
+          \ + [\"publishing_packaging=\" + str(pp_model)]\n    rstat = L(stage_run_status)\
+          \ + [\"publishing_packaging=SUCCEEDED\"]\n    return {\n        \"chain_status\"\
+          : status,\n        \"return_to_script\": rts,\n        \"return_to_production\"\
+          : rtp,\n        \"advisory_notes\": adv,\n        \"formal_return_count\"\
+          : formal,\n        \"advisory_count\": n_adv,\n        \"stage_models\"\
+          : models,\n        \"stage_run_status\": rstat,\n        \"upstream_handoff\"\
+          : L(upstream_handoff) +\n            [\"publishing_artifact_hash=\" + str(pp_hash)\
+          \ + \" len=\" + str(pp_len)],\n        \"final_present\": \"true\",\n  \
+          \      \"pp_mode\": str(pp_mode or \"\"),\n        \"user_delivery_fact_gate\"\
+          : str(pp_fact_gate or \"\"),\n        \"user_delivery_gate_note\": str(pp_gate_note\
           \ or \"\"),\n    }\n"
         code_language: python3
         desc: 只汇总正式回改数组；普通备注一律进 advisory_notes 不升格；chain_status 带计数。本轮不接受、不拒绝、不触发重跑。
@@ -757,6 +776,12 @@ workflow:
           upstream_handoff:
             children: null
             type: array[string]
+          user_delivery_fact_gate:
+            children: null
+            type: string
+          user_delivery_gate_note:
+            children: null
+            type: string
         selected: false
         title: Return Aggregation
         type: code
@@ -813,6 +838,14 @@ workflow:
           - input_check
           - upstream_handoff
           variable: upstream_handoff
+        - value_selector:
+          - pp_extract
+          - user_delivery_fact_gate
+          variable: pp_fact_gate
+        - value_selector:
+          - pp_extract
+          - user_delivery_gate_note
+          variable: pp_gate_note
       height: 100
       id: return_agg
       position:
@@ -906,6 +939,18 @@ workflow:
           - pp_extract
           - user_delivery_status
           variable: publishing_user_delivery_status
+        - value_selector:
+          - return_agg
+          - user_delivery_fact_gate
+          variable: user_delivery_fact_gate
+        - value_selector:
+          - return_agg
+          - user_delivery_gate_note
+          variable: user_delivery_gate_note
+        - value_selector:
+          - pp_extract
+          - used_fact_ids
+          variable: used_fact_ids
         selected: false
         title: 生产包结束
         type: end
