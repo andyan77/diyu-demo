@@ -8,7 +8,7 @@
 
 | task_id | Task Contract | 当前 Manifest | 授权依据 | 终态 |
 |---|---|---|---|---|
-| `COLLAB-LEDGER-BOOTSTRAP-001` | 本文件 §T-001.1 | 本文件 §T-001.2（v1） | Founder 2026-08-24 明确授权 | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) |
+| `COLLAB-LEDGER-BOOTSTRAP-001` | **v2（当前）§T-001.6** ／ v1（历史）§T-001.1 | v1 §T-001.2（v2 只写收口 Delta 口径，其余继承 v1） | Founder 2026-08-24 明确授权 ＋ 两份收口 Delta | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-REBASE-EP00-CURRENT` | [V1 决策链改造产品合同](../decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) §「授权状态与下一步」 | 尚未编译（任务未开工） | 上位合同 `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` | 未开工 |
 | `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | **不得编译** | **无** —— 子合同 `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** | 不可开工 |
 
@@ -258,7 +258,7 @@ Founder 于 2026-08-24 在本任务执行中追加澄清。**它不建立新任�
 
 ---
 
-### T-001.5 Task Contract v2（收口 Delta，`REBASE_TASK`）
+### T-001.6 Task Contract v2（收口 Delta，`REBASE_TASK`）
 
 > **v1（§T-001.1／§T-001.2）逐字节原样保留，两个哈希继续有效。** 本节只写两份收口 Delta **明确修改**的验收口径，其余条款**继承 v1**。
 > 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash_v2` 的哈希对象。
@@ -335,4 +335,4 @@ scope_boundary: "仅适用于 COLLAB-LEDGER-BOOTSTRAP-001 本次收口。不修�
 
 | 项 | 值 | 怎么重算 |
 |---|---|---|
-| `task_contract_hash_v2` | `54a2e635e641a7134b28c7955397471c091294e0ffe0ba283ecb56c88df407d3` | 取 §T-001.5 那个 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |
+| `task_contract_hash_v2` | `54a2e635e641a7134b28c7955397471c091294e0ffe0ba283ecb56c88df407d3` | 取 §T-001.6 那个 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |

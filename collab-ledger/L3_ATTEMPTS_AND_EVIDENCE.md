@@ -1090,6 +1090,7 @@ A2 第 5 轮共报 5 条。按收口 Delta §4.1 逐条判定：
 | **K-10** | 「断言门禁」为执行侧一次性脚本，A5 禁止入库，**未持久化**，其输出不可从仓库复核 | §ATT-001.4、§ATT-004.0 D-004／D-016、[L1 §T-001.4](L1_TASK_MANIFESTS.md) | 已**全面降级** `NOT_VERIFIABLE_FROM_REPO`，**不计入任何验收通过项**；所有验收改用可复算命令 | 不需处理 |
 | **K-11** | `git ls-remote`（账本指定的 Git 副作用**原始权威**）在**只读隔离沙箱中不可执行**（`Couldn't connect to server`），隔离单元只能用本地 `refs/remotes/origin/*` 作间接证据 | §ATT-004.3、§ATT-005 第 5 轮两个单元均报同一限制 | **执行侧有网**，收口以真实 `ls-remote` 为准（见收口.5）；隔离侧该项标 **`NOT_VERIFIED`** | **需 Founder 裁决**是否接受本地跟踪 ref 作为隔离场景的降级证据 |
 | **K-12** | `ATT-00N.2` 各验收表的「证据」栏是隔离单元的**叙述**。命令本身可复跑（已复跑成立），但「谁在什么环境跑的」不可复核 | §ATT-002.2、§ATT-003.2、§ATT-004.2 | 与 K-06 同源；结论均被后续轮次独立复跑验证过 | **需 Founder 裁决**，与 K-06 一并 |
+| **K-14** | Contract v2 的 `terminal_rule.on_pass` 写 `next_stage_allowed = true:V1-REBASE-EP00-CURRENT`，字面像「V1-REBASE 要等 bootstrap 通过才放行」；而 [L2 §一.2／§二](L2_TASK_STATE_AND_HANDOFF.md) 写它「已授权，可立即开工」「无前置未决依赖」 | [L1 §T-001.6](L1_TASK_MANIFESTS.md)、[L2 §一.2](L2_TASK_STATE_AND_HANDOFF.md) | **不构成互斥**：`on_pass` 只声明「通过后什么变为允许」，未写「在此之前禁止」；V1-REBASE 的授权源是**上位合同自身**，独立于 bootstrap。属措辞层面轻度张力 | 不需处理。**口径以上位合同与 L2 为准** |
 | **K-13** | 第 2、3 轮原始问答是 **attempt-4 事后补录**，非当轮落盘；证据强度低于第 1、4 轮的当轮落盘。账本未做证据分级 | §ATT-002.3、§ATT-003.4（均已注明由 D-008 补录） | 原文完整在册、可定位；补录事实本身已登记为 D-008 | 不需处理 |
 
 ### 收口.4 完整历史证据引用（**零删改**）
@@ -1124,11 +1125,44 @@ A2 第 5 轮共报 5 条。按收口 Delta §4.1 逐条判定：
 
 ### 收口.6 定向复验（只验被阻断修复影响的路径）
 
-`PENDING` —— 由定向复验完成后写入。**不重开完整问答轮**（收口 Delta §6）。
+**被测**：收口冻结提交 `2160f9e48a27ab75b23981831a369bce90af85ee`
+**方式**：**1 个**真正隔离的新执行单元，只读工具集，不继承对话上下文；**只问被修复路径上的四个问题**，**不重开完整问答轮**（收口 Delta §6）。隔离性声明的不可复核性见 K-06／K-12。
+
+| 复验项 | 结果 | 单元实测 |
+|---|---|---|
+| **入口可达**（不给路径提示） | **通过** | `ls` ＋ 根目录三处指针（`CLAUDE.md` §7 / `README.md` / `PROJECT_INDEX.md`）→ canonical → 按 §二 四步走通 |
+| **「当前是哪一轮／收口写哪」有无互斥答案** | **通过 —— 零互斥** | 逐一对照 **10 处**相关位置（L2 §一表／§一.1／§二 两栏、L3 §一索引表末行与前五行、§CLOSEOUT 抬头、§ATT-005 SUPERSEDED 标注、L5 SE-002、L1 定位表），**全部一致指向 §CLOSEOUT**。原缺陷在本提交上**确已消失** |
+| 修复是否越界 | **通过** | 单元实测 `git show --stat`：L2 仅 **4 增 4 删**，正好那三处，未借机扩张——与收口.1「没有借机扩到其他四条」相符 |
+| **下一动作四要素** | **通过** | 四项齐全；**「输入／基线」实际解算出** `2160f9e48a27ab75b23981831a369bce90af85ee`（`git rev-parse` 分支 tip == HEAD == 远端 ref，工作区干净） |
+| 第二个活动任务与边界 | **通过** | 独立找到 `V1-REBASE-EP00-CURRENT` 及其四要素；「不能动 Skill／DSL／Dify」由**四处独立依据交叉印证**；子合同 `CONTRACT_REVISION_REQUIRED` 三处一致 |
+| 引用行号准确性 | **通过** | 单元 `sed` 实读上位合同，确认五项预检清单与「核验完成前不得开始改造施工」确在所引区间 |
+| **`git ls-remote` 原始权威** | **本轮跑通** | 单元实测：`refs/heads/chore/collab-ledger-bootstrap-001` = `2160f9e…`；`refs/heads/main` = `6ae78ab…`（**收口合并尚未发生**，与 L5 SE-002 `PLANNED`、收口.7 `PENDING` 三处一致）。沙箱内首次失败、放开后成功——与 K-11 登记的限制**完全吻合** |
+| **能否正确接续** | **能，无卡点** | 单元结论逐字：「**能。我就是这么做的，全程零外部提示……没有卡住的步骤。**」 |
+
+**本轮新报 3 处，均不阻断**：L1 曾有两个同号 `T-001.5`、定位表未收录 Contract v2（**两项已最小修复**，见 §T-001.6 与定位表）；`next_stage_allowed` 措辞可能被误读为前置门禁（登记为 **K-14**）。
+
+> 完整问答**不再抄入本记录**（收口 Delta §4.2）。稳定引用：本节即该次定向复验的结论落点；被测提交 `2160f9e`、被修复路径与十处对照位置如上表，任何人可在该提交上原样复核。
 
 ### 收口.7 采用与远端核验
 
-`PENDING` —— 由合并与 `git ls-remote` 核验后写入；对应副作用见 [L5 SE-002](L5_SIDE_EFFECTS.md)。
+| 项 | 值 |
+|---|---|
+| 采用路径 | 任务分支 `chore/collab-ledger-bootstrap-001` → `--no-ff` 真合并进 `main` → 推送 → `git ls-remote` 核验 |
+| 前置基线 | `6ae78abf5967535bda81392255b8ee3e79e4bcb5` |
+| 被采用内容 | 本收口证据提交（分支 tip，`git rev-parse chore/collab-ledger-bootstrap-001`） |
+| 禁用 | `force` / `amend` / `reset` / `squash` / 绕过保护 / 删除来源分支 / 带入无关提交 |
+| **确认依据** | **远端 `main` ref 与交付证据即为本次 closing push 的确认依据**——按 [L5 SE-002](L5_SIDE_EFFECTS.md) 的反自引用条款，**不为把合并 hash 写回同一提交而制造无穷追加提交**。核验命令：`git ls-remote origin refs/heads/main`，其 HEAD 应**等于**合并提交 hash |
+| C5／R6 判定 | **以上述远端核验结果为准**；核验通过即 C5／R6 通过 |
+
+**终态**（满足 C1–C6 与 R1–R6 后按 Contract v2 `terminal_rule`）：
+
+```text
+COLLAB_LEDGER_BOOTSTRAP_001 = DONE
+activation_status            = ACTIVE_ON_DEFAULT_BASELINE
+next_stage_allowed           = true:V1-REBASE-EP00-CURRENT
+```
+
+> **本终态的生效条件是远端 `main` 确实包含本账本**。核验未通过前，**不得**据本节声称已生效——这正是本账本反复被隔离单元抓住的那类假绿。
 
 ---
 

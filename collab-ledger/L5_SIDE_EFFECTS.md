@@ -60,9 +60,9 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 内容标识 | 合并提交 hash，见 [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | 幂等信息 | 快进保护：推送前重新 `fetch` 比对；**禁用** `--force` / `--amend` / `reset` / `squash`；不删除来源分支 |
 | 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
-| 原始响应 | `PENDING_AT_FREEZE` |
-| 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**合并提交 hash |
-| **状态** | `PLANNED` |
+| 原始响应 | 见 [L3 §收口.7](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**合并提交 hash —— **远端 ref 是原始权威，不是本账本** |
+| **状态** | `PLANNED` → **`STARTED`**（收口合并已发起）。**`CONFIRMED` 的唯一依据是上述远端核验通过**；按反自引用条款，最终 hash 不回写进同一提交 |
 
 > **关于自引用**：SE-002 是本任务的 closing push。按合同，**最终远端 ref 与交付证据即为其确认依据**——
 > **不得**为了把最终 commit hash 写回同一个 commit 而制造无穷追加提交。
