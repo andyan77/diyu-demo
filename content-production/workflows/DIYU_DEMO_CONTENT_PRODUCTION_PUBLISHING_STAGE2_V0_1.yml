@@ -8,7 +8,12 @@ app:
   mode: workflow
   name: DIYU Demo Content Production Publishing Stage 2 v0.1
   use_icon_as_answer_icon: false
-dependencies: []
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.13@76feba79a09357673e1ebe24f1ec98123062d3f3198abe08551804def1fcd020
+    version: null
 kind: app
 version: 0.7.0
 workflow:
@@ -98,17 +103,6 @@ workflow:
       zIndex: 0
     - data:
         isInIteration: false
-        sourceType: if-else
-        targetType: code
-      id: gate_pp-true-return_agg-target
-      source: gate_pp
-      sourceHandle: 'true'
-      target: return_agg
-      targetHandle: target
-      type: custom
-      zIndex: 0
-    - data:
-        isInIteration: false
         sourceType: code
         targetType: end
       id: return_agg-source-end_ok-target
@@ -159,6 +153,28 @@ workflow:
       source: gate_pp
       sourceHandle: 'false'
       target: end_pp_gate_failed
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: llm
+      id: gate_pp-true-semantic_check-target
+      source: gate_pp
+      sourceHandle: 'true'
+      target: semantic_check
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: code
+      id: semantic_check-source-return_agg-target
+      source: semantic_check
+      sourceHandle: source
+      target: return_agg
       targetHandle: target
       type: custom
       zIndex: 0
@@ -591,16 +607,25 @@ workflow:
           \      # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"\
           return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n  \
           \      return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"\
-          OK\"\n    return base\n\n\ndef main(tool_text: str) -> dict:\n    \"\"\"\
-          透传子流的用户交付块。父流不解释、不改写、不补写。\"\"\"\n    r = _core(tool_text)\n    try:\n  \
-          \      o = json.loads(tool_text or \"\")\n        if not isinstance(o, dict):\n\
-          \            o = {}\n    except Exception:\n        o = {}\n    r[\"user_delivery\"\
-          ] = str(o.get(\"user_delivery\") or \"\")\n    r[\"user_delivery_status\"\
-          ] = str(o.get(\"user_delivery_status\") or \"\")\n    # 子流四道确定性闸的判定，父流只透传，不解释、不改写、不代为放行\n\
-          \    r[\"user_delivery_fact_gate\"] = str(o.get(\"user_delivery_fact_gate\"\
-          ) or \"\")\n    r[\"user_delivery_gate_note\"] = str(o.get(\"user_delivery_gate_note\"\
-          ) or \"\")\n    r[\"used_fact_ids\"] = [str(x) for x in (o.get(\"used_fact_ids\"\
-          ) or [])]\n    return r\n"
+          OK\"\n    return base\n\n\ndef _payoff(art: str) -> str:\n    \"\"\"从 Artifact\
+          \ 里原样取出 realized_payoff 段。只切段，不解释、不改写、不补写。\"\"\"\n    out, on = [], False\n\
+          \    for ln in (art or \"\").split(\"\\n\"):\n        t = ln.strip()\n \
+          \       is_h2 = t.startswith(\"## \") and not t.startswith(\"### \")\n \
+          \       if is_h2:\n            if on:\n                break\n         \
+          \   if t[3:].strip().startswith(\"realized_payoff\"):\n                on\
+          \ = True\n            continue\n        if on:\n            out.append(ln)\n\
+          \    return \"\\n\".join(out).strip()\n\ndef main(tool_text: str) -> dict:\n\
+          \    \"\"\"透传子流的用户交付块。父流不解释、不改写、不补写。\"\"\"\n    r = _core(tool_text)\n \
+          \   try:\n        o = json.loads(tool_text or \"\")\n        if not isinstance(o,\
+          \ dict):\n            o = {}\n    except Exception:\n        o = {}\n  \
+          \  r[\"user_delivery\"] = str(o.get(\"user_delivery\") or \"\")\n    r[\"\
+          user_delivery_status\"] = str(o.get(\"user_delivery_status\") or \"\")\n\
+          \    # 子流四道确定性闸的判定，父流只透传，不解释、不改写、不代为放行\n    r[\"user_delivery_fact_gate\"\
+          ] = str(o.get(\"user_delivery_fact_gate\") or \"\")\n    r[\"user_delivery_gate_note\"\
+          ] = str(o.get(\"user_delivery_gate_note\") or \"\")\n    r[\"used_fact_ids\"\
+          ] = [str(x) for x in (o.get(\"used_fact_ids\") or [])]\n    # 供 PP 之后的只读语义核验使用：原样切段，父流不解释、不改写、不补写\n\
+          \    r[\"realized_payoff\"] = _payoff(r.get(\"artifact\") or \"\")\n   \
+          \ return r\n"
         code_language: python3
         desc: 确定性取字段并算 SHA-256
         outputs:
@@ -626,6 +651,9 @@ workflow:
             children: null
             type: string
           note:
+            children: null
+            type: string
+          realized_payoff:
             children: null
             type: string
           reference_projection:
@@ -707,39 +735,75 @@ workflow:
       width: 242
       zIndex: 0
     - data:
-        code: "def main(pd_rts: list, pd_rtp: list, pd_adv: list,\n         pp_rts:\
+        code: "def _sem(sem_raw: str):\n    \"\"\"解析语义事实核验节点的结论。只读、只解析，绝不改写交付块正文。\n\
+          \n    返回 (status, verdict, findings)：\n      status  OK / FAILED —— 核验节点这一环本身是否给出了可用结论\n\
+          \      verdict PASS / BLOCK / UNAVAILABLE\n      findings 逐条问题清单（BLOCK 时非空）\n\
+          \    \"\"\"\n    import json as _j\n    t = str(sem_raw or \"\")\n    if\
+          \ t.strip() == \"SEMANTIC_CHECK_NODE_FAILED\" or not t.strip():\n      \
+          \  return \"FAILED\", \"UNAVAILABLE\", [\n            \"语义事实核验节点未产出结论：本次不声称自动事实核验通过，改为人工事实复核后交付。\"\
+          ]\n    # 推理与正文分离：只取 </think> 之后的正文\n    if \"</think>\" in t:\n        t\
+          \ = t.split(\"</think>\")[-1]\n    t = t.replace(\"```json\", \" \").replace(\"\
+          ```\", \" \")\n    j = t.rfind(\"}\")\n    obj = None\n    if j != -1:\n\
+          \        for i in range(len(t[:j])):\n            if t[i] != \"{\":\n  \
+          \              continue\n            try:\n                o = _j.loads(t[i:j\
+          \ + 1])\n            except Exception:\n                continue\n     \
+          \       if isinstance(o, dict) and \"verdict\" in o:\n                obj\
+          \ = o\n                break\n    if obj is None:\n        return \"FAILED\"\
+          , \"UNAVAILABLE\", [\n            \"语义事实核验结论无法解析为约定的 JSON：不声称自动事实核验通过，改为人工事实复核后交付。\"\
+          ]\n    v = str(obj.get(\"verdict\") or \"\").strip().upper()\n    raw =\
+          \ obj.get(\"unsupported_claims\")\n    items = raw if isinstance(raw, list)\
+          \ else []\n    findings = []\n    for it in items[:20]:\n        if not\
+          \ isinstance(it, dict):\n            continue\n        c = str(it.get(\"\
+          claim\") or \"\").strip()\n        if not c:\n            continue\n   \
+          \     r = str(it.get(\"reason\") or \"\").strip()\n        ids = it.get(\"\
+          claimed_fact_ids\")\n        ids = \"、\".join([str(x) for x in ids]) if\
+          \ isinstance(ids, list) and ids else \"无\"\n        findings.append(\"原句：\"\
+          \ + c + \" ｜ 不成立的理由：\" + r + \" ｜ 声称引用：\" + ids)\n    if v == \"PASS\" and\
+          \ not findings:\n        return \"OK\", \"PASS\", []\n    if v == \"BLOCK\"\
+          \ and findings:\n        return \"OK\", \"BLOCK\", findings\n    # PASS\
+          \ 却列了条目、BLOCK 却一条没列、或 verdict 不合法 —— 自相矛盾，一律不当成通过\n    return \"FAILED\"\
+          , \"UNAVAILABLE\", [\n        \"语义事实核验结论自相矛盾或不合法（verdict=\" + v + \"，条目\
+          \ \" + str(len(findings))\n        + \" 条）：不声称自动事实核验通过，改为人工事实复核后交付。\"]\n\
+          \n\ndef main(pd_rts: list, pd_rtp: list, pd_adv: list,\n         pp_rts:\
           \ list, pp_rtp: list, pp_adv: list,\n         pp_mode: str, pp_model: str,\
           \ pp_hash: str, pp_len: str,\n         stage_models: list, stage_run_status:\
           \ list, upstream_handoff: list,\n         pp_fact_gate: str, pp_gate_note:\
-          \ str) -> dict:\n    def L(x):\n        return [str(i) for i in x] if isinstance(x,\
-          \ list) else ([str(x)] if str(x or \"\").strip() else [])\n\n    # 只有正式数组进\
-          \ return_to_*；普通备注一律进 advisory_notes，不升格\n    # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n\
-          \    rts = L(pd_rts) + [\"[publishing_packaging] \" + s for s in L(pp_rts)]\n\
-          \    rtp = L(pd_rtp) + [\"[publishing_packaging] \" + s for s in L(pp_rtp)]\n\
-          \    adv = L(pd_adv) + [\"[publishing_packaging] \" + s for s in L(pp_adv)]\n\
-          \n    formal = len(rts) + len(rtp)\n    n_adv = len(adv)\n    if formal\
-          \ > 0:\n        status = \"HUMAN_REVIEW_REQUIRED (\" + str(formal) + \"\
-          \ return\"\n        status += (\", \" + str(n_adv) + \" advisory)\") if\
-          \ n_adv else \")\"\n    else:\n        # 本段已不再是 PRE 专用：状态按 PP 自行推导出的 mode\
-          \ 取值。\n        # PRE 分支的字面值与改造前完全一致，已登记的 PRE 行为不受影响；\n        # MIXED /\
-          \ FINAL 是运行合同原本就没覆盖的两档。\n        m = str(pp_mode or \"\").strip().upper()\n\
-          \        prefix = m if m in (\"PRE\", \"MIXED\", \"FINAL\") else \"UNKNOWN_MODE\"\
-          \n        status = prefix + \"_PACKAGE_READY_FOR_REVIEW\"\n        if n_adv:\n\
-          \            status += \" (\" + str(n_adv) + \" advisory)\"\n    # 完整 Artifact\
-          \ 成功 ≠ 这份交付块可以交。四道确定性闸任一命中即阻断，\n    # 且**不删模型正文**：Artifact、交付块与全部证据原样保留在本输出里。\n\
+          \ str, sem_raw: str) -> dict:\n    def L(x):\n        return [str(i) for\
+          \ i in x] if isinstance(x, list) else ([str(x)] if str(x or \"\").strip()\
+          \ else [])\n\n    # 只有正式数组进 return_to_*；普通备注一律进 advisory_notes，不升格\n   \
+          \ # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n    rts = L(pd_rts) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_rts)]\n    rtp = L(pd_rtp) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_rtp)]\n    adv = L(pd_adv) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_adv)]\n\n    formal = len(rts) + len(rtp)\n    n_adv\
+          \ = len(adv)\n    if formal > 0:\n        status = \"HUMAN_REVIEW_REQUIRED\
+          \ (\" + str(formal) + \" return\"\n        status += (\", \" + str(n_adv)\
+          \ + \" advisory)\") if n_adv else \")\"\n    else:\n        # 本段已不再是 PRE\
+          \ 专用：状态按 PP 自行推导出的 mode 取值。\n        # PRE 分支的字面值与改造前完全一致，已登记的 PRE 行为不受影响；\n\
+          \        # MIXED / FINAL 是运行合同原本就没覆盖的两档。\n        m = str(pp_mode or \"\"\
+          ).strip().upper()\n        prefix = m if m in (\"PRE\", \"MIXED\", \"FINAL\"\
+          ) else \"UNKNOWN_MODE\"\n        status = prefix + \"_PACKAGE_READY_FOR_REVIEW\"\
+          \n        if n_adv:\n            status += \" (\" + str(n_adv) + \" advisory)\"\
+          \n    # 完整 Artifact 成功 ≠ 这份交付块可以交。四道确定性闸任一命中即阻断，\n    # 且**不删模型正文**：Artifact、交付块与全部证据原样保留在本输出里。\n\
           \    if str(pp_fact_gate or \"\").strip().upper() == \"BLOCKED\":\n    \
-          \    status = \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\n\n    models = L(stage_models)\
-          \ + [\"publishing_packaging=\" + str(pp_model)]\n    rstat = L(stage_run_status)\
-          \ + [\"publishing_packaging=SUCCEEDED\"]\n    return {\n        \"chain_status\"\
-          : status,\n        \"return_to_script\": rts,\n        \"return_to_production\"\
-          : rtp,\n        \"advisory_notes\": adv,\n        \"formal_return_count\"\
-          : formal,\n        \"advisory_count\": n_adv,\n        \"stage_models\"\
-          : models,\n        \"stage_run_status\": rstat,\n        \"upstream_handoff\"\
-          : L(upstream_handoff) +\n            [\"publishing_artifact_hash=\" + str(pp_hash)\
-          \ + \" len=\" + str(pp_len)],\n        \"final_present\": \"true\",\n  \
-          \      \"pp_mode\": str(pp_mode or \"\"),\n        \"user_delivery_fact_gate\"\
-          : str(pp_fact_gate or \"\"),\n        \"user_delivery_gate_note\": str(pp_gate_note\
-          \ or \"\"),\n    }\n"
+          \    status = \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\n\n    # ---- PP 之后的只读语义事实核验：只会更严，不会替谁放行\
+          \ ----\n    # 上面那道四闸的判定一个字没改；语义层只在它之后叠加，且永远不把 BLOCKED 翻回通过。\n    sem_status,\
+          \ sem_verdict, sem_findings = _sem(sem_raw)\n    if sem_verdict == \"BLOCK\"\
+          :\n        status = \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\n    elif sem_verdict\
+          \ == \"UNAVAILABLE\" and status != \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\
+          :\n        # 核验节点自己失败：不阻断内部产物，也绝不声称自动事实核验通过\n        status = \"USER_DELIVERY_MANUAL_FACT_REVIEW_REQUIRED\"\
+          \n\n    models = L(stage_models) + [\"publishing_packaging=\" + str(pp_model)]\n\
+          \    rstat = L(stage_run_status) + [\"publishing_packaging=SUCCEEDED\"]\n\
+          \    return {\n        \"chain_status\": status,\n        \"return_to_script\"\
+          : rts,\n        \"return_to_production\": rtp,\n        \"advisory_notes\"\
+          : adv,\n        \"formal_return_count\": formal,\n        \"advisory_count\"\
+          : n_adv,\n        \"stage_models\": models,\n        \"stage_run_status\"\
+          : rstat,\n        \"upstream_handoff\": L(upstream_handoff) +\n        \
+          \    [\"publishing_artifact_hash=\" + str(pp_hash) + \" len=\" + str(pp_len)],\n\
+          \        \"final_present\": \"true\",\n        \"pp_mode\": str(pp_mode\
+          \ or \"\"),\n        \"user_delivery_fact_gate\": str(pp_fact_gate or \"\
+          \"),\n        \"user_delivery_gate_note\": str(pp_gate_note or \"\"),\n\
+          \        \"semantic_verdict\": sem_verdict,\n        \"semantic_check_status\"\
+          : sem_status,\n        \"semantic_findings\": sem_findings,\n    }\n"
         code_language: python3
         desc: 只汇总正式回改数组；普通备注一律进 advisory_notes 不升格；chain_status 带计数。本轮不接受、不拒绝、不触发重跑。
         outputs:
@@ -767,6 +831,15 @@ workflow:
           return_to_script:
             children: null
             type: array[string]
+          semantic_check_status:
+            children: null
+            type: string
+          semantic_findings:
+            children: null
+            type: array[string]
+          semantic_verdict:
+            children: null
+            type: string
           stage_models:
             children: null
             type: array[string]
@@ -846,13 +919,17 @@ workflow:
           - pp_extract
           - user_delivery_gate_note
           variable: pp_gate_note
+        - value_selector:
+          - semantic_check
+          - text
+          variable: sem_raw
       height: 100
       id: return_agg
       position:
-        x: 1840
+        x: 2160
         y: 300
       positionAbsolute:
-        x: 1840
+        x: 2160
         y: 300
       selected: false
       sourcePosition: right
@@ -951,16 +1028,28 @@ workflow:
           - pp_extract
           - used_fact_ids
           variable: used_fact_ids
+        - value_selector:
+          - return_agg
+          - semantic_verdict
+          variable: semantic_verdict
+        - value_selector:
+          - return_agg
+          - semantic_check_status
+          variable: semantic_check_status
+        - value_selector:
+          - return_agg
+          - semantic_findings
+          variable: semantic_findings
         selected: false
         title: 生产包结束
         type: end
       height: 100
       id: end_ok
       position:
-        x: 2140
+        x: 2460
         y: 300
       positionAbsolute:
-        x: 2140
+        x: 2460
         y: 300
       selected: false
       sourcePosition: right
@@ -1118,6 +1207,179 @@ workflow:
       targetPosition: left
       type: custom
       width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        default_value:
+        - key: text
+          type: string
+          value: SEMANTIC_CHECK_NODE_FAILED
+        desc: PP 之后的只读事实核验：只判断用户交付块里被当成已发生的事有没有被 fact_refs 支持。不改写内容、不评分、不重跑 PP。
+        error_strategy: default-value
+        memory: null
+        model:
+          completion_params:
+            enable_search: false
+            top_p: 0.8
+          mode: chat
+          name: qwen3.8-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: sem-sys
+          role: system
+          text: '你是事实核验员。你唯一的工作是：判断一份「用户交付块」里，凡是被当作**已经发生过的事**来说的内容，有没有被给定的材料支持。
+
+
+            你不评分。你不评价创意好坏。你不改写内容。你不提优化方案。你不改标题、封面或发布文案。你不要求重跑。你只做判断。
+
+
+            ## 你手上只有这些材料
+
+
+            1. **fact_refs** —— 唯一的事实基座。凡是关于人、人说过的话、人做过的动作、商品、场景、时间、次数、结果的事实，只以这里为准。
+
+            2. **realized_payoff** —— 这条内容实际兑现了什么、哪一段素材够不够的记录。只用来判断「关于本条内容自己的素材」的陈述（例如「某段画面不足」「某个镜头拍到了」），不能用它引入
+            fact_refs 里没有的人物事实。
+
+            3. **cta_contract** —— 承接约定。
+
+            4. **user_delivery_block** —— 被核验的对象。
+
+
+            材料以外的知识一律不算数。你不知道的就是没有发生。不要联网，不要用常识补足，不要替它想一个合理的来源。
+
+
+            ## 哪些句子要判
+
+
+            被当作**已经发生过**来说的：
+
+
+            - 人物动作；
+
+            - 人物原话；
+
+            - 内部讨论、争论、现场决定或试验（指真实发生在人身上的事）；
+
+            - 次数、数量、时间、结果；
+
+            - 否定句里暗含的事实前提；
+
+            - 评论区里的经历性表达；
+
+            - CTA、奖励或后续承诺。
+
+
+            ## 哪些句子不判
+
+
+            下面这些不按已经发生的事实处理：
+
+
+            - 纯创意指令（封面怎么排、字幕怎么断、音乐铺到哪里）；
+
+            - 拍摄和剪辑动作建议（用哪一帧、拍哪个特写、加什么文字卡、保留哪段原声、口播什么时候进出）；
+
+            - 未来才要执行、要确认、要实测、要拍板的要求；
+
+            - 面向观众的提问、条件句、假设句；
+
+            - 关于本条内容自己的编排说明（这一期讲了什么、没讲什么、把什么划到哪一类、为什么不回答某个问题）。
+
+
+            **一句话判别法**：这句话如果是假的，是不是等于「有人编了一件没发生过的事」？是 → 判；不是 → 跳过。
+
+
+            ## 判定尺度
+
+
+            - **同义改写、口语化、概括、合并，不算无依据。** 事实清单写「接送场景」，交付块写「接孩子那一段」，成立。
+
+            - **多出了事实清单里没有的具体信息，才算无依据。** 具体指：多出来的人、多出来的话、多出来的动作、多出来的次数／数量／时间／结果。
+
+            - **否定句不豁免。** 例如「这不是他第三次改口了」，虽然是在否认，仍然预设了「他之前改过口」；事实清单里没有这件事，这句就不成立。
+
+            - **挂了编号不等于成立。** 一句话旁边写着某个 fact_id，你必须回去看那条 fact_id 的正文，确认它真的说了这件事。fact_id
+            里写着「不得扩大」「不得据此认定」的条款要当真：被明文排除的结论，就是没有支持。
+
+            - **拿不准时的唯一标准**：你能在 fact_refs 里指出**哪一条、哪一句**支持它，才算支持；指不出来，就是不支持。
+
+
+            ## CTA 检查
+
+
+            cta_contract 是「无 CTA / NO_CTA」时，交付块里不得出现抽奖、送东西、私信领取、评论区领、关注看答案、下条揭晓、预约、到店、下单、加微信这类动作或奖励承诺。**明文写「不做某某」的禁令句不算违规**，那是在约束自己。
+
+
+            ## 输出
+
+
+            只输出一个 JSON 对象。前后不要加任何别的字，不要加代码块标记，不要写解释：
+
+
+            {"verdict":"PASS 或 BLOCK","unsupported_claims":[{"claim":"用户交付块里的逐字原句","reason":"现有材料为什么不支持","claimed_fact_ids":["这句话声称引用的完整
+            fact_id；没有就是空数组"]}]}
+
+
+            规则：
+
+
+            - verdict = PASS 时，unsupported_claims 必须是空数组。
+
+            - verdict = BLOCK 时，unsupported_claims 至少一条。
+
+            - claim 必须从交付块里一字不改抄下来，抄完整一句，不要抄半句，不要自己拼接改写。
+
+            - reason 里要写清楚三件事：事实清单里最接近的是哪一条、它到底说了什么、这句话多出来的是哪一块。
+
+            - 找不到任何一句不成立的，就输出 PASS 和空数组。不要为了显得认真而凑条目。
+
+            '
+        - id: sem-user
+          role: user
+          text: '=== cta_contract ===
+
+            {{#1788000000001.cta_contract#}}
+
+
+            === fact_refs（唯一事实基座）===
+
+            {{#1788000000001.fact_refs#}}
+
+
+            === realized_payoff（本条内容实际兑现记录）===
+
+            {{#pp_extract.realized_payoff#}}
+
+
+            === user_delivery_block（被核验对象）===
+
+            {{#pp_extract.user_delivery#}}
+
+
+            按上面的规则逐句核验 user_delivery_block，只输出那个 JSON 对象。
+
+            '
+        selected: false
+        title: Semantic Fact Check
+        type: llm
+        vision:
+          enabled: false
+      height: 98
+      id: semantic_check
+      position:
+        x: 1860
+        y: 300
+      positionAbsolute:
+        x: 1860
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
       zIndex: 0
     viewport:
       x: 0
