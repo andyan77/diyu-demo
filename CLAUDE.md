@@ -98,3 +98,9 @@ Creative Script｜Production Director｜Publishing & Packaging
 - **不得由执行侧宣布合同「已接受」，也不得自行把合同状态往上推一级。**
 - **冻结资产零改动**：evidence／skills／workflows／fixtures／references／运行合同／C1—C6／专家材料。需承接变化的冻结合同**另建后继版本或加更正说明**，不覆盖原文。
 - 输出必须列明修改文件、删除或重命名文件、未决事项和一致性检查结果。
+
+## 7. 协作连续性账本（换会话必读）
+
+**开工前先读 [collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md](collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md)。** 它是本仓库协作连续性规则的**唯一正文**——五本账在哪、什么时候写、谁写、三类状态怎么分。**本文件只指路，不复制其规则正文。**
+
+最短路径：canonical → [L2 状态与下一动作](collab-ledger/L2_TASK_STATE_AND_HANDOFF.md) → [L1 合同与边界](collab-ledger/L1_TASK_MANIFESTS.md) → [L4 已排除路线](collab-ledger/L4_FAILED_PATHS.md)。

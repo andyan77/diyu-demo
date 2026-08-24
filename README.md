@@ -16,6 +16,7 @@
 
 ## 从哪里开始
 
+- **[协作连续性账本 · 规则正文](collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md)** —— **换一个新会话来接手，先读这份**：任务做到哪、下一步做什么、什么不能碰、哪条路已走死
 - **[PROJECT_INDEX.md](PROJECT_INDEX.md)** —— 资产索引与文档管理规则
 - **[V1 决策链改造产品合同](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md)** —— 当前产品方向、组件职责、验收与非目标（**最高真相源**）
 - **[单账号持续运营纵向切片子合同](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md)** —— 第一纵向切片，待接受

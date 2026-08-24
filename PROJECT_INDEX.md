@@ -33,6 +33,7 @@
 > 「6—8 张创意操作卡 ＋ 8—10 张视听实现卡 ＋ 4 个黄金案例 ＋ 动态平台参考包」只表示 v0.6 正向能力补强研究的**原始交付目标**，不是当前的独立文件清单。
 > **不得再把 Skill 与 references 称为两套并列资产。**
 | [tools/](tools/) | 通用辅助脚本 |
+| [collab-ledger/](collab-ledger/) | **协作连续性账本**：规则正文 ＋ 五本账（L1–L5）。**不是业务模块**，不适用「五类资产」分类 |
 
 每个模块下最多五类：
 
@@ -50,6 +51,7 @@
 |---|---|
 | 项目定位、阶段与 Founder 已裁决事项 | [笛语项目基线.md](笛语项目基线.md) |
 | 协作规则与硬约束 | [CLAUDE.md](CLAUDE.md) |
+| **换会话接手：任务做到哪／下一步／什么不能碰／哪条路走死** | [collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md](collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md) —— **规则唯一正文**；五本账 [L1](collab-ledger/L1_TASK_MANIFESTS.md)·[L2](collab-ledger/L2_TASK_STATE_AND_HANDOFF.md)·[L3](collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md)·[L4](collab-ledger/L4_FAILED_PATHS.md)·[L5](collab-ledger/L5_SIDE_EFFECTS.md) |
 | **决策链改造产品合同（上位，最高真相源）** | [V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) —— `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED`，**只授权 `V1-REBASE-EP00-CURRENT` 只读预检** |
 | **单账号持续运营纵向切片子合同（待接受）** | [V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) —— `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** |
 | **决策链当前阶段基线** | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md) |
@@ -94,6 +96,7 @@
 9. 修正历史证据**只能新增更正说明，不得修改原文件**。冻结合同同理——**另建后继版本或加更正说明，不覆盖原文**。
 9.1 **不得由执行侧宣布合同「已接受」**，也不得自行把合同状态往上推一级。
 10. 如果现有分类已经能够快速找到文件，**不再继续细分目录**。
+11. `collab-ledger/` 是**治理区，不是业务模块**：只放协作连续性规则与五本账，**不放**任何产品资产；其写入时机与责任主体由 [规则正文](collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md) 规定，本文件不复述。
 
 **不建立**复杂的文档状态机、登记表、审批流或多层索引。历史依靠 Git 追溯，不建 archive 体系。
 
