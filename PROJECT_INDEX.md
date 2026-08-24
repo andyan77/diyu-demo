@@ -37,6 +37,7 @@
 | 项目定位、阶段与 Founder 已裁决事项 | [笛语项目基线.md](笛语项目基线.md) |
 | 协作规则与硬约束 | [CLAUDE.md](CLAUDE.md) |
 | **决策链 V1 当前状态（含已知问题与能力边界）** | [decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md) |
+| **决策链改造产品合同（上位方向，授权范围＝仓库预检，非施工）** | [decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) —— **`PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED`**：只授权核验现有目标路由、创意锦标赛（CS-1）、六个 Skill 价值耦合、Dify 流程与远端运行版本，**核验完成前不得开始改造施工** |
 | **内容生产链入口（当前主线）** | [content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md](content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md) |
 | 三份决策 Skill 正文 | [decision-chain/skills/](decision-chain/skills/) |
 | **内容生产三份 Skill（活跃主线）** | Creative Script → [content-production/skills/writing-creative-scripts/](content-production/skills/writing-creative-scripts/)<br>Production Director → [content-production/skills/directing-content-production/](content-production/skills/directing-content-production/)<br>Publishing & Packaging → [content-production/skills/packaging-content-for-release/](content-production/skills/packaging-content-for-release/) |
