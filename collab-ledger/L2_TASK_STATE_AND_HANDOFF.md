@@ -15,14 +15,16 @@
 
 | task_id | 终态？ | 状态引用 | 起算基线 |
 |---|---|---|---|
-| `COLLAB-LEDGER-BOOTSTRAP-001` | **非终态 —— 执行中**（见 §一.1） | [L1 §T-001](L1_TASK_MANIFESTS.md) · [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前**：收口）；ATT-001～005 **全部**为已判不通过的历史轮次，**不要**当成当前轮次 | `6ae78ab` |
+| `COLLAB-LEDGER-BOOTSTRAP-001` | **已终结 `DONE`**（见 §一.1） | [L1 §T-001](L1_TASK_MANIFESTS.md) · [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前**：收口）；ATT-001～005 **全部**为已判不通过的历史轮次，**不要**当成当前轮次 | `6ae78ab` |
 | `V1-REBASE-EP00-CURRENT` | **非终态 —— 从未启动** | 无 Checkpoint（**没开始过 ≠ 被中断**） | `6ae78ab` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
 | 项 | 值 |
 |---|---|
-| 状态 | **收口中** —— 功能内容已冻结；C1–C4、C6、R1–R5 已判**通过**（[L3 §收口.5](L3_ATTEMPTS_AND_EVIDENCE.md)），定向复验已通过（§收口.6）。**只差 C5／R6 远端采用核验** |
+| 状态 | **`DONE`** —— C1–C6 与 R1–R6 全部通过；远端核验已完成（[L3 §收口.7](L3_ATTEMPTS_AND_EVIDENCE.md)） |
+| activation_status | **`ACTIVE_ON_DEFAULT_BASELINE`** —— 账本已在远程默认基线 `main` 上 |
+| next_stage_allowed | **`true:V1-REBASE-EP00-CURRENT`** |
 | 终结依据 | [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前**：收口记录，含 C1–C6／R1–R6、13 条已知问题登记、完整历史引用）。ATT-001～005 **全部**为已判不通过的历史轮次 |
 | 最终交付引用 | [L3 §收口.7](L3_ATTEMPTS_AND_EVIDENCE.md)。**终态 `DONE` 的生效条件是远端 `main` 确实包含本账本**——核验通过前不得据此声称已生效 |
 | Checkpoint | **无。** 本任务在**执行中**、**未被中断**，不满足写 Checkpoint 的条件（Checkpoint 只给「开工后被外部强制中断」的任务） |
