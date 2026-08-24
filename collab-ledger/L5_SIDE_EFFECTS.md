@@ -62,7 +62,10 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
 | 原始响应 | 见 [L3 §收口.7](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**合并提交 hash —— **远端 ref 是原始权威，不是本账本** |
-| **状态** | `PLANNED` → **`STARTED`**（收口合并已发起）。**`CONFIRMED` 的唯一依据是上述远端核验通过**；按反自引用条款，最终 hash 不回写进同一提交 |
+| **状态** | `PLANNED` → `STARTED` → **`CONFIRMED`** |
+| 实际发生 | 2026-08-24 `--no-ff` 真合并：`6ae78ab` + `5a02310` → 合并提交 **`16ecb2a81bd5bf0f168f4f5ad28fdf3f46b2ce7d`**，推送 `6ae78ab..16ecb2a  main -> main` |
+| **远端核验（原始权威）** | `git ls-remote origin refs/heads/main` → `16ecb2a81bd5bf0f168f4f5ad28fdf3f46b2ce7d` == 合并提交 ✅。`git ls-tree origin/main collab-ledger/` 返回 6 个文件 ✅。`CLAUDE.md` §7 指针在远端 main 上可达 ✅ |
+| 反自引用说明 | 本行写的是**已发生的**合并 hash，不是本提交自身的 hash，**到此终止**。此后再有一次采用即以**当时的远端 ref** 为准，不再回写 |
 
 > **关于自引用**：SE-002 是本任务的 closing push。按合同，**最终远端 ref 与交付证据即为其确认依据**——
 > **不得**为了把最终 commit hash 写回同一个 commit 而制造无穷追加提交。

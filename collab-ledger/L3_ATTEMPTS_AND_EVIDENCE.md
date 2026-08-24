@@ -1114,14 +1114,14 @@ A2 第 5 轮共报 5 条。按收口 Delta §4.1 逐条判定：
 | **C2** 历史证据完整 | **通过** | 逐字块经门禁跨提交比对**逐字节一致**；缺陷册、FP、Attempt、副作用历史行**零删改**；见收口.4 |
 | **C3** 独立接续仍成立 | **通过（带 K-06／K-12 登记）** | 复用 A2 第 5 轮真实隔离验证（测 `7959292`，2 个单元均独立答出五问＋基线、N1–N6 全对）；本轮解除了真实阻断（L2 指针），故对**受影响路径**做一次**定向复验**，见收口.6 |
 | **C4** 已知问题显式登记 | **通过** | 收口.3 共 13 条 K 项，逐条含表现／证据位置／不阻断理由／后续 |
-| **C5** 默认基线采用完成 | 见收口.7 | —— |
+| **C5** 默认基线采用完成 | **通过** | 收口.7：远端 `main` = 合并提交 `16ecb2a`，账本 6 文件在册，入口可达 |
 | **C6** 收口记录最小充分 | **通过** | 本节只写通过项、已知问题、引用、采用状态与终局；**未重复抄录完整原始证据**（原始问答仍在 §ATT-00N，稳定引用） |
 | **R1** 过期引用清除 | **通过** | 收口.2 上半表 |
 | **R2** 漂移计数清除 | **通过** | 收口.2 下半表 |
 | **R3** 当前接续能力保留 | **通过** | 定向复验，见收口.6 |
 | **R4** 历史完整性不受损 | **通过** | 同 C2；`git diff` 对 `decision-chain`／`content-production`／`tools`／`笛语项目基线.md` 为**空** |
 | **R5** 无过度工程 | **通过** | 新增文件仍只有 `collab-ledger/` 下 6 个 Markdown，**零脚本／CI／Schema／数据库／索引器／状态机** |
-| **R6** 默认基线收口 | 见收口.7 | —— |
+| **R6** 默认基线收口 | **通过** | 同 C5；本地与远端最终 Hash 一致可核验 |
 
 ### 收口.6 定向复验（只验被阻断修复影响的路径）
 
@@ -1152,7 +1152,11 @@ A2 第 5 轮共报 5 条。按收口 Delta §4.1 逐条判定：
 | 被采用内容 | 本收口证据提交（分支 tip，`git rev-parse chore/collab-ledger-bootstrap-001`） |
 | 禁用 | `force` / `amend` / `reset` / `squash` / 绕过保护 / 删除来源分支 / 带入无关提交 |
 | **确认依据** | **远端 `main` ref 与交付证据即为本次 closing push 的确认依据**——按 [L5 SE-002](L5_SIDE_EFFECTS.md) 的反自引用条款，**不为把合并 hash 写回同一提交而制造无穷追加提交**。核验命令：`git ls-remote origin refs/heads/main`，其 HEAD 应**等于**合并提交 hash |
-| C5／R6 判定 | **以上述远端核验结果为准**；核验通过即 C5／R6 通过 |
+| C5／R6 判定 | **通过** |
+| **实际采用** | `--no-ff` 真合并：父提交 `6ae78abf5967535bda81392255b8ee3e79e4bcb5` ＋ `5a02310a9173cba5127a837a0992e51acf0a5d1b` → 合并提交 **`16ecb2a81bd5bf0f168f4f5ad28fdf3f46b2ce7d`**；推送 `6ae78ab..16ecb2a  main -> main` |
+| **远端核验实测** | `git ls-remote origin refs/heads/main` → `16ecb2a81bd5bf0f168f4f5ad28fdf3f46b2ce7d`，**等于**合并提交 ✅<br>`git ls-tree --name-only origin/main collab-ledger/` → 6 个文件全在 ✅<br>`git show <merge>:CLAUDE.md` 含 canonical 指针 ✅<br>受保护路径 `git diff --name-status 6ae78ab <merge> -- decision-chain content-production tools 笛语项目基线.md` → **空** ✅；`--diff-filter=DR -M -C` → **空** ✅ |
+| 采用方式合规 | `--no-ff` 真合并（两父提交可查）；**未用** force／amend／reset／squash；**未删除**来源分支 `chore/collab-ledger-bootstrap-001`；未带入无关改动（改动面仅 `collab-ledger/` 6 个新增 ＋ 三处指针） |
+| URL | https://github.com/andyan77/diyu-demo/commit/16ecb2a81bd5bf0f168f4f5ad28fdf3f46b2ce7d |
 
 **终态**（满足 C1–C6 与 R1–R6 后按 Contract v2 `terminal_rule`）：
 
@@ -1162,7 +1166,9 @@ activation_status            = ACTIVE_ON_DEFAULT_BASELINE
 next_stage_allowed           = true:V1-REBASE-EP00-CURRENT
 ```
 
-> **本终态的生效条件是远端 `main` 确实包含本账本**。核验未通过前，**不得**据本节声称已生效——这正是本账本反复被隔离单元抓住的那类假绿。
+> **生效条件已核验满足**：上表「远端核验实测」四项全过，远端 `main` 确实包含本账本。**本终态据此落定，不是自述。**
+>
+> 本节写入的是**已发生的**合并 hash（`16ecb2a`），不是本提交自身的 hash，**自引用到此终止**；这一次终态落定之后的采用，以**当时的远端 ref** 为准，不再回写。
 
 ---
 
