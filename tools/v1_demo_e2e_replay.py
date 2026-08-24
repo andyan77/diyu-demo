@@ -25,8 +25,8 @@ import time
 import urllib.error
 import urllib.request
 
-REPO = os.path.dirname(os.path.abspath(__file__))
-CASES_FILE = os.path.join(REPO, "V1_E2E_CASES_v0.1.json")
+from _repo_paths import ROOT as REPO, rpath  # 目录重组后按文件名解析
+CASES_FILE = rpath("V1_E2E_CASES_v0.1.json")
 
 BASE = os.environ.get("DIFY_BASE", "http://localhost/v1")
 PG = os.environ.get("DIFY_PG_CONTAINER", "docker-db_postgres-1")

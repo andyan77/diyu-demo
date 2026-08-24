@@ -7,8 +7,8 @@
 import argparse, json, os
 from collections import Counter, defaultdict
 
-REPO = os.path.dirname(os.path.abspath(__file__))
-CASES = json.load(open(os.path.join(REPO, "V1_E2E_CASES_v0.1.json"), encoding="utf-8"))
+from _repo_paths import ROOT as REPO, rpath  # 目录重组后按文件名解析
+CASES = json.load(open(rpath("V1_E2E_CASES_v0.1.json"), encoding="utf-8"))
 TITLE = {}
 for s in CASES["scenario_replays"]:
     TITLE[s["scenario_id"]] = s["title"]

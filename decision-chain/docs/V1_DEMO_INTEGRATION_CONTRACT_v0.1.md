@@ -1,5 +1,27 @@
 # 笛语三 Skill 自然语言决策系统 V1 Demo 集成合同 v0.1
 
+---
+
+> ## ⚠️ 更正附录（2026-08-24）：本文件是旧 Demo 兼容基线，不是 Rebase 目标架构
+>
+> **本文原文冻结，一字未改。** 以下只登记它**尚未承接**的、已经部署并有运行证据的行为变化。
+>
+> **本文件的定位：** 当前旧 Demo 的**兼容基线**——描述修复前三 Skill 的运行合同。
+> **它不是** Rebase 目标架构；目标架构见 [`V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md`](V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md)。
+>
+> **本文件未承接的四项已部署变化**（证据：[`../evidence/V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md`](../evidence/V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md)，状态 `DONE`）：
+>
+> | # | 变化 | 落点 |
+> |---|---|---|
+> | 1 | **同轮多诉求**：一轮可以同时含"接受当前产物"与"另一个未处理诉求"，后者进 `open_threads` 跨轮存活 | `v1_shadow` 新增 `side_question` 字段；`v1_state` 新增 `open_threads` |
+> | 2 | **撤销最近一次接受**：产物可从 `USER_ACCEPTED` 退回 `VALIDATED`，下游沿用既有 STALE 语义 | `v1_shadow` 的 `acceptance_signal` 新增 `REVOKE_LAST_ACCEPTANCE`；`v1_state` 新增 `last_acceptance` |
+> | 3 | **新的确认授权路径**：用户明确确认＋授权但未单独陈述经营目标时，可同轮落定并授权，不再要求指定句式 | `v1_state` |
+> | 4 | **不编造失败原因**：回复分支不得无条件宣称"已经记下"，也不得自行编造技术原因 | `v1_state` 指令组装 ＋ `v1_chat_llm` 系统提示词 |
+>
+> **本更正附录不修改本文任何条款，也不构成新授权。** 修复后的正式运行合同**须等预检结论**再定形态。
+
+---
+
 > **文档角色：V1 Demo 集成层的唯一合同。**
 > 本文件规定对话编排层、状态控制层、Skill 调用层与 Demo 级结果追溯的行为边界。
 > 本文件**不是第四份业务 Skill**，不修改三份专业 Skill 的任何专业判断，也不新增业务规则。
@@ -268,7 +290,7 @@ Judge 结论缺失、超出枚举或判为漂移/越界时，一律 **Fail Close
 | Campaign | `一页纸夹具品牌事实 v0.1.md`、`序里集_Campaign当前素材与资源夹具_v0.1.md`、`序里集_Campaign最小承接条件夹具_v0.1.md`、`C1`—`C6_FOUNDER_CONFIRMED_v0.1.md` |
 | Content Brief | `一页纸夹具品牌事实 v0.1.md`、`序里集_Campaign当前素材与资源夹具_v0.1.md`、`序里集_Campaign最小承接条件夹具_v0.1.md` |
 
-每份文件的 SHA、拼接顺序与 bundle 总 SHA 记录在 [`V1_DIFY_RUN_MANIFEST_v0.1.md`](V1_DIFY_RUN_MANIFEST_v0.1.md)。每次运行实际使用的 bundle SHA 由 Tool 回传，并被确定性合同检查逐字比对。
+每份文件的 SHA、拼接顺序与 bundle 总 SHA 记录在 [`V1_DIFY_RUN_MANIFEST_v0.1.md`](../evidence/V1_DIFY_RUN_MANIFEST_v0.1.md)。每次运行实际使用的 bundle SHA 由 Tool 回传，并被确定性合同检查逐字比对。
 
 **为什么 Campaign 与 Content Brief 的 bundle 里没有 `序里集_四张账号责任卡_CONFIRMED_v0.1.md`**：在 V1 链路中，这一位置由**本轮会话中已被用户接受的 Matrix 产物**占据。这样 Matrix→Campaign 的衔接才是真实的机器对机器传递，而不是两份并存的真源。适配层只做了这一处引用替换，`版本优先级` 段落的其余文字与已验证运行逐字相同。
 

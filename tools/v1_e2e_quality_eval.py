@@ -10,8 +10,8 @@
 import argparse, json, os, re
 from collections import Counter, defaultdict
 
-REPO = os.path.dirname(os.path.abspath(__file__))
-CASES = json.load(open(os.path.join(REPO, "V1_E2E_CASES_v0.1.json"), encoding="utf-8"))
+from _repo_paths import ROOT as REPO, rpath  # 目录重组后按文件名解析
+CASES = json.load(open(rpath("V1_E2E_CASES_v0.1.json"), encoding="utf-8"))
 
 OBSERVED_KEYS = {
  "must_state_new_session_no_context", "answer_must_restate_referent",
