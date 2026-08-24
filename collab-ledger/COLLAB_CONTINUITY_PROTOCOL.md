@@ -28,8 +28,8 @@
 
 **四步没走完就动手 = 违规。**
 
-**已实证可达**：仓库根目录三处指针 [CLAUDE.md](../CLAUDE.md) §7 ／ [README.md](../README.md) ／ [PROJECT_INDEX.md](../PROJECT_INDEX.md) —— 三轮隔离执行单元均据此找到本文件。
-**未实证**：任何代理是否会**自动加载**上述文件、以及其他代理的默认入口——**故不作支持声明**，使用者须**显式**指到本文件。
+**本文件不声称任何代理会自动加载它**——Claude Code 子代理实测**不会**。使用者须**显式**把执行侧指到本文件；根目录 [CLAUDE.md](../CLAUDE.md) §7 ／ [README.md](../README.md) ／ [PROJECT_INDEX.md](../PROJECT_INDEX.md) 三处各有一个指针。
+入口可达性的**实证记录**（哪个单元、在哪个提交、走的哪条路径）在 [L3](L3_ATTEMPTS_AND_EVIDENCE.md)，**不在本文件**——canonical 只放低频规则，不放验收结论。
 
 ## 三、什么时候写、写哪本、谁写
 
