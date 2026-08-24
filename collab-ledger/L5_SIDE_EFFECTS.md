@@ -40,7 +40,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
 | 受控状态 | 可逆——分支可删；**未触碰默认分支** |
 | 原始响应 | 2026-08-24 推送成功：`* [new branch]  chore/collab-ledger-bootstrap-001 -> chore/collab-ledger-bootstrap-001` |
-| 核验依据 | `git ls-remote origin refs/heads/chore/collab-ledger-bootstrap-001` → `0d6a4d23a875eea1d005157455ef86c0e9bef135`（**远端 ref 实测**，非本账本自述） |
+| 核验依据 | `git ls-remote origin refs/heads/chore/collab-ledger-bootstrap-001` —— **以实时返回为准**。本栏**不再登记具体 hash**（登记必滞后；历史推送记录见下方状态追加行） |
 | **状态** | `PLANNED` → **`CONFIRMED`**（attempt-1 的功能冻结提交已在远程分支上） |
 | **状态追加 1**（2026-08-24） | attempt-2 冻结提交推同一分支：`0d6a4d2..8873881`，远端 ref → `8873881964569310252326976eab4a563757c084`。状态仍 `CONFIRMED` |
 | **状态追加 2**（2026-08-24） | attempt-2 最终冻结推同一分支：`8873881..8ada866`，远端 ref → `8ada8663db357d91c1c4038ef944d9a3c6a1c930`。状态仍 `CONFIRMED` |
@@ -57,7 +57,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 类型 | Git merge（`--no-ff`，真合并）＋ push |
 | 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/main` |
 | 前置基线 | `6ae78abf5967535bda81392255b8ee3e79e4bcb5` |
-| 内容标识 | 合并提交 hash，见 [L3 §ATT-001.5](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 内容标识 | 合并提交 hash，见 [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | 幂等信息 | 快进保护：推送前重新 `fetch` 比对；**禁用** `--force` / `--amend` / `reset` / `squash`；不删除来源分支 |
 | 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
 | 原始响应 | `PENDING_AT_FREEZE` |

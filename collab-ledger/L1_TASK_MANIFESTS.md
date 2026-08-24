@@ -230,7 +230,7 @@ continuity_refs:
 | 项 | 值 | 怎么重算 |
 |---|---|---|
 | `task_contract_hash` | `d5ee949a9dd61af3a40fbf67bb0f185c04ae05d6f8f6008f2c2e9bfcdc22f380` | 取 §T-001.1 那个 ```yaml 代码块的**块内字节**（两行 ``` 围栏本身不算），做 SHA-256 |
-| `manifest_hash` | `PENDING_SEE_L3` | 同法取 §T-001.2 的 ```yaml 块内字节。登记值见 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) §ATT-001 哈希表——**放在 L3 而不是本块内，是为了避免自引用成环** |
+| `manifest_hash`（v1） | `35a67aa54052ca34e2de726e4d993b4b79e8287d06f42e6f02668bcd0c5fa870` | 取 §T-001.2 那个 ```yaml 代码块的**块内字节**做 SHA-256。**该值不写进块内本身**，以免自引用成环 |
 
 ### T-001.4 本任务的公开缺口
 
@@ -255,3 +255,84 @@ Founder 于 2026-08-24 在本任务执行中追加澄清。**它不建立新任�
 | 5 | 项目级 Current Handoff 只维护活动 `task_id`、依赖关系与定位引用，不设全局「唯一下一步」 | [L2 §二](L2_TASK_STATE_AND_HANDOFF.md) 增 `依赖` / `定位引用` 两列并改写口径 | 已调整 |
 | 6 | `新增文件数 ≤6` 只约束本次 bootstrap 交付，不是未来任务记录的永久总量上限 | [canonical §六](COLLAB_CONTINUITY_PROTOCOL.md) | 已调整 |
 | 7 | 已满足的不制造额外改动；未满足的在合并前做最小调整，保留已有 Attempt 与证据 | 本表即调整清单；`ATT-001` 与 §二 历史目录**未动** | 遵守 |
+
+---
+
+### T-001.5 Task Contract v2（收口 Delta，`REBASE_TASK`）
+
+> **v1（§T-001.1／§T-001.2）逐字节原样保留，两个哈希继续有效。** 本节只写两份收口 Delta **明确修改**的验收口径，其余条款**继承 v1**。
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash_v2` 的哈希对象。
+
+```yaml
+contract_version: 2
+task_id: COLLAB-LEDGER-BOOTSTRAP-001
+task_entry_mode: REBASE_TASK
+prompt_kind: CLOSEOUT_DELTA
+risk_level: LOW
+inherits_from:
+  contract_v1: "collab-ledger/L1_TASK_MANIFESTS.md §T-001.1"
+  contract_v1_hash: d5ee949a9dd61af3a40fbf67bb0f185c04ae05d6f8f6008f2c2e9bfcdc22f380
+  manifest_v1: "collab-ledger/L1_TASK_MANIFESTS.md §T-001.2"
+  manifest_v1_hash: 35a67aa54052ca34e2de726e4d993b4b79e8287d06f42e6f02668bcd0c5fa870
+  unchanged: [P0, 授权范围, 非目标, 受保护资产, 账本语义, 安全边界]
+predecessor_prompts:
+  - "Execution Prompt — 协作连续性账本立规（修订版）"
+  - "Execution Prompt Delta — 协作连续性账本立规收口补充指令"
+  - "Execution Prompt Delta — 账本正文过期引用与静态计数清理"
+authority_refs:
+  - "Founder 2026-08-24 裁决：功能内容冻结，停止追求无边际收益的反复返工，按收口口径完成。"
+  - "Founder 2026-08-24 裁决：把过期引用和会随仓库变化失真的静态计数从账本正文中去掉。"
+
+delta_1_closeout:
+  goal: "在不继续扩写或重构账本功能的前提下安全收口。"
+  only_fix: "确实阻止他人读懂账本、定位任务或定位下一动作的阻断性缺陷。"
+  do_not: [重新设计账本结构或规则, 因非阻断性瑕疵开启新一轮返工,
+           删除或改写已登记的问题与修复记录, 重做已有证据支持的前三轮验证,
+           把本次放宽外推到其他任务]
+  reuse_verification: "功能内容未再变化时复用最近一次真实隔离验证及其 functional hash；
+                       只有解除真实阻断的功能修改才对受影响路径做一次定向复验。"
+  acceptance:
+    C1: 功能内容保持冻结——除解除真实阻断所需的最小修复外无扩张
+    C2: 历史证据完整——问题、修复记录、Attempt、失败路径、原始证据均可定位，零删改
+    C3: 独立接续仍成立——最近一次真实隔离验证已证明可读懂状态并定位下一动作；最终采用内容与被测 functional hash 等价
+    C4: 已知问题显式登记——表现、引用、影响、可接受理由齐全
+    C5: 默认基线采用完成——远程默认分支已含成果，本地与远端 Hash 可核验，过程安全可追溯
+    C6: 收口记录最小充分——只写通过项、已知问题、引用、采用状态与终局
+  non_blocking_rule: "非阻断性问题不再使 C3 失败。C3 判断的是能否正确接续，不是措辞、版式或记录密度是否完美。"
+
+delta_2_cleanup:
+  goal: "current-facing 账本正文不得继续承载已过期引用与会漂移的静态计数。"
+  remove: [已被替代仍冒充当前的引用, 不可解析的路径分支提交或证据定位,
+           已失效的下一步动作或状态, evidence/文件/分支/任务/问题的静态总数,
+           需人工同步的「当前共有 N 项」类汇总]
+  keep: [原始问题与修复记录, Formal Attempt, 失败路径, 外部副作用历史,
+         原始 evidence 与 Git 历史, 精确绑定历史运行的 Commit/版本/对象标识,
+         当前有效且可解析的 Contract/Manifest/Handoff/证据入口,
+         各活动任务的下一可执行动作, 远程默认工作基线的可核验引用]
+  history_rule: "历史记录中的数量若是某次运行在当时的原始事实，不得回写篡改；
+                 只需避免把该历史数量复制进 current-facing 正文。"
+  forbidden_substitutes: [计数脚本, CI, 自动索引器, 数据库, Schema 校验器, 状态机, 第二套账本]
+  unverifiable_rule: "引用是否仍有效无法核验时不得猜测：从 current-facing 正文移除该当前性主张，
+                      历史来源原样保留，并在收口记录中标 NOT_VERIFIED。"
+  acceptance:
+    R1: 过期引用清除
+    R2: 漂移计数清除
+    R3: 当前接续能力保留
+    R4: 历史完整性不受损——零删除零篡改
+    R5: 无过度工程
+    R6: 默认基线收口——本地与远端最终 Hash 可核验
+
+terminal_rule:
+  forbidden: [PARTIAL, "用 CONTINUE 延迟已可完成的收口", "因最后一轮非阻断问题重启完整返工"]
+  on_pass: |
+    COLLAB_LEDGER_BOOTSTRAP_001 = DONE
+    activation_status = ACTIVE_ON_DEFAULT_BASELINE
+    next_stage_allowed = true:V1-REBASE-EP00-CURRENT
+scope_boundary: "仅适用于 COLLAB-LEDGER-BOOTSTRAP-001 本次收口。不修改执行协议 v1.2 与规划协议 v1.1，
+                 不构成项目级验收降级，不适用于 V1-REBASE-EP00-CURRENT / SINGLE-ACCOUNT-SLICE-EP00 / M1–M5
+                 及任何 Skill、工作流、生产链或智能保真验收。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash_v2` | `54a2e635e641a7134b28c7955397471c091294e0ffe0ba283ecb56c88df407d3` | 取 §T-001.5 那个 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |
