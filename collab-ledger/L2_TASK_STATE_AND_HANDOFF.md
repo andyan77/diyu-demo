@@ -23,7 +23,7 @@
 | 项 | 值 |
 |---|---|
 | 状态 | **执行中（非终态）** —— 功能内容已冻结，A2 隔离验证与远程收口**尚未完成** |
-| 终结依据 | **尚未产生。** 终态与 A1–A9 结果由收口时的 evidence-only 增量写入 [L3 §ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 终结依据 | **尚未产生。** 终态与 A1–A9 结果由收口时的 evidence-only 增量写入 [L3 §ATT-005](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前** attempt；ATT-001～004 为已判不通过的历史轮次） |
 | 最终交付引用 | **尚未产生** |
 | Checkpoint | **无。** 本任务在**执行中**、**未被中断**，不满足写 Checkpoint 的条件（Checkpoint 只给「开工后被外部强制中断」的任务） |
 
@@ -47,7 +47,7 @@
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `COLLAB-LEDGER-BOOTSTRAP-001` | 无前置未决依赖 | [L1 §T-001](L1_TASK_MANIFESTS.md) · [L3 §ATT-003](L3_ATTEMPTS_AND_EVIDENCE.md)（当前 attempt）· [L5](L5_SIDE_EFFECTS.md) | 跑完 A2 隔离验证 → 写**一次** evidence-only 收口增量（A1–A9 结果、A2 完整原始问答、本任务终态、SE-001／SE-002 实际状态）→ `--no-ff` 合并进 `main` 并推送 | 分支 `chore/collab-ledger-bootstrap-001`；`collab-ledger/` 下 L2 §一.1、**L3 §ATT-004.2–.5**（**当前** attempt 的槽位，**不是** §ATT-001）、L5 §三 | **可解算口径**：`git rev-parse chore/collab-ledger-bootstrap-001`，即该任务分支的 **tip**——这就是当前功能内容冻结提交。起算基线 `6ae78ab`。<br>**不要**用 §ATT-001.1 的 `0d6a4d2`、也不要用 §ATT-002.1 的 `8ada866`，那是已判不通过的历史冻结点。<br>**为什么不直接写 hash**：提交无法把自身 hash 写进自身；同 [L5 SE-002](L5_SIDE_EFFECTS.md) 的处置，以**分支 tip / 远端 ref** 为准，不制造无穷追加提交 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**合并提交 hash，且本文件 §一.1 已记为终态 |
+| `COLLAB-LEDGER-BOOTSTRAP-001` | 无前置未决依赖 | [L1 §T-001](L1_TASK_MANIFESTS.md) · [L3 §ATT-005](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前** attempt）· [L5](L5_SIDE_EFFECTS.md) | 跑完 A2 隔离验证 → 写**一次** evidence-only 收口增量（A1–A9 结果、A2 完整原始问答、本任务终态、SE-001／SE-002 实际状态）→ `--no-ff` 合并进 `main` 并推送 | 分支 `chore/collab-ledger-bootstrap-001`；`collab-ledger/` 下 L2 §一.1、**L3 §ATT-005.2–.5**（**当前** attempt 的槽位，**不是** §ATT-001～004）、L5 §三 | **可解算口径**：`git rev-parse chore/collab-ledger-bootstrap-001`，即该任务分支的 **tip**——这就是当前功能内容冻结提交。起算基线 `6ae78ab`。<br>**不要**用 §ATT-001.1 的 `0d6a4d2`、也不要用 §ATT-002.1 的 `8ada866`，那是已判不通过的历史冻结点。<br>**为什么不直接写 hash**：提交无法把自身 hash 写进自身；同 [L5 SE-002](L5_SIDE_EFFECTS.md) 的处置，以**分支 tip / 远端 ref** 为准，不制造无穷追加提交 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**合并提交 hash，且本文件 §一.1 已记为终态 |
 | `V1-REBASE-EP00-CURRENT` | 无前置未决依赖。**不依赖**子合同被接受 | [L1 定位表](L1_TASK_MANIFESTS.md) · 本文件 §一.2 | 执行**只读**仓库预检，逐项核验上位合同「授权状态与下一步」列的五项真实状态：① 现有目标路由 ② 现有创意锦标赛（CS-1）③ 六个 Skill 的价值耦合分档 ④ Dify 现有流程 ⑤ 远端真实运行版本 | 本仓库 `main`、六份 Skill 正文、`decision-chain/workflows/**`、`content-production/workflows/**`、真实 Dify 已发布版本 | `main @ 6ae78abf5967535bda81392255b8ee3e79e4bcb5`；五项核验清单出自[上位合同第 907–915 行](../decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) | 产出一份**只读**预检结论文档，五项**逐项**给出「仓库当前事实 + 与合同口径的差距」，并按 [L1](L1_TASK_MANIFESTS.md) 编译该任务 Manifest、按 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) 记一条 Attempt。**核验完成前不得开始任何改造施工。** |
 
 **当前活动 `task_id` 有 2 个，本表就是 2 行**：一个执行中（`COLLAB-LEDGER-BOOTSTRAP-001`），一个已授权未开工（`V1-REBASE-EP00-CURRENT`）。**两行互不覆盖**，也不存在一个凌驾其上的全局「唯一下一步」。新任务被授权时**新增一行**。
