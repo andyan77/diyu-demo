@@ -4,14 +4,28 @@
 
 ---
 
+## 〇、当前阶段与合同状态（先看这一段）
+
+| 合同 | 状态 | 授权范围 |
+|---|---|---|
+| [V1 决策链改造产品合同（上位）](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) | `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` | **仅 `V1-REBASE-EP00-CURRENT` 只读预检** |
+| [单账号持续运营纵向切片子合同](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | `CONTRACT_REVISION_REQUIRED` | **未被接受，不构成任何授权** |
+
+- **上位合同被接受 ≠ 子合同被接受 ≠ 授权施工。**
+- 阶段为 **V1 决策链重对齐（Rebase）**；A/B 对照阶段已结束并按 `PARTIAL` 冻结。
+- **决策链与内容生产链都在产品范围内**，都已建成并在运行；**不存在「唯一活跃主线」**。
+- 「Matrix → Campaign → Brief → 生产」作为**唯一入口**的假设**已废止**；八项能力按需调用、可直接进入、可合法组合。
+
+---
+
 ## 一、资产到哪里找
 
 仓库按「两个业务模块 + 五类资产」组织。
 
 | 模块 | 说明 |
 |---|---|
-| [decision-chain/](decision-chain/) | 决策链：Matrix Architect、Campaign Orchestrator、Content Brief Architect。**已冻结，非活跃主线** |
-| [content-production/](content-production/) | 内容生产链：Creative Script、Production Director、Publishing & Packaging。**当前唯一活跃主线** |
+| [decision-chain/](decision-chain/) | 决策链：Matrix Architect、Campaign Orchestrator、Content Brief Architect，以及**两份产品合同与阶段基线**。**在产品范围内** |
+| [content-production/](content-production/) | 内容生产链：Creative Script、Production Director、Publishing & Packaging。**在产品范围内** |
 
 > **内容生产链三 Skill v0.6 能力资产包**，由 Creative Script、Production Director、Publishing & Packaging 三份核心 Skill，以及配套的行业条件、平台事实和端到端案例参考资产组成。
 >
@@ -36,8 +50,14 @@
 |---|---|
 | 项目定位、阶段与 Founder 已裁决事项 | [笛语项目基线.md](笛语项目基线.md) |
 | 协作规则与硬约束 | [CLAUDE.md](CLAUDE.md) |
-| **决策链 V1 当前状态（含已知问题与能力边界）** | [decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md) |
-| **决策链改造产品合同（上位方向，授权范围＝仓库预检，非施工）** | [decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) —— **`PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED`**：只授权核验现有目标路由、创意锦标赛（CS-1）、六个 Skill 价值耦合、Dify 流程与远端运行版本，**核验完成前不得开始改造施工** |
+| **决策链改造产品合同（上位，最高真相源）** | [V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) —— `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED`，**只授权 `V1-REBASE-EP00-CURRENT` 只读预检** |
+| **单账号持续运营纵向切片子合同（待接受）** | [V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) —— `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** |
+| **决策链当前阶段基线** | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md) |
+| 决策链 A/B 阶段历史基线（`PARTIAL`，原样保留） | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md) |
+| **对话编排修复 001 运行证据（A-0～A-4 真实对话，`DONE`）** | [V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md](decision-chain/evidence/V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md) —— 测试目录的承接见 [V1_NATURAL_LANGUAGE_TEST_CATALOG_v0.1.md](decision-chain/docs/V1_NATURAL_LANGUAGE_TEST_CATALOG_v0.1.md) 承接附录 |
+| **集成后的主 Chatflow DSL（56 节点，与 Dify 已发布版本逐节点一致）** | [DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml](decision-chain/workflows/DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml) |
+| 任务快照 Schema（已增量补齐 `open_threads` / `last_acceptance`） | [V1_TASK_SNAPSHOT_SCHEMA_v0.1.json](decision-chain/docs/V1_TASK_SNAPSHOT_SCHEMA_v0.1.json) |
+| 生产差距登记（G-01～G-12 全部未关闭，含"旧 Demo 不阻塞 / 持续运营成立条件"分档） | [V1_PRODUCTION_GAP_REGISTER_v0.1.md](decision-chain/docs/V1_PRODUCTION_GAP_REGISTER_v0.1.md) |
 | **内容生产链入口（当前主线）** | [content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md](content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md) |
 | 三份决策 Skill 正文 | [decision-chain/skills/](decision-chain/skills/) |
 | **内容生产三份 Skill（活跃主线）** | Creative Script → [content-production/skills/writing-creative-scripts/](content-production/skills/writing-creative-scripts/)<br>Production Director → [content-production/skills/directing-content-production/](content-production/skills/directing-content-production/)<br>Publishing & Packaging → [content-production/skills/packaging-content-for-release/](content-production/skills/packaging-content-for-release/) |
@@ -52,7 +72,10 @@
 | **PP v0.6.1 三档判据（当前最新一轮）** | 运行记录 → [content-production/evidence/CONTENT_PRODUCTION_P05R1_RUN.md](content-production/evidence/CONTENT_PRODUCTION_P05R1_RUN.md) —— **PARTIAL：mode 判据改成三级依次判（「有，但不够」不决定 mode，缺口有没有处置完才决定），PRE 静态 5/5、MIXED 8/8、FINAL 6 过 3 未过；FINAL 命中一处假绿——模型自称已删除、实际没删**<br>MIXED 夹具（S4 缺口未拍板）→ [content-production/fixtures/CONTENT_PRODUCTION_REALIZATION_MANIFEST_MIXED_FIXTURE_v0.1.md](content-production/fixtures/CONTENT_PRODUCTION_REALIZATION_MANIFEST_MIXED_FIXTURE_v0.1.md)<br>FINAL 夹具（完整覆盖）→ [content-production/fixtures/CONTENT_PRODUCTION_REALIZATION_MANIFEST_FINAL_FIXTURE_v0.1.md](content-production/fixtures/CONTENT_PRODUCTION_REALIZATION_MANIFEST_FINAL_FIXTURE_v0.1.md)<br>最终用户交付包 v0.2（由 FINAL 轮生成）→ [content-production/evidence/CONTENT_PRODUCTION_FINAL_USER_DELIVERY_PACK_v0.2.md](content-production/evidence/CONTENT_PRODUCTION_FINAL_USER_DELIVERY_PACK_v0.2.md) —— **先读首页横幅与 ⚠️ 标注** |
 | **PP v0.6.2 事实纪律与假绿阻断（当前最新一轮）** | 运行记录 → [content-production/evidence/CONTENT_PRODUCTION_P05R2_RUN.md](content-production/evidence/CONTENT_PRODUCTION_P05R2_RUN.md) —— **PARTIAL：四道确定性闸建成并在真实运行中拦截成功；十二项自动验收 12/12 全过；但逐句人工核验查出一处无依据事实（「十几次试穿」——它挂着真实 fact_id，四道闸与两个扫描器全部放行）。按规则不生成 v0.3 交付包，问题句原样保留在证据第九节**<br>**最该看的一节**：第六节「确定性闸堵住了格式型与自述型问题，堵不住语义型编造」<br>新增运行状态 `USER_DELIVERY_BLOCKED_FACT_CHECK` → 运行合同 [第 9 节](content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md) |
 | **独立语义事实核验（当前最新一轮）** | 运行记录 → [content-production/evidence/CONTENT_PRODUCTION_P05R3_RUN.md](content-production/evidence/CONTENT_PRODUCTION_P05R3_RUN.md) —— **`SEMANTIC_CHECKER_ACCEPTED_NO_REGRESSION`：PP 之后加了一个只读语义核验节点（qwen3.8-max，独立于内容生产的 DeepSeek）。负向探针正确 BLOCK 并抓出 P05R2 那句「十几次试穿」；正向探针正确 PASS 且零误报；十条非衰减判据 10/10。但正式运行被两层同时拦下（四道闸命中简写编号；语义层抓出「前一天」与「单穿也站得住」两处，后者踩的正是 A04 的「不得扩大」条款），按第六节不生成 v0.3 用户交付包，Artifact 与原交付块原样保留**<br>**最该看的两节**：第七节「两层各自拦的是什么，别混为一谈」、第九节「它的证据范围只有 4 样输入，账号结构类陈述判不稳」<br>新增运行状态 `USER_DELIVERY_MANUAL_FACT_REVIEW_REQUIRED` 与「语义事实核验节点」一节 → 运行合同 [第 9 节](content-production/docs/CONTENT_PRODUCTION_RUNTIME_CONTRACT_v0.1.md) |
-| V1 集成合同 | [decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md](decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md) |
+| V1 集成合同（**旧 Demo 兼容基线，非 Rebase 目标架构**；未承接的四项变化见其更正附录） | [decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md](decision-chain/docs/V1_DEMO_INTEGRATION_CONTRACT_v0.1.md) |
+| **同一资产的多版本**（哪个是当前） | Matrix Architect → 部署运行的是 **v0.1.2**，v0.1／v0.1.1 对应 RUN_001／RUN_002 原样保留<br>Campaign 专家共同上下文 → **v0.2** 为当前，v0.1 保留<br>Campaign 六张专家问题卡 → **v0.3** 为当前，v0.2 保留 |
+| **带口径更正块的文档**（原文未改，只加更正） | 候选数量固定值作废 → [构建规范](content-production/docs/内容生产三份%20Skill%20构建规范%20v1.0.md)、[验收标准](content-production/docs/内容生产三份%20Skill%20验收标准%20v1.0.md)、[context_pack](content-production/docs/context_pack.md)<br>固定线性调用不再是目标架构 → [CONTENT_BRIEF_CONTRACT](decision-chain/docs/CONTENT_BRIEF_CONTRACT_v0.1.md)、[生产链 PRD](content-production/docs/CONTENT_PRODUCTION_CHAIN_PRD_v0.1.md)、[生产链合同](content-production/docs/CONTENT_PRODUCTION_CHAIN_CONTRACT_v0.1.md) |
+| `tools/` 脚本路径解析（目录重组后按文件名解析，判据未改） | [tools/_repo_paths.py](tools/_repo_paths.py) |
 | 品牌夹具（序里集） | [decision-chain/fixtures/](decision-chain/fixtures/) |
 | V1 全部运行证据与盲审材料 | [decision-chain/evidence/](decision-chain/evidence/) |
 
@@ -68,7 +91,8 @@
 6. 只有 **Skill、合同或正式能力发生实质变化**时才建立新版本。
 7. 过程汇报、临时分析、重复总结**不进入仓库**。
 8. **没有实际资产时不建立空目录。**
-9. 修正历史证据**只能新增更正说明，不得修改原文件**。
+9. 修正历史证据**只能新增更正说明，不得修改原文件**。冻结合同同理——**另建后继版本或加更正说明，不覆盖原文**。
+9.1 **不得由执行侧宣布合同「已接受」**，也不得自行把合同状态往上推一级。
 10. 如果现有分类已经能够快速找到文件，**不再继续细分目录**。
 
 **不建立**复杂的文档状态机、登记表、审批流或多层索引。历史依靠 Git 追溯，不建 archive 体系。

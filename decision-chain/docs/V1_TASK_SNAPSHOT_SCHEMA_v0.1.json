@@ -2,13 +2,23 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://diyu.local/schemas/V1_TASK_SNAPSHOT_SCHEMA_v0.1.json",
   "title": "笛语 V1 Demo 任务状态快照 task_snapshot_json",
-  "description": "V1 Demo 用一个字符串会话变量整体持久化的小型状态对象。完整产物不进本对象，只保存引用、hash、状态、父 hash 与简短摘要。本 Schema 由主 Chatflow 的状态机 Code 节点强制执行：未知字段与非法枚举一律整体拒绝，不做部分采纳。",
+  "description": "V1 Demo 用一个字符串会话变量整体持久化的小型状态对象。完整产物不进本对象，只保存引用、hash、状态、父 hash 与简短摘要。本 Schema 由主 Chatflow 的状态机 Code 节点强制执行：未知字段与非法枚举一律整体拒绝，不做部分采纳。  【v0.1 增量补齐（2026-08-24）】运行中的 DSL 已新增 open_threads 与 last_acceptance 两个字段（对话编排修复 001）。本 Schema 以增量方式补齐这两项，二者均为可选（不进 required），以保证修复前落盘的旧快照仍然合法。SCHEMA_VERSION 未改，运行中的会话不受影响。",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version", "task_id", "revision", "phase", "candidate_skill",
-    "draft_task", "confirmed_task", "pending_action", "authorization",
-    "artifacts", "blocking_gap", "last_result_ref", "last_error"
+    "schema_version",
+    "task_id",
+    "revision",
+    "phase",
+    "candidate_skill",
+    "draft_task",
+    "confirmed_task",
+    "pending_action",
+    "authorization",
+    "artifacts",
+    "blocking_gap",
+    "last_result_ref",
+    "last_error"
   ],
   "properties": {
     "schema_version": {
@@ -16,7 +26,10 @@
       "description": "版本不符时状态机从初始状态重建，并在本轮拒绝执行任何 Skill。"
     },
     "task_id": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "maxLength": 64,
       "description": "任务首次形成时生成，取消后清空。"
     },
@@ -26,33 +39,78 @@
       "description": "任务版本号。任务发生实质变化时递增，是授权有效性的绑定键。"
     },
     "phase": {
-      "enum": ["IDLE", "FORMING", "AWAITING_CONFIRMATION", "READY", "RUNNING",
-               "COMPLETED", "FAILED", "CANCELLED"]
+      "enum": [
+        "IDLE",
+        "FORMING",
+        "AWAITING_CONFIRMATION",
+        "READY",
+        "RUNNING",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ]
     },
     "candidate_skill": {
-      "enum": ["NONE", "MATRIX", "CAMPAIGN", "CONTENT_BRIEF"],
+      "enum": [
+        "NONE",
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF"
+      ],
       "description": "本轮候选的 Skill。仅为记录，不构成执行授权。"
     },
     "draft_task": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["goal", "target_object"],
+      "required": [
+        "goal",
+        "target_object"
+      ],
       "properties": {
-        "goal": {"type": ["string", "null"], "maxLength": 400},
-        "target_object": {"type": ["string", "null"], "maxLength": 200}
+        "goal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 400
+        },
+        "target_object": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        }
       }
     },
     "confirmed_task": {
       "description": "用户明确确认后的任务。任务实质变化或被取消时立即置为 null。",
       "oneOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["goal", "target_object"],
+          "required": [
+            "goal",
+            "target_object"
+          ],
           "properties": {
-            "goal": {"type": ["string", "null"], "maxLength": 400},
-            "target_object": {"type": ["string", "null"], "maxLength": 200}
+            "goal": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 400
+            },
+            "target_object": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 200
+            }
           }
         }
       ]
@@ -60,16 +118,41 @@
     "pending_action": {
       "description": "当前待用户回应的事项。用户说「是」「继续」「就这个」时必须绑定到本字段，不得泛化为对任意旧任务的授权。",
       "oneOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["kind", "task_revision", "confirmation_id"],
+          "required": [
+            "kind",
+            "task_revision",
+            "confirmation_id"
+          ],
           "properties": {
-            "kind": {"enum": ["CONFIRM_TASK", "AUTHORIZE_SKILL", "ACCEPT_ARTIFACT"]},
-            "task_revision": {"type": "integer", "minimum": 0},
-            "confirmation_id": {"type": "string", "maxLength": 64},
-            "skill": {"enum": ["NONE", "MATRIX", "CAMPAIGN", "CONTENT_BRIEF"]}
+            "kind": {
+              "enum": [
+                "CONFIRM_TASK",
+                "AUTHORIZE_SKILL",
+                "ACCEPT_ARTIFACT"
+              ]
+            },
+            "task_revision": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "confirmation_id": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "skill": {
+              "enum": [
+                "NONE",
+                "MATRIX",
+                "CAMPAIGN",
+                "CONTENT_BRIEF"
+              ]
+            }
           }
         }
       ]
@@ -77,75 +160,268 @@
     "authorization": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["skill", "task_revision", "confirmation_id", "granted", "consumed"],
+      "required": [
+        "skill",
+        "task_revision",
+        "confirmation_id",
+        "granted",
+        "consumed"
+      ],
       "description": "版本化逻辑授权。只对当前 task_revision 和指定 Skill 有效；任务实质变化或取消后立即失效；执行开始后 consumed 置 true。本轮只在同一 conversation 串行运行的前提下有效，不声称并发原子消费或 exactly-once。",
       "properties": {
-        "skill": {"enum": ["NONE", "MATRIX", "CAMPAIGN", "CONTENT_BRIEF"]},
-        "task_revision": {"type": ["integer", "null"], "minimum": 0},
-        "confirmation_id": {"type": ["string", "null"], "maxLength": 64},
-        "granted": {"type": "boolean"},
-        "consumed": {"type": "boolean"}
+        "skill": {
+          "enum": [
+            "NONE",
+            "MATRIX",
+            "CAMPAIGN",
+            "CONTENT_BRIEF"
+          ]
+        },
+        "task_revision": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "confirmation_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        },
+        "granted": {
+          "type": "boolean"
+        },
+        "consumed": {
+          "type": "boolean"
+        }
       }
     },
     "artifacts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["matrix", "campaign", "content_brief"],
+      "required": [
+        "matrix",
+        "campaign",
+        "content_brief"
+      ],
       "properties": {
-        "matrix": {"$ref": "#/$defs/artifact"},
-        "campaign": {"$ref": "#/$defs/artifact"},
-        "content_brief": {"$ref": "#/$defs/artifact"}
+        "matrix": {
+          "$ref": "#/$defs/artifact"
+        },
+        "campaign": {
+          "$ref": "#/$defs/artifact"
+        },
+        "content_brief": {
+          "$ref": "#/$defs/artifact"
+        }
       }
     },
     "blocking_gap": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "maxLength": 200,
       "description": "本轮阻塞执行的确定性原因，例如 UPSTREAM_NOT_ACCEPTED:matrix:VALIDATED、UPSTREAM_STALE:campaign、NO_CONFIRMED_TASK、NO_VALID_AUTHORIZATION。"
     },
     "last_result_ref": {
-      "enum": ["matrix", "campaign", "content_brief", null],
+      "enum": [
+        "matrix",
+        "campaign",
+        "content_brief",
+        null
+      ],
       "description": "最近一次产出结果所在的槽位。用户说「接受」时，接受的就是这个槽位里的产物。"
     },
     "last_error": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "maxLength": 500,
       "description": "最近一次失败原因，例如 STATE_PATCH_REJECTED:…、ARTIFACT_REJECTED:…、TOOL_INVOCATION@EXECUTE_MATRIX:…"
+    },
+    "open_threads": {
+      "type": "array",
+      "description": "本轮主诉求之外、用户提出但尚未处理的附带诉求；跨轮存活，不因进入下一轮而自动消失。由 v1_state 代码拼装，不由模型写入。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "text",
+          "raised_at_revision",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^thread_[0-9]{3}$"
+          },
+          "text": {
+            "type": "string",
+            "description": "用户原话，不补写"
+          },
+          "raised_at_revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "enum": [
+              "OPEN",
+              "SURFACED"
+            ]
+          }
+        }
+      }
+    },
+    "last_acceptance": {
+      "description": "最近一次被接受的产物，供「撤销最近一次接受」使用；撤销范围只到最近一次，不做无限回溯。无则为 null。",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "slot",
+            "revision"
+          ],
+          "properties": {
+            "slot": {
+              "enum": [
+                "matrix",
+                "campaign",
+                "content_brief",
+                "production_stage1",
+                "publishing_stage2"
+              ]
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      ]
     }
   },
   "$defs": {
     "artifact": {
       "oneOf": [
-        {"type": "null"},
+        {
+          "type": "null"
+        },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["artifact_id", "artifact_type", "revision", "status",
-                       "content_hash", "parent_artifact_id", "parent_hash",
-                       "skill_name", "skill_sha", "run_id", "accepted_turn_id"],
+          "required": [
+            "artifact_id",
+            "artifact_type",
+            "revision",
+            "status",
+            "content_hash",
+            "parent_artifact_id",
+            "parent_hash",
+            "skill_name",
+            "skill_sha",
+            "run_id",
+            "accepted_turn_id"
+          ],
           "properties": {
-            "artifact_id": {"type": "string", "maxLength": 64},
-            "artifact_type": {"enum": ["MATRIX", "CAMPAIGN", "CONTENT_BRIEF"]},
-            "revision": {"type": "integer", "minimum": 1},
+            "artifact_id": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "artifact_type": {
+              "enum": [
+                "MATRIX",
+                "CAMPAIGN",
+                "CONTENT_BRIEF"
+              ]
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1
+            },
             "status": {
-              "enum": ["DRAFT", "VALIDATED", "USER_ACCEPTED", "STALE", "FAILED"],
+              "enum": [
+                "DRAFT",
+                "VALIDATED",
+                "USER_ACCEPTED",
+                "STALE",
+                "FAILED"
+              ],
               "description": "DRAFT 在 V1 中不落盘。Tool 返回后立即进入 VALIDATED 或 FAILED；用户明确接受后进入 USER_ACCEPTED；上游重出后进入 STALE。STALE 产物不得作为下游依据，也不能被直接接受，必须重跑。"
             },
-            "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-            "parent_artifact_id": {"type": ["string", "null"], "maxLength": 64},
-            "parent_hash": {"type": ["string", "null"], "maxLength": 80},
-            "skill_name": {"type": "string", "maxLength": 120},
-            "skill_sha": {"type": "string", "maxLength": 80,
-                          "description": "Skill 正文 SHA-256，由 Tool 回传并被确定性合同检查逐字比对。"},
-            "run_id": {"type": ["string", "null"], "maxLength": 64,
-                       "description": "主 Chatflow 本轮的 workflow_run_id，用于回溯 Dify Run History。"},
-            "accepted_turn_id": {"type": ["string", "null"], "maxLength": 64},
-            "summary": {"type": "string", "maxLength": 300,
-                        "description": "简短摘要。完整产物存放在独立会话变量，不进本对象。"},
-            "ref": {"type": "string", "maxLength": 80,
-                    "description": "完整产物所在的会话变量，例如 conversation.matrix_artifact。会话变量是 V1 Demo 的产物存储方式，不是正式 Artifact Store。"},
-            "status_token": {"type": "string", "maxLength": 60},
-            "model_used": {"type": "string", "maxLength": 80},
-            "fixture_bundle_sha": {"type": "string", "maxLength": 80}
+            "content_hash": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "parent_artifact_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 64
+            },
+            "parent_hash": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 80
+            },
+            "skill_name": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "skill_sha": {
+              "type": "string",
+              "maxLength": 80,
+              "description": "Skill 正文 SHA-256，由 Tool 回传并被确定性合同检查逐字比对。"
+            },
+            "run_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 64,
+              "description": "主 Chatflow 本轮的 workflow_run_id，用于回溯 Dify Run History。"
+            },
+            "accepted_turn_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "maxLength": 64
+            },
+            "summary": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "简短摘要。完整产物存放在独立会话变量，不进本对象。"
+            },
+            "ref": {
+              "type": "string",
+              "maxLength": 80,
+              "description": "完整产物所在的会话变量，例如 conversation.matrix_artifact。会话变量是 V1 Demo 的产物存储方式，不是正式 Artifact Store。"
+            },
+            "status_token": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "model_used": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "fixture_bundle_sha": {
+              "type": "string",
+              "maxLength": 80
+            }
           }
         }
       ]
@@ -158,12 +434,24 @@
       "revision": 0,
       "phase": "IDLE",
       "candidate_skill": "NONE",
-      "draft_task": {"goal": null, "target_object": null},
+      "draft_task": {
+        "goal": null,
+        "target_object": null
+      },
       "confirmed_task": null,
       "pending_action": null,
-      "authorization": {"skill": "NONE", "task_revision": null,
-                        "confirmation_id": null, "granted": false, "consumed": true},
-      "artifacts": {"matrix": null, "campaign": null, "content_brief": null},
+      "authorization": {
+        "skill": "NONE",
+        "task_revision": null,
+        "confirmation_id": null,
+        "granted": false,
+        "consumed": true
+      },
+      "artifacts": {
+        "matrix": null,
+        "campaign": null,
+        "content_brief": null
+      },
       "blocking_gap": null,
       "last_result_ref": null,
       "last_error": null

@@ -11,7 +11,7 @@ X / Y 归属由预注册的确定性规则决定，运行结果无法影响它�
 """
 import argparse, hashlib, json, os, re
 
-REPO = os.path.dirname(os.path.abspath(__file__))
+from _repo_paths import ROOT as REPO, rpath  # 目录重组后按文件名解析
 PRE_COMMIT = "00fc94e6c39bc161d33a3df7df260abb7d37b9ec"
 
 PAIRS = [

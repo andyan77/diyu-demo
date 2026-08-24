@@ -13,6 +13,14 @@
 第 3 步是重点：测试跑的是仓库里真正会被导入 Dify 的那份代码，不是脚本自带的副本。
 
     python3 v1_demo_verify.py
+
+【2026-08-24 同步说明】
+- 目录重组后本脚本一度因路径失效而无法启动，已改用 `_repo_paths.rpath()` 按文件名解析，
+  验证逻辑与判据一字未改。
+- `笛语项目基线.md` 本轮做了语义对齐同步，其 SHA-256 钉子已同步更新（不放宽校验，只换基准值）。
+- **本脚本仍只校验 v0.1 主 Chatflow**。集成后的 v0.2（56 节点）、对话编排修复 001 新增的
+  `side_question` / `open_threads` / `last_acceptance` / `REVOKE_LAST_ACCEPTANCE`
+  **尚未纳入本脚本的单元测试**。该承接属于施工范围，须等预检结论与新授权，本轮不做。
 """
 import hashlib
 import json
@@ -22,8 +30,8 @@ import sys
 
 import yaml
 
-REPO = os.path.dirname(os.path.abspath(__file__))
-CHATFLOW = os.path.join(REPO, "DIYU_DEMO_V1_MAIN_CHATFLOW_v0.1.yml")
+from _repo_paths import ROOT as REPO, rpath  # 目录重组后按文件名解析
+CHATFLOW = rpath("DIYU_DEMO_V1_MAIN_CHATFLOW_v0.1.yml")
 
 FROZEN = {
     "Matrix_Architect_v0.1.2.md": "7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838",
@@ -34,7 +42,7 @@ FROZEN = {
     "序里集_Campaign最小承接条件夹具_v0.1.md": "17b41d3ae37635fcd1e97f6af1136c71afa6310a9c51e1db12948b0b2e1e2b06",
     "序里集_四张账号责任卡_CONFIRMED_v0.1.md": "8e21454f53a34b7dce13b7eab547727bb1ce8bce9bac5f86df6d7dc3078f503f",
     "序里集_CONTENT_BRIEF_GOLDEN_v0.1.md": "3b6cbcd7c79d49815ec1de8db472950ab84ac04a754b3342355285d706fe04bd",
-    "笛语项目基线.md": "fdc850085a681c43dee8b386efa87e5803412eec257c3db4dc1ff57f3d80c28c",
+    "笛语项目基线.md": "6b964cc042313a93a23ec1910656399772ee9ce8d3559be7abff50c6de19f90b",
 }
 
 
@@ -51,7 +59,7 @@ def check_frozen():
     print("=" * 96)
     bad = []
     for name, want in sorted(FROZEN.items()):
-        p = os.path.join(REPO, name)
+        p = rpath(name)
         if not os.path.exists(p):
             bad.append(name + "（文件缺失）")
             print("  FAIL %-44s 文件缺失" % name)
@@ -202,7 +210,7 @@ def validate_graph(name, dsl, expect_mode):
                 }.get(slot)
                 user = [p for p in d["prompt_template"] if p["role"] == "user"][0]["text"]
                 seg = user[user.find("===== BEGIN SOURCE"):user.rfind("=====") + 5]
-                ap = os.path.join(REPO, adapter) if adapter else None
+                ap = rpath(adapter) if adapter else None
                 if not ap or not os.path.exists(ap):
                     fail("%s Judge 节点 %s 找不到对应适配 Workflow" % (name, nid))
                 else:
@@ -235,7 +243,7 @@ def run_static():
     print("2. DSL 静态结构检查")
     print("=" * 96)
 
-    golden_body = open(os.path.join(REPO, GOLDEN_FILE), encoding="utf-8").read()
+    golden_body = open(rpath(GOLDEN_FILE), encoding="utf-8").read()
     # A Golden line only proves leakage if it is UNIQUE to the Golden. The Golden
     # quotes frozen upstream sources (C1—C6, the fixtures) and the Skills' own status
     # tokens verbatim; those lines legitimately reach the model through the frozen
@@ -247,7 +255,7 @@ def run_static():
             "序里集_Campaign最小承接条件夹具_v0.1.md",
         ] + ["C%d_FOUNDER_CONFIRMED_v0.1.md" % i for i in range(1, 7)]
     ))
-    legit_blob = "\n".join(open(os.path.join(REPO, f), encoding="utf-8").read()
+    legit_blob = "\n".join(open(rpath(f), encoding="utf-8").read()
                            for f in legit_sources)
     golden_lines = [l.strip() for l in golden_body.split("\n")
                     if len(l.strip()) >= 24 and not l.strip().startswith(("#", ">", "|", "-", "*"))]
@@ -263,7 +271,7 @@ def run_static():
         "DIYU_DEMO_V1_MAIN_CHATFLOW_v0.1.yml",
     ]
     for fname in targets:
-        path = os.path.join(REPO, fname)
+        path = rpath(fname)
         if not os.path.exists(path):
             print("\n-- %s（尚未生成，跳过）" % fname)
             continue
@@ -299,7 +307,7 @@ def run_static():
                 if msg["role"] != "system":
                     continue
                 for label, sf in SKILL_FILES.items():
-                    body = open(os.path.join(REPO, sf), encoding="utf-8").read()
+                    body = open(rpath(sf), encoding="utf-8").read()
                     if sha(msg["text"]) == sha(body):
                         ok("%s 节点 %s 的 System 提示词与 %s 逐字一致 (%s)"
                            % (fname, nid, sf, sha(body)[:12]))

@@ -6,7 +6,7 @@
 """
 import argparse, hashlib, json, os, subprocess
 
-REPO = os.path.dirname(os.path.abspath(__file__))
+from _repo_paths import ROOT as REPO, rpath  # 目录重组后按文件名解析
 PG = os.environ.get("DIFY_PG_CONTAINER", "docker-db_postgres-1")
 
 NEW_FILES = [
@@ -90,9 +90,9 @@ def main():
 | 名称 | app_id | 已发布 workflow_id |
 |---|---|---|
 """ % (a.pre_commit,
-       sha_file(os.path.join(REPO, "V1_E2E_QUALITY_VALIDATION_PLAN_v0.1.md")),
-       sha_file(os.path.join(REPO, "V1_E2E_CASES_v0.1.json")),
-       sha_file(os.path.join(REPO, "V1_QUALITY_COMPARISON_INPUTS_v0.1.md")),
+       sha_file(rpath("V1_E2E_QUALITY_VALIDATION_PLAN_v0.1.md")),
+       sha_file(rpath("V1_E2E_CASES_v0.1.json")),
+       sha_file(rpath("V1_QUALITY_COMPARISON_INPUTS_v0.1.md")),
        a.mapping_sha)]
 
     for name, aid in TEST_APPS:
@@ -127,18 +127,18 @@ def main():
        sh.get("unauthorized_execution_rate"), sh.get("infra_retries")))
 
     for f in NEW_FILES:
-        p = os.path.join(REPO, f)
+        p = rpath(f)
         if os.path.exists(p):
             L.append("| `%s` | %d | `%s` |\n" % (f, os.path.getsize(p), sha_file(p)))
         else:
             L.append("| `%s` | —— | （本轮未产出） |\n" % f)
     for name, _ in TEST_APPS:
-        p = os.path.join(REPO, "testapps", name + ".yml")
+        p = rpath("testapps", name + ".yml")
         if os.path.exists(p):
             L.append("| `testapps/%s.yml` | %d | `%s` |\n" % (name, os.path.getsize(p), sha_file(p)))
     L.append("\n> 本清单自身的 SHA 不在表内（自指），以提交后的 git blob 为准。\n")
 
-    out = os.path.join(REPO, "V1_E2E_QUALITY_VALIDATION_MANIFEST_v0.1.md")
+    out = rpath("V1_E2E_QUALITY_VALIDATION_MANIFEST_v0.1.md")
     open(out, "w", encoding="utf-8").write("".join(L))
     print("%-46s %8d 字节" % (os.path.basename(out), os.path.getsize(out)))
 

@@ -1,5 +1,21 @@
 # 内容生产三份 Skill 构建规范 v1.0
 
+
+---
+
+> ## ⚠️ 口径更正（2026-08-24，上位合同对齐）
+>
+> 本文件「**默认生成 4 个 Creative Families**」及一切固定候选数量的表述，**已被上位合同取代**：
+>
+> > 只有存在实质选择空间时才提供多个方向；**数量按任务决定，通常可以是两至三个，但不得硬编码固定数量**。不存在真实取舍时，直接给出明确推荐，**不机械凑候选**。
+>
+> 依据：[`V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md`](../../decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) §十一、§十九「避免建设：固定数量的候选生成器」。
+>
+> **本文原文一字未改**，仅加本更正说明。执行时以上位合同为准；本文件的固定数量条款**不得作为验收阻断项**。
+> 与 `Creative Script` CS-1「生成 3 个高差异方向」的差异同属本次更正范围，**不在本轮改 Skill 正文**。
+
+---
+
 **文件性质：** 强制性构建制度
 **适用对象：** `Creative Script`、`Production Director`、`Publishing & Packaging`
 **状态：** `NORMATIVE`

@@ -1,5 +1,24 @@
 # CONTENT_PRODUCTION_CHAIN_CONTRACT v0.1
 
+
+---
+
+> ## ⚠️ 口径更正（2026-08-24，上位合同对齐）
+>
+> 本文件中**把固定线性调用描述为目标产品架构**、以及**把逐段精确确认写成唯一通路**的表述，**已被上位合同取代**：
+>
+> - 「Matrix → Campaign → Content Brief → 内容生产」作为**唯一入口**的假设**已废止**；
+> - 八项能力**按需调用、可直接进入、可合法组合**；**Campaign 既不默认调用也不默认绕过**；
+> - **Content Brief 的合法上游不止 Campaign**：还包括持续运营决策、用户直接提出的明确选题、合法历史产物、满足最小输入的已有脚本构想；
+> - 普通生成、比较、诊断与**可逆微调不要求明确确认**；只有对外发布、关键正式写回、不可逆动作、权限变化或长期产品裁决才要求明确确认；
+> - 用户已用自然语言表达同意时，**不得要求换成系统指定句式**。
+>
+> 依据：[`V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md`](../../decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) §一、§三、§四、§十四。
+>
+> **本文原文一字未改**，仅加本更正说明。**解除 Campaign 唯一上游依赖属于 Skill 正文改动，须等预检与新授权，不在本轮执行。**
+
+---
+
 > 本文件是内容生产链三份 Skill 的**共享生产合同**。
 > 由任务 `CONTENT-PRODUCTION-P0-R` 收缩落盘，取代同名文件的上一版全文。
 >
@@ -20,7 +39,7 @@
 1. Founder 的最新裁决；
 2. 已确认的三份决策 Skill（`Matrix Architect`、`Campaign Orchestrator`、
    `Content Brief Architect`）及其正式合同；
-3. [`CONTENT_BRIEF_CONTRACT_v0.1.md`](CONTENT_BRIEF_CONTRACT_v0.1.md) 与已接受的
+3. [`CONTENT_BRIEF_CONTRACT_v0.1.md`](../../decision-chain/docs/CONTENT_BRIEF_CONTRACT_v0.1.md) 与已接受的
    Content Brief 语义；
 4. 当前有效项目基线与正式产品边界；
 5. 本合同与配套 PRD、研究协议；
