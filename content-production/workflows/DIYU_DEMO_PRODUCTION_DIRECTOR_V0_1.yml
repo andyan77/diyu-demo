@@ -1,0 +1,1179 @@
+app:
+  description: 内容生产链第二段正式独立 Workflow：Production Director v0.6。输入含逐字传入的 Creative Script
+    Final。拍摄前只产出 realization_plan，不虚构 realization_manifest。reference 按运行合同固定投影表加载（platforms
+    第三节；industry 四行；examples 不加载）。 v0.2 增加确定性 Returns Adapter，产出可被下游直接读取的回改数组。
+  icon: 🎬
+  icon_background: '#E4FBCC'
+  icon_type: emoji
+  mode: workflow
+  name: DIYU Demo Production Director v0.1
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.20@850efe73fb62bbe7ab2229116086596596297a77174fb86f73e1363b99a24116
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: template-transform
+      id: 1788000000001-source-ref_projection-target
+      source: '1788000000001'
+      sourceHandle: source
+      target: ref_projection
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: ref_projection-source-projection_record-target
+      source: ref_projection
+      sourceHandle: source
+      target: projection_record
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: llm
+      id: projection_record-source-skill_llm-target
+      source: projection_record
+      sourceHandle: source
+      target: skill_llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: template-transform
+      id: skill_llm-source-final_extract-target
+      source: skill_llm
+      sourceHandle: source
+      target: final_extract
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: final_present-source-model_used-target
+      source: final_present
+      sourceHandle: source
+      target: model_used
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: end
+      id: model_used-source-end_node-target
+      source: model_used
+      sourceHandle: source
+      target: end_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: code
+      id: final_extract-source-returns_adapter-target
+      source: final_extract
+      sourceHandle: source
+      target: returns_adapter
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: template-transform
+      id: returns_adapter-source-final_present-target
+      source: returns_adapter
+      sourceHandle: source
+      target: final_present
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 输入
+        type: start
+        variables:
+        - label: Creative Script 完整 Final（逐字）
+          max_length: 80000
+          options: []
+          required: true
+          type: paragraph
+          variable: cs_final
+        - label: 原 Content Brief 正文
+          max_length: 60000
+          options: []
+          required: true
+          type: paragraph
+          variable: content_brief
+        - label: production_profile
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: production_profile
+        - label: expression_subject
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: expression_subject
+        - label: content_origin_mode
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: content_origin_mode
+        - label: subject_domain
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: subject_domain
+        - label: duration_band
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: duration_band
+        - label: platform（本轮 PROBE_ONLY）
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: platform
+        - label: constraints[]
+          max_length: 8000
+          options: []
+          required: true
+          type: paragraph
+          variable: constraints
+        - label: available_assets
+          max_length: 8000
+          options: []
+          required: true
+          type: paragraph
+          variable: available_assets
+        - label: fact_refs[]
+          max_length: 20000
+          options: []
+          required: true
+          type: paragraph
+          variable: fact_refs
+        - label: example_reference_requested（固定 false）
+          max_length: 16
+          options: []
+          required: true
+          type: text-input
+          variable: example_reference_requested
+      height: 395
+      id: '1788000000001'
+      position:
+        x: 120
+        y: 260
+      positionAbsolute:
+        x: 120
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 确定性查表投影（运行合同 4.1／4.2／4.3）。不使用知识库，不由 LLM 决定加载范围。
+        selected: false
+        template: '## 参考投影 · platforms.md
+
+
+          ## 三、画面安全区 —— Production Director 读这一节
+
+
+          单位是 1080×1920 竖屏下的像素。**被遮住的位置放字幕、放关键动作，等于白做。**
+
+
+          | 平台 | 顶部 | 底部 | 左右 | `as_of` | 来源 |
+
+          |---|---|---|---|---|---|
+
+          | **抖音** | ≥150px | **≥300px**（评论区、操作按钮） | 各 50px | 2026-06-02 | 色彩韵设计规格文档
+          |
+
+          | **小红书** | ≥150px | ≥200px | 未核实 | 2026-05-30 | 色彩韵设计规格文档 |
+
+          | **视频号** | 未核实 | 未核实 | 未核实 | — | 官方未公布 |
+
+
+          **抖音底部 300px 是三家里最狠的一条**：竖屏画面下方约六分之一是不可用的。人物半身构图时，手上正在做的事很容易正好落在这一带——PD-5
+          说「先有动作再定机位」，动作落在遮挡区就等于没拍。
+
+
+          **视频号整行未核实时的处置**：按三家里最保守的一组取（顶 150 / 底 300 / 左右 50），并在 `assumptions[]` 里写明这是保守值。
+
+
+          ## 参考投影 · industry-conditions.md（按 subject_domain 精确匹配 → 再按固定行名投影）
+
+
+          {%- if subject_domain == ''服装 / 门店零售'' -%}
+
+          ## 服装 / 门店零售
+
+
+          | | |
+
+          |---|---|
+
+          | **常见素材形态** | 试穿视频（长、未剪、未编目）｜商品图（棚拍，干净但不带信息）｜陈列照｜空镜 |
+
+          | **哪一类真的带信息** | **只有试穿视频**。棚拍商品图在信息流里和所有服装广告长得一样，基本只能当背景 |
+
+          | **特有淘汰项** | **① 用成分推性能**——"70% 羊毛所以垂感好、不起球"。成分是事实，性能是结论，中间那一步没有来源。要说垂感，只能用试穿时观察到的动作（手一松塌不塌）<br>**②
+          无条件推荐**——"必买""闭眼入"<br>**③ 把条件句写成否决句**——"取决于内搭体积"不是"我劝你别买" |
+
+          | **拍摄条件** | 门店光是混色温的（射灯 ＋ 自然光），白平衡容易翻车｜试衣间退不开，广角畸变｜**"塌"和"挺"只有动态能看出来**，平铺图拍不出来，必须穿着状态下拍
+          |
+
+          {%- elif subject_domain == ''餐饮 / 门店'' -%}
+
+          ## 餐饮 / 门店
+
+
+          | | |
+
+          |---|---|
+
+          | **常见素材形态** | 备料过程（长、脏、真实）｜成品图｜店内环境｜顾客镜头（需授权） |
+
+          | **哪一类真的带信息** | **备料过程**。成品图是这个行业最没有区分度的素材——所有餐饮内容的成品图都长一样 |
+
+          | **特有淘汰项** | **① 无来源的工艺形容**——"秘制""古法""匠心"<br>**② 把后厨拍干净**——干净到不像在用的后厨反而不可信<br>**③
+          用别家的成品图**<br>**④ 把"好吃"当成可证明的事实**——它是 `SUBJECTIVE`，不得用画面强化 |
+
+          | **拍摄条件** | 后厨高温、油烟、噪音大——**现场声通常吃掉人声，必须另录**｜备料时段和营业时段冲突，可拍窗口窄｜**火、油、水汽是天然的动作**，PD-5
+          在这个行业最好做，不需要额外设计"人在做什么" |
+
+          {%- elif subject_domain == ''知识付费 / 课程'' -%}
+
+          ## 知识付费 / 课程
+
+
+          | | |
+
+          |---|---|
+
+          | **常见素材形态** | 学员作业前后对比｜上课录屏｜讲师口播｜学员访谈（**多数还没发生**） |
+
+          | **哪一类真的带信息** | **改稿痕迹本身**——第几版改了什么。这个行业真正的素材是文字，不是画面 |
+
+          | **特有淘汰项** | **① 学员成果当成方法有效的证明**——那是幸存者，不是验证<br>**② 时间承诺**——"三天学会"<br>**③
+          把讲师的判断包装成行业共识**<br>**④ 访谈还没做就先写好学员会说什么**——这是最常见也最难发现的一种，因为写出来的稿子看上去完全正常
+          |
+
+          | **拍摄条件** | 最常见的档位是"一个人 ＋ 一台手机"，**但要再拆一层**：图文档位往往是"一个人 ＋ 零台手机"——`production_profile`
+          写着"单人手机"不等于这一条含拍摄能力，接上游时要问清楚｜**素材荒是常态**：没有可拍的过程、没有可拍的物件。这个行业要靠**版式和文字**承担表达，PD-5
+          的兜底出口（"只能靠文字与版式扛"）在这里是主路径不是备用路径 |
+
+          {%- elif subject_domain == ''动漫 / 原创 IP'' -%}
+
+          ## 动漫 / 原创 IP
+
+
+          | | |
+
+          |---|---|
+
+          | **常见素材形态** | 分镜（含**废弃分镜**）｜设定集｜原画｜配音｜已完成片段 |
+
+          | **哪一类真的带信息** | **废弃分镜**。它是这个行业唯一天然带"真实摩擦"的素材——一个被否掉的版本，本身就是一次可展示的取舍 |
+
+          | **特有淘汰项** | **① 两层事实不分层**——设定层的"真"和现实层的"真"必须在画面上分开，否则观众把创作决策当成剧情<br>**②
+          用"世界观宏大"代替具体设定**<br>**③ 角色一致性断裂**——同一角色在两个单元里不像同一个人。这是这个行业的头号废片原因，且**在分镜阶段就要设一致性锚点**，不能留到成片才发现
+          |
+
+          | **拍摄条件** | 不拍摄，**产能是唯一约束**｜低资源 ≠ 减人，是**不动用新产能**——用废弃分镜、已有素材、纯文字卡替代需要新画／新生成的单元｜**声音是设计出来的、不是收来的**：纸张声、脚步声、器物声往往是这个
+          IP 的核心资产，不能因为"不是实拍"就整块跳过 |
+
+          {%- elif subject_domain == ''户外 / 露营（爱好垂类）'' -%}
+
+          ## 户外 / 露营（爱好垂类）
+
+
+          | | |
+
+          |---|---|
+
+          | **常见素材形态** | 现场视频（风噪严重）｜装备图｜路线图｜**评论区提问** |
+
+          | **哪一类真的带信息** | **评论区提问**。这个行业大量内容本来就是从别人的问题里长出来的——那是客场，见 PP-5 |
+
+          | **特有淘汰项** | **① 把自己的参数当成对方的答案**——"充绒 400g、舒适温标 −2℃"是我的参数，不是你该带多厚的答案。这是这个行业最高频的一种超额承诺<br>**②
+          装备推荐不说使用条件**<br>**③ 把一次好天气的体验当成常态** |
+
+          | **拍摄条件** | **风噪**——缩到 50cm 救不了，反而把广角畸变推到脸上；改成常规 80–100cm ＋ 选背风位 ＋ 贴身另录音轨后期对轨｜**天光窗口**——日出后一小时内或日落前两小时｜低温掉电｜**无监看**：PD-1
+          的"前两遍当热身"在没人看监视器时变成"每遍拍完必须回放"，工时翻倍｜地面是唯一置景面｜**完成日期取决于天气，不取决于工时**——资源档里写"几个天光窗口内"，不写"几小时"
+          |
+
+          {%- else -%}
+
+          （未匹配到行业。按规则不加载任何行业段落，也不选择「最相近行业」。按通用处理。）
+
+          {%- endif -%}
+
+
+          ## 参考投影 · examples.md
+
+
+          （example_reference_requested = {{ example_reference_requested }}；本轮固定 false，examples.md
+          未加载，正文亦未嵌入本工作流。）
+
+          '
+        title: Reference Projection
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - subject_domain
+          variable: subject_domain
+        - value_selector:
+          - '1788000000001'
+          - example_reference_requested
+          variable: example_reference_requested
+      height: 112
+      id: ref_projection
+      position:
+        x: 420
+        y: 260
+      positionAbsolute:
+        x: 420
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: 投影清单，进运行证据。
+        selected: false
+        template: "{%- set INDS = [\"服装 / 门店零售\", \"餐饮 / 门店\", \"知识付费 / 课程\", \"动漫\
+          \ / 原创 IP\", \"户外 / 露营（爱好垂类）\"] -%}\n{\n  \"skill\": \"PD\",\n  \"loaded_reference_sections\"\
+          : [\n    \"SKILL.md :: 全文（始终加载）\",\n    \"platforms.md :: 三、画面安全区 —— Production\
+          \ Director 读这一节\"{%- if subject_domain in INDS %},\n    \"industry-conditions.md\
+          \ :: {{ subject_domain }} :: 行 常见素材形态 / 哪一类真的带信息 / 特有淘汰项 / 拍摄条件\"{%- endif\
+          \ %}\n  ],\n  \"excluded_reference_sections\": [\n    \"platforms.md ::\
+          \ 一、入口形态 —— 决定封面和首帧谁承担第一眼\",\n    \"platforms.md :: 二、结构性参数 —— Creative\
+          \ Script 也读这一节\",\n    \"platforms.md :: 四、字数与展示长度 —— Publishing & Packaging\
+          \ 读这一节\",\n    \"platforms.md :: 五、这张表里没有的东西\",\n    \"platforms.md :: 更新这张表的规则\"\
+          ,\n    \"industry-conditions.md :: 本行业 :: 行 可用的真实摩擦\",\n    \"industry-conditions.md\
+          \ :: 本行业 :: 行 包装差异\"{%- for k in INDS %}{%- if k != subject_domain %},\n\
+          \    \"industry-conditions.md :: {{ k }} :: 整块\"{%- endif %}{%- endfor %},\n\
+          \    \"industry-conditions.md :: 一条跨行业的提醒（仅当表达主体为 Founder／个人 IP 时加载；本轮样本为苏禾，不加载）\"\
+          ,\n    \"examples.md :: 全文\"\n  ],\n  \"reference_hashes\": {\n    \"SKILL.md\"\
+          : \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\",\n\
+          \    \"platforms.md\": \"98fa083c36710fc65f7d5fcf58fb6c33f14d3f984e07c014d7ab47fafe641d2d\"\
+          ,\n    \"industry-conditions.md\": \"b085f1218a561adb500980464325c4356413187ee6e45be5430d5d1334fb7f6d\"\
+          ,\n    \"examples.md\": \"635c86e11ab9bd4e6e1b1fb721b2e3929f8a57c8a18c64f57dc81d743228f3e5\"\
+          ,\n    \"projected_text_sha256_note\": \"见 reference_projection_text 输出，可对该串独立复算\"\
+          \n  },\n  \"projection_reason\": [\n    \"SKILL.md 始终加载。\",\n    \"platforms.md\
+          \ 按运行合同 4.1 固定表加载：三、画面安全区 —— Production Director 读这一节。其余小节按表排除，执行侧不作判断。\"\
+          ,\n    \"industry-conditions.md 先按 subject_domain 精确匹配唯一行业块（本次 = {{ subject_domain\
+          \ }}），再按运行合同 4.2 固定行名投影：加载 常见素材形态 / 哪一类真的带信息 / 特有淘汰项 / 拍摄条件；排除 可用的真实摩擦 /\
+          \ 包装差异。\",\n    \"一条跨行业的提醒 不加载：只有输入明确说明表达主体属于 Founder 或个人 IP 时才加载，不得从 NATURAL_PERSON\
+          \ 自行推导。本轮样本为苏禾。\",\n    \"examples.md 不加载：example_reference_requested 固定\
+          \ false，且正文未嵌入工作流，物理上无法加载。\",\n    \"全部投影由 Template Transform 查表完成，未使用知识库，未由任何\
+          \ LLM 决定加载范围。\"\n  ]\n}\n"
+        title: Projection Record
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - subject_domain
+          variable: subject_domain
+      height: 80
+      id: projection_record
+      position:
+        x: 700
+        y: 260
+      positionAbsolute:
+        x: 700
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        memory: null
+        model:
+          completion_params:
+            max_tokens: 384000
+            reasoning_effort: low
+            thinking: true
+            top_p: 0.8
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: sys-1
+          role: system
+          text: "---\nname: directing-content-production\ndescription: Turns a finished\
+            \ script into something a crew can actually shoot and cut — scenes, human\
+            \ action, shot lists with a stated purpose per shot, performance direction,\
+            \ shooting schedule, asset lists, sound design, edit rhythm, and pickup\
+            \ requirements. Use whenever the user has a script or content plan and\
+            \ needs to figure out how to film it, what shots to get, how to direct\
+            \ the person on camera, what to do with only a phone, how to cut it, or\
+            \ asks to turn a script into a 分镜 / 拍摄计划 / 素材清单 — including when they\
+            \ just say \"这条怎么拍\" or hand over a script and ask what's next. Covers\
+            \ live shooting, existing-footage edits, image-only pieces, and AI-generated\
+            \ visuals; scales from one phone to a full crew.\n---\n\n# Production\
+            \ Director\n\n把脚本变成**制作人员照着就能拍、就能剪**的东西。\n\n**不做**：改脚本台词（要改走「回改建议」）、标题、封面、发布文案、**平台包装适配**。\n\
+            \n平台适配整体归 Publishing & Packaging。这里只出**母版制作方案**，以及目标平台确有必要的制作差异（例如竖屏安全区影响构图）——不出三平台的包装变体。\n\
+            \n---\n\n## 输入\n\n**缺了不要卡住，也不要闷头猜。** 对话里被调用就问；工作流里被调用就用默认并在 `assumptions[]`\
+            \ 声明。\n\n| 槽位 | 缺了怎么办 |\n|---|---|\n| `script_beats[]` 含「事实」「素材」两问 ＋ `zone`\
+            \ | **「事实=有」的段可直接工作。「事实=无」的段只有骨架和提问清单——这是上游的正常产出，不是残缺输入**：为它排\"待成立单元\"\
+            ，不要退回上游 |\n| `content_origin_mode[]` | **必须由上游给定。缺失即回退上游索取，不得默认现拍**——猜错会让整条按\"\
+            可以补拍\"处理，而这正是最贵的错误 |\n| `explicit_non_promise[]` | 只读继承。**不得在这里增加内容回来**——上游明说不承诺的东西，画面也不能替它承诺\
+            \ |\n| `audience_shift` ＋ `content_promise` ＋ `tension_mode` | 从上游原样接收。缺了按\
+            \ `content_promise` 反推并标 `INFERRED`。**三段共用一个落点，不得各做各的** |\n| `fact_refs[]`\
+            \ 含 `type` | 按 type 区别对待：`EXTERNAL` 无来源者不得用画面强化；`SUBJECTIVE` **一律不得用画面强化**；`KNOWN_UNKNOWN`\
+            \ **应当用画面强化**；`SETTING` 与现实层事实必须在画面上分层。<br>**一句话同时是主观判断和\"我不知道\"时，按 `KNOWN_UNKNOWN`\
+            \ 处理**——画面强化\"这里是空的\"，但不得呈现\"空的地方本来该有什么\" |\n| `production_profile` 资源档\
+            \ ＋ **时间窗口** | 两个维度**分别缺、分别补**：资源档缺 → **问**／默认单人手机；时间窗口缺 → **问**／默认半天。不拍摄的档位，时间窗口的单位是**检索工时**不是拍摄时长；户外档的完成日期取决于天气不取决于工时，写\"\
+            几个天光窗口内\"而不是\"几小时\"。**人数和时间是两个维度**——同样 1–2 人，能拍两天和只能拍半天，方案完全不同；4 人动画组按人数是小团队，产能上能做实拍小团队做不到的事\
+            \ |\n| `expression_subject` 五类之一 | **问**／默认 `NATURAL_PERSON`。**先确定是哪一类再往下做**（见\
+            \ PD-1） |\n| `available_assets` | **输入，不是产出。** 每条按上游同一套「素材」词标：`已确认`／`待检索`。<br>「三年\
+            \ 200 小时未整理」名义已有，实际是 `待检索`——**检索成本可能高于重拍**，不标出来就会被当成现成素材排进计划。<br>**它是资产级的（\"\
+            42 分钟\"\"36 张\"），不是 beat 级的**——翻译成 beat 级是本段的活，见「计划 ≠ 实际」 |\n| `constraints[]`\
+            \ | 上游给的拍摄／使用禁令（第三方入镜边界、引用授权状态）。**缺失不等于没有**——涉及他人尤其未成年人入镜时，标为待确认并写进本段\
+            \ `constraints[]`，不要默认可拍 |\n| `duration_band` | 默认短档 |\n| `platform` |\
+            \ 默认平台中立母版 |\n\n**`realization_manifest` 不是这里的输入。** 它是**产出**，且只有真实素材回来之后才存在。已有素材（`available_assets`）是开拍前手上有什么，两者语义不同，不得混用——混用会导致\"\
+            用旧素材清单去判断这条片子实际兑现了什么\"。\n\n---\n\n## 核心判断\n\n### PD-1 · 表演指导必须具体到能照做\n\
+            \n**先确定承载者是谁。** 七个维度在任何表达主体下都成立，变的只是由谁承担——**不要因为没有真人就整块跳过**。\n\n| `expression_subject`\
+            \ | 谁承担这七维 | 特殊处理 |\n|---|---|---|\n| `NATURAL_PERSON` | 出镜人 | 全部适用 |\n\
+            | `CHARACTER_IP` | **原画 ＋ 配音** | 六维照常（\"第三根手指有一次犹豫\"是表演调整，不是技术调整）；`line_latitude`\
+            \ 拆两半——配音语气有余地，口型锁死后台词一字不改 |\n| `BRAND_VOICE` | 语速、断句、信息密度 | `gaze`／`action`\
+            \ 不适用 |\n| `OBJECT_LED` | **手部动作 ＋ 拍摄视角** | 面部相关维度不适用；`state` 改写为\"物件处在什么状态\"\
+            \ |\n| `NO_PERSONA` | 无 | 整块 NOT_APPLICABLE，改出**选帧判据**（取什么帧、不取什么帧） |\n\
+            \n已有素材剪辑模式下**不存在可指导的表演**（动作已经发生），同样改出选帧判据。\n\n\n**转换公式：具体时刻 ＋ 具体动作 ＋ 交流对象**\n\
+            \n| ❌ 不合格 | ✅ 合格 |\n|---|---|\n| 自然一点 | 说到这一句时停一下，先看手里的衣服，再抬头看镜头 |\n|\
+            \ 有感染力 | 语速比前一段慢，把结论说完再动手 |\n| 放松 | 先做完动作再开口，不要边做边解释 |\n| 有亲和力 | 讲给一个具体的人听（陈晚），不是讲给\"\
+            观众\" |\n\n七个维度，缺一项就是没写完：\n\n`state 状态｜action 动作｜pause 停顿｜gaze 视线｜addressee\
+            \ 说给谁听｜intensity 强度｜line_latitude 可发挥范围`\n\n- `state` 写**具体时刻的状态**——「刚比完两件、还没下结论」，不是「有点纠结」\n\
+            - `pause` 用**相对描述**——「等到他看完再说」，不写秒数\n- `gaze` 是最便宜的节奏工具：换句时换看向哪，一分钱不花\n\
+            - `addressee` **对象存在但身份未知时**（回应一条匿名提问、面向没见过的读者），不要退回\"讲给观众听\"——锚到一个你确实认识、处境相同的具体人（可以是过去的自己），并在字段里注明这是替代锚点\n\
+            \n> **为什么**：模型给的表演指导默认就是\"自然一点、微笑、有感染力\"。非职业出镜者拿到这种指导等于没拿到——他不知道具体该做什么，于是站着念稿。\n\
+            \n**出镜人紧张时**：给他一件事做（拿着衣服、翻着本子），让他讲给一个具体的人听，**前两遍当热身，不默认采用**——第三遍开始才是可用素材。\n\
+            **不露脸时**：手部 ＋ 物件 ＋ 画外音。**不露脸不是减分，是换一种打法**——手的动作比脸更能传递\"正在做事\"。\n\n---\n\
+            \n### PD-2 · 每个镜头必须带来新信息\n\n七类信息增量：**新的证据｜变化｜关系｜动作｜反应｜对比｜空间信息**\n\n**只换景别不算。**\
+            \ 说不清这个镜头为什么存在，删掉它。\n\n每个单元必须写清：`unit_id｜unit_type｜内容｜对应 beat｜时长｜**这个单元的目的**`\n\
+            `SHOT` 类型再加：景别｜机位与运动\n\n**目的写不出来的，就是废单元。** 这条对图片、文字卡、动画单元同样成立——一张不带来新信息的图，和一个不带来新信息的镜头，是同一个问题。\n\
+            \n> **为什么**：模型默认输出按景别轮换的分镜表——近景、中景、特写循环，镜头数随脚本长度膨胀，却没有一个能说明自己为什么存在。\n\n\
+            **示例**\n\n> ❌ 镜 3 中景苏禾说话 → 镜 4 近景苏禾说话 → 镜 5 特写苏禾说话\n> ——三个镜头信息完全相同，只是离得越来越近。\n\
+            > ✅ 镜 3 中景：苏禾同时拿起西装和马甲，比重量（**对比**）→ 镜 4 特写：手一松，马甲塌下去，西装没塌（**证据**）→ 镜 5\
+            \ 近景：她抬头，说\"所以这两件不是替代关系\"（**理解**）\n\n---\n\n### PD-2 附加 · 三种\"逐条查不出来\"\
+            的编造\n\n**PD-2 到 PD-7 全是逐个单元查的。下面三件事发生在单元之间，逐条查永远查不出来。**\n\n#### ① 无来源的关联，是在时间线上编造的\n\
+            \n两条各自为真的素材放在一起，观众**必然**读出一条关系。这条关系不在台词里、不在 `fact_refs[]` 里——**所以上游的事实核查看不见它**。\n\
+            \n排完 `capture_plan.units[]` 之后，**逐对**（不是逐条）过一遍：\n\n| 检查 | 问什么 | 没来源怎么办\
+            \ |\n|---|---|---|\n| **时间上相邻** | 观众会不会以为前一个导致了后一个？ | 拆开不相邻，或当场明示无关 |\n\
+            | **同屏排布** | 并排／归组／上下这个位置，是不是在声称一种关系？ | 分区、加隔断，或不同屏 |\n| **声画归属** | 这张脸是不是被安上了别人的话？\
+            \ | 匿名／第三方来源的原话，**不得配本方出镜人的脸** |\n\n**有来源＝照排；没来源＝改。** 不写\"注意不要误导\"——那是提醒，不是关卡。\n\
+            \n> 例：一个学员\"砍掉七成\"、另一个\"调了顺序\"，两段顺排。两条都有来源、都带新信息、都标\"证明\"——**全过**。观众读出的是\"\
+            改稿就会有好结果\"，而输入里第二个人自己说\"不够严谨\"。\n\n#### ② 今天拍的画面，不能承担昨天发生的事\n\n`SHOT`\
+            \ 与 `GENERATED_UNIT` **只能承担拍摄当天成立的事实**。\n已经发生过的事——那次事故、那次改稿、那次试用——只能由\
+            \ `EXISTING_CLIP` / `STILL_FROM_CLIP` / `IMAGE` / `TEXT_CARD` 承担。\n\n\
+            用今天补拍或生成的画面\"重演\"过去的事件，每个参数都是真的，**编的是\"这个画面记录了那件事\"**。这是 ① 的一个特例，只是它伪装成\"\
+            情景再现\"，看起来无害。\n\n#### ③ 成本型事实：时长本身就是证据\n\n`edit_structure` 要\"平均镜头长度\"\
+            ，**这一条对成本型内容是反的**——快剪展示了工序，删掉了成本。\n\n- 首末两次留**完整真实长度**不剪，中间才压缩；三段**同机位**\n\
+            - 压缩段带**可数锚点**：角标 1/9 … 9/9\n- **只用事实里已有的计数单位，不发明单位，不给未命名的环节命名。** 输入写\"\
+            九道\"就只数到九——给每一道编个名字（\"一洗清水冲、二洗面粉搓\"）是最容易被内行一眼拆穿的一种造假\n- 成本段**不铺 BGM**：音乐把成本换算成节奏，观众记住的是\"\
+            很专业\"，不是\"很贵\"\n\n---\n\n### PD-3 · 先问\"哪些东西不能只靠说\"\n\n**不要**逐句问\"这句话配什么画面\"\
+            。**要**问相反的问题：**哪些东西不能只靠说？**\n\n五类必须用画面的东西：**前后变化｜同条件比较｜使用过程｜真实结果｜动作差异**\n\
+            \n**旁白硬规则**：存在\"画面能证明\"的信息时，**不得用旁白说掉**——那是应该改画面的信号，不是应该加旁白的信号。\n\n> **为什么**：模型把\"\
+            视觉\"理解成\"配画面\"，于是给每句话配一个画面描述，最后得到一条口播加图。旁白则变成万能补丁——画面没做到的地方全靠旁白补，越补画面越没用。\n\
+            \n**示例**\n\n> ❌ 台词「三层同穿会显得拥挤」→ 画面：三件衣服平铺展示 ＋ 旁白重复\"三层会拥挤\"\n> ✅ 台词「三层同穿会显得拥挤」→\
+            \ 画面：**领口袖窿下摆那一处的特写**，穿着状态下拍。旁白删掉——画面已经证明了，再说一遍是浪费。\n\n---\n\n**\"同条件比较\"\
+            里的\"同条件\"，要写成锁死清单。** 写不出清单的，那不是对照，是两张并排的图。\n\n- 锁死项**逐条进单元内容**（不是备注）：机位、距离、高度、脚位、姿态、内搭、鞋、发型、时段、**录音位**（声音对照时录音位比机位更重要——机位挪十厘米问题不大，录音位挪十厘米，响度差就作废了）\n\
+            - **两个状态之间必须有一段同机位空画面**，人走出画面再走回来。**那两秒看起来像废片，它是\"这不是两次拍摄\"的唯一证据**\n-\
+            \ **变量声明上屏**。不指出该看哪里，对照白做\n- 硬禁：分两次拍、隔天拍、换机位拍；悄悄换鞋／内搭／发型\n- 对照只证明\"不同\"\
+            ，**不得由对照直接推出\"哪个更好\"**\n\n---\n\n### PD-4 · 画面与语言只有三种关系\n\n**证明｜补充｜制造信息差**\
+            \ —— 三选一，每个镜头标明是哪一种。\n\n机械重复同一句信息，不增加内容价值。\n\n**示例**\n\n> - **证明**：台词说\"\
+            面料偏软\"，画面是手一松布料塌下去\n> - **补充**：台词说\"这件我犹豫过\"，画面是货架上被反复拿起放下的痕迹\n> - **信息差**：台词说\"\
+            这三层挤在三处\"，画面是穿着三层的全身，不指哪三处\n\n---\n\n**标\"证明\"的单元，必须写得出它的失败条件。** 否则任何一个特写都能标成\"\
+            证明\"，这个字段就白设了。\n\n问一句：**这个动作如果说法不成立，当场会怎么露馅？**\n\n- 答不出的，**改标「补充」**——它是展示，不是证据\n\
+            - 证明性操作**一镜不剪**。剪了等于承认\"试了很多次，挑了成功那次\"\n- **操作失败了也留**——那是真实结果，走 `return_to_script[]`，不是重拍到成功为止\n\
+            - 结论是条件句（\"成立与否取决于…\"）时，**条件必须上屏**，否则它变成对所有情况的承诺\n- **`GENERATED_UNIT`\
+            \ 不得标\"证明\"**：生成的操作必然成功，不会失败的操作不构成证据\n\n---\n\n### PD-5 · 动作先于机位\n\n先回答：**这段话，人在做什么事的时候说？**\
+            \ 再定怎么拍。\n\n- 挑衣服的时候说／试穿到一半停下来说／改稿改到第三遍抬头说／关火之后说\n- **不是**\"站在货架前说\"——站着就是背景板\n\
+            \n找不到对应动作的段落，**明确标出\"这段只能靠声音扛\"**，不硬凑画面。\n\n**直接淘汰**：\"电影感\"\"高级感\"\"\
+            质感\"作为要求——这是把导演判断降级成审美形容词。\n\n> **为什么**：镜头语言解决不了\"人站着说话\"这个根本问题。先有动作，画面才有东西可拍。\n\
+            \n---\n\n### PD-6 · 声音要承担事，不只是垫底\n\n**先判断的是\"有没有可用的现场声\"，不是\"是不是实拍\"。**\
+            \ 这两件事不一样：\n\n| 情况 | 现场声 |\n|---|---|\n| 实拍，环境可控 | 有，且通常该留 |\n| 实拍，户外／嘈杂\
+            \ | 有，但**可能吃掉人声**——这是技术题不是美学题，见 PD-7 |\n| **动画** | **有，而且是设计出来的**。纸张声、脚步声、器物声往往是这个\
+            \ IP 的核心声音资产，不能因为\"不是实拍\"就整块跳过 |\n| 远程采集 | 有，但**不在你这边、你控制不了**——只能对采集端提要求（戴耳机、本地录备份轨）\
+            \ |\n| 纯图文 | 无 |\n\n**有现场声时**：\n- **默认保留。** 剪干净的片子听起来像广告。要压掉可以，但那要是个决定（教学、知识类为了清晰度压环境声是合理的），不是默认。\n\
+            - **转折前留一段静默**，通常比加音效有效。留多长按内容节奏定，不写死秒数。\n\n**所有内容通用**（纯图文除外）：\n- 配音／音乐／环境声／音效各自标出**进点和出点**。不写\"\
+            全程轻快背景音乐\"。\n- **音乐不得替代张力。** BGM 撑起来的紧张感，静音播放时立刻消失（正好对应自检第 3 条）。\n\n**多来源拼接时**（远程访谈、多人分头录）：画质、色温、构图、底噪各不相同，**统一处理方案要写进\
+            \ `sound_design` 和 `edit_structure`**，不能留到剪辑台上才发现。\n\n**`sound_design`\
+            \ 里，尚未采集的声音只能写声源和录音位，不得写它听起来怎么样。**\n「第 7 份入油声更闷」「油温够的时候声音更脆」——这是把一个**还没做过的观察**写成了事实。它不在台词里，脚本自查抓不到；到剪辑台上还会被\"\
+            加个低通滤波做出发闷的感觉\"补齐，几乎不可能被外部发现。\n声音要承担对照时：写\"两次同录音位，**不预设差别**\"，该单元「素材」标\
+            \ `待产出·不可控`，并按现行规则带一条**改用可见证据**的降级路径。\n\n**可选手法**（适用时用，不适用就不用，不必解释为什么没用）：\n\
+            音乐在关键句前一拍断掉｜同一句话用两种语速各录一遍留给剪辑选｜关键动作用现场声不铺音乐\n\n### PD-7 · 低资源版不是降级，是换打法\n\
+            \n单人手机、无灯、无收音、一个人：\n\n**先看是哪种场景**，四条对照的适用范围不同：\n\n| 缺什么 | 室内实拍 | 户外实拍\
+            \ | 不拍摄（已有素材／图文） | 动画／生成 |\n|---|---|---|---|---|\n| 多机位 | **一镜到底 ＋ 人真的在做事**\
+            \ | 同左，更适用 | 不适用 | 不适用 |\n| 运镜 | **人进出画面**制造运动 | 同左 | 用**单元进出**（物件推入推出画面）\
+            \ | 同左 |\n| 收音 | **判据是「拍摄那一刻有没有设备在响」，不是「这是什么场地」**。<br>安静（含**非营业时段、抽油烟机关掉的后厨**）：缩到\
+            \ 50cm 内、台词改短。<br>嘈杂（设备在响、油烟机全开、机器运转）：**50cm 同样救不了**——改常规距离 ＋ 贴身另录一轨后期对轨，和户外一个打法。<br>**拿不准就按嘈杂做**：多录一轨的成本远低于人声被吃掉\
+            \ | **50cm 救不了风噪**，且广角畸变推到脸上。改：常规 80–100cm ＋ 选背风位 ＋ 手机贴身另录音轨、后期对轨 | 不适用\
+            \ | 不适用 |\n| 打光 | **面向窗户，或与窗户呈 30–45 度**。背对窗户是逆光，人脸会黑 | 无窗。等价物按优先级：阴天全天光\
+            \ → 背对太阳、面向被照亮的浅色地面或岩壁取反射 → 帐篷白色内帐面。**同样禁止**背后是天空最亮的一块。窗口选日出后一小时内或日落前两小时\
+            \ | 不适用 | 不适用 |\n\n**其它档位下\"低资源\"是什么意思：**\n- **不拍摄**：四条全不适用。低资源＝**减少检索量**——优先扫命中率最高的素材段，为每个证明性单元预置\"\
+            删掉后本段仍成立\"的降级路径\n- **动画／有产能班底**：低资源 ≠ 减人，是**不动用新产能**——用废弃分镜、已有素材、纯文字卡替代需要新画／新生成的单元\n\
+            - **户外单人**：另有一组固有约束——风噪、天光时间窗口、低温掉电、**无监看**（PD-1 的\"前两遍热身\"在无人监看时变成\"\
+            每遍拍完必须回放\"，工时翻倍）、地面是唯一置景面\n\n**低资源版必须完成同一个落点**，不是做一条更差的内容。\n\n**主方案本来就已经是最低档时**（单人手机就是起点，这在知识付费、个人\
+            \ IP 这些档位是常态），`low_resource_version` **不是\"再降一档\"**——那会变成自己跟自己对账。它在这里的意思是**同一档下的失败预案**：出镜人当天没空、检索全部落空、天气不给窗口，这条内容还能不能成立、靠什么成立。写这个，不写一个更穷的版本。\n\
+            \n> **为什么**：模型面对资源不足的默认动作是\"建议增加人手\"\"可考虑外请拍摄\"——那是把问题退回给用户，不是解法。\n\n\
+            ---\n\n## 计划 ≠ 实际\n\n**这是这份 Skill 的输出结构里最重要的一条。**\n\n| | 是什么 | 什么时候存在\
+            \ |\n|---|---|---|\n| `available_assets` | **开拍前手上已经有什么** —— 上游给的输入 |\
+            \ 一直存在 |\n| `realization_plan` | 准备怎么做——单元清单、素材清单、调度。**每个单元继承上游那两个问题**（事实：有／无；素材：已确认／待检索／待产出·可控／待产出·不可控），不另发明状态词\
+            \ | 拍摄前 |\n| `realization_manifest` | **实际做出来了什么**——真拿到哪些素材、哪些 beat 真被覆盖、哪些事实真有画面支撑\
+            \ | 素材回来之后 |\n\n**三者不是一回事，混用会出事**：拿 `available_assets` 当 `realization_manifest`，等于用\"\
+            开拍前的旧素材清单\"去判断\"这条片子实际兑现了什么\"。\n\n**已有素材剪辑模式是一个特例**：素材早就存在，只是没被编目。这种情况**可以直接产出\
+            \ manifest**——把「素材=待检索」的检索完、逐条对上 beat 之后，它就是真实的实现清单，下游可以走 FINAL。**\"素材还没拍\"\
+            和\"素材没被检索\"是两回事，不要一律降级到 PRE。**\n\n**拍摄前不得虚构 manifest。** 下游 Publishing\
+            \ 的 FINAL 模式只能消费 manifest，不能拿 plan 当现实。\n\n### manifest 是 beat 级的，不是资产级的\n\
+            \n素材回来时是**资产级**的——「42 分钟试穿视频」「36 张商品图」「3 小时 20 分备料」。\n下游要的是**beat 级**的——「beat-3\
+            \ 说的那句『马甲塌下去』，画面到底有没有」。\n\n**这两级之间的翻译是本段的活，不是下游的活。** 因为只有本段知道哪段素材对应哪个单元、哪个单元对应哪个\
+            \ beat——这个映射是本段自己排出来的，别人手上没有。\n\n`realization_manifest` 逐条写：\n\n`beat_id\
+            \ | 覆盖它的单元 | 素材出处（起止时间码／第几张） | 这条 beat 的事实有多少画面支撑 | 缺的那部分怎么办`\n\n### 检索之前必须定好的四件事\n\
+            \n**这一节和\"产不产出 manifest\"无关。** 只要有「素材=待检索」的单元，**这四件事就必须在动手检索之前写出来**——哪怕这一轮根本到不了\
+            \ manifest 那一步。写不出来，检索完了也对不上。\n\n（下面这张表和 manifest 的格式是同一件事的两端：现在定判据，回来填结果。）\n\
+            \n\n| 定什么 | 怎么定 |\n|---|---|\n| **检索的最小单位** | 按**单元**切，不按时长切。「42 分钟」要切成「三组试穿各一段」——单元是你自己排的，只有你知道边界在哪\
+            \ |\n| **出处写区间，不写点** | 一个动作是起止两个时间码。「第 47 分钟」剪辑师找不到，「47:12–47:20」找得到 |\n\
+            | **覆盖判据**（每个单元一条，**检索前**写） | 「找到什么算这个单元成立」。要\"往砂锅倒黄酒\"，那么\"看得见液体入锅\"\
+            算，\"锅里有东西在冒泡\"不算 |\n| **第四栏有三种答案，不是两种** | `有`｜`没有`｜**`有，但不够`**——拍到了三层整体，没拍到领口袖窿下摆各自的特写。**第三种最常见，也最容易被顺手填成\"\
+            有\"** |\n\n**一对多、多对一都正常**：一个单元可以覆盖三条 beat，一条 beat 也可能要三个单元才凑齐。第四栏**按 beat\
+            \ 逐条答\"这一条够不够\"**，不按单元答。\n\n**只交「拍了 42 分钟」不算交付 manifest**——那还是 `available_assets`，只是换了个时间点，下游拿它判断不了任何一条\
+            \ beat 是否兑现。\n\n**对不上 beat 之前，manifest 不存在。** 素材在手但没检索、没对位，那一条仍然是「素材=待检索」。\n\
+            \n> **为什么**：\"计划拍到\"不等于\"真的拍到了\"。用拍摄计划去写标题和封面，等于对着一个还不存在的片子做承诺——发出去才发现关键镜头没拍到。\n\
+            \n---\n\n## 默认失败模式对照\n\n| 默认动作 | 对应判断 |\n|---|---|\n| 表演指导写成\"自然一点、微笑、有感染力\"\
+            \ | PD-1 |\n| 输出按景别轮换的分镜表，镜头数随脚本长度膨胀 | PD-2 |\n| 把\"视觉\"理解成\"配画面\"，逐句配图；旁白当万能补丁\
+            \ | PD-3 |\n| 让人站着说话，画面切商品图 | PD-5 |\n| 把\"导演感\"降为审美形容词（\"电影感\"\"高级感\"\
+            ） | PD-5 |\n| 资源不足时建议增加人手，而不是换打法 | PD-7 |\n| 拿拍摄计划当已有素材，为不存在的画面做承诺 | 计划\
+            \ ≠ 实际 |\n| 交一份资产级清单（\"拍了 42 分钟\"）当 manifest，下游无法判断任何一条 beat 是否兑现 | 计划\
+            \ ≠ 实际 |\n| 逐条查每个单元都合格，两条放在一起却声称了一个没有来源的关系 | PD-2 附加 ① |\n| 补拍一个镜头去\"\
+            再现\"上周发生的事，参数全真 | PD-2 附加 ② |\n| 把任意一个特写标成\"证明\"，因为没人问它怎么失败 | PD-4 |\n\
+            \n---\n\n## 输出\n\n**非视频形态的字段映射**（图文、纯音频、纯素材剪辑）：\n`scene_and_action` →\
+            \ 素材里**已存在**的场景（动作已经发生，不可指定）｜`shooting_order` → **检索顺序**（先扫命中率最高的）｜`edit_structure`\
+            \ 的\"第几秒\" → **第几张／第几段**，\"平均镜头长度\"无对应物｜`sound_design` → **先查平台**（图文在部分平台带音轨；「没有现场声」不等于「没有音轨」。不带才是\
+            \ NOT_APPLICABLE）｜`key_frame` → **不一定是首图**——首图是入口要留悬念，可截图帧是转发件要能独立成立，仍按自检\
+            \ 5 选｜`pickup_list[]` → 若硬禁拍，照列但标 `NOT_EXECUTABLE`｜**PD-5 的兜底出口「只能靠声音扛」→「只能靠文字与版式扛」**。\n\
+            \n**静态载体的一条例外**：**同一份材料可以出现两次，且第二次必须是同一张、同一构图。** 这是静态载体唯一的信息增量来源——增量发生在读者脑子里，纸面上一个字都没多。\n\
+            第一次呈现时，**不得**对将在第二次被指出的部分加粗／高亮／放大／居中：提前泄露＝读者没判断过，两次视线退回一次。\n**PD-2「只换景别不算」在这里要反过来读**——换一张更好看的，回视机制整个消失。\n\
+            硬禁：材料与答案同屏（读者只读一次，这条就不存在了）。\n\n```\ndirector_approaches[]     3 套高差异方案：视听策略一句话\
+            \ | 靠什么让画面承担表达 | 什么条件下失败\nselected_approach         选中的一套 + 为什么（指名具体判据）\n\
+            scene_and_action          在哪拍、人在里面做什么\nrealization_plan\n  capture_plan.units[]\
+            \    每个单元：unit_id | unit_type[] | 内容 | 对应 beat_id | 时长 | 这个单元的目的\n   \
+            \                       | 画面语言关系 | **事实** | **素材**\n                 \
+            \         unit_type 可多值（复合单元常见，如文字卡叠在图上）：\n                          \
+            \  SHOT            实拍镜头 —— **只有它填景别、机位与运动、拍摄顺序**\n                   \
+            \         IMAGE           现成照片（22 选 1 级别的工作量）\n                      \
+            \      STILL_FROM_CLIP 从已有视频里截的静帧（要检索，工作量差一个数量级）\n                   \
+            \         EXISTING_CLIP   已有视频片段\n                            REMOTE_CAPTURE\
+            \  远程采集（访谈等）—— 不控机位，景别/机位/运动为 NOT_APPLICABLE\n                       \
+            \     AUDIO_ONLY | TEXT_CARD | ANIMATION_UNIT | GENERATED_UNIT\n     \
+            \                     事实 / 素材 —— 从对应 beat 继承，用 Creative Script 那张两问表的同一套词。\n\
+            \                            单元的「素材」可以比 beat 更细：beat 整体是「待检索」，\n     \
+            \                       某个证明性单元可能是「待产出·可控」（检索不到就自己补拍）\n              \
+            \            **「素材」不是 `已确认` 的单元，各自带一条降级路径**：删掉它之后这一段怎么办\n  performance_direction\
+            \   七维度齐全\n  asset_list[]            商品/人物/环境，用同一套「素材」词标，不另立状态：\n    \
+            \                      已确认 | 待检索 | 待产出·可控 | 待产出·不可控\n                \
+            \          （需拍、需画、需生成都是「待产出·可控」；\n                            等人、等天气、等授权是「待产出·不可控」）\n\
+            \                          **「待检索」不等于已有**——检索成本可能高于重拍，要给出估时\n  shooting_order\
+            \          按什么顺序拍最省时间，谁在什么时段到场\n  sound_design            配音/音乐/环境声/音效，各带进出点\n\
+            \  edit_structure          段落划分、转折点在第几秒、平均镜头长度、呼吸位\n  key_frame      \
+            \         可截图的那一帧：第几秒、画面内容\n  pickup_list[]           必须留到剪辑后补拍/补录的\n\
+            low_resource_version      完整，不是差异说明\nresource_note             几个人、几小时、**几天内完成**、拍几次、补录几次\n\
+            subject_domain            原样透传给下游 —— **本段和 Publishing 都要按它加载\n       \
+            \                   `references/industry-conditions.md`，缺了两边都只能按通用处理**\n\
+            content_origin_mode[]     原样透传给下游\nexplicit_non_promise[]    原样透传给下游，本段不得增加内容\n\
+            constraints[]             拍摄／使用禁令：**上游给的原样透传 ＋ 本段新增的**（第三方入镜边界、\n    \
+            \                      未成年人、引用授权状态）。\n                          **必须透传**——下游的封面与首帧选帧同样受它约束，而封面正是\n\
+            \                          这类禁令最容易破功的地方（入镜授权不等于封面授权）\nreturn_to_script[]\
+            \        回改建议：哪一句、改成什么、为什么\nfailure_case              会拍砸的处理 + 为什么砸\n\
+            assumptions[]             用了哪些默认值\nmissing[]                 还缺什么才能继续\n\
+            ```\n\n`realization_manifest` **不在这里产出，但格式由这里定**——真实素材回来之后，由本段按 beat 级逐条填（见「计划\
+            \ ≠ 实际」）。\n\n---\n\n## 自检\n\n1. 随便挑 3 个镜头，能说出各自\"画面在说什么台词没说的话\"吗？\n2.\
+            \ 出镜人全程在做事，还是有大段站着说话？\n3. **把声音关掉看一遍，还看得懂在讲什么吗？** —— 看不懂说明画面没承担表达\n4.\
+            \ 低资源版能不能完成同一个落点？——不能就是降级，重做\n5. 那一帧「可截图帧」，单独截出来发给别人，对方看得懂吗？\n6. 有没有把拍摄计划当成已有素材？\n\
+            7. `expression_subject` 是哪一类？七个维度的**承载者**换对了吗？（`NO_PERSONA` 之外都不该整块标不适用）\n\
+            8. 「素材」不是 `已确认` 的单元，每一个都带降级路径了吗？\n9. `constraints[]` 里的禁令，有没有落成机械关卡（机位、单元数、不重拍），还是只写了一句提醒？\n\
+            9b. **逐条数一遍 beat：每一条都至少有一个单元覆盖吗？** 单元时长加起来，和脚本时长对得上吗？\n    ——\"每个单元写了对应\
+            \ beat\"不等于\"每个 beat 有单元\"。**漏掉的那一条通常是最贵的那一条**（承载唯一一句外部原话的那 14 秒，计划里一个镜头都没有）\n\
+            10. 素材回来之后，交出去的 manifest 是 **beat 级**还是资产级？只写「拍了 42 分钟」＝还没做完\n11. **并置检查跑了吗？逐对，不是逐条。**\
+            \ 相邻的两个单元、同屏的两块内容、配在一起的脸和话——观众读出的那条关系，有来源吗？\n12. 有没有用**今天拍的**画面去承担**过去发生的**事？（`SHOT`／`GENERATED_UNIT`\
+            \ 只能承担拍摄当天成立的事实）\n13. 标「证明」的单元，**每一个都写得出失败条件**吗？写不出的改标「补充」\n\n---\n\n\
+            ## 参考文件\n\n- `references/platforms.md` — 三平台的**结构性参数**（竖屏安全区、图片张数上限）。**只在影响构图和单元数时读**，包装适配不在这里\n\
+            - `references/industry-conditions.md` — 五个行业各自的拍摄条件与常见素材\n- `references/examples.md`\
+            \ — 端到端黄金案例\n\n**参考文件拿不到时**：安全区拿不到，按三家里最保守的一组取（顶 150 / 底 300 / 左右 50）并写进\
+            \ `assumptions[]`。**另两份直接跳过，照常产出，写进 `missing[]`**——不要凭记忆补一条行业惯例或一个案例上去。\n\
+            \n\n---\n\n# 本次运行注入的参考文件片段\n\n以下片段由确定性投影节点按运行合同的固定表选出。**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**\n\
+            \n{{#ref_projection.output#}}\n"
+        - id: usr-1
+          role: user
+          text: '# 本次运行输入
+
+
+            ## 上游 Creative Script 完整 Final（逐字传入，未经改写）
+
+
+            {{#1788000000001.cs_final#}}
+
+
+            ---
+
+
+            ## 生产槽位
+
+
+            - `production_profile`：{{#1788000000001.production_profile#}}
+
+            - `expression_subject`：{{#1788000000001.expression_subject#}}
+
+            - `content_origin_mode`：{{#1788000000001.content_origin_mode#}}
+
+            - `subject_domain`：{{#1788000000001.subject_domain#}}
+
+            - `duration_band`：{{#1788000000001.duration_band#}}
+
+            - `platform`：{{#1788000000001.platform#}}
+
+            - `constraints[]`：{{#1788000000001.constraints#}}
+
+
+            ## available_assets（输入，不是产出）
+
+
+            {{#1788000000001.available_assets#}}
+
+
+            ## fact_refs[]
+
+
+            {{#1788000000001.fact_refs#}}
+
+
+
+            > **platform 口径**：本轮 `platform` 为 `PROBE_ONLY` 值。正式 Content Brief 记「最终发布平台未确认，由
+            Founder 锁定」。该值只用于打通链路与验证 reference 投影，**不构成正式发布平台裁决**；据此产出的任何平台适配均为草案，不得当作已确认平台方案。
+
+
+            ## 原 Content Brief
+
+
+            {{#1788000000001.content_brief#}}
+
+
+            ---
+
+
+            按 Production Director 的输出契约产出。
+
+            **本轮为拍摄前：只产出 `realization_plan`。真实素材尚不存在，因此 `realization_manifest` 本轮不存在，不得虚构、不得用
+            available_assets 或拍摄计划顶替。**
+
+            不得输出标题、封面、发布文案等 Publishing & Packaging 交付物。
+
+
+            ---
+
+
+            ## 输出格式补充要求（只规定末尾附加块，不改变以上任何判断和产出内容）
+
+
+            完整产出结束之后，**另起一行**，追加下面这个结构块，供下游确定性读取：
+
+
+            ---RETURNS---
+
+            return_to_script: <见下方规则；无则写 NONE>
+
+            return_to_production: <见下方规则；无则写 NONE>
+
+            advisory_notes: <见下方规则；无则写 NONE>
+
+
+            填写规则：
+
+
+            - `---RETURNS---` 这一行原样照抄，只出现一次，且必须排在全部产出之后。
+
+            - 上列标签**必须全部出现、各占一行、顺序不变**；标签名原样小写，不加粗、不加编号、不改写、不翻译。
+
+            - 有内容时：每条独占一行，以 `- ` 开头，写在该标签的下一行起。
+
+            - 确实没有时：在该标签的冒号后写 `NONE`，**不得省略整行标签**。
+
+            - `return_to_script` / `return_to_production` 只放**正式回改项**——必须由上游改动才能解决的问题。可选的、仅供参考的、不改也能交付的，一律放
+            `advisory_notes`，不要升格成回改。
+
+            - **`return_to_production` 直接写 `NONE`，不要为这一项回看正文、不要推敲。**它的意思是「退回 Production
+            Director」，而你就是 Production Director，退不回自己。
+
+            - **`return_to_script` 与 `advisory_notes` 是你在本块里需要真正判断的两项。**`return_to_script`
+            指你在做实现计划时发现的、必须由 Creative Script 改动才能解决的问题。
+
+            - 本块之后不再输出任何内容。
+
+
+            ---
+
+
+            ## 追加输出块 —— 用户交付块
+
+
+            > **本节取代上一节末尾「本块之后不再输出任何内容」这一句。** 输出顺序改为固定三段：
+
+            > **① 完整产出 → ② 用户交付块 → ③ `---RETURNS---` 块**。这三段之外不再输出任何内容。
+
+
+            在完整产出结束之后、`---RETURNS---` 之前，另起一行，原样追加下面这个块。
+
+
+            **这个块是给真实执行人员看的**，只回答一件事：**下一步具体做什么**。写作规则：
+
+
+            - **只保留最终采用的那一个版本。** 不写候选方案、不写推演过程、不写淘汰了什么、不写失败示范或错误示范。
+
+            - **不出现内部字段名**（`assumptions`、`missing`、`question_list`、`failure_case`、`evidence_requirements`
+            等），也不出现「再判一次」「修正后」「我认为上一版」这类自我讨论。
+
+            - **每一项都必须能在你上面的完整产出里找到对应。** 本块不得新增上面没有的事实，不得把假设写成已经发生的事实，不得写未核实的平台数字，不得虚构顾客、员工或内部讨论原话。
+
+            - 用大白话写给人看，直接可执行。
+
+            - 没有内容的字段写 `无`，**不得省略整行标签**。
+
+            - 标签名原样小写照抄、各占一行、顺序不变。
+
+            - 下面模板里的**开始标记行**和**结束标记行**原样照抄，各只出现一次、必须成对闭合。**不要把本节这几行说明抄进产出。**
+
+
+            ---USER_DELIVERY_PD---
+
+            status: READY 或 NEEDS_DECISION 二选一（有必须由人拍板才能开拍的事项就写 NEEDS_DECISION）
+
+            scene_plan: 要拍哪几个场景，每个场景什么样子
+
+            capture_units: 每个拍摄单元拍什么、拍多长、要什么画面
+
+            shooting_order: 按什么顺序拍，以及为什么这么排
+
+            performance_direction: 出镜人在每一段要做什么动作、保持什么状态。**这一项会直接发给出镜人照做，写具体到手上和身体的动作，不要只写情绪形容词。**
+
+            sound_and_edit: 声音怎么收、剪辑怎么处理
+
+            pickup_requirements: 需要补录什么；没有就写 无
+
+            resource_summary: 需要几个人、什么设备、大概多长时间
+
+            must_avoid: 拍摄和剪辑必须避免的做法，逐条列出
+
+            pending_decisions: 开拍前必须由人拍板的事项，逐条列出；没有就写 无
+
+            ---END_USER_DELIVERY_PD---
+
+            '
+        selected: false
+        title: DIYU Demo Production Director v0.1
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: skill_llm
+      position:
+        x: 980
+        y: 260
+      positionAbsolute:
+        x: 980
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: reasoning 分离：取 </think> 之后的正文。
+        selected: false
+        template: '{%- if ''</think>'' in llm_text -%}
+
+          {%- set tail = llm_text.split(''</think>'')|last -%}
+
+          {%- if tail.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ tail
+          }}{%- endif -%}
+
+          {%- elif llm_text.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{
+          llm_text }}{%- endif -%}'
+        title: Final Extract
+        type: template-transform
+        variables:
+        - value_selector:
+          - skill_llm
+          - text
+          variable: llm_text
+      height: 96
+      id: final_extract
+      position:
+        x: 1260
+        y: 260
+      positionAbsolute:
+        x: 1260
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: '{%- if final_text.strip() == '''' or final_text.strip() == ''MODEL_OUTPUT_NO_FINAL''
+          -%}false{%- else -%}true{%- endif -%}'
+        title: Final 存在标记
+        type: template-transform
+        variables:
+        - value_selector:
+          - returns_adapter
+          - artifact
+          variable: final_text
+      height: 52
+      id: final_present
+      position:
+        x: 1820
+        y: 260
+      positionAbsolute:
+        x: 1820
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        selected: false
+        template: deepseek-v4-flash
+        title: 模型标识
+        type: template-transform
+        variables: []
+      height: 52
+      id: model_used
+      position:
+        x: 2100
+        y: 260
+      positionAbsolute:
+        x: 2100
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - returns_adapter
+          - artifact
+          variable: final_output
+        - value_selector:
+          - final_present
+          - output
+          variable: final_present
+        - value_selector:
+          - model_used
+          - output
+          variable: model_used
+        - value_selector:
+          - projection_record
+          - output
+          variable: reference_projection
+        - value_selector:
+          - ref_projection
+          - output
+          variable: reference_projection_text
+        - value_selector:
+          - returns_adapter
+          - returns_raw
+          variable: returns_raw
+        - value_selector:
+          - returns_adapter
+          - returns_status
+          variable: returns_status
+        - value_selector:
+          - returns_adapter
+          - parse_note
+          variable: returns_parse_note
+        - value_selector:
+          - returns_adapter
+          - declared_mode
+          variable: declared_mode
+        - value_selector:
+          - returns_adapter
+          - return_to_script
+          variable: return_to_script
+        - value_selector:
+          - returns_adapter
+          - return_to_production
+          variable: return_to_production
+        - value_selector:
+          - returns_adapter
+          - advisory_notes
+          variable: advisory_notes
+        - value_selector:
+          - returns_adapter
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - returns_adapter
+          - user_delivery_status
+          variable: user_delivery_status
+        - value_selector:
+          - returns_adapter
+          - user_delivery_note
+          variable: user_delivery_note
+        selected: false
+        title: 结束
+        type: end
+      height: 374
+      id: end_node
+      position:
+        x: 2380
+        y: 260
+      positionAbsolute:
+        x: 2380
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "def _core(final_text: str) -> dict:\n    MARK = \"---RETURNS---\"\n\
+          \    LABELS = [\"mode\", \"return_to_script\", \"return_to_production\"\
+          , \"advisory_notes\"]\n    REQUIRED = [\"return_to_script\", \"return_to_production\"\
+          , \"advisory_notes\"]\n    REQUIRE_MODE = False\n    KNOWN_MODES = [\"PRE\"\
+          , \"MIXED\", \"FINAL\"]\n\n    def blank():\n        return {\"artifact\"\
+          : \"\", \"returns_raw\": \"\", \"returns_status\": \"RETURN_PARSE_FAILED\"\
+          ,\n                \"parse_note\": \"\", \"declared_mode\": \"NOT_APPLICABLE\"\
+          ,\n                \"return_to_script\": [], \"return_to_production\": [],\
+          \ \"advisory_notes\": []}\n\n    text = final_text or \"\"\n    if MARK\
+          \ not in text:\n        r = blank()\n        r[\"artifact\"] = text.strip()\n\
+          \        r[\"parse_note\"] = \"未找到 \" + MARK + \" 标记\"\n        return r\n\
+          \n    head, tail = text.rsplit(MARK, 1)\n    artifact = head.rstrip()\n\
+          \    while artifact.endswith(\"-\") or artifact.endswith(\"*\"):\n     \
+          \   artifact = artifact[:-1].rstrip()\n    raw = tail.strip()\n\n    def\
+          \ norm(s):\n        t = s.replace(\"*\", \"\").replace(\"`\", \"\").replace(\"\
+          #\", \"\").strip()\n        while t[:1] in (\"-\", \"+\", \">\"):\n    \
+          \        t = t[1:].strip()\n        return t\n\n    buckets = {}\n    cur\
+          \ = None\n    for line in raw.split(\"\\n\"):\n        n = norm(line)\n\
+          \        low = n.lower()\n        hit = None\n        for lb in LABELS:\n\
+          \            if low.startswith(lb + \":\") or low.startswith(lb + \"\\uff1a\"\
+          ) or low == lb:\n                hit = lb\n                break\n     \
+          \   if hit is not None:\n            cur = hit\n            if hit not in\
+          \ buckets:\n                buckets[hit] = []\n            rest = \"\"\n\
+          \            for sep in (\":\", \"\\uff1a\"):\n                if sep in\
+          \ n:\n                    rest = n.split(sep, 1)[1].strip()\n          \
+          \          break\n            if rest:\n                buckets[hit].append(rest)\n\
+          \        elif cur is not None:\n            s = line.strip()\n         \
+          \   if s:\n                buckets[cur].append(s)\n\n    missing = [lb for\
+          \ lb in REQUIRED if lb not in buckets]\n\n    def items(lb):\n        out\
+          \ = []\n        for v in (buckets.get(lb) or []):\n            t = v.strip()\n\
+          \            while t[:1] in (\"-\", \"*\", \"+\", \"\\u2022\"):\n      \
+          \          t = t[1:].strip()\n            i = 0\n            while i < len(t)\
+          \ and t[i].isdigit():\n                i += 1\n            if 0 < i < len(t)\
+          \ and t[i] in (\".\", \")\", \"\\u3001\"):\n                t = t[i + 1:].strip()\n\
+          \            t = t.strip().strip(\"<>\").strip()\n            if not t:\n\
+          \                continue\n            if t.upper().rstrip(\".\\u3002\"\
+          ) in (\"NONE\", \"\\u65e0\"):\n                continue\n            out.append(t)\n\
+          \        return out\n\n    r = blank()\n    r[\"artifact\"] = artifact\n\
+          \    r[\"returns_raw\"] = raw\n    r[\"return_to_script\"] = items(\"return_to_script\"\
+          )\n    r[\"return_to_production\"] = items(\"return_to_production\")\n \
+          \   r[\"advisory_notes\"] = items(\"advisory_notes\")\n\n    mode_items\
+          \ = items(\"mode\")\n    if REQUIRE_MODE:\n        if not mode_items:\n\
+          \            r[\"declared_mode\"] = \"\"\n        else:\n            line\
+          \ = mode_items[0]\n            up = line.upper()\n            pos = [(up.find(k),\
+          \ k) for k in KNOWN_MODES if up.find(k) >= 0]\n            # 命中已知枚举就取最先出现的那个；一个都不命中就原样保留模型写的值，不代它归一\n\
+          \            r[\"declared_mode\"] = sorted(pos)[0][1] if pos else line[:80]\n\
+          \    else:\n        r[\"declared_mode\"] = \"NOT_APPLICABLE\"\n\n    notes\
+          \ = []\n    if missing:\n        notes.append(\"缺少标签: \" + \",\".join(missing))\n\
+          \    if REQUIRE_MODE and not r[\"declared_mode\"]:\n        notes.append(\"\
+          mode 行存在但取不出值\")\n    if notes:\n        r[\"returns_status\"] = \"RETURN_PARSE_FAILED\"\
+          \n        r[\"parse_note\"] = \"; \".join(notes)\n    else:\n        r[\"\
+          returns_status\"] = \"OK\"\n        r[\"parse_note\"] = \"OK\"\n    return\
+          \ r\n\n\ndef main(final_text: str) -> dict:\n    \"\"\"先按标记摘出用户交付块，再把剩下的正文交给原有的\
+          \ ---RETURNS--- 切分。\"\"\"\n    t = final_text or \"\"\n    DOPEN = \"---USER_DELIVERY_PD---\"\
+          \n    DCLOSE = \"---END_USER_DELIVERY_PD---\"\n\n    def split_delivery(t):\n\
+          \        \"\"\"按标记确定性摘出交付块并把它从正文里移除。无 LLM 参与；\n        缺失 / 重复 / 未闭合 / 为空\
+          \ 一律返回 USER_DELIVERY_PARSE_FAILED，正文原样不动。\"\"\"\n        no = t.count(DOPEN)\n\
+          \        nc = t.count(DCLOSE)\n        if no == 0 and nc == 0:\n       \
+          \     return t, \"\", \"USER_DELIVERY_PARSE_FAILED\", \"缺少 \" + DOPEN\n\
+          \        if no != 1 or nc != 1:\n            return t, \"\", \"USER_DELIVERY_PARSE_FAILED\"\
+          , \"标记不是各一次：开始 %d 次 / 结束 %d 次\" % (no, nc)\n        i = t.find(DOPEN)\n\
+          \        j = t.find(DCLOSE)\n        if j < i:\n            return t, \"\
+          \", \"USER_DELIVERY_PARSE_FAILED\", \"结束标记出现在开始标记之前\"\n        body = t[i\
+          \ + len(DOPEN):j].strip()\n        if not body:\n            return t, \"\
+          \", \"USER_DELIVERY_PARSE_FAILED\", \"交付块内容为空\"\n        rest = t[:i].rstrip()\
+          \ + \"\\n\\n\" + t[j + len(DCLOSE):].lstrip()\n        return rest, body,\
+          \ \"OK\", \"OK\"\n\n    rest, body, st, note = split_delivery(t)\n    r\
+          \ = _core(rest)\n    r[\"user_delivery\"] = body\n    r[\"user_delivery_status\"\
+          ] = st\n    r[\"user_delivery_note\"] = note\n    return r\n"
+        code_language: python3
+        desc: 确定性字符串切分：把正文与 ---RETURNS--- 块分开，并解析三/四个固定标签。无 LLM 参与；缺标签返回 RETURN_PARSE_FAILED，不当成空数组。
+        outputs:
+          advisory_notes:
+            children: null
+            type: array[string]
+          artifact:
+            children: null
+            type: string
+          declared_mode:
+            children: null
+            type: string
+          parse_note:
+            children: null
+            type: string
+          return_to_production:
+            children: null
+            type: array[string]
+          return_to_script:
+            children: null
+            type: array[string]
+          returns_raw:
+            children: null
+            type: string
+          returns_status:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_note:
+            children: null
+            type: string
+          user_delivery_status:
+            children: null
+            type: string
+        selected: false
+        title: Returns Adapter
+        type: code
+        variables:
+        - value_selector:
+          - final_extract
+          - output
+          variable: final_text
+      height: 144
+      id: returns_adapter
+      position:
+        x: 1400
+        y: 420
+      positionAbsolute:
+        x: 1400
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: -550.4121801683091
+      y: 267.12221578023957
+      zoom: 0.8705505632961238
+  rag_pipeline_variables: []

@@ -1,0 +1,1388 @@
+app:
+  description: 发布包装段（通用，非 PRE 专用）：经 Workflow Tool 调用 Publishing & Packaging，核对上游哈希、汇总正式回改与备注、产出
+    chain_status 与完整生产包。realization_manifest 为可选输入：不传＝PP 按第一级判据走 PRE；传入 beat 级覆盖记录时，由
+    PP 自行推导 MIXED 或 FINAL。父流不预填 mode。
+  icon: 📦
+  icon_background: '#E4FBCC'
+  icon_type: emoji
+  mode: workflow
+  name: DIYU Demo Content Production Publishing Stage 2 v0.1
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/tongyi:0.2.13@76feba79a09357673e1ebe24f1ec98123062d3f3198abe08551804def1fcd020
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions: []
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig: {}
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: code
+      id: 1788000000001-source-input_check-target
+      source: '1788000000001'
+      sourceHandle: source
+      target: input_check
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: if-else
+      id: input_check-source-gate_input-target
+      source: input_check
+      sourceHandle: source
+      target: gate_input
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: gate_input-true-pp_tool-target
+      source: gate_input
+      sourceHandle: 'true'
+      target: pp_tool
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: pp_tool-source-pp_extract-target
+      source: pp_tool
+      sourceHandle: source
+      target: pp_extract
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: if-else
+      id: pp_extract-source-gate_pp-target
+      source: pp_extract
+      sourceHandle: source
+      target: gate_pp
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: return_agg-source-end_ok-target
+      source: return_agg
+      sourceHandle: source
+      target: end_ok
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: end
+      id: gate_input-false-end_input_blocked-target
+      source: gate_input
+      sourceHandle: 'false'
+      target: end_input_blocked
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: pp_tool-fail-branch-pp_fail_mark-target
+      source: pp_tool
+      sourceHandle: fail-branch
+      target: pp_fail_mark
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: pp_fail_mark-source-end_pp_tool_failed-target
+      source: pp_fail_mark
+      sourceHandle: source
+      target: end_pp_tool_failed
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: end
+      id: gate_pp-false-end_pp_gate_failed-target
+      source: gate_pp
+      sourceHandle: 'false'
+      target: end_pp_gate_failed
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: llm
+      id: gate_pp-true-semantic_check-target
+      source: gate_pp
+      sourceHandle: 'true'
+      target: semantic_check
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: code
+      id: semantic_check-source-return_agg-target
+      source: semantic_check
+      sourceHandle: source
+      target: return_agg
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 承接 Stage 1 的产物与哈希。platform 本轮为 PROBE_ONLY，不构成发布平台裁决。mode 不在此预填。
+        selected: false
+        title: 输入
+        type: start
+        variables:
+        - label: cs_final
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: cs_final
+        - label: cs_hash
+          max_length: 128
+          options: []
+          required: true
+          type: text-input
+          variable: cs_hash
+        - label: pd_final
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: pd_final
+        - label: pd_hash
+          max_length: 128
+          options: []
+          required: true
+          type: text-input
+          variable: pd_hash
+        - label: pd_return_to_script
+          max_length: 200000
+          options: []
+          required: false
+          type: paragraph
+          variable: pd_return_to_script
+        - label: pd_return_to_production
+          max_length: 200000
+          options: []
+          required: false
+          type: paragraph
+          variable: pd_return_to_production
+        - label: pd_advisory_notes
+          max_length: 200000
+          options: []
+          required: false
+          type: paragraph
+          variable: pd_advisory_notes
+        - label: stage1_models
+          max_length: 200000
+          options: []
+          required: false
+          type: paragraph
+          variable: stage1_models
+        - label: stage1_run_status
+          max_length: 200000
+          options: []
+          required: false
+          type: paragraph
+          variable: stage1_run_status
+        - label: content_brief
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: content_brief
+        - label: platform
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: platform
+        - label: cta_contract
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: cta_contract
+        - label: account_positioning
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: account_positioning
+        - label: subject_domain
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: subject_domain
+        - label: duration_band
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: duration_band
+        - label: constraints
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: constraints
+        - label: fact_refs
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: fact_refs
+        - label: example_reference_requested
+          max_length: 256
+          options: []
+          required: true
+          type: text-input
+          variable: example_reference_requested
+        - label: realization_manifest（beat 级拍后覆盖记录，可空；空＝PRE）
+          max_length: 48000
+          options: []
+          required: false
+          type: paragraph
+          variable: realization_manifest
+      height: 100
+      id: '1788000000001'
+      position:
+        x: 40
+        y: 300
+      positionAbsolute:
+        x: 40
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import hashlib, json\n\ndef main(cs_final: str, cs_hash: str, pd_final:\
+          \ str, pd_hash: str,\n         pd_return_to_script: str, pd_return_to_production:\
+          \ str, pd_advisory_notes: str,\n         stage1_models: str, stage1_run_status:\
+          \ str,\n         content_brief: str, platform: str, cta_contract: str, account_positioning:\
+          \ str,\n         subject_domain: str, duration_band: str, constraints: str,\
+          \ fact_refs: str,\n         example_reference_requested: str) -> dict:\n\
+          \    req = {\"cs_final\": cs_final, \"cs_hash\": cs_hash, \"pd_final\":\
+          \ pd_final, \"pd_hash\": pd_hash,\n           \"content_brief\": content_brief,\
+          \ \"platform\": platform, \"cta_contract\": cta_contract,\n           \"\
+          account_positioning\": account_positioning, \"subject_domain\": subject_domain,\n\
+          \           \"duration_band\": duration_band, \"constraints\": constraints,\
+          \ \"fact_refs\": fact_refs,\n           \"example_reference_requested\"\
+          : example_reference_requested}\n    missing = [k for k, v in req.items()\
+          \ if not str(v or \"\").strip()]\n\n    def jarr(s):\n        t = str(s\
+          \ or \"\").strip()\n        if not t:\n            return []\n        try:\n\
+          \            v = json.loads(t)\n        except Exception:\n            return\
+          \ [\"__PARSE_FAILED__\"]\n        return [str(i) for i in v] if isinstance(v,\
+          \ list) else [\"__PARSE_FAILED__\"]\n\n    rts, rtp = jarr(pd_return_to_script),\
+          \ jarr(pd_return_to_production)\n    adv = jarr(pd_advisory_notes)\n   \
+          \ models, rstatus = jarr(stage1_models), jarr(stage1_run_status)\n    bad\
+          \ = [n for n, a in ((\"pd_return_to_script\", rts), (\"pd_return_to_production\"\
+          , rtp),\n                          (\"pd_advisory_notes\", adv), (\"stage1_models\"\
+          , models),\n                          (\"stage1_run_status\", rstatus))\
+          \ if \"__PARSE_FAILED__\" in a]\n\n    cs_got = hashlib.sha256(str(cs_final\
+          \ or \"\").encode(\"utf-8\")).hexdigest()\n    pd_got = hashlib.sha256(str(pd_final\
+          \ or \"\").encode(\"utf-8\")).hexdigest()\n    cs_ok = cs_got == str(cs_hash\
+          \ or \"\").strip()\n    pd_ok = pd_got == str(pd_hash or \"\").strip()\n\
+          \    verdicts = [\n        \"creative_script -> publishing_packaging : \"\
+          \ + (\"MATCH\" if cs_ok else \"MISMATCH\")\n        + \" (recomputed \"\
+          \ + cs_got[:16] + \" / expected \" + str(cs_hash or \"\")[:16] + \")\",\n\
+          \        \"production_director -> publishing_packaging : \" + (\"MATCH\"\
+          \ if pd_ok else \"MISMATCH\")\n        + \" (recomputed \" + pd_got[:16]\
+          \ + \" / expected \" + str(pd_hash or \"\")[:16] + \")\",\n    ]\n\n   \
+          \ notes = []\n    if missing:\n        notes.append(\"缺失输入: \" + \", \"\
+          .join(missing))\n    if bad:\n        notes.append(\"上游数组解析失败: \" + \",\
+          \ \".join(bad))\n    if not cs_ok:\n        notes.append(\"cs_final 与 cs_hash\
+          \ 不一致\")\n    if not pd_ok:\n        notes.append(\"pd_final 与 pd_hash 不一致\"\
+          )\n\n    return {\n        \"status\": \"OK\" if not notes else \"INPUT_BLOCKED\"\
+          ,\n        \"missing\": missing,\n        \"note\": \"上游产物与哈希核对通过，九槽位齐备\"\
+          \ if not notes else \"; \".join(notes),\n        \"upstream_handoff\": verdicts,\n\
+          \        \"pd_return_to_script\": [] if bad else rts,\n        \"pd_return_to_production\"\
+          : [] if bad else rtp,\n        \"pd_advisory_notes\": [] if bad else adv,\n\
+          \        \"stage_models\": [] if bad else models,\n        \"stage_run_status\"\
+          : [] if bad else rstatus,\n    }\n"
+        code_language: python3
+        desc: 重算 cs_final / pd_final 的 SHA-256 与 Stage 1 交来的哈希比对；不一致即 INPUT_BLOCKED，不调用
+          PP Tool。
+        outputs:
+          missing:
+            children: null
+            type: array[string]
+          note:
+            children: null
+            type: string
+          pd_advisory_notes:
+            children: null
+            type: array[string]
+          pd_return_to_production:
+            children: null
+            type: array[string]
+          pd_return_to_script:
+            children: null
+            type: array[string]
+          stage_models:
+            children: null
+            type: array[string]
+          stage_run_status:
+            children: null
+            type: array[string]
+          status:
+            children: null
+            type: string
+          upstream_handoff:
+            children: null
+            type: array[string]
+        selected: false
+        title: Input Check ＋ 上游哈希核对
+        type: code
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - cs_final
+          variable: cs_final
+        - value_selector:
+          - '1788000000001'
+          - cs_hash
+          variable: cs_hash
+        - value_selector:
+          - '1788000000001'
+          - pd_final
+          variable: pd_final
+        - value_selector:
+          - '1788000000001'
+          - pd_hash
+          variable: pd_hash
+        - value_selector:
+          - '1788000000001'
+          - pd_return_to_script
+          variable: pd_return_to_script
+        - value_selector:
+          - '1788000000001'
+          - pd_return_to_production
+          variable: pd_return_to_production
+        - value_selector:
+          - '1788000000001'
+          - pd_advisory_notes
+          variable: pd_advisory_notes
+        - value_selector:
+          - '1788000000001'
+          - stage1_models
+          variable: stage1_models
+        - value_selector:
+          - '1788000000001'
+          - stage1_run_status
+          variable: stage1_run_status
+        - value_selector:
+          - '1788000000001'
+          - content_brief
+          variable: content_brief
+        - value_selector:
+          - '1788000000001'
+          - platform
+          variable: platform
+        - value_selector:
+          - '1788000000001'
+          - cta_contract
+          variable: cta_contract
+        - value_selector:
+          - '1788000000001'
+          - account_positioning
+          variable: account_positioning
+        - value_selector:
+          - '1788000000001'
+          - subject_domain
+          variable: subject_domain
+        - value_selector:
+          - '1788000000001'
+          - duration_band
+          variable: duration_band
+        - value_selector:
+          - '1788000000001'
+          - constraints
+          variable: constraints
+        - value_selector:
+          - '1788000000001'
+          - fact_refs
+          variable: fact_refs
+        - value_selector:
+          - '1788000000001'
+          - example_reference_requested
+          variable: example_reference_requested
+      height: 100
+      id: input_check
+      position:
+        x: 340
+        y: 300
+      positionAbsolute:
+        x: 340
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            value: OK
+            variable_selector:
+            - input_check
+            - status
+          logical_operator: and
+        desc: ''
+        logical_operator: and
+        selected: false
+        title: 输入闸
+        type: if-else
+      height: 100
+      id: gate_input
+      position:
+        x: 640
+        y: 300
+      positionAbsolute:
+        x: 640
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: cs_final / pd_final 逐字来自 Stage 1 输出；mode 不预填，由该 Skill 自行推导
+        error_strategy: fail-branch
+        provider_id: 154a3dd0-1451-45cf-a061-5f0fde255470
+        provider_name: 154a3dd0-1451-45cf-a061-5f0fde255470
+        provider_type: workflow
+        retry_config:
+          max_retries: 0
+          retry_enabled: false
+          retry_interval: 0
+        selected: false
+        title: Publishing & Packaging Tool
+        tool_configurations: {}
+        tool_label: diyu_content_publishing_packaging
+        tool_name: diyu_content_publishing_packaging
+        tool_node_version: '2'
+        tool_parameters:
+          account_positioning:
+            type: mixed
+            value: '{{#1788000000001.account_positioning#}}'
+          constraints:
+            type: mixed
+            value: '{{#1788000000001.constraints#}}'
+          content_brief:
+            type: mixed
+            value: '{{#1788000000001.content_brief#}}'
+          cs_final:
+            type: mixed
+            value: '{{#1788000000001.cs_final#}}'
+          cta_contract:
+            type: mixed
+            value: '{{#1788000000001.cta_contract#}}'
+          duration_band:
+            type: mixed
+            value: '{{#1788000000001.duration_band#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          fact_refs:
+            type: mixed
+            value: '{{#1788000000001.fact_refs#}}'
+          pd_final:
+            type: mixed
+            value: '{{#1788000000001.pd_final#}}'
+          platform:
+            type: mixed
+            value: '{{#1788000000001.platform#}}'
+          realization_manifest:
+            type: mixed
+            value: '{{#1788000000001.realization_manifest#}}'
+          subject_domain:
+            type: mixed
+            value: '{{#1788000000001.subject_domain#}}'
+        type: tool
+      height: 120
+      id: pp_tool
+      position:
+        x: 940
+        y: 300
+      positionAbsolute:
+        x: 940
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "import hashlib, json\n\ndef _core(tool_text: str) -> dict:\n    def\
+          \ blank(gate, note):\n        return {\"artifact\": \"\", \"artifact_hash\"\
+          : \"\", \"artifact_length\": 0,\n                \"model_used\": \"\", \"\
+          reference_projection\": \"\", \"returns_raw\": \"\",\n                \"\
+          declared_mode\": \"\", \"return_to_script\": [], \"return_to_production\"\
+          : [],\n                \"advisory_notes\": [], \"gate\": gate, \"note\"\
+          : note,\n                \"user_delivery_fact_gate\": \"\", \"user_delivery_gate_note\"\
+          : \"\", \"used_fact_ids\": []}\n    try:\n        o = json.loads(tool_text\
+          \ or \"\")\n    except Exception as e:\n        return blank(\"TOOL_FAILED\"\
+          , \"Tool 返回不是 JSON：\" + str(e)[:150])\n    if not isinstance(o, dict):\n\
+          \        return blank(\"TOOL_FAILED\", \"Tool 返回不是对象\")\n\n    art = str(o.get(\"\
+          final_output\") or \"\")\n    present = str(o.get(\"final_present\", \"\"\
+          )).strip().lower()\n    if present != \"true\" or not art.strip() or art.strip()\
+          \ == \"MODEL_OUTPUT_NO_FINAL\":\n        return blank(\"TOOL_FAILED\", \"\
+          上游 Final 缺失或为空（final_present=\" + present + \"）\")\n\n    h = hashlib.sha256(art.encode(\"\
+          utf-8\")).hexdigest()\n    rstat = str(o.get(\"returns_status\", \"\")).strip()\n\
+          \    base = {\"artifact\": art, \"artifact_hash\": h, \"artifact_length\"\
+          : len(art),\n            \"model_used\": str(o.get(\"model_used\") or \"\
+          \"),\n            \"reference_projection\": str(o.get(\"reference_projection\"\
+          ) or \"\"),\n            \"returns_raw\": str(o.get(\"returns_raw\") or\
+          \ \"\"),\n            \"declared_mode\": str(o.get(\"declared_mode\") or\
+          \ \"\"),\n            \"return_to_script\": [str(x) for x in (o.get(\"return_to_script\"\
+          ) or [])],\n            \"return_to_production\": [str(x) for x in (o.get(\"\
+          return_to_production\") or [])],\n            \"advisory_notes\": [str(x)\
+          \ for x in (o.get(\"advisory_notes\") or [])]}\n    if rstat != \"OK\":\n\
+          \        base[\"gate\"] = \"RETURN_PARSE_FAILED\"\n        base[\"note\"\
+          ] = \"回改块解析失败：\" + str(o.get(\"returns_parse_note\") or \"\")[:200]\n  \
+          \      # 解析失败绝不当成空数组\n        base[\"return_to_script\"] = []\n        base[\"\
+          return_to_production\"] = []\n        base[\"advisory_notes\"] = []\n  \
+          \      return base\n    base[\"gate\"] = \"OK\"\n    base[\"note\"] = \"\
+          OK\"\n    return base\n\n\ndef _payoff(art: str) -> str:\n    \"\"\"从 Artifact\
+          \ 里原样取出 realized_payoff 段。只切段，不解释、不改写、不补写。\"\"\"\n    out, on = [], False\n\
+          \    for ln in (art or \"\").split(\"\\n\"):\n        t = ln.strip()\n \
+          \       is_h2 = t.startswith(\"## \") and not t.startswith(\"### \")\n \
+          \       if is_h2:\n            if on:\n                break\n         \
+          \   if t[3:].strip().startswith(\"realized_payoff\"):\n                on\
+          \ = True\n            continue\n        if on:\n            out.append(ln)\n\
+          \    return \"\\n\".join(out).strip()\n\ndef main(tool_text: str) -> dict:\n\
+          \    \"\"\"透传子流的用户交付块。父流不解释、不改写、不补写。\"\"\"\n    r = _core(tool_text)\n \
+          \   try:\n        o = json.loads(tool_text or \"\")\n        if not isinstance(o,\
+          \ dict):\n            o = {}\n    except Exception:\n        o = {}\n  \
+          \  r[\"user_delivery\"] = str(o.get(\"user_delivery\") or \"\")\n    r[\"\
+          user_delivery_status\"] = str(o.get(\"user_delivery_status\") or \"\")\n\
+          \    # 子流四道确定性闸的判定，父流只透传，不解释、不改写、不代为放行\n    r[\"user_delivery_fact_gate\"\
+          ] = str(o.get(\"user_delivery_fact_gate\") or \"\")\n    r[\"user_delivery_gate_note\"\
+          ] = str(o.get(\"user_delivery_gate_note\") or \"\")\n    r[\"used_fact_ids\"\
+          ] = [str(x) for x in (o.get(\"used_fact_ids\") or [])]\n    # 供 PP 之后的只读语义核验使用：原样切段，父流不解释、不改写、不补写\n\
+          \    r[\"realized_payoff\"] = _payoff(r.get(\"artifact\") or \"\")\n   \
+          \ return r\n"
+        code_language: python3
+        desc: 确定性取字段并算 SHA-256
+        outputs:
+          advisory_notes:
+            children: null
+            type: array[string]
+          artifact:
+            children: null
+            type: string
+          artifact_hash:
+            children: null
+            type: string
+          artifact_length:
+            children: null
+            type: number
+          declared_mode:
+            children: null
+            type: string
+          gate:
+            children: null
+            type: string
+          model_used:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+          realized_payoff:
+            children: null
+            type: string
+          reference_projection:
+            children: null
+            type: string
+          return_to_production:
+            children: null
+            type: array[string]
+          return_to_script:
+            children: null
+            type: array[string]
+          returns_raw:
+            children: null
+            type: string
+          used_fact_ids:
+            children: null
+            type: array[string]
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_fact_gate:
+            children: null
+            type: string
+          user_delivery_gate_note:
+            children: null
+            type: string
+          user_delivery_status:
+            children: null
+            type: string
+        selected: false
+        title: PP Extract & Hash
+        type: code
+        variables:
+        - value_selector:
+          - pp_tool
+          - text
+          variable: tool_text
+      height: 100
+      id: pp_extract
+      position:
+        x: 1240
+        y: 300
+      positionAbsolute:
+        x: 1240
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            value: OK
+            variable_selector:
+            - pp_extract
+            - gate
+          logical_operator: and
+        desc: ''
+        logical_operator: and
+        selected: false
+        title: PP 闸
+        type: if-else
+      height: 100
+      id: gate_pp
+      position:
+        x: 1540
+        y: 300
+      positionAbsolute:
+        x: 1540
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "def _sem(sem_raw: str):\n    \"\"\"解析语义事实核验节点的结论。只读、只解析，绝不改写交付块正文。\n\
+          \n    返回 (status, verdict, findings)：\n      status  OK / FAILED —— 核验节点这一环本身是否给出了可用结论\n\
+          \      verdict PASS / BLOCK / UNAVAILABLE\n      findings 逐条问题清单（BLOCK 时非空）\n\
+          \    \"\"\"\n    import json as _j\n    t = str(sem_raw or \"\")\n    if\
+          \ t.strip() == \"SEMANTIC_CHECK_NODE_FAILED\" or not t.strip():\n      \
+          \  return \"FAILED\", \"UNAVAILABLE\", [\n            \"语义事实核验节点未产出结论：本次不声称自动事实核验通过，改为人工事实复核后交付。\"\
+          ]\n    # 推理与正文分离：只取 </think> 之后的正文\n    if \"</think>\" in t:\n        t\
+          \ = t.split(\"</think>\")[-1]\n    t = t.replace(\"```json\", \" \").replace(\"\
+          ```\", \" \")\n    j = t.rfind(\"}\")\n    obj = None\n    if j != -1:\n\
+          \        for i in range(len(t[:j])):\n            if t[i] != \"{\":\n  \
+          \              continue\n            try:\n                o = _j.loads(t[i:j\
+          \ + 1])\n            except Exception:\n                continue\n     \
+          \       if isinstance(o, dict) and \"verdict\" in o:\n                obj\
+          \ = o\n                break\n    if obj is None:\n        return \"FAILED\"\
+          , \"UNAVAILABLE\", [\n            \"语义事实核验结论无法解析为约定的 JSON：不声称自动事实核验通过，改为人工事实复核后交付。\"\
+          ]\n    v = str(obj.get(\"verdict\") or \"\").strip().upper()\n    raw =\
+          \ obj.get(\"unsupported_claims\")\n    items = raw if isinstance(raw, list)\
+          \ else []\n    findings = []\n    for it in items[:20]:\n        if not\
+          \ isinstance(it, dict):\n            continue\n        c = str(it.get(\"\
+          claim\") or \"\").strip()\n        if not c:\n            continue\n   \
+          \     r = str(it.get(\"reason\") or \"\").strip()\n        ids = it.get(\"\
+          claimed_fact_ids\")\n        ids = \"、\".join([str(x) for x in ids]) if\
+          \ isinstance(ids, list) and ids else \"无\"\n        findings.append(\"原句：\"\
+          \ + c + \" ｜ 不成立的理由：\" + r + \" ｜ 声称引用：\" + ids)\n    if v == \"PASS\" and\
+          \ not findings:\n        return \"OK\", \"PASS\", []\n    if v == \"BLOCK\"\
+          \ and findings:\n        return \"OK\", \"BLOCK\", findings\n    # PASS\
+          \ 却列了条目、BLOCK 却一条没列、或 verdict 不合法 —— 自相矛盾，一律不当成通过\n    return \"FAILED\"\
+          , \"UNAVAILABLE\", [\n        \"语义事实核验结论自相矛盾或不合法（verdict=\" + v + \"，条目\
+          \ \" + str(len(findings))\n        + \" 条）：不声称自动事实核验通过，改为人工事实复核后交付。\"]\n\
+          \n\ndef main(pd_rts: list, pd_rtp: list, pd_adv: list,\n         pp_rts:\
+          \ list, pp_rtp: list, pp_adv: list,\n         pp_mode: str, pp_model: str,\
+          \ pp_hash: str, pp_len: str,\n         stage_models: list, stage_run_status:\
+          \ list, upstream_handoff: list,\n         pp_fact_gate: str, pp_gate_note:\
+          \ str, sem_raw: str) -> dict:\n    def L(x):\n        return [str(i) for\
+          \ i in x] if isinstance(x, list) else ([str(x)] if str(x or \"\").strip()\
+          \ else [])\n\n    # 只有正式数组进 return_to_*；普通备注一律进 advisory_notes，不升格\n   \
+          \ # Stage 1 传来的条目已带来源前缀，原样沿用，不重复打标\n    rts = L(pd_rts) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_rts)]\n    rtp = L(pd_rtp) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_rtp)]\n    adv = L(pd_adv) + [\"[publishing_packaging]\
+          \ \" + s for s in L(pp_adv)]\n\n    formal = len(rts) + len(rtp)\n    n_adv\
+          \ = len(adv)\n    if formal > 0:\n        status = \"HUMAN_REVIEW_REQUIRED\
+          \ (\" + str(formal) + \" return\"\n        status += (\", \" + str(n_adv)\
+          \ + \" advisory)\") if n_adv else \")\"\n    else:\n        # 本段已不再是 PRE\
+          \ 专用：状态按 PP 自行推导出的 mode 取值。\n        # PRE 分支的字面值与改造前完全一致，已登记的 PRE 行为不受影响；\n\
+          \        # MIXED / FINAL 是运行合同原本就没覆盖的两档。\n        m = str(pp_mode or \"\"\
+          ).strip().upper()\n        prefix = m if m in (\"PRE\", \"MIXED\", \"FINAL\"\
+          ) else \"UNKNOWN_MODE\"\n        status = prefix + \"_PACKAGE_READY_FOR_REVIEW\"\
+          \n        if n_adv:\n            status += \" (\" + str(n_adv) + \" advisory)\"\
+          \n    # 完整 Artifact 成功 ≠ 这份交付块可以交。四道确定性闸任一命中即阻断，\n    # 且**不删模型正文**：Artifact、交付块与全部证据原样保留在本输出里。\n\
+          \    if str(pp_fact_gate or \"\").strip().upper() == \"BLOCKED\":\n    \
+          \    status = \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\n\n    # ---- PP 之后的只读语义事实核验：只会更严，不会替谁放行\
+          \ ----\n    # 上面那道四闸的判定一个字没改；语义层只在它之后叠加，且永远不把 BLOCKED 翻回通过。\n    sem_status,\
+          \ sem_verdict, sem_findings = _sem(sem_raw)\n    if sem_verdict == \"BLOCK\"\
+          :\n        status = \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\n    elif sem_verdict\
+          \ == \"UNAVAILABLE\" and status != \"USER_DELIVERY_BLOCKED_FACT_CHECK\"\
+          :\n        # 核验节点自己失败：不阻断内部产物，也绝不声称自动事实核验通过\n        status = \"USER_DELIVERY_MANUAL_FACT_REVIEW_REQUIRED\"\
+          \n\n    models = L(stage_models) + [\"publishing_packaging=\" + str(pp_model)]\n\
+          \    rstat = L(stage_run_status) + [\"publishing_packaging=SUCCEEDED\"]\n\
+          \    return {\n        \"chain_status\": status,\n        \"return_to_script\"\
+          : rts,\n        \"return_to_production\": rtp,\n        \"advisory_notes\"\
+          : adv,\n        \"formal_return_count\": formal,\n        \"advisory_count\"\
+          : n_adv,\n        \"stage_models\": models,\n        \"stage_run_status\"\
+          : rstat,\n        \"upstream_handoff\": L(upstream_handoff) +\n        \
+          \    [\"publishing_artifact_hash=\" + str(pp_hash) + \" len=\" + str(pp_len)],\n\
+          \        \"final_present\": \"true\",\n        \"pp_mode\": str(pp_mode\
+          \ or \"\"),\n        \"user_delivery_fact_gate\": str(pp_fact_gate or \"\
+          \"),\n        \"user_delivery_gate_note\": str(pp_gate_note or \"\"),\n\
+          \        \"semantic_verdict\": sem_verdict,\n        \"semantic_check_status\"\
+          : sem_status,\n        \"semantic_findings\": sem_findings,\n    }\n"
+        code_language: python3
+        desc: 只汇总正式回改数组；普通备注一律进 advisory_notes 不升格；chain_status 带计数。本轮不接受、不拒绝、不触发重跑。
+        outputs:
+          advisory_count:
+            children: null
+            type: number
+          advisory_notes:
+            children: null
+            type: array[string]
+          chain_status:
+            children: null
+            type: string
+          final_present:
+            children: null
+            type: string
+          formal_return_count:
+            children: null
+            type: number
+          pp_mode:
+            children: null
+            type: string
+          return_to_production:
+            children: null
+            type: array[string]
+          return_to_script:
+            children: null
+            type: array[string]
+          semantic_check_status:
+            children: null
+            type: string
+          semantic_findings:
+            children: null
+            type: array[string]
+          semantic_verdict:
+            children: null
+            type: string
+          stage_models:
+            children: null
+            type: array[string]
+          stage_run_status:
+            children: null
+            type: array[string]
+          upstream_handoff:
+            children: null
+            type: array[string]
+          user_delivery_fact_gate:
+            children: null
+            type: string
+          user_delivery_gate_note:
+            children: null
+            type: string
+        selected: false
+        title: Return Aggregation
+        type: code
+        variables:
+        - value_selector:
+          - input_check
+          - pd_return_to_script
+          variable: pd_rts
+        - value_selector:
+          - input_check
+          - pd_return_to_production
+          variable: pd_rtp
+        - value_selector:
+          - input_check
+          - pd_advisory_notes
+          variable: pd_adv
+        - value_selector:
+          - pp_extract
+          - return_to_script
+          variable: pp_rts
+        - value_selector:
+          - pp_extract
+          - return_to_production
+          variable: pp_rtp
+        - value_selector:
+          - pp_extract
+          - advisory_notes
+          variable: pp_adv
+        - value_selector:
+          - pp_extract
+          - declared_mode
+          variable: pp_mode
+        - value_selector:
+          - pp_extract
+          - model_used
+          variable: pp_model
+        - value_selector:
+          - pp_extract
+          - artifact_hash
+          variable: pp_hash
+        - value_selector:
+          - pp_extract
+          - artifact_length
+          variable: pp_len
+        - value_selector:
+          - input_check
+          - stage_models
+          variable: stage_models
+        - value_selector:
+          - input_check
+          - stage_run_status
+          variable: stage_run_status
+        - value_selector:
+          - input_check
+          - upstream_handoff
+          variable: upstream_handoff
+        - value_selector:
+          - pp_extract
+          - user_delivery_fact_gate
+          variable: pp_fact_gate
+        - value_selector:
+          - pp_extract
+          - user_delivery_gate_note
+          variable: pp_gate_note
+        - value_selector:
+          - semantic_check
+          - text
+          variable: sem_raw
+      height: 100
+      id: return_agg
+      position:
+        x: 2160
+        y: 300
+      positionAbsolute:
+        x: 2160
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - return_agg
+          - chain_status
+          variable: chain_status
+        - value_selector:
+          - '1788000000001'
+          - cs_final
+          variable: creative_script_artifact
+        - value_selector:
+          - '1788000000001'
+          - pd_final
+          variable: realization_plan_artifact
+        - value_selector:
+          - pp_extract
+          - artifact
+          variable: publishing_pre_artifact
+        - value_selector:
+          - '1788000000001'
+          - cs_hash
+          variable: creative_script_hash
+        - value_selector:
+          - '1788000000001'
+          - pd_hash
+          variable: production_plan_hash
+        - value_selector:
+          - pp_extract
+          - artifact_hash
+          variable: publishing_pre_hash
+        - value_selector:
+          - return_agg
+          - return_to_script
+          variable: return_to_script
+        - value_selector:
+          - return_agg
+          - return_to_production
+          variable: return_to_production
+        - value_selector:
+          - return_agg
+          - advisory_notes
+          variable: advisory_notes
+        - value_selector:
+          - return_agg
+          - stage_models
+          variable: stage_models
+        - value_selector:
+          - return_agg
+          - stage_run_status
+          variable: stage_run_status
+        - value_selector:
+          - return_agg
+          - pp_mode
+          variable: pp_mode
+        - value_selector:
+          - return_agg
+          - final_present
+          variable: final_present
+        - value_selector:
+          - return_agg
+          - formal_return_count
+          variable: formal_return_count
+        - value_selector:
+          - return_agg
+          - advisory_count
+          variable: advisory_count
+        - value_selector:
+          - return_agg
+          - upstream_handoff
+          variable: upstream_handoff
+        - value_selector:
+          - pp_extract
+          - user_delivery
+          variable: publishing_user_delivery
+        - value_selector:
+          - pp_extract
+          - user_delivery_status
+          variable: publishing_user_delivery_status
+        - value_selector:
+          - return_agg
+          - user_delivery_fact_gate
+          variable: user_delivery_fact_gate
+        - value_selector:
+          - return_agg
+          - user_delivery_gate_note
+          variable: user_delivery_gate_note
+        - value_selector:
+          - pp_extract
+          - used_fact_ids
+          variable: used_fact_ids
+        - value_selector:
+          - return_agg
+          - semantic_verdict
+          variable: semantic_verdict
+        - value_selector:
+          - return_agg
+          - semantic_check_status
+          variable: semantic_check_status
+        - value_selector:
+          - return_agg
+          - semantic_findings
+          variable: semantic_findings
+        selected: false
+        title: 生产包结束
+        type: end
+      height: 100
+      id: end_ok
+      position:
+        x: 2460
+        y: 300
+      positionAbsolute:
+        x: 2460
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - input_check
+          - status
+          variable: chain_status
+        - value_selector:
+          - input_check
+          - missing
+          variable: missing_inputs
+        - value_selector:
+          - input_check
+          - note
+          variable: note
+        - value_selector:
+          - input_check
+          - upstream_handoff
+          variable: upstream_handoff
+        selected: false
+        title: 输入受阻结束
+        type: end
+      height: 100
+      id: end_input_blocked
+      position:
+        x: 940
+        y: 620
+      positionAbsolute:
+        x: 940
+        y: 620
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        code: "def main() -> dict:\n    return {\"chain_status\": \"TOOL_FAILED\"\
+          , \"failed_stage\": \"publishing_packaging\", \"note\": \"Publishing & Packaging\
+          \ Workflow Tool 调用失败（不做节点内重试；重试由控制器以全新父流运行发起）；上游 CS / PD 产物保留在本输出中，不输出生产包。\"\
+          }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          chain_status:
+            children: null
+            type: string
+          failed_stage:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+        selected: false
+        title: PP Tool 失败标记
+        type: code
+        variables: []
+      height: 100
+      id: pp_fail_mark
+      position:
+        x: 1240
+        y: 620
+      positionAbsolute:
+        x: 1240
+        y: 620
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - pp_fail_mark
+          - chain_status
+          variable: chain_status
+        - value_selector:
+          - pp_fail_mark
+          - failed_stage
+          variable: failed_stage
+        - value_selector:
+          - pp_fail_mark
+          - note
+          variable: note
+        - value_selector:
+          - '1788000000001'
+          - cs_final
+          variable: creative_script_artifact
+        - value_selector:
+          - '1788000000001'
+          - pd_final
+          variable: realization_plan_artifact
+        selected: false
+        title: PP Tool 失败结束
+        type: end
+      height: 100
+      id: end_pp_tool_failed
+      position:
+        x: 1540
+        y: 620
+      positionAbsolute:
+        x: 1540
+        y: 620
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - pp_extract
+          - gate
+          variable: chain_status
+        - value_selector:
+          - pp_extract
+          - note
+          variable: failed_stage
+        - value_selector:
+          - '1788000000001'
+          - cs_final
+          variable: creative_script_artifact
+        - value_selector:
+          - '1788000000001'
+          - pd_final
+          variable: realization_plan_artifact
+        - value_selector:
+          - pp_extract
+          - artifact
+          variable: publishing_pre_artifact
+        selected: false
+        title: PP 闸未通过结束
+        type: end
+      height: 100
+      id: end_pp_gate_failed
+      position:
+        x: 1840
+        y: 620
+      positionAbsolute:
+        x: 1840
+        y: 620
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        default_value:
+        - key: text
+          type: string
+          value: SEMANTIC_CHECK_NODE_FAILED
+        desc: PP 之后的只读事实核验：只判断用户交付块里被当成已发生的事有没有被 fact_refs 支持。不改写内容、不评分、不重跑 PP。
+        error_strategy: default-value
+        memory: null
+        model:
+          completion_params:
+            enable_search: false
+            top_p: 0.8
+          mode: chat
+          name: qwen3.8-max
+          provider: langgenius/tongyi/tongyi
+        prompt_template:
+        - id: sem-sys
+          role: system
+          text: '你是事实核验员。你唯一的工作是：判断一份「用户交付块」里，凡是被当作**已经发生过的事**来说的内容，有没有被给定的材料支持。
+
+
+            你不评分。你不评价创意好坏。你不改写内容。你不提优化方案。你不改标题、封面或发布文案。你不要求重跑。你只做判断。
+
+
+            ## 你手上只有这些材料
+
+
+            1. **fact_refs** —— 唯一的事实基座。凡是关于人、人说过的话、人做过的动作、商品、场景、时间、次数、结果的事实，只以这里为准。
+
+            2. **realized_payoff** —— 这条内容实际兑现了什么、哪一段素材够不够的记录。只用来判断「关于本条内容自己的素材」的陈述（例如「某段画面不足」「某个镜头拍到了」），不能用它引入
+            fact_refs 里没有的人物事实。
+
+            3. **cta_contract** —— 承接约定。
+
+            4. **user_delivery_block** —— 被核验的对象。
+
+
+            材料以外的知识一律不算数。你不知道的就是没有发生。不要联网，不要用常识补足，不要替它想一个合理的来源。
+
+
+            ## 哪些句子要判
+
+
+            被当作**已经发生过**来说的：
+
+
+            - 人物动作；
+
+            - 人物原话；
+
+            - 内部讨论、争论、现场决定或试验（指真实发生在人身上的事）；
+
+            - 次数、数量、时间、结果；
+
+            - 否定句里暗含的事实前提；
+
+            - 评论区里的经历性表达；
+
+            - CTA、奖励或后续承诺。
+
+
+            ## 哪些句子不判
+
+
+            下面这些不按已经发生的事实处理：
+
+
+            - 纯创意指令（封面怎么排、字幕怎么断、音乐铺到哪里）；
+
+            - 拍摄和剪辑动作建议（用哪一帧、拍哪个特写、加什么文字卡、保留哪段原声、口播什么时候进出）；
+
+            - 未来才要执行、要确认、要实测、要拍板的要求；
+
+            - 面向观众的提问、条件句、假设句；
+
+            - 关于本条内容自己的编排说明（这一期讲了什么、没讲什么、把什么划到哪一类、为什么不回答某个问题）。
+
+
+            **一句话判别法**：这句话如果是假的，是不是等于「有人编了一件没发生过的事」？是 → 判；不是 → 跳过。
+
+
+            ## 判定尺度
+
+
+            - **同义改写、口语化、概括、合并，不算无依据。** 事实清单写「接送场景」，交付块写「接孩子那一段」，成立。
+
+            - **多出了事实清单里没有的具体信息，才算无依据。** 具体指：多出来的人、多出来的话、多出来的动作、多出来的次数／数量／时间／结果。
+
+            - **否定句不豁免。** 例如「这不是他第三次改口了」，虽然是在否认，仍然预设了「他之前改过口」；事实清单里没有这件事，这句就不成立。
+
+            - **挂了编号不等于成立。** 一句话旁边写着某个 fact_id，你必须回去看那条 fact_id 的正文，确认它真的说了这件事。fact_id
+            里写着「不得扩大」「不得据此认定」的条款要当真：被明文排除的结论，就是没有支持。
+
+            - **拿不准时的唯一标准**：你能在 fact_refs 里指出**哪一条、哪一句**支持它，才算支持；指不出来，就是不支持。
+
+
+            ## CTA 检查
+
+
+            cta_contract 是「无 CTA / NO_CTA」时，交付块里不得出现抽奖、送东西、私信领取、评论区领、关注看答案、下条揭晓、预约、到店、下单、加微信这类动作或奖励承诺。**明文写「不做某某」的禁令句不算违规**，那是在约束自己。
+
+
+            ## 输出
+
+
+            只输出一个 JSON 对象。前后不要加任何别的字，不要加代码块标记，不要写解释：
+
+
+            {"verdict":"PASS 或 BLOCK","unsupported_claims":[{"claim":"用户交付块里的逐字原句","reason":"现有材料为什么不支持","claimed_fact_ids":["这句话声称引用的完整
+            fact_id；没有就是空数组"]}]}
+
+
+            规则：
+
+
+            - verdict = PASS 时，unsupported_claims 必须是空数组。
+
+            - verdict = BLOCK 时，unsupported_claims 至少一条。
+
+            - claim 必须从交付块里一字不改抄下来，抄完整一句，不要抄半句，不要自己拼接改写。
+
+            - reason 里要写清楚三件事：事实清单里最接近的是哪一条、它到底说了什么、这句话多出来的是哪一块。
+
+            - 找不到任何一句不成立的，就输出 PASS 和空数组。不要为了显得认真而凑条目。
+
+            '
+        - id: sem-user
+          role: user
+          text: '=== cta_contract ===
+
+            {{#1788000000001.cta_contract#}}
+
+
+            === fact_refs（唯一事实基座）===
+
+            {{#1788000000001.fact_refs#}}
+
+
+            === realized_payoff（本条内容实际兑现记录）===
+
+            {{#pp_extract.realized_payoff#}}
+
+
+            === user_delivery_block（被核验对象）===
+
+            {{#pp_extract.user_delivery#}}
+
+
+            按上面的规则逐句核验 user_delivery_block，只输出那个 JSON 对象。
+
+            '
+        selected: false
+        title: Semantic Fact Check
+        type: llm
+        vision:
+          enabled: false
+      height: 98
+      id: semantic_check
+      position:
+        x: 1860
+        y: 300
+      positionAbsolute:
+        x: 1860
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.5
+  rag_pipeline_variables: []
