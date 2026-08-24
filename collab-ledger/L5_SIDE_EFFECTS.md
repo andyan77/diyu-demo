@@ -82,9 +82,8 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
 | 受控状态 | 可逆——任务分支可删；**未触碰默认分支**，不合并、不建 PR |
 | 核验依据 | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` —— **以实时返回为准**，本栏不登记具体 hash |
-| **状态** | `PLANNED` → **见下方状态追加**（推送完成后原地追加一行，不新开条目） |
-
-（推送完成后由本任务执行总负责人在此追加一行「状态追加 1」，记录原始响应与远端核验结果——**追加式**，不覆盖本条。）
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-24） | 推送成功：`* [new branch] task/v1-rebase-ep00-current-m0-preflight -> task/v1-rebase-ep00-current-m0-preflight`。远端核验：`git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` → `8413a94d3125d54426527be987d082ed28017c96`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR |
 
 ## 四、其他外部系统
 

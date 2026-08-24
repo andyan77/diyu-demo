@@ -1260,8 +1260,7 @@ next_stage_allowed           = true:V1-REBASE-EP00-CURRENT
 
 | 项 | 值 |
 |---|---|
-| 推送前本地 HEAD | 待补（commit 完成后回填） |
-| 推送后远端 ref | 待补（`git ls-remote origin` 核验后回填） |
-| 结论 | 待补 |
-
-（上表在 push 完成后由本任务执行总负责人原地补齐——**追加式**，不新开条目。）
+| 收口 commit | `8413a94d3125d54426527be987d082ed28017c96`（`V1-REBASE-EP00-CURRENT = DONE：M0 当前真相预检完成`） |
+| 推送后远端 ref | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` → `8413a94d3125d54426527be987d082ed28017c96` |
+| 核验结果 | **本地 HEAD 与远端 ref 完全一致**；未直推／未合并 `main`；未建 PR（详见 [L5 §SE-003](L5_SIDE_EFFECTS.md)） |
+| 结论 | A15 **通过**。任务收口 |
