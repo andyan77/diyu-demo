@@ -28,6 +28,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 |---|---|---|---|
 | SE-001 | `COLLAB-LEDGER-BOOTSTRAP-001` | 远程分支 `chore/collab-ledger-bootstrap-001` | 见下 |
 | SE-002 | `COLLAB-LEDGER-BOOTSTRAP-001` | 远程默认分支 `main`（收口推送） | 见下 |
+| SE-003 | `V1-REBASE-EP00-CURRENT` | 远程分支 `task/v1-rebase-ep00-current-m0-preflight` | 见下 |
 
 ### SE-001 · 推送任务分支 `chore/collab-ledger-bootstrap-001`
 
@@ -69,6 +70,21 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 
 > **关于自引用**：SE-002 是本任务的 closing push。按合同，**最终远端 ref 与交付证据即为其确认依据**——
 > **不得**为了把最终 commit hash 写回同一个 commit 而制造无穷追加提交。
+
+### SE-003 · 推送任务分支 `task/v1-rebase-ep00-current-m0-preflight`
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-REBASE-EP00-CURRENT` |
+| 类型 | Git push（新建远程分支） |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/v1-rebase-ep00-current-m0-preflight` |
+| 内容标识 | 见 [L3 §四 ATT-001.1](L3_ATTEMPTS_AND_EVIDENCE.md) 的 tested functional hash（分支 tip，不写死字面值，避免自引用） |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；**未触碰默认分支**，不合并、不建 PR |
+| 核验依据 | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` —— **以实时返回为准**，本栏不登记具体 hash |
+| **状态** | `PLANNED` → **见下方状态追加**（推送完成后原地追加一行，不新开条目） |
+
+（推送完成后由本任务执行总负责人在此追加一行「状态追加 1」，记录原始响应与远端核验结果——**追加式**，不覆盖本条。）
 
 ## 四、其他外部系统
 
