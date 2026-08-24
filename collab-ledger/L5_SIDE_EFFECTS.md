@@ -42,7 +42,10 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 原始响应 | 2026-08-24 推送成功：`* [new branch]  chore/collab-ledger-bootstrap-001 -> chore/collab-ledger-bootstrap-001` |
 | 核验依据 | `git ls-remote origin refs/heads/chore/collab-ledger-bootstrap-001` → `0d6a4d23a875eea1d005157455ef86c0e9bef135`（**远端 ref 实测**，非本账本自述） |
 | **状态** | `PLANNED` → **`CONFIRMED`**（attempt-1 的功能冻结提交已在远程分支上） |
-| 后续追加 | attempt-2 的冻结提交与收口增量会再次推同一分支，属**同一逻辑副作用**的内容更新，不新开条目；最终 ref 见 [L3 §ATT-002.5](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| **状态追加 1**（2026-08-24） | attempt-2 冻结提交推同一分支：`0d6a4d2..8873881`，远端 ref → `8873881964569310252326976eab4a563757c084`。状态仍 `CONFIRMED` |
+| **状态追加 2**（2026-08-24） | attempt-2 最终冻结推同一分支：`8873881..8ada866`，远端 ref → `8ada8663db357d91c1c4038ef944d9a3c6a1c930`。状态仍 `CONFIRMED` |
+| **为什么要追加** | A2 第 2 轮对抗性隔离单元实测 `refs/remotes/origin/chore/...` 已到 `8ada866`，而本条当时只记 `0d6a4d2`，并把最新值甩给了尚是 `PENDING` 的 `§ATT-002.5`——**账本保留了一个已知与远端 ref 不符的 hash**，违反本文件 §二「远端 ref 才是原始权威」。按 canonical §三「只加不改」以追加行更正，不覆盖原记录 |
+| 后续追加 | attempt-3 冻结提交与收口增量会再推同一分支，属**同一逻辑副作用**的内容更新，不新开条目；最终 ref 见 [L3 §ATT-003.5](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 ### SE-002 · 采用进远程默认工作基线 `main`（收口推送）
 

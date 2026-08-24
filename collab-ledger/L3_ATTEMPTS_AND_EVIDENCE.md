@@ -14,7 +14,8 @@
 | Attempt | 所属 task_id | 结果 |
 |---|---|---|
 | `ATT-001` | `COLLAB-LEDGER-BOOTSTRAP-001` | **A3 不通过** —— A2 第 1 轮查出缺陷 D-001，见 §ATT-001.2 |
-| `ATT-002` | `COLLAB-LEDGER-BOOTSTRAP-001` | 见 §ATT-002.2 |
+| `ATT-002` | `COLLAB-LEDGER-BOOTSTRAP-001` | **A6 不通过** —— A2 第 2 轮查出缺陷 D-002～D-005，见 §ATT-003.0 |
+| `ATT-003` | `COLLAB-LEDGER-BOOTSTRAP-001` | 见 §ATT-003.2 |
 
 ### ATT-001 · `COLLAB-LEDGER-BOOTSTRAP-001` / attempt 1
 
@@ -42,7 +43,7 @@
 
 | 验收项 | 结果 | 证据 |
 |---|---|---|
-| A1 五类账本可定位、非空模板 | **通过** | 隔离单元从 canonical 出发逐项点开 L1–L5 并逐条引用；断言门禁实测 6 个文件均 >800 字节 |
+| A1 五类账本可定位、非空模板 | **通过** | 隔离单元从 canonical 出发逐项点开 L1–L5 并逐条引用；`wc -c collab-ledger/*.md` 六个文件均 >2000 字节（**可复算**） |
 | **A3 每个活动 task_id 的下一动作四要素齐全** | **❌ 不通过** | 见下方**缺陷 D-001** |
 | A4 历史资产零改动／零重命名／零删除 | 通过 | `git diff --stat 6ae78ab -- decision-chain content-production tools 笛语项目基线.md` 为空；`--diff-filter=DR` 为空 |
 | A5 无过度治理 | 通过 | 新增 6 个文件（=上限）、全为 Markdown、canonical 77 行 ≤80、零脚本／CI／Schema |
@@ -133,7 +134,7 @@
 
 **结果如何**：A1–A9 验收结果 `PENDING_AT_FREEZE`——「冻结时刻尚未产生，**不留假结论**」。A2 原始问答 `PENDING_AT_FREEZE`。回归与负向测试：改动前实测基线结果为 `python3 tools/v1_demo_verify.py` → 冻结资产不符 0 项、静态检查失败 0 项、单元测试失败 0 项（exit 0）；四行的**冻结后结果全部 `PENDING_AT_FREEZE`**，包括两条负向测试。收口 `PENDING_AT_FREEZE`。HEAD 提交信息里另有一句实测结论：「断言门禁 18 项全通过，且已通过负向自检（注入第 7 个文件、注入假绿 DONE 均被正确拦下）」——这条在提交信息里，账本 §ATT-001.2 仍记 `PENDING`。
 
-**原始证据**：历史证据共 **57 份**（`decision-chain/evidence` 43 + `content-production/evidence` 14；我用 `git ls-files` 复核，确为 43 与 14）。**全部早于起算基线**，**一律标 `NOT_VERIFIED_BEFORE_BASELINE`**。其中 9 份文件自己显式声明了状态（原文逐字摘录，账本明确说「摘录只表示原文这么写，**不表示本账本认定其成立**」）：`CONTENT_PRODUCTION_CS_REFERENCE_PROBE_RUN_001.md`(`状态 → succeeded`)、`CONTENT_PRODUCTION_P05R3_RUN.md`(`SEMANTIC_CHECKER_ACCEPTED_NO_REGRESSION`)、`CONTENT_PRODUCTION_PRE_CHAIN_FIXTURE_RUN_001.md`(`最终状态 → BLOCKED`)、`CONTENT_PRODUCTION_PRE_CHAIN_FIXTURE_RUN_002.md`(`状态 → DONE`)、`CAMPAIGN_QWEN_RUN_001_RAW.md`(`SUCCESS`)、`CONTENT_BRIEF_DEEPSEEK_V4_FLASH_RUN_001_RAW.md`(`succeeded`)、`CONTENT_BRIEF_NEGATIVE_PROBES_RUN_001_RAW.md`(`succeeded`)、`MATRIX_QWEN_RUN_002_RAW.md`(`SUCCESS`)、`MATRIX_QWEN_RUN_003_RAW.md`(`SUCCESS`)。其余 48 份无显式状态字段，只索引，全部 `NOT_VERIFIED_BEFORE_BASELINE`。另注：`decision-chain/evidence/` 下有一个被 gitignore 的本地残留 `.claude/` 目录，不属仓库资产，不计入 57。§三：`NONE_VERIFIED_SINCE_BASELINE` —— 除 `ATT-001` 外，自 `6ae78ab` 起没有第二个任务产生过 Formal Attempt。
+**原始证据**：历史证据共 **57 份**（`decision-chain/evidence` 43 + `content-production/evidence` 14；我用 `git ls-files` 复核，确为 43 与 14）。**全部早于起算基线**，**一律标 `NOT_VERIFIED_BEFORE_BASELINE`**。其中 9 份文件自己显式声明了状态（原文逐字摘录，账本明确说「摘录只表示原文这么写，**不表示本账本认定其成立**」）：`CONTENT_PRODUCTION_CS_REFERENCE_PROBE_RUN_001.md`(`状态 → succeeded`)、`CONTENT_PRODUCTION_P05R3_RUN.md`(`SEMANTIC_CHECKER_ACCEPTED_NO_REGRESSION`)、`CONTENT_PRODUCTION_PRE_CHAIN_FIXTURE_RUN_001.md`(`最终状态 → BLOCKED`)、`CONTENT_PRODUCTION_PRE_CHAIN_FIXTURE_RUN_002.md`(`状态 → DONE`)、`CAMPAIGN_QWEN_RUN_001_RAW.md`(`SUCCESS`)、`CONTENT_BRIEF_DEEPSEEK_V4_FLASH_RUN_001_RAW.md`(`succeeded`)、`CONTENT_BRIEF_NEGATIVE_PROBES_RUN_001_RAW.md`(`succeeded`)、`MATRIX_QWEN_RUN_002_RAW.md`(`SUCCESS`)、`MATRIX_QWEN_RUN_003_RAW.md`(`SUCCESS`)。其余 48 份无显式状态字段，只索引，全部 `NOT_VERIFIED_BEFORE_BASELINE`。另注：`decision-chain/evidence/` 下有一个被 gitignore 的本地残留 `.claude/` 目录，不属仓库资产，不计入 57。§三：`NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，**只有 `COLLAB-LEDGER-BOOTSTRAP-001` 这一个任务**产生过 Formal Attempt（其下 `ATT-001` / `ATT-002` / `ATT-003` 三次）。**没有第二个任务**产生过 Formal Attempt。
 
 **Q4 哪些路线已有明确失败或排除证据，关键前提不变时不得重试**
 
@@ -210,7 +211,7 @@
 |---|---|---|
 | `python3 tools/v1_demo_verify.py` | 冻结资产不符 0 项；静态检查失败 0 项；单元测试失败 0 项（exit 0） | **同上，0／0／0（exit 0）** |
 | 受保护路径零改动 | 基线即自身 | **通过**（diff 为空） |
-| 断言门禁负向自检 | —— | **通过**：注入第 7 个文件 → 退出码 1；注入假绿 `DONE` → 退出码 1；恢复 → 退出码 0 |
+| 断言门禁负向自检 | —— | **`NOT_VERIFIABLE_FROM_REPO`** —— 该门禁是执行侧一次性断言脚本，A5 禁止向仓库新增脚本，**未入库**。按 [L4 §一](L4_FAILED_PATHS.md) 自订标准「自述不是证据」，**本行不计入任何验收通过项**，仅作执行记录。此判定由 A2 第 2 轮对抗性隔离单元指出（缺陷 D-004） |
 | 负向：隔离单元不得据本账本得出「子合同已接受／施工已授权／预检已完成」 | —— | **通过** —— N1／N2／N3 三题全答「否」，且 N3 进一步指出「从未启动」 |
 | 负向：隔离单元不得把 57 份历史证据当成本基线后的 Formal Attempt | —— | **通过** —— N4 答「否」，并引用了 L3 抬头与 canonical §六 |
 | 第 2 个隔离单元 | —— | **`API Error: Connection lost mid-response`，输出不完整。如实登记，不作为验收证据，不重复计入通过项** |
@@ -255,6 +256,63 @@
 #### ATT-002.5 收口
 
 `PENDING_AT_FREEZE` —— 分支、合并提交、远端 `main` HEAD 与 URL 由收口增量写入；对应副作用见 [L5](L5_SIDE_EFFECTS.md)。
+
+---
+
+### ATT-003 · `COLLAB-LEDGER-BOOTSTRAP-001` / attempt 3
+
+#### ATT-003.0 更正条目（按 canonical §三「只加不改，写错了新增一条更正」）
+
+> **不覆盖 §ATT-002 的原文。** 下表是对它的更正与补充。
+
+| 缺陷 | §ATT-002 原文怎么写的 | 事实是什么 | 谁查出的 |
+|---|---|---|---|
+| **D-002** | canonical §二写「**已实证可达的入口只有一个**：Claude Code —— 项目 `CLAUDE.md` **会被自动加载**」 | **与事实不符。** 执行该轮核查的隔离单元**本身就是 Claude Code 执行单元**，实测「没有 CLAUDE.md、没有任何项目指令被自动加载」。且本账本保存的**唯一相关原始证据**（§ATT-001.3）恰是反证：那个单元是**自己主动 `ls` 后打开**的 `CLAUDE.md`，不是被自动加载。**一条以「已实证」措辞写进规则正文的声明，账本里没有任何一条实证记录。** 已按事实改写为「根目录三处指针可达 / 是否自动加载**未实证**」 | A2 第 2 轮对抗性隔离单元 |
+| **D-003** | §ATT-002「与上一 Attempt 的实质差异」写「**只有一处数据修正** …… canonical 规则正文、L1 两个哈希块、L3 §二 历史目录、L4、L5 **全部未动**」 | **与 git 事实不符。** ① `git diff 0d6a4d2 8873881 -- collab-ledger/L5_SIDE_EFFECTS.md` **非空**——SE-001 由 `PLANNED` 改记 `CONFIRMED` 并新增「后续追加」行，**就发生在写下「L5 全部未动」的同一个提交里**；② `git diff 8873881 8ada866 -- collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md` **非空**——canonical **规则正文**新增 3 行。**准确表述**：attempt-2 实际改动 = L2（D-001 修复）＋ L3（记录）＋ L5（SE-001 状态）＋ canonical（代理入口声明）。**只有 L1 两个 yaml 哈希块与 L3 §二 历史目录确实逐字节未动**（`task_contract_hash` / `manifest_hash` 至今未变可证） | A2 第 2 轮对抗性隔离单元 |
+| **D-004** | 多处以「断言门禁 18／20 项全通过」「注入第 7 个文件 → 退出码 1」作为验收依据 | **不可复核。** A5 禁止向仓库新增脚本，该门禁脚本**未入库**（`git diff --diff-filter=A --name-only` 实测新增文件全为 6 个 Markdown、零脚本）。按 [L4 §一](L4_FAILED_PATHS.md) 自订标准「模型自称不是证据，没有可复核的干预与观测就不写进来」——**该纪律此前只对失败方向执行、对通过方向没执行**。已全面改用**可复算命令**（见 §ATT-003.3），门禁输出降级为 `NOT_VERIFIABLE_FROM_REPO`，不计入任何通过项 | A2 第 2 轮对抗性隔离单元 |
+| **D-005** | L2 §二 bootstrap 行的「输入／基线」指向 §ATT-001.1 的 tested functional hash | **指向了已判 A3 不通过的旧冻结点 `0d6a4d2`。** 新会话严格照此执行会用错基线。已改指 §ATT-003.1 并加显式警告 | A2 第 2 轮五问隔离单元 |
+
+**另有一处已登记为公开缺口、不在本轮修复范围**：[笛语项目基线.md](../笛语项目基线.md) 自称「新会话先读这一篇」却零处提到本账本。**它是受保护资产，`non_goals` 禁止修改**，执行侧**不擅自改、不放宽边界**，已登记进 [L1 §T-001.4](L1_TASK_MANIFESTS.md) 报 Founder 裁决。
+
+#### ATT-003.1 冻结与哈希登记
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `d5ee949a9dd61af3a40fbf67bb0f185c04ae05d6f8f6008f2c2e9bfcdc22f380`（三次 attempt **未变** —— 合同没动过） |
+| `manifest_hash` | `35a67aa54052ca34e2de726e4d993b4b79e8287d06f42e6f02668bcd0c5fa870`（三次 attempt **未变**） |
+| **与上一 Attempt 的实质差异** | 修 D-002～D-005 四项，动了 canonical §二（撤回未实证声明）、L1 §T-001.4（+2 条公开缺口）、L2 §二（基线指针）、L3（本节 + 证据降级）、L5 §三（SE-001 追加状态行）。**L1 两个 yaml 哈希块、L3 §二 历史目录、L4 未动。**（本行按 D-003 的教训，逐一列出实际改动面，不再写「只有一处」） |
+| tested functional hash | `TF3_PLACEHOLDER` |
+| closing evidence hash | `CE3_PLACEHOLDER` |
+
+#### ATT-003.2 验收结果（A1–A9）
+
+`PENDING_AT_FREEZE` —— 由收工时**唯一一次** evidence-only 增量写入。**不留假结论。**
+
+#### ATT-003.3 可复算证据（替代不可复核的门禁自述）
+
+> 以下每条都能在仓库里**原样重跑**。`$B` = `6ae78abf5967535bda81392255b8ee3e79e4bcb5`。
+
+| 验收点 | 命令 | 实测输出（2026-08-24，冻结提交上） |
+|---|---|---|
+| A4 受保护路径零改动 | `git diff --name-status $B HEAD -- decision-chain content-production tools 笛语项目基线.md` | **空** |
+| A4 零删除零重命名 | `git diff --diff-filter=DR -M -C --name-only $B HEAD` | **空** |
+| A5 新增文件数 | `git diff --diff-filter=A --name-only $B HEAD` | **6 条**，全部在 `collab-ledger/` |
+| A5 无新增脚本／Schema／CI | `git diff --diff-filter=A --name-only $B HEAD \| grep -v '\.md$'` | **空**（新增文件 100% 是 Markdown） |
+| A5 canonical 行数 | `wc -l < collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md` | **80** ≤ 80（**已到上限，再加一行即越界**） |
+| A1 非空模板 | `wc -c collab-ledger/*.md` | 5499 / 16056 / 6340 / 42000 / 4333 / 3979 字节 |
+| 改动面总计 | `git diff --stat $B HEAD` | `9 files changed, 846 insertions(+)`，**0 deletions** |
+| 历史证据计数 | `git ls-files decision-chain/evidence \| wc -l` / `content-production/evidence` | **43 / 14 = 57** |
+| 既有机器校验 | `python3 tools/v1_demo_verify.py` | **冻结资产不符 0 项；静态检查失败 0 项；单元测试失败 0 项** |
+
+**这些数值随提交变化，重跑以当前 HEAD 为准。** 上表绑定 §ATT-003.1 的 tested functional hash。
+
+#### ATT-003.4 A2 原始问答（第 3 轮）
+
+`PENDING_AT_FREEZE` —— 完整原始问答由收口增量原样写入，**不摘要、不改写**。
+
+#### ATT-003.5 收口
+
+`PENDING_AT_FREEZE`
 
 ---
 
