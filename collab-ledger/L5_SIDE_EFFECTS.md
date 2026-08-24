@@ -39,9 +39,10 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 内容标识 | 见 [L3 §ATT-001.1](L3_ATTEMPTS_AND_EVIDENCE.md) 的 tested functional hash |
 | 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
 | 受控状态 | 可逆——分支可删；**未触碰默认分支** |
-| 原始响应 | `PENDING_AT_FREEZE` |
-| 核验依据 | `git ls-remote origin refs/heads/chore/collab-ledger-bootstrap-001` |
-| **状态** | `PLANNED` |
+| 原始响应 | 2026-08-24 推送成功：`* [new branch]  chore/collab-ledger-bootstrap-001 -> chore/collab-ledger-bootstrap-001` |
+| 核验依据 | `git ls-remote origin refs/heads/chore/collab-ledger-bootstrap-001` → `0d6a4d23a875eea1d005157455ef86c0e9bef135`（**远端 ref 实测**，非本账本自述） |
+| **状态** | `PLANNED` → **`CONFIRMED`**（attempt-1 的功能冻结提交已在远程分支上） |
+| 后续追加 | attempt-2 的冻结提交与收口增量会再次推同一分支，属**同一逻辑副作用**的内容更新，不新开条目；最终 ref 见 [L3 §ATT-002.5](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 ### SE-002 · 采用进远程默认工作基线 `main`（收口推送）
 
