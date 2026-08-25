@@ -113,7 +113,8 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
 | 受控状态 | 可逆——任务分支可删；**未触碰默认分支**，不合并、不建 PR |
 | 核验依据 | `git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` —— 以实时返回为准 |
-| **状态** | `PLANNED` → 见下方状态追加 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-24） | 推送成功：`* [new branch] task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `e21ff4d11fc7d90b25168844260b8e325e1179d1`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR（GitHub 自动提示的 PR 创建链接未使用）；`git fetch` 后核验 `origin/main` 仍为 `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，未变 |
 
 ## 四、其他外部系统
 

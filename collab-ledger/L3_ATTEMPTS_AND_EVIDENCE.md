@@ -1407,4 +1407,23 @@ v0.1 `git hash-object` 值前后一致、状态字符串在文档头部／§10.3
 
 #### ATT-001.4 远程收口记录
 
-> 本节在实际 `git push` 之后填写。
+| 项 | 值 |
+|---|---|
+| 收口 commit | `e21ff4d11fc7d90b25168844260b8e325e1179d1`（"V1-M0-1B-SLICE-CONTRACT-REVISION-001：单账号下位合同 v0.2 候选（F-01～F-09 定向修订）"） |
+| 推送结果 | `* [new branch] task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001` |
+| 远端核验 | `git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `e21ff4d11fc7d90b25168844260b8e325e1179d1`，与本地 `git rev-parse HEAD` 完全一致 |
+| main 未受影响核验 | 推送后 `git fetch` + `git rev-parse origin/main` → `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，与任务开工前一致，未直推未合并 |
+| M01B-C11 最终判定 | **通过** |
+| 结论 | ATT-001.3 十三项验收（M01B-C01 ~ M01B-C13）**全部通过**。任务收口 |
+
+**终态**：
+
+```text
+M0.1B_CONTRACT_CANDIDATE = READY_FOR_FOUNDER_REVIEW
+next_stage_allowed = false
+```
+
+`next_stage_allowed=false` 含义：合同尚未被 Founder 接受；`SINGLE-ACCOUNT-SLICE-EP00` 未因此
+自动获授权；四个共享合同的冻结未获授权；M1—M4 与 M5 均未获授权。下一动作是 Founder 审阅
+[`decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md)
+并裁决是否接受。
