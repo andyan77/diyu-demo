@@ -179,6 +179,21 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 推送成功：`* [new branch] task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001 -> task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001` → `b5b268b1a50fa4294d6f74866e190e1e3ee420a1`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR。推送目的：使本次 `BLOCKED` 终态记录（含已完成的 L2 纠偏）在远程可见、可续跑，不因本地状态丢失而需要重做 |
 
+> **记录缺口说明（本任务发现，未回补）**：`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 的 P0-A 完成后合入 `main`、以及 `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` 合入 `main` 这两次远程默认分支采用，L1/L2/L3 均写"见 L5"，但本文件当时未追加对应 SE 条目（本文件在此之前止于 SE-009）。这是此前任务遗留的账本记录缺口，不是本任务范围内容，本任务不回填，仅如实指出，供后续任务或 Founder 决定是否需要补记。
+
+### SE-010 · 推送任务分支 `task/v1-m1-engineering-prompt-adoption-001`
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` |
+| 类型 | Git push（新建远程分支，独立于 `main`） |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/v1-m1-engineering-prompt-adoption-001` |
+| 内容标识 | 落盘 `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md` ＋ PROJECT_INDEX／L1／L2／L3／L5 账本登记 |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；未触碰默认分支，随后经集成分支 `--no-ff` 合入 `main`（见 SE-011） |
+| 核验依据 | `git ls-remote origin refs/heads/task/v1-m1-engineering-prompt-adoption-001` —— 以实时返回为准 |
+| **状态** | `PLANNED` |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
