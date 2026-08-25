@@ -1483,4 +1483,22 @@ next_stage_allowed = false
 
 #### ATT-002.4 远程收口记录
 
-（本节留待推送并经 `git ls-remote` 核验后，以追加提交补记——不预先写入未发生的推送结果，避免自引用）
+| 项 | 值 |
+|---|---|
+| 收口 commit | `c32a42e4c3121951a5557840ac3a87c7d1ee8dce`（"V1-M0-1B-SLICE-CONTRACT-REVISION-001 attempt-2：四项定向纠偏 + F-10"） |
+| 推送结果 | `922a99b..c32a42e  task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001` |
+| 远端核验 | `git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `c32a42e4c3121951a5557840ac3a87c7d1ee8dce`，与本地 `git rev-parse HEAD` 完全一致 |
+| main 未受影响核验 | 同一次 `git ls-remote` 联查 `refs/heads/main` → `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，与任务开工前一致，未直推未合并 |
+| 结论 | ATT-002.1（五项处置）、ATT-002.2（8 处发现全部修复）、ATT-002.3（自验证全部通过）已推送并经远端核验。attempt-2 收口 |
+
+**当前终态（等待 Founder 接受门触发前）**：
+
+```text
+M0.1B_CONTRACT_CANDIDATE = READY_FOR_FOUNDER_REVIEW
+next_stage_allowed = false
+```
+
+下一动作：Founder 审阅四项纠偏 + F-10 后，在执行过程中回答一次接受授权提示（见 L1 §T-004.3
+`founder_acceptance_gate`）。回答"接受"后，本任务才进入合同状态更新、main 采用与远程收口，
+并按 `successor_task_change` 以 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`
+取代原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001` 作为唯一后继任务。
