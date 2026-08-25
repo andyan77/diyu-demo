@@ -136,6 +136,20 @@
 | Checkpoint | **无**。本任务已终结，全程未被中断 |
 | 已知不做的事 | 未重审八项能力 32 项合同值的具体内容（前言 §四正文字节不变）；未编译任何 M1-M4 施工 Prompt；未触碰四份共享合同或任何受保护资产 |
 
+### 一.11 `V1-M1-ENGINEERING-PROMPT-ADOPTION-001`
+
+| 项 | 值 |
+|---|---|
+| 状态 | **`DONE`** —— 唯一 attempt 一次通过 |
+| 范围核验 | Founder 消息「执行落盘」的范围（落盘文档 / 授权工程执行 / 二者皆是）不明确；执行侧主动提问澄清，Founder 下一条消息只回答了文件位置（"已经放到仓库根目录"），未回答范围问题；按最小授权原则，本任务只完成确定无歧义部分：落盘规划文档本身，**不**新建、不触碰 `task/m1-natural-interaction-context-v1` 分支或任何 Dify 对象 |
+| 转录漂移 | 用户首次以聊天正文粘贴方式提供全文；执行侧手工转录后自算文档自证哈希不一致，判定转录漂移并请用户改以仓库根目录真实文件提供；文件到位后逐字节 Read 核验，自证哈希与引用真源哈希均一致 |
+| 内容变化 | (1) 新增 `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`（原样移动，字节不变）。(2) PROJECT_INDEX 新增两处指针，标注"工程实现未授权"。(3) 本节；L1/L3/L5 对应登记 |
+| 终结依据 | [L1 §T-008.1～T-008.2](L1_TASK_MANIFESTS.md)；[L3 §十 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 最终交付引用 | 远程默认分支 `main`，采用提交见 [L5](L5_SIDE_EFFECTS.md) |
+| next_stage_allowed | **`false:M1 工程执行`**——`M1_ENGINEERING_PROMPT_COMPILED_AND_ADOPTED = true`；`M1-M4_ENGINEERING_EXECUTION` 仍为 `NOT_AUTHORIZED`，不变。本任务只是把已编译好的 M1 施工文档落盘，**不构成、不新增**对 `task_id: DIYU-V1-M1-NATURAL-CONTEXT-001` 工程执行的授权——该授权需 Founder 另行明确给出，且文档本身第 0/3.1 节已写明这一点 |
+| Checkpoint | **无**。本任务已终结，全程未被中断 |
+| 已知不做的事 | 未新建 `task/m1-natural-interaction-context-v1`；未创建/修改任何 Dify 对象；未编译 M2/M3/M4 施工 Prompt；未触碰四份共享合同、Phase0 前言或任何受保护资产 |
+
 ---
 
 ## 二、项目当前可执行动作（Current Handoff）
@@ -150,7 +164,7 @@
 |---|---|---|---|---|---|---|
 | `NONE` | — | — | — | — | — | — |
 
-**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`；规划侧可据此分别编译 M1—M4 各自施工 Execution Prompt——工程实现本身仍未获授权。**
+**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`；规划侧已编译并落盘 M1 施工 Execution Prompt（[`decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`](../decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md)），M2/M3/M4 尚待编译；M1 工程实现（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）仍未获授权，需 Founder 就该 task_id 另行明确给出执行授权，落盘动作本身不构成该授权。**
 
 **已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 
@@ -158,7 +172,7 @@
 
 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|
-| 规划侧编译 M1—M4 施工 Execution Prompt | M1（自然交互、任务上下文与能力路由）／M2（最小业务数据、版本与运营记忆）／M3（运营状态诊断与持续运营决策）／M4（现有能力组件化接入与兼容改造）——**状态更正 2**：本列此前把 M1 误写为"业务持久化"（实为 M2 职责）、M2 误写为"写回权限恢复实现"（写回权限幂等恢复只是 M2 记忆职责下的一项具体能力，非 M2 全部定义）、M4 留空未定，与四窗口已冻结的唯一责任划分不一致；已由 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 更正，见 [L1 §T-006](L1_TASK_MANIFESTS.md) | 四份已接受的共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)）＋ 两类 EP-00 证据（[通用](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)／[专项](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） | 规划侧分别产出 M1—M4 各自的完整 Execution Prompt；**执行侧不得自行编写或推断这些 Prompt，也不得据本条自行开工任何 M1–M4 工程实现**。**状态更正 3**：此前登记的"两处尚未指定承接方的缺口"已解除——`EIGHT_CAPABILITY_FOUR_CONTRACT_VALUES = FOUNDER_CONFIRMED_AND_ACTIVE`；`MATRIX_INSUFFICIENT_INPUT_PRODUCT_RULE = FOUNDER_CONFIRMED_AS_LOCAL_DEGRADATION_AND_BRANCH_BLOCKING`；`MATRIX_INSUFFICIENT_INPUT_ENGINEERING = ASSIGNED_TO_M1_AND_M4_CONSTRUCTION`（M4 主修 Matrix 现有全局硬停的物理修复，M1 承接交互／路由／局部继续语义接口责任，M2／M3 按前言 §五冻结边界配合，二者可错峰施工但须在 M5 集成前共同闭合）——Founder 2026-08-25 在 `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` 会话内当场确认，非历史"连续动作"追认，见 [L1 §T-007](L1_TASK_MANIFESTS.md) |
+| 规划侧编译 M1—M4 施工 Execution Prompt | M1（自然交互、任务上下文与能力路由）／M2（最小业务数据、版本与运营记忆）／M3（运营状态诊断与持续运营决策）／M4（现有能力组件化接入与兼容改造）——**状态更正 2**：本列此前把 M1 误写为"业务持久化"（实为 M2 职责）、M2 误写为"写回权限恢复实现"（写回权限幂等恢复只是 M2 记忆职责下的一项具体能力，非 M2 全部定义）、M4 留空未定，与四窗口已冻结的唯一责任划分不一致；已由 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 更正，见 [L1 §T-006](L1_TASK_MANIFESTS.md) | 四份已接受的共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)）＋ 两类 EP-00 证据（[通用](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)／[专项](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） | 规划侧分别产出 M1—M4 各自的完整 Execution Prompt；**执行侧不得自行编写或推断这些 Prompt，也不得据本条自行开工任何 M1–M4 工程实现**。**状态更正 3**：此前登记的"两处尚未指定承接方的缺口"已解除——`EIGHT_CAPABILITY_FOUR_CONTRACT_VALUES = FOUNDER_CONFIRMED_AND_ACTIVE`；`MATRIX_INSUFFICIENT_INPUT_PRODUCT_RULE = FOUNDER_CONFIRMED_AS_LOCAL_DEGRADATION_AND_BRANCH_BLOCKING`；`MATRIX_INSUFFICIENT_INPUT_ENGINEERING = ASSIGNED_TO_M1_AND_M4_CONSTRUCTION`（M4 主修 Matrix 现有全局硬停的物理修复，M1 承接交互／路由／局部继续语义接口责任，M2／M3 按前言 §五冻结边界配合，二者可错峰施工但须在 M5 集成前共同闭合）——Founder 2026-08-25 在 `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` 会话内当场确认，非历史"连续动作"追认，见 [L1 §T-007](L1_TASK_MANIFESTS.md)。**状态更正 4**：M1 施工 Execution Prompt 已由规划侧编译完成并落盘——[`decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`](../decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md)（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）；**该文档已落盘 ≠ 该文档所定义的 M1 工程执行已获授权**，须 Founder 另行就这一具体 `task_id` 明确给出执行授权，见 [L1 §T-008](L1_TASK_MANIFESTS.md)。M2／M3／M4 施工 Execution Prompt 仍待规划侧编译 |
 
 ---
 
