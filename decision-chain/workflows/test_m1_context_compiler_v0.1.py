@@ -236,5 +236,82 @@ class TestMultiTurnPersistence(unittest.TestCase):
         self.assertEqual(snap2["revision"], 1, "被拒绝的第二轮不得推进 revision")
 
 
+class TestContentTaskProjection(unittest.TestCase):
+    """project_content_task：快照 → Content Brief 下游投影，设计参照
+    V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md §三。P0 快照结构性地缺少多个设计文档
+    要求的字段，投影必须如实标记缺口，不得编造等价值。"""
+
+    def test_fresh_snapshot_marks_structural_gaps_not_fabricated_values(self):
+        snap = compiler._default_snapshot()
+        ct = compiler.project_content_task(snap)
+        for field in ("account_stage", "expression_discretion", "evidence_and_gaps", "available_capacity"):
+            self.assertEqual(ct[field], "NOT_CAPTURED_IN_P0_SNAPSHOT")
+        self.assertEqual(ct["platform_and_form"], "PLATFORM_UNCONFIRMED")
+
+    def test_caller_supplied_professional_judgment_fields_not_fabricated_by_m1(self):
+        """audience_problem_scene / audience_shift / content_promise / post_publish_observation
+        设计文档明确规定 M1 不做专业判断；未提供时必须是 None，不得由 M1 自己生成内容。"""
+        snap = compiler._default_snapshot()
+        ct = compiler.project_content_task(snap)
+        for field in compiler.CONTENT_TASK_CALLER_SUPPLIED_KEYS:
+            self.assertIsNone(ct[field])
+            self.assertIn(field, ct["projection_gaps"])
+
+    def test_caller_supplied_values_pass_through_and_leave_gaps(self):
+        snap = compiler._default_snapshot()
+        ct = compiler.project_content_task(
+            snap,
+            caller_supplied={
+                "audience_problem_scene": "受众看腻了同质化穿搭内容",
+                "content_promise": "三件基础款穿出五种通勤感",
+            },
+        )
+        self.assertEqual(ct["audience_problem_scene"], "受众看腻了同质化穿搭内容")
+        self.assertEqual(ct["content_promise"], "三件基础款穿出五种通勤感")
+        self.assertIsNone(ct["audience_shift"])
+        self.assertNotIn("audience_problem_scene", ct["projection_gaps"])
+        self.assertNotIn("content_promise", ct["projection_gaps"])
+        self.assertIn("audience_shift", ct["projection_gaps"])
+        self.assertIn("post_publish_observation", ct["projection_gaps"])
+
+    def test_unknown_caller_supplied_key_rejected(self):
+        snap = compiler._default_snapshot()
+        with self.assertRaises(ValueError):
+            compiler.project_content_task(snap, caller_supplied={"made_up_field": "x"})
+
+    def test_cycle_role_not_applicable_when_temporal_scope_is_not_cycle(self):
+        result = _run(None, {"current_task_text": "做一条长期人设内容", "temporal_scope": "LONG_TERM"})
+        snap = json.loads(result["snapshot_json"])
+        ct = compiler.project_content_task(snap)
+        self.assertEqual(ct["cycle_role"], "NOT_APPLICABLE")
+
+    def test_cycle_role_marked_as_structural_gap_when_temporal_scope_is_cycle(self):
+        """temporal_scope=CYCLE 时设计文档要求取真实 cycle_role，但 P0 快照没有承载该
+        字段的位置——不得从 temporal_scope 本身编造一个 cycle_role，如实标记缺口。"""
+        result = _run(None, {"current_task_text": "本周期发三条穿搭", "temporal_scope": "CYCLE"})
+        snap = json.loads(result["snapshot_json"])
+        ct = compiler.project_content_task(snap)
+        self.assertEqual(ct["cycle_role"], "NOT_CAPTURED_IN_P0_SNAPSHOT")
+
+    def test_goal_structure_passthrough_not_flattened(self):
+        result = _run(None, {
+            "current_task_text": "占位任务",
+            "primary_goal_text": "三个月内起量到万粉",
+            "non_sacrifice_constraint_text": "不做剧情类内容",
+        })
+        snap = json.loads(result["snapshot_json"])
+        ct = compiler.project_content_task(snap)
+        self.assertEqual(ct["primary_goal"], "三个月内起量到万粉")
+        self.assertEqual(ct["non_sacrifice_constraints"], ["不做剧情类内容"])
+
+    def test_source_defaults_to_current_task_source_ref_then_override(self):
+        snap = compiler._default_snapshot()
+        ct_default = compiler.project_content_task(snap)
+        self.assertEqual(ct_default["source"], "USER_DIRECT")
+
+        ct_override = compiler.project_content_task(snap, source_override="CAMPAIGN_DECISION_PACKAGE")
+        self.assertEqual(ct_override["source"], "CAMPAIGN_DECISION_PACKAGE")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

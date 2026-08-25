@@ -266,6 +266,75 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
     return "\n".join(parts)
 
 
+# ---- Content Task 投影：快照 → Content Brief 下游精简视图 ----
+# 设计参照：V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md §三。
+#
+# P0 快照（本文件 _default_snapshot）只落地 9 个扁平字段，不是设计文档 §二 完整 14 条语义。
+# 以下四项设计文档要求从快照取值，但 P0 快照结构性地没有承载对应数据：account_stage /
+# expression_discretion / evidence_and_gaps / available_capacity。如实标记为
+# NOT_CAPTURED_IN_P0_SNAPSHOT，不得从其它字段编造等价值（沿用已冻结的"不得假装已满足"纪律）。
+CONTENT_TASK_P0_STRUCTURAL_GAPS = [
+    "account_stage",
+    "expression_discretion",
+    "evidence_and_gaps",
+    "available_capacity",
+]
+
+# 这四项设计文档明确规定"M1 不做专业判断"，只能由调用方（Campaign 决策包／未来 M3）在
+# 投影时补入；M1 自身产出会越界进入 CAP-02/CAP-04 的专业判断范围。
+CONTENT_TASK_CALLER_SUPPLIED_KEYS = [
+    "audience_problem_scene",
+    "audience_shift",
+    "content_promise",
+    "post_publish_observation",
+]
+
+
+def project_content_task(snapshot, source_override=None, caller_supplied=None):
+    """任务上下文快照 → Content Task 投影，只在把工作交给 Content Brief 时调用。
+
+    caller_supplied：可选 dict，键限于 CONTENT_TASK_CALLER_SUPPLIED_KEYS，用于承接
+    Campaign 决策包或未来 M3 补入的专业判断内容；未提供的键如实留空并计入
+    projection_gaps，不由本函数代为判断或编造。
+    """
+    caller_supplied = caller_supplied or {}
+    unknown_keys = set(caller_supplied.keys()) - set(CONTENT_TASK_CALLER_SUPPLIED_KEYS)
+    if unknown_keys:
+        raise ValueError("CALLER_SUPPLIED_UNKNOWN_KEYS:" + ",".join(sorted(unknown_keys)))
+
+    current_task = snapshot.get("current_task") or {}
+    goal = snapshot.get("goal_structure") or {}
+    temporal_scope = current_task.get("temporal_scope", "UNSTATED")
+
+    # 温度范围非 CYCLE 时明确 NOT_APPLICABLE；等于 CYCLE 时 P0 快照也没有专门的
+    # cycle_role 字段可取，同样如实标记为结构性缺口，不得从 temporal_scope 本身编造。
+    if temporal_scope == "CYCLE":
+        cycle_role = "NOT_CAPTURED_IN_P0_SNAPSHOT"
+    else:
+        cycle_role = "NOT_APPLICABLE"
+
+    missing_caller_keys = [k for k in CONTENT_TASK_CALLER_SUPPLIED_KEYS if not caller_supplied.get(k)]
+
+    return {
+        "source": source_override or current_task.get("source_ref") or "USER_DIRECT",
+        "cycle_role": cycle_role,
+        "primary_goal": goal.get("primary_goal"),
+        "secondary_goals": list(goal.get("secondary_goals") or []),
+        "priority_order": list(goal.get("priority_order") or []),
+        "non_sacrifice_constraints": list(goal.get("non_sacrifice_constraints") or []),
+        "audience_problem_scene": caller_supplied.get("audience_problem_scene"),
+        "audience_shift": caller_supplied.get("audience_shift"),
+        "content_promise": caller_supplied.get("content_promise"),
+        "account_stage": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        "expression_discretion": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        "evidence_and_gaps": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        "platform_and_form": "PLATFORM_UNCONFIRMED",
+        "available_capacity": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        "post_publish_observation": caller_supplied.get("post_publish_observation"),
+        "projection_gaps": list(CONTENT_TASK_P0_STRUCTURAL_GAPS) + missing_caller_keys,
+    }
+
+
 def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
     try:
         snap = json.loads(snapshot_json) if snapshot_json else _default_snapshot()
