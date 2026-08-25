@@ -225,6 +225,19 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 创建请求 `POST /console/api/apps` 返回 `201`，响应体含完整 App 对象（id/name/mode/site 均确认），`api_base_url: http://localhost/v1`，`site.access_token` 已生成但未使用；后续核验 `GET /console/api/apps?page=1&limit=20` 返回列表中新 App 存在，字段一致 |
 
+### SE-013 · 导入工作流 DSL、创建 API Key、两次发布、三次真实对话运行
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（SE-012 新建，专用候选 App，不涉及任何既有 App） |
+| 操作序列 | ① `POST /console/api/apps/imports`（DSL v0.1，`mode:yaml-content`）→ `completed`；② `POST /console/api/apps/{id}/workflows/publish`（`marked_name: m1-v0.1`）；③ `POST /console/api/apps/{id}/api-keys` 新建一个 API Key（未写入仓库，仅存本机临时文件 `$TMPDIR` 范围内）；④ `POST /v1/chat-messages` 真实运行 RUN-001（`conversation_id 9f9922aa-...`）；⑤ 同会话内真实运行 RUN-002，发现真实缺陷（专业判断越界）；⑥ 修复系统提示词后重新执行 ①②（DSL v0.2，`marked_name: m1-v0.2`）；⑦ 新会话真实运行 RUN-003 复验缺陷已修复 |
+| 内容标识 | DSL 源：`decision-chain/workflows/build_m1_candidate_dsl_v0.1.py`（可重新生成）＋ `decision-chain/workflows/m1_context_compiler_v0.1.py`；三次真实运行详情见 [`decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md`](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
+| 幂等信息 | 导入/发布均为幂等覆盖（同一 app_id，非新建）；三次对话运行各自产生独立 `conversation_id`/`message_id`，不可重放去重，原始 id 见证据文件 |
+| 受控状态 | 可逆——工作流可再次导入覆盖；对话记录属于候选 App 内测试数据，非生产数据；**未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow** |
+| 核验依据 | `GET /console/api/apps/{id}/workflows/draft` 返回节点与预期一致；`GET /console/api/apps/{id}/workflows/publish` 返回已发布版本；三次真实运行的 `conversation_id`/`message_id` 见证据文件，可用同一 API Key 或控制台会话日志核对 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

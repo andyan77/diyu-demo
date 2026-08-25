@@ -1771,3 +1771,20 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001 结论
 
 `DONE`。任务终态见最终回执与 [L2 §一.12](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
+
+## 十二、`DIYU-V1-M1-NATURAL-CONTEXT-001`（M1 工程实现本身）
+
+### ATT-001（进行中，本节记录截至 Checkpoint 时的状态；非终态）
+
+| 项 | 值 |
+|---|---|
+| 起算 | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`；独立 worktree + 任务分支 `task/m1-natural-interaction-context-v1` |
+| 授权依据 | `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 铁律生效后视为已获执行授权；Founder 2026-08-25 明确裁决"M1 严格对齐 Prompt，只做意图层，不解开既有线性锁" |
+| 设计 | [`V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md`](../decision-chain/docs/V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md)——14 条快照语义→物理字段、Content Task 并集投影、call_intent 对象、与 v1_state 的边界声明 |
+| 编译器实现 | `decision-chain/workflows/m1_context_compiler_v0.1.py`——patch 整体校验（未知字段/非法枚举整体拒绝）、快照合并、`call_intent` 判定（CAP-01/02/04/06/07/08 六项有物理入口，CAP-03/05 如实标 `NO_PHYSICAL_ENTRY_YET`）、`open_threads` 补 `HANDLED` 终态。本地单测 5 个场景全过（任务+能力请求／未知字段整体拒绝／侧问捕获／非法枚举拒绝／无入口能力如实阻塞），见开发过程记录（非独立正式测试文件，P0 阶段口头验证，后续需要正式化） |
+| **Dify 基础设施定位** | 连接的 `mcp__dify-platform-expert` MCP 被核实为纯 demo 桩（自称 `"Dify API not available. This is demonstration data."`），非真实工作空间。真实 Dify 通过 `docker ps` 定位于 `/home/faye/dify/docker/`，本机自托管 1.16.1，与 A-0～A-4 证据绑定的 App（`310ddfcf-e0fb-4211-af98-3d101725e07a`）在同一工作区列表中，确认是同一权威实例。控制台登录端点要求密码字段 Base64 编码（非真加密，服务端源码 `libs/encryption.py` 确认），非明文提交，此前两次登录尝试失败均因未做此编码 |
+| Dify 候选环境 | App `dd638b91-d39f-4e92-a984-6ad1ab809119`（`DIYU V1 M1 Natural Context Candidate v0.1`，advanced-chat，仅本任务新建，未触碰其余 25 个既有 App）；DSL 由 `decision-chain/workflows/build_m1_candidate_dsl_v0.1.py` 生成并通过 `POST /console/api/apps/imports`（`app_id` 定向导入，非新建）落地，经 `POST .../workflows/publish` 两次发布（v0.1→v0.2） |
+| 真实运行与自验发现的缺陷 | 详见 [`V1_M1_CANDIDATE_RUN_001.md`](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。RUN-001 PASS；RUN-002 发现真实缺陷（`m1_chat_llm` 越界给出具体内容策略专业判断，违反"M1 不替专业组件作深度判断"边界）；修复系统提示词后 RUN-003 复验通过 |
+| 已知未完成 | 14 条语义×5 维度完整落地（现只有 9 字段 P0 切片）；`content_task` 投影函数代码；A-0～A-4 受控等价输入回归；`call_intent` 完整必需输入判据；独立 Reviewer；`M1-AC-00`～`15` 逐项验收 |
+| 受保护资产核验 | 未触碰任何既有 Skill 正文、既有主 Chatflow、既有 Dify App；`git status --short` 仅含本任务分支自己的新增文件 |
+| Checkpoint | 见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md) `DIYU-V1-M1-NATURAL-CONTEXT-001 Checkpoint`——正常阶段性收口，非失败中断 |

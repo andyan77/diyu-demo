@@ -202,6 +202,26 @@
 
 ## 四、非终态 Checkpoint 区
 
-`NONE_VERIFIED_SINCE_BASELINE`
+`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。
 
-`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。**当前没有任何任务处于「开工后被中断」状态。**
+### `DIYU-V1-M1-NATURAL-CONTEXT-001` Checkpoint（本任务分支自身状态，未合入 main，不影响主线其他任务）
+
+```yaml
+task_id: DIYU-V1-M1-NATURAL-CONTEXT-001
+task_entry_mode: CONTINUE_TASK
+execution_disposition: CONTINUE
+task_final_status: null
+current_state: IMPLEMENTING
+next_stage_allowed: false
+```
+
+| 项 | 值 |
+|---|---|
+| 起算基线 | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db` |
+| 独立 worktree | `/home/faye/diyu-demo-worktrees/m1-natural-interaction-context-v1` |
+| 任务分支 | `task/m1-natural-interaction-context-v1`（已推送远程） |
+| 已完成 | (1) 设计文档 [`V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md`](../decision-chain/docs/V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md)；(2) 编译器源码 `decision-chain/workflows/m1_context_compiler_v0.1.py`（P0 最小切片：9 个扁平信号字段，本地单测通过）；(3) 真实 Dify 候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119`（已定位真实自托管 Dify 1.16.1，与 A-0～A-4 证据同一实例）；(4) DSL 导入并发布两版（v0.1→发现越界给专业判断的缺陷→v0.2 修复）；(5) 三次真实 `/v1/chat-messages` 对话运行，含一次自验发现并修复的真实缺陷，详见 [`V1_M1_CANDIDATE_RUN_001.md`](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
+| 已决定的范围边界 | Founder 2026-08-25 明确裁决：M1 严格对齐 Execution Prompt 本身，只做意图/编译层，不触碰 `v1_state` 既有线性锁、不改任何 Skill 正文；已写入设计文档 §四"已知限制" |
+| 未完成 | 14 条快照语义×5 维度的完整落地（当前只有 9 个扁平字段的 P0 切片）；`call_intent` 对 CAP-01～08 的完整必需输入判据；A-0～A-4 受控等价输入回归；`content_task` 投影函数的实现（目前只有设计，未写代码）；独立 Reviewer；`M1-AC-00`～`M1-AC-15` 逐项验收 |
+| 下一步可立即执行的动作 | 扩展 `m1_context_compiler_v0.1.py` 覆盖设计文档 §二 完整语义；在候选 App 上补充更多真实多轮对话场景（尤其是 A-0～A-4 的受控等价输入）；实现 `content_task` 投影函数 |
+| Checkpoint 触发原因 | 正常阶段性收口（对话上下文即将压缩），非任务失败或外部中断；已提交的代码、证据、账本记录均已落盘，可凭本 Checkpoint 与 Git 历史直接续作 |
