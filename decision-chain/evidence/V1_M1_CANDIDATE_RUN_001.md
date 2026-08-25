@@ -6,7 +6,7 @@
 
 - Dify：本机自托管 1.16.1（`/home/faye/dify/docker/`），与 A-0～A-4 证据同一实例
 - App：`DIYU V1 M1 Natural Context Candidate v0.1`，id `dd638b91-d39f-4e92-a984-6ad1ab809119`，advanced-chat
-- 工作流版本：v0.3（`marked_comment`: "fix: no more raw enum leak into user-facing text"），发布时间 `2026-08-25`；历史版本 v0.1/v0.2 未删除，可随时回退
+- 工作流版本：v0.4（快照扩展 account_stage／expression_discretion／capacity_triad，Founder 本人 2026-08-25 在控制台完成导入与发布）；历史版本 v0.1/v0.2/v0.3 未删除，可随时回退
 - 节点：`m1_start → m1_shadow(llm) → m1_compiler(code) → m1_save_snapshot(assigner) → m1_chat_llm(llm) → m1_answer`
 - 源码：`decision-chain/workflows/m1_context_compiler_v0.1.py`（编译器）＋ `decision-chain/workflows/build_m1_candidate_dsl_v0.1.py`（DSL 生成脚本，可重新生成同一份 DSL）
 
@@ -102,10 +102,18 @@ A-0～A-4 原始定义与真实证据见 [`V1_DIALOGUE_ORCHESTRATION_REPAIR_001_
 - **未自然复现部分**：A-4(a)（Shadow 分类失败 fail-open）的等价保证已由 17 个单测里的 `TestWholePatchRejection`（3 个用例）在编译器层面**确定性**证明；但"影子 LLM 在真实对话里自然产生一次非法输出"这件事本身不可控制地复现（原始证据文档也是"自然撞见"，不是人为构造），M1 自己的 5 次真实运行（RUN-001~003 + CE-A0/A2 及复验）至今未自然撞见过一次。
 - **结论**：M1-AC-12 目前处于**部分满足**状态，不宜标记全绿 PASS；A-1/A-3/A-4(b) 那部分的满足与否，取决于 Founder/独立审查如何理解"M1 候选环境"与"最终真正接入主决策链后的产物"之间的验收边界——这是需要评估方判断的问题，执行侧不越权替其下结论。
 
-## 十、快照 v0.2 扩展：account_stage／expression_discretion／capacity_triad（单测验证，live 复验被阻塞）
+## 十、快照 v0.2 扩展：account_stage／expression_discretion／capacity_triad（单测 + live 均已验证）
 
 - **代码变化**：`m1_context_compiler_v0.1.py` 新增 8 个扁平 patch 字段（`account_stage_text`／`plot_allowed`／`remix_allowed`／`conflict_allowed`／`controversy_allowed`／`desired_output_text`／`cycle_available_text`／`baseline_text`），对应设计文档 §二 #5/#6/#7（账号阶段、表达裁量、产能三分）。刻意只选扁平字符串/枚举承载，未触碰 `evidence_bundle[]`/`market_observations[]`/`gaps[]`/`runtime_evidence[]` 等数组型、多维度语义——那部分是设计文档 §七 登记的"嵌套结构可能让候选 LLM 结构化输出不稳定"未决风险，本批不处理。
 - **向前兼容**：新增 `main()` 内的快照顶层键补齐逻辑，确保 v0.3 及更早持久化的旧会话快照（缺少这三个新字段）能被正常读取、补齐、继续合并新 patch，不丢旧数据、不抛异常。
 - **`content_task` 投影同步更新**：`account_stage`／`expression_discretion`／`available_capacity` 三项从原先的 `NOT_CAPTURED_IN_P0_SNAPSHOT` 占位改为真实透传快照值；`evidence_and_gaps` 仍标占位（未落地）。
 - **单测验证**：新增 14 个用例（`TestV0_2SnapshotExpansion` 5 个、`TestContentTaskProjection` 内 1 个替换 + 1 个新增），全部文件合计 **35 个用例，全绿**（`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v`）。
-- **live Dify 复验：被阻塞，如实记录**。DSL 已用 `build_m1_candidate_dsl_v0.1.py` 重新生成（同步更新影子节点系统提示词、结构化输出 schema 的 17 字段 required/properties、会话变量默认快照 JSON）。但导入/发布/真实回归**未能执行**：本机 Docker 里的 `docker-api-1` 等容器在会话过程中发生过一次重启（`docker ps` 显示 created 3 天前、Up 8 小时），推断服务端会话/刷新令牌存储被清空——此前用于免密码续期的 `refresh_token` 机制（`POST /console/api/refresh-token`）虽返回 `{"result":"success"}`，但用刷新后的 `access_token` 访问 `/console/api/apps` 仍返回 `401`，判定服务端侧已不再承认这批旧令牌；执行侧未持有 Founder 明文密码，按既定的凭据最小暴露原则不重新索取。**因此 v0.4（含本次扩展）尚未导入/发布到候选 App，候选 App 当前运行的仍是 v0.3**。本节代码层面的正确性只有单测证据，未经真实 Dify 端到端验证，如实标记，不冒充已完成 live 回归。
+- **live Dify 复验阻塞的解除**：执行侧的控制台会话因本机 Docker 容器重启失效（见下方"曾经阻塞"记录），且未持有 Founder 明文密码，不重新索取；改为把重新生成的 DSL 文件（`m1_candidate_dsl_v0.4.yml`）交给 Founder，由 **Founder 本人在浏览器里登录控制台、完成导入与发布**（2026-08-25，Founder 直接操作，执行侧全程未接触登录凭证）。发布完成后，执行侧继续用既有的 App 级 API Key（`app-fHRsI6...`，非控制台会话）跑真实回归。
+- **CE-v0.2-01（真实运行，`conversation_id 86d9a2fa-6176-48b2-b0d8-f62619dd9946`）**：
+  - 第一轮 `message_id bfa61aa3-e6ec-4964-b9c3-1a3ca53b63f0`：用户一次性说出账号阶段、剧情裁量、争议裁量、周期产能、基线产能五项信息。`m1_shadow` 推理轨迹显示其正确抽取：`account_stage_text="刚起号，还没有稳定粉丝"`、`plot_allowed=NOT_ALLOWED`、`remix_allowed=UNSTATED`、`conflict_allowed=UNSTATED`、`controversy_allowed=ALLOWED`、`desired_output_text=""`（用户未提及，正确留空，未编造）、`cycle_available_text`／`baseline_text` 分别贴合原话。回复诚实说明"系统这边还没有记录任何具体任务内容"，未泄漏内部字段，未越界给专业判断。
+  - 第二轮 `message_id`（同会话，`query: "好，那就先按这些情况，帮我规划一下账号的长期人设和分工。"`）：**`m1_shadow` 的推理轨迹直接逐字复述了第一轮持久化后的 `snapshot_json` 内容**——`账号阶段：刚起号，还没有稳定粉丝，confirmation: SYSTEM_TENTATIVE`／`表达裁量：plot_allowed: NOT_ALLOWED, remix_allowed: UNSTATED, conflict_allowed: UNSTATED, controversy_allowed: ALLOWED`／`产能三元组：desired_output: null, cycle_available: "这个周期我们团队人手紧张，大概只能做2条", baseline: "长期稳定产出能到每周4条"`——与第一轮写入值逐项一致，**证明三组新字段确实被正确持久化、跨轮次未丢失未损坏**；`confirmation` 也如预期原样保持 `SYSTEM_TENTATIVE`，未被伪造成 `USER_CONFIRMED`。回复正确识别用户在提出执行请求，如实说明"具体规划需要交给专业能力"，未越界给出人设/分工结论，未泄漏内部字段。
+- **结论**：v0.2 快照扩展现已同时具备单测证据（35/35）与真实 Dify 端到端证据（CE-v0.2-01 两轮），候选 App 当前运行版本为 v0.4。
+
+### （历史记录，问题已解决，保留过程）live 复验曾被阻塞
+
+DSL 用 `build_m1_candidate_dsl_v0.1.py` 重新生成后，执行侧尝试用已保存的控制台会话导入/发布，但本机 Docker 里的 `docker-api-1` 等容器在会话过程中发生过一次重启（`docker ps` 显示 created 3 天前、Up 8 小时），推断服务端会话/刷新令牌存储被清空——用于免密码续期的 `refresh_token` 机制（`POST /console/api/refresh-token`）虽返回 `{"result":"success"}`，但用刷新后的 `access_token` 访问 `/console/api/apps` 仍返回 `401`。执行侧未持有 Founder 明文密码，按既定的凭据最小暴露原则不重新索取，也未尝试绕过——改为交给 Founder 本人操作，见上方"解除"记录。

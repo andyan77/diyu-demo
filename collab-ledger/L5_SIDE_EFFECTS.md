@@ -261,8 +261,22 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 实际结果 | 续期请求本身返回 `200 {"result":"success"}`，但用续期后的 `access_token`（JWT 本身按 `exp` 字段判断仍在有效期内）重新请求 `/console/api/apps` 仍返回 `401` |
 | 根因判断 | `docker ps` 显示 `docker-api-1`/`docker-redis-1` 等容器 `created` 时间为 3 天前但 `Up` 时长仅 8 小时，判断本机 Docker 服务在会话期间发生过一次重启；推断服务端会话/刷新令牌校验所依赖的存储（通常是 Redis）在重启时被清空或重建，导致旧 `refresh_token` 在服务端已不被承认，即使其 JWT 本身未过期。已用 `curl http://localhost/console/api/system-features`（无需鉴权）确认 Dify 服务本身健康可达，排除"服务未启动"这一更简单的解释 |
 | 未采取的动作 | 未尝试猜测、爆破或以任何方式绕过登录；未向 Founder 重新索要明文密码（沿用 SE-014 建立的凭据最小暴露原则）；未修改任何 Dify 账号/权限配置 |
-| 后续影响 | 本轮快照 v0.2 扩展（`account_stage`／`expression_discretion`／`capacity_triad`）**未能导入/发布到候选 App 做真实回归**，只有单测证据（35/35 全绿），如实记录在 [`V1_M1_CANDIDATE_RUN_001.md` §十](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)；候选 App 实际运行版本仍是 v0.3 |
+| 后续影响 | 本轮快照 v0.2 扩展当时**未能导入/发布到候选 App 做真实回归**；阻塞已于同日通过 SE-016（Founder 本人操作）解除 |
 | **状态** | **`CONFIRMED`**（记录的是"尝试续期但未恢复访问"这一实际发生的外部调用序列，不是声称已完成的正面副作用） |
+
+### SE-016 · Founder 本人完成 v0.4 DSL 导入与发布；执行侧用 App API Key 跑真实回归
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同 SE-012/013/014，非新建） |
+| 操作方 | **控制台导入与发布由 Founder 本人在浏览器里完成**（2026-08-25）——执行侧因 SE-015 记录的会话失效且未持有明文密码，把重新生成的 DSL 文件（`m1_candidate_dsl_v0.4.yml`）通过 SendUserFile 交给 Founder，由 Founder 在已登录的控制台会话内完成导入（覆盖同一 App 草稿，非新建）与发布；执行侧全程未接触、未索取任何登录凭证 |
+| 执行侧后续操作 | 发布确认后，执行侧用 SE-013 已创建的 App 级 API Key（`app-fHRsI6...`，非控制台会话，无导入/发布权限，仅能调用 `/v1/chat-messages` 等公开运行时接口）跑真实回归 CE-v0.2-01：① 新对话第一轮陈述账号阶段/四项表达裁量/产能三分；② 同会话第二轮提出执行请求，验证跨轮持久化 |
+| 内容标识 | 两轮真实运行的 `conversation_id`/`message_id`、`m1_shadow` 推理轨迹逐字复述持久化快照的证据，详见 [`V1_M1_CANDIDATE_RUN_001.md` §十](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
+| 幂等信息 | 导入/发布为幂等覆盖（同一 app_id）；两轮对话共享同一 `conversation_id`，`message_id` 各自独立 |
+| 受控状态 | 可逆——工作流历史版本（v0.1～v0.3）未删除，可随时回退；仅作用于本任务专用候选 App；**未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow** |
+| 核验依据 | 两次 `/v1/chat-messages` 响应（本机临时文件 `ce_v0_2_01_resp.json`/`ce_v0_2_02_resp.json`）：`answer` 字段无内部字段泄漏，`metadata.reasoning.m1_shadow` 第二轮逐字包含第一轮写入的三组新字段值 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
 
 ## 四、其他外部系统
 
