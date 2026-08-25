@@ -73,6 +73,7 @@
 - **canonical 只放低频规则与账本定位**，**不承载**任何任务的高频运行状态——状态一律写进对应 `task_id` 的分区。
 - **「新增文件 ≤6」只约束 `COLLAB-LEDGER-BOOTSTRAP-001` 那一次交付**，**不是**仓库未来任务记录的永久总量上限；后续任务按最小充分原则建自己的记录。
 - **本账本不是产品功能**：不建脚本、CI、Schema、数据库、事件溯源、状态机、审批流、模板生成器。
+- **执行 Prompt 即授权**（Founder 2026-08-25 铁律裁决）：Founder 向执行侧注入一份完整 Execution Prompt（含自己的 Task Contract）本身即视为对该 Prompt 所定义任务的执行授权，执行侧**不需要**为同一份 Prompt 再逐次征求单独的"是否可以开始工程执行"确认。本条只免除**逐次重复确认**这一步；Prompt 自身内容仍然是执行范围的边界（`allowed_delta`／`protected_assets`／`explicitly_not_authorized` 等字段照常生效），执行侧遇到 Prompt 未覆盖或与已接受合同冲突之处，仍按 §六其他硬规矩与既有 `REBASE_TASK`／`BLOCKED` 机制处理，不因本条被免除。
 
 ## 七、起算基线
 
