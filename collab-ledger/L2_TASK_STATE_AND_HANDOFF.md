@@ -128,7 +128,17 @@
 
 ## 四、非终态 Checkpoint 区
 
-`NONE_VERIFIED_SINCE_BASELINE`
+### `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（Phase C，等待 Founder 裁决期间的续跑点）
 
-自起算基线 `6ae78ab` 起，**没有任何任务处于「开工后被中断」状态**，因此没有 Checkpoint。
-（`V1-REBASE-EP00-CURRENT` 是**从未启动**，不属于此类；见 §一.2。）
+> 按 Founder 2026-08-24 明确要求登记（见 [L1 §T-005.1](L1_TASK_MANIFESTS.md) `phase_c_interruption_protocol`）：等待期间若会话中断，下一会话必须能从这里续跑，不重做 Phase A/B。
+
+| 项 | 值 |
+|---|---|
+| 任务分支 | `task/v1-m0-slice-preflight-and-shared-contract-closeout-001`，源自 `main @ 0eba71a` |
+| 已完成 | Phase A（`SINGLE-ACCOUNT-SLICE-EP00` 专项预检，`DONE`，commit `4681cc6`）；Phase B（四份共享合同，`DONE`，commit `c1156aa`）——**均已提交到任务分支，尚未推送远程** |
+| 当前所处 | Phase C：一次定向一致性检查已完成（随 Phase B 一并做，见 [L3 §七 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md)），**正在等待 Founder 对四份共享合同的阶段裁决** |
+| 待 Founder 回答的问题（原文） | "四个共享合同候选已经基于两类 EP-00 证据完成，并通过定向一致性检查。请选择：A. 接受四个共享合同，并授权后续规划侧编译和启动 M1–M4 施工；B. 接受四个共享合同，但暂不授权 M1–M4 施工；C. 不接受，并指出需要修改的具体产品语义。" |
+| 若答 A 或 B | 见 [L1 §T-005.1](L1_TASK_MANIFESTS.md) `terminal_rule`：更新四份共享合同状态为对应已接受版本、更新 M0 当前状态和账本、进入 Phase D（M0 远程收口，采用进 `main`）——A 额外记录"M1–M4 施工规划编译已授权"，B 明确记录"暂不授权" |
+| 若答 C | 在**同一任务、同一 Phase C**内定向修改，不新开任务、不判 `BLOCKED`、不使用 `PARTIAL` |
+| 若会话中断且尚无 Founder 回答 | 下一会话：① 读本条 Checkpoint；② 检出任务分支；③ 核对 Phase A/B 两个 commit 仍在（`4681cc6`／`c1156aa`）、v0.1/v0.2/通用 EP-00 blob hash 未变；④ 直接重新提出上方问题等待 Founder 回答，**不重跑 Phase A、Phase B**、不重新起草四份共享合同、不重新派发一致性检查子代理 |
+| 任务状态 | `IN_PROGRESS`（不是 `BLOCKED`，不是虚假终态） |
