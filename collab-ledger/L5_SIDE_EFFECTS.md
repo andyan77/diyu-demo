@@ -147,6 +147,23 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | `git ls-remote origin refs/heads/task/v1-m0-slice-preflight-and-shared-contract-closeout-001` —— 以实时返回为准 |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 推送成功：`* [new branch] task/v1-m0-slice-preflight-and-shared-contract-closeout-001 -> task/v1-m0-slice-preflight-and-shared-contract-closeout-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m0-slice-preflight-and-shared-contract-closeout-001` → `66194fe8e3375c23d14c5bbb8369e14e2ca189b1`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR。推送目的：使 Phase C 等待期 Checkpoint（见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md)）在本地状态丢失时仍可从远程恢复 |
+| **状态追加 2**（2026-08-25） | SE-007 登记本身推送：`66194fe..d5edf63`。远端核验：`git ls-remote` → `d5edf63`，一致 |
+| **状态追加 3**（2026-08-25） | Phase D 内容变更（四份共享合同 `ACCEPTED` + 根索引同步）推送：`d5edf63..34880b2`。远端核验：`git ls-remote origin refs/heads/task/v1-m0-slice-preflight-and-shared-contract-closeout-001` → `34880b230d60f61227b8a14cc95248e74833041b`，与本地一致。此后任务分支未再变更，`34880b2` 是其最终 tip，后续 Phase D 收口在独立集成分支上进行（见 SE-008） |
+
+### SE-008 · 采用进远程默认工作基线 `main`（M0.2B 专项预检 + M0.3 四份共享合同 ACCEPTED 交付 + 当前投影纠偏）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` |
+| 类型 | Git merge（`--no-ff`，真合并，两段：① 集成分支接入任务分支 tip ② 集成分支合并进 main）＋ push |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/main` |
+| 前置基线 | `0eba71a85916d4d993313c015dc8ad87f180d4de` |
+| 内容标识 | 见 [L3 §七 ATT-003.1](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 幂等信息 | 快进保护：推送前 `fetch` 比对 `origin/main` 未漂移；**禁用** `--force` / `--amend` / `reset` / `squash`；不删除来源分支 `task/v1-m0-slice-preflight-and-shared-contract-closeout-001` |
+| 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
+| 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**最终合并提交 hash —— **远端 ref 是原始权威，不是本账本** |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-25） | 集成分支 `chore/m0-slice-preflight-shared-contract-adoption`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m0-slice-preflight-and-shared-contract-closeout-001` tip `34880b2`（零冲突，commit `07a75b8`）；② 叠加 L1／L2／L3 当前投影纠偏（commit `fd350e3`）后，合并进本地 `main`（合并提交 `df2f73987780ea49c1b0e3c25368180105635f94`）。推送前 `git fetch origin main` 核验 `origin/main` 仍为 `0eba71a`，未漂移。推送：`0eba71a..df2f739  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `df2f73987780ea49c1b0e3c25368180105635f94`，与本地 `git rev-parse main` 完全一致。`git merge-base --is-ancestor` 双向核验通过（任务分支是 main 祖先；旧 main tip `0eba71a` 仍是新 main 祖先，未改写历史）。v0.1／v0.2／通用 EP-00 三份受保护文件 blob hash 合并后重算，逐字未动。来源分支 `task/v1-m0-slice-preflight-and-shared-contract-closeout-001` 远程核验仍为 `34880b230d60f61227b8a14cc95248e74833041b`，未被删除、未被改写 |
 
 ## 四、其他外部系统
 
