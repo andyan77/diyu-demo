@@ -7,7 +7,8 @@
 > **Checkpoint** = 任务没做完被中断的续跑点 ｜ **Final Manifest／最终交付引用** = 任务已终结的结论 ｜ **Current Handoff** = 项目层下一步。
 > **本文件 §二 是 Current Handoff，不是 Checkpoint，不代表任何任务未完成。**
 
-**当前基线**：`main @ 6ae78abf5967535bda81392255b8ee3e79e4bcb5`
+**账本起算锚点**（固定值，由 `COLLAB-LEDGER-BOOTSTRAP-001` 钉定，**不是持续追踪的当前 HEAD**）：`main @ 6ae78abf5967535bda81392255b8ee3e79e4bcb5`。
+**要知道仓库当前实际版本，请实时核验** `git rev-parse main` 或 `git ls-remote origin refs/heads/main`——**不要**把上面这个锚点值当成当前 HEAD。
 
 ---
 
@@ -16,7 +17,7 @@
 | task_id | 终态？ | 状态引用 | 起算基线 |
 |---|---|---|---|
 | `COLLAB-LEDGER-BOOTSTRAP-001` | **已终结 `DONE`**（见 §一.1） | [L1 §T-001](L1_TASK_MANIFESTS.md) · [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前**：收口）；ATT-001～005 **全部**为已判不通过的历史轮次，**不要**当成当前轮次 | `6ae78ab` |
-| `V1-REBASE-EP00-CURRENT` | **已终结 `DONE`**（见 §一.3；本行原文不改，下方新增一.3 记终态） | [L1 §T-002](L1_TASK_MANIFESTS.md) · [L3 §四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（实际执行基线，见 §一.3） |
+| `V1-REBASE-EP00-CURRENT` | **已终结 `DONE`**（见 §一.3） | [L1 §T-002](L1_TASK_MANIFESTS.md) · [L3 §四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（实际执行基线，见 §一.3） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -27,7 +28,7 @@
 | next_stage_allowed | **`true:V1-REBASE-EP00-CURRENT`** |
 | 终结依据 | [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前**：收口记录，含 C1–C6／R1–R6、13 条已知问题登记、完整历史引用）。ATT-001～005 **全部**为已判不通过的历史轮次 |
 | 最终交付引用 | [L3 §收口.7](L3_ATTEMPTS_AND_EVIDENCE.md)。**终态 `DONE` 的生效条件是远端 `main` 确实包含本账本**——核验通过前不得据此声称已生效 |
-| Checkpoint | **无。** 本任务在**执行中**、**未被中断**，不满足写 Checkpoint 的条件（Checkpoint 只给「开工后被外部强制中断」的任务） |
+| Checkpoint | **无。** 本任务**已终结**、全程**未被中断**，不满足写 Checkpoint 的条件（Checkpoint 只给「开工后被外部强制中断的未终结任务」） |
 
 ### 一.2 `V1-REBASE-EP00-CURRENT`（本条记录截至开工前的状态，历史原文保留；终态见 §一.3）
 
@@ -47,8 +48,8 @@
 | 终结依据 | [L3 §四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)（唯一一次正式尝试，一次通过） |
 | 最终交付引用 | [`decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md) |
 | next_stage_allowed | **`false`**——本任务只是只读预检完成，**不表示**：M0 全部完成／子合同已接受／`SINGLE-ACCOUNT-SLICE-EP00` 已完成／四个共享合同已冻结／M1—M4 或任何施工已获授权 |
-| Checkpoint | **无**。本任务在**执行中未被中断**，一次直达收口 |
-| 仍需 Founder 裁决的产品命题 | 见交付文档 §十一（11 项，含：Content Brief 唯一上游锁定与合同废止假设的冲突、Campaign 实为编译器而非规划者、六 Skill 价值耦合的多处待裁决点、内容生产链两处仓库/线上模型参数分歧建议回写等） |
+| Checkpoint | **无**。本任务**已终结**，全程未被中断，一次直达收口 |
+| 仍需 Founder 裁决的产品命题 | 见 [`decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md) §十一「仍需 Founder 裁决的产品命题」——**这是下一权限动作，不是可执行工程任务**（见 §二） |
 
 ---
 
@@ -58,14 +59,19 @@
 > 每个活动 `task_id` **各自一行**。**这里没有、也不得有一个覆盖所有并行任务的全局「唯一下一步」。**
 > 每行的下一动作四要素缺一不可：**动作 ／ 对象 ／ 输入或基线 ／ 完成信号**。
 > 当同时有两个及以上任务在跑时，各任务细节写进各自的 `collab-ledger/tasks/<task_id>.md` 分区，本表只留定位引用。
+> **已完成的任务移出本表、终态记进 §一**——本表不维护「共几个」的汇总，数量随授权变化，写死必失真。
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `COLLAB-LEDGER-BOOTSTRAP-001` | 无前置未决依赖 | [L1 §T-001](L1_TASK_MANIFESTS.md) · [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md)（**当前**：收口）· [L5](L5_SIDE_EFFECTS.md) | 按 [收口 Delta](L1_TASK_MANIFESTS.md) 口径完成收口：**复用最近一次真实隔离验证**（不重开完整问答轮）→ 对受影响路径做**定向复验** → 写收口记录（C1–C6、已知问题登记、采用状态）→ `--no-ff` 合并进 `main` 并推送 | 分支 `chore/collab-ledger-bootstrap-001`；`collab-ledger/` 下 L2 §一.1、**L3 §CLOSEOUT**（**当前**槽位；**不是** §ATT-001～005，那五轮全部已判不通过）、L5 §三 | **可解算口径**：`git rev-parse chore/collab-ledger-bootstrap-001`，即该任务分支的 **tip**——这就是当前功能内容冻结提交。起算基线 `6ae78ab`。<br>**不要**用 §ATT-001.1 的 `0d6a4d2`、也不要用 §ATT-002.1 的 `8ada866`，那是已判不通过的历史冻结点。<br>**为什么不直接写 hash**：提交无法把自身 hash 写进自身；同 [L5 SE-002](L5_SIDE_EFFECTS.md) 的处置，以**分支 tip / 远端 ref** 为准，不制造无穷追加提交 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**合并提交 hash，且本文件 §一.1 已记为终态 |
+| `NONE` | — | — | — | — | — | — |
 
-**一个活动 `task_id` 一行，本表不维护「共几个」的汇总**（数量随授权变化，写死必失真）。**各行互不覆盖**，也**不存在**一个凌驾其上的全局「唯一下一步」。新任务被授权时**新增一行**，已完成的任务移出本表、终态记进 §一。
+**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT` 均已终结 `DONE`（见 §一），新会话**不需要、也不应该**重跑其中任何一个。`M0-EP00-ADOPTION-CLOSEOUT-001`（本次采用与状态纠偏任务）的终态见 §一.4，一旦追加即同样按此口径处理。
 
-> **本行是 A2 第 1 轮隔离验证查出来的缺陷修复。** 冻结提交 `0d6a4d2` 时本表**漏了执行中的 bootstrap 任务**，只列了未开工的预检任务，并错写成「当前活动 task_id 只有 1 个」——违反 A3 与「Current Handoff 只维护活动 task_id」。详见 [L3 §ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)。
+**下一权限动作**（不是可执行工程任务，执行侧不得自行开工）：
+
+| 动作 | 对象 | 输入／基线 | 完成信号 |
+|---|---|---|---|
+| Founder 审阅并裁决 | [`decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md) §十一「仍需 Founder 裁决的产品命题」 | 该报告全文（已在 `main` 上可读） | Founder 就其中命题给出裁决，形成新的 Execution Prompt 或授权变更；**在此之前，`SINGLE-ACCOUNT-SLICE-EP00`、四份共享合同的冻结、M1—M4 施工均不获授权** |
 
 ---
 
@@ -75,7 +81,7 @@
 |---|---|
 | `SINGLE-ACCOUNT-SLICE-EP00`（子合同专项预检） | [子合同](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) 状态 `CONTRACT_REVISION_REQUIRED`，**未被 Founder 接受**。子合同只有被接受后才能成为其切片专项预检的依据。**执行侧不得自行宣布已接受。** |
 | Skill 修改／DSL 改造／业务持久化建设／Dify 工作流施工 | 上位合同**只授权只读预检**。**文档语义对齐不等于授权施工。** |
-| [生产差距登记](../decision-chain/docs/V1_PRODUCTION_GAP_REGISTER_v0.1.md) G-01～G-12 | 12 项全部未关闭，但它们是**开放 Gap，不是已授权任务**，也**不是**已排除路线（见 [L4](L4_FAILED_PATHS.md)） |
+| [生产差距登记](../decision-chain/docs/V1_PRODUCTION_GAP_REGISTER_v0.1.md) G-01～G-12 | 均未关闭，但它们是**开放 Gap，不是已授权任务**，也**不是**已排除路线（见 [L4](L4_FAILED_PATHS.md)） |
 | `AO-EP00-HISTORICAL`（`feature/account-operation-v1 @ df94ed1`） | **只作历史参考**，不得冒充当前预检，不得直接合入 `main` |
 
 ---

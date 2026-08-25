@@ -29,6 +29,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | SE-001 | `COLLAB-LEDGER-BOOTSTRAP-001` | 远程分支 `chore/collab-ledger-bootstrap-001` | 见下 |
 | SE-002 | `COLLAB-LEDGER-BOOTSTRAP-001` | 远程默认分支 `main`（收口推送） | 见下 |
 | SE-003 | `V1-REBASE-EP00-CURRENT` | 远程分支 `task/v1-rebase-ep00-current-m0-preflight` | 见下 |
+| SE-004 | `M0-EP00-ADOPTION-CLOSEOUT-001` | 远程默认分支 `main`（采用 EP-00 交付 + 当前投影纠偏） | 见下 |
 
 ### SE-001 · 推送任务分支 `chore/collab-ledger-bootstrap-001`
 
@@ -84,6 +85,20 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` —— **以实时返回为准**，本栏不登记具体 hash |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-24） | 推送成功：`* [new branch] task/v1-rebase-ep00-current-m0-preflight -> task/v1-rebase-ep00-current-m0-preflight`。远端核验：`git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` → `8413a94d3125d54426527be987d082ed28017c96`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR |
+
+### SE-004 · 采用进远程默认工作基线 `main`（EP-00 交付 + 当前投影纠偏）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `M0-EP00-ADOPTION-CLOSEOUT-001` |
+| 类型 | Git merge（`--no-ff`，真合并，两段：① 集成分支接入 EP-00 tip ② 集成分支合并进 main）＋ push |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/main` |
+| 前置基线 | `4d84cd2a4bbd9bcbcff97105f226cf5652f13e29` |
+| 内容标识 | 见 [L3 §五 ATT-001.1](L3_ATTEMPTS_AND_EVIDENCE.md) 的 tested functional hash（分支 tip，不写死字面值，避免自引用） |
+| 幂等信息 | 快进保护：推送前重新 `fetch` 比对；**禁用** `--force` / `--amend` / `reset` / `squash`；不删除来源分支 `task/v1-rebase-ep00-current-m0-preflight` |
+| 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
+| 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**最终合并提交 hash —— **远端 ref 是原始权威，不是本账本** |
+| **状态** | `PLANNED` → 见下方状态追加 |
 
 ## 四、其他外部系统
 
