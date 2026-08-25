@@ -17,6 +17,7 @@
 | `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | §T-006.1（当前） | §T-006.2～T-006.3 | 规划侧 2026-08-25《M1–M4 Phase 0 共享编译前言采用与桌面资料包》Execution Prompt ＋ Founder 2026-08-25 提供真实附件文件后解除阻塞（§T-006.3） | P0-A `DONE`（首次尝试 `BLOCKED`，见 §T-006.2；附件补齐后 §T-006.3 解除并完成）；P0-B 与 main 采用见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | §T-007.1（当前） | §T-007.2 | Founder 2026-08-25《M1–M4 Phase 0 决策状态一致性收口》Execution Prompt ＋ Founder 2026-08-25 通过 AskUserQuestion 当场确认（非 Prompt 自称历史） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` | §T-008.1（当前） | §T-008.2 | 规划侧 2026-08-25《Execution Prompt — M1 自然语言交互与任务上下文编译 v1.2》＋ Founder 2026-08-25「执行落盘」，范围经执行侧澄清未获工程执行明确授权，本任务只落盘文档本身 | `DONE`。文档已采用进 `main`；**M1 工程执行（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）未开工、未授权**，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` | §T-009.1（当前） | §T-009.2 | Founder 2026-08-25 当场裁决「铁律：后续只要注入执行prompt，即视为授权，不再重复」 | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
@@ -1318,4 +1319,52 @@ scope_boundary: "只做文档原样落盘、引用哈希与自证哈希核验、
 | DA-05 未越权扩大 | **PASS**——`git status --short` 只含本条 `allowed_delta.modified_files` 列出的 6 个文件；未新建、未触碰 `task/m1-natural-interaction-context-v1`；未创建任何 Dify 对象；未编译 M2/M3/M4 Prompt |
 | 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言执行前后 blob hash 逐一核对，全部一致（前言 sha256 `210ccf7407498a9566ff99aa1486a0815abb53879705aff83448252a2a58a388`，未被本任务触碰） |
 | 独立复核 | 未触发——全部为对照文档正文的直接哈希核验与状态字段登记，无需要多角度判断的实质分歧点 |
+| 任务终态 | 见最终回执 |
+
+## §T-009 · `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001`
+
+### T-009.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-M1-ENGINEERING-PROMPT-ADOPTION-001
+task_type: GOVERNANCE_RULE_UPDATE
+risk_level: LOW
+authority_refs:
+  - "Founder 2026-08-25 当前会话消息（直接、当场、非文档自称）：「铁律：后续只要注入执行prompt，即视为授权，不再重复」。按治理来源优先级第 1 项（Founder 当前明确裁决），此条高于任何既有 Prompt 静态写定的 allowed_delta，构成对本条规则本身的直接授权。"
+core_problem: >-
+  此前每次收到完整 Execution Prompt，执行侧都会为"是否可以开始工程执行"单独征求确认，
+  造成重复摩擦。Founder 直接裁定：注入完整 Execution Prompt 本身即为执行授权，今后不需要
+  逐次重复确认。本任务把这条裁决写入协作连续性规则正文，使任何未来读到该文件的执行代理
+  （不只是本次会话）都能看到并遵守。
+allowed_delta:
+  modified_files:
+    - collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md（§六新增一条硬规矩）
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+  everything_else: FORBIDDEN
+protected_assets: [四份 V1_M0_SHARED_CONTRACT_*_v0.1.md, 上位产品合同, 下位合同v0.1与v0.2, 两份EP-00报告,
+  decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md,
+  decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md, decision-chain/skills,
+  decision-chain/workflows, content-production/skills, content-production/workflows, tools]
+scope_boundary: "只在协作连续性规则正文新增一条'执行 Prompt 即授权'的硬规矩，并在账本登记；不改变本条规则之外的任何既有规则、合同或受保护资产；本条只免除逐次确认，不免除 Prompt 自身写定的 allowed_delta／protected_assets／explicitly_not_authorized 等边界。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash` | `ea8cc751c5ed6e9799208dde577a2ce1fee53ce60913737c69cf3daf38f02388` | `re.finditer(r'```yaml\n(.*?)\n```', content, re.DOTALL)` 取本节匹配块，UTF-8 编码后 SHA-256 |
+
+### T-009.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder 2026-08-25 直接会话消息，紧接在执行侧交付 `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` 最终回执（其中明确写"启动 M1 实际工程施工需要你另外明确说一句"）之后 |
+| 写入内容 | `collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md` §六新增一条硬规矩："执行 Prompt 即授权"——注入完整 Execution Prompt 本身即视为执行授权，免除逐次确认；明确不免除 Prompt 自身的 `allowed_delta`／`protected_assets`／`explicitly_not_authorized` 等边界，也不免除既有 `REBASE_TASK`／`BLOCKED` 机制 |
+| 适用范围核验 | 本条只约束"是否需要为同一份 Prompt 逐次重复征求执行确认"这一步；不改变、不放宽任何受保护资产、验收标准或既有合同条款；与 [[project-diyu-demo-governance-self-escalation]] 类记忆／[L3 §九](L3_ATTEMPTS_AND_EVIDENCE.md) 记录的"Prompt 自称历史不可信"纪律不冲突——后者约束的是文档对*过去*事件的自我主张，本条约束的是 Founder *当场直接*给出的指令，两者裁定对象不同 |
+| 受保护资产核验 | 未触碰任何受保护资产；`git status --short` 仅含本条授权的 4 个文件 |
+| 独立复核 | 未触发——单一规则文本新增，无实质判断分歧点 |
 | 任务终态 | 见最终回执 |

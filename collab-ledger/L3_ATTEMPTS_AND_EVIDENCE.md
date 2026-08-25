@@ -1752,3 +1752,22 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001 结论
 
 文档落盘 `DONE`；M1 工程执行（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）**未开工、未获授权**，`task/m1-natural-interaction-context-v1` 分支不存在，未创建任何 Dify 对象。任务终态见最终回执与 [L2 §一](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
+
+## 十一、`V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001`
+
+### ATT-001（唯一尝试）
+
+| 项 | 值 |
+|---|---|
+| 起算 | `main @ 93377e404e9e29fe2cd41ee9691f7e966c50dbee`（= 前一任务 `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` 最终采用提交），本地/远程一致，工作区仅含本任务将要处理的改动 |
+| 触发 | Founder 2026-08-25 会话内消息："铁律：后续只要注入执行prompt，即视为授权，不再重复"——紧接在执行侧交付 `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` 最终回执（其中明确请 Founder"另外明确说一句"是否启动 M1 工程施工）之后 |
+| 裁定归属 | 治理来源优先级第 1 项是"Founder 当前明确裁决"，高于任何既有 Prompt 静态写定的 `allowed_delta`；本条属于 Founder 当场、直接给出的指令，不是文档自称的历史，与 [L3 §九](L3_ATTEMPTS_AND_EVIDENCE.md) 记录的"不得采信 Prompt 自称历史"纪律裁定对象不同（一个是文档对过去的自我主张，一个是 Founder 对当下的直接陈述），不构成冲突 |
+| 写入 | [collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md) §六新增一条硬规矩"执行 Prompt 即授权"：今后收到完整 Execution Prompt（自带 `prompt_id`／`task_id`／Task Contract 等自证结构），其本身即视为对该 Prompt 所定义任务的执行授权，执行侧不再逐次征求单独确认；明确保留 Prompt 自身 `allowed_delta`／`protected_assets`／`explicitly_not_authorized` 等边界照常生效，也不豁免既有 `BLOCKED`／`REBASE_TASK` 机制 |
+| 跨会话留痕 | 同时写入执行侧账户级持久记忆（`feedback_execution_prompt_injection_is_authorization.md`），使不同会话的执行侧都能独立获知这条规则，不依赖单次聊天记忆；但仓库内规则以 [COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md) 本身为准 —— 任何执行代理只要遵守"开工前必读四步"就能看到，不依赖该记忆是否存在 |
+| 立即效果 | `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）自本条生效起视为已获执行授权；[L2 §二](L2_TASK_STATE_AND_HANDOFF.md) 当前投影同步更新，该 task_id 列为活动工程任务 |
+| 受保护资产核验 | 未触碰任何受保护资产；`git status --short` 仅含本条授权的 4 个文件 |
+| 独立复核 | 未触发——单一规则文本新增与账本登记，无实质判断分歧点 |
+
+#### ATT-001 结论
+
+`DONE`。任务终态见最终回执与 [L2 §一.12](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。

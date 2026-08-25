@@ -150,6 +150,19 @@
 | Checkpoint | **无**。本任务已终结，全程未被中断 |
 | 已知不做的事 | 未新建 `task/m1-natural-interaction-context-v1`；未创建/修改任何 Dify 对象；未编译 M2/M3/M4 施工 Prompt；未触碰四份共享合同、Phase0 前言或任何受保护资产 |
 
+### 一.12 `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001`
+
+| 项 | 值 |
+|---|---|
+| 状态 | **`DONE`** —— 唯一 attempt 一次通过 |
+| 触发 | Founder 2026-08-25 直接会话消息，紧接在 §一.11 最终回执之后：「铁律：后续只要注入执行prompt，即视为授权，不再重复」 |
+| 内容变化 | `collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md` §六新增一条硬规矩"执行 Prompt 即授权"——今后收到完整 Execution Prompt 不再逐次征求"是否可以开始工程执行"的确认；Prompt 自身 `allowed_delta`／`protected_assets`／`explicitly_not_authorized` 等边界不受影响 |
+| 终结依据 | [L1 §T-009.1～T-009.2](L1_TASK_MANIFESTS.md)；[L3 §十一 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 最终交付引用 | 远程默认分支 `main`，采用提交见 [L5](L5_SIDE_EFFECTS.md) |
+| next_stage_allowed | **`true:M1 工程执行`**——本条规则生效后，`decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）视为已获执行授权，可开工；该文档自身范围边界（`allowed_delta`／`protected_assets`／`remote_target.merge_main: NOT_AUTHORIZED` 等）继续原样有效 |
+| Checkpoint | **无**。本任务已终结，全程未被中断 |
+| 已知不做的事 | 未修改本条规则之外的任何既有规则、合同或受保护资产 |
+
 ---
 
 ## 二、项目当前可执行动作（Current Handoff）
@@ -162,9 +175,9 @@
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `NONE` | — | — | — | — | — | — |
+| `DIYU-V1-M1-NATURAL-CONTEXT-001` | [M1 施工 Execution Prompt v1.2](../decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md) | 本任务自身 Task Contract（内嵌于该 Prompt §2） | 工程实现 M1 全部 P0（自然语言交互、任务上下文编译、唯一调用意图/计划、真实 Dify 候选运行、独立审查、回滚包、远程任务分支收口） | 独立 worktree／任务分支 `task/m1-natural-interaction-context-v1` | `main @ 93377e404e9e29fe2cd41ee9691f7e966c50dbee` ＋ 该 Prompt 全文 | `M1-AC-00` 至 `M1-AC-15` 全部 PASS ＋ 提交 Founder Dify 实测包，见该 Prompt §13 |
 
-**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`；规划侧已编译并落盘 M1 施工 Execution Prompt（[`decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`](../decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md)），M2/M3/M4 尚待编译；M1 工程实现（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）仍未获授权，需 Founder 就该 task_id 另行明确给出执行授权，落盘动作本身不构成该授权。**
+**`COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001`、`V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`。Founder 2026-08-25 裁定"执行 Prompt 即授权"铁律（见 [COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md) §六 与 [L1 §T-009](L1_TASK_MANIFESTS.md)）后，M1 施工 Execution Prompt 视为已获执行授权，`DIYU-V1-M1-NATURAL-CONTEXT-001` 现为活动工程任务（见上表）；M2/M3/M4 施工 Execution Prompt 仍待规划侧编译，编译后同样适用该铁律。**
 
 **已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 
