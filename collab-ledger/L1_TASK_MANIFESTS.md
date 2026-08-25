@@ -1162,3 +1162,4 @@ scope_boundary: "只做附件校验、L2两处独立纠偏、账本登记；附�
 | P0-B 状态 | **`BLOCKED`**（未启动）——依赖 P0-A 产出的最终 `origin/main`（含已采用的前言文件）作为桌面包 `source_full_commit`；P0-A 未完成，P0-B 无有效源可用，不得用当前 main（缺前言文件）冒充最终 main 生成桌面包 |
 | 任务终态 | `BLOCKED`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | 解除条件 | Founder／规划侧提供可核验的真实附件文件（而非聊天正文转写）——例如把文件放入仓库指定路径供逐字节读取，或提供能重算出等于冻结值 SHA-256 的原始 markdown 字节；解除后，新会话或新 attempt 只需重新执行本任务的 P0-A/P0-B，无需重跑本次已完成的 L2 纠偏或激活门核验 |
+| 范围补记 | T-006.1 `allowed_delta.modified_files` 遗漏了 `collab-ledger/L5_SIDE_EFFECTS.md`；Execution Prompt 自身 `authorized_scope.write` 明确包含该文件（"仅记录真实 Git 远程副作用"），本任务实际按 Prompt 权限记录了任务分支推送（[L5 SE-009](L5_SIDE_EFFECTS.md)），T-006.1 的遗漏属内部合同摘要疏漏，不构成越权 |
