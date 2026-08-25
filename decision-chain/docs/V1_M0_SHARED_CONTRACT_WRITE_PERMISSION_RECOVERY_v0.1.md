@@ -1,5 +1,6 @@
 # 共享合同四 · 写回、权限、幂等与恢复 v0.1
 
+> 状态：`ACCEPTED`（Founder 2026-08-25 在 Phase C 执行过程中选择"A. 接受四个共享合同，并授权后续规划侧编译和启动 M1–M4 施工"，见 [collab-ledger L1 §T-005.4](../../collab-ledger/L1_TASK_MANIFESTS.md)）。接受**不表示** M1–M4 工程实现已经开始，只表示允许规划侧基于本文件编译施工 Execution Prompt。
 > 文档角色：M0.3 四份最小共享合同之一，供 M1—M4 施工任务共同引用的**业务语义冻结**，不冻结物理字段、表结构、API、Dify 节点、数据库产品或部署拓扑。
 > 编号与范围来自任务 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` Execution Prompt §15。
 > 素材来源：[V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md](V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) §七、§5.10.1、§5.10.2；[SINGLE-ACCOUNT-SLICE-EP00 专项预检](V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md) §二 M0P-C03。

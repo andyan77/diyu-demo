@@ -1073,4 +1073,16 @@ scope_boundary: "只做只读预检、四个共享合同起草、一次定向一
 | Phase A 报告 blob hash（冻结值，供 Phase B 引用） | `8134ce00645dd86cea6cc7b6d8d6933f762c68a5` |
 | Phase B 交付 | 四份共享合同（已修复）：[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)（`e92100fb66c56b335ca54ceecd260abef984b4a3`）、[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)（`ce96a5ff18743d648f50e53cc8e79ab0207c66f2`）、[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)（`b8adc95284f0310657de0a3505d685b90130748c`）、[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)（`c39b69a661d5fb5e2abb20f8b6d2bf998ec65e2e`） |
 | Phase B 状态 | **`DONE`** —— 一次定向一致性检查（检查项 A-G）查出 8 处问题（含 1 处严重：§8.7 门禁清单被静默删除；2 处双重真源；2 处孤儿 M1-M4 要求；1 处运营效果护栏缺失；2 处引用/裁决主体错误）全部修复；按验证预算未触发第二轮 |
-| Phase C/D | 未开始 |
+| Phase C 状态 | **`DONE`** —— 定向一致性检查随 Phase B 一并完成（见 [L3 §七 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 阶段裁决已获得（见 §T-005.4） |
+| Phase D | 进行中——四份共享合同状态更正为 `ACCEPTED`、根索引文件（CLAUDE.md／README.md／PROJECT_INDEX.md／笛语项目基线.md）同步、账本更新、采用进 `main` |
+| 四份共享合同 blob hash（状态更正后，最终值） | 任务上下文快照 `222008fc99f23b3764d28a2537f4160b58ef48be`；八项能力合同 `6f66a95e847f1a28f8acb4495203019c8b64536f`；版本发布反馈归属 `59fc076044c6930bc66441f2131a039b6d21b79c`；写回权限幂等恢复 `c9a6633ccb5268dfa4e65a60185571b8a0db4df3` |
+
+### T-005.4 Founder 接受记录（块外追加，不改动上方 `task_contract_hash` 覆盖的字节）
+
+| 项 | 值 |
+|---|---|
+| 触发方式 | Phase C 执行过程中的授权提示（`AskUserQuestion`），非离线审查 |
+| 提问内容 | "四个共享合同候选已经基于两类 EP-00 证据完成，并通过定向一致性检查。请选择：A. 接受四个共享合同，并授权后续规划侧编译和启动 M1–M4 施工；B. 接受四个共享合同，但暂不授权 M1–M4 施工；C. 不接受，并指出需要修改的具体产品语义。" |
+| Founder 回答 | **"A. 接受，授权 M1–M4 施工规划"**（2026-08-25） |
+| 触发的状态变化 | 四份共享合同 = `ACCEPTED`；`M1-M4_PLANNING_PROMPT_COMPILATION = AUTHORIZED`；`M1-M4_ENGINEERING_EXECUTION = AUTHORIZED_BY_FOUNDER`（但本任务**仍不得**自行启动 M1–M4，须由规划侧基于本轮证据和已接受共享合同分别编译四份 Execution Prompt） |
+| 未被本次接受触发 | 不触发 M1—M4 工程实现本身；不触发任何 Skill／DSL／Dify 工作流／数据库改动；不构成执行侧自行推高状态——状态推进由 Founder 本人回答触发 |
