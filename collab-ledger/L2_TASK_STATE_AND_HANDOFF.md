@@ -22,6 +22,7 @@
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.4） | [L1 §T-003](L1_TASK_MANIFESTS.md) · [L3 §五 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（起算；终态见 §一.4） |
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | **已终结 `DONE`**（见 §一.5） | [L1 §T-004](L1_TASK_MANIFESTS.md) · [L3 §六 ATT-001～003](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ f94d7a7`（起算；终态见 §一.5） |
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.7） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算；终态见 §一.7） |
+| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | **已终结 `BLOCKED`**（见 §一.8） | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；终态见 §一.8） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -94,9 +95,22 @@
 | 实际执行基线 | `main @ 0eba71a85916d4d993313c015dc8ad87f180d4de` |
 | 终结依据 | [L1 §T-005.1～T-005.4](L1_TASK_MANIFESTS.md)；[L3 §七 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | 最终交付引用 | [`SINGLE-ACCOUNT-SLICE-EP00 专项预检`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)；四份共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)），均 `ACCEPTED`（Founder 2026-08-25 明确回答"A"后由该回答触发，非执行侧自行推高，见 [L1 §T-005.4](L1_TASK_MANIFESTS.md)） |
-| next_stage_allowed | **`true:M1—M4 施工规划 Execution Prompt 编译`**——`M1-M4_PLANNING_PROMPT_COMPILATION = AUTHORIZED`；`M1-M4_ENGINEERING_EXECUTION = AUTHORIZED_BY_FOUNDER`，但**本任务本身不构成 M1–M4 工程实现的授权 Prompt**，规划侧须为 M1—M4 分别编译独立 Execution Prompt，执行侧不得自行编写 |
+| next_stage_allowed | **`true:M1—M4 施工规划 Execution Prompt 编译`**——`M1-M4_PLANNING_PROMPT_COMPILATION = AUTHORIZED`；`M1-M4_ENGINEERING_EXECUTION = NOT_AUTHORIZED`（**状态更正 1**：本行此前误写 `AUTHORIZED_BY_FOUNDER`，与本任务自身"不授权 M1—M4 工程实现本身"的结论矛盾；已由 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 更正，见 [L1 §T-006](L1_TASK_MANIFESTS.md)），规划侧须为 M1—M4 分别编译独立 Execution Prompt，执行侧不得自行编写 |
 | Checkpoint | **无**。Phase C 等待期 Checkpoint 已于 Founder 回答后解除，本任务现已终结 |
 | 已知不做的事 | 本次接受**不**授权 M1—M4 工程实现本身；**不**授权任何 Skill／DSL／Dify 工作流／数据库改动；两处"具体承接方未指定"的缺口（四类合同填值、Matrix 整任务硬停处置）已登记在共享合同二内，**不由本任务代为指定** |
+
+### 一.8 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`
+
+| 项 | 值 |
+|---|---|
+| 状态 | **`BLOCKED`** —— 规划侧《M1–M4 Phase 0 共享编译前言采用与桌面资料包》Execution Prompt 随文给出的"规划附件"（`V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md` 正文，声明冻结 SHA-256 = `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`）实际以聊天消息内联纯文本形式收到，**不含**本仓库全部已采用真源文档统一使用的标准 markdown 语法（`#`标题／`**`加粗／`\|`表格／`` ``` `` yaml围栏——已用 `cat -A` 逐字节核对共享合同二等已采用文件确认此为仓库惯例）；判定为聊天渲染转写而非附件原始字节，无法计算出等于冻结值的 SHA-256，也不得按 Prompt §2 明文指令自行补全格式后重建附件 |
+| 已完成的独立工作 | 按 Prompt §1"缺附件…且已完成所有不依赖该阻塞的工作，判 BLOCKED"的要求，完成了两处不依赖附件、Prompt 正文直接给出的 L2 当前投影纠偏（见 §一.7 `next_stage_allowed` 行「状态更正1」＋ §二「下一权限动作」表「状态更正2」），已提交并推送到任务分支 |
+| 未完成／被阻塞的交付 | P0-A 核心交付（`decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md` 原样采用进 `main`）未写入；P0-B（四窗口桌面资料包）因依赖 P0-A 产出的最终 `main` 作为快照源，未启动 |
+| 终结依据 | [L1 §T-006.1～T-006.2](L1_TASK_MANIFESTS.md)；[L3 §八 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 最终交付引用 | 无新增产品文档；仅 L2 §一.7／§二 两处纠偏（已推送任务分支，**未合并进 `main`**——本次不构成完整 P0 交付，不触发 §5 的"Git 采用与远程收口"） |
+| next_stage_allowed | **`false`**——须先由 Founder／规划侧提供可核验的真实附件文件（例如落到仓库指定路径供逐字节读取，或提供能重算出等于冻结值 SHA-256 的原始 markdown 字节），本任务或其新 attempt 才能继续 P0-A/P0-B；**不表示** M1—M4 施工规划编译授权本身被撤回，那项授权来自上一任务 Founder 2026-08-25 的"A"回答（见 §一.7），与本任务是否能验证这份前言附件是两件事 |
+| Checkpoint | **无**——`BLOCKED` 是本仓库 Task Contract 既有的终态词之一（见 [L1 §T-006.1](L1_TASK_MANIFESTS.md) `terminal_state_order`），本次 attempt 已终结；解除阻塞后按"解除条件"重新开始新 attempt，不需要 Checkpoint 机制 |
+| 已知不做的事 | 未自行拼接/推断/补全前言正文；未把当前 main（缺前言文件）冒充最终 main 生成桌面包；未合并任务分支进 `main`；未修改任何受保护资产 |
 
 ---
 
@@ -110,9 +124,9 @@
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `NONE` | — | — | — | — | — | — |
+| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`（`BLOCKED`，见 §一.8） | Founder／规划侧提供真实附件 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | 提供可核验的《M1–M4 施工 Execution Prompt 共享编译前言 v0.1》原始文件字节 | Founder／规划侧 | 冻结 SHA-256 = `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`；需能重算出等于该值的字节（聊天粘贴的纯文本转写不满足，见 §一.8） | 执行侧重算 SHA-256 与冻结值一致后，按同一 Execution Prompt 继续 P0-A/P0-B，无需重跑本次已完成的 L2 纠偏 |
 
-**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 均已终结 `DONE`（见 §一），新会话**不需要、也不应该**重跑其中任何一个。**M0 已全部完成。**
+**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 均已终结 `DONE`（见 §一）。`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 已终结 `BLOCKED`（见 §一.8），**不是**待执行的工程任务，新会话**不需要、也不应该**自行重跑或猜测附件内容——只需等待上表所列输入。**M0 已全部完成；M1–M4 施工规划编译已获授权但尚待 Phase 0 前言就位。**
 
 **已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 
@@ -120,7 +134,7 @@
 
 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|
-| 规划侧编译 M1—M4 施工 Execution Prompt | M1（业务持久化）／M2（写回权限恢复实现）／M3（单账号持续运营能力）／M4（其余 M1–M4 边界事实所归属的施工项，具体划分由规划侧依据四份共享合同 §五/边界表决定，本行不预判） | 四份已接受的共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)）＋ 两类 EP-00 证据（[通用](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)／[专项](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） | 规划侧分别产出 M1—M4 各自的完整 Execution Prompt；**执行侧不得自行编写或推断这些 Prompt，也不得据本条自行开工任何 M1–M4 工程实现**——两处尚未指定承接方的缺口（共享合同二"四类合同具体值填写"与"Matrix 整任务硬停处置"）须先由 Founder 或规划侧指定归属 |
+| 规划侧编译 M1—M4 施工 Execution Prompt | M1（自然交互、任务上下文与能力路由）／M2（最小业务数据、版本与运营记忆）／M3（运营状态诊断与持续运营决策）／M4（现有能力组件化接入与兼容改造）——**状态更正 2**：本列此前把 M1 误写为"业务持久化"（实为 M2 职责）、M2 误写为"写回权限恢复实现"（写回权限幂等恢复只是 M2 记忆职责下的一项具体能力，非 M2 全部定义）、M4 留空未定，与四窗口已冻结的唯一责任划分不一致；已由 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 更正，见 [L1 §T-006](L1_TASK_MANIFESTS.md) | 四份已接受的共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)）＋ 两类 EP-00 证据（[通用](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)／[专项](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） | 规划侧分别产出 M1—M4 各自的完整 Execution Prompt；**执行侧不得自行编写或推断这些 Prompt，也不得据本条自行开工任何 M1–M4 工程实现**——两处尚未指定承接方的缺口（共享合同二"四类合同具体值填写"与"Matrix 整任务硬停处置"）须先由 Founder 或规划侧指定归属 |
 
 ---
 

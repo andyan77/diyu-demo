@@ -14,6 +14,7 @@
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | v2（当前）§T-004.3 ／ v1（历史）§T-004.1 | §T-004.2（v2 只写 Delta，其余继承 v1） | Founder 2026-08-24《M0.1B 下位单账号合同定向修订》Execution Prompt（F-01～F-09）＋ 后续四项定向纠偏与 F-10 Delta ＋ Founder 2026-08-24 明确接受（§T-004.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4） | `DONE`。交付见 §T-005（[`V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） |
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | §T-005.1（当前） | §T-005.2 | Founder 2026-08-24《M0.2B 专项预检、M0.3 共享合同与 M0 收口》完整 Execution Prompt ＋ Founder 2026-08-25 明确接受（§T-005.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | §T-006.1（当前） | §T-006.2 | 规划侧 2026-08-25《M1–M4 Phase 0 共享编译前言采用与桌面资料包》Execution Prompt | **`BLOCKED`**——规划附件字节不可校验（见 §T-006.2），已完成 L2 两处独立纠偏并终结本次尝试，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
@@ -1087,3 +1088,77 @@ scope_boundary: "只做只读预检、四个共享合同起草、一次定向一
 | Founder 回答 | **"A. 接受，授权 M1–M4 施工规划"**（2026-08-25） |
 | 触发的状态变化 | 四份共享合同 = `ACCEPTED`；`M1-M4_PLANNING_PROMPT_COMPILATION = AUTHORIZED`；`M1-M4_ENGINEERING_EXECUTION = AUTHORIZED_BY_FOUNDER`（但本任务**仍不得**自行启动 M1–M4，须由规划侧基于本轮证据和已接受共享合同分别编译四份 Execution Prompt） |
 | 未被本次接受触发 | 不触发 M1—M4 工程实现本身；不触发任何 Skill／DSL／Dify 工作流／数据库改动；不构成执行侧自行推高状态——状态推进由 Founder 本人回答触发 |
+
+---
+
+## §T-006 · `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`
+
+### T-006.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001
+task_type: MIXED
+risk_level: MEDIUM
+authority_refs:
+  - "Founder 2026-08-25 当前会话消息：完整 Execution Prompt《M1–M4 Phase 0 共享编译前言采用与桌面资料包》，随文给出规划侧成稿《笛语 V1 · M1–M4 施工 Execution Prompt 共享编译前言 v0.1》正文与冻结 SHA-256 = 9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6。"
+core_problem: >-
+  共享合同二尚未实例化八项能力的四类业务合同值与 Matrix 局部降级口径；规划侧已产出唯一 Phase 0
+  编译前言成稿，本任务负责验证其与已接受真源一致后原样采用进 main，纠正 L2 当前投影里的两处
+  错误（工程授权状态、M1-M4 模块职责映射），并从最终 main 生成四窗口桌面资料包。
+phases: [P0A_preamble_verification_and_adoption, P0B_desktop_pack]
+
+activation_gate_verified_at_execution:
+  main_local: cba3a30054acfc703464d62266b4c68ec4b55d66
+  main_remote: cba3a30054acfc703464d62266b4c68ec4b55d66
+  working_tree_before_this_task: clean
+  planning_observed_origin_main: cba3a30054acfc703464d62266b4c68ec4b55d66
+  drift_from_planning_observed_point: NONE
+  four_shared_contracts_and_ep00s_present: "全部 6 份冻结真源文件核验存在，blob hash 已记录于 T-006.2"
+  target_preamble_file_present_before_task: false（符合预期，本任务负责新增）
+  verdict: ALL_CONDITIONS_MET_NOT_BLOCKED_AT_ACTIVATION
+
+attachment_verification:
+  declared_sha256: "9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6"
+  received_form: "Execution Prompt 消息正文内联的纯文本转写（无 markdown 语法：无 # 标题、无 ** 加粗、无 | 表格、无 ``` yaml 代码围栏），与本仓库全部已采用真源文档（含四份共享合同）的实际字节格式（标准 markdown：#/##标题、>引用块、**加粗、|表格）结构性不同"
+  cross_check_method: "对比 decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md 等已采用真源的原始字节（cat -A 逐字节查看），确认本仓库合同文档惯例是标准 markdown 语法，而收到的前言正文完全不含此类符号"
+  conclusion: "收到的前言正文是聊天渲染后的转写文本，不是附件原始字节；无法据此计算出等于冻结值的 SHA-256；不得自行补全或猜测 markdown 语法后再计算哈希（= 自行重建附件，Prompt §2 明文禁止）"
+  verdict: ATTACHMENT_UNVERIFIABLE_TREATED_AS_MISSING
+
+allowed_delta:
+  modified_files:
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+  blocked_deliverables:
+    - decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md（P0-A 核心交付，因附件不可校验未写入）
+    - "桌面四窗口资料包（P0-B，因源 commit 依赖 P0-A 未完成而未执行）"
+  everything_else: FORBIDDEN
+
+protected_assets: [四份 V1_M0_SHARED_CONTRACT_*_v0.1.md, 上位产品合同, 下位合同v0.1与v0.2, 两份EP-00报告,
+  decision-chain/skills, decision-chain/workflows, content-production/skills, content-production/workflows, tools,
+  全部用户未提交改动和其他worktree, 桌面已有文件或目录]
+
+terminal_rule:
+  forbidden: [PARTIAL, 自行重建或猜测附件字节, 自行推断/编写前言正文, 自行推高治理状态字符串]
+  on_activation_gate_fail: [BLOCKED, FAILED, INVALID]
+scope_boundary: "只做附件校验、L2两处独立纠偏、账本登记；附件不可校验时不写入前言文件、不生成桌面包；不编译M1-M4施工Prompt；不做任何工程实现。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash` | `883c3a0bba0cec3e82ef46bdf29f82ebbb1dd865f898ccdace568e6cf7450709` | `re.finditer(r'```yaml\n(.*?)\n```', content, re.DOTALL)` 取本节匹配块，UTF-8 编码后 SHA-256 |
+
+### T-006.2 当前 Manifest（唯一尝试，终态 `BLOCKED`）
+
+| 项 | 值 |
+|---|---|
+| 冻结真源 blob hash（执行前核验） | 上位合同 `9a57d255dec44477ceb38f6f61faaa5f43d36343f89803364eac5df6d5fc5ca0`；v0.1下位合同 `a69a467aeca648a5e0a98068278daa6dccca5a5c734fb8dcd93021fe4befbca2`；v0.2下位合同 `677c7f350410b934b5e25caa3cf98f4665a48936588adc66798d093b042ece9d`；通用EP-00 `afea2d975b1e214ee57aaaab3bfaee63bb6d0319403bfe6d8e66285c2b1bce11`；专项EP-00 `921091b5a43fb72371c5c95e6bb07e6ccd87db6baa29fb9cff2716e5dd2fbc4d`；共享合同一 `76b730d47566eccc188e2dbb0c4da2e8aa594936cc813987cc8d0fd7901bd63b`；共享合同二 `6d3fb85ebce417c4d34103775f833656dab7d62e390b0c9ba482ccc9108e8a30`；共享合同三 `67af3e991394fb27964470bcdbf5a46678a494e4045db60eb573b31ea924ee2b`；共享合同四 `108209b52df232e91e06b5726b2c19eb6094f06eb7025971a958750143a172f0` |
+| P0-A 状态 | **`BLOCKED`**——见 `attachment_verification`：收到的规划前言正文不含本仓库全部已采用真源文档的标准 markdown 语法特征，判定为聊天转写而非附件原始字节，无法验证其 SHA-256 等于冻结值 `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`；按 Prompt §2 明文指令未写入 `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`，也未自行补全格式后重算哈希 |
+| P0-A 内已完成的独立工作 | L2 两处当前投影纠偏（不依赖附件，见 [L2 §一.7](L2_TASK_STATE_AND_HANDOFF.md) `next_stage_allowed` 行「状态更正1」＋ §二「下一权限动作」表「状态更正2」）：(1) `M1-M4_ENGINEERING_EXECUTION` 由误写的 `AUTHORIZED_BY_FOUNDER` 更正为 `NOT_AUTHORIZED`；(2) M1-M4 模块职责映射由误写的「M1=业务持久化／M2=写回权限恢复实现／M3=单账号持续运营能力／M4=待定」更正为 Prompt §二冻结的「M1=自然交互任务上下文与能力路由／M2=最小业务数据版本与运营记忆／M3=运营状态诊断与持续运营决策／M4=现有能力组件化接入与兼容改造」 |
+| P0-B 状态 | **`BLOCKED`**（未启动）——依赖 P0-A 产出的最终 `origin/main`（含已采用的前言文件）作为桌面包 `source_full_commit`；P0-A 未完成，P0-B 无有效源可用，不得用当前 main（缺前言文件）冒充最终 main 生成桌面包 |
+| 任务终态 | `BLOCKED`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 解除条件 | Founder／规划侧提供可核验的真实附件文件（而非聊天正文转写）——例如把文件放入仓库指定路径供逐字节读取，或提供能重算出等于冻结值 SHA-256 的原始 markdown 字节；解除后，新会话或新 attempt 只需重新执行本任务的 P0-A/P0-B，无需重跑本次已完成的 L2 纠偏或激活门核验 |
