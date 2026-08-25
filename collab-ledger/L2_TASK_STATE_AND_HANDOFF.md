@@ -1,7 +1,8 @@
 # L2 · 任务状态与项目下一动作
 
-> 规则正文见 [COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md)。
-> **新会话先读本文件。** 追加式：只加不改，更正另起一条。
+> 规则正文见 [COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md)。**新会话先读本文件。**
+> 本文件属于 canonical §三定义的**当前投影**：状态或规则变化时**直接更新替换**，不必逐条追加更正；旧值由 Git 历史保留。
+> （只有 L1／L3／L4／L5 的历史留痕部分才是「追加式，只加不改」——见 canonical §三。）
 >
 > **三个不能混的东西**（定义见 canonical §四）：
 > **Checkpoint** = 任务没做完被中断的续跑点 ｜ **Final Manifest／最终交付引用** = 任务已终结的结论 ｜ **Current Handoff** = 项目层下一步。
@@ -65,7 +66,7 @@
 |---|---|---|---|---|---|---|
 | `NONE` | — | — | — | — | — | — |
 
-**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT` 均已终结 `DONE`（见 §一），新会话**不需要、也不应该**重跑其中任何一个。`M0-EP00-ADOPTION-CLOSEOUT-001`（本次采用与状态纠偏任务）的终态见 §一.4，一旦追加即同样按此口径处理。
+**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT` 均已终结 `DONE`（见 §一），新会话**不需要、也不应该**重跑其中任何一个。`M0-EP00-ADOPTION-CLOSEOUT-001`（本次采用与状态纠偏任务）执行中，将在自身收口时把终态追加进 §一；追加前请以 [L1 §T-003](L1_TASK_MANIFESTS.md) 与 [L3 §五](L3_ATTEMPTS_AND_EVIDENCE.md) 的最新条目为准。
 
 **下一权限动作**（不是可执行工程任务，执行侧不得自行开工）：
 

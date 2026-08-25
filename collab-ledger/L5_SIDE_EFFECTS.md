@@ -108,4 +108,4 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 业务数据库 / Qdrant / ECS | **否** |
 | 对外消息发送 | **否** |
 
-`NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，除 SE-001／SE-002 外无其他外部副作用。
+`NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，Dify／业务数据库／对外消息发送三类均无写入。**Git 推送类副作用见 §三 索引表**（条目会随任务增加，不在本行重复计数，避免静态数字漂移）。
