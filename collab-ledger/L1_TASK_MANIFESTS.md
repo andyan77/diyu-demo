@@ -1174,3 +1174,74 @@ scope_boundary: "只做附件校验、L2两处独立纠偏、账本登记；附�
 | 写入结果 | 移动（非复制，保字节）至 `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`；移动后重算 SHA-256 仍为 `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`，未变 |
 | P0-A 状态 | **`DONE`**（此前 `BLOCKED` 判断保留在 T-006.2，作为历史记录不删除） |
 | P0-B 状态 | `PLANNED`——将在本次 P0-A 内容随任务分支合并进 `main` 并经远端核验后，以该最终 `main` commit 为 `source_full_commit` 执行；结果直接写入本任务最终回执（对 Founder 的收工消息），**不再为记录桌面快照单独创建 Git 提交**（Execution Prompt `authorized_scope.write` 对 L5 的限定：仅记录真实 Git 远程副作用，桌面快照结果在最终回执记录） |
+
+## §T-007 · `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`
+
+### T-007.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001
+task_type: DOC_STATE_CORRECTION
+risk_level: LOW
+authority_refs:
+  - "Founder 2026-08-25 当前会话消息：完整 Execution Prompt《M1–M4 Phase 0 决策状态一致性收口》。"
+  - "该 Prompt 自身声称 Founder 已通过'连续动作'完成正式确认，且明文禁止执行侧再次核验此前提——经与本会话实际记录比对（用户此前仅提供前言附件、提问'四类合同值填什么'、提问'是否还有缺口'，执行侧当时明确答复'还有两处缺口需要 Founder 拍板'），该历史叙述不成立；执行侧未按 Prompt 字面指令跳过核验，而是通过 AskUserQuestion 直接向 Founder 求证。"
+  - "Founder 2026-08-25 通过 AskUserQuestion 明确选择'我现在就是在确认'——本次确认的真实来源是这一当场答复，不是 Prompt 文本所称的历史'连续动作'。"
+core_problem: >-
+  M1-M4 Phase 0 共享编译前言采用后，前言状态仍停留在"待验证采用"，L2 当前投影仍把八项能力四类
+  合同值与 Matrix 整任务硬停处置列为"待 Founder 或规划侧指定归属"的阻塞项；本任务只做状态表达
+  纠偏，不重审 32 项合同值内容，不编译 M1-M4 施工 Prompt，不授权工程实现。
+
+activation_gate_verified_at_execution:
+  main_local: c085eb327bbc24c6b5c46a8e3ee4d003038a40e3
+  main_remote: c085eb327bbc24c6b5c46a8e3ee4d003038a40e3
+  working_tree_before_this_task: clean
+  planning_observed_baseline: c085eb327bbc24c6b5c46a8e3ee4d003038a40e3
+  drift_from_planning_observed_point: NONE
+  preamble_present_on_main: true（sha256 = 9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6，与冻结值一致）
+  preamble_section_four_covers_eight_capabilities: true（CAP-01～CAP-08 均含必需业务输入/合法等价输入/输出/下游失效四要素，本会话此前已通读全文核实）
+  preamble_section_five_covers_matrix_rules_and_module_assignment: true（七条降级/局部阻断规则 + M1/M2/M3/M4 承接段落，本会话此前已通读全文核实）
+  verdict: ALL_CONDITIONS_MET_NOT_BLOCKED_AT_ACTIVATION
+
+allowed_delta:
+  modified_files:
+    - decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md（仅 YAML 状态块：status/product_semantics_confirmation 字段，§三至§八正文字节不变）
+    - PROJECT_INDEX.md（仅状态字符串）
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+  everything_else: FORBIDDEN
+
+protected_assets: [四份 V1_M0_SHARED_CONTRACT_*_v0.1.md（含八项能力合同正文）, 上位产品合同, 下位合同v0.1与v0.2,
+  两份EP-00报告, 前言正文§三至§八, decision-chain/skills, decision-chain/workflows, content-production/skills,
+  content-production/workflows, tools, M3项目外研究资料包, 全部M1-M4工程实现]
+
+terminal_rule:
+  forbidden: [PARTIAL, 重审32项合同值, 编译M1-M4施工Prompt, 授权工程实现, 不经核验照抄Prompt自称的确认历史]
+  on_activation_gate_fail: [BLOCKED, FAILED, INVALID]
+scope_boundary: "只修正前言 YAML 状态字段 + L2 当前投影两处阻塞语言 + PROJECT_INDEX 状态字符串；确认来源必须绑定到 Founder 本次会话内 AskUserQuestion 的真实答复，不得采用 Prompt 自称的历史叙述。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash` | `acea368883b0029a97223ed46b5933c74a86f4d71bfc65729130c42164f674bd` | `re.finditer(r'```yaml\n(.*?)\n```', content, re.DOTALL)` 取本节匹配块，UTF-8 编码后 SHA-256 |
+
+### T-007.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| 前提核验 | Prompt §二声称"Founder 已通过连续动作完成正式确认"且要求执行侧不得再次核验；执行侧对照本会话实际记录判定该历史叙述不成立，未直接执行，改为 `AskUserQuestion` 求证；Founder 选择"我现在就是在确认"，确认来源改记为本次当场答复，日期 2026-08-25 |
+| DS-C01 | **PASS**——`main` 含前言文件，§四/§五正文未改写（仅 YAML 状态块变化） |
+| DS-C02 | **PASS**——前言 `status: "ACTIVE_ON_DEFAULT_BASELINE"`，`product_semantics_confirmation: "FOUNDER_CONFIRMED"`，`engineering_execution_authorized: false` |
+| DS-C03 | **PASS**——L2 §二"下一权限动作"表不再把两项列为待 Founder/规划侧指定归属的阻塞条件（见「状态更正3」） |
+| DS-C04 | **PASS**——L2 同处明确：`MATRIX_INSUFFICIENT_INPUT_ENGINEERING = ASSIGNED_TO_M1_AND_M4_CONSTRUCTION`，M4 主修物理硬停、M1 承接交互/路由、M2/M3 按前言 §五配合 |
+| DS-C05 | **PASS**——PROJECT_INDEX 第 14 行状态字符串同步为 `ACTIVE_ON_DEFAULT_BASELINE — FOUNDER_CONFIRMED`，与前言、L2 一致，无旧状态并排 |
+| DS-C06 | **PASS**——四份共享合同、上位/下位合同、两份 EP-00 执行前后 blob hash 见下表，逐一核对无变化 |
+| DS-C07 | **PASS**——`git diff --stat` 仅含前言/L1/L2/L3/PROJECT_INDEX 五个文件，无工程施工、无新治理文件 |
+| DS-C08 | 见任务分支/远程收口记录（本条随 Git 采用步骤核验，结果写入最终回执） |
+| 受保护资产 blob hash（执行前=执行后，逐一核对一致） | 上位合同 `9a57d255dec44477ceb38f6f61faaa5f43d36343f89803364eac5df6d5fc5ca0`；v0.1下位合同 `a69a467aeca648a5e0a98068278daa6dccca5a5c734fb8dcd93021fe4befbca2`；v0.2下位合同 `677c7f350410b934b5e25caa3cf98f4665a48936588adc66798d093b042ece9d`；通用EP-00 `afea2d975b1e214ee57aaaab3bfaee63bb6d0319403bfe6d8e66285c2b1bce11`；专项EP-00 `921091b5a43fb72371c5c95e6bb07e6ccd87db6baa29fb9cff2716e5dd2fbc4d`；共享合同一 `76b730d47566eccc188e2dbb0c4da2e8aa594936cc813987cc8d0fd7901bd63b`；共享合同二 `6d3fb85ebce417c4d34103775f833656dab7d62e390b0c9ba482ccc9108e8a30`；共享合同三 `67af3e991394fb27964470bcdbf5a46678a494e4045db60eb573b31ea924ee2b`；共享合同四 `108209b52df232e91e06b5726b2c19eb6094f06eb7025971a958750143a172f0` |
+| 任务终态 | 见最终回执 |
