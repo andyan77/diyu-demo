@@ -13,6 +13,7 @@
 | M0.3 四份共享合同（`decision-chain/docs/V1_M0_SHARED_CONTRACT_*_v0.1.md`） | `ACCEPTED` | 授权 M1—M4 施工规划编译，**不授权工程实现本身** |
 | [M1–M4 Phase 0 共享编译前言](decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md) | `ACTIVE_ON_DEFAULT_BASELINE — FOUNDER_CONFIRMED` | 供规划侧编译 M1—M4 各自施工 Execution Prompt 的共同前言；**不构成任何工程实现授权**（`engineering_execution_authorized: false`） |
 | [M1 施工 Execution Prompt v1.2](decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md) | `READY_FOR_FOUNDER_USE` | 规划侧已编译完成并落盘；**工程实现未获授权**（`engineering_execution_authorized_by_prompt_compilation: false`），需 Founder 就 `task_id: DIYU-V1-M1-NATURAL-CONTEXT-001` 另行明确授权执行 |
+| [M2 施工 Execution Prompt v1.1](decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md) | `READY_FOR_FOUNDER_USE` | 规划侧已编译完成并落盘；**工程实现未获授权**（`engineering_execution_performed: false`），需 Founder 就 `task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 另行明确授权执行；文档自证 `task_contract_hash` 与实际内容字节不一致，已由 Founder 确认改以独立复算值 `4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830` 登记（见 [L1 §T-010](collab-ledger/L1_TASK_MANIFESTS.md)） |
 
 - **上位合同被接受 ≠ 子合同被接受 ≠ 授权施工。**
 - 阶段为 **V1 决策链重对齐（Rebase）**；A/B 对照阶段已结束并按 `PARTIAL` 冻结。
