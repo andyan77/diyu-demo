@@ -11,11 +11,11 @@
 | `COLLAB-LEDGER-BOOTSTRAP-001` | **v2（当前）§T-001.6** ／ v1（历史）§T-001.1 | v1 §T-001.2（v2 只写收口 Delta 口径，其余继承 v1） | Founder 2026-08-24 明确授权 ＋ 两份收口 Delta | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-REBASE-EP00-CURRENT` | §T-002.1（当前） | §T-002.2 | 上位合同 `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` ＋ Founder 2026-08-24 M0 Execution Prompt（审查修订版，含 A16 新增项） | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | §T-003.1（当前） | §T-003.2 | Founder 2026-08-24 M0 · EP-00 采用、当前状态纠偏与默认基线收口 Execution Prompt | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
-| `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | §T-004.1（当前） | §T-004.2 | Founder 2026-08-24《M0.1B 下位单账号合同定向修订》Execution Prompt（F-01～F-09） | 见 [L3](L3_ATTEMPTS_AND_EVIDENCE.md)；独立任务分支，不写入 L2（未合并 main，不改变项目当前状态投影） |
-| `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | **不得编译** | **无** —— 子合同 `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** | 不可开工 |
+| `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | v2（当前）§T-004.3 ／ v1（历史）§T-004.1 | §T-004.2（v2 只写 Delta，其余继承 v1） | Founder 2026-08-24《M0.1B 下位单账号合同定向修订》Execution Prompt（F-01～F-09）＋ 后续四项定向纠偏与 F-10 Delta ＋ Founder 2026-08-24 明确接受（§T-004.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4）——**已构成本项只读预检的合同依据**，但**尚无独立 Execution Prompt，不得自行开工** | 依据已就位、未开工。实质工作并入唯一后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（尚无完整 Prompt） |
 
-> **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**
-> 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级。
+> **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
+> 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
 
 ---
 
