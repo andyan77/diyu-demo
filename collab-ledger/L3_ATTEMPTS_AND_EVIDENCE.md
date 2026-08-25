@@ -1635,3 +1635,77 @@ Phase B 状态：`DONE`（四份共享合同草稿完成并修复，不表示已
 | v0.1/v0.2/通用 EP-00 完整性 | 合并后重算 blob hash，逐字未动（v0.1 `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c`；v0.2 `b0cfbaf6146def8e5f07782e5e82313adc6f1e6e`；通用 EP-00 `09d0a03a05fc70e2698ff3bb1d31269e089cab48`） |
 | 来源分支 | `task/v1-m0-slice-preflight-and-shared-contract-closeout-001` 保留未删除 |
 | 结论 | ATT-003 全部处置已推送并经远端核验。`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 收口，终态见 [L2 §一.7](L2_TASK_STATE_AND_HANDOFF.md) |
+
+---
+
+## 八、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`
+
+### ATT-001（唯一尝试，终态 `BLOCKED`）
+
+| 项 | 值 |
+|---|---|
+| 起算基线 | `main @ cba3a30054acfc703464d62266b4c68ec4b55d66`（本地/远程一致，工作区 clean，与规划观察点无漂移） |
+| 任务分支 | `task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001` |
+
+#### ATT-001.1 执行前只读核验
+
+| 检查项 | 结果 |
+|---|---|
+| 仓库 URL / 本地分支 / HEAD | `andyan77/diyu-demo`；`main`；`cba3a30054acfc703464d62266b4c68ec4b55d66` |
+| `git fetch origin main` | 首次因沙箱网络白名单拦截报错（`Couldn't connect to server`），确认是沙箱限制后以 `dangerouslyDisableSandbox` 重试成功 |
+| `origin/main` | `cba3a30054acfc703464d62266b4c68ec4b55d66`，与本地一致，与规划附件声明的 `planning_observed_origin_main` 一致，**无漂移** |
+| 工作区 | `git status --porcelain` 输出 0 行，clean |
+| 其他 worktree | 4 个，均为无关历史分支，未触碰 |
+| 六份冻结真源文件 | 全部存在，blob hash 已记录于 [L1 §T-006.2](L1_TASK_MANIFESTS.md) |
+| 目标前言文件 | 执行前不存在（符合预期，本任务负责新增） |
+
+#### ATT-001.2 附件校验（阻塞点）
+
+Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或不等于冻结值 `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6` 时停止采用分支、如实判 `BLOCKED`、不得自行修复或重建附件。
+
+先按 Zero-Guess 规则查证是否存在真实附件文件（而非仅聊天正文），排查结果：
+
+- `find /home/faye -iname "*SHARED_PREAMBLE*" -o -iname "*M1_M4*"`：无命中
+- `~/Desktop`、`~/桌面`、`~/Downloads`：均不存在
+- `git status`：无未追踪文件
+- 结论：**没有独立于聊天消息的附件文件**，"附件"只能是 Execution Prompt 消息正文内联的那段文字
+
+进一步核验该内联文字是否可能就是真实字节（而非渲染转写）：抽查已采用真源 `decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md` 的原始字节（`cat -A`），确认本仓库全部已采用 markdown 文档统一使用 `#`/`##` 标题、`>` 引用块、`**` 加粗、`\|` 表格、`---` 分隔线等标准语法。而收到的前言正文（含其中应为表格的"窗口/模块/唯一核心责任/不得越界"四列内容、应为代码围栏的 yaml 块）**完全不含**任何上述符号，是连续段落体。
+
+**结论**：收到的文本是聊天渲染后的纯文本转写，不是附件的原始字节；无法据此计算出等于冻结值的 SHA-256；若自行补全 markdown 语法再计算哈希，等同于"自行修复或重建附件"，Prompt §2 明文禁止。判定 `ATTACHMENT_UNVERIFIABLE_TREATED_AS_MISSING`。
+
+#### ATT-001.3 不依赖阻塞项的已完成工作
+
+按 Prompt §1"缺附件…且已完成所有不依赖该阻塞的工作，判 BLOCKED"的要求，核对哪些 P0-C 验收项不依赖附件字节：
+
+| 验收项 | 是否依赖附件 | 处置 |
+|---|---|---|
+| P0-C04（L2 纠正 M1-M4 工程授权状态与模块职责映射） | **否**——两项内容均由 Execution Prompt 正文（非附件）直接给出 | **已完成**，见下 |
+| P0-C02/C03/C09/C10/C11 | 是——需要前言文件真实字节或其采用后的最终 main | 未做，随 P0-A/P0-B 一并阻塞 |
+| P0-C01/C06/C07/C08 | 部分依赖（远程收口/桌面包依赖 P0-A 完成） | 未做 |
+
+`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 收口时在 [L2 §一.7](L2_TASK_STATE_AND_HANDOFF.md) `next_stage_allowed` 行与 [L1 §T-005.4](L1_TASK_MANIFESTS.md) 触发的状态变化行都写入了 `M1-M4_ENGINEERING_EXECUTION = AUTHORIZED_BY_FOUNDER`——与该任务自身反复强调的"本次接受不授权 M1—M4 工程实现本身"直接矛盾，是真实的当前投影错误。同一位置的 M1-M4 模块职责映射（"M1=业务持久化／M2=写回权限恢复实现"）也与本 Prompt §二冻结的四窗口定义不符（M1 实为"自然交互/任务上下文/能力路由"，业务持久化是 M2 的职责）。
+
+处置：
+
+1. [L2_TASK_STATE_AND_HANDOFF.md](L2_TASK_STATE_AND_HANDOFF.md) §一.7 `next_stage_allowed` 行：`M1-M4_ENGINEERING_EXECUTION` 由 `AUTHORIZED_BY_FOUNDER` 更正为 `NOT_AUTHORIZED`。
+2. [L2_TASK_STATE_AND_HANDOFF.md](L2_TASK_STATE_AND_HANDOFF.md) §二"下一权限动作"表：M1-M4 模块职责列由误写内容更正为 Prompt §二冻结的四窗口定义。
+3. L1 §T-005.4 的同一处错误文字**未改动**——该单元格属于 L1 的历史留痕（Founder 接受记录），按 canonical 规则追加式、只加不改；本次只在新增的 [L1 §T-006](L1_TASK_MANIFESTS.md) 中记录发现与更正依据，不回改历史记录本身。
+
+未触发独立复核子代理——两处修改均为对照 Prompt 正文的直接文本核对，无需要多角度审查的实质判断空间。
+
+#### ATT-001.4 结论
+
+`P0-A` 与 `P0-B` 判 `BLOCKED`；已完成的独立工作（L2 两处纠偏）已提交并推送到任务分支 `task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001`，**未合并进 `main`**——Prompt §5 的"Git 采用与远程收口"以完整 P0 交付为前提，本次未达成，不触发该流程。终态记录见 [L1 §T-006.2](L1_TASK_MANIFESTS.md)、[L2 §一.8](L2_TASK_STATE_AND_HANDOFF.md)。
+
+### ATT-002（附件补齐后的续跑，P0-A 完成）
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder 2026-08-25 会话内消息提供真实附件文件，放置于仓库根目录 |
+| 起算 | 沿用 ATT-001 任务分支 `task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001`，未新建分支、未重跑 L2 两处纠偏 |
+| 附件复核 | `sha256sum V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md` → `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`，与冻结值逐字节一致；内容抽查确认标准 markdown 语法齐全，印证 ATT-001 的"聊天转写非原始字节"判断成立 |
+| 内容一致性核查 | Prompt §3 六项检查全部通过（非第五份合同声明／八项能力四要素齐全／七项承接原则／Matrix 降级与四模块承接／物理实现留给后续施工／工程未授权声明），详见 [L1 §T-006.3](L1_TASK_MANIFESTS.md)。全篇 369 行直接通读核对，未发现与六份冻结真源冲突，未触发独立复核子代理 |
+| 写入 | `mv` 移动（非复制）至 `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`，移动后重算哈希不变；清理随文件带来的 Windows `:Zone.Identifier` 元数据残留（非内容，不采用） |
+| 索引 | [PROJECT_INDEX.md](../PROJECT_INDEX.md) 新增两处指针（§〇当前阶段表 + 资产定位表），均只登记路径/状态/"不构成工程授权"说明，未复制前言正文；`CLAUDE.md`／`README.md`／`笛语项目基线.md` 现有"下一步"表述已准确（M1—M4 施工 Execution Prompt 待规划侧编译），未因遗漏本前言而误导，按 Prompt §4.2"只在确实误导时才改"未触碰，避免顺手重构 |
+| 结论 | `P0-A` 判 `DONE`。下一步：随本次内容一并把任务分支合并进 `main`（见 [L5](L5_SIDE_EFFECTS.md)），随后以最终 `main` commit 为源执行 P0-B 桌面资料包，结果写入本任务最终回执 |
