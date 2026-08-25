@@ -1071,4 +1071,6 @@ scope_boundary: "只做只读预检、四个共享合同起草、一次定向一
 | Phase A 交付 | [`V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md) |
 | Phase A 状态 | **`DONE`** —— 定向语义审查（general-purpose 子代理，检查项：引用准确性/内部一致性/范围边界/复用有效性声明/F-10风险分析可靠性）查出 11 处真实问题（含 1 处实质性分析缺陷：风险 C 结论遗漏 Matrix 整任务硬停这一已存在的过度阻塞实例），已全部修复；按验证预算未触发第二轮全文审查，只做修复点自检（grep 确认残留问题短语清零） |
 | Phase A 报告 blob hash（冻结值，供 Phase B 引用） | `8134ce00645dd86cea6cc7b6d8d6933f762c68a5` |
-| Phase B/C/D | 未开始 |
+| Phase B 交付 | 四份共享合同（已修复）：[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)（`e92100fb66c56b335ca54ceecd260abef984b4a3`）、[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)（`ce96a5ff18743d648f50e53cc8e79ab0207c66f2`）、[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)（`b8adc95284f0310657de0a3505d685b90130748c`）、[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)（`c39b69a661d5fb5e2abb20f8b6d2bf998ec65e2e`） |
+| Phase B 状态 | **`DONE`** —— 一次定向一致性检查（检查项 A-G）查出 8 处问题（含 1 处严重：§8.7 门禁清单被静默删除；2 处双重真源；2 处孤儿 M1-M4 要求；1 处运营效果护栏缺失；2 处引用/裁决主体错误）全部修复；按验证预算未触发第二轮 |
+| Phase C/D | 未开始 |
