@@ -9,7 +9,8 @@
 | 合同 | 状态 | 授权范围 |
 |---|---|---|
 | [V1 决策链改造产品合同（上位）](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) | `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` | **仅 `V1-REBASE-EP00-CURRENT` 只读预检** |
-| [单账号持续运营纵向切片子合同](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | `CONTRACT_REVISION_REQUIRED` | **未被接受，不构成任何授权** |
+| [单账号持续运营纵向切片子合同 v0.2](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED` | 已被 Founder 接受（v0.1 为历史版本） |
+| M0.3 四份共享合同（`decision-chain/docs/V1_M0_SHARED_CONTRACT_*_v0.1.md`） | `ACCEPTED` | 授权 M1—M4 施工规划编译，**不授权工程实现本身** |
 
 - **上位合同被接受 ≠ 子合同被接受 ≠ 授权施工。**
 - 阶段为 **V1 决策链重对齐（Rebase）**；A/B 对照阶段已结束并按 `PARTIAL` 冻结。
@@ -53,7 +54,9 @@
 | 协作规则与硬约束 | [CLAUDE.md](CLAUDE.md) |
 | **换会话接手：任务做到哪／下一步／什么不能碰／哪条路走死** | [collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md](collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md) —— **规则唯一正文**；五本账 [L1](collab-ledger/L1_TASK_MANIFESTS.md)·[L2](collab-ledger/L2_TASK_STATE_AND_HANDOFF.md)·[L3](collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md)·[L4](collab-ledger/L4_FAILED_PATHS.md)·[L5](collab-ledger/L5_SIDE_EFFECTS.md) |
 | **决策链改造产品合同（上位，最高真相源）** | [V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) —— `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED`，**只授权 `V1-REBASE-EP00-CURRENT` 只读预检** |
-| **单账号持续运营纵向切片子合同（待接受）** | [V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) —— `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** |
+| **单账号持续运营纵向切片子合同（已接受）** | [V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) —— `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`；[v0.1](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) 为历史版本，逐字保留 |
+| **M0.3 四份共享合同（已接受）** | [任务上下文快照](decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md) —— 授权 M1—M4 施工规划编译，不授权工程实现本身 |
+| **单账号纵向切片专项预检（已完成）** | [V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md) |
 | **决策链当前阶段基线** | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md) |
 | 决策链 A/B 阶段历史基线（`PARTIAL`，原样保留） | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md) |
 | **对话编排修复 001 运行证据（A-0～A-4 真实对话，`DONE`）** | [V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md](decision-chain/evidence/V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md) —— 测试目录的承接见 [V1_NATURAL_LANGUAGE_TEST_CATALOG_v0.1.md](decision-chain/docs/V1_NATURAL_LANGUAGE_TEST_CATALOG_v0.1.md) 承接附录 |

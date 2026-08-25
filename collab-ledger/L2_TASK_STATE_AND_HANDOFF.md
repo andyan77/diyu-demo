@@ -21,6 +21,7 @@
 | `V1-REBASE-EP00-CURRENT` | **已终结 `DONE`**（见 §一.3） | [L1 §T-002](L1_TASK_MANIFESTS.md) · [L3 §四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（实际执行基线，见 §一.3） |
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.4） | [L1 §T-003](L1_TASK_MANIFESTS.md) · [L3 §五 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（起算；终态见 §一.4） |
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | **已终结 `DONE`**（见 §一.5） | [L1 §T-004](L1_TASK_MANIFESTS.md) · [L3 §六 ATT-001～003](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ f94d7a7`（起算；终态见 §一.5） |
+| `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.7） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算；终态见 §一.7） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -76,6 +77,27 @@
 | Checkpoint | **无**。本任务已终结，全程未被中断 |
 | 已知不做的事 | 本次接受**不**触发 `SINGLE-ACCOUNT-SLICE-EP00` 自动开工、**不**触发四个共享合同冻结、**不**触发 M1—M5 |
 
+### 一.6 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（本条记录截至 Phase C 等待期的状态，历史原文保留；终态见 §一.7）
+
+| 项 | 值 |
+|---|---|
+| 状态 | **`IN_PROGRESS`**（截至本条写入时）—— Phase A/B/C 已完成，等待 Founder 对四份共享合同的阶段裁决 |
+| 授权 | Founder 2026-08-24 完整 Execution Prompt《M0.2B 专项预检、M0.3 共享合同与 M0 收口》；激活门 §2 全部条件已核验通过（见 [L1 §T-005.1](L1_TASK_MANIFESTS.md) `activation_gate_verified_at_execution`），非 `BLOCKED` |
+| Checkpoint | 见 §四「非终态 Checkpoint 区」——已于 Founder 2026-08-25 回答后解除 |
+| 下一动作 | 见 §一.7（已获裁决并终结） |
+
+### 一.7 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（终态，追加于 §一.6 之后，不覆盖 §一.6）
+
+| 项 | 值 |
+|---|---|
+| 状态 | **`DONE`** —— Phase A（专项预检，一次定向审查查出 11 处问题全部修复）、Phase B（四份共享合同，一次定向一致性检查查出 8 处问题全部修复）、Phase C（Founder 阶段裁决：**A. 接受，授权 M1–M4 施工规划编译**）、Phase D（状态更正 + 根索引同步 + 采用进 `main`）全部完成 |
+| 实际执行基线 | `main @ 0eba71a85916d4d993313c015dc8ad87f180d4de` |
+| 终结依据 | [L1 §T-005.1～T-005.4](L1_TASK_MANIFESTS.md)；[L3 §七 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 最终交付引用 | [`SINGLE-ACCOUNT-SLICE-EP00 专项预检`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)；四份共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)），均 `ACCEPTED`（Founder 2026-08-25 明确回答"A"后由该回答触发，非执行侧自行推高，见 [L1 §T-005.4](L1_TASK_MANIFESTS.md)） |
+| next_stage_allowed | **`true:M1—M4 施工规划 Execution Prompt 编译`**——`M1-M4_PLANNING_PROMPT_COMPILATION = AUTHORIZED`；`M1-M4_ENGINEERING_EXECUTION = AUTHORIZED_BY_FOUNDER`，但**本任务本身不构成 M1–M4 工程实现的授权 Prompt**，规划侧须为 M1—M4 分别编译独立 Execution Prompt，执行侧不得自行编写 |
+| Checkpoint | **无**。Phase C 等待期 Checkpoint 已于 Founder 回答后解除，本任务现已终结 |
+| 已知不做的事 | 本次接受**不**授权 M1—M4 工程实现本身；**不**授权任何 Skill／DSL／Dify 工作流／数据库改动；两处"具体承接方未指定"的缺口（四类合同填值、Matrix 整任务硬停处置）已登记在共享合同二内，**不由本任务代为指定** |
+
 ---
 
 ## 二、项目当前可执行动作（Current Handoff）
@@ -90,15 +112,15 @@
 |---|---|---|---|---|---|---|
 | `NONE` | — | — | — | — | — | — |
 
-**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 均已终结 `DONE`（见 §一），新会话**不需要、也不应该**重跑其中任何一个。
+**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 均已终结 `DONE`（见 §一），新会话**不需要、也不应该**重跑其中任何一个。**M0 已全部完成。**
 
-**已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 [`V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md)（已 `ACCEPTED`）。原"Founder 审阅并裁决 EP-00 §十一"这一权限动作**已完成**，不再是待办项。
+**已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 
 **下一权限动作**（不是可执行工程任务，执行侧不得自行开工）：
 
 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|
-| Founder 下发完整 Execution Prompt | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（唯一后继任务，统一承接 `SINGLE-ACCOUNT-SLICE-EP00` 专项预检 → M0.3 四个共享合同 → Founder 阶段接受 → M0 收口） | 已接受的 [下位合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md)（`ACCEPTED`）＋ 已采用的 [通用 EP-00 报告](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md) | Founder 下发该任务的完整 Execution Prompt（目前只有名称与一句话范围，执行侧**不得**据一句话范围自行编写并开工，**不得**自行推断其验收标准） |
+| 规划侧编译 M1—M4 施工 Execution Prompt | M1（业务持久化）／M2（写回权限恢复实现）／M3（单账号持续运营能力）／M4（其余 M1–M4 边界事实所归属的施工项，具体划分由规划侧依据四份共享合同 §五/边界表决定，本行不预判） | 四份已接受的共享合同（[任务上下文快照](../decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](../decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](../decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](../decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md)）＋ 两类 EP-00 证据（[通用](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)／[专项](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） | 规划侧分别产出 M1—M4 各自的完整 Execution Prompt；**执行侧不得自行编写或推断这些 Prompt，也不得据本条自行开工任何 M1–M4 工程实现**——两处尚未指定承接方的缺口（共享合同二"四类合同具体值填写"与"Matrix 整任务硬停处置"）须先由 Founder 或规划侧指定归属 |
 
 ---
 
@@ -106,8 +128,8 @@
 
 | 项 | 为什么不能开工 |
 |---|---|
-| `SINGLE-ACCOUNT-SLICE-EP00`（子合同专项预检） | 下位合同已升级到 [v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md)，状态 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 明确接受）——**依据已就位**，但仍不构成活动任务：**尚无独立 Execution Prompt**，实质工作已并入唯一后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（同样尚无完整 Prompt，见 §二） |
-| Skill 修改／DSL 改造／业务持久化建设／Dify 工作流施工 | 上位合同**只授权只读预检**。**文档语义对齐不等于授权施工。** |
+| `SINGLE-ACCOUNT-SLICE-EP00`（子合同专项预检） | **已完成**（[V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)，作为 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` Phase A 交付），不再是待办项，列在此处仅防止误重跑 |
+| Skill 修改／DSL 改造／业务持久化建设／Dify 工作流施工（M1—M4 工程实现本身） | 四份共享合同已被接受，**M1—M4 施工规划编译已获授权**，但**工程实现本身仍需各自独立的 Execution Prompt 与 Founder 授权**——共享合同接受 ≠ 施工授权 |
 | [生产差距登记](../decision-chain/docs/V1_PRODUCTION_GAP_REGISTER_v0.1.md) G-01～G-12 | 均未关闭，但它们是**开放 Gap，不是已授权任务**，也**不是**已排除路线（见 [L4](L4_FAILED_PATHS.md)） |
 | `AO-EP00-HISTORICAL`（`feature/account-operation-v1 @ df94ed1`） | **只作历史参考**，不得冒充当前预检，不得直接合入 `main` |
 
@@ -117,5 +139,4 @@
 
 `NONE_VERIFIED_SINCE_BASELINE`
 
-自起算基线 `6ae78ab` 起，**没有任何任务处于「开工后被中断」状态**，因此没有 Checkpoint。
-（`V1-REBASE-EP00-CURRENT` 是**从未启动**，不属于此类；见 §一.2。）
+`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。**当前没有任何任务处于「开工后被中断」状态。**
