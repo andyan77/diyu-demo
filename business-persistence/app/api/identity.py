@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_workspace
+from app.api.deps import MembershipContext, require_membership
 from app.api.serialize import row_to_dict
 from app.db import get_db
 from app.models.identity import Account, Subject, User, Workspace, WorkspaceMembership
@@ -78,7 +78,7 @@ def create_subject(
     workspace_id: uuid.UUID,
     body: CreateSubjectRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    _ctx: MembershipContext = Depends(require_membership),
 ):
     subject = Subject(workspace_id=workspace_id, name=body.name, kind=body.kind)
     db.add(subject)
@@ -98,8 +98,13 @@ def create_account(
     workspace_id: uuid.UUID,
     body: CreateAccountRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    _ctx: MembershipContext = Depends(require_membership),
 ):
+    if body.subject_id is not None:
+        subject = db.get(Subject, body.subject_id)
+        if subject is None or subject.workspace_id != workspace_id:
+            raise HTTPException(status_code=404, detail="subject_id not found in this workspace")
+
     existing = db.execute(
         select(Account).where(
             Account.workspace_id == workspace_id,
@@ -125,7 +130,7 @@ def create_account(
 def list_accounts(
     workspace_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    _ctx: MembershipContext = Depends(require_membership),
 ):
     rows = db.execute(select(Account).where(Account.workspace_id == workspace_id)).scalars().all()
     return [row_to_dict(a) for a in rows]

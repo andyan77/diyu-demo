@@ -3,9 +3,10 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_workspace
+from app.api.deps import MembershipContext, require_membership
 from app.api.serialize import row_to_dict
 from app.db import get_db
 from app.models.content import (
@@ -15,7 +16,6 @@ from app.models.content import (
     Material,
     Task,
 )
-from app.models.identity import Workspace
 from app.services.versioning import promote_version, withdraw_material
 
 router = APIRouter(tags=["content"])
@@ -33,7 +33,7 @@ def create_artifact(
     task_id: uuid.UUID,
     body: CreateArtifactRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     task = db.get(Task, task_id)
     if task is None or task.workspace_id != workspace_id:
@@ -62,6 +62,7 @@ def _require_artifact_in_workspace(db: Session, workspace_id: uuid.UUID, artifac
 
 
 class CreateVersionRequest(BaseModel):
+    idempotency_key: str
     content_ref: str | None = None
     content_hash: str
     produced_by: str | None = None
@@ -74,13 +75,40 @@ def create_version(
     artifact_id: uuid.UUID,
     body: CreateVersionRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     """Create a new candidate version. Never touches is_current -- promotion
     is a separate, explicit, auditable action (see promote_content_version).
+
+    Every material_id must belong to this workspace AND not be withdrawn --
+    without that second check a version could be created (or a withdrawn
+    material silently re-used) after withdrawal, bypassing the whole
+    withdraw-cascades-to-invalidation mechanism in withdraw_material.
     """
 
     _require_artifact_in_workspace(db, workspace_id, artifact_id)
+
+    existing = db.execute(
+        select(ContentVersion).where(
+            ContentVersion.artifact_id == artifact_id,
+            ContentVersion.idempotency_key == body.idempotency_key,
+        )
+    ).scalar_one_or_none()
+    if existing:
+        return row_to_dict(existing)
+
+    materials = []
+    for material_id in body.material_ids:
+        material = db.get(Material, material_id)
+        if material is None or material.workspace_id != workspace_id:
+            raise HTTPException(
+                status_code=404, detail=f"material {material_id} not found in this workspace"
+            )
+        if material.withdrawn_at is not None:
+            raise HTTPException(
+                status_code=409, detail=f"material {material_id} has been withdrawn"
+            )
+        materials.append(material)
 
     next_no = (
         db.execute(
@@ -98,20 +126,31 @@ def create_version(
         content_ref=body.content_ref,
         content_hash=body.content_hash,
         produced_by=body.produced_by,
+        idempotency_key=body.idempotency_key,
     )
     db.add(version)
     db.flush()
 
-    for material_id in body.material_ids:
-        if db.get(Material, material_id) is None:
-            raise HTTPException(status_code=404, detail=f"material {material_id} not found")
+    for material in materials:
         db.add(
             ContentVersionMaterialDependency(
-                content_version_id=version.id, material_id=material_id
+                content_version_id=version.id, material_id=material.id
             )
         )
 
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        existing = db.execute(
+            select(ContentVersion).where(
+                ContentVersion.artifact_id == artifact_id,
+                ContentVersion.idempotency_key == body.idempotency_key,
+            )
+        ).scalar_one_or_none()
+        if existing:
+            return row_to_dict(existing)
+        raise
     db.refresh(version)
     return row_to_dict(version)
 
@@ -121,7 +160,7 @@ def list_versions(
     workspace_id: uuid.UUID,
     artifact_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     _require_artifact_in_workspace(db, workspace_id, artifact_id)
     rows = db.execute(
@@ -137,7 +176,7 @@ def get_current_version(
     workspace_id: uuid.UUID,
     artifact_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     _require_artifact_in_workspace(db, workspace_id, artifact_id)
     version = db.execute(
@@ -151,7 +190,6 @@ def get_current_version(
 
 
 class PromoteVersionRequest(BaseModel):
-    promoted_by: str
     expected_row_version: int | None = None
 
 
@@ -162,11 +200,20 @@ def promote_content_version(
     version_id: uuid.UUID,
     body: PromoteVersionRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
+    """promoted_by is always the authenticated actor (X-Actor-Ref), never a
+    free-text request field -- a caller could otherwise write any string,
+    including a bare "model:*" self-evaluation, into the audit trail of who
+    promoted a version. A viewer-role member can read everything but may not
+    promote.
+    """
+
+    if ctx.role == "viewer":
+        raise HTTPException(status_code=403, detail="viewer role cannot promote a version")
     _require_artifact_in_workspace(db, workspace_id, artifact_id)
     version = promote_version(
-        db, artifact_id, version_id, body.promoted_by, body.expected_row_version
+        db, artifact_id, version_id, ctx.user.external_ref, body.expected_row_version
     )
     return row_to_dict(version)
 
@@ -186,7 +233,7 @@ def create_material(
     workspace_id: uuid.UUID,
     body: CreateMaterialRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     material = Material(
         workspace_id=workspace_id,
@@ -209,7 +256,7 @@ def get_material(
     workspace_id: uuid.UUID,
     material_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     material = db.get(Material, material_id)
     if material is None or material.workspace_id != workspace_id:
@@ -222,19 +269,18 @@ def get_material(
     return row_to_dict(material)
 
 
-class WithdrawMaterialRequest(BaseModel):
-    withdrawn_by: str
-
-
 @router.post("/workspaces/{workspace_id}/materials/{material_id}/withdraw")
 def withdraw_material_endpoint(
     workspace_id: uuid.UUID,
     material_id: uuid.UUID,
-    body: WithdrawMaterialRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
+    """withdrawn_by is always the authenticated actor (X-Actor-Ref), never a
+    free-text request field -- same rationale as promoted_by above.
+    """
+
     material = db.get(Material, material_id)
     if material is None or material.workspace_id != workspace_id:
         raise HTTPException(status_code=404, detail="material not found in this workspace")
-    return withdraw_material(db, material_id, body.withdrawn_by)
+    return withdraw_material(db, material_id, ctx.user.external_ref)

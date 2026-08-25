@@ -40,6 +40,12 @@ workflow:
         title: M2 六步验收输入
         type: start
         variables:
+        - variable: actor_ref
+          label: Actor Ref（一次性引导脚本已创建的 User.external_ref，必须是该 Workspace 的成员）
+          type: text-input
+          required: true
+          max_length: 128
+          options: []
         - variable: workspace_id
           label: Workspace ID（一次性引导脚本已创建）
           type: text-input
@@ -111,7 +117,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -187,7 +195,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -225,7 +235,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -237,8 +249,8 @@ workflow:
           data:
           - key: ''
             type: text
-            value: '{"account_id": "{{#start_1.account_id#}}", "label": "{{#start_1.idempotency_prefix#}}-cycle",
-              "start_at": "{{#start_1.published_at#}}"}'
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-cycle", "account_id": "{{#start_1.account_id#}}",
+              "label": "{{#start_1.idempotency_prefix#}}-cycle", "start_at": "{{#start_1.published_at#}}"}'
         selected: false
       position:
         x: 1120
@@ -262,7 +274,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -295,7 +309,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -370,7 +386,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -382,8 +400,8 @@ workflow:
           data:
           - key: ''
             type: text
-            value: '{"content_ref": "{{#start_1.content_ref#}}", "content_hash": "{{#start_1.idempotency_prefix#}}-content-hash",
-              "produced_by": "dify-m2-candidate"}'
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-version", "content_ref": "{{#start_1.content_ref#}}",
+              "content_hash": "{{#start_1.idempotency_prefix#}}-content-hash", "produced_by": "dify-m2-candidate"}'
         selected: false
       position:
         x: 2160
@@ -446,7 +464,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -458,7 +478,7 @@ workflow:
           data:
           - key: ''
             type: text
-            value: '{"promoted_by": "dify-m2-candidate-reviewer"}'
+            value: '{}'
         selected: false
       position:
         x: 2680
@@ -482,7 +502,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -559,7 +581,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:
@@ -598,7 +622,9 @@ workflow:
         authorization:
           type: no-auth
           config: null
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
         params: ''
         ssl_verify: false
         timeout:

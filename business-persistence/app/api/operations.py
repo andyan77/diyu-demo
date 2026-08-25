@@ -7,10 +7,10 @@ from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_workspace
+from app.api.deps import MembershipContext, require_membership
 from app.api.serialize import row_to_dict
 from app.db import get_db
-from app.models.identity import Workspace
+from app.models.identity import Account
 from app.models.operations import CampaignOverride, Cycle
 
 router = APIRouter(tags=["operations"])
@@ -20,7 +20,15 @@ def utcnow():
     return datetime.now(timezone.utc)
 
 
+def _require_account_in_workspace(db: Session, workspace_id: uuid.UUID, account_id: uuid.UUID) -> Account:
+    account = db.get(Account, account_id)
+    if account is None or account.workspace_id != workspace_id:
+        raise HTTPException(status_code=404, detail="account not found in this workspace")
+    return account
+
+
 class CreateCycleRequest(BaseModel):
+    idempotency_key: str
     account_id: uuid.UUID
     label: str
     start_at: datetime
@@ -38,7 +46,7 @@ def create_cycle(
     workspace_id: uuid.UUID,
     body: CreateCycleRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     """Create a new cycle and atomically make it the current baseline for
     this account. The previous current cycle (if any) is chained via
@@ -46,8 +54,22 @@ def create_cycle(
     readable. This is the mechanism a Cycle N -> N+1 transition uses.
     """
 
+    _require_account_in_workspace(db, workspace_id, body.account_id)
+
+    existing = db.execute(
+        select(Cycle).where(
+            Cycle.workspace_id == workspace_id, Cycle.idempotency_key == body.idempotency_key
+        )
+    ).scalar_one_or_none()
+    if existing:
+        return row_to_dict(existing)
+
     prior = db.execute(
-        select(Cycle).where(Cycle.account_id == body.account_id, Cycle.is_current.is_(True))
+        select(Cycle).where(
+            Cycle.workspace_id == workspace_id,
+            Cycle.account_id == body.account_id,
+            Cycle.is_current.is_(True),
+        )
     ).scalar_one_or_none()
 
     cycle = Cycle(
@@ -56,6 +78,7 @@ def create_cycle(
         label=body.label,
         start_at=body.start_at,
         end_at=body.end_at,
+        idempotency_key=body.idempotency_key,
         baseline_capacity=body.baseline_capacity,
         baseline_capacity_source=body.baseline_capacity_source,
         actual_capacity=body.actual_capacity,
@@ -78,6 +101,13 @@ def create_cycle(
         db.commit()
     except IntegrityError:
         db.rollback()
+        existing = db.execute(
+            select(Cycle).where(
+                Cycle.workspace_id == workspace_id, Cycle.idempotency_key == body.idempotency_key
+            )
+        ).scalar_one_or_none()
+        if existing:
+            return row_to_dict(existing)
         raise HTTPException(
             status_code=409,
             detail="concurrent modification: another cycle transition won the race; retry",
@@ -91,7 +121,7 @@ def get_current_cycle(
     workspace_id: uuid.UUID,
     account_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     cycle = db.execute(
         select(Cycle).where(
@@ -110,7 +140,7 @@ def list_cycles(
     workspace_id: uuid.UUID,
     account_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     rows = db.execute(
         select(Cycle)
@@ -135,11 +165,17 @@ def create_campaign_override(
     workspace_id: uuid.UUID,
     body: CreateCampaignOverrideRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
+    _require_account_in_workspace(db, workspace_id, body.account_id)
+
     cycle = db.get(Cycle, body.cycle_id)
     if cycle is None or cycle.workspace_id != workspace_id:
         raise HTTPException(status_code=404, detail="cycle not found in this workspace")
+    if cycle.account_id != body.account_id:
+        raise HTTPException(
+            status_code=422, detail="cycle_id does not belong to the given account_id"
+        )
 
     override = CampaignOverride(
         workspace_id=workspace_id,
@@ -163,7 +199,7 @@ def end_campaign_override(
     workspace_id: uuid.UUID,
     override_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     """Ends (or cancels) an override. Idempotent: ending an already-ended
     override just returns its current state. Does NOT touch the cycle
@@ -177,9 +213,16 @@ def end_campaign_override(
         raise HTTPException(status_code=404, detail="campaign_override not found")
     if override.status != "active":
         return row_to_dict(override)
-    override.status = "ended"
-    override.ended_at = utcnow()
-    override.row_version += 1
+
+    result = db.execute(
+        update(CampaignOverride)
+        .where(CampaignOverride.id == override_id, CampaignOverride.status == "active")
+        .values(status="ended", ended_at=utcnow(), row_version=CampaignOverride.row_version + 1)
+    )
+    if result.rowcount == 0:
+        db.rollback()
+        db.refresh(override)
+        return row_to_dict(override)
     db.commit()
     db.refresh(override)
     return row_to_dict(override)
@@ -190,7 +233,7 @@ def get_active_overrides(
     workspace_id: uuid.UUID,
     account_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     rows = db.execute(
         select(CampaignOverride).where(

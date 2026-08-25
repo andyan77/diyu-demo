@@ -1,12 +1,11 @@
 import uuid
-from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey, Index, Numeric, String, text
+from sqlalchemy import ForeignKey, Index, Numeric, String, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, CreatedAtMixin, OptimisticVersionMixin, UUIDPKMixin
+from app.models.base import Base, CreatedAtMixin, OptimisticVersionMixin, UUIDPKMixin, tz_datetime_column
 
 
 class Cycle(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
@@ -28,6 +27,9 @@ class Cycle(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
         Index(
             "uq_cycle_current", "account_id", unique=True, postgresql_where=text("is_current")
         ),
+        UniqueConstraint(
+            "workspace_id", "idempotency_key", name="uq_cycle_workspace_idempotency"
+        ),
     )
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(
@@ -37,8 +39,9 @@ class Cycle(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
         UUID(as_uuid=True), ForeignKey("accounts.id"), nullable=False
     )
     label: Mapped[str] = mapped_column(String(255), nullable=False)
-    start_at: Mapped[datetime] = mapped_column(nullable=False)
-    end_at: Mapped[Optional[datetime]] = mapped_column()
+    start_at = tz_datetime_column(nullable=False)
+    end_at = tz_datetime_column(nullable=True)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))
 
     baseline_capacity: Mapped[Optional[int]] = mapped_column(Numeric)
     baseline_capacity_source: Mapped[Optional[str]] = mapped_column(String(255))
@@ -77,11 +80,11 @@ class CampaignOverride(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin
         UUID(as_uuid=True), ForeignKey("cycles.id"), nullable=False
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    scope_start: Mapped[datetime] = mapped_column(nullable=False)
-    scope_end: Mapped[Optional[datetime]] = mapped_column()
+    scope_start = tz_datetime_column(nullable=False)
+    scope_end = tz_datetime_column(nullable=True)
     targeted_positions: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     rationale: Mapped[Optional[str]] = mapped_column(String)
 
     # free text: "active" | "ended" | "cancelled" -- not a physical enum
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="active")
-    ended_at: Mapped[Optional[datetime]] = mapped_column()
+    ended_at = tz_datetime_column(nullable=True)

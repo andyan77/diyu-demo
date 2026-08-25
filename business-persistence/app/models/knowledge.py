@@ -1,12 +1,11 @@
 import uuid
-from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import ForeignKey, Index, String, text
+from sqlalchemy import ForeignKey, Index, String, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, CreatedAtMixin, OptimisticVersionMixin, UUIDPKMixin
+from app.models.base import Base, CreatedAtMixin, OptimisticVersionMixin, UUIDPKMixin, tz_datetime_column
 
 
 class MarketObservation(Base, UUIDPKMixin, CreatedAtMixin):
@@ -25,13 +24,13 @@ class MarketObservation(Base, UUIDPKMixin, CreatedAtMixin):
     )
     source: Mapped[Optional[str]] = mapped_column(String(255))
     platform: Mapped[Optional[str]] = mapped_column(String(64))
-    collected_at: Mapped[datetime] = mapped_column(nullable=False)
+    collected_at = tz_datetime_column(nullable=False)
     applicable_track: Mapped[Optional[str]] = mapped_column(String(255))
     scope_ref: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     mechanism_summary: Mapped[Optional[str]] = mapped_column(String(4096))
     # raw | analysis | homogeneous_judgment
     layer: Mapped[str] = mapped_column(String(32), nullable=False, default="raw")
-    valid_until: Mapped[Optional[datetime]] = mapped_column()
+    valid_until = tz_datetime_column(nullable=True)
 
 
 class Playbook(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
@@ -52,6 +51,9 @@ class Playbook(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
             unique=True,
             postgresql_where=text("is_current"),
         ),
+        UniqueConstraint(
+            "workspace_id", "idempotency_key", name="uq_playbook_workspace_idempotency"
+        ),
     )
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(
@@ -64,8 +66,9 @@ class Playbook(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
     scope_ref: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     observation_status: Mapped[Optional[str]] = mapped_column(String(1024))
     rationale: Mapped[Optional[str]] = mapped_column(String(4096))
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))
 
     supersedes_playbook_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True), ForeignKey("playbooks.id")
     )
-    superseded_at: Mapped[Optional[datetime]] = mapped_column()
+    superseded_at = tz_datetime_column(nullable=True)

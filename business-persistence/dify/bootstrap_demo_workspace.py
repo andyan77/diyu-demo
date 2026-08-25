@@ -20,20 +20,26 @@ def main():
         user = client.post(
             "/users", json={"external_ref": "founder-dify-candidate-demo", "display_name": "Founder (Dify candidate demo)"}
         ).json()
+        actor_ref = user["external_ref"]
         ws = client.post(
             "/workspaces",
             json={"name": "M2 Dify Candidate Demo Workspace", "kind": "personal", "owner_user_id": user["id"]},
         ).json()
+        # every workspace-scoped call requires X-Actor-Ref -- the workspace
+        # owner (this user) is the only member who can call it right after
+        # create_workspace.
         account = client.post(
             f"/workspaces/{ws['id']}/accounts",
             json={"platform": "test-platform", "handle": "m2-candidate-demo-account"},
+            headers={"X-Actor-Ref": actor_ref},
         ).json()
 
+    print("actor_ref:    ", actor_ref)
     print("user_id:      ", user["id"])
     print("workspace_id: ", ws["id"])
     print("account_id:   ", account["id"])
     print()
-    print("Paste workspace_id and account_id into the Dify Start form.")
+    print("Paste actor_ref, workspace_id and account_id into the Dify Start form.")
 
 
 if __name__ == "__main__":

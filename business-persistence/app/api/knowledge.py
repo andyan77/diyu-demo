@@ -7,10 +7,9 @@ from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.api.deps import require_workspace
+from app.api.deps import MembershipContext, require_membership
 from app.api.serialize import row_to_dict
 from app.db import get_db
-from app.models.identity import Workspace
 from app.models.knowledge import MarketObservation, Playbook
 
 router = APIRouter(tags=["knowledge"])
@@ -36,7 +35,7 @@ def create_market_observation(
     workspace_id: uuid.UUID,
     body: CreateMarketObservationRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     if body.layer not in ("raw", "analysis", "homogeneous_judgment"):
         raise HTTPException(
@@ -63,7 +62,7 @@ def create_market_observation(
 def list_market_observations(
     workspace_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     """Returns every observation with an explicit is_expired flag computed
     against "now" -- a stale observation is never silently presented as
@@ -84,6 +83,7 @@ def list_market_observations(
 
 
 class CreatePlaybookRequest(BaseModel):
+    idempotency_key: str
     name: str
     proposed_by: str | None = None
     scope_ref: dict = {}
@@ -96,14 +96,24 @@ def create_or_version_playbook(
     workspace_id: uuid.UUID,
     body: CreatePlaybookRequest,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     """Creates a new playbook, or a new version of an existing one (matched
     by name within the workspace). The prior current version is chained via
     supersedes_playbook_id, never mutated or deleted -- 打法's professional
     content is whatever the caller (M3/user) proposes; M2 only versions and
-    stores it.
+    stores it. idempotency_key is scoped per-workspace
+    (uq_playbook_workspace_idempotency): a retry with the same key returns
+    the row that retry already created instead of creating a second version.
     """
+
+    existing = db.execute(
+        select(Playbook).where(
+            Playbook.workspace_id == workspace_id, Playbook.idempotency_key == body.idempotency_key
+        )
+    ).scalar_one_or_none()
+    if existing:
+        return row_to_dict(existing)
 
     prior = db.execute(
         select(Playbook).where(
@@ -123,6 +133,7 @@ def create_or_version_playbook(
         observation_status=body.observation_status,
         rationale=body.rationale,
         supersedes_playbook_id=prior.id if prior else None,
+        idempotency_key=body.idempotency_key,
     )
     db.add(playbook)
 
@@ -137,6 +148,14 @@ def create_or_version_playbook(
         db.commit()
     except IntegrityError:
         db.rollback()
+        existing = db.execute(
+            select(Playbook).where(
+                Playbook.workspace_id == workspace_id,
+                Playbook.idempotency_key == body.idempotency_key,
+            )
+        ).scalar_one_or_none()
+        if existing:
+            return row_to_dict(existing)
         raise HTTPException(
             status_code=409,
             detail="concurrent modification: another playbook version won the race; retry",
@@ -150,7 +169,7 @@ def get_current_playbook(
     workspace_id: uuid.UUID,
     name: str,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     playbook = db.execute(
         select(Playbook).where(
@@ -169,7 +188,7 @@ def list_playbook_versions(
     workspace_id: uuid.UUID,
     name: str,
     db: Session = Depends(get_db),
-    _ws: Workspace = Depends(require_workspace),
+    ctx: MembershipContext = Depends(require_membership),
 ):
     rows = db.execute(
         select(Playbook)

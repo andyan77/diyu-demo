@@ -18,6 +18,15 @@ def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def tz_datetime_column(**kwargs):
+    """Every business datetime column must be TIMESTAMPTZ, never the bare
+    Python ``datetime`` mapping (which Postgres stores as TIMESTAMP WITHOUT
+    TIME ZONE and silently drops the offset). Use this everywhere instead of
+    a bare ``mapped_column()`` for a datetime field.
+    """
+    return mapped_column(DateTime(timezone=True), **kwargs)
+
+
 class UUIDPKMixin:
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=new_uuid

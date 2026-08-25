@@ -22,13 +22,16 @@ def http_body(json_obj_template: str) -> dict:
 
 
 def http_node(node_id, title, method, url, body_template=None):
+    # Every M2 endpoint now requires X-Actor-Ref (app/api/deps.py:
+    # require_membership) -- the actor collected on the Start node is
+    # forwarded on every call, not just the ones that create records.
     data = {
         "title": title,
         "type": "http-request",
         "method": method,
         "url": url,
         "authorization": {"type": "no-auth", "config": None},
-        "headers": "Content-Type: application/json",
+        "headers": "Content-Type: application/json\nX-Actor-Ref: {{#start_1.actor_ref#}}",
         "params": "",
         "ssl_verify": False,
         "timeout": {"connect": 10, "read": 10, "write": 10},
@@ -84,6 +87,14 @@ add(
             "title": "M2 六步验收输入",
             "type": "start",
             "variables": [
+                {
+                    "variable": "actor_ref",
+                    "label": "Actor Ref（一次性引导脚本已创建的 User.external_ref，必须是该 Workspace 的成员）",
+                    "type": "text-input",
+                    "required": True,
+                    "max_length": 128,
+                    "options": [],
+                },
                 {
                     "variable": "workspace_id",
                     "label": "Workspace ID（一次性引导脚本已创建）",
@@ -201,6 +212,7 @@ add(
         API_BASE + "/workspaces/{{#start_1.workspace_id#}}/cycles",
         json.dumps(
             {
+                "idempotency_key": "{{#start_1.idempotency_prefix#}}-cycle",
                 "account_id": "{{#start_1.account_id#}}",
                 "label": "{{#start_1.idempotency_prefix#}}-cycle",
                 "start_at": "{{#start_1.published_at#}}",
@@ -247,6 +259,7 @@ add(
         + "/workspaces/{{#start_1.workspace_id#}}/artifacts/{{#code_extract_artifact.artifact_id#}}/versions",
         json.dumps(
             {
+                "idempotency_key": "{{#start_1.idempotency_prefix#}}-version",
                 "content_ref": "{{#start_1.content_ref#}}",
                 "content_hash": "{{#start_1.idempotency_prefix#}}-content-hash",
                 "produced_by": "dify-m2-candidate",
@@ -269,7 +282,9 @@ add(
         API_BASE
         + "/workspaces/{{#start_1.workspace_id#}}/artifacts/{{#code_extract_artifact.artifact_id#}}"
         "/versions/{{#code_extract_version.version_id#}}/promote",
-        json.dumps({"promoted_by": "dify-m2-candidate-reviewer"}),
+        # promoted_by is no longer a body field -- the API derives it from
+        # the authenticated X-Actor-Ref header instead of trusting free text.
+        json.dumps({}),
     )
 )
 

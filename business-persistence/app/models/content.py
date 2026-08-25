@@ -1,12 +1,11 @@
 import uuid
-from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import ForeignKey, Index, String, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.base import Base, CreatedAtMixin, OptimisticVersionMixin, UUIDPKMixin
+from app.models.base import Base, CreatedAtMixin, OptimisticVersionMixin, UUIDPKMixin, tz_datetime_column
 
 
 class Task(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
@@ -16,6 +15,10 @@ class Task(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
     __table_args__ = (
         Index("ix_tasks_workspace_id", "workspace_id"),
         Index("ix_tasks_cycle_id", "cycle_id"),
+        # idempotency is scoped to the workspace that issued the key -- a
+        # globally-unique key let workspace A's retry return workspace B's
+        # row when both happened to pick the same string.
+        UniqueConstraint("workspace_id", "idempotency_key", name="uq_task_workspace_idempotency"),
     )
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(
@@ -33,8 +36,8 @@ class Task(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
     # NOT collapsed into this single field, see ContentVersion/PublishInstance
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="open")
     # caller-supplied idempotency key for task creation; a retry with the
-    # same key returns the existing task instead of creating a duplicate
-    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    # same key (within the same workspace) returns the existing task
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))
 
 
 class TaskSnapshot(Base, UUIDPKMixin, CreatedAtMixin):
@@ -49,7 +52,12 @@ class TaskSnapshot(Base, UUIDPKMixin, CreatedAtMixin):
     """
 
     __tablename__ = "task_snapshots"
-    __table_args__ = (Index("ix_task_snapshots_task_id", "task_id"),)
+    __table_args__ = (
+        Index("ix_task_snapshots_task_id", "task_id"),
+        UniqueConstraint(
+            "task_id", "idempotency_key", name="uq_task_snapshot_task_idempotency"
+        ),
+    )
 
     task_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False
@@ -67,7 +75,7 @@ class TaskSnapshot(Base, UUIDPKMixin, CreatedAtMixin):
     # dimension 5: available | expired | withdrawn | unknown
     availability_status: Mapped[str] = mapped_column(String(32), nullable=False, default="available")
 
-    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255), unique=True)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))
 
 
 class Material(Base, UUIDPKMixin, CreatedAtMixin):
@@ -91,7 +99,7 @@ class Material(Base, UUIDPKMixin, CreatedAtMixin):
     scope_ref: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     content_ref: Mapped[Optional[str]] = mapped_column(String(1024))
 
-    withdrawn_at: Mapped[Optional[datetime]] = mapped_column()
+    withdrawn_at = tz_datetime_column(nullable=True)
     withdrawn_by: Mapped[Optional[str]] = mapped_column(String(255))
 
 
@@ -146,11 +154,20 @@ class ContentVersion(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
     atomic promote_version service). Promotion never deletes or overwrites a
     prior current row -- it flips is_current off there and on here in one
     transaction, so history stays fully readable.
+
+    NOTE: promoted_by / invalidated_at being set here only records what
+    happened; nothing in this model enforces WHO may promote or that a
+    promoted version can't later be re-invalidated. That enforcement lives
+    in app/services/versioning.py and app/api/content.py -- read the code
+    there, not this docstring, for the actual guarantee.
     """
 
     __tablename__ = "content_versions"
     __table_args__ = (
         UniqueConstraint("artifact_id", "version_no", name="uq_version_artifact_no"),
+        UniqueConstraint(
+            "artifact_id", "idempotency_key", name="uq_content_version_artifact_idempotency"
+        ),
         Index("ix_content_versions_artifact_id", "artifact_id"),
         Index(
             "uq_content_version_current",
@@ -167,23 +184,28 @@ class ContentVersion(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
     is_current: Mapped[bool] = mapped_column(default=False, nullable=False)
     content_ref: Mapped[Optional[str]] = mapped_column(String(1024))
     content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))
 
     # who/what proposed this candidate -- distinct from who promoted it
     produced_by: Mapped[Optional[str]] = mapped_column(String(255))
-    # human/user decision that promoted this version to current; a model's
-    # own self-evaluation is never a valid promoted_by actor for this field
+    # human/user decision that promoted this version to current, enforced
+    # (workspace member with role != "viewer", never a bare "model:*" actor)
+    # by promote_content_version in app/api/content.py
     promoted_by: Mapped[Optional[str]] = mapped_column(String(255))
-    promoted_at: Mapped[Optional[datetime]] = mapped_column()
-    superseded_at: Mapped[Optional[datetime]] = mapped_column()
+    promoted_at = tz_datetime_column(nullable=True)
+    superseded_at = tz_datetime_column(nullable=True)
 
     # milestones are additive flags, not one exclusive status:
     # "generated/selected/produced/published/observed" can all be true at once
     was_selected: Mapped[bool] = mapped_column(default=False, nullable=False)
     was_produced: Mapped[bool] = mapped_column(default=False, nullable=False)
 
-    # cascading invalidation target: set when a material this version's
-    # artifact depends on is withdrawn. Only ever set on a version that has
-    # no publish_instances yet -- a published version is history and is
-    # never invalidated by a later withdrawal.
-    invalidated_at: Mapped[Optional[datetime]] = mapped_column()
+    # cascading invalidation target: set when a material this version
+    # depends on is withdrawn. app/services/versioning.py's withdraw_material
+    # and app/api/publish.py's register_publish_instance both take a row
+    # lock on this content_version before checking/writing it, so a
+    # published version can never be invalidated by a later withdrawal no
+    # matter how the two requests interleave -- see withdraw_material's
+    # docstring for why that locking is required, not optional.
+    invalidated_at = tz_datetime_column(nullable=True)
     invalidation_reason: Mapped[Optional[str]] = mapped_column(String(1024))

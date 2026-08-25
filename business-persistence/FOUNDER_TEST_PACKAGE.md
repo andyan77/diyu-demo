@@ -2,6 +2,11 @@
 
 `task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`
 
+> 交付前经过一次独立对抗性审查，发现 21 个真实缺陷（6 个阻断级：无身份认证、幂等键跨
+> 租户泄漏、跨 workspace 写入污染、并发下裸 500、撤回-发布竞态污染已发布历史、素材撤回
+> 后仍可被引用），均已修复并实测验证（见 `TECHNICAL_DECISION_RECORD.md` 对应章节）。
+> 下方六步场景已用修复后的版本重新跑通，`Actor Ref` 字段是本轮新增的必填项。
+
 ## 候选应用/工作流身份
 
 - 应用名称：`M2 候选 - 业务持久化六步验收 (DO NOT USE FOR PRODUCTION)`
@@ -13,9 +18,12 @@
 ## 测试身份说明
 
 - 测试用户/workspace/account 由一次性引导脚本创建，**不是**你的真实经营账号：
-  - workspace_id: `64f56e9b-c530-49cf-b670-1b1746de265a`
-  - account_id: `49f6d2b8-488e-4543-8a4d-fad8bd2157b8`
-- 这两个 ID 要粘贴进工作流「运行」时的 Start 表单前两个字段。
+  - actor_ref: `founder-dify-candidate-demo`
+  - workspace_id: `68df687c-a6a9-4593-a772-2d6a8c08fee7`
+  - account_id: `12802f90-3c30-41a0-831d-cfe4e5111915`
+- 这三个值要粘贴进工作流「运行」时的 Start 表单前三个字段。API 现在要求每次调用带一个
+  真实身份（`X-Actor-Ref`）才放行，`actor_ref` 就是这个身份——workflow 里每个 HTTP
+  节点都会自动带上它，你只需要在 Start 表单填一次。
 
 ## 六步场景怎么跑
 
@@ -23,8 +31,9 @@
 
 | 字段 | 填什么 |
 |---|---|
-| Workspace ID | `64f56e9b-c530-49cf-b670-1b1746de265a` |
-| Account ID | `49f6d2b8-488e-4543-8a4d-fad8bd2157b8` |
+| Actor Ref | `founder-dify-candidate-demo` |
+| Workspace ID | `68df687c-a6a9-4593-a772-2d6a8c08fee7` |
+| Account ID | `12802f90-3c30-41a0-831d-cfe4e5111915` |
 | 本次运行标识 | 任意字符串，比如 `founder-test-01`；**每次重新完整跑一遍请换一个新值**（它是幂等键前缀，同一个值第二次运行会直接返回上次的结果而不是真的重新创建） |
 | 首次任务原始诉求 | 随便写一句真实一点的话，比如"帮我看看这周三条内容能不能按时发" |
 | 候选内容引用 | 随便写一个占位引用，比如 `s3://demo/content-001.mp4` |
@@ -45,7 +54,8 @@
    `latest_snapshot.payload.note` 就是你填的"首次任务原始诉求"原文，说明状态真的被存住、
    读回来了，不是每次都是空白
 5. `version_id` —— 真实 UUID
-6. `promote_body` —— `is_current: true`，`promoted_by` 是 `dify-m2-candidate-reviewer`
+6. `promote_body` —— `is_current: true`，`promoted_by` 是 `founder-dify-candidate-demo`
+   （即你填的 Actor Ref 本人——晋升人不再是表单里能随便填的一句话，而是系统按身份认出来的）
 7. `publish_instance_id` —— 真实 UUID
 8. `feedback_body` —— 里面 `is_test: true`、`is_manual_entry: true`，`payload.note`
    就是你填的反馈原文
