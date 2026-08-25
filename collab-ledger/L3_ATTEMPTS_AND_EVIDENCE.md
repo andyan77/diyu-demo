@@ -1340,3 +1340,177 @@ next_stage_allowed = false
 | 缺口 | 处置 |
 |---|---|
 | EP-00 报告 [`V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md) §三「路由与任务上下文（A4）」下存在一处空占位符残留（"> 待并行子任务 `cap-cards-a4a5` 回填。"），与该报告已完成的 A4 正文重复出现 | 报告是**受保护资产**（本任务 `protected_assets` 列内，non_goals 明确禁止修改其事实结论与正文），**不擅自改**。由 C-CONTINUITY 无上下文单元查出，登记报 Founder／下一次触碰该报告的任务裁决是否需要一次极小的编辑性（非事实性）清理 |
+
+---
+
+## 六、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`
+
+### ATT-001 · `V1-M0-1B-SLICE-CONTRACT-REVISION-001` / attempt 1（首次也是唯一一次正式尝试）
+
+| 项 | 值 |
+|---|---|
+| attempt identity | `V1-M0-1B-SLICE-CONTRACT-REVISION-001 / attempt-1` |
+| 任务与输入引用 | [L1 §T-004.1 Task Contract](L1_TASK_MANIFESTS.md) · [§T-004.2 Run Manifest](L1_TASK_MANIFESTS.md) |
+| 起算基线 | `main @ f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`（本地 == 远端，工作区干净，与 Founder Prompt 观测值一致，无漂移） |
+| 实现引用 | [`decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md)（新建候选文件，v0.1 逐字未动）；文末新增「十一、v0.2 本轮定向修订登记」自带 F-01～F-09 映射与 diff 摘要 |
+| 工作流／模型／Checker | 执行总负责人本人完成全部 F-01～F-09 定向修订与证据核对（含 grep 上位/下位合同、EP-00 报告交叉核验）；派发 1 个 `general-purpose` 子代理执行一次定向语义审查（仅检查 Prompt §8 列明的阻断类问题） |
+| 环境 | 本机 WSL2；`git 2.x`；无付费模型调用；无 Dify／数据库访问 |
+| 与上一 Attempt 的实质差异 | **无上一 Attempt** —— `task_entry_mode = NEW_TASK` |
+
+#### ATT-001.1 冻结与哈希登记
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `d025bfec81e060b45066d8f767e41749487bee62890e4dab7fea56a90f670bd2` |
+| `manifest_hash` | `dadc922d0fe5e998f6d3d2c5e54f9bef4a16fe57a1e9b839ec9cd8e64eadb540` |
+| 重算方法 | 取 [L1](L1_TASK_MANIFESTS.md) §T-004.1 与 §T-004.2 各自 ```yaml 块的块内字节分别求 SHA-256 |
+| v0.1 起始 Blob Hash | `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c`（`git hash-object`，任务开工前实测） |
+| tested functional hash | 任务分支 `task/v1-m0-1b-slice-contract-revision-001` tip（`git rev-parse`，可复算，不写死字面值） |
+
+#### ATT-001.2 一次定向语义审查：发现与修复
+
+派发子代理逐条核对 F-01～F-09 在候选合同中的落点，仅检查 Prompt §8 列明的阻断类问题
+（漏改/反向改写 F 项、与上位合同未登记冲突、模拟发布冒充真实发布、真实发布重新设为工程硬门、
+擅自宣布已接受、越权修改、v0.1 被破坏）。
+
+| # | 发现 | 类别 | 修复 |
+|---|---|---|---|
+| 1 | §1.3 顶层链路仍写"单账号诊断与持续运营决策"，与 F-03 直接冲突；同时 §11.1 登记表误标该项"已合规，未作改动" | 阻断：F-03 遗漏 | 改写为"Matrix（按需）与持续运营决策"；§11.1 登记表更正为如实反映此次修复 |
+| 2 | §8.1 新引入 `ENGINEERING_VERTICAL_SLICE_VERIFIED`／`REAL_OPERATION_LOOP_VERIFIED` 两级命名，但紧邻的 §8.2 既有三层验收框架未显式对齐，存在被误读为"第三层（真实运营观察）仍是 M0—M5 工程闭环验收必要条件"的风险 | 阻断：F-07 衔接缺口 | §8.2 开头新增对齐段，显式声明第一/二层＝工程闭环验收范围，第三层＝真实运营闭环验收范围且不阻塞工程收口 |
+| 3 | 候选合同文档头部与 §10.3 把治理状态字符串自行推高为 `READY_FOR_FOUNDER_ACCEPTANCE`，超出 F-01～F-09 授权范围，且与本文件自身 §10.3 硬规则「不得由执行侧自行把状态往上推一级」及项目 CLAUDE.md §6 同款红线直接冲突 | 阻断：擅自变更治理状态 | 文档头部与 §10.3 回退为沿用 `CONTRACT_REVISION_REQUIRED`；新增说明段明确"执行侧认为已满足升级条件的文字表述，但状态字符串本身是否推进只能由 Founder 确认"；§11 同步更正 |
+
+非阻断顺带更正：§11.1 登记表 F-04 行"四条边界"应为"五条"（§5.5.1 实际 5 条），已一并修正。
+
+**修复后仅对受影响范围做定向复验**（未重开全文审查）：grep 确认三处修复点已生效、
+v0.1 `git hash-object` 值前后一致、状态字符串在文档头部／§10.3／§11 三处交叉一致。
+**未触发第二轮完整审查。**
+
+#### ATT-001.3 验收结果（M01B-C01 ~ M01B-C13）
+
+| 验收项 | 结果 | 证据定位 |
+|---|---|---|
+| M01B-C01 | **通过** | `git rev-parse main`／`origin/main` 均为 `f94d7a7`，与 Prompt 观测值一致 |
+| M01B-C02 | **通过** | `git hash-object` 前后均为 `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c`；`git status` 确认 v0.1 未被改动 |
+| M01B-C03 | **通过（含 1 处发现-修复）** | 见 ATT-001.2 #1；候选合同 §2.1.1／§2.1／§1.3／§5.3-5.4 |
+| M01B-C04 | **通过** | 候选合同 §5.5.1（五条边界，引用 EP-00 报告 §四.3 C-2 真实运行证据） |
+| M01B-C05 | **通过** | 候选合同 §5.9.1（含"不得包装成三级 CTA 体系"显式条款） |
+| M01B-C06 | **通过** | 候选合同 §1.6（视频号锁定 + 动态选台 + 非目标清单） |
+| M01B-C07 | **通过（含 1 处发现-修复）** | 见 ATT-001.2 #2；候选合同 §8.1（重写）／§8.2（新增对齐段） |
+| M01B-C08 | **通过** | 候选合同 §0.5 增量登记表（+4 行）；§11.1 映射表 |
+| M01B-C09 | **通过（含 1 处发现-修复）** | 见 ATT-001.2 #3；候选合同头部／§10.3／§11.3 |
+| M01B-C10 | **通过** | `diff -u` v0.1/v0.2 共 13 处 hunk，逐一映射至某项 F 编号或其修复，无非目标改动 |
+| M01B-C11 | **见下方远程收口记录** | |
+| M01B-C12 | **通过** | 候选合同 §5.10.2 |
+| M01B-C13 | **通过** | 候选合同 §5.10.1 |
+
+**本轮一次定向语义审查发现 3 处阻断问题，全部修复；未触发第二轮复核。**
+
+#### ATT-001.4 远程收口记录
+
+| 项 | 值 |
+|---|---|
+| 收口 commit | `e21ff4d11fc7d90b25168844260b8e325e1179d1`（"V1-M0-1B-SLICE-CONTRACT-REVISION-001：单账号下位合同 v0.2 候选（F-01～F-09 定向修订）"） |
+| 推送结果 | `* [new branch] task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001` |
+| 远端核验 | `git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `e21ff4d11fc7d90b25168844260b8e325e1179d1`，与本地 `git rev-parse HEAD` 完全一致 |
+| main 未受影响核验 | 推送后 `git fetch` + `git rev-parse origin/main` → `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，与任务开工前一致，未直推未合并 |
+| M01B-C11 最终判定 | **通过** |
+| 结论 | ATT-001.3 十三项验收（M01B-C01 ~ M01B-C13）**全部通过**。任务收口 |
+
+**终态**：
+
+```text
+M0.1B_CONTRACT_CANDIDATE = READY_FOR_FOUNDER_REVIEW
+next_stage_allowed = false
+```
+
+`next_stage_allowed=false` 含义：合同尚未被 Founder 接受；`SINGLE-ACCOUNT-SLICE-EP00` 未因此
+自动获授权；四个共享合同的冻结未获授权；M1—M4 与 M5 均未获授权。下一动作是 Founder 审阅
+[`decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md)
+并裁决是否接受。
+
+### ATT-002 · `V1-M0-1B-SLICE-CONTRACT-REVISION-001` / attempt 2（Founder 复核后的第二轮定向纠偏，同一任务内，不新开任务）
+
+| 项 | 值 |
+|---|---|
+| attempt identity | `V1-M0-1B-SLICE-CONTRACT-REVISION-001 / attempt-2` |
+| 触发 | Founder 复核 attempt-1 交付的 v0.2 候选后，提出四项定向纠偏意见（见下表 #1～#4）；在本 attempt 尚未提交时，Founder 追加一份"Manifest v3 / F-10 产品裁决补丁"，明确 F-10 在**同一任务、同一 attempt** 内与四项纠偏一并处理，不新开任务、不重新审查已 DONE 的 attempt-1 F-01～F-09 落地 |
+| 起算基线 | 任务分支 `task/v1-m0-1b-slice-contract-revision-001` 现有 tip（attempt-1 收口 commit `922a99b2f8a1268181f74e7049abcecea90d4924`，经 `git rev-parse`/`git ls-remote` 核验本地远端一致后开工） |
+| 与上一 Attempt 的实质差异 | 针对下表五项意见（四项纠偏 ＋ F-10）做定向修改，**不重开** M01B-C01～C13 全量复核；F-01～F-09 的既有落点保持不动，仅同步更正其中被五项意见波及的措辞 |
+
+#### ATT-002.1 四项纠偏意见 ＋ F-10 与处置
+
+| # | Founder 意见 | 处置 | 落点 |
+|---|---|---|---|
+| 1 | 取消"视频号被 Founder 冻结为正式验收平台"的错误表述 | **更正** §1.6："锁定视频号"框架改为"围绕一个明确目标平台完成验收，具体平台由当轮任务或测试夹具动态选定，合同不预先冻结"；视频号降级为"测试夹具示例选择"；同步更正 §1.1、§8.1 开头说明、§0.5 增量登记表、§11.1 F-06 行 | §1.6、§1.1、§8.1、§0.5、§11.1 |
+| 2 | 修正上位合同绑定和三类 EP-00 状态 | **更正** §0.2：基线快照由过期的 `e326e44` 改为本文件实际派生自的 `main @ f94d7a7`，并更正"本轮已同步收口"的不准确表述（该对齐 `b89f78b` 发生在本任务分支创建之前，非本轮产出）；**更正** §10.2：`V1-REBASE-EP00-CURRENT` 由"现在可以开展"改为"已完成并已采用进远程 main（`M0-EP00-ADOPTION-CLOSEOUT-001`）" | §0.2、§10.2 |
+| 3 | 分离真实发布实例与模拟/测试发布记录 | **补充** §8.1：显式加入"真实发布实例 ≠ 模拟/测试发布记录"的数据身份边界（不得混入真实发布历史、不得进入真实市场效果数据、结构等价不代表业务身份等价） | §8.1 |
+| 4 | 反馈闭环统一为"有依据地调整或有依据地保持不变" | **补充** §5.10.1：显式承认"有依据地保持不变"为合法结果，并与既有"无依据拒绝"清单划清界限，避免被误读为可回避执行 | §5.10.1 |
+| 5 | F-10：目标忠实、适用专业价值保留与证据等级 | **新增** §5.12（三个子节）；**补充** §8.2 对齐说明，防止四类证据等级被误读为与既有三层验收框架竞争 | §5.12、§8.2、§0.5、§11.1 |
+
+同步更正 §11.2「未改动」清单中已过期的"§10.2 逐字保留"表述；新增 §11.2.1 登记本轮五项处置。
+
+#### ATT-002.2 一次定向语义审查：发现与修复
+
+派发 1 个 `general-purpose` 子代理，仅检查本 attempt 改动直接引出的 7 类问题（平台锁定残留矛盾、
+上位合同绑定与 EP-00 状态残留矛盾、F-10 四类证据等级与既有验收框架的一致性、F-10 组件跳过语言
+是否吞掉现有硬门、F-10 目标忠实与 §8.3 P0-6 是否冲突、登记表/映射表引用完整性、治理状态字符串
+未被推高），不做全文风格复审。
+
+| # | 发现 | 严重度 | 修复 |
+|---|---|---|---|
+| 1 | §1.6 更正段引用"见 §6.1 的同一口径"，但 §6.1 实际是内容版本状态定义，与平台无关，是断链引用 | 引用错误 | 改指向本节下方段落与 §8.1 |
+| 2 | §10.2 结尾仍写"上位合同范围内的通用预检可以开始"，与刚更正的表格行"已完成并已采用进 main"直接矛盾 | **阻断** | 改写为"已完成，见上表" |
+| 3 | §8.2 的 F-10 对齐说明称"专业价值增益"是"不改变本节三层验收通过条件的独立评价轴"，但 §8.3 P0-5／P0-7 与 §8.5 已把盲式人工对照列为阻断验收项，构成矛盾 | **阻断** | 补充"独立不表示可选"，明确其仍是第一、二层的阻断验收项 |
+| 4 | §5.12.2"非关键专业建议不得阻塞任务"的例外清单（事实/权限/合规/用户不可牺牲条件/下游必要输入缺失）未包含 §8.7 的"高度同质必须改版或不发"门禁，字面上会把该硬门读成可以被跳过 | **阻断** | 例外清单显式补入"§8.7 已点名的门禁项"，并声明"本条不缩减 §8.7 门禁清单" |
+| 5 | §5.12.2"可以跳过相应物理组件"未声明其只约束运行时按需调用，未与 §5.11／§8.3 P0-1／P0-2 的"至少一条代表性内容必须完整跑通全链路"验收要求划清边界 | 引用缺口 | 补充"不放宽 §5.11 与 §8.3 P0-1／P0-2" |
+| 6 | §5.12.1／§0.5 引用上位合同"红线"时把两条不同的上位条款（表达激进化红线 + 目标改写红线）拼接成一句带省略号的引文，实际只有后者是目标忠实红线 | 引用错误 | 改为准确引用"不得让它们把起号、吸粉、流量和 GMV 任务重新改写为长期价值内容"，并注明另一条红线与本条无关 |
+| 7 | §5.12.2 引用"§5.4.1『八项能力不等于八份 Skill』"，该原文字符串在 §5.4.1 中不存在（实际句子是"「创意决策／创意锦标赛」必须出现在完整能力目录中，但不因此拆成新 Skill"） | 引用错误 | 改为准确转述 §5.4.1 实际原句 |
+| 8 | §11.2 统计"§0.5 切片增量登记表 +4 行"，F-10 新增一行后应为 +5；"未改动"清单遗漏排除新增的 §5.12；§11.3 仍写"F-01～F-09 修订"未把 F-10 与四项纠偏计入 | 统计/措辞过期 | 三处分别更正为 +5 行、补入 5.12 排除项、改写为"F-01～F-10 修订与四项定向纠偏" |
+
+**8 处发现全部确认为真实问题，全部修复。** 修复后仅对上表 8 个点做 `grep` 定向复验（见 ATT-002.3），**未重开第二轮全文审查**。
+
+#### ATT-002.3 自验证（定向，不重开全量审查）
+
+| 检查 | 方法 | 结果 |
+|---|---|---|
+| v0.1 逐字未动 | `git hash-object` 重算并核对 | `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c`，与任务开工前一致 |
+| 改动范围收敛 | `git status --short` + `git diff --stat` | 仅 `decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md` 与本 L3 文件两处变更，无其他文件 |
+| ATT-002.2 八处发现均已修复 | 逐条 `grep` 核对修复后文本存在、旧表述不再出现 | 全部通过 |
+| 无残留过期表述 | `grep` 全文核对"冻结视频号／锁定视频号"、`e326e44`、孤立的"现在可以开展" | 仅存在于本轮更正说明文字本身内，无遗漏的旧表述 |
+| 未触碰受保护资产 | `git status --short` 确认改动文件范围，未涉及 v0.1、上位合同、Skill/Workflow/Fixtures/Evidence | 通过 |
+| 治理状态字符串 | 全文 grep 状态字符串三处交叉核对 | 仍为 `CONTRACT_REVISION_REQUIRED`，未被本轮推高 |
+| 未引入新 Skill/工作流/评测平台/第五份共享合同 | 通读 §5.12 与 §11.2.1 确认 | 通过（呼应 F-10 补丁 §1 处理规则第 7 条） |
+
+#### ATT-002.4 远程收口记录
+
+| 项 | 值 |
+|---|---|
+| 收口 commit | `c32a42e4c3121951a5557840ac3a87c7d1ee8dce`（"V1-M0-1B-SLICE-CONTRACT-REVISION-001 attempt-2：四项定向纠偏 + F-10"） |
+| 推送结果 | `922a99b..c32a42e  task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001` |
+| 远端核验 | `git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `c32a42e4c3121951a5557840ac3a87c7d1ee8dce`，与本地 `git rev-parse HEAD` 完全一致 |
+| main 未受影响核验 | 同一次 `git ls-remote` 联查 `refs/heads/main` → `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，与任务开工前一致，未直推未合并 |
+| 结论 | ATT-002.1（五项处置）、ATT-002.2（8 处发现全部修复）、ATT-002.3（自验证全部通过）已推送并经远端核验。attempt-2 收口 |
+
+**当前终态（等待 Founder 接受门触发前）**：
+
+```text
+M0.1B_CONTRACT_CANDIDATE = READY_FOR_FOUNDER_REVIEW
+next_stage_allowed = false
+```
+
+下一动作：Founder 审阅四项纠偏 + F-10 后，在执行过程中回答一次接受授权提示（见 L1 §T-004.3
+`founder_acceptance_gate`）。回答"接受"后，本任务才进入合同状态更新、main 采用与远程收口，
+并按 `successor_task_change` 以 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`
+取代原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001` 作为唯一后继任务。
+
+### ATT-003 · `V1-M0-1B-SLICE-CONTRACT-REVISION-001` / Founder 接受与主干采用
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder 于 2026-08-24 在执行过程中被问及是否接受 v0.2 时，明确回答**"接受，采用进 main"**（详见 [L1 §T-004.4](L1_TASK_MANIFESTS.md)） |
+| 处置 | 更新 `V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md` 内嵌治理状态字符串为 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（头部状态块、§10.3 状态梯、§11.2/§11.2.1/§11.3 同步更正，历史叙述保留不改，只追加"随后接受"的说明）；采用进远程 `main`（见下方远程收口记录）；登记 `M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED` 与后继任务名称变更 |
+| 明确不做的事 | **不**编写或启动 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 的实质工作——该任务目前只有名称与一句话范围，没有完整 Execution Prompt；**不**自行推断其验收标准或起草其 Task Contract；**不**触发 M1—M5 或四个共享合同冻结 |
+
+#### ATT-003.1 远程收口记录
+
+（本节留待主干采用推送并经 `git ls-remote` 核验后，以追加提交补记）

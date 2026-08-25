@@ -11,10 +11,11 @@
 | `COLLAB-LEDGER-BOOTSTRAP-001` | **v2（当前）§T-001.6** ／ v1（历史）§T-001.1 | v1 §T-001.2（v2 只写收口 Delta 口径，其余继承 v1） | Founder 2026-08-24 明确授权 ＋ 两份收口 Delta | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-REBASE-EP00-CURRENT` | §T-002.1（当前） | §T-002.2 | 上位合同 `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` ＋ Founder 2026-08-24 M0 Execution Prompt（审查修订版，含 A16 新增项） | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | §T-003.1（当前） | §T-003.2 | Founder 2026-08-24 M0 · EP-00 采用、当前状态纠偏与默认基线收口 Execution Prompt | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
-| `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | **不得编译** | **无** —— 子合同 `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** | 不可开工 |
+| `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | v2（当前）§T-004.3 ／ v1（历史）§T-004.1 | §T-004.2（v2 只写 Delta，其余继承 v1） | Founder 2026-08-24《M0.1B 下位单账号合同定向修订》Execution Prompt（F-01～F-09）＋ 后续四项定向纠偏与 F-10 Delta ＋ Founder 2026-08-24 明确接受（§T-004.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4）——**已构成本项只读预检的合同依据**，但**尚无独立 Execution Prompt，不得自行开工** | 依据已就位、未开工。实质工作并入唯一后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（尚无完整 Prompt） |
 
-> **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**
-> 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级。
+> **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
+> 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
 
 ---
 
@@ -724,3 +725,268 @@ acceptance_oracle:
 | 项 | 值 |
 |---|---|
 | `manifest_hash` | `e7aaff03a5d01156c046a417a5acbb20926d13dab2019daec41c686a0bdc1d9c` |
+
+---
+
+## §T-004 · `V1-M0-1B-SLICE-CONTRACT-REVISION-001`
+
+### T-004.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-M0-1B-SLICE-CONTRACT-REVISION-001
+task_entry_mode: NEW_TASK
+parent_task_id: ""
+task_type: RESEARCH_REVIEW
+risk_level: MEDIUM
+next_stage_default: false
+remote_closure_required: true
+remote_target: "独立任务分支 task/v1-m0-1b-slice-contract-revision-001，不得直接写入或合并 main"
+authority_refs:
+  - "Founder 2026-08-24 下发《M0.1B 下位单账号合同定向修订》Execution Prompt（主体 + 补丁两段合一，Founder 已明确：补丁即 F-08/F-09 与 F-05/F-06/F-07 的完整化，须与主体合并为单一最新版执行，不构成第二个独立任务）。"
+  - "Founder 2026-08-24 对单账号合同核心产品命题 F-01～F-09 的明确裁决。"
+  - "Founder 2026-08-24 补充确认：起算基线 main @ f94d7a7；M0.1B 可以启动；不得因此推进 M1—M4。"
+governance_refs:
+  - protocol_id: DIYU-BOUNDED-EXECUTION-OWNER-PROTOCOL
+    version: "1.2"
+    declared_file: 受边界约束的执行总负责人协议_v1.2.md
+    declared_sha256: 151808b0749789dc8ff5713193a9a756a0bbd2f0ac46bf2a80d016efbbd3742a
+    availability_at_execution: ABSENT
+  - protocol_id: DIYU-EXECUTION-PROMPT-PLANNING-COMPILER
+    version: "1.1"
+    declared_file: 执行Prompt生成总则_规划侧约束框架_v1.1.md
+    declared_sha256: 7cd63848ecbda8ad6a69bdf94572a6b0a17954fc373edf8983c42b2e798e25fb
+    availability_at_execution: ABSENT
+  governance_conformance: NOT_VERIFIED
+  governance_note: >-
+    与 T-001/T-002/T-003 同一处置先例：两份协议仅有文件名与声明哈希，本仓库与执行机均未
+    命中，且本 Prompt 明确禁止将其正文写入仓库。实际执行依据是 Execution Prompt 自身写明的
+    完整合同语义（主体 + 补丁合一后的版本）。
+core_problem: >-
+  下位单账号纵向切片合同 v0.1 处于 CONTRACT_REVISION_REQUIRED，其中若干表述（独立顾客问题硬
+  准入门、Campaign 编译模式与正式身份混淆、CTA 与平台范围缺失、真实发布与工程验收混淆、项目
+  治理角色可能渗入产品运行逻辑、用户调整请求处理不完整）需要 Founder 已裁决的 F-01～F-09 定向
+  修订，形成一份可供 Founder 审阅的后继候选版本。
+final_deliverable: >-
+  decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md（候选，v0.1 逐字未动），
+  状态字符串沿用 CONTRACT_REVISION_REQUIRED（不由执行侧自行推高），已推送至独立任务分支。
+p0_acceptance:
+  M01B_C01: "启动基线来自前序任务收口后的最新远程 main"
+  M01B_C02: "v0.1 原文件逐字保持不变（Blob Hash 核验）"
+  M01B_C03: "F-01、F-02、F-03 完整写入候选合同"
+  M01B_C04: "Campaign 身份完整符合 F-04"
+  M01B_C05: "CTA 边界完整符合 F-05，未包装成三级体系"
+  M01B_C06: "平台支持、动态选台、视频号锁定完整符合 F-06"
+  M01B_C07: "真实发布不阻塞 M0—M5；工程与真实运营验证分级命名且全文档一致"
+  M01B_C08: "父子合同关系明确；本轮改变之处均登记为切片增量"
+  M01B_C09: "候选状态仅供审阅，不自行推高治理状态字符串，不开放专项预检或施工"
+  M01B_C10: "没有发生非目标改动"
+  M01B_C11: "候选合同已推送到独立远程任务分支，本地与远端 Hash 一致"
+  M01B_C12: "F-08 项目治理角色与产品运行角色分离完整落地"
+  M01B_C13: "F-09 用户调整请求必须产生实际调整完整落地"
+p1:
+  enabled: false
+non_goals:
+  - 修改或覆盖 v0.1 历史合同
+  - 修改上位产品合同
+  - 把候选合同标记为 ACCEPTED，或自行推高其治理状态字符串
+  - 修改 README、CLAUDE、项目基线和正式索引中的当前合同指针
+  - 更新四窗口共同母规划
+  - 执行或重写 SINGLE-ACCOUNT-SLICE-EP00
+  - 起草或冻结四个共享合同
+  - 修改 Matrix、Campaign、Content Brief、Creative Script、Production Director 或 Publishing & Packaging
+  - 修改任何 DSL、Dify 应用、模型参数或运行配置
+  - 创建数据库、Schema、API、状态机或路由
+  - 实现平台 OAuth、自动发布或效果采集
+  - 开始 M1、M2、M3、M4 或 M5
+  - 创建 PR、合并 main
+  - 清理其他分支、worktree 或历史文件
+  - 新建第二份规划、审查或治理体系
+  - 修复 EP-00 发现的工程问题（Skill 参数漂移、仓库与线上漂移、孤儿 Dify App、Content Brief 唯一上游锁定等）
+protected_assets:
+  - decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md（逐字不得改动）
+  - decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md（上位合同）
+  - decision-chain/skills/** · content-production/skills/**
+  - decision-chain/workflows/** · content-production/workflows/**
+  - decision-chain/fixtures/** · content-production/fixtures/**
+  - content-production/references/**
+  - decision-chain/evidence/** · content-production/evidence/**
+  - tools/**
+  - 笛语项目基线.md
+  - collab-ledger/** 既有历史条目正文（只可追加）
+  - main 分支（本任务不得写入或合并）
+allowed_writes:
+  - decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md（新建）
+  - 本任务 Manifest、Attempt、证据、交付（collab-ledger/**，追加式）
+terminal_state_order: [INVALID, DONE, BLOCKED, FAILED]
+```
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `d025bfec81e060b45066d8f767e41749487bee62890e4dab7fea56a90f670bd2` |
+
+### T-004.2 Run Manifest（首次写入前编译）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `manifest_hash` 的哈希对象。**块内不含 `manifest_hash` 自身**，因此可无环重算。
+
+```yaml
+manifest_version: 1
+task_id: V1-M0-1B-SLICE-CONTRACT-REVISION-001
+compiled_at: "2026-08-24"
+task_contract_ref: "collab-ledger/L1_TASK_MANIFESTS.md §T-004.1"
+task_contract_hash: d025bfec81e060b45066d8f767e41749487bee62890e4dab7fea56a90f670bd2
+
+final_deliverable: "V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md 候选，F-01～F-09 全部落地，已推送独立任务分支。"
+core_problem: "下位合同 v0.1 需要 Founder 已裁决的 F-01～F-09 定向修订，形成后继候选供审阅。"
+
+truth_sources:
+  - decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md
+  - decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md
+  - decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md
+  - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md（本任务执行前版本）
+  - Git 历史与远端 ref
+
+actual_baseline_verified_at_execution:
+  remote: https://github.com/andyan77/diyu-demo.git
+  branch_checked_out_before: main
+  main_local: f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a
+  main_remote: f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a
+  matches_prompt_observation: true
+  existing_v0_2: NONE_FOUND_AT_START
+  other_branches_touching_contract_file: >-
+    仅一个历史提交 b89f78b（已在 main 上），无并行任务正在修改同一文件
+  working_tree_before_this_task: clean
+  v0_1_blob_hash_at_start: faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c
+  prior_ledger_for_this_task_id: NONE
+  drift_vs_planning_observation: NONE
+
+accepted_baseline: f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a
+
+review_process:
+  round_1: >-
+    执行侧完成 v0.1→v0.2 全部 F-01～F-09 定向修订后，派发 1 个 general-purpose 子代理执行
+    一次定向语义审查，仅检查 §8「有界审查与停止规则」列明的阻断类问题，明确排除排版/措辞/
+    顺手修复等非阻断意见。
+  round_1_findings: >-
+    3 处阻断发现：① F-03 在 §1.3 顶层链路遗漏（"单账号诊断"含混未清除，且登记表误标"已合规"）；
+    ② F-07 的 ENGINEERING/REAL 两级命名与 §8.2 既有三层验收框架未显式对齐；③ 候选合同自行把
+    治理状态字符串推高到 READY_FOR_FOUNDER_ACCEPTANCE，构成执行侧自行推高状态（超出 F-01～F-09
+    授权范围的擅自变更）。
+  round_1_disposition: >-
+    3 处全部确认为真实缺陷，按"只修复其明确破坏的验收项及直接连带范围"原则修复：
+    §1.3 改写 + §11.1 登记表更正（对应①）；§8.2 增补对齐段（对应②）；文档头部与 §10.3
+    状态字符串回退为 CONTRACT_REVISION_REQUIRED，§11 同步更正（对应③）。未发现的一条非阻断
+    问题（F-04 登记表"四条边界"应为"五条"）顺带更正。
+  round_2: NOT_TRIGGERED
+  round_2_reason: >-
+    修复后仅对受影响范围做定向复验（grep 确认三处修复点、v0.1 blob hash 未变、状态字符串
+    全文档一致），未重新开放全文审查，符合 Prompt §9 的验证预算与强制停止规则。
+
+allowed_delta:
+  new_files:
+    - decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md
+  modified_files:
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+    - collab-ledger/L5_SIDE_EFFECTS.md
+  everything_else: FORBIDDEN
+
+authorizations:
+  read: [仓库全文, Git 历史, remote refs, 上位/下位合同, EP-00 报告]
+  write: [v0.2 候选合同文件, 本任务 Manifest／Attempt／证据, L1/L3/L5 追加式增量]
+  execute: [只读侦察, 建独立任务分支, 定向语义审查子代理, commit, push 任务分支]
+  network: [fetch origin, push 任务分支, 读远端 ref 验哈希]
+  forbidden_ops: [force, amend, reset, 直推或合并 main, 建 PR, 修改 v0.1, 修改上位合同]
+
+acceptance_oracle:
+  M01B_C01: "git rev-parse main 与 origin/main 一致，且等于启动时观测值"
+  M01B_C02: "git hash-object v0.1 前后一致；git status 确认 v0.1 未被 git add/modify"
+  M01B_C03: "定向语义审查子代理逐条核对 F-01/F-02/F-03 落点，含 F-03 修复后复核"
+  M01B_C04: "§5.5.1 五条边界逐条核对；子代理确认无遗漏"
+  M01B_C05: "§5.9.1 逐条核对；子代理确认未包装为三级体系"
+  M01B_C06: "§1.6 逐条核对；子代理确认视频号锁定表述准确、动态选台条款完整"
+  M01B_C07: "§8.1/§8.2 逐条核对；子代理发现衔接缺口后已修复并复验"
+  M01B_C08: "§0.5 增量登记表 + §11.1 映射表逐条核对"
+  M01B_C09: "文档头部/§10.3/§11.3 状态字符串三处交叉核对，确认沿用 CONTRACT_REVISION_REQUIRED"
+  M01B_C10: "diff -u v0.1 v0.2 的 13 个 hunk 逐一核对，均可映射到某个 F 项或其修复"
+  M01B_C11: "git ls-remote 与本地 git rev-parse 核对任务分支"
+  M01B_C12: "§5.10.2 逐条核对；子代理确认未发现 Founder 审核类角色渗入产品运行逻辑"
+  M01B_C13: "§5.10.1 逐条核对；子代理确认未发现拒绝调整类反模式"
+```
+
+| 项 | 值 |
+|---|---|
+| `manifest_hash` | `dadc922d0fe5e998f6d3d2c5e54f9bef4a16fe57a1e9b839ec9cd8e64eadb540` |
+
+---
+
+### T-004.3 Task Contract v2（Founder 复核纠偏 ＋ F-10 Delta，`REBASE_TASK`）
+
+> **v1（§T-004.1／§T-004.2）逐字节原样保留，两个哈希继续有效**——本节只写 Founder 本轮
+> 追加的四项定向纠偏与新增命题 F-10 明确修改／新增的验收口径，其余条款**继承 v1**。
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash_v2` 的哈希对象。
+
+```yaml
+contract_version: 2
+task_id: V1-M0-1B-SLICE-CONTRACT-REVISION-001
+task_entry_mode: REBASE_TASK
+prompt_kind: CORRECTION_AND_EXTENSION_DELTA
+risk_level: MEDIUM
+inherits_from:
+  contract_v1: "collab-ledger/L1_TASK_MANIFESTS.md §T-004.1"
+  contract_v1_hash: d025bfec81e060b45066d8f767e41749487bee62890e4dab7fea56a90f670bd2
+  manifest_v1: "collab-ledger/L1_TASK_MANIFESTS.md §T-004.2"
+  manifest_v1_hash: dadc922d0fe5e998f6d3d2c5e54f9bef4a16fe57a1e9b839ec9cd8e64eadb540
+  unchanged: [task_id, 独立任务分支不合并主干的边界, protected_assets, v0.1 逐字不得改动, terminal_state_order]
+predecessor_prompts:
+  - "补充执行指令 — 恢复并完成 Prompt A manifest v2"
+  - "Execution Delta — M0.1B Manifest v3 / F-10 产品裁决补丁"
+authority_refs:
+  - "Founder 2026-08-24：本轮四项定向纠偏（视频号冻结表述取消／上位合同绑定与三类 EP-00 状态／真实与模拟发布记录分离／反馈闭环二选一）在同一任务内完成，不新开任务。"
+  - "Founder 2026-08-24：新增产品命题 F-10（目标忠实、适用专业价值保留与证据等级），在同一任务同一 attempt 内与四项纠偏一并处理。"
+
+delta_scope:
+  four_fixes: [取消视频号冻结表述, 修正上位合同绑定与三类EP-00状态, 分离真实发布实例与模拟测试发布记录, 反馈闭环统一为有依据调整或有依据保持不变]
+  new_proposition: "F-10：目标忠实、适用专业价值保留与证据等级"
+  do_not: [把F-10扩张为新Skill, 把F-10扩张为新工作流, 把F-10扩张为新评测平台, 把F-10扩张为第五份共享合同,
+           重做manifest_v1已完成的F-01至F-09落地, 回滚或重做manifest_v1无关事项]
+  acceptance:
+    M01B3_C13: "下位合同已明确目标忠实＋适用专业价值保留，且不存在固定调用六份 Skill 的含义"
+    M01B3_C14: "适用专业能力被限制为任务相关、下游必要、允许等价输入满足，不构成全能硬门"
+    M01B3_C15: "非关键专业建议不会阻塞整个任务，事实、权限、合规和真实下游必要输入门禁未被削弱"
+    M01B3_C16: "专业价值、工程闭环、真实运营闭环和经营提升四类结论已分离，普通运营观察不会被写成因果提升"
+    M01B3_C17: "F-10没有引入新 Skill、新链路、第五份共享合同、评测平台或范围外实现要求"
+  completion_condition: "M01B_C01～C13（v1，全部通过） 与 M01B3_C13～C17（本 delta）全部通过，方可视为本轮完成"
+
+founder_acceptance_gate:
+  mechanism: "定向自验通过后，在当前执行过程中弹出一次授权提示（AskUserQuestion 或等价机制），不新开任务、不判定 BLOCKED、不结束当前执行"
+  on_accept: |
+    SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT = ACCEPTED
+    M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED
+  successor_task_change:
+    superseded: "V1-SINGLE-ACCOUNT-SLICE-EP00-001（不再作为自动后继任务单独执行）"
+    new_successor: "V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001（统一承接 M0.2B 切片专项预检 → M0.3 四个共享合同 → Founder 阶段接受 → M0 收口；不得自动进入 M1–M4）"
+
+terminal_rule:
+  forbidden: [PARTIAL, 未获Founder明确接受即写ACCEPTED, 自行推高治理状态字符串]
+  on_pass: |
+    V1-M0-1B-SLICE-CONTRACT-REVISION-001 = DONE
+    next_stage_allowed = true:V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001（仅当 founder_acceptance_gate 已触发 on_accept 时生效）
+scope_boundary: "仅适用于本任务本轮 Delta；不构成项目级验收降级；不自动授权 M1–M5。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash_v2` | `27d65007d297d9d8649cefabfee08fc4e5f1efaac62fda64c9daf387b87c0bc3` | 取本节 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |
+
+### T-004.4 Founder 接受记录（块外追加，不改动上方 `task_contract_hash_v2` 覆盖的字节）
+
+| 项 | 值 |
+|---|---|
+| 触发方式 | 执行过程中的授权提示（`AskUserQuestion`），非离线审查——对应 §T-004.3 `founder_acceptance_gate.mechanism` |
+| 提问内容 | "四项定向纠偏与 F-10 已完成并通过定向审查修复，未发现范围外产品语义变化。是否接受 V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md，授权采用进远程 main？" |
+| Founder 回答 | **"接受，采用进 main"**（2026-08-24） |
+| 触发的状态变化 | `SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT = ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`；`M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED` |
+| 后继任务变更登记 | 原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001`（含其完整 Execution Prompt）不再单独执行；新后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 仅有名称与一句话范围（见 §T-004.3 `successor_task_change`），**尚无完整 Execution Prompt，不得据此自行开工** |
+| 未被本次接受触发 | 不触发 M1—M4／M5；不触发四个共享合同冻结；不触发 `SINGLE-ACCOUNT-SLICE-EP00` 自动开工（其自身仍需满足 v0.2 §10.1／§10.2 的实施顺序与授权登记） |
