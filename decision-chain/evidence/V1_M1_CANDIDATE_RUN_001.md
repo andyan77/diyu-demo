@@ -101,3 +101,11 @@ A-0～A-4 原始定义与真实证据见 [`V1_DIALOGUE_ORCHESTRATION_REPAIR_001_
 - **结构性无法满足部分**：A-1（接受并继续）／A-3（撤销最近一次接受）／A-4(b)（撤销无对象如实拒绝）依赖按槽位的产物接受状态机，这是 `v1_state` 的机制，M1 P0 设计上明确不复用、不重建（见设计文档 §四已知限制、`known_limitation` 字段）。在 M1 现在的 9 字段快照上，这三项**无法**做出真正意义上的等价回归——勉强映射只会制造"看起来测过"的假象。
 - **未自然复现部分**：A-4(a)（Shadow 分类失败 fail-open）的等价保证已由 17 个单测里的 `TestWholePatchRejection`（3 个用例）在编译器层面**确定性**证明；但"影子 LLM 在真实对话里自然产生一次非法输出"这件事本身不可控制地复现（原始证据文档也是"自然撞见"，不是人为构造），M1 自己的 5 次真实运行（RUN-001~003 + CE-A0/A2 及复验）至今未自然撞见过一次。
 - **结论**：M1-AC-12 目前处于**部分满足**状态，不宜标记全绿 PASS；A-1/A-3/A-4(b) 那部分的满足与否，取决于 Founder/独立审查如何理解"M1 候选环境"与"最终真正接入主决策链后的产物"之间的验收边界——这是需要评估方判断的问题，执行侧不越权替其下结论。
+
+## 十、快照 v0.2 扩展：account_stage／expression_discretion／capacity_triad（单测验证，live 复验被阻塞）
+
+- **代码变化**：`m1_context_compiler_v0.1.py` 新增 8 个扁平 patch 字段（`account_stage_text`／`plot_allowed`／`remix_allowed`／`conflict_allowed`／`controversy_allowed`／`desired_output_text`／`cycle_available_text`／`baseline_text`），对应设计文档 §二 #5/#6/#7（账号阶段、表达裁量、产能三分）。刻意只选扁平字符串/枚举承载，未触碰 `evidence_bundle[]`/`market_observations[]`/`gaps[]`/`runtime_evidence[]` 等数组型、多维度语义——那部分是设计文档 §七 登记的"嵌套结构可能让候选 LLM 结构化输出不稳定"未决风险，本批不处理。
+- **向前兼容**：新增 `main()` 内的快照顶层键补齐逻辑，确保 v0.3 及更早持久化的旧会话快照（缺少这三个新字段）能被正常读取、补齐、继续合并新 patch，不丢旧数据、不抛异常。
+- **`content_task` 投影同步更新**：`account_stage`／`expression_discretion`／`available_capacity` 三项从原先的 `NOT_CAPTURED_IN_P0_SNAPSHOT` 占位改为真实透传快照值；`evidence_and_gaps` 仍标占位（未落地）。
+- **单测验证**：新增 14 个用例（`TestV0_2SnapshotExpansion` 5 个、`TestContentTaskProjection` 内 1 个替换 + 1 个新增），全部文件合计 **35 个用例，全绿**（`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v`）。
+- **live Dify 复验：被阻塞，如实记录**。DSL 已用 `build_m1_candidate_dsl_v0.1.py` 重新生成（同步更新影子节点系统提示词、结构化输出 schema 的 17 字段 required/properties、会话变量默认快照 JSON）。但导入/发布/真实回归**未能执行**：本机 Docker 里的 `docker-api-1` 等容器在会话过程中发生过一次重启（`docker ps` 显示 created 3 天前、Up 8 小时），推断服务端会话/刷新令牌存储被清空——此前用于免密码续期的 `refresh_token` 机制（`POST /console/api/refresh-token`）虽返回 `{"result":"success"}`，但用刷新后的 `access_token` 访问 `/console/api/apps` 仍返回 `401`，判定服务端侧已不再承认这批旧令牌；执行侧未持有 Founder 明文密码，按既定的凭据最小暴露原则不重新索取。**因此 v0.4（含本次扩展）尚未导入/发布到候选 App，候选 App 当前运行的仍是 v0.3**。本节代码层面的正确性只有单测证据，未经真实 Dify 端到端验证，如实标记，不冒充已完成 live 回归。

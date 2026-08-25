@@ -252,6 +252,18 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 导入/发布响应见 `dify_import3_resp.json`/`dify_publish3_resp.json`（本机临时文件）；三次回归运行的 answer 文本经关键词扫描确认不含内部枚举代码 |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 
+### SE-015 · refresh_token 续期尝试失败（如实记录未成功的外部调用，非成功副作用）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 触发原因 | 继续本轮快照 v0.2 扩展工作时，`GET /console/api/apps?limit=1`（带既有 cookie）返回 `401`；沿用 SE-014 已验证的免密码续期路径，`POST /console/api/refresh-token`（带 `refresh_token` cookie） |
+| 实际结果 | 续期请求本身返回 `200 {"result":"success"}`，但用续期后的 `access_token`（JWT 本身按 `exp` 字段判断仍在有效期内）重新请求 `/console/api/apps` 仍返回 `401` |
+| 根因判断 | `docker ps` 显示 `docker-api-1`/`docker-redis-1` 等容器 `created` 时间为 3 天前但 `Up` 时长仅 8 小时，判断本机 Docker 服务在会话期间发生过一次重启；推断服务端会话/刷新令牌校验所依赖的存储（通常是 Redis）在重启时被清空或重建，导致旧 `refresh_token` 在服务端已不被承认，即使其 JWT 本身未过期。已用 `curl http://localhost/console/api/system-features`（无需鉴权）确认 Dify 服务本身健康可达，排除"服务未启动"这一更简单的解释 |
+| 未采取的动作 | 未尝试猜测、爆破或以任何方式绕过登录；未向 Founder 重新索要明文密码（沿用 SE-014 建立的凭据最小暴露原则）；未修改任何 Dify 账号/权限配置 |
+| 后续影响 | 本轮快照 v0.2 扩展（`account_stage`／`expression_discretion`／`capacity_triad`）**未能导入/发布到候选 App 做真实回归**，只有单测证据（35/35 全绿），如实记录在 [`V1_M1_CANDIDATE_RUN_001.md` §十](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)；候选 App 实际运行版本仍是 v0.3 |
+| **状态** | **`CONFIRMED`**（记录的是"尝试续期但未恢复访问"这一实际发生的外部调用序列，不是声称已完成的正面副作用） |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

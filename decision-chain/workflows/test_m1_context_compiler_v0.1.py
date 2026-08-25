@@ -236,17 +236,102 @@ class TestMultiTurnPersistence(unittest.TestCase):
         self.assertEqual(snap2["revision"], 1, "被拒绝的第二轮不得推进 revision")
 
 
+class TestV0_2SnapshotExpansion(unittest.TestCase):
+    """v0.2 扩展：account_stage / expression_discretion / capacity_triad 三项新增字段
+    （设计文档 §二 #5/#6/#7），刻意只用扁平字符串/枚举承载，回避 §七 登记的嵌套结构
+    稳定性风险。"""
+
+    def test_account_stage_text_captured(self):
+        result = _run(None, {"current_task_text": "占位", "account_stage_text": "已经有稳定粉丝但没转化"})
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["account_stage"]["text"], "已经有稳定粉丝但没转化")
+        self.assertEqual(snap["account_stage"]["confirmation"], "SYSTEM_TENTATIVE",
+                          "P0 每轮只有一个通用 confirmation_signal，无法可靠归因到某个具体字段，"
+                          "如实固定为 SYSTEM_TENTATIVE，不得伪造 USER_CONFIRMED")
+
+    def test_discretion_fields_only_overwrite_when_stated(self):
+        turn1 = _run(None, {"current_task_text": "占位", "plot_allowed": "NOT_ALLOWED"})
+        turn2 = _run(turn1["snapshot_json"], {"remix_allowed": "ALLOWED"})
+        snap2 = json.loads(turn2["snapshot_json"])
+        self.assertEqual(snap2["expression_discretion"]["plot_allowed"], "NOT_ALLOWED",
+                          "第二轮没有重新提到剧情裁量时，第一轮的表态不应被 UNSTATED 覆盖掉")
+        self.assertEqual(snap2["expression_discretion"]["remix_allowed"], "ALLOWED")
+
+    def test_illegal_discretion_enum_rejects_whole_patch(self):
+        patch = {"plot_allowed": "MAYBE_SOMETIMES"}
+        result = _run(None, patch)
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:plot_allowed"))
+
+    def test_capacity_triad_three_fields_independently_carried(self):
+        result = _run(None, {
+            "current_task_text": "占位",
+            "desired_output_text": "每周 5 条",
+            "cycle_available_text": "本周期只能做 2 条",
+            "baseline_text": "团队长期稳定产出 3 条/周",
+        })
+        snap = json.loads(result["snapshot_json"])
+        triad = snap["capacity_triad"]
+        self.assertEqual(triad["desired_output"], "每周 5 条")
+        self.assertEqual(triad["cycle_available"], "本周期只能做 2 条")
+        self.assertEqual(triad["baseline"], "团队长期稳定产出 3 条/周")
+
+    def test_pre_v0_2_persisted_snapshot_upgrades_without_crashing(self):
+        """向前兼容：模拟 v0.3 及更早持久化的快照（没有 account_stage 等三个新字段），
+        必须能被本版本正常读取、补齐缺失字段、继续合并新 patch，而不是抛异常或丢失旧数据。"""
+        old_snapshot_json = json.dumps({
+            "schema_version": 1,
+            "task_id": None,
+            "revision": 3,
+            "current_task": {"text": "旧会话已经存在的任务", "temporal_scope": "CYCLE", "source_ref": "USER_DIRECT"},
+            "goal_structure": {"primary_goal": "旧目标", "secondary_goals": [], "priority_order": [], "non_sacrifice_constraints": []},
+            "allowed_capabilities": [],
+            "open_threads": [],
+            "last_confirmation_signal": "NONE",
+            "last_route_intent": None,
+        }, ensure_ascii=False)
+
+        result = _run(old_snapshot_json, {"account_stage_text": "新会话里才第一次提到阶段"})
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["current_task"]["text"], "旧会话已经存在的任务", "补齐新字段不得丢失旧字段的真实数据")
+        self.assertEqual(snap["account_stage"]["text"], "新会话里才第一次提到阶段")
+
+
 class TestContentTaskProjection(unittest.TestCase):
     """project_content_task：快照 → Content Brief 下游投影，设计参照
     V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md §三。P0 快照结构性地缺少多个设计文档
     要求的字段，投影必须如实标记缺口，不得编造等价值。"""
 
-    def test_fresh_snapshot_marks_structural_gaps_not_fabricated_values(self):
+    def test_fresh_snapshot_marks_remaining_structural_gap_not_fabricated_value(self):
+        """v0.2 起 account_stage / expression_discretion / available_capacity 已由快照
+        承载，不再是缺口；evidence_and_gaps（evidence_bundle[]/gaps[]，数组+多维度）仍未
+        落地，如实标记为 NOT_CAPTURED_IN_P0_SNAPSHOT。"""
         snap = compiler._default_snapshot()
         ct = compiler.project_content_task(snap)
-        for field in ("account_stage", "expression_discretion", "evidence_and_gaps", "available_capacity"):
-            self.assertEqual(ct[field], "NOT_CAPTURED_IN_P0_SNAPSHOT")
+        self.assertEqual(ct["evidence_and_gaps"], "NOT_CAPTURED_IN_P0_SNAPSHOT")
+        self.assertIsNone(ct["account_stage"])
+        self.assertEqual(
+            ct["expression_discretion"],
+            {"plot_allowed": "UNSTATED", "remix_allowed": "UNSTATED", "conflict_allowed": "UNSTATED", "controversy_allowed": "UNSTATED"},
+        )
+        self.assertIsNone(ct["available_capacity"])
         self.assertEqual(ct["platform_and_form"], "PLATFORM_UNCONFIRMED")
+
+    def test_captured_account_stage_discretion_and_capacity_pass_through_projection(self):
+        result = _run(None, {
+            "current_task_text": "占位任务",
+            "account_stage_text": "刚起号，还没有稳定粉丝",
+            "plot_allowed": "NOT_ALLOWED",
+            "controversy_allowed": "ALLOWED",
+            "cycle_available_text": "本周期能做 3 条",
+        })
+        snap = json.loads(result["snapshot_json"])
+        ct = compiler.project_content_task(snap)
+        self.assertEqual(ct["account_stage"], "刚起号，还没有稳定粉丝")
+        self.assertEqual(ct["expression_discretion"]["plot_allowed"], "NOT_ALLOWED")
+        self.assertEqual(ct["expression_discretion"]["controversy_allowed"], "ALLOWED")
+        self.assertEqual(ct["expression_discretion"]["remix_allowed"], "UNSTATED")
+        self.assertEqual(ct["available_capacity"], "本周期能做 3 条")
 
     def test_caller_supplied_professional_judgment_fields_not_fabricated_by_m1(self):
         """audience_problem_scene / audience_shift / content_promise / post_publish_observation

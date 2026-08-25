@@ -60,10 +60,15 @@ VALID_TEMPORAL_SCOPE = ["UNSTATED", "ONE_ITEM", "CYCLE", "LONG_TERM"]
 VALID_CONFIRMATION_SIGNAL = ["NONE", "AFFIRM", "DECLINE"]
 VALID_ROUTE_INTENT = ["DISCUSS", "FOCUS", "EXECUTE_REQUEST", "CANCEL", "OUT_OF_SCOPE"]
 VALID_REQUESTED_CAPABILITY = ["NONE"] + CAPABILITIES
+VALID_DISCRETION = ["UNSTATED", "ALLOWED", "NOT_ALLOWED"]
+DISCRETION_KEYS = ["plot_allowed", "remix_allowed", "conflict_allowed", "controversy_allowed"]
 
-# 影子节点必须原样返回的扁平字段集合（v0.1 最小切片，覆盖 P0 核心行为，
-# 不是快照设计文档 14 条语义的完整落地——完整落地留给后续迭代真实 Dify 运行后再扩展，
-# 避免一次性给 LLM 塞过多嵌套结构导致结构化输出不稳定，参照侦察对 v1_shadow 的发现）
+# 影子节点必须原样返回的扁平字段集合（v0.1 最小切片覆盖 P0 核心行为；v0.2 扩展第一批：
+# account_stage / expression_discretion / capacity_triad 三项——刻意只挑设计文档 §二
+# 里能用扁平字符串/枚举承载、不需要嵌套对象的语义，回避设计文档 §七登记的"嵌套结构可能让
+# DeepSeek V4 Flash 结构化输出不稳定"这一未决风险。evidence_bundle[]／market_observations[]／
+# gaps[]／runtime_evidence[] 等数组型、必须携带多维度的语义仍不在本批范围内，留待该风险
+# 经真实验证后再决定是否降级为"LLM 只出粗粒度信号，五维度由确定性代码推导默认值"）
 PATCH_KEYS = {
     "route_intent",
     "current_task_text",
@@ -74,6 +79,14 @@ PATCH_KEYS = {
     "confirmation_signal",
     "side_question",
     "user_message_summary",
+    "account_stage_text",
+    "plot_allowed",
+    "remix_allowed",
+    "conflict_allowed",
+    "controversy_allowed",
+    "desired_output_text",
+    "cycle_available_text",
+    "baseline_text",
 }
 
 
@@ -89,6 +102,22 @@ def _default_snapshot():
             "priority_order": [],
             "non_sacrifice_constraints": [],
         },
+        # 账号阶段：自由文本 + confirmation 维度（设计文档 §二 #5）。P0 扁平 patch 每轮只有
+        # 一个通用 confirmation_signal，无法可靠归因到"正在确认的是账号阶段"这一具体字段，
+        # 如实固定为 SYSTEM_TENTATIVE，不伪造 USER_CONFIRMED（与 open_threads 的已知限制
+        # 同一类问题：真正的按字段确认状态机需要设计判断，不在本批擅自决定）。
+        "account_stage": {"text": None, "confirmation": "SYSTEM_TENTATIVE"},
+        # 表达裁量与风险边界（设计文档 §二 #6）：剧情/二创/冲突/争议四项裁量，
+        # 每项 ALLOWED｜NOT_ALLOWED｜UNSTATED。
+        "expression_discretion": {
+            "plot_allowed": "UNSTATED",
+            "remix_allowed": "UNSTATED",
+            "conflict_allowed": "UNSTATED",
+            "controversy_allowed": "UNSTATED",
+        },
+        # 产能三分（设计文档 §二 #7）：期望发布量／当前周期可用产能／基线产能，
+        # 三者分别承载，不得静默取其一覆盖三个。
+        "capacity_triad": {"desired_output": None, "cycle_available": None, "baseline": None},
         "allowed_capabilities": [],  # 由 call_intent 现算，不在快照里静态存
         "open_threads": [],
         "last_confirmation_signal": "NONE",
@@ -115,6 +144,10 @@ def _validate_patch(patch):
     rc = patch.get("requested_capability", "NONE")
     if rc not in VALID_REQUESTED_CAPABILITY:
         return False, "ILLEGAL_ENUM:requested_capability:" + str(rc)
+    for key in DISCRETION_KEYS:
+        val = patch.get(key, "UNSTATED")
+        if val not in VALID_DISCRETION:
+            return False, "ILLEGAL_ENUM:" + key + ":" + str(val)
     return True, ""
 
 
@@ -155,6 +188,32 @@ def _merge_patch(snap, patch):
     ri = patch.get("route_intent")
     if ri:
         snap["last_route_intent"] = ri
+
+    stage = (patch.get("account_stage_text") or "").strip()
+    if stage:
+        snap["account_stage"]["text"] = stage
+        changed = True
+
+    for key in DISCRETION_KEYS:
+        val = patch.get(key, "UNSTATED")
+        if val != "UNSTATED":
+            snap["expression_discretion"][key] = val
+            changed = True
+
+    desired = (patch.get("desired_output_text") or "").strip()
+    if desired:
+        snap["capacity_triad"]["desired_output"] = desired
+        changed = True
+
+    cycle_avail = (patch.get("cycle_available_text") or "").strip()
+    if cycle_avail:
+        snap["capacity_triad"]["cycle_available"] = cycle_avail
+        changed = True
+
+    baseline = (patch.get("baseline_text") or "").strip()
+    if baseline:
+        snap["capacity_triad"]["baseline"] = baseline
+        changed = True
 
     if changed:
         snap["revision"] = snap["revision"] + 1
@@ -269,15 +328,12 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
 # ---- Content Task 投影：快照 → Content Brief 下游精简视图 ----
 # 设计参照：V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md §三。
 #
-# P0 快照（本文件 _default_snapshot）只落地 9 个扁平字段，不是设计文档 §二 完整 14 条语义。
-# 以下四项设计文档要求从快照取值，但 P0 快照结构性地没有承载对应数据：account_stage /
-# expression_discretion / evidence_and_gaps / available_capacity。如实标记为
-# NOT_CAPTURED_IN_P0_SNAPSHOT，不得从其它字段编造等价值（沿用已冻结的"不得假装已满足"纪律）。
+# v0.2 起 account_stage / expression_discretion / available_capacity 已由快照 v0.2 扩展
+# 承载（见 _default_snapshot），不再是结构性缺口。evidence_and_gaps 仍未落地——它对应设计
+# 文档 §二 #9/#11（evidence_bundle[] 五维度 + gaps[]），属于设计文档 §七 登记的"数组型、
+# 嵌套多维度语义是否会让候选 LLM 结构化输出不稳定"未决风险范围，本批不处理。
 CONTENT_TASK_P0_STRUCTURAL_GAPS = [
-    "account_stage",
-    "expression_discretion",
     "evidence_and_gaps",
-    "available_capacity",
 ]
 
 # 这四项设计文档明确规定"M1 不做专业判断"，只能由调用方（Campaign 决策包／未来 M3）在
@@ -325,11 +381,14 @@ def project_content_task(snapshot, source_override=None, caller_supplied=None):
         "audience_problem_scene": caller_supplied.get("audience_problem_scene"),
         "audience_shift": caller_supplied.get("audience_shift"),
         "content_promise": caller_supplied.get("content_promise"),
-        "account_stage": "NOT_CAPTURED_IN_P0_SNAPSHOT",
-        "expression_discretion": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        "account_stage": (snapshot.get("account_stage") or {}).get("text"),
+        "expression_discretion": dict(
+            snapshot.get("expression_discretion")
+            or {"plot_allowed": "UNSTATED", "remix_allowed": "UNSTATED", "conflict_allowed": "UNSTATED", "controversy_allowed": "UNSTATED"}
+        ),
         "evidence_and_gaps": "NOT_CAPTURED_IN_P0_SNAPSHOT",
         "platform_and_form": "PLATFORM_UNCONFIRMED",
-        "available_capacity": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        "available_capacity": (snapshot.get("capacity_triad") or {}).get("cycle_available"),
         "post_publish_observation": caller_supplied.get("post_publish_observation"),
         "projection_gaps": list(CONTENT_TASK_P0_STRUCTURAL_GAPS) + missing_caller_keys,
     }
@@ -342,6 +401,13 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
         snap = _default_snapshot()
     if not isinstance(snap, dict) or "schema_version" not in snap:
         snap = _default_snapshot()
+
+    # 向前兼容：v0.3 及更早持久化的快照没有 account_stage/expression_discretion/
+    # capacity_triad 这三个 v0.2 扩展字段。只补齐缺失的顶层键，不整体重置——已有数据
+    # （如 current_task/goal_structure）必须原样保留，否则等于悄悄丢弃旧会话的真实状态。
+    for _key, _default_val in _default_snapshot().items():
+        if _key not in snap:
+            snap[_key] = _default_val
 
     # Dify 把 LLM 节点的 structured_output 作为原生 object 传给下游 Code 节点
     # （非 JSON 字符串），故这里直接按 dict 校验，不做 json.loads。
