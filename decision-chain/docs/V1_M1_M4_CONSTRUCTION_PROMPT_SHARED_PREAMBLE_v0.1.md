@@ -5,7 +5,8 @@ document_id: "V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE"
 version: "v0.1"
 document_role: "PLANNING_CANONICAL_INPUT"
 intended_use: "M1-M4 各窗口施工 Execution Prompt 的共同前言"
-status: "FOUNDER_AUTHORIZED_FOR_VALIDATION_AND_ADOPTION"
+status: "ACTIVE_ON_DEFAULT_BASELINE"
+product_semantics_confirmation: "FOUNDER_CONFIRMED"
 engineering_execution_authorized: false
 ```
 

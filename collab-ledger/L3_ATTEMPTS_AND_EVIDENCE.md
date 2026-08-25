@@ -1709,3 +1709,24 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 | 写入 | `mv` 移动（非复制）至 `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`，移动后重算哈希不变；清理随文件带来的 Windows `:Zone.Identifier` 元数据残留（非内容，不采用） |
 | 索引 | [PROJECT_INDEX.md](../PROJECT_INDEX.md) 新增两处指针（§〇当前阶段表 + 资产定位表），均只登记路径/状态/"不构成工程授权"说明，未复制前言正文；`CLAUDE.md`／`README.md`／`笛语项目基线.md` 现有"下一步"表述已准确（M1—M4 施工 Execution Prompt 待规划侧编译），未因遗漏本前言而误导，按 Prompt §4.2"只在确实误导时才改"未触碰，避免顺手重构 |
 | 结论 | `P0-A` 判 `DONE`。下一步：随本次内容一并把任务分支合并进 `main`（见 [L5](L5_SIDE_EFFECTS.md)），随后以最终 `main` commit 为源执行 P0-B 桌面资料包，结果写入本任务最终回执 |
+
+## 九、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`
+
+### ATT-001（唯一尝试）
+
+| 项 | 值 |
+|---|---|
+| 起算 | `main @ c085eb327bbc24c6b5c46a8e3ee4d003038a40e3`（= 前一任务 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 最终采用提交），`git fetch` 重新核验 origin/main 与本地一致（首次尝试遇代理瞬时故障 `Proxy CONNECT aborted`，重试后成功，非实质阻塞） |
+| **前提核验（本次最关键的一步）** | Execution Prompt §二声称"Founder 已经通过以下连续动作完成正式确认"，并明文写"不得再次要求 Founder 逐条确认……不应继续登记为'无人正式拍板'"。执行侧对照本会话实际发生的消息逐条核对：Founder 此前只做了三件事——放置前言附件、提问"四类合同值具体要填什么"、提问"是否还有缺口"；执行侧在"是否还有缺口"的答复中明确列出这两项为"需要你说一句拍板"的未决项。Prompt 所称的"连续动作正式确认"与会话实际记录不符，其真实来源无法独立核实（可能指规划侧起草前言 §四/§五 的过程本身，但那不等于 Founder 本人的确认动作）。**执行侧未按 Prompt 字面指令跳过核验**，改为通过 `AskUserQuestion` 直接向 Founder 求证三选一：现在就是在确认／别的渠道已经定的／其实还没真正定 |
+| Founder 答复 | "我现在就是在确认"——即本次确认的真实、可核验来源是 **Founder 2026-08-25 当场答复本身**，不是 Prompt 文本所称的历史"连续动作"；执行侧据此写入账本时统一使用这一真实来源作为 provenance，不采用 Prompt 自称的叙述 |
+| 执行前只读核验 | 仓库 URL／默认分支／`origin/main`／本地 HEAD／工作区／worktree 核验通过；`origin/main = c085eb327bbc24c6b5c46a8e3ee4d003038a40e3`，与本地一致，无漂移；前言文件在 `main` 上存在且 SHA-256 与冻结值一致；前言 §四覆盖八项能力四要素、§五含 Matrix 七条规则与四模块承接段落——均为本会话此前通读全文时已核实的既有事实，本次直接复用，未重新逐字重读（Prompt 本身"evidence_reuse_policy"精神一致，未在其明文列出但属同类型场景） |
+| 新建任务分支 | `task/v1-m1-m4-phase0-decision-state-closeout-001`，无同名冲突 |
+| 修改 1：前言 YAML 状态块 | `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md` 第 8 行 `status: "FOUNDER_AUTHORIZED_FOR_VALIDATION_AND_ADOPTION"` → `status: "ACTIVE_ON_DEFAULT_BASELINE"` + 新增 `product_semantics_confirmation: "FOUNDER_CONFIRMED"`；`engineering_execution_authorized: false` 不变；§三至§八正文字节未动（`git diff` 仅 3 行变化，位于 YAML 块内） |
+| 修改 2：L2 当前投影 | [L2_TASK_STATE_AND_HANDOFF.md](L2_TASK_STATE_AND_HANDOFF.md) §二"下一权限动作"表：删除"两处尚未指定承接方的缺口……须先由 Founder 或规划侧指定归属"的阻塞语言，代之以「状态更正3」——明确写入 `EIGHT_CAPABILITY_FOUR_CONTRACT_VALUES = FOUNDER_CONFIRMED_AND_ACTIVE`／`MATRIX_INSUFFICIENT_INPUT_PRODUCT_RULE = FOUNDER_CONFIRMED_AS_LOCAL_DEGRADATION_AND_BRANCH_BLOCKING`／`MATRIX_INSUFFICIENT_INPUT_ENGINEERING = ASSIGNED_TO_M1_AND_M4_CONSTRUCTION`，并注明确认来源是本任务会话内当场答复，非历史叙述。§一.7（T-005 终态历史记录）中同样提到"两处缺口未指定"的文字**未改动**——该处是已终结任务的历史留痕，当时确为真实，按 canonical 只加不改的规则不回改，由本任务的新记录（§一 当前投影 + 本节）体现状态已变 |
+| 修改 3：PROJECT_INDEX | 第 14 行状态字符串由 `FOUNDER_AUTHORIZED_FOR_VALIDATION_AND_ADOPTION` 更正为 `ACTIVE_ON_DEFAULT_BASELINE — FOUNDER_CONFIRMED`，与前言、L2 一致 |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00 执行前后 blob hash 逐一核对，全部一致；`git status --short` 仅 3 个文件被修改（前言/L2/PROJECT_INDEX），与授权范围完全一致 |
+| 独立复核 | 未触发——三处修改均为对照 Prompt 正文的直接文本核对与状态字段替换，无需要多角度判断的实质分歧点；前提核验环节已通过 `AskUserQuestion` 直接向 Founder 求证解决，比子代理复核更直接可靠 |
+
+#### ATT-001 结论
+
+`DS-C01`～`DS-C07` 判 `PASS`（见 [L1 §T-007.2](L1_TASK_MANIFESTS.md)）；`DS-C08`（远程收口）随 Git 采用步骤核验，结果见最终回执。任务终态见最终回执与 [L2 §一](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
