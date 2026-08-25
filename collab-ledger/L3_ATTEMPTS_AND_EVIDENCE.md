@@ -1208,4 +1208,116 @@ next_stage_allowed           = true:V1-REBASE-EP00-CURRENT
 
 ## 三、本基线之后的其他任务
 
-`NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，**只有 `COLLAB-LEDGER-BOOTSTRAP-001` 这一个任务**产生过 Formal Attempt（其下 `ATT-001`～`ATT-005` 五次）。**没有第二个任务**产生过 Formal Attempt。
+`NONE_VERIFIED_SINCE_BASELINE`（**本条描述截至 `V1-REBASE-EP00-CURRENT` 开工前**，追加式更正见 §四；本条原文不改，只加不改）—— 自 `6ae78ab` 起，**只有 `COLLAB-LEDGER-BOOTSTRAP-001` 这一个任务**产生过 Formal Attempt（其下 `ATT-001`～`ATT-005` 五次）。**没有第二个任务**产生过 Formal Attempt。
+
+---
+
+## 四、`V1-REBASE-EP00-CURRENT`
+
+### ATT-001 · `V1-REBASE-EP00-CURRENT` / attempt 1（本任务首次也是唯一一次正式尝试）
+
+| 项 | 值 |
+|---|---|
+| attempt identity | `V1-REBASE-EP00-CURRENT / attempt-1` |
+| 任务与输入引用 | [L1 §T-002.1 Task Contract](L1_TASK_MANIFESTS.md) · [§T-002.2 Run Manifest](L1_TASK_MANIFESTS.md) |
+| 起算基线 | `main @ 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29`（本地 == 远端，任务分支切出前工作区干净；与账本固定起算锚点 `6ae78ab` 的关系见 L1 §T-002.2 `actual_baseline_verified_at_execution`） |
+| 实现引用 | [`decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)（本任务唯一交付物，含八项能力现状卡、六 Skill 价值耦合表、六 Skill 源文件↔工作流↔模型约束一致性表、25 个 Dify App 一致性核验、持久化现状、A1–A10/A14–A16 验收矩阵） |
+| 工作流／模型／Checker | 7 个后台并行子代理（`general-purpose`）分别核验：8 项能力现状卡+路由（A4/A5）、六 Skill 价值耦合（A6）、A16 决策链三 Skill 逐份比对、A16 内容生产三 Skill 逐份比对、CS-1+生产链接缝（A7/A8）、持久化现状（A10）、25 个 Dify App 一致性扫描（A3/A9）；执行总负责人自行核验 A1/A2/A14/A15 并汇编全部子代理产出、解决重复/交叉发现、统一分类标签 |
+| 环境 | 本机 WSL2；`git 2.x`；`docker exec docker-db_postgres-1 psql` 只读核验真实本机 Dify 1.16.1（沙箱默认禁 docker.sock，按证据触发 `dangerouslyDisableSandbox` 执行只读 SELECT，全程零写入，无 INSERT/UPDATE/DELETE） |
+| 与上一 Attempt 的实质差异 | **无上一 Attempt** —— `task_entry_mode = NEW_TASK`；L2 §一.2 记该任务此前状态为「未开工」，无 Checkpoint |
+
+#### ATT-001.1 冻结与哈希登记
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `0a176145f7e7ed5b99f2fb09c583800c81a8829ca5cba227571d51d0f32b1210` |
+| `manifest_hash` | `f3972b67ca746c228a7827602f51f5df7a644b40a447acea8d2bab76d44446d8` |
+| 重算方法 | 取 [L1](L1_TASK_MANIFESTS.md) §T-002.1 与 §T-002.2 各自 ```yaml 块的块内字节分别求 SHA-256；围栏行本身不计入 |
+| tested functional hash | 本任务分支 `task/v1-rebase-ep00-current-m0-preflight` tip（`git rev-parse task/v1-rebase-ep00-current-m0-preflight`，可复算；不在本条目内写死字面值，避免自我循环引用） |
+| closing evidence hash | 同上——本任务单轮直达收口，无分离的 closing commit |
+
+#### ATT-001.2 验收结果（A1–A10、A14–A16，NON_PRUNABLE 已标注）
+
+| 验收项 | 结果 | 证据定位 |
+|---|---|---|
+| A1 当前基线可信 | **通过** | 报告 §〇 |
+| A2 权威与授权不混淆 | **通过** | 报告 §一 |
+| A3 目标环境真实只读核验 `NON_PRUNABLE` | **通过** | 报告 §七（含两个自称 Dify 通道的 MCP 工具被识别为演示假数据、改走真实 Docker/Postgres 只读通道的过程记录） |
+| A4 路由与任务上下文实证映射 | **通过** | 报告 §三 |
+| A5 八项能力全覆盖 `NON_PRUNABLE` | **通过** | 报告 §二（能力 3「单账号持续运营」判定 MISSING，附三重核验） |
+| A6 六 Skill 价值耦合分档 `NON_PRUNABLE` | **通过** | 报告 §四（含与产品合同自带历史值的显式比对） |
+| A7 CS-1 与 Content Brief 接缝 `NON_PRUNABLE` | **通过** | 报告 §五 |
+| A8 生产链现状 `NON_PRUNABLE` | **通过** | 报告 §六 |
+| A9 仓库—Dify—部署一致性 `NON_PRUNABLE` | **通过** | 报告 §七（25 个 App 全量核验，3 处真实漂移原样登记未修复） |
+| A10 持久化基础 | **通过** | 报告 §八 |
+| A14 受保护资产零变化 | **通过** | 报告 §十.1；`git diff --stat main` 只含本报告与 L1 两个文件，Dify 侧全程只 `SELECT` |
+| A15 远程收口 | **通过** | 见本文件 §四 ATT-001.3（推送后核验） |
+| A16 六 Skill 源文件↔工作流↔模型约束一致性 `NON_PRUNABLE` | **通过** | 报告 §七.3（两个子代理各自逐份给出版本配对、正文差异清单、模型约束的真实运行证据；发现 9 处实证缺陷，无充分依据处均标 NOT_VERIFIED，未凭配置数字推断） |
+
+**本轮一次性通过全部 P0 验收项，未触发第二轮复核。**
+
+#### ATT-001.3 远程收口记录
+
+| 项 | 值 |
+|---|---|
+| 收口 commit | `8413a94d3125d54426527be987d082ed28017c96`（`V1-REBASE-EP00-CURRENT = DONE：M0 当前真相预检完成`） |
+| 推送后远端 ref | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` → `8413a94d3125d54426527be987d082ed28017c96` |
+| 核验结果 | **本地 HEAD 与远端 ref 完全一致**；未直推／未合并 `main`；未建 PR（详见 [L5 §SE-003](L5_SIDE_EFFECTS.md)） |
+| 结论 | A15 **通过**。任务收口 |
+
+---
+
+## 五、`M0-EP00-ADOPTION-CLOSEOUT-001`
+
+### ATT-001 · `M0-EP00-ADOPTION-CLOSEOUT-001` / attempt 1（首次也是唯一一次正式尝试）
+
+| 项 | 值 |
+|---|---|
+| attempt identity | `M0-EP00-ADOPTION-CLOSEOUT-001 / attempt-1` |
+| 任务与输入引用 | [L1 §T-003.1 Task Contract](L1_TASK_MANIFESTS.md) · [§T-003.2 Run Manifest](L1_TASK_MANIFESTS.md) |
+| 起算基线 | `main @ 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29`（本地 == 远端，工作区干净；执行时重新 `git fetch` 核验与规划观察一致，无漂移，见 L1 §T-003.2 `actual_baseline_verified_at_execution`） |
+| 实现引用 | 本地集成分支 `chore/m0-ep00-adoption-closeout-001`（源自 `main`，`--no-ff` 接入来源分支 `task/v1-rebase-ep00-current-m0-preflight` tip，再叠加 canonical／L2 当前投影纠偏与本任务账本记账） |
+| 工作流／模型／Checker | 执行总负责人本人操作 Git 集成（无付费模型调用）；派发 1 个 `general-purpose` 子代理执行 C-CONTINUITY 无上下文接续检查（仅给仓库读权限，不携带本会话任何上下文） |
+| 环境 | 本机 WSL2；`git 2.x`；`gh` CLI（已认证）核验 `main` 分支保护规则（`404 Branch not protected`，确认可用普通 merge+push，无需 PR） |
+| 与上一 Attempt 的实质差异 | **无上一 Attempt** —— `task_entry_mode = NEW_TASK` |
+
+#### ATT-001.1 冻结与哈希登记
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `57f3eb37325ecf30367e8079ebce1a9c308dfe27edbfd3c4cfc9e2ba82a4603d` |
+| `manifest_hash` | `e7aaff03a5d01156c046a417a5acbb20926d13dab2019daec41c686a0bdc1d9c` |
+| 重算方法 | 取 [L1](L1_TASK_MANIFESTS.md) §T-003.1 与 §T-003.2 各自 ```yaml 块的块内字节分别求 SHA-256；围栏行本身不计入 |
+| tested functional hash | 集成分支 `chore/m0-ep00-adoption-closeout-001` tip（`git rev-parse chore/m0-ep00-adoption-closeout-001`，可复算；不在本条目内写死字面值，避免自我循环引用） |
+| closing evidence hash | 见 ATT-001.3（推送后核验，最终并入 `main` 的合并提交） |
+
+#### ATT-001.2 验收结果（C-ADOPT ~ C-CONTINUITY，全部 9 项须通过才判 DONE）
+
+| 验收项 | 结果 | 证据定位 |
+|---|---|---|
+| C-ADOPT | **见 ATT-001.3（推送后核验）** | 需要最终 `main` 实际包含来源 tip 后才能判定 |
+| C-RULE | **通过** | [canonical §三](COLLAB_CONTINUITY_PROTOCOL.md)：新增「历史留痕（只加不改）／当前投影（直接替换）」边界一节，未新增治理机制，未修改无关低频规则 |
+| C-L2-STATE | **通过** | [L2 §一.1／§一.3](L2_TASK_STATE_AND_HANDOFF.md)：bootstrap 与 EP00 各一份无矛盾 `DONE` 记录；两处此前「Checkpoint 文字仍称执行中」的矛盾（bootstrap 与 EP00 各一处）均已改为「已终结、全程未被中断」 |
+| C-L2-HANDOFF | **通过** | [L2 §二](L2_TASK_STATE_AND_HANDOFF.md)：活动任务表改为 `NONE`，显式声明「当前没有任何已授权、待执行的工程任务」；Founder 审阅报告 §十一 改列为独立「下一权限动作」表，按稳定路径＋标题引用 |
+| C-STABLE-REF | **通过** | [L2 §一.3](L2_TASK_STATE_AND_HANDOFF.md) 移除「11 项，含：…」式静态清单，改引稳定标题；[L2 §三](L2_TASK_STATE_AND_HANDOFF.md) 移除 Gap Register「12 项全部未关闭」的静态计数，保留稳定 ID 区间 `G-01～G-12`。**例外范围**：L3 历史轮次的逐字引述（如「非终态 —— 执行中」）不在清理范围内，属历史留痕，L2 §一表已明确标注其为「已判不通过的历史轮次，不要当成当前轮次」——本轮无上下文接续检查已验证读者不会被这些历史引述误导（见 C-CONTINUITY 行） |
+| C-HISTORY | **通过** | `git diff origin/task/v1-rebase-ep00-current-m0-preflight -- <5 个来源文件>` 逐项核验：报告文件字节级相同；L1/L3/L5 三本账仅有新增行，`git diff ... | grep '^-'` 结果为空；L2 的删除行逐一核对，全部落在本任务被授权修改的当前投影范围内，§一.2（EP-00 开工前状态快照，被 L1 §T-002 合同与报告正文引用）逐字节未动 |
+| C-SCOPE | **通过** | `git diff --stat origin/main chore/m0-ep00-adoption-closeout-001` 显示变更面恰为 5 个来源文件 ＋ 本任务对 canonical／L1／L2／L5 的追加式修改，无其他文件被触碰 |
+| C-REMOTE | **见 ATT-001.3（推送后核验）** | 需要 `git ls-remote origin refs/heads/main` 与本地 `main` 一致 |
+| C-CONTINUITY | **通过（含一轮发现-修复）** | 派发 1 个无上下文子代理，按 canonical 四步顺序读取仓库并回答四问；其原始回答与逐条引用见下方「C-CONTINUITY 原始问答摘录」。该代理额外发现 6 处真实缺陷（其中 5 处属本任务当前投影范围内的悬空引用/过期措辞，1 处是 EP-00 报告内部的既有占位符残留）；已修复其中 4 处（L2 `§一.4` 悬空引用、L2 header 追加式规则冲突、L5 `除 SE-001／SE-002 外` 过期计数——**这 3 处见本 commit 的实际编辑**；第 4 处「L3 §五 ATT-001.1 悬空引用」由本节的创建本身解决），1 处（SE-004 停在 `PLANNED`）本就是设计内的分步登记，将在 ATT-001.3 推送后补齐，1 处（EP-00 报告内部空占位符）**不属本任务授权范围**（报告是受保护资产，登记为已知缺口见下，不修复） |
+
+**C-CONTINUITY 原始问答摘录**（子代理独立读取本 commit 时刻的仓库、无本会话上下文）：
+
+1. `COLLAB-LEDGER-BOOTSTRAP-001` = 终态 `DONE`，无 Checkpoint；`V1-REBASE-EP00-CURRENT` = 终态 `DONE`，无 Checkpoint。均正确识别 L3 中「执行中」「从未启动」等字样为已判不通过历史轮次的逐字引述，未被误导。
+2. 当前无任何已授权待执行的工程任务——正确读出 L2 §二活动任务表为 `NONE`。
+3. 下一权限动作 = Founder 审阅并裁决报告 §十一，正确引用其材料位置与门槛后果（子合同、共享合同冻结、M1—M4 施工均不获授权）。
+4. M1—M4 均未获授权——正确交叉引用 L2 §一.3 `next_stage_allowed=false`、L2 §二完成信号列、报告 §十二、L1 `non_goals`、L1 §T-001.6 `scope_boundary` 五处独立位置。
+
+#### ATT-001.3 远程收口记录（推送后填写）
+
+> 本节在实际执行 `git merge` 进 `main` 并 `git push` 之后填写，届时以 append 方式记录以下三项内容，与 [L5 §SE-004](L5_SIDE_EFFECTS.md) 的状态追加行同步：最终合并提交 hash、`git ls-remote origin refs/heads/main` 的核验结果、C-ADOPT／C-REMOTE 的最终判定。
+
+#### ATT-001.4 本任务的已知缺口（登记，不修复）
+
+| 缺口 | 处置 |
+|---|---|
+| EP-00 报告 [`V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md) §三「路由与任务上下文（A4）」下存在一处空占位符残留（"> 待并行子任务 `cap-cards-a4a5` 回填。"），与该报告已完成的 A4 正文重复出现 | 报告是**受保护资产**（本任务 `protected_assets` 列内，non_goals 明确禁止修改其事实结论与正文），**不擅自改**。由 C-CONTINUITY 无上下文单元查出，登记报 Founder／下一次触碰该报告的任务裁决是否需要一次极小的编辑性（非事实性）清理 |

@@ -9,7 +9,8 @@
 | task_id | Task Contract | 当前 Manifest | 授权依据 | 终态 |
 |---|---|---|---|---|
 | `COLLAB-LEDGER-BOOTSTRAP-001` | **v2（当前）§T-001.6** ／ v1（历史）§T-001.1 | v1 §T-001.2（v2 只写收口 Delta 口径，其余继承 v1） | Founder 2026-08-24 明确授权 ＋ 两份收口 Delta | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3 §CLOSEOUT](L3_ATTEMPTS_AND_EVIDENCE.md) |
-| `V1-REBASE-EP00-CURRENT` | [V1 决策链改造产品合同](../decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) §「授权状态与下一步」 | 尚未编译（任务未开工） | 上位合同 `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` | 未开工 |
+| `V1-REBASE-EP00-CURRENT` | §T-002.1（当前） | §T-002.2 | 上位合同 `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` ＋ Founder 2026-08-24 M0 Execution Prompt（审查修订版，含 A16 新增项） | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `M0-EP00-ADOPTION-CLOSEOUT-001` | §T-003.1（当前） | §T-003.2 | Founder 2026-08-24 M0 · EP-00 采用、当前状态纠偏与默认基线收口 Execution Prompt | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | **不得编译** | **无** —— 子合同 `CONTRACT_REVISION_REQUIRED`，**未被接受，不构成授权** | 不可开工 |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**
@@ -336,3 +337,390 @@ scope_boundary: "仅适用于 COLLAB-LEDGER-BOOTSTRAP-001 本次收口。不修�
 | 项 | 值 | 怎么重算 |
 |---|---|---|
 | `task_contract_hash_v2` | `54a2e635e641a7134b28c7955397471c091294e0ffe0ba283ecb56c88df407d3` | 取 §T-001.6 那个 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |
+
+---
+
+## §T-002 · `V1-REBASE-EP00-CURRENT`
+
+### T-002.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要、侦察计划与当前进度。
+
+```yaml
+task_id: V1-REBASE-EP00-CURRENT
+task_entry_mode: NEW_TASK
+parent_task_id: ""
+task_type: RESEARCH_REVIEW
+risk_level: LOW
+next_stage_default: false
+remote_closure_required: true
+authority_refs:
+  - "V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md：PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED"
+  - "V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md：当前允许开展 V1-REBASE-EP00-CURRENT，只读预检不构成施工授权"
+  - "Founder 于 2026-08-24 下发《M0 当前真相预检（Founder 审查修订版）》Execution Prompt，含 A16（六 Skill 源文件—工作流提示词—模型约束一致性）新增验收项"
+  - "L2 §一.2／§二：本任务此前状态为「已授权，可立即开工」「未开工」，此次为该任务的首次正式执行"
+governance_refs:
+  - protocol_id: DIYU-BOUNDED-EXECUTION-OWNER-PROTOCOL
+    version: "1.2"
+    declared_file: 受边界约束的执行总负责人协议_v1.2.md
+    declared_sha256: 151808b0749789dc8ff5713193a9a756a0bbd2f0ac46bf2a80d016efbbd3742a
+    availability_at_execution: ABSENT
+  - protocol_id: DIYU-EXECUTION-PROMPT-PLANNING-COMPILER
+    version: "1.1"
+    declared_file: 执行Prompt生成总则_规划侧约束框架_v1.1.md
+    declared_sha256: 7cd63848ecbda8ad6a69bdf94572a6b0a17954fc373edf8983c42b2e798e25fb
+    availability_at_execution: ABSENT
+  governance_conformance: NOT_VERIFIED
+  governance_note: >-
+    两份治理协议以文件名与 SHA-256 被引用，本次执行环境（仓库全历史、当前文件系统）
+    穷尽检索均未命中，不允许复制进仓库。对两份协议条款的符合性无法核验，标 NOT_VERIFIED；
+    与 COLLAB-LEDGER-BOOTSTRAP-001（T-001.1）同一处置先例一致。实际执行依据是本
+    Execution Prompt 自身写明的完整 Task Contract 语义。
+core_problem: >-
+  上位产品合同已授权对 V1 决策链改造仓库做一次只读、证据绑定、可复核的当前真相预检，
+  但此前从未真正开工（L2 §一.2：状态=未开工）。需要以远程 main、真实 Dify 已发布／草稿
+  状态和当前部署为对象，逐项核验八项能力、六份 Skill 价值耦合、六份 Skill 源文件—工作流
+  提示词—模型约束一致性（A16，Founder 本轮新增）、路由与生产链接缝、仓库—Dify—部署一致性、
+  持久化现状，产出一份供 Founder 裁决的 current-state preflight report。
+final_deliverable: >-
+  一份 current-state preflight report（含八项能力现状卡、六 Skill 价值耦合表、六 Skill
+  源文件↔工作流提示词↔模型约束一致性表、CURRENT/STALE/NOT_VERIFIED/MISSING/CONFLICT
+  标注、A1—A10 与 A14—A16 验收矩阵结果），连同本任务 Manifest、Attempt 与证据索引，
+  已推送至任务分支并核验本地/远端 Hash 一致。
+p0_acceptance:
+  A1: "当前基线可信——remote/branch/HEAD/worktree/工作区/未推送状态的原始输出，报告基线与之相同"
+  A2: "权威与授权不混淆——上位/子合同/阶段基线/三类 EP-00 原文引用；未把子合同或历史预检当当前授权"
+  A3_NON_PRUNABLE: "目标环境（真实 Dify）已被真实只读核验——稳定标识/查询时间/原始响应，非仓库推断"
+  A4: "路由与任务上下文完成实证映射——当前实现/输入输出/运行证据/缺口逐项绑定"
+  A5_NON_PRUNABLE: "八项能力全覆盖——八张 current-state 卡片齐全，无能力被静默合并/冒充/遗漏"
+  A6_NON_PRUNABLE: "六份 Skill 价值耦合完成分档——每份结论有具体规则/Prompt/Reference 证据"
+  A7_NON_PRUNABLE: "创意锦标赛（CS-1）与 Content Brief 接缝已查清——调用位置/候选出口/外部比较/直接入口"
+  A8_NON_PRUNABLE: "生产链当前能力已查清——CS/PD/PP、Stage1/2、PRE/MIXED/FINAL、Returns、语义核验、用户交付、恢复机制"
+  A9_NON_PRUNABLE: "仓库—Dify—部署一致性结论可信——对相同对象做结构/Hash/版本比较，漂移原样登记不修复"
+  A10: "持久化基础已查清——业务真源/Dify状态/权限/版本/反馈/写回/幂等/恢复逐项标 CURRENT/MISSING/NOT_VERIFIED"
+  A14: "受保护资产零变化——除允许的报告/治理 Delta 外，产品资产、运行资产、目标系统均无写入"
+  A15: "远程收口——任务分支已推送，本地/远端 Hash 一致，不直推/不合并 main，不建 PR"
+  A16: "六份 Skill 源文件—工作流提示词—模型约束一致性已逐份核验——版本配对/正文差异清单/模型约束证据/能力影响结论；无充分依据处标 NOT_VERIFIED，不得凭配置数字推断"
+p1:
+  enabled: false
+  reason: "本任务无预定义阶段性交付，不得使用 PARTIAL。"
+non_goals:
+  - 修改产品合同、阶段基线、Skill、Reference、fixture、DSL、Workflow、Prompt、Tool 绑定、Dify 应用、模型参数、Checker、业务数据库、部署配置或 tools/
+  - 执行任何付费模型生成、内容生产、业务工作流、Dify 发布、重绑或数据写入
+  - 开展 SINGLE-ACCOUNT-SLICE-EP00，或把未接受子合同的新增验收当作当前 P0
+  - 冻结起始资料合同、业务数据合同、Dify 集成合同或四个共享合同
+  - 设计或实施 M1—M4
+  - 新建第二套路由、第二套创意锦标赛、第二套生产链、数据库平台、RAG、知识库、插件平台、Judge 网络或重型依赖图
+  - 用历史 AO-EP00-HISTORICAL、旧 evidence、自述状态或静态文件存在替代当前核验
+  - 为得到整洁结论而修复漂移、删改失败证据或把 MISSING 改写成"规划中"
+  - 改动其他分支、worktree 或用户未提交内容
+  - 直推或合并 main、创建或合并 PR
+protected_assets:
+  - decision-chain/docs/** · content-production/docs/**（现有合同与阶段基线）
+  - decision-chain/skills/** · content-production/skills/**
+  - decision-chain/workflows/** · content-production/workflows/**
+  - decision-chain/fixtures/** · content-production/fixtures/**
+  - content-production/references/**
+  - decision-chain/evidence/** · content-production/evidence/**
+  - tools/**
+  - 笛语项目基线.md
+  - 真实 Dify 应用/工作流/Tool 绑定/模型参数/数据库/部署配置（只读核验，零写入）
+  - 其他分支、worktree、用户未提交内容
+allowed_writes:
+  - 一份新的 current-state preflight report
+  - 本任务 Manifest、Attempt、原始检查证据、最终交付（collab-ledger/**、本任务分支下的报告文件）
+  - 已采用协作账本中本任务的增量条目（L1—L5，追加式）
+  - 为定位本报告所必需的最小项目索引链接（PROJECT_INDEX.md／README.md／CLAUDE.md 的指针性追加）
+acceptance_note: >-
+  A11—A13（四份共享合同 readiness map／M1—M4 缺口图与成熟度重估／报告级"无孤儿结论"）
+  已由 Founder 从本任务验收矩阵移除，交由预检后规划工作处理，不构成本任务 P0。
+terminal_state_order: [INVALID, DONE, PARTIAL_UNAVAILABLE, BLOCKED, FAILED]
+next_stage_default: false
+remote_closure_required: true
+```
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `0a176145f7e7ed5b99f2fb09c583800c81a8829ca5cba227571d51d0f32b1210` |
+
+### T-002.2 Run Manifest（首次写入前编译）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `manifest_hash` 的哈希对象。**块内不含 `manifest_hash` 自身**，因此可无环重算。
+
+```yaml
+manifest_version: 1
+task_id: V1-REBASE-EP00-CURRENT
+compiled_at: "2026-08-24"
+task_contract_ref: "collab-ledger/L1_TASK_MANIFESTS.md §T-002.1"
+task_contract_hash: 0a176145f7e7ed5b99f2fb09c583800c81a8829ca5cba227571d51d0f32b1210
+
+final_deliverable: "current-state preflight report + A1—A10/A14—A16 验收矩阵，已推送任务分支。"
+core_problem: "上位合同已授权的只读预检此前从未开工（L2 §一.2 状态=未开工）；需要以真实远程仓库与真实 Dify 为对象逐项核验。"
+
+truth_sources:
+  - decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md   # 上位合同
+  - decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md            # 子合同（未接受）
+  - decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md            # 当前阶段基线
+  - PROJECT_INDEX.md · 笛语项目基线.md §〇 · CLAUDE.md
+  - Git 历史与远端 ref                                                       # 推送事实的原始权威
+  - 真实本机 Dify 1.16.1 Docker 部署（docker-db_postgres-1 只读 psql）        # 目标环境原始权威
+
+actual_baseline_verified_at_execution:
+  remote: https://github.com/andyan77/diyu-demo.git
+  branch_checked_out_before: main
+  main_local: 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29
+  main_remote: 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29
+  working_tree_before_this_task: clean
+  remote_heads: 9
+  local_branches: 11
+  worktrees: 5
+  ledger_header_baseline_6ae78ab_vs_live_main: >-
+    L2 §二 与 canonical §七 记的「main @ 6ae78ab」是账本起算基线（固定锚点，不追踪 HEAD），
+    非当前 HEAD 过期；6ae78ab 是 4d84cd2 的祖先，二者之间 8 个 commit 经 diff --stat 核验
+    只动 collab-ledger/**、CLAUDE.md、PROJECT_INDEX.md、README.md（COLLAB-LEDGER-BOOTSTRAP-001
+    自身收口），无产品语义漂移。本任务实际执行基线钉为 main @ 4d84cd2（当前 HEAD）。
+  execution_prompt_observed_main_6ae78ab_vs_live: >-
+    规划侧 Prompt 第 3 节「当前观察」记录 observed main = 6ae78ab，同样是 4d84cd2 的祖先，
+    差异同上，判定为规划侧观察相对当前 HEAD 的良性滞后（STALE_BENIGN），不视为 CONFLICT。
+  dify_target_identified: >-
+    本机 Docker 运行真实 Dify 1.16.1 全栈（17 容器，2 天在线，健康）；主 Chatflow App
+    id=310ddfcf-e0fb-4211-af98-3d101725e07a，name="DIYU Demo V1 Main Chatflow v0.1"（Dify
+    应用名未随内容更新，见下）。仓库共列出的 MCP 工具 dify-platform-expert／
+    dify-workflow-1/2/3 均非本项目真实通道（前者自报 "demonstration data"，后者名称与
+    本项目工作流不匹配）；真实核验改走 docker exec docker-db_postgres-1 psql 只读查询
+    apps／workflows 表（沙箱默认禁网络与 docker socket，需按证据触发 dangerouslyDisableSandbox
+    执行只读命令，不写不改）。
+  main_chatflow_spot_check: >-
+    App 310ddfcf 当前 draft graph 与已发布 workflow_id=055b7bbe 的 graph 字节长度相同
+    （249047），节点数均为 56，与 PROJECT_INDEX 声称一致。经节点标题唯一性比对，实际内容
+    对应仓库 decision-chain/workflows/DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml（v0.2），
+    而非同目录 DIYU_DEMO_V1_MAIN_CHATFLOW_v0.1.yml（v0.1）——Dify 应用显示名称仍为
+    "v0.1" 是命名未同步，非内容漂移。其余 ~20 个 App 的核验见任务证据（本 Manifest
+    编译时尚未逐一走完，属首次写入前的部分核验，允许在 Attempt 中继续补齐）。
+  prior_ledger_for_this_task_id: NONE_EXCEPT_L1_L2_LOCATOR_ROWS
+  drift_vs_planning_observation: BENIGN_ONLY
+
+accepted_baseline: 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29
+
+allowed_delta:
+  new_files:
+    - task/v1-rebase-ep00-current-m0-preflight 分支下的 preflight report（路径待定，写入时登记）
+  modified_files:
+    - collab-ledger/L1_TASK_MANIFESTS.md   # 本 Manifest
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+    - collab-ledger/L5_SIDE_EFFECTS.md     # 记 commit/push 副作用
+    - PROJECT_INDEX.md／README.md（可能的最小指针追加，非必须）
+  everything_else: FORBIDDEN
+
+authorizations:
+  read: [仓库全文, Git 历史, remote refs/branches/worktrees, 真实本机 Dify（只读 API/DB）, tools/**]
+  write: [preflight report, 本任务 Manifest／Attempt／证据／交付, L1—L5 追加式增量, 最小索引指针]
+  execute: [只读侦察, 建任务分支（已建）, docker exec 只读 psql（需 sandbox 例外）, commit, push 任务分支]
+  network: [fetch origin, push 任务分支, 读远端 ref 验哈希, 本机 Dify 只读 API/DB（非公网）]
+  forbidden_ops: [force, amend, reset, 绕过分支保护, Dify/DB 任何写操作, 直推或合并 main, 建 PR]
+
+acceptance_oracle:
+  A1: git status/branch/log/worktree 原始输出与报告基线一致
+  A2: 上位/子合同/阶段基线原文引用逐条核对，未越权代裁
+  A3: docker exec psql 对真实 Dify apps/workflows 表的原始查询结果，含时间戳与稳定 ID
+  A4: A-0—A-4 运行证据文件逐项引用 + 当前路由实现文件定位
+  A5: 八张能力卡逐项绑定仓库文件/Dify App/evidence
+  A6: 六 Skill 全文分档，规则/Prompt 行号引用
+  A7: CS-1 与 Content Brief 接缝的 workflow 节点级证据
+  A8: CS/PD/PP 与两段式生产链的 workflow/evidence 交叉核验
+  A9: 仓库 DSL 与 Dify 实际 graph 的结构/节点数/Tool 绑定版本比较
+  A10: 业务持久化（DB/Dify 会话状态）只读枚举
+  A14: git diff 与 Dify DB 只读查询确认零写入（除 allowed_delta）
+  A15: git ls-remote 核对任务分支远端 HEAD 与本地一致
+  A16: 六 Skill 源文件与工作流内嵌正文逐份文本比对 + 节点模型参数只读查询
+```
+
+| 项 | 值 |
+|---|---|
+| `manifest_hash` | `f3972b67ca746c228a7827602f51f5df7a644b40a447acea8d2bab76d44446d8` |
+
+---
+
+## §T-003 · `M0-EP00-ADOPTION-CLOSEOUT-001`
+
+### T-003.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: M0-EP00-ADOPTION-CLOSEOUT-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-REBASE-EP00-CURRENT
+task_type: MIXED
+risk_level: MEDIUM
+next_stage_default: false
+remote_closure_required: true
+remote_target: origin/main
+authority_refs:
+  - "Founder 已确认 COLLAB-LEDGER-BOOTSTRAP-001 与 V1-REBASE-EP00-CURRENT 均已形成正式 DONE；要求先完成剩余 M0 收口，再处理后续入口门。"
+  - "Founder 2026-08-24 下发《M0 · EP-00 采用、当前状态纠偏与默认基线收口》Execution Prompt。"
+  - "Founder 裁决：历史运行、失败路径和外部副作用留痕只追加；L2 当前状态与总规则页属于当前投影，可以直接替换，旧值由 Git 历史保存。"
+  - "Founder 裁决：当前态正文不得保留自然过期的轮次、数量或位置式引用；完成任务必须移出 Current Handoff。"
+  - "Founder 裁决：两份规划／执行治理协议不属于项目仓库，本任务不得把其正文写入仓库。"
+governance_refs:
+  - protocol_id: DIYU-BOUNDED-EXECUTION-OWNER-PROTOCOL
+    version: "1.2"
+    declared_file: 受边界约束的执行总负责人协议_v1.2.md
+    declared_sha256: 151808b0749789dc8ff5713193a9a756a0bbd2f0ac46bf2a80d016efbbd3742a
+    availability_at_execution: ABSENT
+  - protocol_id: DIYU-EXECUTION-PROMPT-PLANNING-COMPILER
+    version: "1.1"
+    declared_file: 执行Prompt生成总则_规划侧约束框架_v1.1.md
+    declared_sha256: 7cd63848ecbda8ad6a69bdf94572a6b0a17954fc373edf8983c42b2e798e25fb
+    availability_at_execution: ABSENT
+  governance_conformance: NOT_VERIFIED
+  governance_note: >-
+    与 T-001／T-002 同一处置先例：两份协议仅有文件名与声明哈希，穷尽检索本仓库与执行机
+    均未命中，不允许复制进仓库（Prompt authority_refs 第 5 条明确禁止）。对其内部条款的
+    符合性无法核验，标 NOT_VERIFIED；实际执行依据是 Execution Prompt 自身写明的完整合同语义。
+core_problem: >-
+  COLLAB-LEDGER-BOOTSTRAP-001 与 V1-REBASE-EP00-CURRENT 均已在各自任务分支上终结 DONE，
+  但 EP-00 的完整交付（报告 + 账本证据）尚未进入远程默认分支 main；同时 L2 当前状态页
+  仍存在若干过期投影（已终结任务残留在 Current Handoff、Checkpoint 文字与终态状态矛盾、
+  账本起算锚点被误读为当前 HEAD 等），新会话可能被误导为两个已完成任务仍需执行。
+final_deliverable: >-
+  远程 main 同时包含完整、祖先关系不变的 EP-00 交付，以及经纠偏的 L2 当前投影
+  （无矛盾终态、Current Handoff 清空并显式声明、下一权限动作按稳定路径引用），
+  连同本任务自身的 Manifest／Attempt／副作用记录。
+p0_acceptance:
+  C_ADOPT: "EP-00 已交付 tip 被默认分支完整接收，来源分支保留，报告与证据在 main 可读"
+  C_RULE: "canonical 正确区分历史留痕（只加不改）与当前投影（可直接替换），未新增治理系统"
+  C_L2_STATE: "bootstrap 与 EP00 各只有一个无矛盾的当前 DONE，均无 Checkpoint"
+  C_L2_HANDOFF: "Current Handoff 不再包含两个已完成任务；明写无已授权执行任务；Founder 审阅报告表述为下一权限动作"
+  C_STABLE_REF: "当前态无自然过期计数、轮次、位置式指针；历史证据原文不在清理范围"
+  C_HISTORY: "EP-00 与 bootstrap 的历史证据、失败记录、外部副作用及来源提交未被篡改"
+  C_SCOPE: "未触碰任何未授权产品或运行资产；变更面仅限来源分支五文件 Delta ＋ canonical／L2 纠偏 ＋ 本任务最小账本收口"
+  C_REMOTE: "远程默认基线真实收口——本地 main 与 git ls-remote origin refs/heads/main 一致"
+  C_CONTINUITY: "无聊天上下文的新执行会话能正确回答两个任务状态、当前是否有已授权执行任务、下一权限动作、M1—M4 是否获授权，且与最终 L2／报告一致"
+p1:
+  enabled: false
+  permitted_next_stage: NONE
+non_goals:
+  - 修改 EP-00 报告的事实结论、八项能力卡、六份 Skill 比对、11 项 Founder 待裁决命题或任何原始证据
+  - 重跑 EP-00、扩展预检范围或补做 readiness map、M1–M4 缺口图
+  - 替 Founder 回答报告中的产品命题
+  - 接受、修改或升级下位单账号纵向切片合同；启动 SINGLE-ACCOUNT-SLICE-EP00
+  - 起草、写入或冻结四个共享合同；生成或启动 M1–M4 施工
+  - 修改 Skill、DSL、Dify、Runtime、数据库、业务持久化、生产链或目标系统
+  - 更新四窗口共同规划 v0.3
+  - 把《执行 Prompt 生成总则》或《受边界约束的执行总负责人协议》写入项目仓库
+  - 新建脚本、CI、Schema、状态机、数据库、Judge、Reviewer 网络或第二套账本
+  - 为了让状态页"看起来完整"补造未发生的任务、授权、Checkpoint 或下一阶段权限
+  - 删除来源分支、改写远端历史、force push、reset、amend、rebase／squash 已交付的来源提交
+protected_assets:
+  - decision-chain/docs/**（现有合同与阶段基线；含 EP-00 报告本身，事实结论不可改）
+  - decision-chain/skills/** · content-production/skills/**
+  - decision-chain/workflows/** · content-production/workflows/**
+  - decision-chain/fixtures/** · content-production/fixtures/**
+  - content-production/references/**
+  - decision-chain/evidence/** · content-production/evidence/**
+  - tools/**
+  - 笛语项目基线.md
+  - L1／L3／L4／L5 中已有的历史条目正文（只可追加，不可覆盖）
+  - EP-00 来源分支 task/v1-rebase-ep00-current-m0-preflight 及其提交历史
+  - 其他分支、worktree、用户未提交内容
+allowed_writes:
+  - 为采用 EP-00 交付所需的正常 Git 集成提交（merge，非 squash／rebase）
+  - collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md 中与历史／当前投影边界直接相关的最小规则修正
+  - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md 的当前状态与 Current Handoff 重写
+  - L1／L3／L5 为本任务追加的最小充分记录（身份、验收、远程副作用）
+  - 因本次采用出现实际断链时的最小定位链接修复
+terminal_state_order: [INVALID, DONE, BLOCKED, FAILED]
+```
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `57f3eb37325ecf30367e8079ebce1a9c308dfe27edbfd3c4cfc9e2ba82a4603d` |
+
+### T-003.2 Run Manifest（首次写入前编译）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `manifest_hash` 的哈希对象。**块内不含 `manifest_hash` 自身**，因此可无环重算。
+
+```yaml
+manifest_version: 1
+task_id: M0-EP00-ADOPTION-CLOSEOUT-001
+compiled_at: "2026-08-24"
+task_contract_ref: "collab-ledger/L1_TASK_MANIFESTS.md §T-003.1"
+task_contract_hash: 57f3eb37325ecf30367e8079ebce1a9c308dfe27edbfd3c4cfc9e2ba82a4603d
+
+final_deliverable: "远程 main 完整接收 EP-00 交付且祖先关系不变；L2 当前投影纠偏；本任务自身记账完成。"
+core_problem: "EP-00 已 DONE 但证据未进入默认 main；L2 当前投影存在过期/矛盾表述，可能误导无上下文新会话。"
+
+truth_sources:
+  - collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md
+  - collab-ledger/L1_TASK_MANIFESTS.md §T-001／§T-002
+  - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md（本任务执行前版本）
+  - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md §四 ATT-001（EP-00 唯一正式尝试）
+  - collab-ledger/L5_SIDE_EFFECTS.md SE-001／SE-002／SE-003
+  - decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md
+  - Git 历史与远端 ref                                       # 推送事实的原始权威
+
+actual_baseline_verified_at_execution:
+  remote: https://github.com/andyan77/diyu-demo.git
+  branch_checked_out_before: task/v1-rebase-ep00-current-m0-preflight
+  main_local_before: 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29
+  main_remote_before: 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29
+  ep00_source_branch: task/v1-rebase-ep00-current-m0-preflight
+  ep00_source_tip: 48c8275e8aa576be7c037303348de0dfb5677641
+  ancestry_check: "git merge-base --is-ancestor main origin/task/v1-rebase-ep00-current-m0-preflight → true"
+  commits_ahead_behind: "main...task 分支 = 0 behind, 3 ahead"
+  file_delta_vs_main: >-
+    5 files changed, 888 insertions(+), 7 deletions(-)：L1/L2/L3/L5 四本账 + 新增 preflight
+    report；与规划观察完全一致，无未披露改动
+  working_tree_before_this_task: clean
+  branch_protection_on_main: >-
+    gh api repos/andyan77/diyu-demo/branches/main/protection → 404 Branch not protected
+    （可用普通 push／merge 采用，无需 PR）
+  planning_observation_vs_live: >-
+    规划侧记录的 main=4d84cd2、task tip=48c8275、ahead-3-behind-0、5 文件 Delta
+    与执行时实测完全一致，无漂移
+  prior_ledger_for_this_task_id: NONE
+  drift_vs_planning_observation: NONE
+
+accepted_baseline: 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29
+
+integration_path:
+  strategy: >-
+    本地新建集成分支 chore/m0-ep00-adoption-closeout-001（源自 main）→ --no-ff 合并来源
+    分支 tip（保留祖先关系，零冲突）→ 在集成分支上做 canonical／L2 当前投影纠偏 ＋
+    本任务 L1/L3/L5 记账 → 一次无上下文接续检查 → 整体 --no-ff 合并进本地 main →
+    推送 main → 核验远端 ref
+  forbidden_ops_confirmed_not_used: [force, amend, reset, squash, rebase, 删除来源分支]
+
+allowed_delta:
+  modified_files:
+    - collab-ledger/COLLAB_CONTINUITY_PROTOCOL.md
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+    - collab-ledger/L5_SIDE_EFFECTS.md
+  everything_else: FORBIDDEN
+
+authorizations:
+  read: [远程仓库/分支/Commit/PR/保护规则/工作树, collab-ledger/** 全部, EP-00 任务分支与其报告/证据, 上位合同/阶段基线/子合同状态/项目索引, Prompt 随附两份外部治理协议的引用（不读正文，正文不在仓库）]
+  write: [正常 Git 集成提交, canonical 最小规则修正, L2 当前状态重写, L1/L3/L5 本任务最小追加记录, 必要时的最小定位链接修复]
+  execute: [Git/GitHub 只读核验与比较, 创建集成分支, commit, push, 按仓库保护策略采用进 origin/main, 一次无上下文接续检查]
+  network: [fetch origin, push 集成结果, 读远端 ref 验哈希]
+  forbidden_ops: [force, amend, reset, squash, rebase, 删除来源分支, 建 PR（main 无分支保护，直接 merge+push 即可满足 remote_target）]
+
+acceptance_oracle:
+  C_ADOPT: "git merge-base --is-ancestor 与 git log 核验来源 tip 是最终 main 祖先；报告与证据文件在 main 工作树可读；git ls-remote 确认来源分支仍存在"
+  C_RULE: "读 canonical 最终正文，确认新增内容仅为历史/当前投影边界一节；diff 确认未新增治理机制"
+  C_L2_STATE: "读 L2 §一，确认 bootstrap 与 EP00 各一份无矛盾 DONE 记录，Checkpoint 字段与终态一致"
+  C_L2_HANDOFF: "读 L2 §二，确认活动任务表为空、显式声明 NONE、下一权限动作按稳定路径引用"
+  C_STABLE_REF: "grep 当前投影正文，确认无「共几项」「第几轮」类表述残留（历史证据正文除外）"
+  C_HISTORY: "diff 来源分支与采用后对应文件的 EP00 历史内容段落，确认逐字节未改；L1 两个既有哈希块保持不变"
+  C_SCOPE: "git diff --stat 核对变更文件清单仅为预期范围"
+  C_REMOTE: "git ls-remote origin refs/heads/main 与本地 git rev-parse main 一致"
+  C_CONTINUITY: "派发一个无本会话上下文的只读代理，仅给仓库读权限，核对其回答与最终 L2/报告一致"
+```
+
+| 项 | 值 |
+|---|---|
+| `manifest_hash` | `e7aaff03a5d01156c046a417a5acbb20926d13dab2019daec41c686a0bdc1d9c` |
