@@ -134,6 +134,20 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-24） | 集成分支 `chore/m0-1b-adoption-closeout`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m0-1b-slice-contract-revision-001` tip `a3d8940`（零冲突）；② 叠加 L1／L2 当前投影纠偏（commit `732c27f`）后，合并进本地 `main`（合并提交 `b305e1eb6f058a2d89b2dcec8aa21a9a98080e58`）。推送：`f94d7a7..b305e1e  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `b305e1eb6f058a2d89b2dcec8aa21a9a98080e58`，与本地 `git rev-parse main` 完全一致。`git merge-base --is-ancestor` 双向核验通过。来源分支 `task/v1-m0-1b-slice-contract-revision-001` 远程核验仍为 `a3d8940c276c1682047d5c3b8417ca884e5d979b`，未被删除、未被改写 |
 
+### SE-007 · 推送任务分支 `task/v1-m0-slice-preflight-and-shared-contract-closeout-001`
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` |
+| 类型 | Git push（新建远程分支，独立于 `main`） |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/v1-m0-slice-preflight-and-shared-contract-closeout-001` |
+| 内容标识 | Phase A（commit `4681cc6`）＋ Phase B（commit `c1156aa`）＋ Phase C 等待期 Checkpoint（commit `66194fe`） |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；**未触碰默认分支**，不合并、不建 PR（GitHub 自动提示的 PR 创建链接未使用） |
+| 核验依据 | `git ls-remote origin refs/heads/task/v1-m0-slice-preflight-and-shared-contract-closeout-001` —— 以实时返回为准 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-25） | 推送成功：`* [new branch] task/v1-m0-slice-preflight-and-shared-contract-closeout-001 -> task/v1-m0-slice-preflight-and-shared-contract-closeout-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m0-slice-preflight-and-shared-contract-closeout-001` → `66194fe8e3375c23d14c5bbb8369e14e2ca189b1`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR。推送目的：使 Phase C 等待期 Checkpoint（见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md)）在本地状态丢失时仍可从远程恢复 |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

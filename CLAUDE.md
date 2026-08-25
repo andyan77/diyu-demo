@@ -9,11 +9,13 @@
 | 合同 | 状态 | 授权 |
 |---|---|---|
 | [V1 决策链改造产品合同（上位）](decision-chain/docs/V1_DECISION_CHAIN_REBASE_PRODUCT_CONTRACT_v0.1.md) | `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` | **只授权只读预检 `V1-REBASE-EP00-CURRENT`** |
-| [单账号持续运营纵向切片子合同](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) | `CONTRACT_REVISION_REQUIRED` | **未被接受，不构成授权** |
+| [单账号持续运营纵向切片子合同 v0.2](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED` | Founder 已接受（v0.1 历史版本不再是当前指针）；授权 `SINGLE-ACCOUNT-SLICE-EP00` 只读预检 |
+| M0.3 四份共享合同（任务上下文快照／八项能力／版本发布反馈归属／写回权限幂等恢复，`decision-chain/docs/V1_M0_SHARED_CONTRACT_*_v0.1.md`） | `ACCEPTED` | Founder 已接受，**授权 M1–M4 施工规划 Execution Prompt 编译**；**不授权** M1–M4 工程实现本身，工程实现需各自独立的 Execution Prompt |
 
 - **上位合同被接受 ≠ 子合同被接受**，也 ≠ 授权施工。改 Skill、DSL、持久化、工作流一律需要新授权。
 - 模型按能力选用（当前主模型 DeepSeek，语义事实核验 qwen3.8-max），**不再有 Qwen-only 约束**。
 - 当前不做完整软件工程化。
+- M0（`V1-REBASE-EP00-CURRENT` 通用预检 → `SINGLE-ACCOUNT-SLICE-EP00` 专项预检 → 四份共享合同）已全部完成并采用进 `main`；下一步是 M1–M4 各自的施工 Execution Prompt 编译与授权，不在本文件预先展开。
 
 ## 2. 真相源优先级
 
@@ -40,7 +42,7 @@ Creative Script｜Production Director｜Publishing & Packaging
 - 组件必须拥有所需业务输入，或存在合同允许的**等价替代输入**；**不得为进入某组件暗中补跑前置组件**。
 - 不得并行扩建外围系统。
 
-**当前下一步**：`V1-REBASE-EP00-CURRENT`（上位合同已授权的只读仓库预检）。子合同专项预检 `SINGLE-ACCOUNT-SLICE-EP00` **须等子合同被接受**。
+**当前下一步**：M0 全部阶段（通用预检、专项预检、四份共享合同）已完成并被 Founder 接受；下一步是由规划侧基于四份共享合同分别编译 M1—M4 施工 Execution Prompt，**编译已获授权，工程实现本身尚未获授权**，须等各自的 Execution Prompt 与授权。
 
 ## 4. 防跑偏硬约束
 
