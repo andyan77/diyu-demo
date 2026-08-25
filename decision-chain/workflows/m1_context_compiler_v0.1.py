@@ -13,6 +13,15 @@ Dify 按 `variables:` 声明把节点输入作为关键字参数传给 main()，
   2. patch 整体拒绝：任一未知字段或非法枚举值，拒绝整个 patch，不局部采纳。
   3. 失败诚实：不编造原因，不假装已完成。
   4. open_threads 补终态 HANDLED（v1_state 的 OPEN/SURFACED 二值在此基础上扩展，互不覆盖）。
+
+**未决（需 Reviewer/Founder 核对，不由执行侧单方认定为新纪律）**：本批对纪律 2（整体拒绝）
+的适用范围做了一处执行侧解释性收窄——UNSTATED 是 evidence_nature 的合法枚举值，不属于纪律 2
+逐字写的"未知字段或非法枚举值"，因此按局部跳过处理（只跳过该条证据，本轮其余捕获照常合并、
+reject_reason 不变），被跳过的事实登记进 turn_report_json、不进对话文本。这处解释尚未同步进
+设计文档 §六.2（V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md:142，该行是 AU-05 的通过判据原文，
+逐字写的是"整体拒绝"）。当前代码行为按此解释运行，理由是与 CLAUDE.md「资料不足时不得整任务
+拒绝」及共享合同一 §五 一致；**但它是否成立属于验收判据的解释，须由 Reviewer/Founder 核对后
+才能写进设计文档**，在此之前不作为已确立的纪律陈述。
 """
 
 import json
@@ -63,12 +72,66 @@ VALID_REQUESTED_CAPABILITY = ["NONE"] + CAPABILITIES
 VALID_DISCRETION = ["UNSTATED", "ALLOWED", "NOT_ALLOWED"]
 DISCRETION_KEYS = ["plot_allowed", "remix_allowed", "conflict_allowed", "controversy_allowed"]
 
+# ---- evidence_bundle 五个正交维度（共享合同一 §三 / 设计文档 §二「五个正交维度」）----
+#
+# EVIDENCE_DIMENSION_VOCAB 的定位：它是共享合同一 §三 五维度取值空间的**机器可读声明**，
+# 供下游消费方与未来的写入路径引用，不是"这五张表都在被本文件执行"的意思。逐条如实标注
+# P0 内的真实代码读者，避免把声明当成已实现的能力（计划不等于现实）：
+#   nature       ── **P0 唯一有真实代码读者的维度**：_merge_evidence_item 写入前的取值门禁
+#                   （词表外取值抛 ValueError）。
+#   provenance   ── **P0 无代码读者**，纯声明（写入恒为 USER_DIRECT）。
+#   confirmation ── **P0 无代码读者**，纯声明（写入恒为 SYSTEM_TENTATIVE）。
+#   scope        ── **P0 无代码读者**（写入只取 patch 值或 UNSTATED；patch 侧的合法性由
+#                   VALID_EVIDENCE_SCOPE 承担）。此处纯声明。
+#   availability ── **P0 无代码读者**，纯声明。P0 恒为 AVAILABLE，其余四值不可达，
+#                   已由 _compute_gaps 的结构性缺口条目如实登记。
+#
+# 为什么 provenance / confirmation 这两维没有、也不需要一个运行时守卫：P0 的
+# _merge_evidence_item 是**纯追加、永不修改既有条目**，所以两条冻结硬约束
+#   - 「系统推断不因为被写入持久化就升级为用户确认事实」
+#   - 「参考资料和历史产物不得覆盖用户已经确认的事实」
+# 在 P0 是**结构上天然满足**的——没有任何"修改既有条目"的动作存在，也就没有东西可违反。
+# 真正需要"修改既有条目"这个动作的那一批实现（M4/M5，比如未来的按字段用户确认交互、
+# runtime_evidence 的外部写入）才需要引入一个真实的运行时守卫，届时由那一批连同它的调用方
+# 一起设计。现在先写一个零调用方的守卫，只是把"未来想法"伪装成"已实现能力"。
+EVIDENCE_DIMENSION_VOCAB = {
+    "nature": ["FACT", "PREFERENCE", "REFERENCE", "SYSTEM_INFERENCE"],
+    "provenance": [
+        "USER_DIRECT",
+        "SOURCED_MATERIAL",
+        "VALID_HISTORICAL_ARTIFACT",
+        "AUTHORIZED_EXTERNAL",
+        "SYSTEM_DERIVED",
+    ],
+    "confirmation": ["USER_CONFIRMED", "SYSTEM_TENTATIVE", "REJECTED", "SUPERSEDED", "EXPIRED"],
+    "scope": ["THIS_ITEM_ONLY", "THIS_CYCLE_ONLY", "THIS_ACCOUNT", "LONG_TERM_SUBJECT"],
+    "availability": ["AVAILABLE", "UNKNOWN", "NOT_PROVIDED", "DECLINED", "STALE"],
+}
+
+# LLM patch 侧允许的 nature 取值：刻意**不含 SYSTEM_INFERENCE**——系统推断只能由确定性代码
+# 写入，模型不得给自己对用户原话的复述贴上"系统判断"标签。UNSTATED 是"这一轮没有可记录信息"
+# 的哨兵（P0 没有任何代码路径产出 SYSTEM_INFERENCE，不造假的系统推断生成器）。
+VALID_EVIDENCE_NATURE_PATCH = ["UNSTATED", "FACT", "PREFERENCE", "REFERENCE"]
+
+# scope 比合同词表多一个 UNSTATED 哨兵：用户没说明适用层级时只能如实记 UNSTATED，不得替用户
+# 选一个（共享合同一 §三 反例：不得把"这条不要剧情"静默扩张成长期规则）。**消费方不得把
+# UNSTATED 扩宽成 LONG_TERM_SUBJECT 或任何具体层级**，也不得从 current_task.temporal_scope
+# 推导——任务的时间作用域不等于某条证据的适用层级。
+VALID_EVIDENCE_SCOPE = ["UNSTATED"] + EVIDENCE_DIMENSION_VOCAB["scope"]
+
 # 影子节点必须原样返回的扁平字段集合（v0.1 最小切片覆盖 P0 核心行为；v0.2 扩展第一批：
-# account_stage / expression_discretion / capacity_triad 三项——刻意只挑设计文档 §二
-# 里能用扁平字符串/枚举承载、不需要嵌套对象的语义，回避设计文档 §七登记的"嵌套结构可能让
-# DeepSeek V4 Flash 结构化输出不稳定"这一未决风险。evidence_bundle[]／market_observations[]／
-# gaps[]／runtime_evidence[] 等数组型、必须携带多维度的语义仍不在本批范围内，留待该风险
-# 经真实验证后再决定是否降级为"LLM 只出粗粒度信号，五维度由确定性代码推导默认值"）
+# account_stage / expression_discretion / capacity_triad；v0.3 扩展第二批：evidence_bundle[]
+# 的三个粗粒度信号 evidence_text / evidence_nature / evidence_scope）。
+#
+# v0.3 采用的是设计文档 §七 官方登记的**降级路径**：「LLM 只出粗粒度信号，五维度由确定性
+# 代码从上下文推导默认值」。依据是 v1_shadow（同类组件）设计说明里的既有观察——DeepSeek
+# V4 Flash 只能稳定处理扁平字符串/枚举，不支持嵌套对象（decision-chain/evidence/
+# V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md:68）。因此这里仍然只加扁平字符串/枚举，
+# 不引入嵌套对象或布尔，不重跑已有先例证据的那条路线。
+#
+# gaps[] 零新增 patch key（完全由确定性代码从既有快照状态推导）；market_observations[] 与
+# runtime_evidence[] 本批 DEFER（无真实产出通道、M1 内无消费者、关键字段无法诚实填充），
+# 理由见 _default_snapshot 里对应注释与 _compute_gaps 的结构性缺口条目。
 PATCH_KEYS = {
     "route_intent",
     "current_task_text",
@@ -87,6 +150,9 @@ PATCH_KEYS = {
     "desired_output_text",
     "cycle_available_text",
     "baseline_text",
+    "evidence_text",
+    "evidence_nature",
+    "evidence_scope",
 }
 
 
@@ -118,8 +184,42 @@ def _default_snapshot():
         # 产能三分（设计文档 §二 #7）：期望发布量／当前周期可用产能／基线产能，
         # 三者分别承载，不得静默取其一覆盖三个。
         "capacity_triad": {"desired_output": None, "cycle_available": None, "baseline": None},
+        # 可用事实/偏好/参考及其五维度（设计文档 §二 #9）。纯追加，永不修改既有条目：
+        # 冻结硬约束「参考资料和历史产物不得覆盖用户已经确认的事实」在 P0 因此天然不可违反。
+        "evidence_bundle": [],
+        # 市场观察（设计文档 §二 #10）：本批 **DEFER，未实现**。
+        # M1 候选环境里没有任何合法的市场数据通道（DSL 无 Tool 节点、file_upload.enabled=False、
+        # 无联网；仓库红线与共享合同一 §八 均把全平台市场情报爬虫列为非目标），消费者
+        # CAP-03/CAP-05 又正是当前 NO_ENTRY_CAPABILITIES；observed_at 由编译器补即伪造采集
+        # 时间，validity 由代码评级即新增自动评分器。
+        # **口径（不得只留空数组）**：孤零零的 [] 会被下游读成"查过了，没有"——那是不实主张
+        # （共享合同一 §六「没有市场资料时不得声称已完成市场比较」）。因此 _compute_gaps 恒定
+        # 输出一条 market_observations 的 DEGRADED/NOT_CAPTURED_IN_P0_SNAPSHOT 缺口，二者必须
+        # 同时存在，并由单测锁定。**该配对成立于完整视图**（_compute_gaps(...,
+        # include_structural=True)，即 project_content_task 给下游的那一份）；持久化快照的
+        # gaps 只留动态子集，因为这条常量条目内容恒定、读代码常量即可，不必逐轮序列化。
+        "market_observations": [],
+        # 缺失信息与已降级项（设计文档 §二 #11）。**当轮派生结果的快照，不是累积状态**：
+        # 每轮由 _compute_gaps 整体重算覆写，消费方要么用它、要么自己重算，二者等价。
+        # 持久化的是 include_structural=False 的动态子集（空快照上 12 条）；完整 20 条视图由
+        # 需要它的调用点自行重算，见 _compute_gaps 的 include_structural 说明。
+        "gaps": [],
         "allowed_capabilities": [],  # 由 call_intent 现算，不在快照里静态存
         "open_threads": [],
+        # 运行中新增的联网/外部证据（设计文档 §二 #14）：本批 **DEFER，未实现**。
+        # 该语义的前提是运行期真的发生过一次外部获取动作，而本环境没有任何工具/联网节点，
+        # 这个动作在 P0 不可能发生，任何写入都是无中生有；obtained_at / applicable_scope 只有
+        # 真正执行获取的那一侧知道，编译器代填即伪造取证时间与适用范围。真正的生产者在
+        # M4/M5（共享合同一 §四：外部搜索、素材读取等工具在 Skill 运行期调用）。
+        # 未来实现口径：由发起获取的一侧在获取完成后显式追加，条目至少携带
+        # {source, obtained_at（获取方给）, applicable_scope（获取方声明）, snapshot_version=写入
+        # 时的 revision}；在 evidence 语义上对应 provenance=AUTHORIZED_EXTERNAL、
+        # confirmation=SYSTEM_TENTATIVE——**外部证据同样不因为写进快照就变成用户确认事实**。
+        # 该批实现一旦引入"修改既有条目"的动作，就必须同时引入一个真实的运行时守卫来承接两条
+        # 冻结硬约束（P0 靠"纯追加"这个结构天然满足，所以 P0 不需要该守卫）。
+        # 同样不得只留空数组（理由与配对成立的视图同 market_observations，见 _compute_gaps
+        # 结构性条目与 include_structural 说明）。
+        "runtime_evidence": [],
         "last_confirmation_signal": "NONE",
         "last_route_intent": None,
     }
@@ -148,12 +248,99 @@ def _validate_patch(patch):
         val = patch.get(key, "UNSTATED")
         if val not in VALID_DISCRETION:
             return False, "ILLEGAL_ENUM:" + key + ":" + str(val)
+    # v0.3：只追加两条枚举校验，沿用既有整体拒绝语义。**不新增任何跨字段整体拒绝规则**——
+    # 既有"整体拒绝"纪律的适用范围是逐字写死的"任一未知字段或非法枚举值"（本文件 docstring、
+    # 设计文档 §六.2）。"evidence_text 非空但 evidence_nature=UNSTATED"用的是合法枚举值，
+    # 不属于该范围，按局部降级处理（见 _merge_evidence_item），不整轮作废用户这一轮说的话。
+    # **这处收窄是执行侧解释、尚未同步设计文档 §六.2，未决状态见模块 docstring 的"未决"段。**
+    en = patch.get("evidence_nature", "UNSTATED")
+    if en not in VALID_EVIDENCE_NATURE_PATCH:
+        return False, "ILLEGAL_ENUM:evidence_nature:" + str(en)
+    es = patch.get("evidence_scope", "UNSTATED")
+    if es not in VALID_EVIDENCE_SCOPE:
+        return False, "ILLEGAL_ENUM:evidence_scope:" + str(es)
     return True, ""
+
+
+def _merge_evidence_item(snap, patch):
+    """把本轮 patch 的单条粗粒度证据信号写入 evidence_bundle[]，返回
+    (appended: bool, dropped_incomplete: bool)。
+
+    **P0 纯追加：任何情况下都不修改既有条目。** 这件事本身就是冻结约束二（参考资料和历史
+    产物不得覆盖用户已经确认的事实）的完整实现——本函数只有 append 一条路径，没有任何修改
+    既有条目的动作，所以该约束在 P0 结构上不可违反，不依赖也不需要任何独立的运行时守卫
+    去保证。（真正需要"修改既有条目"这个动作的实现在 M4/M5，守卫由那一批连同它的调用方
+    一起引入。）
+
+    冻结约束一（系统推断不因为被写入持久化就升级为用户确认事实）的落地：confirmation 是
+    字面常量 SYSTEM_TENTATIVE，本函数不接受任何入参覆盖。轮级 confirmation_signal=AFFIRM 是
+    对"当前正在确认的事项"的回应，无法归因到具体哪一条证据，**不得**被解释成对某条证据的
+    用户确认；同理轮级 DECLINE 也不得写成 REJECTED（与 v0.2 account_stage.confirmation 固定
+    SYSTEM_TENTATIVE 是同一条已裁决的理由）。
+
+    五维度默认值（P0 只有 nature / scope 两维可以偏离，其余三维不可偏离——偏离需要新的物理
+    通道：资料上传／工具调用／按字段确认交互，属 M4/M5 范围）：
+      nature       ← LLM 给出（唯一只有模型能读出的维度：代码分不清"我们店在杭州"是事实、
+                     "我不喜欢强 CTA"是偏好），代码不得代填默认值
+      provenance   ← 恒为 USER_DIRECT（本环境唯一的信息入口就是用户这一轮的自然语言；
+                     写成 SOURCED_MATERIAL 等值即伪造来源，所以也不需要 LLM 字段）
+      confirmation ← 恒为 SYSTEM_TENTATIVE（见上）
+      scope        ← 取 patch 值，缺省 UNSTATED；**绝不从 current_task.temporal_scope 推导**
+      availability ← 恒为 AVAILABLE（本数组只承载"已经拿到的信息"；UNKNOWN/NOT_PROVIDED/
+                     DECLINED/STALE 属于"没拿到"，归 gaps[]；STALE/EXPIRED 还需要生命周期
+                     时钟，P0 没有，已由 _compute_gaps 结构性条目如实登记）
+    """
+    text = (patch.get("evidence_text") or "").strip()
+    if not text:
+        return False, False
+
+    nature = patch.get("evidence_nature", "UNSTATED")
+    if nature not in VALID_EVIDENCE_NATURE_PATCH:
+        # 正常路径下 _validate_patch 已整体拒绝；这里是 helper 被直接调用时的取值门禁，
+        # 防止绕过校验写进一个词表外的（或 SYSTEM_INFERENCE 这种模型不得自称的）性质。
+        raise ValueError("ILLEGAL_EVIDENCE_NATURE:" + str(nature))
+    if nature == "UNSTATED":
+        # 维度不全（模型给了原话却没给性质）：**只跳过这一条证据**，本轮其余捕获（任务、
+        # 目标、产能、裁量……）照常合并，reject_reason 保持不变，dialogue_directive 不变。
+        # 不整体拒绝的四条理由见 _validate_patch 注释与设计说明；代码无法诚实推导一条信息
+        # 是事实还是偏好，所以宁可不写，也不补一个默认 nature。这一轮的丢弃由
+        # turn_report_json.evidence_dropped_incomplete 如实登记在不面向用户的通道里。
+        return False, True
+
+    # 与 _compute_gaps / compute_call_intent 的 `.get(...) or []` / isinstance 防御同一风格：
+    # helper 可能被直接喂一份手工构造的、或早于 v0.3 持久化的快照（没有这个顶层键）。
+    snap.setdefault("evidence_bundle", [])
+
+    for item in snap["evidence_bundle"]:
+        # 去重沿用 non_sacrifice_constraints 的 `not in` 先例：同 text 已存在则不追加、
+        # 不 bump revision，也不修改既有条目。
+        if item.get("text") == text:
+            return False, False
+
+    snap["evidence_bundle"].append(
+        {
+            "id": "ev_%03d" % (len(snap["evidence_bundle"]) + 1),
+            "text": text,
+            "nature": nature,
+            "provenance": "USER_DIRECT",
+            "confirmation": "SYSTEM_TENTATIVE",
+            "scope": patch.get("evidence_scope", "UNSTATED"),
+            "availability": "AVAILABLE",
+            # 取增量前的 revision，与 open_threads.raised_at_revision 同一时序先例。
+            # 只有这一个整数，没有变更历史、没有事件流、没有回放——不是事件溯源。
+            "captured_at_revision": snap["revision"],
+        }
+    )
+    return True, False
 
 
 def _merge_patch(snap, patch):
     """把校验通过的 patch 合并进快照。只有用户本轮真的说出口的内容才写入
-    （不得把 §四 冻结的"不得把用户没说的目标写成已确认"违反）。"""
+    （不得把 §四 冻结的"不得把用户没说的目标写成已确认"违反）。
+
+    返回 (snap, changed, evidence_dropped_incomplete)。第三个值只用于机器可读的
+    turn_report_json，不进入 dialogue_directive、不影响 patch_ok。
+    """
     changed = False
 
     text = (patch.get("current_task_text") or "").strip()
@@ -215,10 +402,129 @@ def _merge_patch(snap, patch):
         snap["capacity_triad"]["baseline"] = baseline
         changed = True
 
+    # evidence_bundle 必须在 revision 自增之前合并：captured_at_revision 取的是增量前的
+    # revision（与 open_threads.raised_at_revision 同一时序先例）。
+    evidence_appended, evidence_dropped_incomplete = _merge_evidence_item(snap, patch)
+    if evidence_appended:
+        changed = True
+
     if changed:
         snap["revision"] = snap["revision"] + 1
 
-    return snap, changed
+    return snap, changed, evidence_dropped_incomplete
+
+
+# ---- gaps[]：缺失信息与已降级项（设计文档 §二 #11）----
+#
+# 零新增 LLM patch key：完全由确定性代码从既有快照状态推导（None 值、UNSTATED 哨兵、本批
+# 明确不实现的结构性语义清单）。只做"有值/无值/是不是哨兵"的布尔判断，不给任何东西打分或
+# 排优先级（阻塞与否直接复用既有 block_reason，不是新算的分数）。
+#
+# 三类语义靠 status + degraded_to 的组合区分，让下游能判断"能不能追问用户"：
+#   结构性未承载（**不得向用户追问**，问了也没地方放）：DEGRADED / NOT_CAPTURED_IN_P0_SNAPSHOT
+#   有承载位置但用户还没说（可追问，但仍受"只追问真正阻塞的一项"约束）：MISSING / None
+#   有哨兵值继续运行（下游不得推定默认值）：DEGRADED / "UNSTATED"
+#
+# 条目严格只有设计文档 §二 #11 的三个键，不加第四个。
+GAP_NOT_CAPTURED = "NOT_CAPTURED_IN_P0_SNAPSHOT"
+
+# 下面这 8 条是**内容恒定的常量**（不随对话状态变化），因此不进逐轮持久化快照——它们由
+# _compute_gaps(..., include_structural=True) 在需要完整合规视图的调用点（project_content_task）
+# 现拼出来，需要它们的消费方也可以直接读本常量。见 _compute_gaps 的 include_structural 说明。
+P0_STRUCTURAL_GAPS = [
+    # 本批范围外、快照里根本没有承载位置的语义。一份自称"缺口登记"的数组如果隐瞒已知缺口，
+    # 本身就是误导，所以 #1/#4/#8 这三条虽然不在本批实现范围内，也如实登记。
+    {"field_ref": "subject_scope", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
+    {"field_ref": "business_goal_categories", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
+    {"field_ref": "cycle_ref", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
+    # 本批明确 DEFER 的两个数组：空数组 + 这两条缺口条目在**完整视图里必须同时存在**
+    # （include_structural=True，即 project_content_task 给下游的那一份），否则空数组会被
+    # 下游读成"查过了，没有"（不实主张）。已由单测锁定，不只是注释。
+    {"field_ref": "market_observations", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
+    {"field_ref": "runtime_evidence", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
+    # 确认维度五个取值里 P0 只可达 SYSTEM_TENTATIVE（没有按字段的用户确认通道），
+    # 可用性维度里 STALE/EXPIRED 需要生命周期时钟、P0 没有。如实登记为结构缺口。
+    {
+        "field_ref": "account_stage.confirmation",
+        "status": "DEGRADED",
+        "degraded_to": "ALWAYS_SYSTEM_TENTATIVE_NO_PER_FIELD_CONFIRM_CHANNEL",
+    },
+    {
+        "field_ref": "evidence_bundle[].confirmation",
+        "status": "DEGRADED",
+        "degraded_to": "ALWAYS_SYSTEM_TENTATIVE_NO_PER_FIELD_CONFIRM_CHANNEL",
+    },
+    {
+        "field_ref": "evidence_bundle[].availability",
+        "status": "DEGRADED",
+        "degraded_to": "ALWAYS_AVAILABLE_NO_LIFECYCLE_CLOCK",
+    },
+]
+
+
+def _compute_gaps(snapshot, include_structural=True):
+    """快照 → 当轮缺口清单。**纯函数**：只读入参、返回新列表，不写入 snapshot。
+
+    每轮整体重算、不留历史，快照里只有当下这一份清单，不存在缺口变更流水（不是事件溯源）。
+
+    include_structural：控制 P0_STRUCTURAL_GAPS 那 8 条**内容恒定的常量条目**是否包含在
+    返回值里。这 8 条不随对话状态变化，不携带任何"这一轮/这次会话独有"的信息——需要它们的
+    消费方直接读代码常量即可，逐轮序列化进 Dify 会话变量纯属浪费，还会让持久化快照每轮都
+    背着同一份不变内容。因此：
+      - main() 传 include_structural=False，只持久化真正随对话状态变化的动态子集；
+        compute_call_intent 的 fallback 分支同口径（non_blocking_gaps 是调用路由信号，
+        不是审计副本）。
+      - project_content_task 等需要**完整合规视图**的调用点传 include_structural=True
+        （设计文档 §三 要求 evidence_and_gaps 完整、不摊平，两条 DEFER 数组的"空数组必须
+        配 gaps 登记"口径也落在这条路径上）。
+    默认值 True，保持既有调用方与手工调用的向后兼容。
+    """
+    gaps = [dict(g) for g in P0_STRUCTURAL_GAPS] if include_structural else []
+
+    current_task = snapshot.get("current_task") or {}
+    goal = snapshot.get("goal_structure") or {}
+    stage = snapshot.get("account_stage") or {}
+    triad = snapshot.get("capacity_triad") or {}
+    discretion = snapshot.get("expression_discretion") or {}
+    evidence = snapshot.get("evidence_bundle") or []
+
+    if not current_task.get("text"):
+        gaps.append({"field_ref": "current_task.text", "status": "MISSING", "degraded_to": None})
+    if current_task.get("temporal_scope", "UNSTATED") == "UNSTATED":
+        gaps.append({"field_ref": "current_task.temporal_scope", "status": "DEGRADED", "degraded_to": "UNSTATED"})
+
+    if not goal.get("primary_goal"):
+        gaps.append({"field_ref": "goal_structure.primary_goal", "status": "MISSING", "degraded_to": None})
+
+    if not stage.get("text"):
+        gaps.append({"field_ref": "account_stage.text", "status": "MISSING", "degraded_to": None})
+
+    # 产能三项各自独立成条，**绝不合并成一条**（共享合同一 §二.7 逐字要求三者分别承载、
+    # 不得静默取其一覆盖三个）。
+    for key in ("desired_output", "cycle_available", "baseline"):
+        if not triad.get(key):
+            gaps.append({"field_ref": "capacity_triad." + key, "status": "MISSING", "degraded_to": None})
+
+    # 未表态不得被推定为允许或不允许，如实登记为带哨兵的降级项。
+    for key in DISCRETION_KEYS:
+        if discretion.get(key, "UNSTATED") == "UNSTATED":
+            gaps.append({"field_ref": "expression_discretion." + key, "status": "DEGRADED", "degraded_to": "UNSTATED"})
+
+    if not evidence:
+        gaps.append({"field_ref": "evidence_bundle", "status": "MISSING", "degraded_to": None})
+    elif any(item.get("scope", "UNSTATED") == "UNSTATED" for item in evidence):
+        # 聚合一条即可：提醒下游"存在未声明作用域的证据"，不得自行把它扩张为长期规则。
+        gaps.append({"field_ref": "evidence_bundle[].scope", "status": "DEGRADED", "degraded_to": "UNSTATED"})
+
+    return gaps
+
+
+# block_reason → 当轮真正在阻塞该能力的字段。用于把"真正阻塞的一项"从"带着继续跑的缺口"里
+# 分出来（共享合同一 §五）。只是一张常量映射，不是新算的分数。
+BLOCK_REASON_BLOCKING_FIELD_REFS = {
+    "NO_CURRENT_TASK_STATED": ["current_task.text"],
+    "NO_TASK_OR_GOAL_STATED": ["current_task.text", "goal_structure.primary_goal"],
+}
 
 
 def _capability_input_status(snap, cap_id):
@@ -275,12 +581,28 @@ def compute_call_intent(snap, requested_capability):
 
     open_now = [t for t in snap["open_threads"] if t.get("status") == "OPEN"]
 
+    # 共享合同一 §五「只追问真正阻塞当前任务的一项，其余作为缺口继续运行」的机制化落地。
+    # 阻塞集合只在"本轮请求了某项能力、且该能力当轮判定为 BLOCKED"时才非空；否则为空集，
+    # 全部缺口都是非阻塞缺口——这与"没有任何一项在阻塞"是同一件事，不需要额外分支。
+    blocking_field_refs = set()
+    requested_info = per_capability.get(requested_capability) if requested_capability else None
+    if requested_info and requested_info["status"] == "BLOCKED":
+        blocking_field_refs = set(BLOCK_REASON_BLOCKING_FIELD_REFS.get(requested_info["block_reason"], []))
+
+    # gaps 正常由 main() 在合并后、调用本函数前重算写入；若调用方喂来的快照没有该键，
+    # 这里自行重算而不是退化成空列表——空列表会被读成"查过了，没有缺口"，那是不实主张。
+    # fallback 用 include_structural=False，与 main() 实际持久化的口径一致：
+    # non_blocking_gaps 是调用路由信号，不是审计副本，8 条恒定常量不必塞进每轮 call_intent。
+    gaps = snap["gaps"] if isinstance(snap.get("gaps"), list) else _compute_gaps(snap, include_structural=False)
+    # 只放 field_ref 字符串，完整对象留在 snapshot.gaps，避免 call_intent 膨胀。
+    non_blocking_gaps = [g["field_ref"] for g in gaps if g["field_ref"] not in blocking_field_refs]
+
     return {
         "needed_capabilities": needed,
         "per_capability": per_capability,
         "continuation": {
             "open_threads_to_surface": [t["id"] for t in open_now[:1]],
-            "non_blocking_gaps": [],
+            "non_blocking_gaps": non_blocking_gaps,
         },
     }
 
@@ -328,12 +650,15 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
 # ---- Content Task 投影：快照 → Content Brief 下游精简视图 ----
 # 设计参照：V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md §三。
 #
-# v0.2 起 account_stage / expression_discretion / available_capacity 已由快照 v0.2 扩展
-# 承载（见 _default_snapshot），不再是结构性缺口。evidence_and_gaps 仍未落地——它对应设计
-# 文档 §二 #9/#11（evidence_bundle[] 五维度 + gaps[]），属于设计文档 §七 登记的"数组型、
-# 嵌套多维度语义是否会让候选 LLM 结构化输出不稳定"未决风险范围，本批不处理。
+# v0.2 起 account_stage / expression_discretion / available_capacity 已由快照扩展承载；
+# v0.3 起 evidence_and_gaps 也不再是哨兵——真实拼装 evidence_bundle[] + gaps[]，保留来源与
+# 确认状态、不摊平（设计文档 §三 原文）。
+#
+# 剩下的结构缺口收窄成一条 evidence_and_gaps.relevance_filter：设计文档 §三 要求取"与本条
+# 相关的子集"，而 P0 快照没有"本条内容"的标识符（无 item_id），任何过滤都会是编造出来的
+# 相关性判断。因此如实全量透传，并把"相关性过滤未实现"登记进 projection_gaps。
 CONTENT_TASK_P0_STRUCTURAL_GAPS = [
-    "evidence_and_gaps",
+    "evidence_and_gaps.relevance_filter",
 ]
 
 # 这四项设计文档明确规定"M1 不做专业判断"，只能由调用方（Campaign 决策包／未来 M3）在
@@ -386,7 +711,17 @@ def project_content_task(snapshot, source_override=None, caller_supplied=None):
             snapshot.get("expression_discretion")
             or {"plot_allowed": "UNSTATED", "remix_allowed": "UNSTATED", "conflict_allowed": "UNSTATED", "controversy_allowed": "UNSTATED"}
         ),
-        "evidence_and_gaps": "NOT_CAPTURED_IN_P0_SNAPSHOT",
+        # 五维度整条保留，不摊平；gaps **自行重算而不是读 snapshot["gaps"] 的存量值**——
+        # 投影可能被喂一份手工构造的、或早于 v0.3 持久化的快照，此时存量值是 [] 或缺失，
+        # 直接透传就会输出 "gaps": []，下游只能读成"查过了，没有缺口"。_compute_gaps 是纯
+        # 函数、幂等、无副作用，重算成本可忽略。
+        # **必须 include_structural=True**：这里正是设计文档 §三 要求"完整、不摊平"的落地点，
+        # 也是两条 DEFER 数组（market_observations / runtime_evidence）"空数组必须配一条 gaps
+        # 登记"这条诚实口径真正被下游看到的地方；持久化路径只留动态子集，不影响本视图。
+        "evidence_and_gaps": {
+            "evidence": [dict(item) for item in (snapshot.get("evidence_bundle") or [])],
+            "gaps": _compute_gaps(snapshot, include_structural=True),
+        },
         "platform_and_form": "PLATFORM_UNCONFIRMED",
         "available_capacity": (snapshot.get("capacity_triad") or {}).get("cycle_available"),
         "post_publish_observation": caller_supplied.get("post_publish_observation"),
@@ -402,9 +737,11 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
     if not isinstance(snap, dict) or "schema_version" not in snap:
         snap = _default_snapshot()
 
-    # 向前兼容：v0.3 及更早持久化的快照没有 account_stage/expression_discretion/
-    # capacity_triad 这三个 v0.2 扩展字段。只补齐缺失的顶层键，不整体重置——已有数据
-    # （如 current_task/goal_structure）必须原样保留，否则等于悄悄丢弃旧会话的真实状态。
+    # 向前兼容：更早持久化的快照没有 v0.2 扩展的 account_stage/expression_discretion/
+    # capacity_triad，也没有 v0.3 扩展的 evidence_bundle/market_observations/gaps/
+    # runtime_evidence。只补齐缺失的顶层键，不整体重置——已有数据（如 current_task/
+    # goal_structure）必须原样保留，否则等于悄悄丢弃旧会话的真实状态。本循环遍历
+    # _default_snapshot() 的全部顶层键，新增字段自动被覆盖，无需为每批扩展另写升级代码。
     for _key, _default_val in _default_snapshot().items():
         if _key not in snap:
             snap[_key] = _default_val
@@ -421,10 +758,19 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
 
     requested_capability = "NONE"
     if patch_ok:
-        snap, changed = _merge_patch(snap, patch)
+        snap, changed, evidence_dropped_incomplete = _merge_patch(snap, patch)
         requested_capability = patch.get("requested_capability", "NONE")
     else:
         changed = False
+        evidence_dropped_incomplete = False
+
+    # gaps[] 每轮整体重算并覆写。**无条件执行**（不放在 if patch_ok 分支内）：patch 被拒绝的
+    # 轮次同样重算，结果与上一轮相同，因为快照没变。这次覆写**不置 changed、不推进 revision**
+    # ——缺口清单是既有状态的派生视图，不是用户造成的状态变化。
+    # include_structural=False：只持久化随对话状态变化的动态子集（空快照上 12 条）。8 条结构性
+    # 常量内容恒定、不携带任何本轮独有信息，逐轮写进 Dify 会话变量只会让快照白白膨胀；需要完整
+    # 20 条合规视图的调用点（project_content_task）自行以 include_structural=True 重算。
+    snap["gaps"] = _compute_gaps(snap, include_structural=False)
 
     call_intent = compute_call_intent(snap, requested_capability)
     directive = _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capability)
@@ -446,6 +792,10 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
                 "open_threads_open_count": len(
                     [t for t in snap["open_threads"] if t.get("status") in ("OPEN", "SURFACED")]
                 ),
+                # 本轮有一条证据因维度不全（给了原话、没给性质）被丢弃。如实登记在**不面向
+                # 用户**的机器可读通道里：dialogue_directive 不变、reject_reason 不变，
+                # 不给"内部枚举被对话 LLM 复述给用户"（CE-A2）这个已知缺陷新增触发器。
+                "evidence_dropped_incomplete": evidence_dropped_incomplete,
             },
             ensure_ascii=False,
         ),

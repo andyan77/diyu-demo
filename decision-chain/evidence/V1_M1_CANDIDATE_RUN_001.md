@@ -117,3 +117,31 @@ A-0～A-4 原始定义与真实证据见 [`V1_DIALOGUE_ORCHESTRATION_REPAIR_001_
 ### （历史记录，问题已解决，保留过程）live 复验曾被阻塞
 
 DSL 用 `build_m1_candidate_dsl_v0.1.py` 重新生成后，执行侧尝试用已保存的控制台会话导入/发布，但本机 Docker 里的 `docker-api-1` 等容器在会话过程中发生过一次重启（`docker ps` 显示 created 3 天前、Up 8 小时），推断服务端会话/刷新令牌存储被清空——用于免密码续期的 `refresh_token` 机制（`POST /console/api/refresh-token`）虽返回 `{"result":"success"}`，但用刷新后的 `access_token` 访问 `/console/api/apps` 仍返回 `401`。执行侧未持有 Founder 明文密码，按既定的凭据最小暴露原则不重新索取，也未尝试绕过——改为交给 Founder 本人操作，见上方"解除"记录。
+
+## 十一、快照 v0.3 扩展：evidence_bundle[]／gaps[]（实现）＋ market_observations[]／runtime_evidence[]（如实 DEFER）
+
+本轮处理设计文档 §二 表格第 9/10/11/14 行，即 v0.2 之后剩余的四个数组型、多维度快照字段。做法：先用独立的设计→对抗审查两步产出方案（对抗审查逐字核对了 worktree 内三份源码、设计文档全文、共享合同一 §三 全文，以及 §七 引用的 `v1_shadow` 既有证据行，纠正了原方案里两处会实际违反冻结硬约束/仓库红线的地方和三处会当场出错的实现细节），再落地实现，再用三路独立复核（重新跑单测、对抗式合规审查、DSL 同步核对）验证实现——过程本身不在这里复述，只记录会影响验收判断的结论。
+
+**四个字段的处置**：
+
+- `evidence_bundle[]`（#9，可用事实/偏好/参考/系统判断及缺口）：**实现**。采用设计文档 §七 官方登记的降级路径——`v1_shadow`（同类组件）设计说明已记录 DeepSeek V4 Flash 不支持嵌套对象（`V1_DIALOGUE_ORCHESTRATION_REPAIR_001_EVIDENCE.md:68`），本批不重新验证这个已有先例的风险，直接采用"LLM 只出扁平粗粒度信号，五维度由确定性代码组装"。新增 3 个 patch 字段：`evidence_text`（用户原话，不润色不补充）、`evidence_nature`（FACT｜PREFERENCE｜REFERENCE｜UNSTATED，刻意不含 `SYSTEM_INFERENCE`——系统推断只能由代码写入，模型不得给自己的复述贴系统判断标签）、`evidence_scope`（比合同词表多一个 `UNSTATED` 哨兵，不替用户推断适用层级）。写入是纯追加，永不修改既有条目；五维度里 `provenance` 恒 `USER_DIRECT`、`confirmation` 恒 `SYSTEM_TENTATIVE`、`availability` 恒 `AVAILABLE`（三者在 P0 环境里结构性为真：无 Tool 节点、无联网、`file_upload.enabled=False`，写成其他值即伪造来源）。两条冻结硬约束的落实方式：约束一（系统推断不因持久化升级为用户确认事实）靠 `confirmation` 是字面常量、代码无任何路径写入 `USER_CONFIRMED`；约束二（参考资料和历史产物不得覆盖已确认事实）靠"纯追加、永不修改既有条目"这个结构本身天然满足，**不需要一个独立的运行时守卫**——首版实现为此写了一个 45 行、生产代码零调用方的 `_may_modify_existing_evidence` 守卫函数，被对抗式合规审查判定违反"不得为未来想象增加无必要结构"（宪法第12条），已删除。
+- `gaps[]`（#11，缺失信息与已降级项）：**实现，零新增 LLM 字段**。完全由确定性代码（`_compute_gaps`）从既有快照状态推导——None 值、`UNSTATED` 哨兵、本批明确不实现的结构性语义清单（`subject_scope`／`business_goal_categories`／`cycle_ref`／两个 DEFER 数组／确认与可用性维度的单值限制）。`compute_call_intent` 里此前硬编码为 `[]` 的 `continuation.non_blocking_gaps` 首次有了真实计算，是共享合同一 §五"只追问真正阻塞的一项，其余带缺口继续跑"第一次有机制载体而非只有注释声明。
+- `market_observations[]`（#10，市场观察）／`runtime_evidence[]`（#14，运行中新增的外部证据）：**本批 DEFER，不实现**，理由是结构性的、不是"没时间做"：M1 候选 DSL 没有 Tool 节点、`file_upload.enabled=False`、无联网（已逐节点核对），这两项语义的消费者 CAP-03/CAP-05 又正是当前 `NO_PHYSICAL_ENTRY_YET`；且关键子字段（`observed_at`／`obtained_at`／`validity`）如果由编译器代填，要么是伪造采集时间，要么是新增自动评分器，两者都是仓库红线。处置：两个字段的快照值恒为 `[]`，同时由 `gaps[]` 恒定登记一条 `DEGRADED / NOT_CAPTURED_IN_P0_SNAPSHOT`（不能只留空数组——孤立的 `[]` 会被下游读成"查过了，没有"，是不实主张，已由单测锁定这条"空数组必须配缺口条目"的口径，不只是注释）。
+
+**对抗式合规审查发现并已修复的问题**（不是走过场，逐条列出）：
+
+1. **派生数据被冗余持久化**：`gaps[]` 空快照上共 20 条，其中 8 条（`P0_STRUCTURAL_GAPS`）内容永远不变，却在首版实现里每轮都被序列化进 Dify 会话变量，实测占某次持久化快照总字节数的 73%。修复：`_compute_gaps(snapshot, include_structural=True|False)` 拆成两档——`main()` 只持久化随对话状态真正变化的动态子集（空快照 12 条），`project_content_task()` 等需要完整合规视图的调用点仍取全部 20 条（设计文档 §三 要求 `evidence_and_gaps` 完整、不摊平，这个要求在这里被保留，不因为持久化优化而丢信息）。
+2. **零调用方的守卫代码**：见上方 `_may_modify_existing_evidence` 的删除记录。
+3. **执行侧在代码注释里给验收判据写解释，未同步设计文档**：首版实现在模块 docstring 里新增"纪律 5"，主张"整体拒绝"规则不适用于 `evidence_nature=UNSTATED` 这种情况（改为只丢这一条证据，本轮其余内容照常合并——这个**行为**本身是对的，和共享合同一 §五、CLAUDE.md"资料不足时不得整任务拒绝"一致，继续保留）。但这处解释断言时的措辞把它当成了既定新纪律来写，而设计文档 `V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md:142`（"纪律 2"，逐字是 AU-05 的通过判据原文）并未同步。已改为在代码里明确标注"未决、需 Reviewer/Founder 核对，不由执行侧单方认定为新纪律"，行为不变，只改措辞的确定性程度。**这一条需要 Reviewer/Founder 核对**：是否需要把这处收窄补进设计文档 §六.2，还是维持现状作为已知的表达简化。
+4. 一处防御风格不一致（`_merge_evidence_item` 未对 `evidence_bundle` 做防御性取值，和文件里其他函数风格不一致）：已修复，无实质影响（P0 里该字段不可能缺失）。
+
+**本批不擅自处理、明确留给 Reviewer/Founder 的事项**：
+
+- `market_observations`／`runtime_evidence` 的 DEFER 判断本身——这两项是共享合同一 §二 冻结的 14 条语义之一，"用 gaps[] 机器可读登记为已降级"是否构成本批可接受的 P0 状态，属于治理判断，不由执行侧单方宣布"已完成"。
+- 每轮只能捕获一条证据（`evidence_text` 单值）：用户一轮说三件事会丢两件，是否需要加 `evidence_text_2`/`_3`（仍是扁平字段，不引入嵌套）是取舍题，本批不擅自扩展。
+- 设计文档 §三 的五维度取值空间与共享合同一 §三 有两处既有的不完全对齐（可用性维度合同列 6 值、设计文档只落 5 值，缺"不适用"；作用域维度合同末尾还有"生效时间是否仍有效"，设计文档四值枚举未承载）。两处都是设计文档 v0.1 既有取舍，不是本批引入，但 `evidence_bundle[]` 正是这组枚举的直接落地对象，从本批起开始承压。本批未改动真相源枚举，如实登记，交 Reviewer 裁决是否需要补进设计文档。
+- "用户明确拒绝提供某项"场景（EP §6 场景 5／M1-AC-05 的"拒绝补充后合法降级"）在本批仍不可表达，因为轮级 `confirmation_signal` 无法归因到具体字段，而按字段确认状态机是 v0.2 已裁决"需要设计判断、不擅自决定"的事项，本批延续同一裁决，不新增一个半截状态机。
+
+**测试**：35 → 88（首版实现）→ 83（对抗审查修复后，删除 8 个只测已删除守卫函数的用例，净增 48）。`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v` → `Ran 83 tests ... OK`，独立复核过两次（对抗审查阶段一次、修复后本次一次），均 0 失败。
+
+**尚未 live 验证**：本批改动（含上述三处修复）目前只有本地单测证据，DSL 已重新生成为 `m1_candidate_dsl_v0.5.yml`（58251 字符 / 75263 UTF-8 字节），但**尚未导入/发布到候选 App，尚未跑真实 Dify 回归**。`_may_modify_existing_evidence` 相关的 `NOT_VERIFIED_IN_LIVE` 标注因该函数已删除而不再适用；但 `evidence_bundle[]`/`gaps[]` 的其余全部行为，在这条记录写下的时刻，仍然只是单测证据，不是 live 证据——按既定纪律不得混称"已验证"。
