@@ -1513,4 +1513,13 @@ next_stage_allowed = false
 
 #### ATT-003.1 远程收口记录
 
-（本节留待主干采用推送并经 `git ls-remote` 核验后，以追加提交补记）
+| 项 | 值 |
+|---|---|
+| 集成分支（本地，未推远程） | `chore/m0-1b-adoption-closeout`，源自 `main @ f94d7a7`；两段合并：① 接入任务分支 `task/v1-m0-1b-slice-contract-revision-001` tip `a3d8940`（零冲突）；② 叠加 L1 定位表／L2 Current Handoff 当前投影纠偏（commit `732c27f`） |
+| 合并进 main | `--no-ff` 真合并，合并提交 **`b305e1eb6f058a2d89b2dcec8aa21a9a98080e58`**，推送 `f94d7a7..b305e1e main -> main` |
+| 远端核验 | `git ls-remote origin refs/heads/main` → `b305e1eb6f058a2d89b2dcec8aa21a9a98080e58`，与本地 `git rev-parse main` 完全一致 |
+| 双向祖先核验 | `git merge-base --is-ancestor task/v1-m0-1b-slice-contract-revision-001 main` ✅；`git merge-base --is-ancestor f94d7a7 main` ✅（旧 main tip 仍是新 main 祖先，未改写历史） |
+| v0.1 完整性 | 合并后 `git hash-object` 重算 `V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md` 仍为 `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c`，逐字未动 |
+| 来源分支 | `task/v1-m0-1b-slice-contract-revision-001` 保留未删除，远端 tip 仍为 `a3d8940c276c1682047d5c3b8417ca884e5d979b` |
+| 已知未修（登记，不修复） | 根 `CLAUDE.md` 顶部合同状态表仍指向 `V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md` / `CONTRACT_REVISION_REQUIRED`，未同步为 v0.2 / `ACCEPTED`——按本任务 `non_goals`「不得修改 README、CLAUDE、项目基线和正式索引中的当前合同指针」明确禁止本任务修改，留待 Founder 授权的后续任务处理 |
+| 结论 | ATT-003 全部处置已推送并经远端核验。`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 收口，终态见 [L2 §一.5](L2_TASK_STATE_AND_HANDOFF.md) |

@@ -31,6 +31,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | SE-003 | `V1-REBASE-EP00-CURRENT` | 远程分支 `task/v1-rebase-ep00-current-m0-preflight` | 见下 |
 | SE-004 | `M0-EP00-ADOPTION-CLOSEOUT-001` | 远程默认分支 `main`（采用 EP-00 交付 + 当前投影纠偏） | 见下 |
 | SE-005 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | 远程分支 `task/v1-m0-1b-slice-contract-revision-001` | 见下 |
+| SE-006 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | 远程默认分支 `main`（采用下位合同 v0.2 ACCEPTED 交付 + 当前投影纠偏） | 见下 |
 
 ### SE-001 · 推送任务分支 `chore/collab-ledger-bootstrap-001`
 
@@ -116,6 +117,22 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-24） | 推送成功：`* [new branch] task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `e21ff4d11fc7d90b25168844260b8e325e1179d1`，与本地 `git rev-parse HEAD` 完全一致。未直推／未合并 `main`，未建 PR（GitHub 自动提示的 PR 创建链接未使用）；`git fetch` 后核验 `origin/main` 仍为 `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，未变 |
 | **状态追加 2**（2026-08-24） | attempt-2（四项定向纠偏 + F-10）推送：`922a99b..c32a42e  task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m0-1b-slice-contract-revision-001` → `c32a42e4c3121951a5557840ac3a87c7d1ee8dce`，与本地 `git rev-parse HEAD` 完全一致；同次查询 `refs/heads/main` 仍为 `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a`，未变。状态仍 `CONFIRMED` |
+| **状态追加 3**（2026-08-24） | Founder 接受后登记接受记录，推送：`9687e90..a3d8940  task/v1-m0-1b-slice-contract-revision-001 -> task/v1-m0-1b-slice-contract-revision-001`。远端核验：`git ls-remote` → `a3d8940c276c1682047d5c3b8417ca884e5d979b`，与本地一致。状态仍 `CONFIRMED` |
+
+### SE-006 · 采用进远程默认工作基线 `main`（下位合同 v0.2 ACCEPTED 交付 + 当前投影纠偏）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` |
+| 类型 | Git merge（`--no-ff`，真合并，两段：① 集成分支接入任务分支 tip ② 集成分支合并进 main）＋ push |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/main` |
+| 前置基线 | `f94d7a754a46c64f4b3e2f4e48cc4c3faa5b319a` |
+| 内容标识 | 见 [L3 §六 ATT-003.1](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 幂等信息 | 快进保护：推送前 `fetch` 比对 `origin/main` 未漂移；**禁用** `--force` / `--amend` / `reset` / `squash`；不删除来源分支 `task/v1-m0-1b-slice-contract-revision-001` |
+| 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
+| 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**最终合并提交 hash —— **远端 ref 是原始权威，不是本账本** |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-24） | 集成分支 `chore/m0-1b-adoption-closeout`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m0-1b-slice-contract-revision-001` tip `a3d8940`（零冲突）；② 叠加 L1／L2 当前投影纠偏（commit `732c27f`）后，合并进本地 `main`（合并提交 `b305e1eb6f058a2d89b2dcec8aa21a9a98080e58`）。推送：`f94d7a7..b305e1e  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `b305e1eb6f058a2d89b2dcec8aa21a9a98080e58`，与本地 `git rev-parse main` 完全一致。`git merge-base --is-ancestor` 双向核验通过。来源分支 `task/v1-m0-1b-slice-contract-revision-001` 远程核验仍为 `a3d8940c276c1682047d5c3b8417ca884e5d979b`，未被删除、未被改写 |
 
 ## 四、其他外部系统
 
