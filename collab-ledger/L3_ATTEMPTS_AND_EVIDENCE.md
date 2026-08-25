@@ -1312,9 +1312,28 @@ next_stage_allowed           = true:V1-REBASE-EP00-CURRENT
 3. 下一权限动作 = Founder 审阅并裁决报告 §十一，正确引用其材料位置与门槛后果（子合同、共享合同冻结、M1—M4 施工均不获授权）。
 4. M1—M4 均未获授权——正确交叉引用 L2 §一.3 `next_stage_allowed=false`、L2 §二完成信号列、报告 §十二、L1 `non_goals`、L1 §T-001.6 `scope_boundary` 五处独立位置。
 
-#### ATT-001.3 远程收口记录（推送后填写）
+#### ATT-001.3 远程收口记录
 
-> 本节在实际执行 `git merge` 进 `main` 并 `git push` 之后填写，届时以 append 方式记录以下三项内容，与 [L5 §SE-004](L5_SIDE_EFFECTS.md) 的状态追加行同步：最终合并提交 hash、`git ls-remote origin refs/heads/main` 的核验结果、C-ADOPT／C-REMOTE 的最终判定。
+| 项 | 值 |
+|---|---|
+| 集成分支 tip（合入前） | `chore/m0-ep00-adoption-closeout-001` @ `66f02bd`（`git rev-parse`，可复算） |
+| 最终合并提交 | `2dc4b5921bcfbe86c880c45696b0ece8367966c1`（本地 `main`，`--no-ff` 合并集成分支） |
+| 推送结果 | `4d84cd2..2dc4b59  main -> main` |
+| 远端核验 | `git ls-remote origin refs/heads/main` → `2dc4b5921bcfbe86c880c45696b0ece8367966c1`，与本地 `git rev-parse main` **完全一致** |
+| 祖先关系核验 | `git merge-base --is-ancestor origin/task/v1-rebase-ep00-current-m0-preflight main` → true；`git merge-base --is-ancestor 4d84cd2... main` → true——**来源 tip 与旧 main tip 均为新 main 的祖先**，历史未被压平或改写 |
+| 来源分支保留核验 | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` → `48c8275e8aa576be7c037303348de0dfb5677641`（与合入前一致，未删除未改写） |
+| C-ADOPT 最终判定 | **通过** —— 上述祖先关系与远端核验共同证明 |
+| C-REMOTE 最终判定 | **通过** —— 本地/远端 `main` hash 完全一致 |
+| 结论 | ATT-001.2 九项验收（C-ADOPT ~ C-CONTINUITY）**全部通过**。任务收口 |
+
+**终态**：
+
+```text
+M0_EP00_ADOPTION_CLOSEOUT_001 = DONE
+next_stage_allowed = false
+```
+
+`next_stage_allowed=false` 的含义与 `V1-REBASE-EP00-CURRENT` 相同：本任务只完成了「把已完成交付采用进默认基线 + 状态纠偏」，**不表示**子合同已接受、共享合同已冻结或 M1—M4 施工已获授权——这些仍待 Founder 就报告 §十一 的产品命题裁决（见 [L2 §二](L2_TASK_STATE_AND_HANDOFF.md)）。
 
 #### ATT-001.4 本任务的已知缺口（登记，不修复）
 

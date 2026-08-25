@@ -98,7 +98,8 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 幂等信息 | 快进保护：推送前重新 `fetch` 比对；**禁用** `--force` / `--amend` / `reset` / `squash`；不删除来源分支 `task/v1-rebase-ep00-current-m0-preflight` |
 | 受控状态 | **不可逆**（公开仓库，推上去即世界可见）；仅可用新提交前向修正，**不得改写历史** |
 | 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**最终合并提交 hash —— **远端 ref 是原始权威，不是本账本** |
-| **状态** | `PLANNED` → 见下方状态追加 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-24） | 集成分支 `chore/m0-ep00-adoption-closeout-001`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入来源分支 `task/v1-rebase-ep00-current-m0-preflight` tip `48c8275`（零冲突，file delta 与规划观察完全一致）；② 叠加本任务的 canonical／L2／L1／L3／L5 当前投影纠偏与记账后，合并进本地 `main`（合并提交 `2dc4b5921bcfbe86c880c45696b0ece8367966c1`）。推送：`4d84cd2..2dc4b59  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `2dc4b5921bcfbe86c880c45696b0ece8367966c1`，与本地 `git rev-parse main` 完全一致。`git merge-base --is-ancestor` 双向核验：来源分支 tip 与旧 `main` tip（`4d84cd2`）均为新 `main` 的祖先。来源分支 `task/v1-rebase-ep00-current-m0-preflight` 远程核验仍为 `48c8275e8aa576be7c037303348de0dfb5677641`，未被删除、未被改写 |
 
 ## 四、其他外部系统
 
