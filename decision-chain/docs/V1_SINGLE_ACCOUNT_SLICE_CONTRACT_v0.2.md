@@ -2,22 +2,25 @@
 
 > **文档角色：纵向切片产品合同（product contract）后继候选版本，不是施工包，不是技术方案。**
 >
-> **当前状态（沿用 v0.1，本任务不自行推高）：**
+> **当前状态：**
 >
 > ```text
-> SINGLE_ACCOUNT_VERTICAL_SLICE = CONTRACT_REVISION_REQUIRED
+> SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT_ACCEPTED
+> — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED
 > ```
 >
 > **本版是 v0.1 的后继候选，不覆盖 v0.1。** v0.1 逐字保留于
 > [`V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md`](V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md)，作为历史记录。
-> 本版完成 Founder 2026-08-24 就 F-01～F-10 十项产品语义命题的定向裁决落地，并通过任务
-> `V1-M0-1B-SLICE-CONTRACT-REVISION-001` 自身的一次定向语义审查（见文末「十一、v0.2 本轮定向修订登记」）。
-> **执行侧认为**本版已满足 v0.1 §10.3 状态梯中"完成集中语义收口，并通过再次语义审查"这一
-> 升级条件的文字表述，**但状态字符串本身是否推进到 `READY_FOR_FOUNDER_ACCEPTANCE`，
-> 依然只能由 Founder 明确确认后推进，不由执行侧自行推高**（见 §10.3、CLAUDE.md §6
-> "不得由执行侧宣布合同已接受，也不得自行把合同状态往上推一级"）。
-> 任务本身的完成状态是 `M0.1B_CONTRACT_CANDIDATE = READY_FOR_FOUNDER_REVIEW`——
-> 这是**任务交付状态**，不是本文件内嵌的合同治理状态字符串。
+> 本版完成 Founder 2026-08-24 就 F-01～F-10 十项产品语义命题的定向裁决落地，通过任务
+> `V1-M0-1B-SLICE-CONTRACT-REVISION-001` 两轮定向语义审查（见文末「十一、v0.2 本轮定向修订登记」），
+> 并经 **Founder 于 2026-08-24 在执行过程中明确回答接受**（对应本文件 §10.3 所述的"在执行中
+> 弹出授权提示，Founder 直接回答"机制，非离线审查）——**状态字符串由 Founder 本人确认后推进，
+> 不是执行侧自行推高**（呼应 CLAUDE.md §6）。
+> 任务本身的完成状态是 `V1-M0-1B-SLICE-CONTRACT-REVISION-001 = DONE`——
+> 这是**任务交付状态**，与本文件内嵌的合同治理状态字符串是两件事，但两者现在一致指向"已接受"。
+>
+> **本次接受只授权 `SINGLE-ACCOUNT-SLICE-EP00` 只读预检**（见 §10.2、§10.3）；**不授权**
+> 施工、不授权 Skill／DSL／Dify 改造、不授权 M1—M5。后继任务名称与范围见 §10.3。
 
 ---
 
@@ -1400,27 +1403,38 @@ Matrix 是所有任务必经入口；Campaign 是所有内容必经入口；Brie
 ## 10.3 状态梯
 
 ```text
-SINGLE_ACCOUNT_VERTICAL_SLICE = CONTRACT_REVISION_REQUIRED   ← 当前（v0.2 沿用）
-        ↓  完成集中语义收口，并通过再次语义审查
+SINGLE_ACCOUNT_VERTICAL_SLICE = CONTRACT_REVISION_REQUIRED
+        ↓  完成集中语义收口，并通过再次语义审查（v0.2 attempt-1 达成）
 SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT_READY_FOR_FOUNDER_ACCEPTANCE
-        ↓  Founder 明确接受
+        ↓  Founder 明确接受（2026-08-24，在执行过程中的授权提示中直接回答"接受"）
 SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT_ACCEPTED
-— SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED
+— SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED   ← 当前
 ```
 
-v0.1 曾停在 `CONTRACT_REVISION_REQUIRED`，待"完成集中语义收口，并通过再次语义审查"后才能升到
-`READY_FOR_FOUNDER_ACCEPTANCE`。本版（v0.2）由任务 `V1-M0-1B-SLICE-CONTRACT-REVISION-001`
-落实了 F-01～F-09、完成该任务自身的一次定向语义审查（见文末「十一」），并在同一任务内
-按 Founder 复核意见完成四项定向纠偏与新增命题 F-10——**执行侧认为**这已满足升级条件的文字
-表述，**但状态字符串本身是否推进，仍只能由 Founder 明确确认，不由执行侧自行推高**；因此
-本版状态字符串**沿用** `CONTRACT_REVISION_REQUIRED`，供 Founder 审阅后自行决定是否推进到
-`READY_FOR_FOUNDER_ACCEPTANCE`。
+v0.1 曾停在 `CONTRACT_REVISION_REQUIRED`。本版（v0.2）由任务 `V1-M0-1B-SLICE-CONTRACT-REVISION-001`
+分两个 attempt 完成：attempt-1 落实 F-01～F-09 并通过一次定向语义审查；attempt-2 按 Founder
+复核意见完成四项定向纠偏与新增命题 F-10，并通过第二次定向语义审查（见文末「十一」）。
+**Founder 于 2026-08-24 在执行过程中被问及是否接受时，直接回答"接受，采用进 main"**——
+状态字符串因此由 Founder 本人的明确回答推进，不是执行侧自行推高。
 
-**三条硬规则：**
+**接受意味着什么、不意味着什么：**
 
-1. **不能由执行侧自行宣布「已接受」，也不能自行把状态往上推一级。**
+- **意味着**：`SINGLE-ACCOUNT-SLICE-EP00`（单账号纵向切片专项只读预检）现在有了被接受的下位
+  合同可以依据；
+- **不意味着**：授权施工、授权修改 Skill/DSL/Dify、授权 M1—M5、授权四个共享合同冻结。
+- **后继任务名称变更**：此前独立的 `V1-SINGLE-ACCOUNT-SLICE-EP00-001`（连同其完整 Execution
+  Prompt）**不再作为自动后继任务单独执行**；唯一后继改为
+  `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`，统一承接
+  "`SINGLE-ACCOUNT-SLICE-EP00` 专项预检 → M0.3 四个共享合同 → Founder 阶段接受 → M0 收口"，
+  不得自动进入 M1—M4。**该后继任务目前只有名称与一句话范围，尚无完整 Execution Prompt——
+  实质工作待 Founder 另行下发。**
+
+**三条硬规则（继续有效，不因本次接受而失效）：**
+
+1. **不能由执行侧自行宣布「已接受」，也不能自行把状态往上推一级**——本次推进是 Founder 本人
+   在执行过程中明确回答后才发生的，执行侧只是记录该回答，不是自行判定。
 2. 状态字符串**只是文档治理标签**，不是代码、Schema 或路由枚举。
-3. 即使进入 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`，**也只授权 `SINGLE-ACCOUNT-SLICE-EP00` 只读预检，不授权执行侧直接建设持久化、修改 Skill 或改造 Dify 工作流。**
+3. 进入 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED` 后，**也只授权 `SINGLE-ACCOUNT-SLICE-EP00` 只读预检，不授权执行侧直接建设持久化、修改 Skill 或改造 Dify 工作流。**
 
 ---
 
@@ -1455,8 +1469,9 @@ v0.1 曾停在 `CONTRACT_REVISION_REQUIRED`，待"完成集中语义收口，并
   F-07 衔接缺口）。
 - **新增小节**：§1.6、§2.1.1、§5.5.1、§5.9.1、§5.10.1、§5.10.2（6 个，attempt-1）；§5.12（F-10，attempt-2）。
 - **表格新增行**：§0.5 切片增量登记表 +5 行（attempt-1 四行 ＋ attempt-2 的 §5.12 一行）；
-  文档头部状态块与 §10.3 说明段补充文字，
-  **状态字符串本身沿用 `CONTRACT_REVISION_REQUIRED`，未被本任务推高**（见下 §11.3）。
+  文档头部状态块与 §10.3 说明段补充文字。**attempt-2 交付时状态字符串沿用
+  `CONTRACT_REVISION_REQUIRED`；Founder 随后在同一执行过程中接受，状态字符串已推进为
+  `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`**（接受记录见下 §11.3）。
 - **未改动**：§二（除 2.1/2.1.1 增补外）、§三、§四、§五（除 5.5.1/5.9.1/5.10.1/5.10.2/5.12 外）、
   §六、§七、§八（除 8.1/8.2 开头一段外）、§九、§10.1 逐字保留；**§10.2 在本轮定向纠偏中被
   改动，见下方「11.2.1」，此处更正上一版误写的"逐字保留"**。
@@ -1475,20 +1490,26 @@ v0.1 曾停在 `CONTRACT_REVISION_REQUIRED`，待"完成集中语义收口，并
 | 将反馈闭环统一为"有依据地调整或有依据地保持不变" | **补充** §5.10.1：显式承认"有依据地保持不变"是合法结果，与 §8.1 既有措辞对齐；同时界定其与"无依据拒绝"（§5.10.1 原有"系统不得"清单）的区别，避免被误读为可以借"保持不变"回避执行 | §5.10.1 |
 | **F-10**：目标忠实、适用专业价值保留与证据等级 | **新增** §5.12（三个子节：目标忠实对称约束、适用专业能力非全能前置门、四类证据等级）；**补充** §8.2 开头一段对齐说明，防止四类证据等级与既有三层验收框架被误读为两套竞争体系 | §5.12、§8.2、§0.5、§11.1 |
 
-本轮**未**改变治理状态字符串（仍为 `CONTRACT_REVISION_REQUIRED`，见 §11.3），**未**扩大到
-四项纠偏意见与 F-10 以外的产品命题，**未**触碰 v0.1、上位合同或任何受保护资产，**未**引入
-新 Skill、新工作流、新评测平台或第五份共享合同。
+**attempt-2 交付时**（尚未获 Founder 回应）：**未**改变治理状态字符串（仍为
+`CONTRACT_REVISION_REQUIRED`），**未**扩大到四项纠偏意见与 F-10 以外的产品命题，**未**触碰
+v0.1、上位合同或任何受保护资产，**未**引入新 Skill、新工作流、新评测平台或第五份共享合同。
 
-## 11.3 本节不改变的边界
+> **接受记录**：Founder 于 2026-08-24 在同一执行过程中被问及是否接受 v0.2（四项纠偏 ＋ F-10
+> 已完成、定向审查已修复、未发现范围外产品语义变化）时，**明确回答"接受，采用进 main"**。
+> 状态字符串因此推进为 §10.3 所示的 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`，
+> **由 Founder 本人的回答触发，不是执行侧自行推高**——下方 §11.3 按接受后的现状更新。
 
-- **本文件的合同治理状态字符串沿用 `CONTRACT_REVISION_REQUIRED`，未被本任务推高**——执行侧
-  认为 F-01～F-10 修订与四项定向纠偏、以及本任务两轮的定向语义审查已满足 v0.1 §10.3 declared
-  的升级条件，但状态字符串是否推进到 `READY_FOR_FOUNDER_ACCEPTANCE` 只能由 Founder 明确确认，
-  不由执行侧自行推高（呼应 CLAUDE.md §6："不得由执行侧宣布合同已接受，也不得自行把合同状态
-  往上推一级"）；
-- 本文件（无论哪个状态字符串）**未被 Founder 接受**；
-- `SINGLE-ACCOUNT-SLICE-EP00` **未因本次修订自动获得授权**；
-- 四个共享合同的冻结、M1—M4 及 M5 施工**均未获授权**；
+## 11.3 现状与边界（Founder 已接受后）
+
+- **本文件的合同治理状态字符串已推进为 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`**
+  ——推进动作由 Founder 2026-08-24 在执行过程中的明确回答触发，执行侧只负责记录与落地，
+  未自行判定、未自行推高（呼应 CLAUDE.md §6）；
+- `SINGLE-ACCOUNT-SLICE-EP00`（单账号纵向切片专项只读预检）**因本次接受获得下位合同依据**，
+  但**不因此自动获得开工授权**——其自身仍需满足 §10.1 冻结的实施顺序与 §10.2 的授权登记；
+- **后继任务名称已变更**：原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001` 不再单独执行；唯一后继
+  `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` **目前只有名称与一句话范围，
+  尚无完整 Execution Prompt**，不得凭本节文字自行编写并开工；
+- 四个共享合同的冻结、M1—M4 及 M5 施工**仍均未获授权**；
 - EP-00 报告中的工程发现（Skill 参数漂移、Dify App 孤儿、Content Brief 唯一上游锁定等）**不在本次修订范围**，仍待后续工程任务处理。
 
 ---

@@ -979,3 +979,14 @@ scope_boundary: "仅适用于本任务本轮 Delta；不构成项目级验收降
 | 项 | 值 | 怎么重算 |
 |---|---|---|
 | `task_contract_hash_v2` | `27d65007d297d9d8649cefabfee08fc4e5f1efaac62fda64c9daf387b87c0bc3` | 取本节 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |
+
+### T-004.4 Founder 接受记录（块外追加，不改动上方 `task_contract_hash_v2` 覆盖的字节）
+
+| 项 | 值 |
+|---|---|
+| 触发方式 | 执行过程中的授权提示（`AskUserQuestion`），非离线审查——对应 §T-004.3 `founder_acceptance_gate.mechanism` |
+| 提问内容 | "四项定向纠偏与 F-10 已完成并通过定向审查修复，未发现范围外产品语义变化。是否接受 V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md，授权采用进远程 main？" |
+| Founder 回答 | **"接受，采用进 main"**（2026-08-24） |
+| 触发的状态变化 | `SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT = ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`；`M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED` |
+| 后继任务变更登记 | 原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001`（含其完整 Execution Prompt）不再单独执行；新后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 仅有名称与一句话范围（见 §T-004.3 `successor_task_change`），**尚无完整 Execution Prompt，不得据此自行开工** |
+| 未被本次接受触发 | 不触发 M1—M4／M5；不触发四个共享合同冻结；不触发 `SINGLE-ACCOUNT-SLICE-EP00` 自动开工（其自身仍需满足 v0.2 §10.1／§10.2 的实施顺序与授权登记） |

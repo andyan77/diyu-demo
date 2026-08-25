@@ -1502,3 +1502,15 @@ next_stage_allowed = false
 `founder_acceptance_gate`）。回答"接受"后，本任务才进入合同状态更新、main 采用与远程收口，
 并按 `successor_task_change` 以 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`
 取代原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001` 作为唯一后继任务。
+
+### ATT-003 · `V1-M0-1B-SLICE-CONTRACT-REVISION-001` / Founder 接受与主干采用
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder 于 2026-08-24 在执行过程中被问及是否接受 v0.2 时，明确回答**"接受，采用进 main"**（详见 [L1 §T-004.4](L1_TASK_MANIFESTS.md)） |
+| 处置 | 更新 `V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md` 内嵌治理状态字符串为 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（头部状态块、§10.3 状态梯、§11.2/§11.2.1/§11.3 同步更正，历史叙述保留不改，只追加"随后接受"的说明）；采用进远程 `main`（见下方远程收口记录）；登记 `M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED` 与后继任务名称变更 |
+| 明确不做的事 | **不**编写或启动 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 的实质工作——该任务目前只有名称与一句话范围，没有完整 Execution Prompt；**不**自行推断其验收标准或起草其 Task Contract；**不**触发 M1—M5 或四个共享合同冻结 |
+
+#### ATT-003.1 远程收口记录
+
+（本节留待主干采用推送并经 `git ls-remote` 核验后，以追加提交补记）
