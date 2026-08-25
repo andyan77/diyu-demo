@@ -210,6 +210,34 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 集成分支 `chore/m1-engineering-prompt-adoption`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m1-engineering-prompt-adoption-001` tip `06870b8`（零冲突，commit `2d3084a`）；② 合并进本地 `main`（合并提交 `2ccd6d847f119c2280031902c98d511fb33aaa1f`）。推送前 `git fetch origin main` 核验 `origin/main` 仍为 `2a082269`，未漂移。推送：`2a08226..2ccd6d8  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `2ccd6d847f119c2280031902c98d511fb33aaa1f`，与本地 `git rev-parse main` 完全一致。双向祖先核验通过（任务分支是新 main 祖先；旧 main tip `2a082269` 仍是新 main 祖先，历史未改写）。全部受保护资产（四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言）blob hash 合并后重算，逐字未动。落盘的 `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md` 最终 sha256 = `b0adc1fc770abcb09dc2466d36a4803e3dba81ddafb63876d396e10848c37e4a`，与落盘时一致。来源分支 `task/v1-m1-engineering-prompt-adoption-001` 远程保留，未删除 |
 
+### SE-012 · 推送任务分支 `task/v1-m2-engineering-prompt-adoption-001`
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-M2-ENGINEERING-PROMPT-ADOPTION-001` |
+| 类型 | Git push（新建远程分支，独立于 `main`） |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/v1-m2-engineering-prompt-adoption-001` |
+| 内容标识 | 落盘 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md` ＋ PROJECT_INDEX／L1／L2／L3／L5 账本登记（含自证哈希不一致披露） |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；未触碰默认分支，随后经集成分支 `--no-ff` 合入 `main`（见 SE-013） |
+| 核验依据 | `git ls-remote origin refs/heads/task/v1-m2-engineering-prompt-adoption-001` —— 以实时返回为准 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-25） | 推送成功：`* [new branch] task/v1-m2-engineering-prompt-adoption-001 -> task/v1-m2-engineering-prompt-adoption-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m2-engineering-prompt-adoption-001` → `c8121179290637fc942204414b8465e87991e9a0`，与本地 `git rev-parse HEAD` 完全一致 |
+
+### SE-013 · 采用进远程默认工作基线 `main`（M2 施工 Execution Prompt 落盘）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `V1-M2-ENGINEERING-PROMPT-ADOPTION-001` |
+| 类型 | Git merge（`--no-ff`，集成分支接入任务分支 tip，再合入 `main`）＋ push |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/main` |
+| 前置基线 | `0de99930ff5da5c24aa2fbe34615abe52cc6c7db` |
+| 内容标识 | 见 [L3 §十二 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| 幂等信息 | 快进保护：推送前 `fetch` 比对 `origin/main` 未漂移；**禁用** `--force`/`--amend`/`reset`/`squash`；不删除来源分支 `task/v1-m2-engineering-prompt-adoption-001` |
+| 受控状态 | **不可逆**（公开仓库）；仅可用新提交前向修正 |
+| 核验依据 | `git ls-remote origin refs/heads/main` 的 HEAD **等于**最终合并提交 hash |
+| **状态** | `PLANNED` |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

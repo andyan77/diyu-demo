@@ -1771,3 +1771,25 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001 结论
 
 `DONE`。任务终态见最终回执与 [L2 §一.12](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
+
+## 十二、`V1-M2-ENGINEERING-PROMPT-ADOPTION-001`
+
+### ATT-001（唯一尝试）
+
+| 项 | 值 |
+|---|---|
+| 起算 | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（= 前一任务 `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 最终采用提交），本地/远程一致，工作区仅含本任务待处理的根目录未跟踪文件 |
+| 触发 | Founder 2026-08-25 会话内消息：「M2_业务持久化版本发布反馈投影_Execution_Prompt_v1.1.md 已经放到仓库根目录，授权推进落盘」 |
+| **范围核验（第一步）** | 字面只授权"落盘"。§六新增铁律"执行 Prompt 即授权"（[L3 §十一](L3_ATTEMPTS_AND_EVIDENCE.md)）只免除"逐次确认"这一步，Prompt 自身内容仍是执行范围边界；M2 文档 0 节自身明写"不因文件存在而自动授权工程施工"。两者叠加，判定本次仍只处理确定无歧义的部分：落盘文档本身；不新建、不触碰 `task/m2-business-persistence-version-feedback-v1` 或任何 PostgreSQL/Dify 对象；M2 工程执行授权问题留待落盘完成后单独向 Founder 确认 |
+| **并发写入排查** | 落盘前 `git status --short` 发现 `COLLAB_CONTINUITY_PROTOCOL.md`／`L1_TASK_MANIFESTS.md`／`L2_TASK_STATE_AND_HANDOFF.md` 三个文件已被修改但未提交（即 `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 本身）。`ListAgents` 确认存在两个 interactive 状态的同机并行会话。判定：若此时编辑同一批文件并提交，会把对方未完成/未审阅内容打包进本任务 commit。未 stash、未强行编辑，用 AskUserQuestion 向 Founder 报告，Founder 选择"等对方提交后再落盘"。用后台 Bash（`git diff HEAD --quiet` 轮询，30s 间隔，30min 超时兜底）等待，对方于 `main @ 0de99930...` 提交完成后收到通知，确认三文件相对新 HEAD 已 clean 后才开始写入 |
+| **自证哈希核验** | 用两种独立方法（awk/sed 提取 + Python 精确字节切片）复算文档 Task Contract 代码块字节；先用同方法在 M1 文档上验证可正确复现其自证哈希 `d6b0b3d8...`（方法有效性确认），再对 M2 文档复算得 `4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830`，与文档自称 `task_contract_hash`（`e17b354b97d53bfa52eeb30ffca50970e5469acabee98b3cfc32a1031b1b90ca`）**不一致**。排查 CRLF（无）、BOM（无）、代码块内行尾空白（0 处）、异常隐藏字符（唯一非 ASCII 命中为正常中文引号与箭头）；均排除后判定为文档自身编译时哈希与最终定稿内容未同步，非本次转录/传输引入的漂移。未自行改写文档内容以"凑成"一致，也未静默采用错误的自称值；用 AskUserQuestion 向 Founder 报告，Founder 裁决"按实测值登记，继续落盘" |
+| 引用真源哈希核验 | 文档 §1.1/§1.2 引用的 9 份仓库内文件（上位产品合同、下位切片合同v0.2、通用EP-00、专项EP-00、四份 M0.3 共享合同、Phase0 共享前言）逐一 `sha256sum` 现算，与文档声明值**全部一致**；另核验 `git diff 2a082269..0de9993 -- decision-chain/` 期间只新增 M1 落盘文档一个文件，上述 9 份引用文件在此期间零改动，无漂移。规划工作区外部文件（Windows 路径 `/mnt/c/...`）不可从本仓库核验，按引用原样记录，不臆测其内容 |
+| 落盘 | `mv`（非复制）从仓库根目录移动到 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md`（与 M1/共享前言同目录；命名遵循 M1 的 `M<N>_ENGINEERING_EXECUTION_PROMPT_v<version>.md` 既有约定，未沿用原始中文文件名）；移动后 sha256 = `8008bebd04b35037e16f5462ea1b7284db7dec943e954263762bbdb4688bb0c6`，与移动前 Read 工具读取内容计算的整文件哈希一致，未变 |
+| 新建任务分支 | `task/v1-m2-engineering-prompt-adoption-001`，无同名冲突 |
+| 账本登记 | [L1 §T-010](L1_TASK_MANIFESTS.md)（Task Contract + Manifest，含哈希不一致披露）／[L2 §一.13](L2_TASK_STATE_AND_HANDOFF.md)／本节／[L5](L5_SIDE_EFFECTS.md)；[PROJECT_INDEX.md](../PROJECT_INDEX.md) 新增一处指针，标注"工程实现未授权"并披露哈希不一致 |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、M1 落盘文档执行前后 blob hash 逐一核对，全部一致；`git status --short` 仅含本任务授权的 6 个文件 |
+| 独立复核 | 未触发——全部为哈希核验、并发状态核验与状态字段登记的直接核对，无需要多角度判断的实质分歧点 |
+
+#### ATT-001 结论
+
+文档落盘 `DONE`（含一处已披露的文档自证哈希不一致，Founder 已裁决按独立复算值登记）；M2 工程执行（`task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`）**未开工、未获授权**，`task/m2-business-persistence-version-feedback-v1` 分支不存在，未创建任何 PostgreSQL/Dify 对象。任务终态见最终回执与 [L2 §一.13](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
