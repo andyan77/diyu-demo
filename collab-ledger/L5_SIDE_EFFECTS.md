@@ -221,7 +221,8 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
 | 受控状态 | 可逆——任务分支可删；未触碰默认分支，随后经集成分支 `--no-ff` 合入 `main`（见 SE-013） |
 | 核验依据 | `git ls-remote origin refs/heads/task/v1-m2-engineering-prompt-adoption-001` —— 以实时返回为准 |
-| **状态** | `PLANNED` |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-25） | 推送成功：`* [new branch] task/v1-m2-engineering-prompt-adoption-001 -> task/v1-m2-engineering-prompt-adoption-001`。远端核验：`git ls-remote origin refs/heads/task/v1-m2-engineering-prompt-adoption-001` → `c8121179290637fc942204414b8465e87991e9a0`，与本地 `git rev-parse HEAD` 完全一致 |
 
 ### SE-013 · 采用进远程默认工作基线 `main`（M2 施工 Execution Prompt 落盘）
 
