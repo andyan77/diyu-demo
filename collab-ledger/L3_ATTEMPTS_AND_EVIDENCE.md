@@ -1523,3 +1523,59 @@ next_stage_allowed = false
 | 来源分支 | `task/v1-m0-1b-slice-contract-revision-001` 保留未删除，远端 tip 仍为 `a3d8940c276c1682047d5c3b8417ca884e5d979b` |
 | 已知未修（登记，不修复） | 根 `CLAUDE.md` 顶部合同状态表仍指向 `V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md` / `CONTRACT_REVISION_REQUIRED`，未同步为 v0.2 / `ACCEPTED`——按本任务 `non_goals`「不得修改 README、CLAUDE、项目基线和正式索引中的当前合同指针」明确禁止本任务修改，留待 Founder 授权的后续任务处理 |
 | 结论 | ATT-003 全部处置已推送并经远端核验。`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 收口，终态见 [L2 §一.5](L2_TASK_STATE_AND_HANDOFF.md) |
+
+---
+
+## 七、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`
+
+### ATT-001 · `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` / Phase A（进行中任务的首个 Phase，非完整 attempt 收口）
+
+| 项 | 值 |
+|---|---|
+| 任务与输入引用 | [L1 §T-005.1 Task Contract](L1_TASK_MANIFESTS.md) · [§T-005.2 Manifest](L1_TASK_MANIFESTS.md) |
+| 起算基线 | `main @ 0eba71a85916d4d993313c015dc8ad87f180d4de`（本地 == 远端，工作区开工前 clean） |
+| 激活门核验 | §2 全部条件核验通过（见 L1 §T-005.1 `activation_gate_verified_at_execution`），非 `BLOCKED` |
+| 复用基线核验 | `git diff --stat 4d84cd2 main` 对 Skills／workflows／content-production 全路径为空 diff；Dify 主 Chatflow `updated_at` 与通用 EP-00 记录秒级一致——通用 EP-00 §二～§九全部 `CURRENT`，本任务未重做 |
+| 实现引用 | [`decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)（新建，`SINGLE-ACCOUNT-SLICE-EP00` 专项预检交付） |
+| 工作流／模型／Checker | 执行总负责人本人完成 §〇.1 复用有效性核验、M0P-C01～C08 逐项作答、六 Skill／附件重分类、F-10 三风险核验、M1–M4 事实边界表；派发 1 个 `general-purpose` 子代理执行一次定向语义审查（检查项：引用准确性 A／内部一致性 B／范围边界 C／复用有效性声明 D／F-10风险分析可靠性 E） |
+| 环境 | 本机 WSL2；`git 2.x`；`docker exec docker-db_postgres-1 psql` 只读核验；无付费模型调用（子代理审查用 Claude） |
+
+#### ATT-001.1 冻结与哈希登记
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `8b5a48885e27969c404ef86068ec2358bcceda85675247b6bb196eb700a57ac9` |
+| 重算方法 | 取 [L1](L1_TASK_MANIFESTS.md) §T-005.1 ```yaml 块的块内字节求 SHA-256 |
+| Phase A 报告 blob hash（修复后冻结值） | `8134ce00645dd86cea6cc7b6d8d6933f762c68a5` |
+| v0.2 下位合同 blob hash（核验未变） | `b0cfbaf6146def8e5f07782e5e82313adc6f1e6e` |
+| v0.1 下位合同 blob hash（核验未变） | `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c` |
+
+#### ATT-001.2 一次定向语义审查：发现与修复
+
+派发子代理逐条核对 A（引用准确性）／B（内部一致性）／C（范围边界）／D（复用有效性声明）／E（F-10 风险分析可靠性），不做通用编辑意见。
+
+| # | 发现 | 类别 | 修复 |
+|---|---|---|---|
+| 1 | §〇.1 声称 Dify `updated_at` 与通用 EP-00 记录"逐字一致"，但通用 EP-00 原文未记录微秒位，只能算秒级核验 | 引用精度 | 改为"秒级值一致（该报告未记录微秒位）" |
+| 2 | §〇.2 表把三预检状态表（"目前不能开展"）误标为通用 EP-00 §十.2（该节实为 A14/A15 验收矩阵，无此表）；且声称"已由 v0.2 §10.2 自行更正在先"，但 v0.2 §10.2 的两处更正只修了 `V1-REBASE-EP00-CURRENT` 一行，未修 `SINGLE-ACCOUNT-SLICE-EP00` 一行 | 阻断：引用错误＋因果链错误 | 更正为 v0.2 §10.2 原文，更正来源改为"Founder 2026-08-24 对 v0.2 的明确接受（v0.2 §10.3 状态梯）" |
+| 3 | §三 Content Brief 行把"六份中最中性"误用于概括整体价值轴，实际只是 Q4 列结论；遗漏该行 `ROLE_CONFLICT（架构级）` 风险分档 | 引用错误 | 补回 ROLE_CONFLICT 标注与 Q2/Q4 列的准确对应 |
+| 4 | §四风险 C 引用"§三.6"作为"5 次接受动作"出处，实际在 §三.5 | 引用错误 | 改正引用节号（该句在后续 E5 修复中被整段替换，已不再需要该引用） |
+| 5 | **§四风险 C 结论"全能硬门目前不存在"与通用 EP-00 §二·能力1／§四.5（Matrix 整任务硬停、六份 Skill 中最严重一处、决策链三份全部无降级通道、与 CLAUDE.md §4 直接冲突）相矛盾** | **阻断：实质性分析缺陷** | 风险 C 结论重写为"横跨六 Skill 的强制门不存在，但决策链侧整任务硬停无降级通道已真实存在，是风险 C 的一种已发生变体"，并登记为 §七 新增裁决命题 15 |
+| 6 | §四风险 A 只引用 Campaign Q2 列（3 处降权），遗漏 Q1 列"主目标类型被锁定为认知变化"这条与目标忠实最直接相关的证据 | 引用不完整 | 风险 A 补入 Q1 证据，结论从"无证据"改为"改写意义上无证据，但目标类型锁定是需如实呈现的相邻证据" |
+| 7 | §四风险 B／C 使用"必须明确""强约束"等超出只读预检角色的措辞，与 §七同一事项"起草建议，非已裁决事项"的定性自相矛盾 | 阻断：范围边界自相矛盾 | 统一改为"建议""留待 Phase B／Founder 确认"等非强制措辞 |
+| 8 | §五 M1–M4 归属表把 M3 预先定为"单账号持续运营 Skill 本体"，与 §二 M0P-C04 明确声明"不做这个选择"矛盾 | 阻断：范围边界自相矛盾 | 改为"能力（三选一待定）"，M0P-C04 正文同步补充"本报告明确不做这个选择，登记为仍需裁决事项" |
+| 9 | v0.2 §10.2.1 末条要求核验"三选一最终采用哪种形态"，报告原文未显式登记为未决事项即判 `DONE`，存在隐性遗漏 | 阻断：范围边界／完整性 | 新增 §七 命题 14，显式登记为未决事项，`DONE` 仅表示预检事实性完成 |
+| 10 | §二/§五/§八多处使用"共享合同一／二／三／四"编号，未注明来源；v0.2 §10.1 自身只列三类预检对象，容易被误读为编号来自 v0.2 | 引用来源不清 | §二开头新增说明：编号与范围来自本任务 Execution Prompt §12-15，非 v0.2 编号；v0.2 §3-§7 只是素材来源 |
+| 11 | §四风险 B 原文"六项能力仍是线性锁"，应为"八项能力中五个" | 数字错误 | 改正为"八项能力中五个仍是线性锁" |
+
+**修复后仅做修复点自检**（grep 确认全部问题短语清零，见下方 ATT-001.3），**未触发第二轮完整审查**，符合本任务 Prompt §18/§22 验证预算。
+
+#### ATT-001.3 自检结果
+
+```text
+grep -n "§三\.6|六项能力仍是线性锁|强约束|必须明确\"|已由 v0.2 §10.2 自行更正在先|不是可任意扩大的开口|Skill 本体，具体形态待定" \
+  decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md
+→ 零命中（全部问题短语已清零）
+```
+
+Phase A 状态：`DONE`（预检事实性完成，不表示四个共享合同已冻结、不表示 F-10 相关产品命题已被 Founder 裁决、不表示 M1–M4 三选一已决定）。Phase B 尚未开始。

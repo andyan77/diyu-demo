@@ -21,6 +21,7 @@
 | `V1-REBASE-EP00-CURRENT` | **已终结 `DONE`**（见 §一.3） | [L1 §T-002](L1_TASK_MANIFESTS.md) · [L3 §四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（实际执行基线，见 §一.3） |
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.4） | [L1 §T-003](L1_TASK_MANIFESTS.md) · [L3 §五 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（起算；终态见 §一.4） |
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | **已终结 `DONE`**（见 §一.5） | [L1 §T-004](L1_TASK_MANIFESTS.md) · [L3 §六 ATT-001～003](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ f94d7a7`（起算；终态见 §一.5） |
+| `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **`IN_PROGRESS`**（见 §一.6） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -75,6 +76,18 @@
 | next_stage_allowed | **`true:V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`**——但该后继任务**目前只有名称与一句话范围，尚无完整 Execution Prompt**，不构成可执行工程任务（见 §二） |
 | Checkpoint | **无**。本任务已终结，全程未被中断 |
 | 已知不做的事 | 本次接受**不**触发 `SINGLE-ACCOUNT-SLICE-EP00` 自动开工、**不**触发四个共享合同冻结、**不**触发 M1—M5 |
+
+### 一.6 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（进行中，非终态）
+
+| 项 | 值 |
+|---|---|
+| 状态 | **`IN_PROGRESS`** —— Phase A（`SINGLE-ACCOUNT-SLICE-EP00` 专项预检）草稿完成，一次定向语义审查进行中 |
+| 授权 | Founder 2026-08-24 完整 Execution Prompt《M0.2B 专项预检、M0.3 共享合同与 M0 收口》；激活门 §2 全部条件已核验通过（见 [L1 §T-005.1](L1_TASK_MANIFESTS.md) `activation_gate_verified_at_execution`），非 `BLOCKED` |
+| 起算基线 | `main @ 0eba71a85916d4d993313c015dc8ad87f180d4de` |
+| 任务分支 | `task/v1-m0-slice-preflight-and-shared-contract-closeout-001` |
+| Phase 进度 | Phase A：草稿完成，定向审查中 ／ Phase B/C/D：未开始 |
+| Checkpoint | 见 §四「非终态 Checkpoint 区」——本任务若在 Phase C 等待 Founder 裁决期间中断，必须先写 Checkpoint 才能交接 |
+| 下一动作 | 见 §二 |
 
 ---
 

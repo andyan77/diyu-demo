@@ -12,7 +12,8 @@
 | `V1-REBASE-EP00-CURRENT` | §T-002.1（当前） | §T-002.2 | 上位合同 `PRODUCT_CONTRACT_ACCEPTED — REPO_PREFLIGHT_AUTHORIZED` ＋ Founder 2026-08-24 M0 Execution Prompt（审查修订版，含 A16 新增项） | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | §T-003.1（当前） | §T-003.2 | Founder 2026-08-24 M0 · EP-00 采用、当前状态纠偏与默认基线收口 Execution Prompt | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | v2（当前）§T-004.3 ／ v1（历史）§T-004.1 | §T-004.2（v2 只写 Delta，其余继承 v1） | Founder 2026-08-24《M0.1B 下位单账号合同定向修订》Execution Prompt（F-01～F-09）＋ 后续四项定向纠偏与 F-10 Delta ＋ Founder 2026-08-24 明确接受（§T-004.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
-| `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4）——**已构成本项只读预检的合同依据**，但**尚无独立 Execution Prompt，不得自行开工** | 依据已就位、未开工。实质工作并入唯一后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`（尚无完整 Prompt） |
+| `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4） | 交付见 §T-005（[`V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)，Phase A 草稿完成，定向审查中） |
+| `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | §T-005.1（当前） | §T-005.2 | Founder 2026-08-24《M0.2B 专项预检、M0.3 共享合同与 M0 收口》完整 Execution Prompt | 见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md)；`IN_PROGRESS`，Phase A 草稿完成中 |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
@@ -990,3 +991,84 @@ scope_boundary: "仅适用于本任务本轮 Delta；不构成项目级验收降
 | 触发的状态变化 | `SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT = ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`；`M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED` |
 | 后继任务变更登记 | 原 `V1-SINGLE-ACCOUNT-SLICE-EP00-001`（含其完整 Execution Prompt）不再单独执行；新后继 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 仅有名称与一句话范围（见 §T-004.3 `successor_task_change`），**尚无完整 Execution Prompt，不得据此自行开工** |
 | 未被本次接受触发 | 不触发 M1—M4／M5；不触发四个共享合同冻结；不触发 `SINGLE-ACCOUNT-SLICE-EP00` 自动开工（其自身仍需满足 v0.2 §10.1／§10.2 的实施顺序与授权登记） |
+
+---
+
+## §T-005 · `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`
+
+### T-005.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-M0-1B-SLICE-CONTRACT-REVISION-001
+task_type: MIXED
+risk_level: MEDIUM
+authority_refs:
+  - "Founder 2026-08-24：完整 Execution Prompt《M0.2B 专项预检、M0.3 共享合同与 M0 收口》，统一承接 SINGLE-ACCOUNT-SLICE-EP00 专项预检 → M0.3 四个共享合同 → Founder 阶段接受 → M0 收口，见 collab-ledger/L1_TASK_MANIFESTS.md §T-004.3 successor_task_change 与 §T-004.4"
+  - "Founder 2026-08-24：追加要求——若在 Phase C 等待 Founder 裁决期间会话可能中断，须先按账本规则持久化一份收工日志再交接；恢复后从 Phase C 继续，不重跑 Phase A、Phase B。"
+core_problem: >-
+  下位合同 v0.2 已被接受，但单账号持续运营切片仍缺专项事实预检与可供 M1—M4 施工引用的
+  四份最小共享合同；本任务把两者与 Founder 阶段裁决、M0 远程收口合并为一个连续任务完成。
+phases: [PhaseA_special_readonly_preflight, PhaseB_four_shared_contracts, PhaseC_consistency_check_and_founder_gate, PhaseD_m0_remote_closeout]
+
+activation_gate_verified_at_execution:
+  V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2_status: "ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED，已采用进 main（commit b305e1e/0eba71a）"
+  V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1_blob_hash: faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c
+  V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1_status: "已采用进 main（commit 2dc4b59，M0-EP00-ADOPTION-CLOSEOUT-001）"
+  V1-REBASE-EP00-CURRENT_status: "DONE"
+  SINGLE-ACCOUNT-SLICE-EP00_status: "AUTHORIZED — NOT_STARTED（本任务 Phase A 即其交付）"
+  main_local: 0eba71a85916d4d993313c015dc8ad87f180d4de
+  main_remote: 0eba71a85916d4d993313c015dc8ad87f180d4de
+  working_tree_before_this_task: clean
+  m1_m4_branches_or_files: NONE_FOUND
+  verdict: ALL_CONDITIONS_MET_NOT_BLOCKED
+
+allowed_delta:
+  new_files:
+    - decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md
+    - "Phase B：四个共享合同候选文件（路径待 Phase B 起草时登记）"
+  modified_files:
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+    - collab-ledger/L5_SIDE_EFFECTS.md
+  everything_else: FORBIDDEN
+
+protected_assets: [已接受的上位与下位产品合同正文, 历史v0.1合同, 已采用的通用EP-00报告正文, 全部Skill源文件,
+  全部工作流DSL模型参数或Dify发布版本, 数据库结构和业务数据, ECS对象存储身份权限配置, 历史运行证据和失败路径,
+  已发布内容或真实平台状态, 外部两份规划执行协议]
+
+authorizations:
+  read: [仓库全文, Git历史, remote refs, 上位/下位合同, 两类EP-00报告, 六份Skill及附件, 工作流DSL, Dify真实只读状态,
+         现有路由/创意锦标赛/生产链, 后端数据库身份权限存储恢复基础, 账本和既有运行证据]
+  write: [专项EP-00报告, 四个共享合同候选, 必要的M0状态索引和账本Delta, 原始核验证据和最小Git元数据]
+  execute: [只读侦察, 建独立任务分支, 定向语义审查子代理, commit, push任务分支]
+  network: [fetch origin, push任务分支, 读远端ref验哈希, docker exec只读psql]
+  forbidden_ops: [force, amend, reset, 直推或合并main, 建PR, 修改v0.1或上位合同, 建M1-M4任何工程实现,
+                  自行宣布共享合同已接受, 自行推高治理状态字符串]
+
+phase_c_interruption_protocol:
+  rule: "Phase C 提交 Founder 裁决问题后若等待期间会话可能中断，须先持久化收工日志（当前 Phase 产出、待裁决问题原文、下一步续跑点）到 L1/L2/L3，再交接；恢复会话须从 Phase C 继续，不得重跑 Phase A/Phase B。"
+  reason: "Founder 2026-08-24 明确要求：等待裁决期间任务保持 IN_PROGRESS、不判 BLOCKED、不出虚假终态，但必须留下可续跑的收工记录，防止会话中断后下一会话读账本看到「进行中但无续跑点」的断裂状态。"
+
+terminal_rule:
+  forbidden: [PARTIAL, 未获Founder明确裁决即写ACCEPTED或AUTHORIZED, 自行推高治理状态字符串, 自行启动M1-M4施工]
+  on_activation_gate_fail: [BLOCKED, FAILED, INVALID]
+scope_boundary: "只做只读预检、四个共享合同起草、一次定向一致性检查、Founder阶段裁决与M0收口；不做M1-M4任何工程实现；不建第五份共享合同。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash` | `8b5a48885e27969c404ef86068ec2358bcceda85675247b6bb196eb700a57ac9` | `re.finditer(r'```yaml\n(.*?)\n```', content, re.DOTALL)` 取本节匹配块，UTF-8 编码后 SHA-256 |
+
+### T-005.2 当前 Manifest（Phase A 收口，持续更新）
+
+| 项 | 值 |
+|---|---|
+| Phase A 交付 | [`V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md) |
+| Phase A 状态 | **`DONE`** —— 定向语义审查（general-purpose 子代理，检查项：引用准确性/内部一致性/范围边界/复用有效性声明/F-10风险分析可靠性）查出 11 处真实问题（含 1 处实质性分析缺陷：风险 C 结论遗漏 Matrix 整任务硬停这一已存在的过度阻塞实例），已全部修复；按验证预算未触发第二轮全文审查，只做修复点自检（grep 确认残留问题短语清零） |
+| Phase A 报告 blob hash（冻结值，供 Phase B 引用） | `8134ce00645dd86cea6cc7b6d8d6933f762c68a5` |
+| Phase B/C/D | 未开始 |
