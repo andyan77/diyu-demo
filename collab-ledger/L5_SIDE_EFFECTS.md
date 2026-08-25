@@ -238,6 +238,20 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | `GET /console/api/apps/{id}/workflows/draft` 返回节点与预期一致；`GET /console/api/apps/{id}/workflows/publish` 返回已发布版本；三次真实运行的 `conversation_id`/`message_id` 见证据文件，可用同一 API Key 或控制台会话日志核对 |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 
+### SE-014 · 会话 access_token 过期后用 refresh_token 续期（未再次索要密码）、DSL v0.3 导入发布、三次受控等价回归运行
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同 SE-012/SE-013，非新建） |
+| 触发原因 | 上次 Checkpoint 后本轮延续工作时，之前保存的控制台会话 `access_token` 已过期（`GET /console/api/apps` 返回 `401 Invalid Authorization token`）；未重新索要 Founder 密码，改为读 Dify 后端源码（`docker exec docker-api-1` 读 `controllers/console/auth/login.py` 的 `RefreshTokenApi`）确认存在 `POST /console/api/refresh-token`，凭仍在有效期内的 `refresh_token` cookie换发新 `access_token`/`csrf_token`，续期成功（`200 {"result":"success"}`），全程未接触明文密码 |
+| 操作序列 | ① 用 `test_m1_context_compiler_v0.1.py`（本轮新增，见下）之外的真实 Dify 对话做 A-0～A-4 受控等价回归，发现真实缺陷：`_dialogue_directive` 把内部枚举代码（如 `MATRIX`、`NO_PHYSICAL_ENTRY_YET`）原样拼进给对话 LLM 的指令文本，被复述给用户且在 CE-A2 场景里被错误表述成"用户提到的"内容；② 修复 `m1_context_compiler_v0.1.py`（新增 `CAPABILITY_LABEL_ZH`/`BLOCK_REASON_LABEL_ZH` 人话标签映射，`_dialogue_directive` 改用标签且不再断言"用户点名"）；③ 重新生成 DSL（`build_m1_candidate_dsl_v0.1.py`，DSL v0.3）；④ `POST /console/api/apps/imports` 导入（`app_id` 定向，非新建）；⑤ `POST .../workflows/publish`（`marked_name: v0.3`）；⑥ 用同一枚 SE-013 已创建的 API Key 重新运行 CE-A0/CE-A2 并新增 CE-general（一次"普通咨询不误触发专业模块"受控等价检查），确认泄漏已修复且无新回归 |
+| 内容标识 | 修复后源码 `decision-chain/workflows/m1_context_compiler_v0.1.py`；受控等价回归详情与 conversation_id/message_id 见 [`decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md`](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) 新增章节 |
+| 幂等信息 | 导入/发布同 SE-013，幂等覆盖；三次新对话各自独立 `conversation_id` |
+| 受控状态 | 可逆；仅作用于本任务专用候选 App；**未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow**；`refresh-token` 操作本身只读续期一个既有会话，不创建新账号权限、不修改任何账号数据 |
+| 核验依据 | 导入/发布响应见 `dify_import3_resp.json`/`dify_publish3_resp.json`（本机临时文件）；三次回归运行的 answer 文本经关键词扫描确认不含内部枚举代码 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

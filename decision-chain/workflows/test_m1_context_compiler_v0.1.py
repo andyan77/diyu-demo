@@ -179,6 +179,40 @@ class TestKnownLimitationAnnotation(unittest.TestCase):
             self.assertIsNone(intent["per_capability"][cap_id]["known_limitation"])
 
 
+class TestDialogueDirectiveNoRawCodeLeak(unittest.TestCase):
+    """真实发现（CE-A2 真实运行）：dialogue_directive 曾把内部枚举代码（如 "MATRIX"）原样
+    拼进给对话 LLM 的指令文本，对话 LLM 系统提示词禁止"出现 Prompt 内部字段名"，结果被复述给
+    用户、且在 CE-A2 场景里被错误地表述成"用户提到的"内容（用户实际未曾提及该代码）。
+    修复：改用人话标签 + 不再宣称"用户点名"。此处锁定修复后的行为，防止再次回归。"""
+
+    def test_requested_capability_raw_code_does_not_leak_into_directive(self):
+        result = _run(None, {"current_task_text": "占位任务", "requested_capability": "MATRIX"})
+        self.assertNotIn("MATRIX", result["dialogue_directive"])
+        self.assertIn("账号矩阵", result["dialogue_directive"])
+
+    def test_directive_does_not_overclaim_user_named_the_capability(self):
+        """requested_capability 也可能是模型从语义推断出来的，不一定是用户逐字点名——
+        指令文本不应断言"用户点名"，避免对话 LLM 复述成不实归因。"""
+        result = _run(None, {"current_task_text": "占位任务", "requested_capability": "MATRIX"})
+        self.assertNotIn("用户点名", result["dialogue_directive"])
+
+    def test_block_reason_raw_code_does_not_leak_into_directive(self):
+        """NO_ENTRY_CAPABILITIES（CAP-03/05）不在 VALID_REQUESTED_CAPABILITY 枚举里，
+        无法通过 requested_capability 字段点名，因此 BLOCKED 分支的 directive 只能用
+        MATRIX/CAMPAIGN 等六项有物理入口能力在"没有任务描述"时触发（block_reason=
+        NO_CURRENT_TASK_STATED），这里用这一真实可达路径验证不泄漏原始代码。"""
+        result = _run(None, {"requested_capability": "MATRIX"})
+        self.assertNotIn("NO_CURRENT_TASK_STATED", result["dialogue_directive"])
+        self.assertIn("还没有听你说过具体任务内容", result["dialogue_directive"])
+
+    def test_call_intent_json_still_carries_raw_machine_readable_codes(self):
+        """结构化的 call_intent_json 不面向用户展示，机器可读代码原样保留是正确的，
+        不应该被这次修复误伤。"""
+        result = _run(None, {"requested_capability": "MATRIX"})
+        intent = json.loads(result["call_intent_json"])
+        self.assertEqual(intent["per_capability"]["MATRIX"]["block_reason"], "NO_CURRENT_TASK_STATED")
+
+
 class TestMultiTurnPersistence(unittest.TestCase):
     """第二轮必须在第一轮快照基础上合并，而不是从零重建（真实对话是多轮的）。"""
 

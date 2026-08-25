@@ -32,6 +32,30 @@ CAPABILITIES = [
 ]
 NO_ENTRY_CAPABILITIES = ["SINGLE_ACCOUNT_OPERATION", "CREATIVE_TOURNAMENT"]  # CAP-03 / CAP-05
 
+# 给对话 LLM 的人话标签：dialogue_directive 面向对话 LLM 组织自然语言，不得把内部枚举代码
+# （如 "MATRIX"）原样拼进指令文本——这类代码本质是 Prompt 内部字段值，chat LLM 系统提示词
+# 明确禁止"出现 Prompt 内部字段名"，直接拼代码会被它当作用户说过的原话复述出来（真实发现，
+# 见 evidence/V1_M1_CANDIDATE_RUN_001.md CE-A2）。
+CAPABILITY_LABEL_ZH = {
+    "MATRIX": "账号矩阵",
+    "CAMPAIGN": "经营任务策划",
+    "CONTENT_BRIEF": "内容 Brief",
+    "CREATIVE_SCRIPT": "创意脚本",
+    "PRODUCTION_DIRECTOR": "成片导演",
+    "PUBLISHING_PACKAGING": "发布与打包",
+    "SINGLE_ACCOUNT_OPERATION": "单账号持续运营",
+    "CREATIVE_TOURNAMENT": "创意锦标赛",
+}
+
+# _capability_input_status 里唯一会产出的四个 block_reason 代码，同理不得原样拼进
+# dialogue_directive；call_intent_json（机器可读、不面向用户）仍保留原始代码。
+BLOCK_REASON_LABEL_ZH = {
+    "NO_CURRENT_TASK_STATED": "还没有听你说过具体任务内容",
+    "NO_TASK_OR_GOAL_STATED": "还没有听你说过具体任务或目标",
+    "NO_PHYSICAL_ENTRY_YET": "这项能力目前还没有可以实际调用的入口",
+    "UNKNOWN_CAPABILITY": "无法识别这项能力",
+}
+
 VALID_TEMPORAL_SCOPE = ["UNSTATED", "ONE_ITEM", "CYCLE", "LONG_TERM"]
 VALID_CONFIRMATION_SIGNAL = ["NONE", "AFFIRM", "DECLINE"]
 VALID_ROUTE_INTENT = ["DISCUSS", "FOCUS", "EXECUTE_REQUEST", "CANCEL", "OUT_OF_SCOPE"]
@@ -220,14 +244,16 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
     if requested_capability and requested_capability != "NONE":
         info = call_intent["per_capability"].get(requested_capability)
         if info:
+            label = CAPABILITY_LABEL_ZH.get(requested_capability, requested_capability)
             if info["status"] == "BLOCKED":
+                reason_label = BLOCK_REASON_LABEL_ZH.get(info["block_reason"], str(info["block_reason"]))
                 parts.append(
-                    "用户点名的能力（" + requested_capability + "）当前判定为阻塞：" + str(info["block_reason"])
+                    "当前识别到你想调用的能力是" + label + "，判定为阻塞，原因是：" + reason_label
                     + "。如实告知，不编造网络或系统故障之类的原因。"
                 )
             else:
                 parts.append(
-                    "用户点名的能力（" + requested_capability + "）业务语义上可以直接进入，"
+                    "当前识别到你想调用的能力是" + label + "，业务语义上可以直接进入，"
                     "但本候选环境是独立评估，不代表主 Chatflow 会立即放行——如实说明这是"
                     "M1 候选环境下的意图判定，不代表已经执行。"
                 )
