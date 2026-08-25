@@ -918,3 +918,64 @@ acceptance_oracle:
 | 项 | 值 |
 |---|---|
 | `manifest_hash` | `dadc922d0fe5e998f6d3d2c5e54f9bef4a16fe57a1e9b839ec9cd8e64eadb540` |
+
+---
+
+### T-004.3 Task Contract v2（Founder 复核纠偏 ＋ F-10 Delta，`REBASE_TASK`）
+
+> **v1（§T-004.1／§T-004.2）逐字节原样保留，两个哈希继续有效**——本节只写 Founder 本轮
+> 追加的四项定向纠偏与新增命题 F-10 明确修改／新增的验收口径，其余条款**继承 v1**。
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash_v2` 的哈希对象。
+
+```yaml
+contract_version: 2
+task_id: V1-M0-1B-SLICE-CONTRACT-REVISION-001
+task_entry_mode: REBASE_TASK
+prompt_kind: CORRECTION_AND_EXTENSION_DELTA
+risk_level: MEDIUM
+inherits_from:
+  contract_v1: "collab-ledger/L1_TASK_MANIFESTS.md §T-004.1"
+  contract_v1_hash: d025bfec81e060b45066d8f767e41749487bee62890e4dab7fea56a90f670bd2
+  manifest_v1: "collab-ledger/L1_TASK_MANIFESTS.md §T-004.2"
+  manifest_v1_hash: dadc922d0fe5e998f6d3d2c5e54f9bef4a16fe57a1e9b839ec9cd8e64eadb540
+  unchanged: [task_id, 独立任务分支不合并主干的边界, protected_assets, v0.1 逐字不得改动, terminal_state_order]
+predecessor_prompts:
+  - "补充执行指令 — 恢复并完成 Prompt A manifest v2"
+  - "Execution Delta — M0.1B Manifest v3 / F-10 产品裁决补丁"
+authority_refs:
+  - "Founder 2026-08-24：本轮四项定向纠偏（视频号冻结表述取消／上位合同绑定与三类 EP-00 状态／真实与模拟发布记录分离／反馈闭环二选一）在同一任务内完成，不新开任务。"
+  - "Founder 2026-08-24：新增产品命题 F-10（目标忠实、适用专业价值保留与证据等级），在同一任务同一 attempt 内与四项纠偏一并处理。"
+
+delta_scope:
+  four_fixes: [取消视频号冻结表述, 修正上位合同绑定与三类EP-00状态, 分离真实发布实例与模拟测试发布记录, 反馈闭环统一为有依据调整或有依据保持不变]
+  new_proposition: "F-10：目标忠实、适用专业价值保留与证据等级"
+  do_not: [把F-10扩张为新Skill, 把F-10扩张为新工作流, 把F-10扩张为新评测平台, 把F-10扩张为第五份共享合同,
+           重做manifest_v1已完成的F-01至F-09落地, 回滚或重做manifest_v1无关事项]
+  acceptance:
+    M01B3_C13: "下位合同已明确目标忠实＋适用专业价值保留，且不存在固定调用六份 Skill 的含义"
+    M01B3_C14: "适用专业能力被限制为任务相关、下游必要、允许等价输入满足，不构成全能硬门"
+    M01B3_C15: "非关键专业建议不会阻塞整个任务，事实、权限、合规和真实下游必要输入门禁未被削弱"
+    M01B3_C16: "专业价值、工程闭环、真实运营闭环和经营提升四类结论已分离，普通运营观察不会被写成因果提升"
+    M01B3_C17: "F-10没有引入新 Skill、新链路、第五份共享合同、评测平台或范围外实现要求"
+  completion_condition: "M01B_C01～C13（v1，全部通过） 与 M01B3_C13～C17（本 delta）全部通过，方可视为本轮完成"
+
+founder_acceptance_gate:
+  mechanism: "定向自验通过后，在当前执行过程中弹出一次授权提示（AskUserQuestion 或等价机制），不新开任务、不判定 BLOCKED、不结束当前执行"
+  on_accept: |
+    SINGLE_ACCOUNT_VERTICAL_SLICE_PRODUCT_CONTRACT = ACCEPTED
+    M0_REMAINING_CLOSEOUT = AUTHORIZED — NOT_STARTED
+  successor_task_change:
+    superseded: "V1-SINGLE-ACCOUNT-SLICE-EP00-001（不再作为自动后继任务单独执行）"
+    new_successor: "V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001（统一承接 M0.2B 切片专项预检 → M0.3 四个共享合同 → Founder 阶段接受 → M0 收口；不得自动进入 M1–M4）"
+
+terminal_rule:
+  forbidden: [PARTIAL, 未获Founder明确接受即写ACCEPTED, 自行推高治理状态字符串]
+  on_pass: |
+    V1-M0-1B-SLICE-CONTRACT-REVISION-001 = DONE
+    next_stage_allowed = true:V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001（仅当 founder_acceptance_gate 已触发 on_accept 时生效）
+scope_boundary: "仅适用于本任务本轮 Delta；不构成项目级验收降级；不自动授权 M1–M5。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash_v2` | `27d65007d297d9d8649cefabfee08fc4e5f1efaac62fda64c9daf387b87c0bc3` | 取本节 ```yaml 代码块的**块内字节**做 SHA-256（本表在块外，不影响该值） |
