@@ -22,7 +22,7 @@
 | `M0-EP00-ADOPTION-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.4） | [L1 §T-003](L1_TASK_MANIFESTS.md) · [L3 §五 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 4d84cd2`（起算；终态见 §一.4） |
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | **已终结 `DONE`**（见 §一.5） | [L1 §T-004](L1_TASK_MANIFESTS.md) · [L3 §六 ATT-001～003](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ f94d7a7`（起算；终态见 §一.5） |
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.7） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算；终态见 §一.7） |
-| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | **已终结 `BLOCKED`**（见 §一.8） | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；终态见 §一.8） |
+| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | 首次尝试 `BLOCKED`（§一.8），附件补齐后 P0-A `DONE`（§一.9），采用进 `main` 与桌面包见最终回执 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；P0-A 完成见 §一.9） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -112,6 +112,16 @@
 | Checkpoint | **无**——`BLOCKED` 是本仓库 Task Contract 既有的终态词之一（见 [L1 §T-006.1](L1_TASK_MANIFESTS.md) `terminal_state_order`），本次 attempt 已终结；解除阻塞后按"解除条件"重新开始新 attempt，不需要 Checkpoint 机制 |
 | 已知不做的事 | 未自行拼接/推断/补全前言正文；未把当前 main（缺前言文件）冒充最终 main 生成桌面包；未合并任务分支进 `main`；未修改任何受保护资产 |
 
+### 一.9 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`（P0-A 解除阻塞，追加于 §一.8 之后，不覆盖 §一.8）
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder 2026-08-25 会话内提供真实附件文件（仓库根目录），重新校验 SHA-256 与冻结值 `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6` 逐字节一致，内容六项一致性核查全部通过 |
+| P0-A 状态 | **`DONE`** —— `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md` 原样采用（移动保字节，二次核验哈希不变） |
+| P0-B 状态 | 见本任务最终回执（合并进 `main` 并远端核验后，以该 commit 为源生成桌面资料包；结果不再单独提交 Git，直接写入 Founder 收工消息） |
+| 终结依据 | [L1 §T-006.3](L1_TASK_MANIFESTS.md)；[L3 §八 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| Checkpoint | **无**——沿用 §一.8 的判断：`BLOCKED`/`DONE` 都是 Task Contract 既有终态词，非 Checkpoint 场景 |
+
 ---
 
 ## 二、项目当前可执行动作（Current Handoff）
@@ -124,9 +134,9 @@
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`（`BLOCKED`，见 §一.8） | Founder／规划侧提供真实附件 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | 提供可核验的《M1–M4 施工 Execution Prompt 共享编译前言 v0.1》原始文件字节 | Founder／规划侧 | 冻结 SHA-256 = `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`；需能重算出等于该值的字节（聊天粘贴的纯文本转写不满足，见 §一.8） | 执行侧重算 SHA-256 与冻结值一致后，按同一 Execution Prompt 继续 P0-A/P0-B，无需重跑本次已完成的 L2 纠偏 |
+| `NONE` | — | — | — | — | — | — |
 
-**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 均已终结 `DONE`（见 §一）。`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 已终结 `BLOCKED`（见 §一.8），**不是**待执行的工程任务，新会话**不需要、也不应该**自行重跑或猜测附件内容——只需等待上表所列输入。**M0 已全部完成；M1–M4 施工规划编译已获授权但尚待 Phase 0 前言就位。**
+**当前没有任何已授权、待执行的工程任务。** `COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 均已终结 `DONE`（见 §一）。`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 的 P0-A（前言采用）已 `DONE`（见 §一.9），P0-B（桌面资料包）随本次采用一并完成，结果见最终回执。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用，规划侧可据此分别编译 M1—M4 各自施工 Execution Prompt——工程实现本身仍未获授权。**
 
 **已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 

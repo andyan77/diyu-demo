@@ -14,7 +14,7 @@
 | `V1-M0-1B-SLICE-CONTRACT-REVISION-001` | v2（当前）§T-004.3 ／ v1（历史）§T-004.1 | §T-004.2（v2 只写 Delta，其余继承 v1） | Founder 2026-08-24《M0.1B 下位单账号合同定向修订》Execution Prompt（F-01～F-09）＋ 后续四项定向纠偏与 F-10 Delta ＋ Founder 2026-08-24 明确接受（§T-004.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4） | `DONE`。交付见 §T-005（[`V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） |
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | §T-005.1（当前） | §T-005.2 | Founder 2026-08-24《M0.2B 专项预检、M0.3 共享合同与 M0 收口》完整 Execution Prompt ＋ Founder 2026-08-25 明确接受（§T-005.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
-| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | §T-006.1（当前） | §T-006.2 | 规划侧 2026-08-25《M1–M4 Phase 0 共享编译前言采用与桌面资料包》Execution Prompt | **`BLOCKED`**——规划附件字节不可校验（见 §T-006.2），已完成 L2 两处独立纠偏并终结本次尝试，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | §T-006.1（当前） | §T-006.2～T-006.3 | 规划侧 2026-08-25《M1–M4 Phase 0 共享编译前言采用与桌面资料包》Execution Prompt ＋ Founder 2026-08-25 提供真实附件文件后解除阻塞（§T-006.3） | P0-A `DONE`（首次尝试 `BLOCKED`，见 §T-006.2；附件补齐后 §T-006.3 解除并完成）；P0-B 与 main 采用见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
@@ -1163,3 +1163,14 @@ scope_boundary: "只做附件校验、L2两处独立纠偏、账本登记；附�
 | 任务终态 | `BLOCKED`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | 解除条件 | Founder／规划侧提供可核验的真实附件文件（而非聊天正文转写）——例如把文件放入仓库指定路径供逐字节读取，或提供能重算出等于冻结值 SHA-256 的原始 markdown 字节；解除后，新会话或新 attempt 只需重新执行本任务的 P0-A/P0-B，无需重跑本次已完成的 L2 纠偏或激活门核验 |
 | 范围补记 | T-006.1 `allowed_delta.modified_files` 遗漏了 `collab-ledger/L5_SIDE_EFFECTS.md`；Execution Prompt 自身 `authorized_scope.write` 明确包含该文件（"仅记录真实 Git 远程副作用"），本任务实际按 Prompt 权限记录了任务分支推送（[L5 SE-009](L5_SIDE_EFFECTS.md)），T-006.1 的遗漏属内部合同摘要疏漏，不构成越权 |
+
+### T-006.3 附件解除与 P0-A 完成记录（块外追加，不改动 T-006.1 `task_contract_hash` 覆盖的字节）
+
+| 项 | 值 |
+|---|---|
+| 触发方式 | Founder 2026-08-25 会话内消息："SHA-256：9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6 已经放到项目根目录"——提供真实附件文件（而非聊天正文转写），回应 [L2 §一.8](L2_TASK_STATE_AND_HANDOFF.md) 登记的解除条件 |
+| 附件重新校验 | 文件位于仓库根目录 `V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`（另有 Windows 下载产生的 `:Zone.Identifier` 元数据文件，非内容，已清理不采用）；`sha256sum` 实测 `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`，与冻结值**逐字节一致**；抽查内容确认标准 markdown 语法齐全（`#`标题／`\`\`\`yaml`围栏／`\|`表格／`>`引用），与仓库既有真源惯例一致，印证此前 `BLOCKED` 判断（收到的是聊天转写而非原始字节）成立 |
+| 内容一致性核查（Prompt §3 六项） | 逐项通过：①明确非第五份共享合同、不替代四份 ACCEPTED 合同（正文 L12）；②八项能力 CAP-01～CAP-08 均给出必需输入／合法等价输入／输出／实质修改下游失效四要素（正文 §四）；③承接用户意图优先、非线性直达、局部失效、角色分离、证据分级、专业能力非全能硬门、不夸大运营提升（正文 §三 各条 + §六）；④Matrix 降级只暂停真实依赖分支，并显式分配 M1/M2/M3/M4 承接责任（正文 §五）；⑤物理 Schema／Dify 节点／数据库／模块实施路线留给后续施工（正文 L33 + §七）；⑥明确 M1-M4 工程仍未授权（正文 `engineering_execution_authorized: false` + L14 + §八第5条）。未发现与六份冻结真源的直接语义冲突，未触发独立复核子代理（六项均为对照原文的直接核对，非需要多角度判断的实质分歧点） |
+| 写入结果 | 移动（非复制，保字节）至 `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`；移动后重算 SHA-256 仍为 `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`，未变 |
+| P0-A 状态 | **`DONE`**（此前 `BLOCKED` 判断保留在 T-006.2，作为历史记录不删除） |
+| P0-B 状态 | `PLANNED`——将在本次 P0-A 内容随任务分支合并进 `main` 并经远端核验后，以该最终 `main` commit 为 `source_full_commit` 执行；结果直接写入本任务最终回执（对 Founder 的收工消息），**不再为记录桌面快照单独创建 Git 提交**（Execution Prompt `authorized_scope.write` 对 L5 的限定：仅记录真实 Git 远程副作用，桌面快照结果在最终回执记录） |

@@ -1697,3 +1697,15 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001.4 结论
 
 `P0-A` 与 `P0-B` 判 `BLOCKED`；已完成的独立工作（L2 两处纠偏）已提交并推送到任务分支 `task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001`，**未合并进 `main`**——Prompt §5 的"Git 采用与远程收口"以完整 P0 交付为前提，本次未达成，不触发该流程。终态记录见 [L1 §T-006.2](L1_TASK_MANIFESTS.md)、[L2 §一.8](L2_TASK_STATE_AND_HANDOFF.md)。
+
+### ATT-002（附件补齐后的续跑，P0-A 完成）
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder 2026-08-25 会话内消息提供真实附件文件，放置于仓库根目录 |
+| 起算 | 沿用 ATT-001 任务分支 `task/v1-m1-m4-phase0-preamble-adoption-and-desktop-pack-001`，未新建分支、未重跑 L2 两处纠偏 |
+| 附件复核 | `sha256sum V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md` → `9b046e9b6b8008d66e7347fcc878d2eed13cf251c3a899ed3ea989f761774da6`，与冻结值逐字节一致；内容抽查确认标准 markdown 语法齐全，印证 ATT-001 的"聊天转写非原始字节"判断成立 |
+| 内容一致性核查 | Prompt §3 六项检查全部通过（非第五份合同声明／八项能力四要素齐全／七项承接原则／Matrix 降级与四模块承接／物理实现留给后续施工／工程未授权声明），详见 [L1 §T-006.3](L1_TASK_MANIFESTS.md)。全篇 369 行直接通读核对，未发现与六份冻结真源冲突，未触发独立复核子代理 |
+| 写入 | `mv` 移动（非复制）至 `decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md`，移动后重算哈希不变；清理随文件带来的 Windows `:Zone.Identifier` 元数据残留（非内容，不采用） |
+| 索引 | [PROJECT_INDEX.md](../PROJECT_INDEX.md) 新增两处指针（§〇当前阶段表 + 资产定位表），均只登记路径/状态/"不构成工程授权"说明，未复制前言正文；`CLAUDE.md`／`README.md`／`笛语项目基线.md` 现有"下一步"表述已准确（M1—M4 施工 Execution Prompt 待规划侧编译），未因遗漏本前言而误导，按 Prompt §4.2"只在确实误导时才改"未触碰，避免顺手重构 |
+| 结论 | `P0-A` 判 `DONE`。下一步：随本次内容一并把任务分支合并进 `main`（见 [L5](L5_SIDE_EFFECTS.md)），随后以最终 `main` commit 为源执行 P0-B 桌面资料包，结果写入本任务最终回执 |
