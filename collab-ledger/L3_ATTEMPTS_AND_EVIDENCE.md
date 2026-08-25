@@ -1730,3 +1730,25 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001 结论
 
 `DS-C01`～`DS-C07` 判 `PASS`（见 [L1 §T-007.2](L1_TASK_MANIFESTS.md)）；`DS-C08`（远程收口）随 Git 采用步骤核验，结果见最终回执。任务终态见最终回执与 [L2 §一](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
+
+## 十、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001`
+
+### ATT-001（唯一尝试）
+
+| 项 | 值 |
+|---|---|
+| 起算 | `main @ 2a0822692802ac084d92e032f098da33079f063d`（= 前一任务 `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` 最终采用提交），本地/远程一致，工作区 clean |
+| 触发 | Founder 2026-08-25 会话内粘贴规划侧成稿《Execution Prompt — M1 自然语言交互与任务上下文编译 v1.2》正文，随后消息「执行落盘」 |
+| **范围核验（第一步）** | 文档 0 节／3.1 节明文区分"落盘文档"与"授权工程执行"两件事；「执行落盘」字面可能指either或两者皆是。执行侧未直接按较大范围（启动工程执行）行事，先在回复中列出问题请 Founder 澄清。Founder 下一条消息"已经放到仓库根目录"只回答了文件位置，未回答范围问题。按最小授权原则，本次只处理确定无歧义的部分：落盘文档本身；不新建、不触碰 `task/m1-natural-interaction-context-v1` 或任何 Dify 对象 |
+| **转录漂移排查** | 用户第一次以聊天正文粘贴方式给出全文；执行侧手工转录进暂存文件，自算文档 §2 `TASK_CONTRACT_BEGIN`/`END` 间字节 sha256 得 `886ae8931467cf8f913a3186cc6e63b6a5189f7fc273fb18e87993a1c8c25b0d`，与文档 §14 自称 `d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3` 不一致。未假设"大概率正确"就采用，判定手工转录长文档（22KB／14节稠密中文）存在字节漂移风险，请用户改以仓库根目录真实文件提供，比照 `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` 首次尝试的处理方式（同类问题、同类处置） |
+| 文件到位后核验 | 用户回复"已经放到仓库根目录"；`find`/`ls` 确认 `M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`（41315 字节）存在于仓库根。用 Read 工具逐字节读取（不再手工转录），Python 精确定位 HTML 注释标记 `<!-- TASK_CONTRACT_BEGIN -->`/`<!-- TASK_CONTRACT_END -->`，取内部 `` ```yaml `` 围栏间字节（含末行 `next_stage_default: false` 的行尾换行符，即：块内容以换行结尾）sha256 = `d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3`，与文档 §14 自称值**完全一致**——证实真实文件内部自洽，此前的不一致确系手工转录漂移，非文档本身缺陷 |
+| 引用真源哈希核验 | 文档 §1.3 引用的 9 份仓库文件（上位产品合同、下位切片合同v0.2、通用EP-00、专项EP-00、四份 M0.3 共享合同、Phase0 共享前言）逐一 `sha256sum` 现算，与文档声明值**全部一致**；文档 §1.4 `observed_local_head`/`observed_local_origin_main`/`observed_github_main` 均为 `2a0822692802ac084d92e032f098da33079f063d`，与当前 `main`/`origin/main` 一致，无漂移。综合判定：这是基于真实仓库现况编译的正式产物，非过时或臆造文本 |
+| 落盘 | `mv`（非复制）从仓库根目录移动到 `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`（与共享前言同目录；保留原文件名，与文档 §14 `prompt_file` 自称字段一致，未重命名）；移动后 sha256 = `b0adc1fc770abcb09dc2466d36a4803e3dba81ddafb63876d396e10848c37e4a`，与移动前 Read 工具读取内容重新计算的整文件哈希一致，未变 |
+| 新建任务分支 | `task/v1-m1-engineering-prompt-adoption-001`，无同名冲突 |
+| 账本登记 | [L1 §T-008](L1_TASK_MANIFESTS.md)（Task Contract + Manifest）／[L2 §一.12](L2_TASK_STATE_AND_HANDOFF.md)／本节／[L5](L5_SIDE_EFFECTS.md)；[PROJECT_INDEX.md](../PROJECT_INDEX.md) 新增两处指针（§〇状态表 + 资产定位表），均标注"工程实现未授权" |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言执行前后 blob hash 逐一核对，全部一致；`git status --short` 仅含本任务授权的 6 个文件 |
+| 独立复核 | 未触发——全部为哈希核验与状态字段登记的直接核对，无需要多角度判断的实质分歧点 |
+
+#### ATT-001 结论
+
+文档落盘 `DONE`；M1 工程执行（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）**未开工、未获授权**，`task/m1-natural-interaction-context-v1` 分支不存在，未创建任何 Dify 对象。任务终态见最终回执与 [L2 §一](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。

@@ -12,6 +12,7 @@
 | [单账号持续运营纵向切片子合同 v0.2](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED` | 已被 Founder 接受（v0.1 为历史版本） |
 | M0.3 四份共享合同（`decision-chain/docs/V1_M0_SHARED_CONTRACT_*_v0.1.md`） | `ACCEPTED` | 授权 M1—M4 施工规划编译，**不授权工程实现本身** |
 | [M1–M4 Phase 0 共享编译前言](decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md) | `ACTIVE_ON_DEFAULT_BASELINE — FOUNDER_CONFIRMED` | 供规划侧编译 M1—M4 各自施工 Execution Prompt 的共同前言；**不构成任何工程实现授权**（`engineering_execution_authorized: false`） |
+| [M1 施工 Execution Prompt v1.2](decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md) | `READY_FOR_FOUNDER_USE` | 规划侧已编译完成并落盘；**工程实现未获授权**（`engineering_execution_authorized_by_prompt_compilation: false`），需 Founder 就 `task_id: DIYU-V1-M1-NATURAL-CONTEXT-001` 另行明确授权执行 |
 
 - **上位合同被接受 ≠ 子合同被接受 ≠ 授权施工。**
 - 阶段为 **V1 决策链重对齐（Rebase）**；A/B 对照阶段已结束并按 `PARTIAL` 冻结。
@@ -58,6 +59,7 @@
 | **单账号持续运营纵向切片子合同（已接受）** | [V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) —— `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`；[v0.1](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.1.md) 为历史版本，逐字保留 |
 | **M0.3 四份共享合同（已接受）** | [任务上下文快照](decision-chain/docs/V1_M0_SHARED_CONTRACT_TASK_CONTEXT_SNAPSHOT_v0.1.md)／[八项能力合同](decision-chain/docs/V1_M0_SHARED_CONTRACT_EIGHT_CAPABILITIES_v0.1.md)／[版本发布反馈归属](decision-chain/docs/V1_M0_SHARED_CONTRACT_VERSION_PUBLISH_FEEDBACK_v0.1.md)／[写回权限幂等恢复](decision-chain/docs/V1_M0_SHARED_CONTRACT_WRITE_PERMISSION_RECOVERY_v0.1.md) —— 授权 M1—M4 施工规划编译，不授权工程实现本身 |
 | **M1–M4 Phase 0 共享编译前言** | [V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md](decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md) —— 实例化八项能力四类业务合同值 + Matrix 局部降级口径，供规划侧编译 M1—M4 各自施工 Execution Prompt；不是第五份共享合同，不构成工程实现授权 |
+| **M1 施工 Execution Prompt（已落盘，未授权工程执行）** | [M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md](decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md) —— W1-M1 窗口完整 P0 施工合同；`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001` 尚未开工，需 Founder 另行明确授权工程执行；M2/M3/M4 施工 Execution Prompt 仍待编译 |
 | **单账号纵向切片专项预检（已完成）** | [V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md](decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md) |
 | **决策链当前阶段基线** | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.2.md) |
 | 决策链 A/B 阶段历史基线（`PARTIAL`，原样保留） | [V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md](decision-chain/docs/V1_DECISION_CHAIN_STAGE_BASELINE_v0.1.md) |

@@ -15,6 +15,8 @@
 | `SINGLE-ACCOUNT-SLICE-EP00` | [单账号纵向切片子合同 v0.2](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_CONTRACT_v0.2.md) | 不适用（本行不是独立任务，是切片专项预检的授权登记） | 下位合同 v0.2 `ACCEPTED — SINGLE_ACCOUNT_SLICE_PREFLIGHT_AUTHORIZED`（Founder 2026-08-24 接受，见 §T-004.4） | `DONE`。交付见 §T-005（[`V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_SINGLE_ACCOUNT_SLICE_EP00_PREFLIGHT_v0.1.md)） |
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | §T-005.1（当前） | §T-005.2 | Founder 2026-08-24《M0.2B 专项预检、M0.3 共享合同与 M0 收口》完整 Execution Prompt ＋ Founder 2026-08-25 明确接受（§T-005.4） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | §T-006.1（当前） | §T-006.2～T-006.3 | 规划侧 2026-08-25《M1–M4 Phase 0 共享编译前言采用与桌面资料包》Execution Prompt ＋ Founder 2026-08-25 提供真实附件文件后解除阻塞（§T-006.3） | P0-A `DONE`（首次尝试 `BLOCKED`，见 §T-006.2；附件补齐后 §T-006.3 解除并完成）；P0-B 与 main 采用见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | §T-007.1（当前） | §T-007.2 | Founder 2026-08-25《M1–M4 Phase 0 决策状态一致性收口》Execution Prompt ＋ Founder 2026-08-25 通过 AskUserQuestion 当场确认（非 Prompt 自称历史） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` | §T-008.1（当前） | §T-008.2 | 规划侧 2026-08-25《Execution Prompt — M1 自然语言交互与任务上下文编译 v1.2》＋ Founder 2026-08-25「执行落盘」，范围经执行侧澄清未获工程执行明确授权，本任务只落盘文档本身 | `DONE`。文档已采用进 `main`；**M1 工程执行（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）未开工、未授权**，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
@@ -1244,4 +1246,76 @@ scope_boundary: "只修正前言 YAML 状态字段 + L2 当前投影两处阻塞
 | DS-C07 | **PASS**——`git diff --stat` 仅含前言/L1/L2/L3/PROJECT_INDEX 五个文件，无工程施工、无新治理文件 |
 | DS-C08 | 见任务分支/远程收口记录（本条随 Git 采用步骤核验，结果写入最终回执） |
 | 受保护资产 blob hash（执行前=执行后，逐一核对一致） | 上位合同 `9a57d255dec44477ceb38f6f61faaa5f43d36343f89803364eac5df6d5fc5ca0`；v0.1下位合同 `a69a467aeca648a5e0a98068278daa6dccca5a5c734fb8dcd93021fe4befbca2`；v0.2下位合同 `677c7f350410b934b5e25caa3cf98f4665a48936588adc66798d093b042ece9d`；通用EP-00 `afea2d975b1e214ee57aaaab3bfaee63bb6d0319403bfe6d8e66285c2b1bce11`；专项EP-00 `921091b5a43fb72371c5c95e6bb07e6ccd87db6baa29fb9cff2716e5dd2fbc4d`；共享合同一 `76b730d47566eccc188e2dbb0c4da2e8aa594936cc813987cc8d0fd7901bd63b`；共享合同二 `6d3fb85ebce417c4d34103775f833656dab7d62e390b0c9ba482ccc9108e8a30`；共享合同三 `67af3e991394fb27964470bcdbf5a46678a494e4045db60eb573b31ea924ee2b`；共享合同四 `108209b52df232e91e06b5726b2c19eb6094f06eb7025971a958750143a172f0` |
+| 任务终态 | 见最终回执 |
+
+## §T-008 · `V1-M1-ENGINEERING-PROMPT-ADOPTION-001`
+
+### T-008.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-M1-ENGINEERING-PROMPT-ADOPTION-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001
+task_type: DOC_ADOPTION
+risk_level: LOW
+authority_refs:
+  - "Founder 2026-08-25 当前会话消息：随文给出规划侧成稿《Execution Prompt — M1 自然语言交互与任务上下文编译 v1.2》正文，随后消息「执行落盘」。"
+  - "该正文声明 planning_status: READY_FOR_FOUNDER_USE，并自述 engineering_execution_authorized_by_prompt_compilation: false；正文 0 节与 3.1 节明文要求：只读核验不构成开工，工程写入需 Founder 另行把准确文件交给工程执行终端并明确授权执行。执行侧就「执行落盘」一词的范围（落盘文档本身 / 启动工程执行 / 二者皆是）主动请用户澄清，用户回复仅确认文件已放置于仓库根目录，未答复该范围问题；按未获得针对工程执行的明确授权处理，本任务只落盘/采用规划文档本身，不新建 DIYU-V1-M1-NATURAL-CONTEXT-001 任务分支、不做任何工程/Dify写入。"
+core_problem: >-
+  规划侧已产出 M1 完整施工 Execution Prompt（W1-M1 窗口），用户以聊天正文粘贴方式提供，
+  首次经执行侧手工转录后自算 task_contract_hash 不一致，判定转录漂移，要求用户改以仓库根目录
+  真实文件提供；文件到位后逐字节读取核验通过。本任务负责将该文件原样采用进仓库规范位置、
+  核验其自证哈希与引用真源哈希、账本登记，明确本任务不构成、也不授权 M1 工程执行本身。
+
+activation_gate_verified_at_execution:
+  main_local: 2a0822692802ac084d92e032f098da33079f063d
+  main_remote: 2a0822692802ac084d92e032f098da33079f063d
+  working_tree_before_this_task: clean
+  planning_observed_baseline_in_prompt: 2a0822692802ac084d92e032f098da33079f063d
+  drift_from_planning_observed_point: NONE
+  referenced_source_docs_hash_check: "文档 §1.3 引用的 9 份仓库真源文件（上位合同/下位合同v0.2/两份EP-00/四份共享合同/Phase0前言）sha256 逐一现算，与文档声明值全部一致"
+  task_contract_hash_self_consistency: "文档 §2 TASK_CONTRACT_BEGIN/END 间字节（含末行换行，不含围栏）sha256 与文档 §14 自称 task_contract_hash 一致"
+  verdict: ALL_CONDITIONS_MET_NOT_BLOCKED_AT_ACTIVATION
+
+allowed_delta:
+  modified_files:
+    - decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md（新增，原样移动，字节不变）
+    - PROJECT_INDEX.md
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+    - collab-ledger/L5_SIDE_EFFECTS.md
+  everything_else: FORBIDDEN
+
+protected_assets: [四份 V1_M0_SHARED_CONTRACT_*_v0.1.md, 上位产品合同, 下位合同v0.1与v0.2, 两份EP-00报告,
+  decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md, decision-chain/skills,
+  decision-chain/workflows, content-production/skills, content-production/workflows, tools,
+  全部用户未提交改动和其他worktree]
+
+terminal_rule:
+  forbidden: [PARTIAL, 新建或推送 task/m1-natural-interaction-context-v1 分支, 创建或修改任何 Dify 对象,
+    自行推断本任务即等于对 M1 工程执行的明确授权, 自行编写或推断 M2/M3/M4 施工 Prompt]
+  on_activation_gate_fail: [BLOCKED, FAILED, INVALID]
+scope_boundary: "只做文档原样落盘、引用哈希与自证哈希核验、账本登记（含 L5 推送记录）；不新建、不触碰 DIYU-V1-M1-NATURAL-CONTEXT-001 任务的任何分支/worktree/Dify对象/账本条目；不构成对该任务工程执行的授权。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash` | `fa9fe16a6173ae3502eeef8d64d716461423bd94302e4b73a39420b59baeedc4` | `re.finditer(r'```yaml\n(.*?)\n```', content, re.DOTALL)` 取本节匹配块，UTF-8 编码后 SHA-256 |
+
+### T-008.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| 范围澄清 | 执行侧收到聊天粘贴正文后先行提问：「执行落盘」具体指落盘文档本身，还是启动 M1 工程执行（新建 `task/m1-natural-interaction-context-v1` 分支/Dify对象），或二者皆是；用户回复"已经放到仓库根目录"，只回答了文件位置问题，未回答范围问题。按最小授权原则，本任务只完成范围内确定无歧义的部分（文档落盘），不推断用户默认同意了工程执行 |
+| 转录漂移与解决 | 用户首次以聊天正文粘贴方式提供全文（约 22KB，14 节），执行侧手工转录进暂存文件后自算 `task_contract_hash` 与文档自称值不一致，判定为转录漂移，未采用；请用户改为仓库根目录真实文件提供。文件到位（`M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`，41315 字节）后用 Read 工具逐字节读取，不再经手工转录 |
+| DA-01 引用真源哈希核验 | **PASS**——文档 §1.3 引用的 9 份文件（上位产品合同、下位切片合同v0.2、通用/专项 EP-00、四份 M0.3 共享合同、Phase0 共享前言）sha256 逐一现算，与文档声明值逐字节一致 |
+| DA-02 文档自证哈希核验 | **PASS**——用 Python 精确定位 `<!-- TASK_CONTRACT_BEGIN -->`/`<!-- TASK_CONTRACT_END -->` 标记，取内部 `` ```yaml `` 围栏间字节（含最后一行 `next_stage_default: false` 的行尾换行，不含围栏本身）sha256 = `d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3`，与文档 §14 `task_contract_hash` 字段完全一致 |
+| DA-03 现场事实核验 | **PASS**——文档 §1.4 `observed_local_head`/`observed_local_origin_main`/`observed_github_main` 均为 `2a0822692802ac084d92e032f098da33079f063d`，与执行本任务时的 `main`/`origin/main` 一致，无漂移 |
+| DA-04 落盘位置与移动保字节 | **PASS**——`mv`（非复制）从仓库根目录移动到 `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md`（与共享前言同目录，未改文件名，保持文档 §14 `prompt_file` 自称字段与实际文件名一致）；移动前后 sha256 = `b0adc1fc770abcb09dc2466d36a4803e3dba81ddafb63876d396e10848c37e4a`，未变 |
+| DA-05 未越权扩大 | **PASS**——`git status --short` 只含本条 `allowed_delta.modified_files` 列出的 6 个文件；未新建、未触碰 `task/m1-natural-interaction-context-v1`；未创建任何 Dify 对象；未编译 M2/M3/M4 Prompt |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言执行前后 blob hash 逐一核对，全部一致（前言 sha256 `210ccf7407498a9566ff99aa1486a0815abb53879705aff83448252a2a58a388`，未被本任务触碰） |
+| 独立复核 | 未触发——全部为对照文档正文的直接哈希核验与状态字段登记，无需要多角度判断的实质分歧点 |
 | 任务终态 | 见最终回执 |
