@@ -210,12 +210,27 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 集成分支 `chore/m1-engineering-prompt-adoption`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m1-engineering-prompt-adoption-001` tip `06870b8`（零冲突，commit `2d3084a`）；② 合并进本地 `main`（合并提交 `2ccd6d847f119c2280031902c98d511fb33aaa1f`）。推送前 `git fetch origin main` 核验 `origin/main` 仍为 `2a082269`，未漂移。推送：`2a08226..2ccd6d8  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `2ccd6d847f119c2280031902c98d511fb33aaa1f`，与本地 `git rev-parse main` 完全一致。双向祖先核验通过（任务分支是新 main 祖先；旧 main tip `2a082269` 仍是新 main 祖先，历史未改写）。全部受保护资产（四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言）blob hash 合并后重算，逐字未动。落盘的 `decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md` 最终 sha256 = `b0adc1fc770abcb09dc2466d36a4803e3dba81ddafb63876d396e10848c37e4a`，与落盘时一致。来源分支 `task/v1-m1-engineering-prompt-adoption-001` 远程保留，未删除 |
 
+### SE-012 · 创建 Dify 专用候选 App（`DIYU-V1-M1-NATURAL-CONTEXT-001`）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 类型 | Dify 控制台 API 写入（`POST /console/api/apps`，新建 App） |
+| 目标 | 本机自托管 Dify（`/home/faye/dify/docker/`，version 1.16.1，`http://localhost`）——与 A-0～A-4 证据绑定的同一实例（现有 App `310ddfcf-e0fb-4211-af98-3d101725e07a` 已核实在同一工作区列表中） |
+| 凭据来源 | Founder 2026-08-25 会话内直接提供控制台登录邮箱与密码；未写入仓库任何文件，仅用于本机临时 cookie jar（`$TMPDIR` 范围内，不在仓库路径下） |
+| 内容标识 | 新建 App id `dd638b91-d39f-4e92-a984-6ad1ab809119`，name `DIYU V1 M1 Natural Context Candidate v0.1`，mode `advanced-chat`，创建时 `workflow: null`（空工作流，尚未导入任何节点） |
+| 幂等信息 | 创建动作本身不可重放去重（每次调用会新建一个 App）；已现场核验创建前工作区内不存在任何名称/描述包含 `M1`／`NATURAL-CONTEXT`／`DIYU-V1-M1` 的 App（25 个既有 App 逐一核对），本次是唯一一次创建 |
+| 受控状态 | 可逆——该 App 本身可删除（`app.acl.delete` 权限已授予）；**未触碰任何现有 App**（25 个既有 App 逐一核对未被读写、未被引用、未被修改） |
+| 核验依据 | `GET /console/api/apps` 返回列表包含该 App id 且字段与创建响应一致 —— 以该接口实时返回为准 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1**（2026-08-25） | 创建请求 `POST /console/api/apps` 返回 `201`，响应体含完整 App 对象（id/name/mode/site 均确认），`api_base_url: http://localhost/v1`，`site.access_token` 已生成但未使用；后续核验 `GET /console/api/apps?page=1&limit=20` 返回列表中新 App 存在，字段一致 |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
 |---|---|
-| Dify（发布／重绑／工作流） | **否** |
+| Dify（发布／重绑／工作流） | **是**——`DIYU-V1-M1-NATURAL-CONTEXT-001` 任务已创建专用候选 App，见 SE-012；仅限该 App，未触碰任何既有 App |
 | 业务数据库 / Qdrant / ECS | **否** |
 | 对外消息发送 | **否** |
 
-`NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，Dify／业务数据库／对外消息发送三类均无写入。**Git 推送类副作用见 §三 索引表**（条目会随任务增加，不在本行重复计数，避免静态数字漂移）。
+**Git 推送类副作用见 §三 索引表**（条目会随任务增加，不在本行重复计数，避免静态数字漂移）。Dify 写入类副作用见本节 SE-012 起。
