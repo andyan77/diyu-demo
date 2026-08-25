@@ -1368,3 +1368,75 @@ scope_boundary: "只在协作连续性规则正文新增一条'执行 Prompt 即
 | 受保护资产核验 | 未触碰任何受保护资产；`git status --short` 仅含本条授权的 4 个文件 |
 | 独立复核 | 未触发——单一规则文本新增，无实质判断分歧点 |
 | 任务终态 | 见最终回执 |
+
+## §T-010 · `V1-M2-ENGINEERING-PROMPT-ADOPTION-001`
+
+### T-010.1 Task Contract（稳定合同）
+
+> 下面这个 ```yaml 代码块的**块内字节**即 `task_contract_hash` 的哈希对象。**不含**聊天摘要与执行计划。
+
+```yaml
+task_id: V1-M2-ENGINEERING-PROMPT-ADOPTION-001
+task_entry_mode: NEW_TASK
+parent_task_id: V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001
+task_type: DOC_ADOPTION
+risk_level: LOW
+authority_refs:
+  - "Founder 2026-08-25 当前会话消息：「M2_业务持久化版本发布反馈投影_Execution_Prompt_v1.1.md 已经放到仓库根目录，授权推进落盘」。字面授权范围限定为「落盘」，不是「工程执行」。"
+  - "该正文声明 M2_ENGINEERING_EXECUTION_PROMPT = READY_FOR_FOUNDER_USE、engineering_execution_performed = false，正文 0 节明文：只完成规划编译，未被本规划窗口执行，也不因文件存在而自动授权工程施工。"
+  - "§六新增铁律「执行 Prompt 即授权」（见 L1 §T-009）本身声明只免除逐次重复确认，Prompt 自身内容仍是执行范围边界；本任务按该条与 Founder 本次字面用词（「落盘」）的交集，只判定落盘本身已获授权，M2 工程执行是否已被一并授权留待 Founder 就该具体 task_id 显式确认，不由执行侧自行推定。"
+core_problem: >-
+  规划侧已产出 M2 完整施工 Execution Prompt v1.1（W2 窗口），文件已放置于仓库根目录；
+  本任务负责将其原样落盘进规范位置、核验引用真源哈希与文档自证哈希、账本登记，
+  并明确本任务本身不构成对 M2 工程执行（task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001）的授权。
+
+activation_gate_verified_at_execution:
+  main_local: 0de99930ff5da5c24aa2fbe34615abe52cc6c7db
+  main_remote: 0de99930ff5da5c24aa2fbe34615abe52cc6c7db
+  working_tree_before_this_task: "clean except untracked root文件 M2_业务持久化版本发布反馈投影_Execution_Prompt_v1.1.md（本任务处理对象）"
+  planning_observed_baseline_in_prompt: 2a0822692802ac084d92e032f098da33079f063d
+  drift_from_planning_observed_point: "main 已前进 3 个 commit（V1-M1-ENGINEERING-PROMPT-ADOPTION-001 落盘 + V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001 铁律登记）；git diff 2a0822..0de9993 -- decision-chain/ 只新增 M1 Prompt 文件，文档 §1.2 引用的 9 份真源文件 blob hash 逐一现算与 main@2a0822 时完全一致，无漂移"
+  referenced_source_docs_hash_check: "文档 §1.1/§1.2 引用的 9 份仓库内真源文件（上位合同/下位合同v0.2/两份EP-00/四份共享合同/Phase0前言）sha256 逐一现算，与文档声明值全部一致；规划工作区外部文件（Windows 路径）不可从本仓库核验，按引用记录"
+  task_contract_hash_self_consistency: "MISMATCH——用两种独立方法（awk/sed 提取 + Python 精确字节切片，同一方法在 M1 文档上验证可正确复现其 d6b0b3d8... 自证哈希）复算 M2 文档 §3 TASK_CONTRACT_BEGIN/END 间字节，得 4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830，与文档 §3/§12 自称 task_contract_hash（e17b354b97d53bfa52eeb30ffca50970e5469acabee98b3cfc32a1031b1b90ca）不一致；已排除 CRLF/BOM/行尾空白/隐藏字符等转录类误差。已用 AskUserQuestion 向 Founder 报告，Founder 选择「按实测值登记，继续落盘」；本任务后续全部引用改用独立复算值 4d14eb35...，并在 PROJECT_INDEX/本节/T-010.2 显式披露该不一致，不覆盖文档原文、不代文档静默改称一致"
+  verdict: ALL_CONDITIONS_MET_NOT_BLOCKED_AT_ACTIVATION_WITH_DISCLOSED_HASH_MISMATCH
+
+allowed_delta:
+  modified_files:
+    - decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md（新增，原样移动，字节不变）
+    - PROJECT_INDEX.md
+    - collab-ledger/L1_TASK_MANIFESTS.md
+    - collab-ledger/L2_TASK_STATE_AND_HANDOFF.md
+    - collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md
+    - collab-ledger/L5_SIDE_EFFECTS.md
+  everything_else: FORBIDDEN
+
+protected_assets: [四份 V1_M0_SHARED_CONTRACT_*_v0.1.md, 上位产品合同, 下位合同v0.1与v0.2, 两份EP-00报告,
+  decision-chain/docs/V1_M1_M4_CONSTRUCTION_PROMPT_SHARED_PREAMBLE_v0.1.md, decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md,
+  decision-chain/skills, decision-chain/workflows, content-production/skills, content-production/workflows, tools,
+  全部用户未提交改动和其他worktree]
+
+terminal_rule:
+  forbidden: [PARTIAL, 新建或推送 task/m2-business-persistence-version-feedback-v1 分支, 创建或修改任何 PostgreSQL/Dify 对象,
+    自行推断本任务即等于对 M2 工程执行的明确授权, 自行编写或推断 M3/M4 施工 Prompt, 静默改写文档正文使自证哈希"看起来"一致]
+  on_activation_gate_fail: [BLOCKED, FAILED, INVALID]
+scope_boundary: "只做文档原样落盘、引用哈希与自证哈希核验（含披露不一致）、账本登记（含 L5 推送记录）；不新建、不触碰 DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001 任务的任何分支/worktree/数据库/Dify对象/账本条目；不构成对该任务工程执行的授权。"
+```
+
+| 项 | 值 | 怎么重算 |
+|---|---|---|
+| `task_contract_hash` | `727075798e0a9cdceb217542c1cf91c37f12c177b9e847bea11fb35f28c58a97` | `re.finditer(r'```yaml\n(.*?)\n```', content, re.DOTALL)` 取本节匹配块，UTF-8 编码后 SHA-256 |
+
+### T-010.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| 范围核验 | Founder 消息字面只授权「落盘」；参照 [[V1-M1-ENGINEERING-PROMPT-ADOPTION-001]] 先例的最小授权原则，本任务只完成确定无歧义部分（文档落盘），不推断 Founder 已一并授权 M2 工程执行；新铁律（T-009）不改变这一判断——铁律正文自述"不免除 Prompt 自身内容的执行范围边界"，M2 文档正文自身又明写"不因文件存在而自动授权工程施工"，两者叠加后仍是"落盘≠执行授权" |
+| DA-01 引用真源哈希核验 | **PASS**——文档 §1.2 引用的 9 份仓库内文件 sha256 逐一现算，与文档声明值逐字节一致 |
+| DA-02 文档自证哈希核验 | **FAIL（已披露，非转录漂移）**——用同一方法（先在 M1 文档上验证可正确复现 `d6b0b3d8...`）对 M2 文档精确定位 `<!-- TASK_CONTRACT_BEGIN -->`/`<!-- TASK_CONTRACT_END -->` 间 `` ```yaml `` 围栏内字节，sha256 = `4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830`，与文档 §3/§12 自称值 `e17b354b97d53bfa52eeb30ffca50970e5469acabee98b3cfc32a1031b1b90ca` 不一致；已排查 CRLF（无）、BOM（无）、行尾空白（0 处）、隐藏字符（唯一非 ASCII 命中为正常中文引号/箭头）。判定为文档自身编译时哈希未与最终内容同步，非本次转录/传输引入。已用 AskUserQuestion 向 Founder 报告，Founder 裁决「按实测值登记，继续落盘」——本任务及后续全部引用一律使用独立复算值 `4d14eb35...`，不采用、不代改文档自称值 |
+| DA-03 现场事实核验 | **PASS**——`main_local`/`main_remote` 均为 `0de99930...`；`git diff 2a0822..0de9930 -- decision-chain/` 只新增 M1 Prompt 一个文件，M2 文档 §1.2 引用的下位合同/EP-00/四份共享合同/Phase0前言在此期间零改动 |
+| DA-04 落盘位置与移动保字节 | **PASS**——`mv`（非复制）从仓库根目录移动到 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md`（与 M1/共享前言同目录）；移动前后 sha256 = `8008bebd04b35037e16f5462ea1b7284db7dec943e954263762bbdb4688bb0c6`，未变 |
+| DA-05 未越权扩大 | **PASS**——`git status --short` 只含本条 `allowed_delta.modified_files` 列出的 6 个文件；未新建、未触碰 `task/m2-business-persistence-version-feedback-v1`；未创建任何 PostgreSQL/Dify 对象；未编译 M3/M4 Prompt |
+| 并发核验 | 落盘前发现主工作区被另一并行会话同时编辑 `COLLAB_CONTINUITY_PROTOCOL.md`/L1/L2（即 T-009 本身，登记"执行 Prompt 即授权"铁律），当时未提交；已用 AskUserQuestion 向 Founder 报告，Founder 选择"等对方提交后再落盘"；本任务在其合并进 `main`（`0de99930...`）之后才开始写入，避免把对方未完成内容打包进本任务 commit |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、M1 落盘文档执行前后 blob hash 逐一核对，全部一致 |
+| 独立复核 | 未触发——全部为对照文档正文的直接哈希核验、并发状态核验与状态字段登记，无需要多角度判断的实质分歧点 |
+| 任务终态 | 见最终回执 |
