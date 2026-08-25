@@ -18,6 +18,7 @@
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | §T-007.1（当前） | §T-007.2 | Founder 2026-08-25《M1–M4 Phase 0 决策状态一致性收口》Execution Prompt ＋ Founder 2026-08-25 通过 AskUserQuestion 当场确认（非 Prompt 自称历史） | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` | §T-008.1（当前） | §T-008.2 | 规划侧 2026-08-25《Execution Prompt — M1 自然语言交互与任务上下文编译 v1.2》＋ Founder 2026-08-25「执行落盘」，范围经执行侧澄清未获工程执行明确授权，本任务只落盘文档本身 | `DONE`。文档已采用进 `main`；**M1 工程执行（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）未开工、未授权**，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` | §T-009.1（当前） | §T-009.2 | Founder 2026-08-25 当场裁决「铁律：后续只要注入执行prompt，即视为授权，不再重复」 | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
+| `V1-M2-ENGINEERING-PROMPT-ADOPTION-001` | §T-010.1（当前） | §T-010.2 | 规划侧 2026-08-25《Execution Prompt — M2 业务持久化版本发布反馈投影 v1.1》＋ Founder 2026-08-25「授权推进落盘」，落盘完成后 Founder 另行就该 task_id 明确答复「就是要启动，铁律适用」（见 [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md)） | `DONE`。文档已采用进 `main`；`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 工程执行已获授权并已开工，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
