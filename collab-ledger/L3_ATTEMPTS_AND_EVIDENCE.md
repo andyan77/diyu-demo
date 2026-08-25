@@ -1208,4 +1208,59 @@ next_stage_allowed           = true:V1-REBASE-EP00-CURRENT
 
 ## 三、本基线之后的其他任务
 
-`NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，**只有 `COLLAB-LEDGER-BOOTSTRAP-001` 这一个任务**产生过 Formal Attempt（其下 `ATT-001`～`ATT-005` 五次）。**没有第二个任务**产生过 Formal Attempt。
+`NONE_VERIFIED_SINCE_BASELINE`（**本条描述截至 `V1-REBASE-EP00-CURRENT` 开工前**，追加式更正见 §四；本条原文不改，只加不改）—— 自 `6ae78ab` 起，**只有 `COLLAB-LEDGER-BOOTSTRAP-001` 这一个任务**产生过 Formal Attempt（其下 `ATT-001`～`ATT-005` 五次）。**没有第二个任务**产生过 Formal Attempt。
+
+---
+
+## 四、`V1-REBASE-EP00-CURRENT`
+
+### ATT-001 · `V1-REBASE-EP00-CURRENT` / attempt 1（本任务首次也是唯一一次正式尝试）
+
+| 项 | 值 |
+|---|---|
+| attempt identity | `V1-REBASE-EP00-CURRENT / attempt-1` |
+| 任务与输入引用 | [L1 §T-002.1 Task Contract](L1_TASK_MANIFESTS.md) · [§T-002.2 Run Manifest](L1_TASK_MANIFESTS.md) |
+| 起算基线 | `main @ 4d84cd2a4bbd9bcbcff97105f226cf5652f13e29`（本地 == 远端，任务分支切出前工作区干净；与账本固定起算锚点 `6ae78ab` 的关系见 L1 §T-002.2 `actual_baseline_verified_at_execution`） |
+| 实现引用 | [`decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md`](../decision-chain/docs/V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md)（本任务唯一交付物，含八项能力现状卡、六 Skill 价值耦合表、六 Skill 源文件↔工作流↔模型约束一致性表、25 个 Dify App 一致性核验、持久化现状、A1–A10/A14–A16 验收矩阵） |
+| 工作流／模型／Checker | 7 个后台并行子代理（`general-purpose`）分别核验：8 项能力现状卡+路由（A4/A5）、六 Skill 价值耦合（A6）、A16 决策链三 Skill 逐份比对、A16 内容生产三 Skill 逐份比对、CS-1+生产链接缝（A7/A8）、持久化现状（A10）、25 个 Dify App 一致性扫描（A3/A9）；执行总负责人自行核验 A1/A2/A14/A15 并汇编全部子代理产出、解决重复/交叉发现、统一分类标签 |
+| 环境 | 本机 WSL2；`git 2.x`；`docker exec docker-db_postgres-1 psql` 只读核验真实本机 Dify 1.16.1（沙箱默认禁 docker.sock，按证据触发 `dangerouslyDisableSandbox` 执行只读 SELECT，全程零写入，无 INSERT/UPDATE/DELETE） |
+| 与上一 Attempt 的实质差异 | **无上一 Attempt** —— `task_entry_mode = NEW_TASK`；L2 §一.2 记该任务此前状态为「未开工」，无 Checkpoint |
+
+#### ATT-001.1 冻结与哈希登记
+
+| 项 | 值 |
+|---|---|
+| `task_contract_hash` | `0a176145f7e7ed5b99f2fb09c583800c81a8829ca5cba227571d51d0f32b1210` |
+| `manifest_hash` | `f3972b67ca746c228a7827602f51f5df7a644b40a447acea8d2bab76d44446d8` |
+| 重算方法 | 取 [L1](L1_TASK_MANIFESTS.md) §T-002.1 与 §T-002.2 各自 ```yaml 块的块内字节分别求 SHA-256；围栏行本身不计入 |
+| tested functional hash | 本任务分支 `task/v1-rebase-ep00-current-m0-preflight` tip（`git rev-parse task/v1-rebase-ep00-current-m0-preflight`，可复算；不在本条目内写死字面值，避免自我循环引用） |
+| closing evidence hash | 同上——本任务单轮直达收口，无分离的 closing commit |
+
+#### ATT-001.2 验收结果（A1–A10、A14–A16，NON_PRUNABLE 已标注）
+
+| 验收项 | 结果 | 证据定位 |
+|---|---|---|
+| A1 当前基线可信 | **通过** | 报告 §〇 |
+| A2 权威与授权不混淆 | **通过** | 报告 §一 |
+| A3 目标环境真实只读核验 `NON_PRUNABLE` | **通过** | 报告 §七（含两个自称 Dify 通道的 MCP 工具被识别为演示假数据、改走真实 Docker/Postgres 只读通道的过程记录） |
+| A4 路由与任务上下文实证映射 | **通过** | 报告 §三 |
+| A5 八项能力全覆盖 `NON_PRUNABLE` | **通过** | 报告 §二（能力 3「单账号持续运营」判定 MISSING，附三重核验） |
+| A6 六 Skill 价值耦合分档 `NON_PRUNABLE` | **通过** | 报告 §四（含与产品合同自带历史值的显式比对） |
+| A7 CS-1 与 Content Brief 接缝 `NON_PRUNABLE` | **通过** | 报告 §五 |
+| A8 生产链现状 `NON_PRUNABLE` | **通过** | 报告 §六 |
+| A9 仓库—Dify—部署一致性 `NON_PRUNABLE` | **通过** | 报告 §七（25 个 App 全量核验，3 处真实漂移原样登记未修复） |
+| A10 持久化基础 | **通过** | 报告 §八 |
+| A14 受保护资产零变化 | **通过** | 报告 §十.1；`git diff --stat main` 只含本报告与 L1 两个文件，Dify 侧全程只 `SELECT` |
+| A15 远程收口 | **通过** | 见本文件 §四 ATT-001.3（推送后核验） |
+| A16 六 Skill 源文件↔工作流↔模型约束一致性 `NON_PRUNABLE` | **通过** | 报告 §七.3（两个子代理各自逐份给出版本配对、正文差异清单、模型约束的真实运行证据；发现 9 处实证缺陷，无充分依据处均标 NOT_VERIFIED，未凭配置数字推断） |
+
+**本轮一次性通过全部 P0 验收项，未触发第二轮复核。**
+
+#### ATT-001.3 远程收口记录
+
+| 项 | 值 |
+|---|---|
+| 收口 commit | `8413a94d3125d54426527be987d082ed28017c96`（`V1-REBASE-EP00-CURRENT = DONE：M0 当前真相预检完成`） |
+| 推送后远端 ref | `git ls-remote origin refs/heads/task/v1-rebase-ep00-current-m0-preflight` → `8413a94d3125d54426527be987d082ed28017c96` |
+| 核验结果 | **本地 HEAD 与远端 ref 完全一致**；未直推／未合并 `main`；未建 PR（详见 [L5 §SE-003](L5_SIDE_EFFECTS.md)） |
+| 结论 | A15 **通过**。任务收口 |
