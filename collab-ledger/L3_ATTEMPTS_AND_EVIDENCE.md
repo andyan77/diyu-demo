@@ -1614,3 +1614,24 @@ grep -n "SIX_SKILL_VALUE_ADDITION_PROVEN|由后续施工任务根据现有部署
 ```
 
 Phase B 状态：`DONE`（四份共享合同草稿完成并修复，不表示已被 Founder 接受）。
+
+### ATT-003 · Phase C（Founder 阶段裁决）＋ Phase D（M0 远程收口）
+
+| 项 | 值 |
+|---|---|
+| Phase C 触发方式 | 执行过程中的授权提示（`AskUserQuestion`），非离线审查 |
+| 提问内容 | "四个共享合同候选已经基于两类 EP-00 证据完成，并通过定向一致性检查。请选择：A. 接受四个共享合同，并授权后续规划侧编译和启动 M1–M4 施工；B. 接受四个共享合同，但暂不授权 M1–M4 施工；C. 不接受，并指出需要修改的具体产品语义。" |
+| Founder 回答 | **"A. 接受，授权 M1–M4 施工规划"**（2026-08-25） |
+| Phase D 处置 | ① 四份共享合同状态更正为 `ACCEPTED`（见 [L1 §T-005.1](L1_TASK_MANIFESTS.md) 更新后的 blob hash）；② 同步根索引文件 `CLAUDE.md`／`README.md`／`PROJECT_INDEX.md`／`笛语项目基线.md` 中过期的 v0.1／`CONTRACT_REVISION_REQUIRED` 指针为 v0.2／`ACCEPTED`，并登记 M0.3 四份共享合同与 M1—M4 授权状态（本任务 Phase D 明确授权此项，不同于前一任务 `V1-M0-1B-SLICE-CONTRACT-REVISION-001` 的 `non_goals` 限制）；③ 更新 collab-ledger L1/L2 当前投影；④ 采用进 `main`（见下方远程收口记录） |
+| 明确不做的事 | **不**自行启动 M1—M4 工程实现；**不**编写或推断 M1—M4 的 Execution Prompt；**不**修改任何 Skill／DSL／Dify 工作流／数据库 |
+
+#### ATT-003.1 远程收口记录
+
+| 项 | 值 |
+|---|---|
+| 任务分支最终推送 | 见 [L5 SE-007](L5_SIDE_EFFECTS.md) 状态追加 |
+| 集成分支 | `chore/m0-slice-preflight-shared-contract-adoption`，源自 `main @ 0eba71a`，`--no-ff` 接入任务分支 tip（零冲突），叠加当前投影纠偏后合并进本地 `main` |
+| 合并进 main | 见 [L5 SE-008](L5_SIDE_EFFECTS.md) |
+| v0.1/v0.2/通用 EP-00 完整性 | 合并后重算 blob hash，逐字未动（v0.1 `faf4e012c8c9d7c8f689dffcc181fdd05c8ab25c`；v0.2 `b0cfbaf6146def8e5f07782e5e82313adc6f1e6e`；通用 EP-00 `09d0a03a05fc70e2698ff3bb1d31269e089cab48`） |
+| 来源分支 | `task/v1-m0-slice-preflight-and-shared-contract-closeout-001` 保留未删除 |
+| 结论 | ATT-003 全部处置已推送并经远端核验。`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 收口，终态见 [L2 §一.7](L2_TASK_STATE_AND_HANDOFF.md) |
