@@ -24,7 +24,7 @@
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.7） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算；终态见 §一.7） |
 | `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | 首次尝试 `BLOCKED`（§一.8），附件补齐后 P0-A `DONE`（§一.9），采用进 `main` 与桌面包见最终回执 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；P0-A 完成见 §一.9） |
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.10） | [L1 §T-007](L1_TASK_MANIFESTS.md) · [L3 §九 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ c085eb3`（起算；终态见 §一.10） |
-| `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十二 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（独立 worktree/任务分支，未合入 main，终态不改变 main） |
+| `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（起算基线；已经 `DIYU-V1-M1-MODULE-LANDING-001` 合并进 `main`，不再是"未合入 main"，见 [L1 新增行](L1_TASK_MANIFESTS.md) 与 `decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md`） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
