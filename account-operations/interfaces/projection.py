@@ -155,6 +155,16 @@ def _project_market_observations(rows, applicable_tracks, now_iso):
 
     过期的**保留**并标 `EXPIRED`，不丢弃——丢弃会让"我们手上这条证据已经过期"
     这件事本身不可见，而 M3-AC-09 恰恰要求它可见。
+
+    时效与**使用权限**是两个正交维度，分别承载，不合并：一条没过期的观察完全
+    可能因为来源授权未确认而不可用；一条已获授权的观察也完全可能已经过期。把
+    两者塞进同一个 `availability` 会让"为什么不能用"不可区分——而 M3-AC-12 要求
+    同时保留来源、**权限**与时效。
+
+    `usable_for_inference` 是唯一给下游看的结论位：它只会比 M2 更保守，永远不会
+    把 M2 说"当前不可用"的观察抬成可用。M2 未表达权限概念时（如绑定基线
+    `main@df2c595`，其 market_observations 尚无权限字段），`currently_usable`
+    为 `None`，此位退化为纯时效判断，行为与加入本维度之前**逐字节一致**。
     """
 
     tracks = set(applicable_tracks or [])
@@ -164,11 +174,27 @@ def _project_market_observations(rows, applicable_tracks, now_iso):
         if tracks and track is not None and track not in tracks:
             continue
         expired = _observation_is_expired(obs, now_iso)
+        availability = EXPIRED if expired else PRESENT
+
+        # 三个键在绑定基线里都不存在。用 sentinel 区分"这个 M2 构建没有权限概念"
+        # 与"权限状态是 unknown"——把前者读成后者等于替 M2 发明一个它没说过的判断。
+        has_permission_model = "permission_status" in obs or "currently_usable" in obs
+        currently_usable = obs.get("currently_usable") if has_permission_model else None
+        permission = {
+            "status": obs.get("permission_status") if has_permission_model else None,
+            "currently_usable": currently_usable,
+            "excluded_reason": obs.get("excluded_reason") if has_permission_model else None,
+            "usage_limits": obs.get("usage_limits") if has_permission_model else None,
+        }
+
         out.append(
             {
                 "observation_id": str(obs.get("id", "")),
                 "layer": obs.get("layer", "raw"),
-                "availability": EXPIRED if expired else PRESENT,
+                "availability": availability,
+                "usage_permission": permission,
+                # 只在两个维度同时放行时才为真。永远 ≤ M2 自己的判断。
+                "usable_for_inference": availability == PRESENT and currently_usable is not False,
                 "source": obs.get("source"),
                 "platform": obs.get("platform"),
                 "collected_at": obs.get("collected_at"),
@@ -227,6 +253,53 @@ def _project_feedback(rows, now_iso):
     return out
 
 
+def _project_cycle_summary(cycle):
+    """把 M2 的周期行压成当轮最小必要字段。
+
+    为什么不能直接把整行塞进 `value`（本轮由真实响应抓出的实现缺陷）：
+
+    - M2 的真实行带着 `row_version` 与 `idempotency_key`——并发控制与去重细节，
+      不是运营判断的输入。把它们投给模型就是"过量读取"（M3-AC-12 的失败条件）；
+    - 整行还**重复携带**三类产能，而产能已经在 `capacity` 里逐个带上了自己的
+      来源与可用状态。同一事实在同一份投影里出现两次，就是两个真源：一旦
+      `declared_absences` 把 `capacity.actual_capacity` 标成"用户拒绝提供"，原始行
+      里那个赤裸的数字仍然在，模型照样能读到——整个防坍缩机制当场失效。
+
+    所以周期摘要**刻意不含**任何产能字段。
+    """
+
+    # 没有 id 就不是一行周期。403 的响应体（`{"detail": ...}`）也会走到这里，
+    # 必须落成 None → UNKNOWN，而不是一条 cycle_id 为空串的"周期"。
+    if not cycle or not cycle.get("id"):
+        return None
+    return {
+        "cycle_id": str(cycle.get("id", "")),
+        "label": cycle.get("label"),
+        "start_at": cycle.get("start_at"),
+        "end_at": cycle.get("end_at"),
+        "is_current": bool(cycle.get("is_current", False)),
+        "supersedes_cycle_id": (
+            str(cycle["supersedes_cycle_id"]) if cycle.get("supersedes_cycle_id") else None
+        ),
+    }
+
+
+def _project_decision_summary(decision):
+    """同上：只带判断本身与它的依据，不带 M2 的内部键。"""
+
+    return {
+        "decision_id": str(decision.get("id", "")),
+        "cycle_id": str(decision["cycle_id"]) if decision.get("cycle_id") else None,
+        "decision": decision.get("decision"),
+        "rationale": decision.get("rationale"),
+        "source": decision.get("source"),
+        "based_on": decision.get("based_on") or {},
+        "resulting_cycle_id": (
+            str(decision["resulting_cycle_id"]) if decision.get("resulting_cycle_id") else None
+        ),
+    }
+
+
 def _project_overlays(rows):
     return [
         {
@@ -280,7 +353,11 @@ def build_projection(
         latest_decision_field = field(None, UNKNOWN, info_nature="fact", provenance="system_derived")
     else:
         latest_decision_field = field(
-            decision, PRESENT, info_nature="fact", provenance="system_derived", as_of=decision.get("created_at")
+            _project_decision_summary(decision),
+            PRESENT,
+            info_nature="fact",
+            provenance="system_derived",
+            as_of=decision.get("created_at"),
         )
 
     projection = {
@@ -362,7 +439,7 @@ def build_projection(
             ),
         },
         "current_cycle": _resolve(
-            m2.get("current_cycle"),
+            _project_cycle_summary(m2.get("current_cycle")),
             "current_cycle",
             declared,
             info_nature="fact",
@@ -449,6 +526,29 @@ def validate_projection(projection):
             problems.append("market_observations[%d].availability 非法" % i)
         if obs.get("layer") not in ("raw", "analysis", "homogeneous_judgment"):
             problems.append("market_observations[%d].layer 非法——原始观察/分析/同质判断必须分清" % i)
+
+        permission = obs.get("usage_permission")
+        if not isinstance(permission, dict):
+            problems.append(
+                "market_observations[%d].usage_permission 缺失——权限与时效是两个维度，不得只留时效" % i
+            )
+            continue
+        usable = obs.get("usable_for_inference")
+        if not isinstance(usable, bool):
+            problems.append("market_observations[%d].usable_for_inference 必须是布尔" % i)
+            continue
+        # 单向不等式：M3 侧的结论位不得比 M2 更宽松。
+        if permission.get("currently_usable") is False and usable:
+            problems.append(
+                "market_observations[%d]: M2 已判定当前不可用（%s），投影却标为可用——"
+                "权限未确认的观察被抬成可引用证据是 M3-AC-09/AC-12 的直接 FAIL"
+                % (i, permission.get("excluded_reason"))
+            )
+        if obs.get("availability") != PRESENT and usable:
+            problems.append(
+                "market_observations[%d]: availability=%s 却标为可用——过期证据不得参与推理"
+                % (i, obs.get("availability"))
+            )
 
     for i, item in enumerate(projection.get("feedback") or []):
         for key in ("is_test", "is_simulated", "is_manual_entry", "is_pre_publish_review"):
