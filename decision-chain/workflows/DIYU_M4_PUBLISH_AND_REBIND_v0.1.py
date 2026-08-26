@@ -32,6 +32,7 @@ import json
 import os
 import subprocess
 import sys
+import http.cookiejar
 import urllib.error
 import urllib.request
 
@@ -140,6 +141,14 @@ class Console(object):
         self.email = os.environ.get("DIFY_CONSOLE_EMAIL") or cfg.get("DIFY_CONSOLE_EMAIL")
         self.pw = os.environ.get("DIFY_CONSOLE_PASSWORD") or cfg.get("DIFY_CONSOLE_PASSWORD")
         self.token = None
+        self.csrf = None
+        # Dify 1.16.1 现场实测：/console/api/login 的响应体只有 {"result":"success"}，
+        # access_token / refresh_token / csrf_token 全部走 Set-Cookie；且此后每一个
+        # 已认证请求都必须带 X-CSRF-Token 头，否则一律 401 "CSRF token is missing or invalid"。
+        # 因此必须用 cookie jar 打开器，并从 cookie 里取 token。
+        self.cj = http.cookiejar.CookieJar()
+        self.opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(self.cj))
 
     def login(self):
         if not (self.email and self.pw):
@@ -150,9 +159,16 @@ class Console(object):
             "email": self.email,
             "password": base64.b64encode(self.pw.encode()).decode(),
             "language": "zh-Hans", "remember_me": True}, auth=False)
-        self.token = (body.get("data") or {}).get("access_token")
+        ck = {c.name: c.value for c in self.cj}
+        # 先按「token 在响应体里」取（其它 Dify 版本的形状），取不到再走 cookie。
+        self.token = (body.get("data") or {}).get("access_token") or ck.get("access_token")
+        self.csrf = ck.get("csrf_token")
         if not self.token:
-            raise RuntimeError("登录失败：%s" % json.dumps(body)[:200])
+            raise RuntimeError("登录失败：响应体 %s；cookie 名 %s"
+                               % (json.dumps(body)[:120], sorted(ck)))
+        if not self.csrf:
+            raise RuntimeError("登录成功但没拿到 csrf_token cookie；后续写入必然 401。cookie 名 %s"
+                               % sorted(ck))
         return True
 
     def _req(self, method, path, payload=None, auth=True, raw_files=None):
@@ -178,8 +194,10 @@ class Console(object):
             req.add_header(k, v)
         if auth and self.token:
             req.add_header("Authorization", "Bearer " + self.token)
+        if auth and self.csrf:
+            req.add_header("X-CSRF-Token", self.csrf)
         try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
+            with self.opener.open(req, timeout=120) as resp:
                 txt = resp.read().decode()
                 return json.loads(txt) if txt.strip() else {}
         except urllib.error.HTTPError as e:
@@ -321,6 +339,39 @@ TOOL_PARAMS = [
 ]
 
 
+def params_from_start(dsl_path):
+    """工具参数直接从该应用 start 节点的变量派生，不用硬编码清单。
+
+    现场教训（2026-08-26）：硬编码的 TOOL_PARAMS 里有 `run_mode`，
+    统一接缝应用的 start 节点没有这个变量，Dify 直接 400 `variable not found`。
+    参数清单只有一个真源——应用自己的 start 节点，从那里派生就不会漂移。"""
+    import yaml as _y
+    with open(dsl_path, encoding="utf-8") as fh:
+        d = _y.safe_load(fh)
+    for n in d["workflow"]["graph"]["nodes"]:
+        if n["data"].get("type") == "start":
+            return [{"name": v["variable"], "form": "llm",
+                     "required": bool(v.get("required")), "type": "string",
+                     "description": v.get("label") or v["variable"]}
+                    for v in n["data"].get("variables", [])]
+    raise RuntimeError("找不到 start 节点：%s" % dsl_path)
+
+
+def resolve_provider(c, app_id):
+    """provider_id 由目标系统重新读取确认，不从 create 的返回体里猜。
+
+    现场教训（2026-08-26）：Dify 1.16.1 的 workflow tool create 返回体里
+    既没有 `workflow_tool_id` 也没有顶层 `id`，照返回体取会得到 PENDING_PUBLISH，
+    而工具其实已经建好了——那会把「已成功」误判成「未绑定」。
+    写后由目标系统确认（Prompt §13 第 4 条）。"""
+    t = c.list_workflow_tools()
+    items = t if isinstance(t, list) else (t.get("data") or [])
+    for it in items:
+        if it.get("workflow_app_id") == app_id:
+            return it.get("id") or "PENDING_PUBLISH"
+    return "PENDING_PUBLISH"
+
+
 def cmd_rebind():
     """N-20：子应用发布后，父接缝的 provider 必须重绑到后继版本；未重绑不得 PASS。"""
     pub_path = os.path.join(EVID, "M4_DIFY_PUBLISH.json")
@@ -352,11 +403,11 @@ def cmd_rebind():
             bindings[key] = {"provider_id": "PENDING_PUBLISH", "app_id": "PENDING_PUBLISH",
                              "published_workflow_id": "PENDING_PUBLISH", "tool_name": cap["tool_name"]}
             continue
-        tool = by_app.get(app_id)
-        if not tool:
-            tool = c.create_workflow_tool(app_id, cap["tool_name"], cap["app_name"], TOOL_PARAMS)
-            tool = (tool.get("data") or tool)
-        provider_id = tool.get("workflow_tool_id") or tool.get("id") or "PENDING_PUBLISH"
+        if app_id not in by_app:
+            c.create_workflow_tool(
+                app_id, cap["tool_name"], cap["app_name"],
+                params_from_start(os.path.join(cap["out_dir"], cap["out_file"])))
+        provider_id = resolve_provider(c, app_id)      # 写后由目标系统确认
         rows = psql("SELECT workflow_id FROM apps WHERE id='%s';" % app_id)
         bindings[key] = {"provider_id": provider_id, "app_id": app_id,
                          "published_workflow_id": rows[0] if rows else "UNKNOWN",
@@ -377,16 +428,12 @@ def cmd_rebind():
 
     # 接缝本身也要注册成 workflow tool，供 Founder 画布调用
     if seam_app_id:
-        stool = by_app.get(seam_app_id)
-        if not stool:
-            stool = c.create_workflow_tool(seam_app_id, "diyu_m4_capability_seam",
-                                           "DIYU %s · Capability Seam" % APP_TAG,
-                                           TOOL_PARAMS + [{"name": "capability", "form": "llm",
-                                                           "required": True, "type": "string",
-                                                           "description": "M1 给出的唯一能力调用意图"}])
-            stool = (stool.get("data") or stool)
+        if seam_app_id not in by_app:
+            c.create_workflow_tool(seam_app_id, "diyu_m4_capability_seam",
+                                   "DIYU %s · Capability Seam" % APP_TAG,
+                                   params_from_start(SEAM_FILE))
         bindings["_seam"] = {
-            "provider_id": stool.get("workflow_tool_id") or stool.get("id") or "PENDING_PUBLISH",
+            "provider_id": resolve_provider(c, seam_app_id),   # 写后由目标系统确认
             "app_id": seam_app_id, "tool_name": "diyu_m4_capability_seam",
         }
         with open(BINDINGS, "w", encoding="utf-8") as fh:

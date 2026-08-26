@@ -279,3 +279,43 @@ M4-BLK-001:
   is_terminal: false
   authorized_path_remains: true
 ```
+
+---
+
+### A-011 · M4-BLK-001 解除并完成 Dify 发布与重绑（**首次真实写入**）
+
+```yaml
+attempt_id: "A-011"
+kind: "DIAGNOSTIC"                      # 发布本身不是 Formal Attempt，只是让 Formal Attempt 成为可能
+authority: "Founder 放行写入子命令；Founder 亦在宿主机先行执行过一次（preflight 通过、publish 因脚本缺陷失败）"
+phases_run: ["preflight", "publish", "rebind", "confirm"]
+dify_apps_created: 8
+dify_workflow_tools_created: 7          # 六个能力应用 + 统一接缝
+protected_apps_modified: 0              # 写前、写后各复算一次，均为零变化
+real_content_published: 0
+objects_touched: "全部名称含 'M4 v1.3 TEST'，无一例外"
+evidence:
+  - "decision-chain/evidence/m4/M4_DIFY_PUBLISH.json"
+  - "decision-chain/evidence/m4/M4_DIFY_REBIND.json"
+  - "decision-chain/evidence/m4/M4_DIFY_CONFIRM.json"
+target_system_confirmation:
+  seam_app_id: "de0cb1e9-2af8-415a-9762-31b6cf348c22"
+  canvas_app_id: "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8"
+  seam_tool_nodes_bound: "6/6，无 PENDING_PUBLISH，provider_id 逐个命中绑定表"
+  canvas_tool_node_bound: "1/1，指向接缝 provider"
+  canvas_v1_state_unlocked_live: true   # 直接读线上 published graph 复算，不看本地文件
+static_verify_after_rebind: "FAIL=0 WARN=0"
+```
+
+**真实执行查出并修复的两处脚本缺陷**（只有真跑才会暴露，如实记录）：
+
+| # | 缺陷 | 现象 | 根因 | 修复 |
+|---|---|---|---|---|
+| 1 | `Console.login()` 假定 token 在响应体 `data.access_token` | `RuntimeError: 登录失败：{"result": "success"}` | Dify 1.16.1 把 `access_token` / `refresh_token` / `csrf_token` 全部走 `Set-Cookie`，响应体只有 `{"result":"success"}`；且此后**每个**已认证请求都必须带 `X-CSRF-Token`，否则一律 401 `CSRF token is missing or invalid` | 改用 cookie jar 打开器；token 先按响应体取、取不到再从 cookie 取（兼容其它版本）；所有已认证请求补 `X-CSRF-Token` 头 |
+| 2 | `cmd_rebind()` 用硬编码 `TOOL_PARAMS`，并从 create 返回体取 `provider_id` | 接缝工具注册 400 `variable not found`；六个能力工具明明建成了却被记成 `PENDING_PUBLISH` | 硬编码清单含 `run_mode`，统一接缝的 start 节点没有这个变量；且 Dify 1.16.1 的 workflow tool create 返回体里既无 `workflow_tool_id` 也无顶层 `id` | 参数改为从各应用**自己的 start 节点**派生（参数只有一个真源，不会漂移）；`provider_id` 改为**写后由目标系统重新读取确认**，不从返回体猜 |
+
+> 缺陷 2 的后半段是典型的「把已成功误判成未绑定」——按 Prompt §13 第 4 条
+> 「写后由目标系统确认，不以 HTTP 200 当成功」，反向也成立：**不以返回体缺字段当失败**。
+
+**仍然不成立的**：以上全部是「对象已存在且已绑定」，**不是** Runtime 行为证据。
+AC-02…30 与 N-01…50 的 Runtime 部分仍为 `NOT_VERIFIED`，须由绑定真实 run_id 的 Formal Attempt 产生。
