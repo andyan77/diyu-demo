@@ -1,0 +1,122 @@
+import uuid
+
+
+def _legacy_snapshot(goal="帮我看看这周三条内容能不能按时发", confirmed=True):
+    task_obj = {"goal": goal, "target_object": "本周排期"}
+    return {
+        "schema_version": 1,
+        "task_id": f"legacy-{uuid.uuid4().hex[:8]}",
+        "revision": 3,
+        "phase": "READY" if confirmed else "FORMING",
+        "candidate_skill": "CAMPAIGN",
+        "draft_task": task_obj,
+        "confirmed_task": task_obj if confirmed else None,
+        "pending_action": None,
+        "authorization": {
+            "skill": "CAMPAIGN",
+            "task_revision": 3,
+            "confirmation_id": "conf-1",
+            "granted": confirmed,
+            "consumed": confirmed,
+        },
+        "artifacts": {"matrix": None, "campaign": None, "content_brief": None},
+        "blocking_gap": None,
+        "last_result_ref": None,
+        "last_error": None,
+    }
+
+
+def test_valid_legacy_import_creates_readable_snapshot(client, bootstrapped, unique):
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+
+    r = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={
+            "idempotency_key": f"legacy-{unique}",
+            "account_id": account_id,
+            "legacy_snapshot": _legacy_snapshot(),
+        },
+        headers=headers,
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    task_id = body["task"]["id"]
+    assert body["snapshot"]["source"] == "legacy_dify_5slot_import"
+
+    projection = client.get(f"/workspaces/{ws_id}/tasks/{task_id}/projection", headers=headers).json()
+    assert projection["latest_snapshot"]["payload"]["note"] == "帮我看看这周三条内容能不能按时发"
+    assert projection["latest_snapshot"]["source"] == "legacy_dify_5slot_import"
+
+
+def test_legacy_import_is_idempotent(client, bootstrapped, unique):
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+    key = f"legacy-idem-{unique}"
+
+    r1 = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": key, "account_id": account_id, "legacy_snapshot": _legacy_snapshot()},
+        headers=headers,
+    )
+    r2 = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": key, "account_id": account_id, "legacy_snapshot": _legacy_snapshot(goal="换一个原话也不该生效")},
+        headers=headers,
+    )
+    assert r1.status_code == 200 and r2.status_code == 200
+    assert r1.json()["task"]["id"] == r2.json()["task"]["id"]
+    assert r1.json()["snapshot"]["id"] == r2.json()["snapshot"]["id"], (
+        "retrying the same idempotency_key must return the original import, never create a second task/snapshot"
+    )
+
+
+def test_legacy_import_rejects_missing_required_key(client, bootstrapped, unique):
+    ws_id = bootstrapped["workspace"]["id"]
+    headers = bootstrapped["headers"]
+    broken = _legacy_snapshot()
+    del broken["authorization"]
+
+    r = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": f"legacy-broken-{unique}", "legacy_snapshot": broken},
+        headers=headers,
+    )
+    assert r.status_code == 422
+    assert "authorization" in r.json()["detail"]
+
+
+def test_legacy_import_provenance_reflects_old_confirmation_state(client, bootstrapped, unique):
+    """A snapshot imported from an old CONFIRMED task is tagged fact/confirmed;
+    one imported from an old un-confirmed draft is tagged preference/inferred.
+    Either way `source` makes clear it's an import, not a live M2 confirmation.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    headers = bootstrapped["headers"]
+
+    confirmed = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={
+            "idempotency_key": f"legacy-confirmed-{unique}",
+            "legacy_snapshot": _legacy_snapshot(confirmed=True),
+        },
+        headers=headers,
+    ).json()
+    assert confirmed["snapshot"]["info_nature"] == "fact"
+    assert confirmed["snapshot"]["confirmation_status"] == "confirmed"
+    assert confirmed["snapshot"]["source"] == "legacy_dify_5slot_import"
+
+    draft = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={
+            "idempotency_key": f"legacy-draft-{unique}",
+            "legacy_snapshot": _legacy_snapshot(confirmed=False),
+        },
+        headers=headers,
+    ).json()
+    assert draft["snapshot"]["info_nature"] == "preference"
+    assert draft["snapshot"]["confirmation_status"] == "inferred"
+    assert draft["snapshot"]["source"] == "legacy_dify_5slot_import"

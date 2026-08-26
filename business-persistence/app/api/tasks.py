@@ -135,6 +135,116 @@ def create_snapshot(
     return row_to_dict(snapshot)
 
 
+LEGACY_SNAPSHOT_REQUIRED_KEYS = {
+    "schema_version",
+    "task_id",
+    "revision",
+    "phase",
+    "candidate_skill",
+    "draft_task",
+    "confirmed_task",
+    "pending_action",
+    "authorization",
+    "artifacts",
+    "blocking_gap",
+    "last_result_ref",
+    "last_error",
+}
+
+
+class LegacyImportRequest(BaseModel):
+    idempotency_key: str
+    account_id: uuid.UUID | None = None
+    legacy_snapshot: dict
+
+
+@router.post("/workspaces/{workspace_id}/tasks/legacy-import")
+def import_legacy_snapshot(
+    workspace_id: uuid.UUID,
+    body: LegacyImportRequest,
+    db: Session = Depends(get_db),
+    ctx: MembershipContext = Depends(require_membership),
+):
+    """Imports one V1 Demo task_snapshot_json object (the old Dify 5-slot
+    session-state mechanism -- see decision-chain/docs/
+    V1_TASK_SNAPSHOT_SCHEMA_v0.1.json) as a single historical TaskSnapshot.
+
+    The old mechanism only ever kept ONE current slot per artifact type and
+    overwrote it in place -- there is no version history behind it to
+    recover, so this creates exactly one Task + one TaskSnapshot representing
+    what was actually observed at import time. It never fabricates a
+    sequence of versions that never existed. `source` is always set to
+    "legacy_dify_5slot_import" so this can never be mistaken for a live,
+    real-time user confirmation captured by M2 itself -- that discriminator,
+    not confirmation_status, is what protects real business history from
+    being polluted by an import.
+    """
+
+    missing = LEGACY_SNAPSHOT_REQUIRED_KEYS - body.legacy_snapshot.keys()
+    if missing:
+        raise HTTPException(
+            status_code=422,
+            detail=f"legacy_snapshot missing required V1 schema keys: {sorted(missing)}",
+        )
+
+    existing_task = db.execute(
+        select(Task).where(
+            Task.workspace_id == workspace_id, Task.idempotency_key == body.idempotency_key
+        )
+    ).scalar_one_or_none()
+    if existing_task:
+        existing_snapshot = db.execute(
+            select(TaskSnapshot).where(
+                TaskSnapshot.task_id == existing_task.id,
+                TaskSnapshot.idempotency_key == body.idempotency_key,
+            )
+        ).scalar_one_or_none()
+        return {
+            "task": row_to_dict(existing_task),
+            "snapshot": row_to_dict(existing_snapshot) if existing_snapshot else None,
+        }
+
+    task = create_task(
+        workspace_id,
+        CreateTaskRequest(
+            idempotency_key=body.idempotency_key, account_id=body.account_id, kind="legacy_import"
+        ),
+        db=db,
+        ctx=ctx,
+    )
+
+    confirmed_task = body.legacy_snapshot.get("confirmed_task")
+    draft_task = body.legacy_snapshot.get("draft_task") or {}
+    goal_source = confirmed_task if isinstance(confirmed_task, dict) else draft_task
+    note = goal_source.get("goal") if isinstance(goal_source, dict) else None
+
+    if confirmed_task:
+        info_nature, confirmation_status = "fact", "confirmed"
+    else:
+        info_nature, confirmation_status = "preference", "inferred"
+
+    snapshot = create_snapshot(
+        workspace_id,
+        uuid.UUID(task["id"]),
+        CreateSnapshotRequest(
+            idempotency_key=body.idempotency_key,
+            payload={"note": note, "legacy_snapshot": body.legacy_snapshot},
+            info_nature=info_nature,
+            source="legacy_dify_5slot_import",
+            confirmation_status=confirmation_status,
+            scope={
+                "imported_from": "v1_demo_5slot",
+                "schema_version": body.legacy_snapshot.get("schema_version"),
+                "legacy_task_id": body.legacy_snapshot.get("task_id"),
+            },
+            availability_status="available",
+        ),
+        db=db,
+        ctx=ctx,
+    )
+    return {"task": task, "snapshot": snapshot}
+
+
 class RunStateRequest(BaseModel):
     last_success_step: str | None = None
     failed_step: str | None = None
