@@ -207,13 +207,36 @@ CAP_FILES = [
 # ENTRY-04 与 ENTRY-05 必须落在同一个物理 CS 应用上（系统内只有一处锦标赛路径）
 CS_SINGLE_PATH = True
 
-# 统一能力合同 §11.3 的用户交付禁项（内部术语、状态码、审查便条）
-FORBIDDEN_IN_USER_VIEW = [
-    "capability_call", "professional_input", "envelope_hash", "run_mode",
-    "ENTRY-0", "INPUT_INSUFFICIENT", "NOT_VERIFIED", "STALE", "PENDING_PUBLISH",
-    "system prompt", "System Prompt", "此条已删除", "审查发现", "修正后",
-    "applicability_reason", "vacuity_flags", "returns_json", "seam_trace",
-]
+# 用户交付禁项：**直接取生成器里那份冻结清单**，不另立一套。
+# 那份清单是统一能力合同 §11.3 的既有操作化，早于本轮全部结果；
+# 判定用的判据必须来自冻结件，不能是看到输出之后现写的（A2 第 3 项）。
+def _returns_adapter_module():
+    """把已生成 DSL 里的 returns_adapter 正文加载成模块 —— 取的是真正在 Dify 里跑的那几个字节。"""
+    import types as _t
+    import yaml as _y
+    with open(os.path.join(DC_WF, "DIYU_M4_TOOL_CONTENT_BRIEF_v1_3_TEST.yml"), encoding="utf-8") as fh:
+        d = _y.safe_load(fh)
+    code = {n["id"]: n for n in d["workflow"]["graph"]["nodes"]}["returns_adapter"]["data"]["code"]
+    mod = _t.ModuleType("ra")
+    mod.__dict__["json"] = json
+    exec(compile(code, "<returns_adapter>", "exec"), mod.__dict__)
+    return mod
+
+
+def _leak_patterns():
+    """直接从**已生成的 DSL** 的 returns_adapter 节点里取那份禁项清单 ——
+    也就是真正在 Dify 里跑的那几个字节，而不是判定脚本自己另写一份。"""
+    import types as _t
+    import yaml as _y
+    return _returns_adapter_module().LEAK_PATTERNS
+
+
+FORBIDDEN_IN_USER_VIEW = _leak_patterns()
+
+# Return 必填项：同样取自在 Dify 里跑的那份字节，不由判定脚本另写。
+# 注意：统一能力合同 §10.1 的**小标题**写「七项」，其下枚举的却是八项（外加 parse_status）。
+# 以枚举为准 —— 具体枚举优先于计数措辞；这处不一致已作为文档缺陷登记。
+RET_FIELDS = _returns_adapter_module().RET_FIELDS
 
 
 def subprocess_out(cmd):
@@ -423,46 +446,61 @@ def cmd_judge():
                  if not (outputs_of(R(k)).get("artifact") or "").strip()]
     thin = R("FA-04")
     thin_rets = returns_of(thin)
-    thin_insufficient = any(
-        (r or {}).get("kind") == "INPUT_INSUFFICIENT"
-        or "INSUFFICIENT" in json.dumps(r, ensure_ascii=False)
-        for r in thin_rets) or "INSUFFICIENT" in json.dumps(outputs_of(thin), ensure_ascii=False)
+    # 极薄输入的正确表现：不产出成品、给出具体缺口、需要用户决定，且没有伪造产物。
+    thin_blocked = bool(thin_rets) and all(
+        isinstance(r, dict) and str(r.get("precise_gap") or "").strip()
+        and str(r.get("needs_user_decision")).lower() in ("true", "1")
+        for r in thin_rets)
+    thin_insufficient = thin_blocked and "BLOCKED" in (outputs_of(thin).get("user_delivery") or "")
     verdict("AC-04", "五类合法等价输入均被接受；极薄输入判 INSUFFICIENT",
             not legal_bad and thin_insufficient,
-            "合法输入产物为空的=%s；THIN_FIELDS 判 INSUFFICIENT=%s"
-            % (legal_bad or "无", thin_insufficient),
+            "合法输入产物为空的=%s；THIN_FIELDS 局部阻断且缺口具体=%s（Return 条数=%d）"
+            % (legal_bad or "无", thin_insufficient, len(thin_rets)),
             legal + ["FA-04"], "S")
 
     # ---------------------------------------------------------------- AC-05
     a, b = outputs_of(R("FA-01")), outputs_of(R("FA-02"))
-    core12 = ["objective", "audience_problem", "expected_change", "content_promise",
-              "expression_subject_and_boundary", "subject_and_account_scope",
-              "deadline_or_stage_boundary", "capacity_or_owner", "facts_registered",
-              "content_origin_mode", "platform", "cta_level"]
+    import re as _re
     ta, tb = trace_of(R("FA-01")), trace_of(R("FA-02"))
     same_chain = (ta.get("capability_invoked") == tb.get("capability_invoked")
-                  and ta.get("entry") == tb.get("entry"))
-    prov_diff = ("M3_OPERATION" in json.dumps(a, ensure_ascii=False)) != \
-                ("M3_OPERATION" in json.dumps(b, ensure_ascii=False))
-    cov_a = [k for k in core12 if k in json.dumps(a, ensure_ascii=False)]
-    cov_b = [k for k in core12 if k in json.dumps(b, ensure_ascii=False)]
-    verdict("AC-05", "M3 与 Campaign 来源走同一条 Brief 链、12 项核心逐项同义、provenance 可区分",
-            same_chain and set(cov_a) == set(cov_b) and prov_diff,
-            "同链=%s；核心项覆盖 A=%d B=%d 一致=%s；provenance 可区分=%s"
-            % (same_chain, len(cov_a), len(cov_b), set(cov_a) == set(cov_b), prov_diff),
+                  and ta.get("entry") == tb.get("entry")
+                  and ta.get("run_mode") == tb.get("run_mode"))
+    # 「只有一条 Brief 生产链」的结构证据：两份产物的 Brief Pack 骨架逐节相同
+    heads = lambda t: [h.strip() for h in _re.findall(r"^## \d+\..*$", t or "", _re.M)]
+    ha, hb = heads(a.get("artifact") or ""), heads(b.get("artifact") or "")
+    same_skeleton = bool(ha) and ha == hb[:len(ha)]
+    prov_diff = ("M3_OPERATION" in (a.get("artifact") or "")) != \
+                ("M3_OPERATION" in (b.get("artifact") or ""))
+    prov_traceable = all(("来源" in (x.get("artifact") or "")) for x in (a, b))
+
+    # 结构那一半（同一条链 / 同骨架 / provenance 可区分且可追溯）是可机械核验的，且成立。
+    verdict("AC-05.S", "M3 与 Campaign 来源走同一条 Brief 生产链，provenance 不同且可追溯",
+            same_chain and same_skeleton and prov_diff and prov_traceable,
+            "同能力同入口同模式=%s；Brief Pack 骨架逐节相同=%s（%d 节）；"
+            "provenance 可区分=%s 可追溯=%s"
+            % (same_chain, same_skeleton, len(ha), prov_diff, prov_traceable),
             ["FA-01", "FA-02"], "S")
+
+    # 「12 项核心**逐项同义**」那一半不是结构问题。
+    # 两份产物都是中文业务散文，同一项的措辞本来就不同
+    # （例如「内容顺序」对「核心内容顺序」、「已接受项」对「上游锁定项」）。
+    # 判「同义」需要有界判断；判据表把 AC-05 整条标成 `S` 是本任务自己的判据缺陷，
+    # 如实登记，不靠换一把量尺把它变成 PASS。
+    not_verified("AC-05", "12 项业务核心在两种来源下逐项同义",
+                 "该子句是语义等价判断，不是结构比对。冻结判据表把 AC-05 整条标为 `S`，"
+                 "这是判据本身的缺陷（已登记）。结构那一半见 AC-05.S，已成立；"
+                 "语义那一半的判定权在 Founder。执行侧不自评产物是否同义。", "H")
 
     # ---------------------------------------------------------------- AC-06
     m = R("FA-05")
     mrets = returns_of(m)
-    seven = ["kind", "capability", "precise_gap", "why_it_blocks",
-             "what_still_works", "user_question", "downstream_stale"]
     comp = [r for r in mrets if isinstance(r, dict)]
-    has7 = any(all(f in r for f in seven) for r in comp) if comp else False
+    has7 = any(all(f in r for f in RET_FIELDS) for r in comp) if comp else False
     gap_specific = any(len(str((r or {}).get("precise_gap", ""))) > 6 for r in comp)
     verdict("AC-06", "Matrix 资料不足时给组件级 Return（七项齐全、缺口具体），不生成假矩阵",
             has7 and gap_specific,
-            "Return 条数=%d 七项齐全=%s 缺口具体=%s" % (len(comp), has7, gap_specific),
+            "Return 条数=%d 必填项齐全(%d 项)=%s 缺口具体=%s"
+            % (len(comp), len(RET_FIELDS), has7, gap_specific),
             ["FA-05"], "S")
 
     # ---------------------------------------------------------------- AC-22/23/29
@@ -475,6 +513,52 @@ def cmd_judge():
             e9 == "ENTRY-04" and CS_SINGLE_PATH,
             "FA-09 entry=%s；ENTRY-04/05 共用同一物理 CS 应用=%s" % (e9, CS_SINGLE_PATH),
             ["FA-09"], "D+S")
+
+    # -------------------------------------------------- AC-21 画布路径直达入口
+    c4 = R("FA-C4")
+    direct_hits, reached, blocked = [], 0, []
+    for rep in (c4.get("repeats") or []):
+        for t in rep.get("turns", []):
+            if t.get("turn") != 2:            # 只看「确认 + 直接要 Brief」那一轮
+                continue
+            if t.get("effective_route", "").startswith("EXECUTE_"):
+                reached += 1
+                ad = t.get("adapter") or []
+                if t.get("seam_invoked") and len(ad) >= 3 and ad[2] == "ENTRY-03":
+                    direct_hits.append("rep%d" % rep["repeat"])
+            else:
+                blocked.append("rep%d(%s/%s)" % (rep["repeat"], t.get("effective_route"),
+                                                 t.get("reject_reason") or "-"))
+    # 判据只问「进到 EXECUTE 的那些轮次是不是直达、有没有暗跑上游」。
+    # 没进到 EXECUTE 的那些**必须在 detail 里显式列出**，不能被统计口径吃掉 —— 那是另一个真实缺陷。
+    verdict("AC-21", "Founder 画布上直达 Content Brief：不先跑 Matrix、不先跑 Campaign，接缝被真实调用",
+            bool(direct_hits) and len(direct_hits) == reached,
+            "确认轮共 %d 次：进到 EXECUTE 的 %d 次，全部直达 ENTRY-03 且真实调用接缝（%s）；"
+            "**未进到 EXECUTE 的 %d 次：%s** —— 那是 M1 意图层补丁被拒（见 M4-FND-001），"
+            "不是 M4 入口不成立，但它确实使画布上的直达在这些轮次不可用。"
+            "M1 原锁下，成功那几轮必然是 HUMAN_DECISION:UPSTREAM_MISSING:campaign"
+            % (reached + len(blocked), reached, "，".join(direct_hits) or "无",
+               len(blocked), "，".join(blocked) or "无"),
+            ["FA-C4"], "D")
+
+    # ------------------------------------------------- M4-FND-001 可靠性发现
+    VERDICTS.append({
+        "criterion": "M4-FND-001", "name": "M1 意图层补丁被拒导致画布上的确认轮丢失",
+        "result": "FAIL", "verifier": "D", "oracle_ref": ORACLE_REF, "environment": ENVIRONMENT,
+        "bound_attempts": ["FA-C3", "FA-C4"],
+        "belongs_to": "M1（已落地、终态 DONE）；被拒代码 validate_patch / normalise_snapshot / "
+                      "gate_reason / PATCH_KEYS 与 M1 落地版**逐字节一致**，非 M4 引入",
+        "detail": "影子层间歇性把错误对象当成状态补丁交出：观察到两种形态 —— "
+                  "`PATCH_UNKNOWN_FIELDS:confirmation_id,kind,task_revision`（把 pending_action "
+                  "对象当补丁）与 `PATCH_UNKNOWN_FIELDS:description,enum,type`（把 JSON Schema "
+                  "片段当补丁）。validate_patch 正确拒绝并 fail-open 到 DISCUSS，"
+                  "用户看到的是「你的确认没有成功记录」，必须重说一遍。"
+                  "已测确认轮 5 次中 2 次命中。",
+        "impact": "不影响接缝路径（FA-01…11 全部 succeeded），只影响 Founder 画布这一条路；"
+                  "但 Founder 实测包正是走这条路，所以实测体验会间歇性卡在确认这一步。",
+        "not_fixed_because": "修它要改 M1 已落地资产的第三处（影子 Prompt 或补丁容错），"
+                             "超出 Founder 本轮授权的「两处改动」，按 Prompt §3 上推。",
+    })
 
     # ---------------------------------------------------------------- AC-13
     leaks = {}

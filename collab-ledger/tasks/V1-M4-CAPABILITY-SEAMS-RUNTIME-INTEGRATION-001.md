@@ -344,3 +344,61 @@ note: "两处都只有真跑才会暴露；静态验证与既有确定性探针*
 
 **当前 Dify 状态**：八个 M4 对象已更新到修复后版本（幂等，app_id 全部复用未新建）；
 `provider 版本复验：7/7 均等于应用当前已发布版本`；受保护应用写前写后仍为零变化。
+
+### A-013 · Formal Attempt 与判定（**首批 FORMAL**）
+
+```yaml
+attempt_id: "A-013"
+kind: "FORMAL"
+runs: 17            # 11 接缝 + 2 画布可达 + 3×2 轮画布对话（其中 1 组为 DIAGNOSTIC 重复）
+all_bound_to_run_id: true
+evidence_dir: "decision-chain/evidence/m4/runs/"
+verdicts: "decision-chain/evidence/m4/M4_FORMAL_VERDICTS.json"
+result: "PASS=10  FAIL=1  NOT_VERIFIED=6"
+evidence_grade: "RUNTIME_VERIFIED"
+pass_list: ["AC-03","AC-04","AC-05.S","AC-06","AC-12","AC-13","AC-16","AC-21","AC-22","AC-23"]
+fail_list: ["M4-FND-001"]
+not_verified_list: ["AC-05（语义半）","AC-15","AC-17","AC-18","AC-26","AC-27"]
+h_class_note: >
+  标 H（盲评）的五条一律不由执行侧判定。CLAUDE.md §4：不让 Claude Code 或其他 LLM
+  评价哪份内容更好。对照运行已跑完并原始落盘，判定权在 Founder。
+```
+
+**判据修正登记（第二次，如实记录）**：AC-05 第一次判定用「在中文产物里数英文字段名」测量，得 `FAIL`。
+复核确认是**测量工具错**（测的不是判据要问的东西）。但换结构量尺同样不成立——
+「12 项核心逐项同义」是语义等价判断，判据表把 AC-05 整条标 `S` 是本任务自己的判据缺陷。
+处置：拆成 `AC-05.S = PASS`（结构半，同链同骨架、provenance 可区分可追溯）
+与 `AC-05 = NOT_VERIFIED`（语义半，交 Founder）。**没有把它算成 PASS。**
+
+**AC-21 的统计口径也修正过一次**：初版只统计「进到 EXECUTE 的轮次」，
+等于把「压根没进到 EXECUTE 的那一次」从分母里去掉了。改成必须在 detail 里显式列出未进入的轮次
+及其 `reject_reason`。判据没变，变的是不许用统计口径吃掉失败样本。
+
+### 发现登记 · M4-FND-001
+
+```yaml
+finding_id: "M4-FND-001"
+severity: "HIGH"
+belongs_to: "M1（已落地、终态 DONE）"
+introduced_by_m4: false
+proof: "validate_patch / normalise_snapshot / gate_reason / PATCH_KEYS 与 M1 落地版逐字节一致"
+what: "影子层间歇性把 pending_action 对象或 JSON Schema 片段当成状态补丁交出，被 validate_patch 拒绝，fail-open 到 DISCUSS"
+user_visible: "「你的确认没有成功记录」，用户必须把确认重说一遍"
+frequency_observed: "已测确认轮 5 次中 2 次"
+scope: "只影响 Founder 画布路径；接缝路径 FA-01…11 全部 succeeded"
+blocks: "Founder 实测包（V1_M4_FOUNDER_TEST_PACKAGE_v0.1.md）会间歇性卡在确认这一步"
+proposed_minimal_fix: "validate_patch 遇未知字段时丢弃未知字段并继续（丢弃项记进 notes 以便审计），而不是整轮拒绝"
+requires_founder_authorization: true    # 这是 M1 已落地资产的第三处改动，超出本轮授权的两处
+is_terminal: false
+```
+
+### 已解锁的实证（画布路径）
+
+```yaml
+what_the_unlock_actually_bought:
+  evidence: "FA-C4 三次重复的第 2 轮"
+  reached_execute: 2
+  of_which_direct_entry_03: 2          # 100%，且接缝被真实调用
+  blocked_by_M4_FND_001: 1
+  under_m1_original_lock: "这 2 次必然是 HUMAN_DECISION:UPSTREAM_MISSING:campaign"
+```

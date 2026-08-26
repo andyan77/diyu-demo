@@ -497,3 +497,118 @@ founder_product_acceptance:
 2. **放行 Dify 写入**。注意：2026-08-26 复测证明**补凭据不解决问题**，
    被拦的是 `publish` / `rebind` / `confirm` 三个写入子命令本身（不给凭据也照样被拦）。
    两条可行路径：为本会话放行这三个子命令，或你在宿主机自行执行这三个阶段。
+
+---
+
+# 附录 A · Formal Attempt 结果（2026-08-26，绑定真实 Dify run_id）
+
+> 本附录追加，不覆盖 §1—§10 原文。§4 的 AC 状态表反映的是 Checkpoint `M4-CP-002` 时刻，
+> 当时全部 Runtime 类判据尚未取证；本附录是取证之后的状态，以本附录为准。
+
+## A.1 正式运行清单
+
+11 条能力接缝运行 + 2 条画布可达运行 + 1 组三次重复的画布两轮对话，**全部绑定真实 run_id / message_id**，
+原始输入输出、节点级执行轨迹、模型与参数全量落盘于 `decision-chain/evidence/m4/runs/`。
+
+| Attempt | 冻结夹具 | 能力 | 状态 |
+|---|---|---|---|
+| FA-01 | `FX-M4-CT-M3` | Content Brief | succeeded |
+| FA-02 | `FX-M4-CT-CAMPAIGN` | Content Brief | succeeded |
+| FA-03 | `FX-M4-CT-USER-DIRECT` | Content Brief | succeeded |
+| FA-04 | `FX-M4-THIN-FIELDS` | Content Brief | succeeded（正确局部阻断） |
+| FA-05 | `FX-M4-MATRIX-INSUFFICIENT-WITH-UNRELATED` | Matrix | succeeded（正确组件级 Return） |
+| FA-06 | `FX-M4-SCRIPT-LEGAL` | Production Director | succeeded |
+| FA-07 | `FX-M4-REALIZATION-FINAL` | Publishing & Packaging | succeeded |
+| FA-08 | `FX-M4-ACCEPTED-DIRECTION` | Creative Script | succeeded（ENTRY-05） |
+| FA-09 | `FX-M4-REAL-TRADEOFF` | Creative Script | succeeded（ENTRY-04） |
+| FA-10 / FA-11 | `FX-M4-GOAL-COUNTERFACTUAL-A/B` | Content Brief | succeeded（对照对，供盲评） |
+| FA-C1 / FA-C2 | Founder 实测包场景 1 / 场景 4 | Founder 画布 | 可达 |
+| FA-C3 / FA-C4 | 两轮对话 ×（1+3） | Founder 画布 | 见 A.4 |
+
+## A.2 判定结果
+
+```text
+PASS = 10    FAIL = 1    NOT_VERIFIED = 6
+evidence_grade = RUNTIME_VERIFIED（绑定真实 Dify run_id）
+原始判定：decision-chain/evidence/m4/M4_FORMAL_VERDICTS.json
+```
+
+| 判据 | 结果 | 关键证据 |
+|---|---|---|
+| AC-03 | PASS | 每次运行的节点轨迹里**恰好一个**成功 tool 节点；`upstream_auto_invoked: []`；六个能力应用之间零 tool 调用边 |
+| AC-04 | PASS | 六类合法等价输入全部产出成品；`FX-M4-THIN-FIELDS` 正确局部阻断，缺口具体、需用户决定、无伪造产物 |
+| AC-05.S | PASS | 两种来源的 Brief Pack 骨架逐节相同（同一条生产链）；provenance 可区分且可追溯 |
+| AC-06 | PASS | Matrix 资料不足 → 组件级 Return，必填项齐全，`precise_gap` 具体，只问一个问题，不生成假矩阵 |
+| AC-12 | PASS | 从**已发布** graph 读出的 system prompt 字节 sha256 与本地由后继 SKILL 派生的期望值逐能力一致（6/6）；模型与参数一致；provider 已绑定 |
+| AC-13 | PASS | 全部运行的用户交付块，按**生成器里那份冻结禁项清单**（24 条）逐条扫描，零命中 |
+| AC-16 | PASS | 13 次带 run_id/message_id 的真实运行；画布可达；受保护应用零变化 |
+| AC-21 | PASS | 画布确认轮进到 EXECUTE 的每一次都直达 `ENTRY-03` 且真实调用接缝（未进到的另计，见 A.4） |
+| AC-22 | PASS | `FX-M4-REAL-TRADEOFF` → `ENTRY-04 / TOURNAMENT_ONLY`；ENTRY-04 与 05 共用同一物理 CS 应用 |
+| AC-23 | PASS | `FX-M4-ACCEPTED-DIRECTION` → `ENTRY-05 / SELECTED_DIRECTION_TO_SCRIPT`，不重开锦标赛 |
+
+## A.3 判据本身的一处缺陷（如实登记，不靠换量尺变绿）
+
+**AC-05** 的原判据是「M3/Campaign 同种 Content Task：12 项业务核心**逐项同义**」，`V` 列标 `S`（结构检查）。
+
+第一次判定用「在产物里数英文字段名」的方式测量，得到 `FAIL`。复核结论：**那是测量工具错了**——
+两份产物都是中文业务散文，数英文标识符测的根本不是判据要问的东西。
+
+但换一把结构量尺也不成立：同一项在两份产物里的措辞本来就不同
+（「内容顺序」对「核心内容顺序」、「已接受项」对「上游锁定项」）。
+**「同义」是语义等价判断，不是结构比对**——判据表把 AC-05 整条标成 `S` 是本任务自己的判据缺陷。
+
+处置：拆成两半。结构那一半（同一条生产链、同骨架、provenance 可区分可追溯）记 `AC-05.S = PASS`；
+语义那一半记 `AC-05 = NOT_VERIFIED`，判定权交 Founder。**不把它算成 PASS，也不把它算成 FAIL。**
+
+## A.4 唯一一条 FAIL：M4-FND-001（属于 M1，不是 M4 引入）
+
+```yaml
+finding_id: "M4-FND-001"
+result: "FAIL"
+name: "M1 意图层补丁被拒，导致 Founder 画布上的确认轮丢失"
+belongs_to: "M1（已落地、终态 DONE）"
+introduced_by_m4: false
+proof_not_introduced_by_m4: >
+  被拒代码 validate_patch / normalise_snapshot / gate_reason / PATCH_KEYS
+  与 M1 落地版**逐字节一致**（已机械复算）；本轮两处外科补丁不在这条路径上。
+symptom: "用户看到「你的确认没有成功记录」，必须把确认重说一遍"
+root_cause: >
+  影子层间歇性把**错误的对象**当成状态补丁交出。观察到两种形态：
+  `PATCH_UNKNOWN_FIELDS:confirmation_id,kind,task_revision`（把 pending_action 对象当补丁）；
+  `PATCH_UNKNOWN_FIELDS:description,enum,type`（把 JSON Schema 片段当补丁）。
+  validate_patch 正确拒绝并 fail-open 到 DISCUSS —— 拒绝本身是对的，
+  M1 的设计就是「坏补丁不得到达 Skill」；问题在于影子层交出了坏补丁。
+frequency_observed: "已测确认轮 5 次中 2 次命中"
+impact_scope:
+  seam_path: "不受影响。FA-01…11 全部 succeeded"
+  canvas_path: "受影响。Founder 实测包正是走这条路"
+not_fixed_because: >
+  修它要动 M1 已落地资产的**第三处**（影子 Prompt 或补丁容错），
+  超出 Founder 本轮授权的「两处改动」，按 Prompt §3 上推。
+```
+
+**这条 FAIL 的实际含义**：M4 的七入口在接缝路径上已经用真实运行证明成立；
+在 Founder 画布上，**能走到那一步的时候也确实直达**（3 次重复里 2 次，`ENTRY-03`，接缝被真实调用，
+M1 原锁下这两次必然是 `HUMAN_DECISION:UPSTREAM_MISSING:campaign`）——
+**但有约四成的确认轮会卡在 M1 的补丁校验上，根本走不到 M4。**
+
+## A.5 建议的最小修法（需 Founder 授权，未实施）
+
+两条，都不动 `v1_shadow` 的业务语义：
+
+1. **补丁容错**：`validate_patch` 遇到未知字段时，若已知字段构成合法补丁，则**丢弃未知字段并继续**，
+   而不是整个拒绝。风险：可能吞掉真正的格式错误 —— 需同时把丢弃项记进 `notes` 以便审计。
+2. **影子输出约束**：给影子 LLM 节点加结构化输出约束，使其只能产出 `PATCH_KEYS` 之内的字段。
+   风险：改的是 M1 的 Prompt/节点配置，改动面比第 1 条大。
+
+**执行侧倾向第 1 条**：改动面小、可机械断言（「丢弃项必须记进 notes」）、
+且与 M1 既有的 fail-open 设计一致 —— 现在是「坏补丁 → 整轮丢失」，改后是「坏字段 → 丢字段不丢轮」。
+
+## A.6 仍然不成立的（不因本轮取证而上推）
+
+- **AC-15 / AC-17 / AC-18 / AC-26 / AC-27 = `NOT_VERIFIED`**：判据要求盲式人类判断。
+  `CLAUDE.md` §4「不让 Claude Code 或其他 LLM 评价哪份内容更好」——
+  对照运行（含 `FX-M4-GOAL-COUNTERFACTUAL-A/B` 这一对）已跑完并原始落盘，**判定权在 Founder**。
+- **AC-05 的语义那一半 = `NOT_VERIFIED`**，见 A.3。
+- 本轮取证**不等于**完整单账号持续运营纵向切片已验证，**不等于**真实运营闭环或经营提升已证明。
+- M3 本轮仍只测了业务语义接口，**没有**接入 M3 的真实运行。
