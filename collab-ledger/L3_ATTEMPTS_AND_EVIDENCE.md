@@ -1887,3 +1887,4 @@ Founder 指出 ATT-006 登记的终态与相关账本存在治理矛盾：(1) `e
 | `M2-AC-13`（重申） | 继续 `FOUNDER_WAIVED`：技术未完全达标（`NOT_FULLY_MET`）、Founder 已裁决豁免（`WAIVED`）、不阻塞收口（`blocking_effect = false`），未被改写为 `PASS` |
 | L5 纠偏 | 见 `collab-ledger/L5_SIDE_EFFECTS.md` 本次新增的状态映射与 §四 更正块；本文件不重复副作用细节 |
 | 本次 Recovery 范围 | 只修改治理/证据/账本文件；`m2_engineering_code_changed = false`；`database_write_performed = false`；`dify_write_performed = false`；完整记录见 `business-persistence/M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md` |
+| Recovery Git 收口（现场核验完成） | 推送任务分支：`74bc9e3..894211b`，`recovery_commit = 894211bb025228eb69c50b7c415c4f9de3c6c8dd`；`git merge --no-ff` 合入 `main`（零冲突）后推送：`a903e49..03a94ca`，`merge_commit = final_origin_main = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`；本地/远程一致，双向祖先核验通过，受保护资产与非 `business-persistence`/`collab-ledger` 路径零 diff |

@@ -335,6 +335,31 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 合并后验证 | 远程 main 与本地一致（`17f5e57`）；合并内容与已验收候选字节级一致；69/69 测试重跑通过；Dify 候选后端代码字节一致（容器未重建） |
 | **状态** | `EXECUTED`——`main` 现真实包含 M2 全部交付；`task/m2-business-persistence-version-feedback-v1` 分支保留未删除 |
 
+### SE-022 · 推送任务分支（Recovery Delta，治理收口纠偏）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（`task_entry_mode = RECOVERY_TASK`） |
+| 类型 | Git push（既有任务分支，非破坏性快进 + 1 个 Recovery Delta 提交） |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/m2-business-persistence-version-feedback-v1` |
+| 内容标识 | 快进 `74bc9e3 → a903e49`（`--ff-only`，零冲突，未产生新提交）后提交 Recovery Delta（`M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md` 新增 + `M2_ACCEPTANCE_EVIDENCE.md`/`M2_REBASE_ERRATA_001_RECORD.md`/L1/L2/L3/L5 六份治理文件更正） |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；未触碰默认分支 |
+| 核验依据 | `git push` 回显 `74bc9e3..894211b`；`git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` → `894211bb025228eb69c50b7c415c4f9de3c6c8dd`，与本地一致 |
+| **状态** | `CONFIRMED` |
+
+### SE-023 · 治理收口纠偏合并进 main
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（`task_entry_mode = RECOVERY_TASK`） |
+| 触发 | 本次 `M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_EXECUTION_PROMPT_v1.0` §8.4 明确授权，纯治理 Recovery 提交验收全部通过后合并 |
+| 执行 | 合并前 `git fetch origin main` 核验未漂移（仍为 `a903e49`）；`git merge --no-ff task/m2-business-persistence-version-feedback-v1`，产生合并 commit `03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`；`git push origin main` |
+| 冲突处理 | **零冲突**——未触发第五节之外的任何冲突处理路径 |
+| 受影响范围 | 仅 `business-persistence/`（1 个新文件 + 2 处更正）与 `collab-ledger/`（L1/L2/L3/L5 追加/更正）；`git diff --stat` 排除这两个目录后合并前后对比为空；受保护路径（`app/`/`migrations/`/`tests/`/`dify/`/`decision-chain/docs/`/`requirements.txt`/`Dockerfile`）零变化 |
+| 合并后验证 | 远程 `main` 与本地一致（`03a94ca`）；双向祖先核验通过（`894211b`、`a903e49` 均为新 `main` 祖先，历史未改写）；未执行任何数据库/Dify/容器操作 |
+| **状态** | `CONFIRMED`——`main` 现真实包含本次治理收口纠偏；`task/m2-business-persistence-version-feedback-v1` 分支保留未删除 |
+
 ### 状态值规范映射（2026-08-26，M2 治理收口纠偏新增，不改历史原文）
 
 本文件 §一固定六值枚举为 `PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED`。SE-017/SE-018/SE-019/SE-020/SE-021 使用了枚举外的状态字面值（`ATTEMPTED`、`BLOCKED`、`EXECUTED`）。以下为口径对照，**只新增映射说明，不修改上述条目原文**：

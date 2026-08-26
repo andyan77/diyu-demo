@@ -108,9 +108,16 @@ active_work_package: null
 
 代码（`business-persistence/app/**`）、迁移（`business-persistence/migrations/**`）、测试（`business-persistence/tests/**`）、Dify DSL（`business-persistence/dify/**`）、`requirements.txt`、`Dockerfile`、`decision-chain/docs/**`、四份 M0.3 共享合同、两份 EP-00 报告、Phase 0 共享编译前言、M1/M3/M4 文件、Skill 源文件、Dify 应用/工作流/DSL/发布状态、PostgreSQL 数据库/角色/权限/Schema/业务记录、容器/镜像/运行配置、生产环境、真实社交平台——**均零变化**（证据见 §14）。未执行 Alembic upgrade/downgrade，未重建容器，未重新导入或发布 Dify 工作流，未重新运行六步 Dify 场景。
 
-## 11. Git 执行（§8.3/§8.4）
+## 11. Git 执行（§8.3/§8.4，现场核验完成）
 
-<!-- 本节在完成 Recovery 提交、推送与合并后现场核验并登记，见下方"最终证据绑定"。 -->
+1. 任务分支 worktree 非破坏性快进：`git merge --ff-only origin/main`，`task/m2-business-persistence-version-feedback-v1` 从 `74bc9e32627b290c93827a4ff83b2bc79aa9befd` 快进至 `a903e49ab175eab8acf4b4e62b9dedea87eff901`（零冲突，纯快进，未产生新提交）。
+2. 在快进后的任务分支上提交 Recovery Delta（本记录 §9 所列 7 个文件），提交前 `git diff --name-only` 核验只包含允许路径；提交后推送：`74bc9e3..894211b task/m2-business-persistence-version-feedback-v1 -> task/m2-business-persistence-version-feedback-v1`。远端核验：`git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` → `894211bb025228eb69c50b7c415c4f9de3c6c8dd`，与本地 `git rev-parse HEAD` 一致。
+3. 合并前重新 `git fetch origin main` 核验 `origin/main` 仍为 `a903e49...`，未漂移。在主工作区执行 `git merge --no-ff task/m2-business-persistence-version-feedback-v1`，**零冲突**（未触发第五节之外的任何冲突处理路径），产生合并 commit `03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`。
+4. `git push origin main`：`a903e49..03a94ca main -> main`。远端核验：`git ls-remote origin refs/heads/main` → `03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`，与本地 `git rev-parse HEAD` 一致。
+5. 双向祖先核验：`git merge-base --is-ancestor 894211b HEAD` 通过；`git merge-base --is-ancestor a903e49 HEAD` 通过——历史未被改写，旧 `main` tip 仍是新 `main` 的祖先。
+6. 任务分支 `task/m2-business-persistence-version-feedback-v1` 保留未删除。本次全程未使用 `force`/`reset --hard`/`amend`/`rebase`/`squash`。
+
+**最终 hash 绑定**：`recovery_commit = 894211bb025228eb69c50b7c415c4f9de3c6c8dd`；`merge_commit = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`；`final_origin_main = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`（本节即完成本记录 §12/§13 的绑定要求）。
 
 ## 12.（并入 §11 最终证据绑定）
 
@@ -118,7 +125,12 @@ active_work_package: null
 
 ## 14. 受保护资产零变化证据
 
-<!-- 在完成 Recovery 提交后现场核验并登记，见"最终证据绑定"。 -->
+合并前后（`a903e49ab175eab8acf4b4e62b9dedea87eff901` → `03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`）现场核验：
+
+- `git diff a903e49 03a94ca --stat -- business-persistence/app/ business-persistence/migrations/ business-persistence/tests/ business-persistence/dify/ decision-chain/docs/ business-persistence/requirements.txt business-persistence/Dockerfile` → **输出为空**，零变化。
+- `git diff a903e49 03a94ca --stat -- . ':!business-persistence' ':!collab-ledger'` → **输出为空**——仓库内除 `business-persistence/` 与 `collab-ledger/` 之外的全部路径零变化，四份 M0.3 共享合同、两份 EP-00 报告、Phase 0 前言、M1/M3/M4 文件、Skill 源文件均未受影响。
+- 主工作区既有 6 个未跟踪文件（`M1_ENGINEERING_EXECUTION_REBASE_PROMPT_v1.3.md`、Rebase/Errata Prompt 未跟踪原件、`m3-account-content-operator-semantic-v1.0/`、三份笛语规划文档）合并前后均原样保留，未被删除、覆盖或误提交。
+- 未执行 `docker build`/`stop`/`rm`/`run`；未执行 `alembic upgrade`/`downgrade`；未调用任何 Dify API；PostgreSQL 数据库内容未变。
 
 ## 15. 本次未重新运行的、会产生业务数据的 Dify 验收场景
 
@@ -156,4 +168,4 @@ M5_INTEGRATION_VERIFIED = false
 PRODUCTION_ADOPTION_AUTHORIZED = false
 ```
 
-`M2_STRICT_GOVERNANCE_CLOSEOUT = COMPLETE` 的声明以本记录 §11"最终证据绑定"（Git 收口现场核验完成后）为生效前提；在该节填写完成前，本节声明视为待完成。
+§11/§14 的 Git 收口现场核验已完成（`recovery_commit = 894211bb025228eb69c50b7c415c4f9de3c6c8dd`；`merge_commit = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`；`final_origin_main = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`，本地/远程一致，受保护资产零变化），`M2_STRICT_GOVERNANCE_CLOSEOUT = COMPLETE` 生效。完成后立即停止，不继续润色、重构、扩建、重跑开放式审查，不启动 M3/M4/M5，不修改 Dify 或处理任何其他模块问题。
