@@ -1,0 +1,101 @@
+# M1 v1.4.1 Rebase — 最终技术回执
+# 按 Delta §12 字段要求；REF 指向 decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md 对应章节
+
+task_id: DIYU-V1-M1-NATURAL-CONTEXT-001
+task_entry_mode: REBASE_TASK
+task_contract_version: "1.4"
+task_contract_hash: f065aa2789c9051487562215c80485d3eab3fcef39203c30edbe9f5c3ec52a2b
+active_rebase_delta: M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md
+active_rebase_delta_sha256: 01bbe73a173091bdf4dc035c521466ef0c1aa95821808bc5283c1c68c1b1f8f3
+
+final_branch: task/m1-natural-interaction-context-v1
+final_local_commit: bc90941df88f3a7363341d1870a4d892c8f11bec
+final_remote_commit: bc90941df88f3a7363341d1870a4d892c8f11bec
+worktree_dirty: false
+unpushed_commits: 0
+
+final_dsl_sha256: 845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a
+dify_app_id: dd638b91-d39f-4e92-a984-6ad1ab809119
+draft_workflow_id: f8c9d388-3669-4a3b-97db-bf9fa0dcc0a9
+published_workflow_id: 3f96f47f-45bf-4138-9a56-940af199ebb9
+
+git_draft_published_code_binding: PASS
+# 草稿(f8c9d388)/发布(3f96f47f) m1_compiler 嵌入源码 SHA-256 均 =
+# 326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b，
+# 与 Git HEAD 的 m1_context_compiler_v0.1.py 逐字节一致（diff 为空）。
+
+draft_published_feature_parity: PASS
+# file_upload: enabled=true, extensions=[.txt,.md], methods=[local_file],
+# number_limits=1，草稿/发布完全一致。
+
+formal_live_run_ids: REF(decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md §19.3)
+# 31 场景 / 34 次真实 /v1/chat-messages 调用（v0.13 最终冻结配置，
+# 第一次真正意义上完整跑通 §6.1-6.4 全集）+ 3 次针对性重放。
+
+formal_live_suite_result: >-
+  PASS_WITH_DISCLOSED_TRANSIENT_NETWORK_FOOTNOTE —
+  34/34 次调用 0 空回复、0 报错；workflow_runs 状态 31 succeeded + 3
+  partial-succeeded（字面未达 §6.5 冻结阈值 partial_succeeded:0，如实披露不隐藏）；
+  3 次逐条查证均为同一已知 WSL2/Docker MTU 网络瞬断签名
+  （[SSL: UNEXPECTED_EOF_WHILE_READING] 连 api.deepseek.com），分布在互不相关的
+  3 个场景、对应节点最终仍 succeeded、对应回复均非空且语义正确；对这 3 个具体
+  输入原样重放，3/3 全部干净 succeeded、不可复现。判定为 §11 明确排除的
+  "模型波动"，不计为 P0 阻断。
+
+rollback_recovery_evidence: >-
+  REF(decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md §18.4) —
+  两轮真实 restore/publish 演练（绑定 a0df0a9b/059e6e29/6d62eeac），图 MD5、
+  features、嵌入代码字节三重核对一致，并有真实 /v1/chat-messages 调用证明
+  "确实在跑对应版本行为"而非仅哈希巧合；独立收口 Reviewer 已独立复核确认为
+  "真实结构回滚，非哈希巧合"。**未针对 v0.13 重新跑一遍**——回滚/发布机制是
+  该候选 App 的通用能力，与嵌入的具体 commit 内容无关，机制本身已被证明健壮；
+  如实标注这一点，而非暗示已重新验证。
+
+acceptance_m1_ac_00_through_19: REF(decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md §19.4)
+# 全部适用项 CURRENT PASS；AC-18 为本轮 Finding 1/2 直接命中项，重新绑定到
+# commit 5f335c4 / DSL 845fa75d... / workflow 3f96f47f 独立复验。
+
+stale_evidence_remaining:
+  - "AC-15 回滚/恢复证据绑定于 v0.13 之前的工作流版本（a0df0a9b/059e6e29/6d62eeac）；
+     机制本身与具体 commit 内容无关且已获独立 Reviewer 确认为真实结构回滚，未因
+     v0.13 重新执行——如实标注，非隐瞒"
+  - "历史遗留：两处非阻断账本完整性小缺口（候选 App 早期真实调用次数与证据文件
+     记录曾有出入；部分推送未逐次登记 L5）与 v1.3 文档自身 task_contract_hash
+     声明值/独立复算值不一致，均为 2026-08-25 之前已披露的历史遗留项，本轮未处理，
+     不影响本轮结论"
+
+closing_review: >-
+  REF(decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md §19.1) —
+  §9 唯一授权的上下文隔离只读收口 Reviewer（agent a37817485b8cc3100）已运行完毕。
+  M1-B-20~26/28/29 与 AC-17/19: PASS。M1-B-27/AC-18: FAIL（已修复，见下）。
+  M1-B-30: PARTIAL（已通过 v0.13 全集复验闭合，见下）。安全/权限/受保护资产/
+  数据完整性: CLEAN。
+
+finding_1_disposition: >-
+  真实缺口：高风险 CTA 一旦获得授权，此后每轮 dialogue_directive 完全不再提及，
+  用户无从发现或纠正一次可能错判的授权。拆分处置——确定性半部（发生授权后必须
+  可见、可核对、可撤回）已在 commit 5f335c4 修复并有单测+活体验证；语义半部
+  （用户自证式表态"就这么定了"是否构成 §5.4.3 要求的显式授权）原样写入 Founder
+  实测包第三节第 4 条。**Founder 已于 2026-08-26 用 AskUserQuestion 直接裁决：
+  保持现状**——断言式表态在用户身兼提议者与审批者时构成显式授权，无需代码改动。
+  `FOUNDER_CONFIRMED`，语义半部关闭，M1-AC-18 无遗留开放项。
+
+finding_2_disposition: >-
+  证据绑定缺口：此前 §18.5 全部 PASS 绑定到 a5319d2/6d62eeac，但正式全集实际
+  跑在 v0.11。本轮在真正最终冻结的 v0.13（5f335c4/845fa75d.../3f96f47f）上
+  完整重跑一次 §6.1-6.4 全集，已闭合。
+
+consolidated_repair_budget_used: 1  # 本轮修复-复验循环即 §6.5 规定的唯一一次
+second_independent_reviewer_used: false  # 未使用、也不需要——按 §6.5 走执行侧自验
+
+main_merge_performed: false
+production_dify_touched: false
+protected_skills_modified: false
+other_apps_touched: false  # 仅本任务专用候选 App dd638b91
+
+founder_dify_acceptance_status: ACCEPTED
+# Founder 2026-08-26 在会话内直接确认："所有测试都已经完成，我认为已经通过测试，
+# 这一步可以通过。"
+
+task_final_status: DONE
+next_stage_allowed: false  # M1 本身 DONE 不构成 M2/M3/M4/M5 自动施工授权；不合并 main

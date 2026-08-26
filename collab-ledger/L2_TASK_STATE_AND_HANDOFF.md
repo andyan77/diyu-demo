@@ -24,6 +24,7 @@
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.7） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算；终态见 §一.7） |
 | `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | 首次尝试 `BLOCKED`（§一.8），附件补齐后 P0-A `DONE`（§一.9），采用进 `main` 与桌面包见最终回执 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；P0-A 完成见 §一.9） |
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.10） | [L1 §T-007](L1_TASK_MANIFESTS.md) · [L3 §九 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ c085eb3`（起算；终态见 §一.10） |
+| `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十二 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（独立 worktree/任务分支，未合入 main，终态不改变 main） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -228,9 +229,9 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `DIYU-V1-M1-NATURAL-CONTEXT-001` | [M1 施工 Execution Prompt v1.2](../decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md) | 本任务自身 Task Contract（内嵌于该 Prompt §2） | 工程实现 M1 全部 P0（自然语言交互、任务上下文编译、唯一调用意图/计划、真实 Dify 候选运行、独立审查、回滚包、远程任务分支收口） | 独立 worktree／任务分支 `task/m1-natural-interaction-context-v1` | `main @ 93377e404e9e29fe2cd41ee9691f7e966c50dbee` ＋ 该 Prompt 全文 | `M1-AC-00` 至 `M1-AC-15` 全部 PASS ＋ 提交 Founder Dify 实测包，见该 Prompt §13 |
+| （当前无活动 task_id——`DIYU-V1-M1-NATURAL-CONTEXT-001` 已于 2026-08-26 终结 `DONE`，移出本表，见 §一） | | | | | | |
 
-**`COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001`、`V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001`、`V1-M2-ENGINEERING-PROMPT-ADOPTION-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`。Founder 2026-08-25 裁定"执行 Prompt 即授权"铁律（见 [COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md) §六 与 [L1 §T-009](L1_TASK_MANIFESTS.md)）后，M1 施工 Execution Prompt 视为已获执行授权，`DIYU-V1-M1-NATURAL-CONTEXT-001` 现为活动工程任务（见上表）。M2 施工 Execution Prompt v1.1 已由规划侧编译完成并落盘（[`decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md`](../decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md)，`task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`）；落盘完成后执行侧就"铁律是否适用"直接向 Founder 求证，Founder 2026-08-25 当场明确答复"就是要启动，铁律适用"——`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 随即成为活动工程任务，见 [L2 §一.14](#一14-v1-m2-engineering-prompt-adoption-001m2-工程执行授权确认追加于一13之后不覆盖一13)。**该任务已于 2026-08-26 完整收口为 `DONE` 并合并进 `main`，已移出上表，终态见 [L2 §一.15](#一15-diyu-v1-m2-business-persistence-version-feedback-001m2-工程任务最终收尾done)**。M3/M4 施工 Execution Prompt 仍待规划侧编译，编译后同样适用铁律但仍需就各自 task_id 单独确认落盘用词是否等于执行授权。**
+**`COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001`、`V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001`、`V1-M2-ENGINEERING-PROMPT-ADOPTION-001`、`DIYU-V1-M1-NATURAL-CONTEXT-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`。M1 工程实现（自然语言交互、任务上下文编译、CTA 三层权限、账号锚点、真实 Dify 候选运行、独立审查、回滚演练、Founder 实测验收）已于 2026-08-26 全部完成并经 Founder ACCEPT，`task_final_status: DONE`；`DIYU-V1-M1-MODULE-LANDING-001`（父任务即此 M1 任务）已把该任务分支正常合入 `main`，见 [L1 新增行](L1_TASK_MANIFESTS.md) 与 `decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md`。M2 施工 Execution Prompt v1.1 已由规划侧编译完成并落盘（[`decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md`](../decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md)，`task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`）；落盘完成后执行侧就"铁律是否适用"直接向 Founder 求证，Founder 2026-08-25 当场明确答复"就是要启动，铁律适用"——`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 随即成为活动工程任务，见 [L2 §一.14](#一14-v1-m2-engineering-prompt-adoption-001m2-工程执行授权确认追加于一13之后不覆盖一13)。**该任务已于 2026-08-26 完整收口为 `DONE` 并合并进 `main`，已移出上表，终态见 [L2 §一.15](#一15-diyu-v1-m2-business-persistence-version-feedback-001m2-工程任务最终收尾done)**。M3/M4 施工 Execution Prompt 仍待规划侧编译，编译后同样适用铁律但仍需就各自 task_id 单独确认落盘用词是否等于执行授权。`M1 本身 DONE` 与本次落地进 `main` 均不构成对 M2 之外的 M3/M4/M5 的自动施工授权。**
 
 **已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 
@@ -258,3 +259,89 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。
 
 **当前无非终态 Checkpoint。** `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 的 `M2_POST_DONE_REBASE_v1.2` 曾在此登记过一份 Checkpoint（唯一缺口：`M2-PDR-12` 因本会话无可用 App API Key 未能现场重跑 Dify 候选受影响回归，历史原文见本行的上一版本或 Git 历史）；Founder 已于同日会话内就该缺口给出说明并以第一手见证补充 Dify 侧运行身份，执行侧独立核验本系统侧对应记录后，`M2-PDR-12` 更正为 `PASS`，Checkpoint 解除，任务转为正式终态 `DONE`。完整记录见 [L1 §T-011.9～§T-011.10](L1_TASK_MANIFESTS.md)、[L3 §ATT-009](L3_ATTEMPTS_AND_EVIDENCE.md)、`business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §13/§13.1、[本文件 §一.16](#一16-diyu-v1-m2-business-persistence-version-feedback-001m2_post_done_rebase_v12-收口done取代四原-checkpoint-登记一15-历史-done-不受影响不回滚)。
+
+以下是 `DIYU-V1-M1-NATURAL-CONTEXT-001` 自身任务分支（`task/m1-natural-interaction-context-v1`）历史遗留的 Checkpoint 与状态更新记录，随 `DIYU-V1-M1-MODULE-LANDING-001` 一并合入本文件，纯历史存档，不代表当前存在非终态 Checkpoint。
+
+### `DIYU-V1-M1-NATURAL-CONTEXT-001` Checkpoint（历史记录；该任务已于 2026-08-26 终结 `DONE` 并经 `DIYU-V1-M1-MODULE-LANDING-001` 合入 `main`）
+
+```yaml
+task_id: DIYU-V1-M1-NATURAL-CONTEXT-001
+task_entry_mode: REBASE_TASK
+execution_disposition: COMPLETE
+task_final_status: DONE
+current_task_contract_version: "1.4"
+active_rebase_delta: M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md
+active_rebase_delta_sha256: 01bbe73a173091bdf4dc035c521466ef0c1aa95821808bc5283c1c68c1b1f8f3
+current_state: V1_4_1_FOUNDER_ACCEPTED_CTA_SEMANTIC_QUESTION_FOUNDER_CONFIRMED_KEEP_AS_IS_DONE
+final_commit: 024d6992b73e884355658f10e78da5d1c16a126f
+final_dsl_sha256: 845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a
+published_workflow_id: 3f96f47f-45bf-4138-9a56-940af199ebb9
+founder_dify_acceptance_status: ACCEPTED
+next_stage_allowed: false  # M1 本身 DONE ≠ M2/M3/M4/M5 自动获得施工授权，需另行明确新授权
+```
+
+**2026-08-26 状态更新（Founder 实测验收 + CTA 授权语义裁决，任务终态 `DONE`，最新）**：Founder 在本会话内直接确认已完成 `V1_M1_FOUNDER_DIFY_TEST_PACKAGE_v0.13.md` 全部测试并接受（"所有测试都已经完成，我认为已经通过测试，这一步可以通过"）。针对实测包第三节第 4 条留给 Founder 的开放语义问题（高风险 CTA 场景下，用户自己的断言式表态是否构成显式授权），执行侧用 `AskUserQuestion` 原样复述判据边界供裁决，**Founder 明确选择"保持现状"**——当前代码行为（断言式表态即可触发授权）就此 `FOUNDER_CONFIRMED`，不需要任何代码改动。M1-AC-18 语义半部关闭，全部适用 AC-00～19 无遗留开放项。任务终态 `DONE`；`next_stage_allowed` 仍为 `false`，M2/M3/M4/M5 施工需另行明确授权，本次不自动开工。详见 [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+---
+
+**2026-08-26 状态更新（独立收口 Reviewer 结论 + Finding 1 修复 + v0.13 最终冻结全集复验，历史记录）**：唯一一名 §9 授权的上下文隔离只读收口 Reviewer（agent `a37817485b8cc3100`）已运行完毕，结论：M1-B-20～26/28/29 与 AC-17/19 `PASS`（含活体复现）；**M1-B-27／M1-AC-18 判定 `FAIL`**（真实缺口：高风险 CTA 一旦获得授权，`dialogue_directive` 此后完全不再提及，用户没有任何机会发现或纠正一次可能错判的授权）；M1-B-30 `PARTIAL`（AC-15 回滚本身独立复核为真实，但正式全集实际跑在 v0.11 而非最终冻结配置，§6.5 字面要求未满足）；安全/权限/受保护资产/数据完整性 `CLEAN`。
+
+执行侧处置：该缺口拆成确定性半部（一旦授权就必须每轮无条件复述，可核对可撤回）和语义半部（用户自己的断言式表态"就这么定了"在其身兼提议者与审批者时是否构成 §5.4.3 的显式授权——产品语义问题，不由执行侧代答）。**只修确定性半部**（commit `5f335c4`，216/216 单测通过，新增 2 条回归锁定），**语义半部原样写入 Founder 实测包，明确留给 Founder 用真实对话判断**，不落子 §11 强制停止条件（属"实现多解"范畴，非合同冲突）。随后在这个新 commit 上重新构建 DSL（SHA-256 `845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a`，两次构建字节一致）、导入发布到同一候选 App（`apps.workflow_id` 直查确认 = `3f96f47f-45bf-4138-9a56-940af199ebb9`，草稿/发布嵌入编译器源码与 Git HEAD 字节一致），**第一次真正在最终冻结配置上跑通 §6.1～6.4 全集**（31 场景/34 次真实调用，0 空回复、0 报错；新增用例活体证明 Finding 1 修复端到端生效——授权当轮 + 跨到无关话题的后续轮次均持续复述"已授权+具体目标+可撤回"）。全集阈值对照：34 次中 3 次 `partial-succeeded`，逐条查证均为同一已知 WSL2/Docker MTU 网络瞬断签名（`api.deepseek.com` SSL EOF），分布在互不相关的 3 个场景、功能上零失败，对 3 个具体输入重放 3/3 全部干净 `succeeded`——判定为 §11 明确排除的"模型波动"，如实记录字面差异（`partial_succeeded` 非 0）但不视为 P0 阻断。详见 [evidence §十九](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**当前状态**：本轮修复-复验循环用的正是 §6.5 规定的"唯一一次集中修复预算，冻结新 commit/图/参数后对同一输入全集再跑一次"，不额外占用或需要第二名独立 Reviewer。技术门已达成，Founder 实测包已就绪，本任务在本会话内到此为止——不启动 M2/M3/M4/M5，不合并 main，等待 Founder 通过实测包做出验收裁决（含语义半部的开放判断）。
+
+---
+
+**2026-08-26 状态更新（v1.4.1 Rebase：全部 P0 阻断修复 + 首次真正端到端 live 验证 + AC-15 完成，历史记录）**：按 Founder 提供的 `M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md`（`REBASE_TASK`，继承原 task_id/分支/worktree/候选 App）修复冻结阻断集合 M1-B-20～M1-B-30，新增 M1-AC-17（最小账号锚点）、M1-AC-18（CTA 三层权限上下文）。同会话对抗式独立审查发现 13 处真实缺陷全部修复。单测 170→215 全绿。
+
+**方法论变化，需要 Founder 知悉**：本轮确认此前"控制台操作需 Founder 代跑"的限制来自 Bash 工具的沙箱网络策略，非硬限制——显式放开沙箱后可用 Founder 此前提供、存于本机固定路径 `~/.dify-console.env`（未写入仓库）的凭据完成真实控制台登录与 DSL 导入/发布/回滚。本轮起执行侧在本 task_id 唯一候选 App 范围内自主完成了全部 DSL 导入/发布与 AC-15 回滚演练，不再逐次请 Founder 代跑，严格未触碰任何其它 App、main 或生产流量。
+
+**首次真正端到端 live 验证**：v0.9→v0.12 四轮迭代（导入→发布→数据库取证→修复），最终候选 v0.12（commit `a5319d2`，DSL SHA-256 `a66f91c2d6687a0612d6b572e6f211d4132a278e8cb7f75a7cfc087e9bbef460`，发布 workflow_id `6d62eeac-bae6-4edd-a591-8c006eaebf7f`）：27 场景/27 有效轮次直连数据库确认 `patch_ok=true`、workflow 状态全 `succeeded`、0 空回复；7/7 入口正确路由；CTA/账号锚点内部状态全部正确；材料上传确认闭环。**M1-AC-15 已完成真实回滚+恢复演练**（restore/publish 两轮，graph MD5/features/嵌入代码字节三重核对一致）。详见 [evidence §十八](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**如实标注的证据边界**：live 验证过程中发现并修复的两处模型分类准确率问题（`max_tokens` 不足导致的思维链截断、CTA `GRANT` 语义误判）均属于提示词层面缓解，不是可验证零失败的保证；结构性对齐约束（授权必须同一轮三者同时出现）是防止误判后果扩散的主要防线。`features.file_upload` 本轮四次导入均正确保留（未复现此前 B-21 记录的"导入不保留 features"现象），如实记录这一观察，不代表已确认该现象永久解决，未来每次导入仍需照常复核。
+
+**下一动作**：按 Delta §9 spawn 一名上下文隔离只读收口 Reviewer（`closing_verification: affected_scope_only`），产出 Founder 可直接复制的 Dify 实测包，随后停止——不启动 M2/M3/M4/M5，不合并 main。
+
+---
+
+**2026-08-26 状态更新（v0.7 live 验证 + B-3 两处真实缺陷发现并修复，历史记录）**：Founder 导入并发布 v0.7 后，执行侧用 App API Key（由 Founder 在本机终端代跑 curl，执行侧不持有绕过沙箱写权限的通道）跑真实回归，并直连本机 Docker 内的 Dify 数据库（只读）核对节点级真实产出。**B-4、B-5（短指代绑定+撤销）三项均 PASS，有数据库直查证据**，详见 [evidence §十七](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**B-3 先后发现两处真实缺陷，均已修复**：①应用配置层——候选 App 这次导入没有把 `features.file_upload` 一起带过去，DSL 内容本身是对的，只是运行中的 App 配置没跟上，Founder 明确要求"你应该在后台修复"后，执行侧对本机自建 Docker 数据库（既有只读排障权限范围内，本次定位根因正是靠这条权限）做了一次只替换 `file_upload` 一个字段、其余原样保留的精确修正，由 Founder 在自己终端执行该写入（同网络调用一样受 Bash 沙箱权限分类器限制）；②代码层——配置修好后复测，文件真的被抽取、`m1_shadow` 也正确判定来源，但最终回复仍说"没收到"，根因是 `_dialogue_directive` 从不告知负责生成回复的 `m1_chat_llm` 材料已收到。**已在源码里修复**，且第一版实现本身又被同会话对抗式审查（read-only、未参与实现）挑出两个真实问题（确认信号挂错、材料原文被拼进无抗注入措施的指令通道）后重新设计。单测 162→170 全绿，DSL 重新生成为 v0.8。
+
+**当前唯一剩余动作，需要 Founder**：导入并发布 v0.8（覆盖 v0.7），执行侧随后重新核对 `features.file_upload` 是否又被这次导入覆盖（无法假设上次的修复永久生效），并跑真实回归验证"对话 LLM 正确告知用户已收到材料"这一环节——这部分目前只有单测覆盖，未经任何真实 Dify 调用验证。
+
+**2026-08-25 状态更新（B-3/B-4/B-5 真实实现，收口审查后继续施工）**：Founder 指出此前把 B-3/B-4 列为"需要架构判断故本批不做"不构成合法延期理由，B-5 也只修了诚实反馈这一部分——执行侧据此完成三者的真实机制（`requested_capabilities_text` 多能力选择、真实文件上传通道 + `evidence_provenance` 真实来源核实、`handled_thread_id` 短指代绑定 + `HANDLED` 闭环 + `cancel_target` 真实撤销）。每批各跑一轮对抗式独立审查，均发现真实缺陷并已修复（详见 [evidence §十六](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)）。单测 145→162 全绿，DSL 重新生成为 v0.7。
+
+**重要治理后果，已如实登记**：这批改动发生在 `closing_verification` 通过**之后**，修改了编译器/DSL 源码。按 v1.3 `evidence_reuse_policy.criterion_dependency_map`，此前收口审查对 AC-03/04/07/10/13/14 给出的 PASS，其证据绑定（commit hash、已发布图字节）随新 commit 必然过期，已在 [Rebase Manifest §五](../decision-chain/docs/M1_REBASE_MANIFEST_v1.3.md) 逐条标注为 `PASS_STALE_PENDING_REVERIFICATION`（AC-07 因改动的是全新代码路径，直接改记 `NOT_VERIFIED`，不是"过期"）；AC-00/AC-16 不依赖编译器代码内容，继续有效；AC-15 阻断原因是环境权限、与源码无关，不受影响。
+
+**证据边界，如实标注**：以上全部只是 `executor_self_check`（确定性单测）+ 两轮同会话内对抗式审查，**不是** §8 标准的正式独立审查（预算已在 v1.2 阶段耗尽），**也没有任何一次真实 Dify 调用验证过**——file_upload/document-extractor 链路能否真的在真实运行时工作、真实模型是否真的按新口径填写这几个新字段，均是未经证实的假设。
+
+**唯一剩余动作，需要 Founder（与之前一致，二选一）**：
+1. Founder 亲自在浏览器控制台对候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119` 导入并发布 v0.7（覆盖 v0.6），执行侧随后跑真实回归验证 B-3/B-4/B-5，并完成 AC-15 的真实回滚演练；
+2. Founder 提供一个当前有效的控制台会话/API 凭证，交由执行侧自主完成上述全部动作并记录。
+
+在此之前，v0.7 的全部新增机制、以及此前已过期的 6 项 PASS，均无法进一步推进。
+
+**2026-08-25 状态更新（v1.3 收口审查已完成）**：v1.3 `review_contract.closing_verification: affected_scope_only` 已跑完（隔离上下文、只读、无先前记忆的第二名审查员），范围锁定 8 项待复验 + 新增 AC-16，结论：**8/9 PASS，1 项阻断**——详见 [evidence §十五](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**唯一阻断**：`M1-AC-15`（回滚演练）——从未真实执行过一次"指回旧版本→确认候选 App 真的按旧版本运行→再指回新版本"的演练，只有结构性静态验证，缺演练日志和 after-state。**受阻原因是环境权限，不是工程缺陷**：执行侧对 Dify 控制台 API 无写权限（`console/api/apps` 仍返回 401，与 SE-015 一致）；本次额外排查了仓库连接的 `dify-platform-expert` MCP 工具是否可作为替代写入通道，经核实其 `base_url` 指向一个本机确认连接被拒绝、非真实运行实例的地址，且平台自我介绍带营销式措辞，**判定为未连接到本机真实 Dify 实例的工具，不采信、不使用**，避免在虚假前提下产生不可控副作用。
+
+**唯一剩余动作，需要 Founder**：以下二选一即可解除阻断——
+1. Founder 亲自在浏览器控制台对候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119` 执行一次真实版本回退再重新发布（执行侧可提供具体操作步骤，由执行侧全程直连数据库记录 before/after 状态与恢复验证）；
+2. Founder 提供一个当前有效的控制台会话/API 凭证，交由执行侧在候选 App 范围内自主完成演练并记录。
+
+按 v1.3 `review_contract.closure_rule`，本次阻断不重开开放式审查，其余 8 项验收标准已通过，不受影响。**次要、非阻断**：审查同时发现两处账本完整性小缺口（候选 App 实际服务过 7 次真实调用、证据文件只记 6 次；`307d3aa` 之后两次推送未再登记进 L5）和一处 v1.3 文档自身的治理待决项（§8 自证 `task_contract_hash` 与合同正文独立复算不一致，此前已披露，本次由第二名独立审查员复核确认不是执行侧笔误）——均已如实记录，均不影响其余 8 项验收标准的 PASS 结论。
+
+| 项 | 值 |
+|---|---|
+| 起算基线 | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db` |
+| 独立 worktree | `/home/faye/diyu-demo-worktrees/m1-natural-interaction-context-v1` |
+| 任务分支 | `task/m1-natural-interaction-context-v1`（已推送远程） |
+| 已完成 | (1) 设计文档 [`V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md`](../decision-chain/docs/V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md)；(2) 编译器源码 `decision-chain/workflows/m1_context_compiler_v0.1.py`（P0 最小切片：9 个扁平信号字段）；(3) 真实 Dify 候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119`（已定位真实自托管 Dify 1.16.1，与 A-0～A-4 证据同一实例）；(4) DSL 导入并发布三版（v0.1→越界给专业判断→v0.2 修复→A-0/A-2 受控等价回归中发现内部枚举代码泄漏→v0.3 修复）；(5) 六次真实 `/v1/chat-messages` 对话运行（RUN-001~003 + CE-A0/CE-A2/CE-general 首轮 + 三者复验），含两次自验发现并修复的真实缺陷，详见 [`V1_M1_CANDIDATE_RUN_001.md`](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)；(6) 正式单测文件 `decision-chain/workflows/test_m1_context_compiler_v0.1.py`（29 用例全绿）；(7) A-0～A-4 受控等价回归**部分**完成，M1-AC-12 当前诚实状态见 evidence 文档 §九——A-0/A-2/普通咨询三类已覆盖，A-1/A-3/A-4(b) 因依赖 M1 P0 没有的按槽位接受/撤销状态机而结构性无法覆盖；(8) `project_content_task()` 投影函数（设计参照文档 §三）已实现——纯离线函数，不接入 Dify DSL（设计文档明确其只在移交 Content Brief 时按需调用，非本轮对话节点职责）；P0 快照结构性缺失的四项（`account_stage`／`expression_discretion`／`evidence_and_gaps`／`available_capacity`）如实标 `NOT_CAPTURED_IN_P0_SNAPSHOT`，M1 明确不做专业判断的四项（`audience_problem_scene`／`audience_shift`／`content_promise`／`post_publish_observation`）留给调用方经 `caller_supplied` 传入、未传入时如实计入 `projection_gaps`，不由 M1 编造内容；8 个新单测覆盖上述缺口标记、调用方传值透传、未知键拒绝、`cycle_role` 分支 |
+| 已决定的范围边界 | Founder 2026-08-25 明确裁决：M1 严格对齐 Execution Prompt 本身，只做意图/编译层，不触碰 `v1_state` 既有线性锁、不改任何 Skill 正文；已写入设计文档 §四"已知限制" |
+| 未完成 | 见下方 v1.3 Rebase 行——8 项阻断中已修 4 项（B-1/2/5/6），B-3/B-4 明确本批不做（需真正架构判断），B-7 只做静态验证，B-8 已补账本；`M1-AC-00`～`16` 逐项收口复验（`affected_scope_only`）；DSL v0.6 尚未导入/发布/live 验证 |
+| 下一步可立即执行的动作 | DSL v0.6 交 Founder 导入/发布 → 用 App API Key 跑真实回归（重点验证 B-6 判据依赖的"影子节点严格产出全部必需字段"这一未经实测的前提）→ 对 `REVERIFY_AFFECTED_SCOPE` 标记的 8 项 AC + 新增 AC-16 跑一次收口复验（隔离上下文只读 reviewer，`affected_scope_only`，不重开开放式审查，见 [`M1_REBASE_MANIFEST_v1.3.md`](../decision-chain/docs/M1_REBASE_MANIFEST_v1.3.md)） |
+| **v1.3 Rebase（Founder 2026-08-25 提供 `M1_ENGINEERING_EXECUTION_REBASE_PROMPT_v1.3.md` 并明确"授权补充落盘"）** | 落盘 Prompt 副本 + [`M1_REBASE_MANIFEST_v1.3.md`](../decision-chain/docs/M1_REBASE_MANIFEST_v1.3.md)（哈希核验、基线核验、`REBASE_IMPACT_MAP`）。**首次对本任务运行正式 §8 独立审查**（隔离上下文/只读/无先前记忆，非执行侧自验）：`M1-AC-00`～`15` 里 3 项相对扎实（`AC-12`/`AC-13`），**8 项构成阻断**（B-1 次目标/优先级/经营目标类别无承载；B-2 `permission`/`freshness` 维度缺失；B-3 材料/历史产物无输入通道；B-4 `needed_capabilities` 单值+关键词决定；B-5 `CANCEL`/短指代/`HANDLED` 无机制；**B-6 影子节点真实失败时被当合法空 patch，产生虚假的"确实不是落库失败"断言**——真实 bug，已独立复现；B-7 从未做回滚演练；B-8 10 次真实推送账本零记录）。已修复 B-1/2/5/6（单测 83→116→120，过程中二次对抗式审查又发现并修复 3 个新问题：`priority_order` 矛盾累积改为替换语义、存量证据条目补条目级升级、`CANCEL`+真实变更时的假断言加 `changed` 守卫）；B-7 因无控制台写权限改做静态验证；B-8 已补记 L5 SE-018（10 次推送）并更正一处审查报告的表述（`b39c9e21` 经数据库时间戳核实为修复前重复发送，非修复后复发）。**B-3/B-4 本批明确不做**（需真正架构判断，同"按字段确认状态机"此前的范围裁定）。DSL 已生成 v0.6，尚未导入/发布/live 验证。`task_contract_hash` 自证不一致已如实登记（v1.3 §8 声明值与独立复算值不同，详见 Rebase Manifest §一），未擅自处理，不影响已经通过其他渠道明确的执行授权本身 |
+| **v0.2 快照扩展（代码+单测+live 全部完成）** | 新增 `account_stage`／`expression_discretion`（剧情/二创/冲突/争议四项裁量）／`capacity_triad`（期望发布量/周期可用/基线三分）三组字段，均为扁平字符串/枚举、刻意回避嵌套结构风险；新增向前兼容的快照顶层键补齐逻辑（旧会话快照缺新字段时不丢数据、不崩溃）；`content_task` 投影同步消解三项 `NOT_CAPTURED_IN_P0_SNAPSHOT` 缺口；DSL 生成脚本同步更新（影子节点系统提示词、17 字段结构化输出 schema、默认快照 JSON）；单测从 29 个扩到 35 个全绿。**导入/发布**：执行侧控制台会话因本机 Docker 容器重启失效、未持有明文密码不重新索取，改为把 DSL 文件交给 Founder，**Founder 本人 2026-08-25 在浏览器控制台完成导入与发布（v0.4）**；执行侧随后用既有 App API Key 跑真实回归 CE-v0.2-01（两轮），`m1_shadow` 推理轨迹逐字复述出第一轮持久化的三组新字段值，证明真实持久化正确、跨轮不丢失，详见 [`V1_M1_CANDIDATE_RUN_001.md` §十](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
+| **v0.3 快照扩展（本轮新增，代码+单测完成，live 未做）** | `evidence_bundle[]`（#9，用户原话+代码组装五维度）与 `gaps[]`（#11，零新增 LLM 字段、纯代码推导）**实现**；`market_observations[]`（#10）／`runtime_evidence[]`（#14）判定 M1 候选环境无真实产出通道，**如实 DEFER**（空数组+gaps 恒定登记降级原因，非只留空数组）。实现前先跑设计→对抗审查两步产出方案，对抗审查纠正原方案两处会违反冻结硬约束/仓库红线的问题；实现完成后三路独立复核（重跑单测/对抗式合规审查/DSL 同步）又抓到两处真实硬伤——8 条恒定缺口条目被逐轮冗余持久化（占某次快照 73% 字节）、为 P0 不可达状态建了 45 行零调用方守卫函数（违反"不为未来想象增加无必要结构"）——以及一处治理越界（执行侧在代码注释里给验收判据 AU-05 写解释未同步设计文档），三处均已修复。单测 35→88→83（修复后净增 48）全绿。详见 [`V1_M1_CANDIDATE_RUN_001.md` §十一](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。**导入/发布**：Founder 本人完成 `m1_candidate_dsl_v0.5.yml` 导入与发布（覆盖 v0.4）；执行侧用 App API Key 跑真实回归 CE-v0.3-01（两轮），`m1_shadow` 推理轨迹逐字复述第一轮持久化的证据条目及 `SYSTEM_TENTATIVE` 状态，`evidence_nature` FACT/REFERENCE 两分支均真实触发，`evidence_scope` 一次被模型主动推断为 `THIS_ACCOUNT`（合法但更主动，待 Reviewer 判断是否收紧），候选 App 当前运行版本 v0.5 |
+| Checkpoint 触发原因 | 正常阶段性收口（对话上下文即将压缩），非任务失败或外部中断；已提交的代码、证据、账本记录均已落盘，可凭本 Checkpoint 与 Git 历史直接续作 |
