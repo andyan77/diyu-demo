@@ -239,6 +239,79 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 集成分支 `chore/m2-engineering-prompt-adoption`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m2-engineering-prompt-adoption-001` tip `2db32b1`（零冲突，commit `a7d6944`）；② 合并进本地 `main`（合并提交 `1398c83a54fc5e9b89c397b20747818edb5616dc`）。推送前 `git fetch origin main` 核验 `origin/main` 仍为 `0de99930...`，未漂移。推送：`0de9993..1398c83  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `1398c83a54fc5e9b89c397b20747818edb5616dc`，与本地 `git rev-parse main` 完全一致。双向祖先核验通过（任务分支是新 main 祖先；旧 main tip `0de99930...` 仍是新 main 祖先，历史未改写）。全部受保护资产（四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、M1 落盘文档）blob hash 合并后重算，逐字未动。落盘的 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md` 最终 sha256 = `8008bebd04b35037e16f5462ea1b7284db7dec943e954263762bbdb4688bb0c6`，与落盘时一致。来源分支 `task/v1-m2-engineering-prompt-adoption-001` 远程保留，未删除 |
 
+### SE-014 · 推送任务分支 `task/m2-business-persistence-version-feedback-v1`（工程执行，非落盘）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 类型 | Git push（任务分支，独立于 `main`），3 次连续推送，同一目标 ref |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/m2-business-persistence-version-feedback-v1` |
+| 内容标识 | 见 [L3 §十三 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md#十三-diyu-v1-m2-business-persistence-version-feedback-001) |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；未触碰默认分支 |
+| 核验依据 | `git push` 命令本身回显的 ref-update 行（`旧hash..新hash`），逐次核对 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1** | `019df51..44f02dd`——首次工程执行修复批（`a3eeb2f` 独立审查 21 项缺陷修复、`0546f30` M2-AC-14、`d7f9e94` M2-AC-07、`44f02dd` M2-AC-15） |
+| **状态追加 2** | `44f02dd..020bc58`——两轮独立审查发现的 4 个真实缺陷修复批 |
+| **状态追加 3** | `020bc58..f09e292`——收口验证发现的 legacy-import 多快照 500 修复 |
+
+### SE-015 · PostgreSQL 迁移（独立数据库 `diyu_business`）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 类型 | Alembic 迁移，`docker-db_postgres-1` 内独立数据库 `diyu_business`（与 `dify`/`dify_plugin` 物理隔离，`diyu_app` 角色对后两者 `REVOKE ALL`） |
+| 内容标识 | 7 个迁移线性链：`fdbd31cee7f9`(initial)→`6033064ae1ed`→`6bc000bb178d`→`fb5e3889277c`→`db747c8a1f80`(auth+race fixes)→`a1c5e7d4f2b9`(cycle_decisions)→`c3f8b2e6d0a4`(account 级幂等+legacy-import 隔离) |
+| 幂等信息 | `alembic upgrade head` 对已应用版本为空操作；`downgrade`/`upgrade` 往返已在收口验证中核验对称（`c3f8b2e6d0a4` 一节） |
+| 受控状态 | 可逆——全部迁移均有对称 `downgrade()`；数据库内容目前仅为工程测试数据，非真实经营数据 |
+| 核验依据 | 现场 `alembic current` = `c3f8b2e6d0a4 (head)`；`alembic check` 无模型/schema 漂移 |
+| **状态** | **`CONFIRMED`**（现场核验，非自报） |
+
+### SE-016 · Dify 候选应用（沿用既有对象，本轮未新建/未发布新版本）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 对象 | `app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`，`diyu 's Workspace`，workflow 类型，命名含 `DO NOT USE FOR PRODUCTION` |
+| 本轮动作 | **无**——本轮新增的三个后端能力（M2-AC-07/14/15）未被该候选画布调用，候选契约未变，未重新导入/发布 |
+| 已披露限制 | 按 Prompt `evidence_reuse_policy.criterion_dependency_map` 字面要求，应用后端变化后 AC-16 证据应刷新；本轮未重新触发画布真实运行（无可用已认证 Dify 会话，且核验到的 `dify-platform-expert` MCP 连接指向另一个不相关的 Dify 1.9.2 实例，判断不可用后放弃采用，未用其伪造证据）。等价 API 级证据（66 项回归，覆盖候选实际调用的全部端点契约）已现场验证，详见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` M2-AC-16 行 |
+| **状态** | 沿用既有对象，**未产生新副作用**；限制已披露，非隐藏 |
+| **状态追加 1**（2026-08-25，Rebase/Errata 001，R-08） | 尝试通过 Console API 重建认证会话失败——本会话无可用 refresh_token，仓库内未发现任何已保存的 App API Key；未向用户索要或尝试重建密码。按 Rebase Prompt R-08.8"如果当前无法访问准确目标 Dify，M2-AC-16 = NOT_VERIFIED...不得用 API等价证据改判 PASS"，`M2-AC-16` 已在 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` 中从"PASS 但有限制"下修为 `NOT_VERIFIED`，本条同步更新 |
+
+### SE-017 · 数据库权限修复（`REVOKE CONNECT`）——首次被拦截，Founder 授权后已执行
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | Rebase/Errata 001 R-09 现场负向核验发现：`diyu_app` 角色实际可以 `CONNECT` 到 `dify`/`dify_plugin` 数据库（`psql -U diyu_app -d dify -c "SELECT 1;"` 返回成功），表级 `SELECT` 仍被正确拒绝（`ERROR: permission denied for table accounts`），未读到任何真实数据；`pg_database.datacl` 显示 PUBLIC 默认 CONNECT 授权从未被显式撤销，与 `TECHNICAL_DECISION_RECORD.md` 声称的"REVOKE ALL"不一致 |
+| 首次尝试 | `REVOKE CONNECT ON DATABASE dify FROM PUBLIC; ...`（以 postgres 超级用户执行）——**被 Claude Code 权限分类器拦截**，理由：该操作触及 `dify`/`dify_plugin`，不属于本 task_id 独占的 `diyu_business` 沙箱；未强行绕过、未改用其他方式尝试执行，如实记录为 `BLOCKED` |
+| 授权 | Founder 2026-08-25 在本会话中对该具体、已明确说明内容与风险的操作明确答复"我授权，你是否可以执行？"，构成对此单一操作的授权 |
+| 实际执行 | 修复前现场负向复现（确认漏洞真实存在）→ 以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;` 与对 `dify_plugin` 的同语句 → 修复后现场重测确认 `diyu_app` 对两库 `CONNECT` 均被拒绝（`FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`）→ 回归验证 `diyu_app` 自身库 `diyu_business` 连接不受影响、Dify 自身容器（`postgres` 超级用户连接，天然绕过 CONNECT ACL）不受影响 |
+| 结果 | `dify`/`dify_plugin` 的 `PUBLIC`/`diyu_app` CONNECT 权限已撤销；`diyu_app` 自身工作范围与 Dify 自身运行均未受损 |
+| **状态** | `ATTEMPTED → BLOCKED` → **`EXECUTED`**（Founder 明确授权后完成，非执行侧自行解除拦截） |
+
+### SE-018 · Dify 候选画布真实重跑（App API Key，R-08 解除）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | R-08：`M2-AC-16` 要求最终候选在真实 Dify 目标环境重新运行，此前受限于无可用 Console 会话/API Key |
+| 授权与凭据 | Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key；执行侧未索要 Console 会话或账号密码，Key 仅在内存中使用，未写入任何文件、commit 或本账本 |
+| 执行 | `curl -X POST http://localhost/v1/workflows/run` 携带该 Key，输入六步场景字段（`actor_ref`/`workspace_id`/`account_id`/`idempotency_prefix`/`task_note`/`content_ref`/`platform`/`published_at`/`feedback_note`），`response_mode: blocking` |
+| 结果 | `workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，`elapsed_time: 0.43s`，`error: null`；对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准逐项核验全部满足（`task_id`/`version_id`/`publish_instance_id` 均为真实 UUID；`projection_body.latest_snapshot.payload.note` 与填入原文逐字一致；`promote_body.promoted_by` 与填入 Actor Ref 一致；`current_cycle_body.label` 含本次运行标识） |
+| 受影响对象 | 该候选应用自身的 workflow 执行记录（Dify 侧新增一条运行历史，`workspace_id: 68df687c-...`、`account_id: 12802f90-...` 下新增真实业务对象：1 个 task、1 个 cycle、1 个 content version、1 个 publish instance、1 个 feedback record）——均在该候选专用的测试 workspace/account 范围内，不触碰任何生产账号或其他工作区 |
+| **状态** | `EXECUTED`——`M2-AC-16` 由 `NOT_VERIFIED` 转 `PASS` |
+
+### SE-019 · Rebase/Errata Prompt 文件复制进任务分支
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | Founder 复核指出该 Prompt 文件此前只在主工作区作为未跟踪文件存在，未进入本任务分支或远程，脱离本分支单独审计时无法追溯授权来源 |
+| 执行 | 将 `/home/faye/diyu-demo/M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`（`sha256 = fbb65e1dcdb405a435f03fc8efa8f9828926d9881850aa7c86237bf267ef7c5d`）原样字节复制（保留原 CRLF 换行）进本任务分支 `business-persistence/M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`，`diff` 核验字节完全一致；未修改主工作区原文件（仍保留在原位，未删除） |
+| 顺带发现 | 该文件本身有一处未闭合 Markdown 代码围栏（外观像复制/转存截断），逐行核对至文末确认内容连续完整、以正常声明块结束，非内容缺失，仅格式缺陷；未修改原文件一字 |
+| **状态** | `EXECUTED`——只在 `business-persistence/`（本任务已获授权的修改范围）内新增文件，未触碰主工作区或其他任务资产 |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

@@ -1793,3 +1793,74 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001 结论
 
 文档落盘 `DONE`（含一处已披露的文档自证哈希不一致，Founder 已裁决按独立复算值登记）；M2 工程执行（`task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`）**未开工、未获授权**，`task/m2-business-persistence-version-feedback-v1` 分支不存在，未创建任何 PostgreSQL/Dify 对象。任务终态见最终回执与 [L2 §一.13](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
+
+**状态更正**（2026-08-25，追加于本任务终结之后，不改写本任务自身历史）：上一段"未开工、未获授权"仅对**本落盘任务自身**在其执行时点为真，不代表该 task_id 此后的状态。`V1-M2-ENGINEERING-PROMPT-ADOPTION-001`（§一.14）登记 Founder 已就该具体 task_id 明确答复"就是要启动，铁律适用"后，`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 已实际开工并推进：`task/m2-business-persistence-version-feedback-v1` 分支与独立 worktree 已建立，PostgreSQL 隔离数据库 `diyu_business`、7 个 Alembic 迁移、Dify 候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）均已创建，9 个 commit 已推送远程任务分支（本地/远程 head 一致于 `f09e2923a7b57efbcb94cd83ed54c5b6cd94b3c4`）。详见新增 [L1 §T-011](L1_TASK_MANIFESTS.md)、[本文件 §十三](#十三-diyu-v1-m2-business-persistence-version-feedback-001)、[L5](L5_SIDE_EFFECTS.md) SE-014 起、以及 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` 的 `M2-AC-00`~`M2-AC-17` 逐条证据。
+
+---
+
+## 十三、`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`
+
+### ATT-001（多次会话延续，同一 task_id，同一分支/worktree，无重建）
+
+| 项 | 值 |
+|---|---|
+| 授权依据 | [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md#一14-v1-m2-engineering-prompt-adoption-001m2-工程执行授权确认追加于一13之后不覆盖一13)——Founder 2026-08-25 就该 task_id 当场明确答复"就是要启动，铁律适用" |
+| Task Contract | 见 [L1 §T-011](L1_TASK_MANIFESTS.md)，内容为 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md` §3 原文，独立复算 `task_contract_hash = 4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830`（与文档自称值不一致，已在 [L1 §T-010](L1_TASK_MANIFESTS.md) 披露并由 Founder 裁决采用独立复算值） |
+| 分支／worktree | `task/m2-business-persistence-version-feedback-v1`；独立 worktree `/home/faye/diyu-demo-worktrees/m2-business-persistence-version-feedback-v1` |
+| 数据库隔离 | PostgreSQL 15.19（`docker-db_postgres-1`）内独立数据库 `diyu_business`，owner `diyu_app`（`NOSUPERUSER NOCREATEDB NOCREATEROLE`），对 `dify`/`dify_plugin` 显式 `REVOKE ALL`；7 个 Alembic 迁移线性链，现场 `alembic current` = `c3f8b2e6d0a4 (head)` |
+| Dify 候选 | `app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`，workflow 类型，`diyu 's Workspace`，命名含 `DO NOT USE FOR PRODUCTION` 标记；六步验收场景已于早前会话真实运行 17/17 节点成功（见 `business-persistence/FOUNDER_TEST_PACKAGE.md`） |
+| 独立审查 | 本任务经过多轮独立、上下文隔离的对抗性审查：(1) 初版实现审查，发现 21 个真实缺陷（6 阻断级），已修复（commit `a3eeb2f`）；(2) 本轮 M2-AC-07/14/15 补齐后的双路并行审查，发现 4 个真实缺陷（含 1 阻断级——legacy-import 与活体任务共享 idempotency 命名空间），已修复（commit `020bc58`）；(3) 收口验证（仅复核受影响范围），发现修复本身引入的 1 个新缺陷，已修复（commit `f09e292`） |
+| 全量回归 | 现场 `pytest tests/ -q` = **66 passed**（对最终 commit `f09e292` 重跑，非历史缓存结果） |
+| Git 收口 | 9 个 commit；本地 HEAD 与远程 `origin/task/m2-business-persistence-version-feedback-v1` 一致于 `f09e2923a7b57efbcb94cd83ed54c5b6cd94b3c4`（`git push` 输出逐次核验，最后一次 `020bc58..f09e292`） |
+| 验收证据 | `M2-AC-00` 至 `M2-AC-16` 现场 PASS（`AC-16` 含一项已披露的证据新鲜度限制——本轮新增端点未触发 Dify 画布重新运行，等价 API 级回归已现场验证），`M2-AC-17` 待 Founder。逐条记录见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` |
+| 已知限制 | `create_version` 的 `version_no` 高并发分配裸 500（已披露，非本轮任一 AC 阻断项）；AC-14 只覆盖 5 槽 task_snapshot_json 一种旧兼容形态；AC-16 的 Dify 画布证据未在本轮变更后重新触发 |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、Dify 现有生产/共享应用与内部表——全程零改动，`diyu_app` 角色对 `dify`/`dify_plugin` 无连接权限 |
+| 任务终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE`；`next_stage_allowed = false`——技术侧已收口，等待 Founder 通过 Dify 画布完成产品/业务验收；退回时沿用同一 task_id 执行 `CONTINUE_TASK` |
+
+**状态更正**（2026-08-25，Rebase/Errata 001，追加于本表之后，不改写本表历史）：上表"受保护资产核验"一行"`diyu_app` 角色对 `dify`/`dify_plugin` 无连接权限"**不准确**——Rebase 现场实际发起负向连接实测，`diyu_app` 可以 `CONNECT` 到这两个数据库（表级 `SELECT` 仍被正确拒绝，未读到真实数据）。"任务终态"一行的 `AWAITING_FOUNDER_DIFY_ACCEPTANCE` 同样已被 Rebase 下修为 `IN_PROGRESS`。详见下方 ATT-002。
+
+### ATT-002（Rebase/Errata 001，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+见 `business-persistence/M2_REBASE_ERRATA_001_RECORD.md` 与 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`（本轮重写）完整记录，不在本节重复全文。要点：
+
+- R-04 关闭 `create_version` 并发裸 500（先证伪：8 路并发实测 5/8 失败；后证实：修复后 5 轮 8/8 成功），commit `3d23674`。
+- R-05 穷尽检索确认独立"3 槽"Schema 真实不存在，不补造；用 3 份真实历史生产产物（真实 sha256）经既有端点显式导入，commit `fabffd8`。
+- R-09 对真实累积数据（非空库）实测复现 `c3f8b2e6d0a4` downgrade 裸崩溃并修复为清晰错误，commit `6955d66`；同时发现 `diyu_app` 对 `dify`/`dify_plugin` 的 CONNECT 权限未被撤销，修复尝试被权限分类器拦截，**未完成**（见 [L5](L5_SIDE_EFFECTS.md) SE-017）。
+- R-10 如实登记 `REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT`——本 task_id 实际发生 3 个正式审查单元 + 1 收口验证单元，超出冻结预算 1；本轮未另开新的正式 Reviewer，全部由执行负责人本人在真实容器/数据库上直接自验。
+- 全量测试 69 项通过（现场重跑）。
+- **任务终态（当前有效，取代上表 ATT-001 的判定）**：`execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`；`next_stage_allowed = false`——`M2-AC-13`（数据库 CONNECT 权限）与 `M2-AC-16`（Dify 画布现场运行）未 CURRENT PASS，未满足进入 `AWAITING_FOUNDER_DIFY_ACCEPTANCE` 的全部前提。
+
+### ATT-003（Founder 授权 R-09b 后现场执行，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+Founder 在本会话中被完整告知 R-09b 的发现、被拦截的修复动作、需要何种授权后，明确答复"我授权，你是否可以执行？"。执行侧据此现场执行，未新增独立审查（该操作是单条 DDL 语句 + 现场负向/正向连接验证，不属于需要新开正式 Reviewer 的范畴）。
+
+| 项 | 值 |
+|---|---|
+| 授权依据 | Founder 本会话内对该具体、已明确说明内容的操作明确答复"我授权，你是否可以执行？" |
+| 修复前基线 | `docker exec docker-db_postgres-1 psql -U diyu_app -d dify -c "SELECT current_database();"` 与对 `dify_plugin` 同语句均**成功返回**，现场确认漏洞真实存在 |
+| 执行 | `docker exec docker-db_postgres-1 psql -U postgres -c "REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;"` 与对 `dify_plugin` 的同语句 |
+| 修复后验证 | `diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；`diyu_app` 连接自身 `diyu_business` 仍正常；`docker-api-1`（Dify 自身应用容器，`DB_USERNAME=postgres`）以 `postgres` 超级用户连接 `dify` 仍正常（超级用户天然绕过 CONNECT ACL，未受此次 REVOKE 影响） |
+| 验收标准更正 | `M2-AC-13` 由 `NOT_VERIFIED` 转 `PASS`；顺带发现并更正 `M2_ACCEPTANCE_EVIDENCE.md` 中 `M2-RB-08` 的一处遗留过期表述（该行仍写"R-07 尚未执行"，与同一文件内其他位置已确认 R-07 完成的事实矛盾，系文档撰写时序问题，非新缺陷），已更正为 `PASS`；`M2-AC-16`/`M2-RB-09` 维持 `NOT_VERIFIED`——凭据缺口，本次授权不覆盖（Founder 未提供、执行侧未索要 Dify 会话或 API Key） |
+| **任务终态（当前有效，取代 ATT-002 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）；`next_stage_allowed = false:Dify 画布重跑`——唯一剩余缺口是 `M2-AC-16` |
+
+### ATT-004（Founder 第二轮复核并提供 Dify App API Key，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+Founder 复核 ATT-003 后指出四类问题（3 槽/5 槽命名事实偏差、迁移降级"清晰拒绝"被误判为"可恢复"、技术决策记录与证据绑定的治理不一致、Rebase/Errata Prompt 文件未进任务分支且有格式缺陷），并明确指示逐项修正；随后主动提供该候选 Dify 应用专属的 App API Key 以解除 R-08。
+
+| 项 | 值 |
+|---|---|
+| 3 槽/5 槽更正 | 核实 `V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 的 `artifacts` 子对象真实拥有 3 个具名槽位（`matrix`/`campaign`/`content_brief`）；"5 槽"实际是同一 Schema 里可选字段 `last_acceptance.slot` 的 5 值枚举，与 `artifacts` 是两回事，此前混为一谈。`source` 由 `legacy_dify_5slot_import` 更正为 `legacy_dify_v1_task_snapshot_import`；重新 `docker build`、`stop/rm/run` 重启容器，69/69 测试重跑通过 |
+| 迁移降级恢复更正（撤回上一轮 PASS） | `M2-AC-13` 由 ATT-003 误判的 `PASS` 更正回 `NOT_VERIFIED`——downgrade 遇合法跨账号同键真实数据只能清晰拒绝、不能自动恢复/回滚，不满足验收标准原文字面要求；不擅自发明自动改键规则（业务决定），等待 Founder 裁决 |
+| 治理一致性更正 | `TECHNICAL_DECISION_RECORD.md` 追加更正说明（并发裸 500 早已修复，非"刻意不处理"）；`M2_ACCEPTANCE_EVIDENCE.md` 证据绑定基线改写为区分代码候选提交与纯文档提交 |
+| Rebase/Errata Prompt 分支归档 | 原文件（`sha256 = fbb65e1d...`）按 §6 授权范围字节级复制进 `business-persistence/`，`diff` 核验一致；文件确有一处未闭合 Markdown 代码围栏，逐行核对内容完整不缺失，仅格式缺陷 |
+| R-08 解除 | Founder 提供 App API Key（未索要 Console 会话/密码）；调用 Dify Service API 真实重跑候选 workflow，`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，`M2-AC-16` 转 `PASS` |
+| **任务终态（当前有效，取代 ATT-003 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`；`next_stage_allowed = false:M2-AC-13 迁移降级恢复裁决`——唯一剩余缺口是 `M2-AC-13`，需 Founder 决定自动改键规则或改写验收标准字面口径 |
+
+### ATT-005（Founder 明确裁决豁免迁移降级恢复，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+执行侧向 Founder 解释迁移回滚的技术含义、当前具体卡点（跨账号共享 idempotency_key 冲突时自动改键需要业务规则，不是纯技术判断）后，Founder 明确答复"可以跳过这一步，继续推进 M2 落盘收口，备注说明：我已经完全裁决豁免回滚这个环节步骤"。
+
+| 项 | 值 |
+|---|---|
+| `M2-AC-13` 更正 | 标记 `FOUNDER_WAIVED`——技术事实不变（迁移降级遇跨账号冲突不能自动恢复），不拔高为 `PASS`；该子项已被 Founder 明确豁免，不再阻塞任务收尾。这是 Founder 行使其对 ACCEPTANCE 的控制权作出的决定，非执行侧自行放宽标准，也未使用 `PASS_WITH_LIMITATION` 类规避措辞 |
+| **任务终态（当前有效，取代 ATT-004 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state` 由 `IN_PROGRESS` **推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`**（Rebase Prompt §8.2 全部前提本轮已满足）；`next_stage_allowed = false:M2-AC-17`——唯一剩余事项是 `M2-AC-17`，只能由 Founder 通过 Dify 画布完成产品/业务验收 |

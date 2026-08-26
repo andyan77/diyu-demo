@@ -1,0 +1,208 @@
+import concurrent.futures
+
+import httpx
+
+from tests.conftest import BASE_URL
+
+
+def test_concurrent_version_creation_on_same_artifact_never_produces_a_raw_500(bootstrapped, unique):
+    """Regression for a previously-disclosed, deliberately-unfixed defect
+    (M2 Rebase/Errata R-04): create_version computed max(version_no)+1 with
+    no lock, so N genuinely concurrent creates on the SAME artifact (each
+    with its OWN distinct idempotency_key -- the idempotency branch only
+    protects a *repeated* key, not distinct concurrent callers) could all
+    read the same max and race to insert the same version_no, and the
+    loser's IntegrityError on uq_version_artifact_no had no idempotency-key
+    match to recover onto, so it re-raised as a raw 500. Every one of these
+    calls represents a legitimate, distinct new version -- there is no
+    idempotent-hit or conflict outcome available to the losers the way
+    there is for a repeated-key retry; the only correct fix is to prevent
+    the collision from happening at all.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    artifact_id = bootstrapped["artifact"]["id"]
+    headers = bootstrapped["headers"]
+
+    N = 8
+
+    def create(i):
+        with httpx.Client(base_url=BASE_URL, timeout=10.0) as c:
+            return c.post(
+                f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions",
+                json={
+                    "idempotency_key": f"concurrent-create-{unique}-{i}",
+                    "content_hash": f"concurrent-create-{unique}-{i}",
+                    "content_ref": "s3://x",
+                },
+                headers=headers,
+            )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=N) as pool:
+        results = list(pool.map(create, range(N)))
+
+    statuses = [r.status_code for r in results]
+    assert all(s == 200 for s in statuses), f"expected all {N} distinct creates to succeed, got {statuses}"
+
+    version_nos = [r.json()["version_no"] for r in results]
+    assert len(set(version_nos)) == N, (
+        f"expected {N} distinct version_no values under concurrent creation, got {sorted(version_nos)}"
+    )
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        all_versions = client.get(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions", headers=headers
+        ).json()
+    matching = [v for v in all_versions if v["id"] in {r.json()["id"] for r in results}]
+    assert len(matching) == N, "no orphaned or missing rows -- exactly N versions must be persisted"
+
+
+def test_concurrent_promotion_of_different_versions_never_leaves_two_current(bootstrapped, unique):
+    """Two callers race to promote two DIFFERENT candidate versions of the
+    same artifact at (as close to) the same instant. This is a genuine
+    mutual-exclusion race, not two independent writes -- both versions are
+    competing for the single is_current slot on that artifact. Either both
+    happen to succeed (if they get serialized far enough apart) or the
+    loser gets an honest 409 to retry; what must never happen is an opaque
+    5xx, or the database ending up with two current rows, or zero.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    artifact_id = bootstrapped["artifact"]["id"]
+    headers = bootstrapped["headers"]
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        v1 = client.post(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions",
+            json={"idempotency_key": f"c1-{unique}", "content_hash": f"c1-{unique}", "content_ref": "s3://x"},
+            headers=headers,
+        ).json()
+        v2 = client.post(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions",
+            json={"idempotency_key": f"c2-{unique}", "content_hash": f"c2-{unique}", "content_ref": "s3://x"},
+            headers=headers,
+        ).json()
+
+    def promote(version_id):
+        with httpx.Client(base_url=BASE_URL, timeout=10.0) as c:
+            return c.post(
+                f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions/{version_id}/promote",
+                json={},
+                headers=headers,
+            )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        f1 = pool.submit(promote, v1["id"])
+        f2 = pool.submit(promote, v2["id"])
+        r1 = f1.result()
+        r2 = f2.result()
+
+    statuses = sorted([r1.status_code, r2.status_code])
+    assert statuses in ([200, 200], [200, 409]), (
+        f"expected a clean win plus either a clean second win or an honest 409 loser, got {statuses}"
+    )
+    for r in (r1, r2):
+        if r.status_code not in (200, 409):
+            raise AssertionError(f"unexpected status {r.status_code}: {r.text}")
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        all_versions = client.get(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions", headers=headers
+        ).json()
+
+    current_ones = [v for v in all_versions if v["is_current"]]
+    assert len(current_ones) == 1, (
+        f"exactly one version must be current after concurrent promotions, got {len(current_ones)}"
+    )
+
+
+def test_concurrent_promotion_of_the_same_version_is_not_double_charged(bootstrapped, unique):
+    """Two callers race to promote the SAME candidate version at once.
+
+    Exactly one of them performs the real state transition; the other must
+    get an honest, recoverable signal -- either a clean 200 no-op (if it
+    happens to observe the row only after the winner's commit) or a 409
+    conflict (if its UPDATE raced against the winner's in-flight
+    transaction and matched zero rows). What must NEVER happen is both
+    silently "succeeding" while the underlying row gets bumped twice, or
+    either racer getting an opaque 5xx. A 409 loser is expected to retry
+    and then observe the already-promoted state cleanly.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    artifact_id = bootstrapped["artifact"]["id"]
+    headers = bootstrapped["headers"]
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        v1 = client.post(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions",
+            json={"idempotency_key": f"same-{unique}", "content_hash": f"same-{unique}", "content_ref": "s3://x"},
+            headers=headers,
+        ).json()
+
+    def promote():
+        with httpx.Client(base_url=BASE_URL, timeout=10.0) as c:
+            return c.post(
+                f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions/{v1['id']}/promote",
+                json={},
+                headers=headers,
+            )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        f1 = pool.submit(promote)
+        f2 = pool.submit(promote)
+        r1 = f1.result()
+        r2 = f2.result()
+
+    statuses = sorted([r1.status_code, r2.status_code])
+    assert statuses in ([200, 200], [200, 409]), (
+        f"expected exactly one clean win and an honest no-op-or-conflict loser, got {statuses}"
+    )
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        current = client.get(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions/current", headers=headers
+        ).json()
+    assert current["id"] == v1["id"]
+    assert current["row_version"] == v1["row_version"] + 1, (
+        "racing to promote the same row must bump row_version exactly once, not twice"
+    )
+
+    # the loser retrying now must see a clean idempotent no-op, never another conflict
+    retry = promote()
+    assert retry.status_code == 200
+    assert retry.json()["row_version"] == current["row_version"]
+
+
+def test_concurrent_first_run_state_upsert_never_5xxs(bootstrapped, unique):
+    """Two callers race to write run-state for a task that has NO row yet.
+    Both take the "insert a new row" branch of upsert_run_state; the loser's
+    INSERT collides with the unique task_run_states.task_id constraint. That
+    must degrade to a clean merge onto the winner's row (200) or an honest
+    409, never a raw IntegrityError surfacing as a 500.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    task_id = bootstrapped["task"]["id"]
+    headers = bootstrapped["headers"]
+
+    def upsert(step):
+        with httpx.Client(base_url=BASE_URL, timeout=10.0) as c:
+            return c.put(
+                f"/workspaces/{ws_id}/tasks/{task_id}/run-state",
+                json={"last_success_step": step},
+                headers=headers,
+            )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+        f1 = pool.submit(upsert, "step-a")
+        f2 = pool.submit(upsert, "step-b")
+        r1 = f1.result()
+        r2 = f2.result()
+
+    for r in (r1, r2):
+        assert r.status_code in (200, 409), f"unexpected status {r.status_code}: {r.text}"
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        state = client.get(f"/workspaces/{ws_id}/tasks/{task_id}/run-state", headers=headers).json()
+    assert state["last_success_step"] in ("step-a", "step-b")

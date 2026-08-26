@@ -1,0 +1,889 @@
+app:
+  description: 'M2 业务持久化候选（技术验证）。直接调用 M2 business-persistence API 完成 Execution Prompt v1.1 SS5.12 六步验收：首次任务->保存状态->再次进入->登记发布实例->导入反馈->下一周期读取。不含
+    M1 自然语言编译或路由；workspace/account 需先由一次性引导脚本创建。task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001。'
+  icon: 🗄️
+  icon_background: '#E0F2FE'
+  icon_type: emoji
+  mode: workflow
+  name: M2 候选 - 业务持久化六步验收 (DO NOT USE FOR PRODUCTION)
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  rag_pipeline_variables: []
+  features:
+    file_upload:
+      enabled: false
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    nodes:
+    - id: start_1
+      type: custom
+      data:
+        title: M2 六步验收输入
+        type: start
+        variables:
+        - variable: actor_ref
+          label: Actor Ref（一次性引导脚本已创建的 User.external_ref，必须是该 Workspace 的成员）
+          type: text-input
+          required: true
+          max_length: 128
+          options: []
+        - variable: workspace_id
+          label: Workspace ID（一次性引导脚本已创建）
+          type: text-input
+          required: true
+          max_length: 128
+          options: []
+        - variable: account_id
+          label: Account ID（一次性引导脚本已创建）
+          type: text-input
+          required: true
+          max_length: 128
+          options: []
+        - variable: idempotency_prefix
+          label: 本次运行标识（用于幂等键前缀，换一次真实测试请换一个值）
+          type: text-input
+          required: true
+          max_length: 128
+          options: []
+        - variable: task_note
+          label: 首次任务原始诉求（自然语言，作为快照 payload）
+          type: paragraph
+          required: true
+          max_length: 4096
+          options: []
+        - variable: content_ref
+          label: 候选内容引用（例如一个占位 s3:// 路径或文本）
+          type: text-input
+          required: true
+          max_length: 1024
+          options: []
+        - variable: platform
+          label: 发布平台标识
+          type: text-input
+          required: true
+          max_length: 64
+          options: []
+        - variable: published_at
+          label: 发布时间（ISO8601，例如 2026-08-25T00:00:00Z）
+          type: text-input
+          required: true
+          max_length: 64
+          options: []
+        - variable: feedback_note
+          label: 反馈原始观测（自然语言）
+          type: paragraph
+          required: true
+          max_length: 4096
+          options: []
+        selected: false
+      position:
+        x: 80
+        y: 260
+      positionAbsolute:
+        x: 80
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_create_task
+      type: custom
+      data:
+        title: ① 首次任务：创建 Task
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/tasks
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-task", "account_id": "{{#start_1.account_id#}}",
+              "kind": "m2_candidate_demo"}'
+        selected: false
+      position:
+        x: 340
+        y: 260
+      positionAbsolute:
+        x: 340
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: code_extract_task
+      type: custom
+      data:
+        title: 解析 task_id
+        type: code
+        code_language: python3
+        code: "def main(body: str, status_code: int) -> dict:\n    import json\n    try:\n        parsed\
+          \ = json.loads(body) if body else {}\n    except Exception:\n        parsed = {}\n    value\
+          \ = parsed.get('id', '') if isinstance(parsed, dict) else ''\n    return {'task_id': str(value)\
+          \ if value else '', 'status_code': status_code}\n"
+        variables:
+        - variable: body
+          value_selector:
+          - http_create_task
+          - body
+        - variable: status_code
+          value_selector:
+          - http_create_task
+          - status_code
+        outputs:
+          task_id:
+            type: string
+            children: null
+          status_code:
+            type: number
+            children: null
+        selected: false
+      position:
+        x: 600
+        y: 260
+      positionAbsolute:
+        x: 600
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_snapshot
+      type: custom
+      data:
+        title: ① 保存状态：写任务快照
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/tasks/{{#code_extract_task.task_id#}}/snapshots
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-snapshot", "payload": {"note":
+              "{{#start_1.task_note#}}"}, "info_nature": "fact", "source": "dify-m2-candidate", "confirmation_status":
+              "confirmed", "availability_status": "available"}'
+        selected: false
+      position:
+        x: 860
+        y: 260
+      positionAbsolute:
+        x: 860
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_create_cycle
+      type: custom
+      data:
+        title: 建立当前周期（供末步「下一周期读取」验证）
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/cycles
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-cycle", "account_id": "{{#start_1.account_id#}}",
+              "label": "{{#start_1.idempotency_prefix#}}-cycle", "start_at": "{{#start_1.published_at#}}"}'
+        selected: false
+      position:
+        x: 1120
+        y: 260
+      positionAbsolute:
+        x: 1120
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_projection
+      type: custom
+      data:
+        title: ② 再次进入：读取任务最小投影
+        type: http-request
+        method: get
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/tasks/{{#code_extract_task.task_id#}}/projection
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: none
+          data: []
+        selected: false
+      position:
+        x: 1380
+        y: 260
+      positionAbsolute:
+        x: 1380
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_create_artifact
+      type: custom
+      data:
+        title: 创建产物（发布前置）
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/tasks/{{#code_extract_task.task_id#}}/artifacts
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"kind": "final", "content_hash": "{{#start_1.idempotency_prefix#}}-hash"}'
+        selected: false
+      position:
+        x: 1640
+        y: 260
+      positionAbsolute:
+        x: 1640
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: code_extract_artifact
+      type: custom
+      data:
+        title: 解析 artifact_id
+        type: code
+        code_language: python3
+        code: "def main(body: str, status_code: int) -> dict:\n    import json\n    try:\n        parsed\
+          \ = json.loads(body) if body else {}\n    except Exception:\n        parsed = {}\n    value\
+          \ = parsed.get('id', '') if isinstance(parsed, dict) else ''\n    return {'artifact_id': str(value)\
+          \ if value else '', 'status_code': status_code}\n"
+        variables:
+        - variable: body
+          value_selector:
+          - http_create_artifact
+          - body
+        - variable: status_code
+          value_selector:
+          - http_create_artifact
+          - status_code
+        outputs:
+          artifact_id:
+            type: string
+            children: null
+          status_code:
+            type: number
+            children: null
+        selected: false
+      position:
+        x: 1900
+        y: 260
+      positionAbsolute:
+        x: 1900
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_create_version
+      type: custom
+      data:
+        title: 创建候选内容版本
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/artifacts/{{#code_extract_artifact.artifact_id#}}/versions
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-version", "content_ref": "{{#start_1.content_ref#}}",
+              "content_hash": "{{#start_1.idempotency_prefix#}}-content-hash", "produced_by": "dify-m2-candidate"}'
+        selected: false
+      position:
+        x: 2160
+        y: 260
+      positionAbsolute:
+        x: 2160
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: code_extract_version
+      type: custom
+      data:
+        title: 解析 version_id
+        type: code
+        code_language: python3
+        code: "def main(body: str, status_code: int) -> dict:\n    import json\n    try:\n        parsed\
+          \ = json.loads(body) if body else {}\n    except Exception:\n        parsed = {}\n    value\
+          \ = parsed.get('id', '') if isinstance(parsed, dict) else ''\n    return {'version_id': str(value)\
+          \ if value else '', 'status_code': status_code}\n"
+        variables:
+        - variable: body
+          value_selector:
+          - http_create_version
+          - body
+        - variable: status_code
+          value_selector:
+          - http_create_version
+          - status_code
+        outputs:
+          version_id:
+            type: string
+            children: null
+          status_code:
+            type: number
+            children: null
+        selected: false
+      position:
+        x: 2420
+        y: 260
+      positionAbsolute:
+        x: 2420
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_promote
+      type: custom
+      data:
+        title: 晋升为当前有效版本
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/artifacts/{{#code_extract_artifact.artifact_id#}}/versions/{{#code_extract_version.version_id#}}/promote
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{}'
+        selected: false
+      position:
+        x: 2680
+        y: 260
+      positionAbsolute:
+        x: 2680
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_register_publish
+      type: custom
+      data:
+        title: ③ 登记准确发布实例
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/publish-instances
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-publish", "content_version_id":
+              "{{#code_extract_version.version_id#}}", "account_id": "{{#start_1.account_id#}}", "platform":
+              "{{#start_1.platform#}}", "published_at": "{{#start_1.published_at#}}", "is_test": true}'
+        selected: false
+      position:
+        x: 2940
+        y: 260
+      positionAbsolute:
+        x: 2940
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: code_extract_publish
+      type: custom
+      data:
+        title: 解析 publish_instance_id
+        type: code
+        code_language: python3
+        code: "def main(body: str, status_code: int) -> dict:\n    import json\n    try:\n        parsed\
+          \ = json.loads(body) if body else {}\n    except Exception:\n        parsed = {}\n    value\
+          \ = parsed.get('id', '') if isinstance(parsed, dict) else ''\n    return {'publish_instance_id':\
+          \ str(value) if value else '', 'status_code': status_code}\n"
+        variables:
+        - variable: body
+          value_selector:
+          - http_register_publish
+          - body
+        - variable: status_code
+          value_selector:
+          - http_register_publish
+          - status_code
+        outputs:
+          publish_instance_id:
+            type: string
+            children: null
+          status_code:
+            type: number
+            children: null
+        selected: false
+      position:
+        x: 3200
+        y: 260
+      positionAbsolute:
+        x: 3200
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_register_feedback
+      type: custom
+      data:
+        title: ④ 导入明确身份的反馈
+        type: http-request
+        method: post
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/feedback
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"idempotency_key": "{{#start_1.idempotency_prefix#}}-feedback", "publish_instance_id":
+              "{{#code_extract_publish.publish_instance_id#}}", "kind": "observation", "is_test": true,
+              "is_manual_entry": true, "source": "dify-m2-candidate-manual-entry", "payload": {"note":
+              "{{#start_1.feedback_note#}}"}}'
+        selected: false
+      position:
+        x: 3460
+        y: 260
+      positionAbsolute:
+        x: 3460
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: http_read_cycle
+      type: custom
+      data:
+        title: ⑤ 下一周期读取：当前周期投影
+        type: http-request
+        method: get
+        url: http://diyu-m2-app:8000/workspaces/{{#start_1.workspace_id#}}/accounts/{{#start_1.account_id#}}/cycles/current
+        authorization:
+          type: no-auth
+          config: null
+        headers: 'Content-Type: application/json
+
+          X-Actor-Ref: {{#start_1.actor_ref#}}'
+        params: ''
+        ssl_verify: false
+        timeout:
+          connect: 10
+          read: 10
+          write: 10
+        body:
+          type: none
+          data: []
+        selected: false
+      position:
+        x: 3720
+        y: 260
+      positionAbsolute:
+        x: 3720
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    - id: end_1
+      type: custom
+      data:
+        title: 六步验收结果
+        type: end
+        outputs:
+        - variable: task_id
+          value_selector:
+          - code_extract_task
+          - task_id
+        - variable: snapshot_status
+          value_selector:
+          - http_snapshot
+          - status_code
+        - variable: cycle_created_body
+          value_selector:
+          - http_create_cycle
+          - body
+        - variable: projection_body
+          value_selector:
+          - http_projection
+          - body
+        - variable: version_id
+          value_selector:
+          - code_extract_version
+          - version_id
+        - variable: promote_body
+          value_selector:
+          - http_promote
+          - body
+        - variable: publish_instance_id
+          value_selector:
+          - code_extract_publish
+          - publish_instance_id
+        - variable: feedback_body
+          value_selector:
+          - http_register_feedback
+          - body
+        - variable: current_cycle_body
+          value_selector:
+          - http_read_cycle
+          - body
+        selected: false
+      position:
+        x: 3980
+        y: 260
+      positionAbsolute:
+        x: 3980
+        y: 260
+      height: 88
+      width: 242
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      zIndex: 0
+    edges:
+    - id: start_1-source-http_create_task-target
+      source: start_1
+      sourceHandle: source
+      target: http_create_task
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+    - id: http_create_task-source-code_extract_task-target
+      source: http_create_task
+      sourceHandle: source
+      target: code_extract_task
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+    - id: code_extract_task-source-http_snapshot-target
+      source: code_extract_task
+      sourceHandle: source
+      target: http_snapshot
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+    - id: http_snapshot-source-http_create_cycle-target
+      source: http_snapshot
+      sourceHandle: source
+      target: http_create_cycle
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: http-request
+    - id: http_create_cycle-source-http_projection-target
+      source: http_create_cycle
+      sourceHandle: source
+      target: http_projection
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: http-request
+    - id: http_projection-source-http_create_artifact-target
+      source: http_projection
+      sourceHandle: source
+      target: http_create_artifact
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: http-request
+    - id: http_create_artifact-source-code_extract_artifact-target
+      source: http_create_artifact
+      sourceHandle: source
+      target: code_extract_artifact
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+    - id: code_extract_artifact-source-http_create_version-target
+      source: code_extract_artifact
+      sourceHandle: source
+      target: http_create_version
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+    - id: http_create_version-source-code_extract_version-target
+      source: http_create_version
+      sourceHandle: source
+      target: code_extract_version
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+    - id: code_extract_version-source-http_promote-target
+      source: code_extract_version
+      sourceHandle: source
+      target: http_promote
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+    - id: http_promote-source-http_register_publish-target
+      source: http_promote
+      sourceHandle: source
+      target: http_register_publish
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: http-request
+    - id: http_register_publish-source-code_extract_publish-target
+      source: http_register_publish
+      sourceHandle: source
+      target: code_extract_publish
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+    - id: code_extract_publish-source-http_register_feedback-target
+      source: code_extract_publish
+      sourceHandle: source
+      target: http_register_feedback
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+    - id: http_register_feedback-source-http_read_cycle-target
+      source: http_register_feedback
+      sourceHandle: source
+      target: http_read_cycle
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: http-request
+    - id: http_read_cycle-source-end_1-target
+      source: http_read_cycle
+      sourceHandle: source
+      target: end_1
+      targetHandle: target
+      type: custom
+      zIndex: 0
+      data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.7
