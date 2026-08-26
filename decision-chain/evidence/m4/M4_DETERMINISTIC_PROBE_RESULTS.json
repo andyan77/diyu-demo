@@ -1,0 +1,484 @@
+{
+  "evidence_grade": "DETERMINISTIC_NODE_VERIFIED",
+  "runtime_verified": false,
+  "total": 79,
+  "pass": 78,
+  "fail": 0,
+  "not_verified": 1,
+  "results": [
+    {
+      "probe": "AC-04",
+      "name": "M3 来源 Content Task 充分",
+      "result": "PASS",
+      "detail": "CONTENT_BRIEF can_run=true(want true) status=SUFFICIENT missing=[] vacuity=[]"
+    },
+    {
+      "probe": "AC-04",
+      "name": "Campaign 来源 Content Task 充分",
+      "result": "PASS",
+      "detail": "CONTENT_BRIEF can_run=true(want true) status=SUFFICIENT missing=[] vacuity=[]"
+    },
+    {
+      "probe": "AC-04",
+      "name": "极薄「字段齐全」判 INSUFFICIENT，不冒充等价输入",
+      "result": "PASS",
+      "detail": "CONTENT_BRIEF can_run=false(want false) status=INSUFFICIENT missing=['facts_registered'] vacuity=['audience_problem', 'expected_change', 'content_promise', 'expression_subject_and_boundary']"
+    },
+    {
+      "probe": "AC-04",
+      "name": "合法脚本等价输入直达 PD",
+      "result": "PASS",
+      "detail": "PRODUCTION_DIRECTOR can_run=true(want true) status=SUFFICIENT_WITH_CONDITIONS missing=[] vacuity=['content_origin_mode', 'time_window']"
+    },
+    {
+      "probe": "AC-04",
+      "name": "合法成片等价兑现证据直达 PP",
+      "result": "PASS",
+      "detail": "PUBLISHING_PACKAGING can_run=true(want true) status=SUFFICIENT missing=[] vacuity=[]"
+    },
+    {
+      "probe": "AC-04",
+      "name": "缺兑现证据/权限语义 → 组件级 Return",
+      "result": "PASS",
+      "detail": "PUBLISHING_PACKAGING can_run=false(want false) status=INSUFFICIENT missing=['content_body_or_beats', 'explicit_non_promise', 'cta_contract', 'asset_publish_permission'] vacuity=[]"
+    },
+    {
+      "probe": "AC-04",
+      "name": "Matrix 结构在场",
+      "result": "PASS",
+      "detail": "MATRIX can_run=true(want true) status=SUFFICIENT missing=[] vacuity=[]"
+    },
+    {
+      "probe": "N-34",
+      "name": "极薄「字段齐全」判 INSUFFICIENT，且逐条标出单薄项与缺项",
+      "result": "PASS",
+      "detail": "status=INSUFFICIENT missing=['facts_registered'] vacuity_flags=['audience_problem', 'expected_change', 'content_promise', 'expression_subject_and_boundary']"
+    },
+    {
+      "probe": "N-34",
+      "name": "极薄输入只阻断本分支，不整任务退回",
+      "result": "PASS",
+      "detail": "terminal=false invalidation=false"
+    },
+    {
+      "probe": "AC-17",
+      "name": "CONTENT_BRIEF：goal_family 原样只读继承（A=LONG_TERM_VALUE B=LEADS）",
+      "result": "PASS",
+      "detail": "外壳未改写目标；实质变化由 Skill 正文与盲评判定（本脚本不代替）"
+    },
+    {
+      "probe": "AC-17",
+      "name": "CREATIVE_SCRIPT：goal_family 原样只读继承（A=LONG_TERM_VALUE B=LEADS）",
+      "result": "PASS",
+      "detail": "外壳未改写目标；实质变化由 Skill 正文与盲评判定（本脚本不代替）"
+    },
+    {
+      "probe": "AC-17",
+      "name": "PUBLISHING_PACKAGING：goal_family 原样只读继承（A=LONG_TERM_VALUE B=LEADS）",
+      "result": "PASS",
+      "detail": "外壳未改写目标；实质变化由 Skill 正文与盲评判定（本脚本不代替）"
+    },
+    {
+      "probe": "AC-28",
+      "name": "goal_family=GMV 未把 cta_level 自动提升到 HIGH_RISK",
+      "result": "PASS",
+      "detail": "goal_family=GMV cta_level=LOW_RISK_INTERACTION"
+    },
+    {
+      "probe": "AC-28",
+      "name": "KNOWN_BUT_NOT_AUTHORIZED 被原样保留（权限不全 != 信息不全）",
+      "result": "PASS",
+      "detail": "cta_level=KNOWN_BUT_NOT_AUTHORIZED"
+    },
+    {
+      "probe": "AC-06",
+      "name": "Matrix 不足 → 七项齐全的组件级 Return；非整任务终态；不造假；不启下游",
+      "result": "PASS",
+      "detail": "can_run=false terminal=false invalidation=false fabricated=false downstream=false gap='applicability_reason；subject_and_account_scope；objective；fac'"
+    },
+    {
+      "probe": "N-39",
+      "name": "只追问最具区分力的一项，且以自然语言表达（用户交付零内部字段名）",
+      "result": "PASS",
+      "detail": "ask='这次是要新建或实质改动账号的长期定位、人设或职责分工吗？还是只想解决眼下这一条内容？' leaks=[]"
+    },
+    {
+      "probe": "AC-14",
+      "name": "显式 NONE 被识别为「无回改」而不是解析失败",
+      "result": "PASS",
+      "detail": "status=NONE block=false"
+    },
+    {
+      "probe": "N-12",
+      "name": "RETURNS 块为空 → PARSE_FAILED + 局部阻断（空 != NONE）",
+      "result": "PASS",
+      "detail": "status=PARSE_FAILED note='RETURNS 块为空。空 != NONE：无回改必须显式写 NONE'"
+    },
+    {
+      "probe": "N-12",
+      "name": "RETURNS 条目缺字段 → PARSE_FAILED，不伪装成空数组",
+      "result": "PASS",
+      "detail": "status=PARSE_FAILED note='一条 Return 缺字段：highest_damaged_layer,affected_objects,proposed_disposition,needs_user_decis'"
+    },
+    {
+      "probe": "N-12",
+      "name": "整个 RETURNS 块缺失 → PARSE_FAILED，不静默当成无回改",
+      "result": "PASS",
+      "detail": "status=PARSE_FAILED raw=ABSENT"
+    },
+    {
+      "probe": "N-13",
+      "name": "被拒绝的 Return 保留权威理由与精确失效集，不沉默丢失",
+      "result": "PASS",
+      "detail": "status=OK disposition=REJECT_WITH_AUTHORITY stale=['PP 对 B2 的兑现判断']"
+    },
+    {
+      "probe": "AC-30",
+      "name": "失效集只列真实依赖项，不做全链级联",
+      "result": "PASS",
+      "detail": "downstream_stale=['PP 对 B2 的兑现判断']"
+    },
+    {
+      "probe": "AC-13",
+      "name": "用户交付块出现「已删除」便条与内部分级术语 → 拦截并局部阻断",
+      "result": "PASS",
+      "detail": "status=LEAK_DETECTED leaks=['已删除', 'BUSINESS_HANDOFF']"
+    },
+    {
+      "probe": "AC-13",
+      "name": "干净交付通过，且用户的必要选择未被投影掉",
+      "result": "PASS",
+      "detail": "status=OK"
+    },
+    {
+      "probe": "N-22",
+      "name": "结构缺失时保留原始输出并局部阻断，不静默丢弃、不翻绿",
+      "result": "PASS",
+      "detail": "artifact_status=STRUCTURE_MISSING_RAW_PRESERVED block=true raw_len=29"
+    },
+    {
+      "probe": "N-09",
+      "name": "已选方向 → ENTRY-05 直达脚本，不重开锦标赛",
+      "result": "PASS",
+      "detail": "entry=ENTRY-05 run_mode=SELECTED_DIRECTION_TO_SCRIPT derivation=已存在 accepted_direction ⇒ 直达脚本（不重开锦标赛）"
+    },
+    {
+      "probe": "N-43",
+      "name": "确有取舍结构前提 → ENTRY-04 进入 CS-1（同一处锦标赛路径）",
+      "result": "PASS",
+      "detail": "entry=ENTRY-04 run_mode=TOURNAMENT_ONLY"
+    },
+    {
+      "probe": "N-50",
+      "name": "无真实取舍结构前提 → 直接推荐（候选数=1），不凑候选",
+      "result": "PASS",
+      "detail": "entry=ENTRY-05 derivation=未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选"
+    },
+    {
+      "probe": "AC-03",
+      "name": "MATRIX → ENTRY-01 确定性映射",
+      "result": "PASS",
+      "detail": "entry=ENTRY-01"
+    },
+    {
+      "probe": "AC-03",
+      "name": "CAMPAIGN → ENTRY-02 确定性映射",
+      "result": "PASS",
+      "detail": "entry=ENTRY-02"
+    },
+    {
+      "probe": "AC-03",
+      "name": "CONTENT_BRIEF → ENTRY-03 确定性映射",
+      "result": "PASS",
+      "detail": "entry=ENTRY-03"
+    },
+    {
+      "probe": "AC-03",
+      "name": "PRODUCTION_DIRECTOR → ENTRY-06 确定性映射",
+      "result": "PASS",
+      "detail": "entry=ENTRY-06"
+    },
+    {
+      "probe": "AC-03",
+      "name": "PUBLISHING_PACKAGING → ENTRY-07 确定性映射",
+      "result": "PASS",
+      "detail": "entry=ENTRY-07"
+    },
+    {
+      "probe": "AC-03",
+      "name": "不支持的能力被如实拒绝，M4 不代做 M1 的能力选择",
+      "result": "PASS",
+      "detail": "route=UNSUPPORTED"
+    },
+    {
+      "probe": "N-06",
+      "name": "输入显式为已确认决定包时才用 compile 模式",
+      "result": "PASS",
+      "detail": "run_mode=COMPILE_CONFIRMED_DECISIONS"
+    },
+    {
+      "probe": "N-05",
+      "name": "未确认经营任务保持 PLANNING，不被强制 compile",
+      "result": "PASS",
+      "detail": "run_mode=PLANNING"
+    },
+    {
+      "probe": "AC-09",
+      "name": "存在 realization_manifest → MANIFEST 模式；否则 PLAN",
+      "result": "PASS",
+      "detail": "with_manifest=MANIFEST without=PLAN"
+    },
+    {
+      "probe": "AC-03",
+      "name": "MATRIX 应用内零 tool 节点（结构上不可能暗跑上游）",
+      "result": "PASS",
+      "detail": "tool_nodes=0"
+    },
+    {
+      "probe": "AC-03",
+      "name": "CAMPAIGN 应用内零 tool 节点（结构上不可能暗跑上游）",
+      "result": "PASS",
+      "detail": "tool_nodes=0"
+    },
+    {
+      "probe": "AC-03",
+      "name": "CONTENT_BRIEF 应用内零 tool 节点（结构上不可能暗跑上游）",
+      "result": "PASS",
+      "detail": "tool_nodes=0"
+    },
+    {
+      "probe": "AC-03",
+      "name": "CREATIVE_SCRIPT 应用内零 tool 节点（结构上不可能暗跑上游）",
+      "result": "PASS",
+      "detail": "tool_nodes=0"
+    },
+    {
+      "probe": "AC-03",
+      "name": "PRODUCTION_DIRECTOR 应用内零 tool 节点（结构上不可能暗跑上游）",
+      "result": "PASS",
+      "detail": "tool_nodes=0"
+    },
+    {
+      "probe": "AC-03",
+      "name": "PUBLISHING_PACKAGING 应用内零 tool 节点（结构上不可能暗跑上游）",
+      "result": "PASS",
+      "detail": "tool_nodes=0"
+    },
+    {
+      "probe": "N-01",
+      "name": "直接 Brief 的接缝轨迹：只调 CONTENT_BRIEF，其余五项显式跳过，零暗跑",
+      "result": "PASS",
+      "detail": "invoked=['CONTENT_BRIEF'] auto=[]"
+    },
+    {
+      "probe": "AC-11",
+      "name": "MATRIX 的 reference 投影与加载矩阵一致",
+      "result": "PASS",
+      "detail": "got(platforms,industry,examples)=(False, False, False) want=(False, False, False)"
+    },
+    {
+      "probe": "N-18",
+      "name": "MATRIX：无关附件全文未被加载",
+      "result": "PASS",
+      "detail": "模板显式声明未加载"
+    },
+    {
+      "probe": "AC-11",
+      "name": "CAMPAIGN 的 reference 投影与加载矩阵一致",
+      "result": "PASS",
+      "detail": "got(platforms,industry,examples)=(False, False, False) want=(False, False, False)"
+    },
+    {
+      "probe": "N-18",
+      "name": "CAMPAIGN：无关附件全文未被加载",
+      "result": "PASS",
+      "detail": "模板显式声明未加载"
+    },
+    {
+      "probe": "AC-11",
+      "name": "CONTENT_BRIEF 的 reference 投影与加载矩阵一致",
+      "result": "PASS",
+      "detail": "got(platforms,industry,examples)=(False, False, False) want=(False, False, False)"
+    },
+    {
+      "probe": "N-18",
+      "name": "CONTENT_BRIEF：无关附件全文未被加载",
+      "result": "PASS",
+      "detail": "模板显式声明未加载"
+    },
+    {
+      "probe": "AC-11",
+      "name": "CREATIVE_SCRIPT 的 reference 投影与加载矩阵一致",
+      "result": "PASS",
+      "detail": "got(platforms,industry,examples)=(True, True, True) want=(True, True, True)"
+    },
+    {
+      "probe": "AC-11",
+      "name": "PRODUCTION_DIRECTOR 的 reference 投影与加载矩阵一致",
+      "result": "PASS",
+      "detail": "got(platforms,industry,examples)=(True, True, True) want=(True, True, True)"
+    },
+    {
+      "probe": "AC-11",
+      "name": "PUBLISHING_PACKAGING 的 reference 投影与加载矩阵一致",
+      "result": "PASS",
+      "detail": "got(platforms,industry,examples)=(True, True, True) want=(True, True, True)"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CAMPAIGN 后继 SKILL sha256 与绑定记录一致",
+      "result": "PASS",
+      "detail": "43b17ddbe66d9023"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CAMPAIGN 源 SKILL sha256 与绑定记录一致（源零改动）",
+      "result": "PASS",
+      "detail": "c7ef284e40e7c4cd"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CAMPAIGN DSL 内 system prompt 字节与绑定记录一致",
+      "result": "PASS",
+      "detail": "15bd51b6c6c5b6a7"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CAMPAIGN system prompt 逐字节包含后继 SKILL 全文",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "probe": "AC-12",
+      "name": "CONTENT_BRIEF 后继 SKILL sha256 与绑定记录一致",
+      "result": "PASS",
+      "detail": "f66e1b637639c59e"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CONTENT_BRIEF 源 SKILL sha256 与绑定记录一致（源零改动）",
+      "result": "PASS",
+      "detail": "a0268a211a235b5b"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CONTENT_BRIEF DSL 内 system prompt 字节与绑定记录一致",
+      "result": "PASS",
+      "detail": "aeb118c12220cbb4"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CONTENT_BRIEF system prompt 逐字节包含后继 SKILL 全文",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "probe": "AC-12",
+      "name": "CREATIVE_SCRIPT 后继 SKILL sha256 与绑定记录一致",
+      "result": "PASS",
+      "detail": "442dc1262e5d2bbc"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CREATIVE_SCRIPT 源 SKILL sha256 与绑定记录一致（源零改动）",
+      "result": "PASS",
+      "detail": "d0f78a480f58d494"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CREATIVE_SCRIPT DSL 内 system prompt 字节与绑定记录一致",
+      "result": "PASS",
+      "detail": "f6cf29ca045ee2dd"
+    },
+    {
+      "probe": "AC-12",
+      "name": "CREATIVE_SCRIPT system prompt 逐字节包含后继 SKILL 全文",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "probe": "AC-12",
+      "name": "MATRIX 后继 SKILL sha256 与绑定记录一致",
+      "result": "PASS",
+      "detail": "245bd2238f9dc379"
+    },
+    {
+      "probe": "AC-12",
+      "name": "MATRIX 源 SKILL sha256 与绑定记录一致（源零改动）",
+      "result": "PASS",
+      "detail": "7a6afa3cf1a7b2e4"
+    },
+    {
+      "probe": "AC-12",
+      "name": "MATRIX DSL 内 system prompt 字节与绑定记录一致",
+      "result": "PASS",
+      "detail": "7ec255f0e9be871d"
+    },
+    {
+      "probe": "AC-12",
+      "name": "MATRIX system prompt 逐字节包含后继 SKILL 全文",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "probe": "AC-12",
+      "name": "PRODUCTION_DIRECTOR 后继 SKILL sha256 与绑定记录一致",
+      "result": "PASS",
+      "detail": "b48b88402cd09ea2"
+    },
+    {
+      "probe": "AC-12",
+      "name": "PRODUCTION_DIRECTOR 源 SKILL sha256 与绑定记录一致（源零改动）",
+      "result": "PASS",
+      "detail": "87acc4a082500190"
+    },
+    {
+      "probe": "AC-12",
+      "name": "PRODUCTION_DIRECTOR DSL 内 system prompt 字节与绑定记录一致",
+      "result": "PASS",
+      "detail": "61b17de95dfd8a98"
+    },
+    {
+      "probe": "AC-12",
+      "name": "PRODUCTION_DIRECTOR system prompt 逐字节包含后继 SKILL 全文",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "probe": "AC-12",
+      "name": "PUBLISHING_PACKAGING 后继 SKILL sha256 与绑定记录一致",
+      "result": "PASS",
+      "detail": "c56fe9cdaca173bc"
+    },
+    {
+      "probe": "AC-12",
+      "name": "PUBLISHING_PACKAGING 源 SKILL sha256 与绑定记录一致（源零改动）",
+      "result": "PASS",
+      "detail": "0c91a8efb0583523"
+    },
+    {
+      "probe": "AC-12",
+      "name": "PUBLISHING_PACKAGING DSL 内 system prompt 字节与绑定记录一致",
+      "result": "PASS",
+      "detail": "6459286ff956e16e"
+    },
+    {
+      "probe": "AC-12",
+      "name": "PUBLISHING_PACKAGING system prompt 逐字节包含后继 SKILL 全文",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "probe": "N-20",
+      "name": "父接缝 provider 绑定与绑定文件逐项一致（重绑机制存在）",
+      "result": "PASS",
+      "detail": "tools=6 pending=6 resolved=0"
+    },
+    {
+      "probe": "N-20",
+      "name": "provider 绑定当前状态",
+      "result": "NOT_VERIFIED",
+      "detail": "6/6 个 tool 节点仍为 PENDING_PUBLISH。未解析前不得宣称 Runtime 入口可达成立。"
+    }
+  ]
+}
