@@ -1668,16 +1668,17 @@ workflow:
       zIndex: 0
     - data:
         code: "\nimport hashlib\nimport json\n\n# AC-12 保真绑定记录（源 Skill → Workflow → Runtime → 模型 → provider → Attempt）\n#\
-          \ 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\nRECORD = {\"capability\": \"CONTENT_BRIEF\", \"completion_params\"\
-          : {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"model_name\": \"\
-          deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"reference_load_matrix\": {\"examples\"\
-          : \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\"\
-          , \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\"\
-          : \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\"\
-          , \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\"\
-          : \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
+          \ 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\n# 注意：这里必须走 json.loads，不能把 json.dumps 的结果直接当 Python 字面量贴进来。\n# 现场教训（2026-08-26）：直接贴会把\
+          \ Python 的 True 写成 JSON 的 true，\n# 代码节点一进沙箱就 NameError: name 'true' is not defined，整个能力应用调不起来。\nRECORD = json.loads('{\"\
+          capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\",\
+          \ \"thinking\": true, \"top_p\": 0.8}, \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\"\
+          , \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\"\
+          : \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\"\
+          , \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\"\
+          : \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\"\
+          , \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
           , \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"\
-          }\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
+          }')\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
           \ run_mode_resolved, goal_family):\n    art = artifact or \"\"\n    rec = dict(RECORD)\n    rec[\"input_envelope_sha256\"\
           ] = envelope_hash\n    rec[\"input_professional_sha256\"] = professional_input_hash\n    rec[\"artifact_sha256\"\
           ] = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rec[\"reference_projection_declared\"] = reference_projection\n\

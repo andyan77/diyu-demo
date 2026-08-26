@@ -497,11 +497,27 @@ def probe_provider_binding_honesty():
     pending = [t for t in tools if t["data"]["provider_id"] == "PENDING_PUBLISH"]
     resolved = [t for t in tools if t["data"]["provider_id"] != "PENDING_PUBLISH"]
     # 判据：绑定文件与 DSL 必须一致，且 PENDING 必须被如实反映
-    consistent = all(
-        b[k]["provider_id"] == [t for t in tools if t["data"]["tool_name"] == b[k]["tool_name"]][0]["data"]["provider_id"]
-        for k in b)
-    check("N-20", "父接缝 provider 绑定与绑定文件逐项一致（重绑机制存在）", consistent,
-          "tools=%d pending=%d resolved=%d" % (len(tools), len(pending), len(resolved)))
+    by_tool = {t["data"]["tool_name"]: t["data"]["provider_id"] for t in tools}
+    mismatch = []
+    for k, v in b.items():
+        if k == "_seam":            # 接缝自己的 provider 属于画布，不在接缝的 tool 节点里
+            continue
+        if by_tool.get(v["tool_name"]) != v["provider_id"]:
+            mismatch.append("%s: 绑定表=%s DSL=%s"
+                            % (k, v["provider_id"], by_tool.get(v["tool_name"], "缺节点")))
+    check("N-20", "父接缝 provider 绑定与绑定文件逐项一致（重绑机制存在）", not mismatch,
+          "tools=%d pending=%d resolved=%d 不一致=%s"
+          % (len(tools), len(pending), len(resolved), mismatch or "无"))
+
+    # 画布那一层：唯一的 tool 节点必须指向接缝的 provider
+    if "_seam" in b:
+        with open(CANVAS, encoding="utf-8") as fh:
+            cv = yaml.safe_load(fh)
+        ct = [n for n in cv["workflow"]["graph"]["nodes"] if n["data"].get("type") == "tool"]
+        ok = len(ct) == 1 and ct[0]["data"]["provider_id"] == b["_seam"]["provider_id"]
+        check("N-20", "Founder 画布的唯一 tool 节点指向统一接缝 provider", ok,
+              "canvas_tools=%d provider=%s 期望=%s"
+              % (len(ct), ct[0]["data"]["provider_id"] if ct else "无", b["_seam"]["provider_id"]))
     RESULTS.append({
         "probe": "N-20", "name": "provider 绑定当前状态",
         "result": "PASS" if len(pending) == 0 else "NOT_VERIFIED",
@@ -680,6 +696,56 @@ def probe_canvas_linear_lock_removed():
           "byte_identical=%s" % same)
 
 
+def probe_all_code_nodes_importable():
+    """N-57：每一个代码节点都必须能在沙箱里加载并暴露 main()。
+
+    为什么必须有这条：本探针原先只执行**被单独点名**的那几个代码节点，
+    没有被点名的节点从未被执行过。2026-08-26 首次真实 Dify 运行时，
+    六个能力应用的 `binding_record` 节点全部在模块级 `NameError:
+    name 'true' is not defined` 上炸掉 —— 根因是生成器把 json.dumps 的
+    结果直接当 Python 字面量贴进源码，`True` 变成了 JSON 的 `true`。
+    这是一个**静态就能发现**的缺陷，却拖到线上才暴露。补这条探针，
+    让「没被点名的节点」不再是盲区。
+    """
+    import glob
+    targets = sorted(glob.glob(os.path.join(DC_WF, "DIYU_M4_*_v1_3_TEST.yml"))
+                     + glob.glob(os.path.join(CP_WF, "DIYU_M4_*_v1_3_TEST.yml")))
+    total, bad = 0, []
+    for path in targets:
+        with open(path, encoding="utf-8") as fh:
+            d = yaml.safe_load(fh)
+        for n in d["workflow"]["graph"]["nodes"]:
+            if n["data"].get("type") != "code":
+                continue
+            total += 1
+            try:
+                fn = load_node_code(path, n["id"], preload={"json": json})
+                if not callable(fn):
+                    bad.append("%s::%s 没有可调用的 main()" % (os.path.basename(path), n["id"]))
+            except Exception as e:
+                bad.append("%s::%s -> %s: %s"
+                           % (os.path.basename(path), n["id"], type(e).__name__, str(e)[:120]))
+    check("N-57", "全部 %d 个代码节点都能加载并暴露 main()" % total, not bad,
+          "加载失败：" + ("；".join(bad) if bad else "无"))
+
+    # 另一半：JSON 字面量不得被当成 Python 字面量（就是上面那个缺陷的根因）
+    import re as _re
+    pat = _re.compile(r'(?<![\w"\'])(true|false|null)(?![\w"\'])')
+    leaks = []
+    for path in targets:
+        with open(path, encoding="utf-8") as fh:
+            d = yaml.safe_load(fh)
+        for n in d["workflow"]["graph"]["nodes"]:
+            if n["data"].get("type") != "code":
+                continue
+            for i, line in enumerate(n["data"]["code"].split("\n"), 1):
+                stripped = _re.sub(r'"[^"]*"|\'[^\']*\'', "", line.split("#")[0])
+                if pat.search(stripped):
+                    leaks.append("%s::%s:%d" % (os.path.basename(path), n["id"], i))
+    check("N-57", "代码节点里没有把 JSON 的 true/false/null 当成 Python 字面量",
+          not leaks, "命中：" + ("；".join(leaks[:10]) if leaks else "无"))
+
+
 def main():
     probe_sufficiency()
     probe_goal_fidelity_readonly()
@@ -694,6 +760,7 @@ def main():
     probe_fidelity_chain()
     probe_provider_binding_honesty()
     probe_canvas_linear_lock_removed()
+    probe_all_code_nodes_importable()
 
     n_pass = sum(1 for r in RESULTS if r["result"] == "PASS")
     n_fail = sum(1 for r in RESULTS if r["result"] == "FAIL")

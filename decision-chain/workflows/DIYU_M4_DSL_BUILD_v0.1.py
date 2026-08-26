@@ -584,7 +584,10 @@ import json
 # AC-12 保真绑定记录（源 Skill → Workflow → Runtime → 模型 → provider → Attempt）
 # 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。
 
-RECORD = __BINDING_RECORD__
+# 注意：这里必须走 json.loads，不能把 json.dumps 的结果直接当 Python 字面量贴进来。
+# 现场教训（2026-08-26）：直接贴会把 Python 的 True 写成 JSON 的 true，
+# 代码节点一进沙箱就 NameError: name 'true' is not defined，整个能力应用调不起来。
+RECORD = json.loads(__BINDING_RECORD_JSON__)
 
 
 def main(envelope_hash, professional_input_hash, artifact, reference_projection,
@@ -1081,8 +1084,11 @@ def build_capability_app(cap):
                 .replace("__RETURN_LAYER__", cap["capability"] + "_INPUT_SUFFICIENCY"))
 
     adapter_code = RETURNS_ADAPTER_CODE.replace("__CAPABILITY__", cap["capability"])
+    # 先 json.dumps 成 JSON 文本，再用 repr() 包成合法的 Python 字符串字面量，
+    # 由代码节点自己 json.loads —— 全程没有「JSON 字面量当 Python 字面量」这一步。
     bind_code = BINDING_RECORD_CODE.replace(
-        "__BINDING_RECORD__", json.dumps(binding_record, ensure_ascii=False, sort_keys=True))
+        "__BINDING_RECORD_JSON__",
+        repr(json.dumps(binding_record, ensure_ascii=False, sort_keys=True)))
 
     nodes = []
     edges = []

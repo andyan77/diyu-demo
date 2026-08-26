@@ -319,3 +319,28 @@ static_verify_after_rebind: "FAIL=0 WARN=0"
 
 **仍然不成立的**：以上全部是「对象已存在且已绑定」，**不是** Runtime 行为证据。
 AC-02…30 与 N-01…50 的 Runtime 部分仍为 `NOT_VERIFIED`，须由绑定真实 run_id 的 Formal Attempt 产生。
+
+### A-012 · 首次真实运行暴露的两处缺陷（DIAGNOSTIC）
+
+```yaml
+attempt_id: "A-012"
+kind: "DIAGNOSTIC"
+trigger: "FA-01 首次真实 Dify 运行，status=partial-succeeded"
+note: "两处都只有真跑才会暴露；静态验证与既有确定性探针**都没抓到**，这本身是探针盲区"
+```
+
+| # | 缺陷 | 现象 | 根因 | 修复 | 探针补强 |
+|---|---|---|---|---|---|
+| 3 | 生成器把 `json.dumps` 的结果直接当 Python 字面量贴进代码节点 | 六个能力应用的 `binding_record` 全部在模块级 `NameError: name 'true' is not defined`，整条能力调用起不来 | Python 的 `True` 经 `json.dumps` 变成 JSON 的 `true`，贴进 Python 源码即非法 | 改为 `RECORD = json.loads(<repr 的 JSON 字符串>)`，全程没有「JSON 字面量当 Python 字面量」这一步 | 新增 **N-57**：① 全部 37 个代码节点逐个加载并检查 `main()` 可调用；② 全量扫描「JSON 的 `true`/`false`/`null` 被当成 Python 字面量」 |
+| 4 | 重绑只看 `provider_id` 是否解析，没看 provider 钉住的**版本** | 应用重新发布后线上 published graph 确实是新的，工具调用却仍报旧版本的错 | `tool_workflow_providers.version` 在**注册那一刻**被钉死，重发布不会自动跟上；而 `provider_id` 始终不变，所以「绑定看起来是好的」 | `rebind` 每次无条件调 `tool-provider/workflow/update` 刷新；并新增目标系统复验「provider 钉住的 version == 应用当前已发布 version」，不等即 `rebind_complete: false` | 复验写进 `rebind` 自身，落盘 `provider_version_lag` |
+
+> **缺陷 4 正是 N-20 要防的那个失效**：「父接缝的 provider 必须重绑到后继版本；未重绑不得 PASS」。
+> 原实现把「`provider_id` 解析成功」当成了「已重绑」——**这两件事不是一回事**。
+> 教训写进判据：`provider_id` 不变**不能**说明绑定是新的。
+
+**N-57 的验证方式**（先证明探针有效，再修）：在**未修复**的 DSL 上先跑一次新探针，
+确认它给出 2 条 `FAIL`；修复后重跑，`total=95 PASS=95 FAIL=0 NOT_VERIFIED=0`。
+探针不是修完补上去凑数的，是先证明它能抓到这个真实缺陷。
+
+**当前 Dify 状态**：八个 M4 对象已更新到修复后版本（幂等，app_id 全部复用未新建）；
+`provider 版本复验：7/7 均等于应用当前已发布版本`；受保护应用写前写后仍为零变化。

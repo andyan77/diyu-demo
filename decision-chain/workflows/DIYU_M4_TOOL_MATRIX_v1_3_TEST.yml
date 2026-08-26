@@ -812,16 +812,17 @@ workflow:
       zIndex: 0
     - data:
         code: "\nimport hashlib\nimport json\n\n# AC-12 保真绑定记录（源 Skill → Workflow → Runtime → 模型 → provider → Attempt）\n#\
-          \ 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\nRECORD = {\"capability\": \"MATRIX\", \"completion_params\": {\"\
-          max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"model_name\": \"deepseek-v4-flash\"\
-          , \"model_provider\": \"langgenius/deepseek/deepseek\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"\
-          industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\": \"decision-chain/skills/Matrix_Architect_v0.1.2.md\"\
-          , \"source_skill_sha256\": \"7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838\", \"successor_skill_path\"\
-          : \"decision-chain/skills/Matrix_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf\"\
-          , \"system_prompt_sha256\": \"7ec255f0e9be871d2ce870c55eea644d0310d6e114afa37a34395531ae057460\", \"target_environment\"\
-          : \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
+          \ 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\n# 注意：这里必须走 json.loads，不能把 json.dumps 的结果直接当 Python 字面量贴进来。\n# 现场教训（2026-08-26）：直接贴会把\
+          \ Python 的 True 写成 JSON 的 true，\n# 代码节点一进沙箱就 NameError: name 'true' is not defined，整个能力应用调不起来。\nRECORD = json.loads('{\"\
+          capability\": \"MATRIX\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\"\
+          : true, \"top_p\": 0.8}, \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\"\
+          , \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\"\
+          : \"decision-chain/skills/Matrix_Architect_v0.1.2.md\", \"source_skill_sha256\": \"7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838\"\
+          , \"successor_skill_path\": \"decision-chain/skills/Matrix_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"\
+          245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf\", \"system_prompt_sha256\": \"7ec255f0e9be871d2ce870c55eea644d0310d6e114afa37a34395531ae057460\"\
+          , \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
           , \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f60472170cae32fb243a4fb608ab2b283c7c65ef3e673d79d4cf168eaacd28f2\"\
-          }\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
+          }')\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
           \ run_mode_resolved, goal_family):\n    art = artifact or \"\"\n    rec = dict(RECORD)\n    rec[\"input_envelope_sha256\"\
           ] = envelope_hash\n    rec[\"input_professional_sha256\"] = professional_input_hash\n    rec[\"artifact_sha256\"\
           ] = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rec[\"reference_projection_declared\"] = reference_projection\n\

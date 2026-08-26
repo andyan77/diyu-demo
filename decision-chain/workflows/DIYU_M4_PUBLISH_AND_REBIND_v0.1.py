@@ -223,6 +223,21 @@ class Console(object):
             "description": "M4 v1.3 TEST 能力后继应用", "parameters": params, "privacy_policy": "",
         })
 
+    def update_workflow_tool(self, workflow_tool_id, name, label, params):
+        """把已注册的 workflow tool 刷到应用**当前**已发布版本。
+
+        现场教训（2026-08-26）：`tool_workflow_providers.version` 在**注册那一刻**
+        被钉死。应用重新发布后，provider 仍然调用旧版本 —— 表现为「代码明明已修好、
+        线上 published graph 也确实是新的，工具调用却还在报旧版本的错」。
+        这正是 N-20 要防的失效：provider 没重绑到后继版本。
+        每次 rebind 都必须无条件刷一次，不能因为 provider_id 没变就认为绑定是新的。"""
+        return self._req("POST", "/console/api/workspaces/current/tool-provider/workflow/update", {
+            "workflow_tool_id": workflow_tool_id, "name": name, "label": label,
+            "icon": {"content": "🧩", "background": "#E4FBCC"},
+            "description": "M4 v1.3 TEST 能力后继应用", "parameters": params,
+            "privacy_policy": "", "labels": [],
+        })
+
     def list_workflow_tools(self):
         return self._req("GET", "/console/api/workspaces/current/tools/workflow")
 
@@ -403,11 +418,13 @@ def cmd_rebind():
             bindings[key] = {"provider_id": "PENDING_PUBLISH", "app_id": "PENDING_PUBLISH",
                              "published_workflow_id": "PENDING_PUBLISH", "tool_name": cap["tool_name"]}
             continue
+        params = params_from_start(os.path.join(cap["out_dir"], cap["out_file"]))
         if app_id not in by_app:
-            c.create_workflow_tool(
-                app_id, cap["tool_name"], cap["app_name"],
-                params_from_start(os.path.join(cap["out_dir"], cap["out_file"])))
+            c.create_workflow_tool(app_id, cap["tool_name"], cap["app_name"], params)
         provider_id = resolve_provider(c, app_id)      # 写后由目标系统确认
+        if provider_id != "PENDING_PUBLISH":
+            # 无条件刷新：provider 的 version 在注册那一刻被钉死，重发布不会自动跟上
+            c.update_workflow_tool(provider_id, cap["tool_name"], cap["app_name"], params)
         rows = psql("SELECT workflow_id FROM apps WHERE id='%s';" % app_id)
         bindings[key] = {"provider_id": provider_id, "app_id": app_id,
                          "published_workflow_id": rows[0] if rows else "UNKNOWN",
@@ -428,12 +445,17 @@ def cmd_rebind():
 
     # 接缝本身也要注册成 workflow tool，供 Founder 画布调用
     if seam_app_id:
+        seam_label = "DIYU %s · Capability Seam" % APP_TAG
+        seam_params = params_from_start(SEAM_FILE)
         if seam_app_id not in by_app:
             c.create_workflow_tool(seam_app_id, "diyu_m4_capability_seam",
-                                   "DIYU %s · Capability Seam" % APP_TAG,
-                                   params_from_start(SEAM_FILE))
+                                   seam_label, seam_params)
+        seam_provider = resolve_provider(c, seam_app_id)       # 写后由目标系统确认
+        if seam_provider != "PENDING_PUBLISH":
+            c.update_workflow_tool(seam_provider, "diyu_m4_capability_seam",
+                                   seam_label, seam_params)
         bindings["_seam"] = {
-            "provider_id": resolve_provider(c, seam_app_id),   # 写后由目标系统确认
+            "provider_id": seam_provider,
             "app_id": seam_app_id, "tool_name": "diyu_m4_capability_seam",
         }
         with open(BINDINGS, "w", encoding="utf-8") as fh:
@@ -449,14 +471,35 @@ def cmd_rebind():
 
     # 重绑后必须复验：父 provider 指向后继而不是旧版
     stale = [k for k, v in bindings.items() if v["provider_id"] == "PENDING_PUBLISH"]
+
+    # N-20 的真正判据：provider 钉住的 version 必须等于该应用**当前**已发布版本。
+    # provider_id 没变**不能**说明绑定是新的 —— 2026-08-26 就是栽在这一点上。
+    version_lag = []
+    for k, v in bindings.items():
+        aid = v.get("app_id")
+        if not aid or aid == "PENDING_PUBLISH":
+            continue
+        pin = psql("SELECT version FROM tool_workflow_providers WHERE id='%s';" % v["provider_id"])
+        cur = psql("SELECT w.version FROM apps a JOIN workflows w ON w.id=a.workflow_id "
+                   "WHERE a.id='%s';" % aid)
+        if not pin or not cur or pin[0] != cur[0]:
+            version_lag.append("%s: provider 钉住 %s，应用当前已发布 %s"
+                               % (k, pin[0] if pin else "?", cur[0] if cur else "?"))
+    if version_lag:
+        print("[FAIL] provider 版本落后：")
+        for x in version_lag:
+            print("   -", x)
+    else:
+        print("provider 版本复验：%d/%d 均等于应用当前已发布版本" % (len(bindings), len(bindings)))
     record("M4_DIFY_REBIND.json", {
         "bindings": bindings,
         "seam_app_id": seam_app_id,
         "unresolved_providers": stale,
-        "rebind_complete": not stale,
+        "provider_version_lag": version_lag,
+        "rebind_complete": not stale and not version_lag,
         "note": "未重绑的 provider 一律不得据以宣称入口可达或 Runtime 保真成立（N-20）。",
     })
-    return 0 if not stale else 1
+    return 0 if (not stale and not version_lag) else 1
 
 
 def cmd_confirm():

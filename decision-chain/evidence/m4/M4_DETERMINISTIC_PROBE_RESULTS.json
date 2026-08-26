@@ -1,10 +1,10 @@
 {
   "evidence_grade": "DETERMINISTIC_NODE_VERIFIED",
   "runtime_verified": false,
-  "total": 92,
-  "pass": 91,
+  "total": 95,
+  "pass": 95,
   "fail": 0,
-  "not_verified": 1,
+  "not_verified": 0,
   "results": [
     {
       "probe": "AC-04",
@@ -472,13 +472,19 @@
       "probe": "N-20",
       "name": "父接缝 provider 绑定与绑定文件逐项一致（重绑机制存在）",
       "result": "PASS",
-      "detail": "tools=6 pending=6 resolved=0"
+      "detail": "tools=6 pending=0 resolved=6 不一致=无"
+    },
+    {
+      "probe": "N-20",
+      "name": "Founder 画布的唯一 tool 节点指向统一接缝 provider",
+      "result": "PASS",
+      "detail": "canvas_tools=1 provider=2daa2d27-4305-4d24-95ec-3cb424eaeb2f 期望=2daa2d27-4305-4d24-95ec-3cb424eaeb2f"
     },
     {
       "probe": "N-20",
       "name": "provider 绑定当前状态",
-      "result": "NOT_VERIFIED",
-      "detail": "6/6 个 tool 节点仍为 PENDING_PUBLISH。未解析前不得宣称 Runtime 入口可达成立。"
+      "result": "PASS",
+      "detail": "0/6 个 tool 节点仍为 PENDING_PUBLISH。未解析前不得宣称 Runtime 入口可达成立。"
     },
     {
       "probe": "N-51",
@@ -557,6 +563,18 @@
       "name": "v1_shadow（M1 的自然语言理解）零改动",
       "result": "PASS",
       "detail": "byte_identical=True"
+    },
+    {
+      "probe": "N-57",
+      "name": "全部 37 个代码节点都能加载并暴露 main()",
+      "result": "PASS",
+      "detail": "加载失败：无"
+    },
+    {
+      "probe": "N-57",
+      "name": "代码节点里没有把 JSON 的 true/false/null 当成 Python 字面量",
+      "result": "PASS",
+      "detail": "命中：无"
     }
   ]
 }
