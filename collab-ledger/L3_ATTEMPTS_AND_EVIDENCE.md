@@ -1842,3 +1842,16 @@ Founder 在本会话中被完整告知 R-09b 的发现、被拦截的修复动�
 | 修复后验证 | `diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；`diyu_app` 连接自身 `diyu_business` 仍正常；`docker-api-1`（Dify 自身应用容器，`DB_USERNAME=postgres`）以 `postgres` 超级用户连接 `dify` 仍正常（超级用户天然绕过 CONNECT ACL，未受此次 REVOKE 影响） |
 | 验收标准更正 | `M2-AC-13` 由 `NOT_VERIFIED` 转 `PASS`；顺带发现并更正 `M2_ACCEPTANCE_EVIDENCE.md` 中 `M2-RB-08` 的一处遗留过期表述（该行仍写"R-07 尚未执行"，与同一文件内其他位置已确认 R-07 完成的事实矛盾，系文档撰写时序问题，非新缺陷），已更正为 `PASS`；`M2-AC-16`/`M2-RB-09` 维持 `NOT_VERIFIED`——凭据缺口，本次授权不覆盖（Founder 未提供、执行侧未索要 Dify 会话或 API Key） |
 | **任务终态（当前有效，取代 ATT-002 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）；`next_stage_allowed = false:Dify 画布重跑`——唯一剩余缺口是 `M2-AC-16` |
+
+### ATT-004（Founder 第二轮复核并提供 Dify App API Key，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+Founder 复核 ATT-003 后指出四类问题（3 槽/5 槽命名事实偏差、迁移降级"清晰拒绝"被误判为"可恢复"、技术决策记录与证据绑定的治理不一致、Rebase/Errata Prompt 文件未进任务分支且有格式缺陷），并明确指示逐项修正；随后主动提供该候选 Dify 应用专属的 App API Key 以解除 R-08。
+
+| 项 | 值 |
+|---|---|
+| 3 槽/5 槽更正 | 核实 `V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 的 `artifacts` 子对象真实拥有 3 个具名槽位（`matrix`/`campaign`/`content_brief`）；"5 槽"实际是同一 Schema 里可选字段 `last_acceptance.slot` 的 5 值枚举，与 `artifacts` 是两回事，此前混为一谈。`source` 由 `legacy_dify_5slot_import` 更正为 `legacy_dify_v1_task_snapshot_import`；重新 `docker build`、`stop/rm/run` 重启容器，69/69 测试重跑通过 |
+| 迁移降级恢复更正（撤回上一轮 PASS） | `M2-AC-13` 由 ATT-003 误判的 `PASS` 更正回 `NOT_VERIFIED`——downgrade 遇合法跨账号同键真实数据只能清晰拒绝、不能自动恢复/回滚，不满足验收标准原文字面要求；不擅自发明自动改键规则（业务决定），等待 Founder 裁决 |
+| 治理一致性更正 | `TECHNICAL_DECISION_RECORD.md` 追加更正说明（并发裸 500 早已修复，非"刻意不处理"）；`M2_ACCEPTANCE_EVIDENCE.md` 证据绑定基线改写为区分代码候选提交与纯文档提交 |
+| Rebase/Errata Prompt 分支归档 | 原文件（`sha256 = fbb65e1d...`）按 §6 授权范围字节级复制进 `business-persistence/`，`diff` 核验一致；文件确有一处未闭合 Markdown 代码围栏，逐行核对内容完整不缺失，仅格式缺陷 |
+| R-08 解除 | Founder 提供 App API Key（未索要 Console 会话/密码）；调用 Dify Service API 真实重跑候选 workflow，`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，`M2-AC-16` 转 `PASS` |
+| **任务终态（当前有效，取代 ATT-003 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`；`next_stage_allowed = false:M2-AC-13 迁移降级恢复裁决`——唯一剩余缺口是 `M2-AC-13`，需 Founder 决定自动改键规则或改写验收标准字面口径 |

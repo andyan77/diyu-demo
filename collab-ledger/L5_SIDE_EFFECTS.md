@@ -290,6 +290,28 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 结果 | `dify`/`dify_plugin` 的 `PUBLIC`/`diyu_app` CONNECT 权限已撤销；`diyu_app` 自身工作范围与 Dify 自身运行均未受损 |
 | **状态** | `ATTEMPTED → BLOCKED` → **`EXECUTED`**（Founder 明确授权后完成，非执行侧自行解除拦截） |
 
+### SE-018 · Dify 候选画布真实重跑（App API Key，R-08 解除）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | R-08：`M2-AC-16` 要求最终候选在真实 Dify 目标环境重新运行，此前受限于无可用 Console 会话/API Key |
+| 授权与凭据 | Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key；执行侧未索要 Console 会话或账号密码，Key 仅在内存中使用，未写入任何文件、commit 或本账本 |
+| 执行 | `curl -X POST http://localhost/v1/workflows/run` 携带该 Key，输入六步场景字段（`actor_ref`/`workspace_id`/`account_id`/`idempotency_prefix`/`task_note`/`content_ref`/`platform`/`published_at`/`feedback_note`），`response_mode: blocking` |
+| 结果 | `workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，`elapsed_time: 0.43s`，`error: null`；对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准逐项核验全部满足（`task_id`/`version_id`/`publish_instance_id` 均为真实 UUID；`projection_body.latest_snapshot.payload.note` 与填入原文逐字一致；`promote_body.promoted_by` 与填入 Actor Ref 一致；`current_cycle_body.label` 含本次运行标识） |
+| 受影响对象 | 该候选应用自身的 workflow 执行记录（Dify 侧新增一条运行历史，`workspace_id: 68df687c-...`、`account_id: 12802f90-...` 下新增真实业务对象：1 个 task、1 个 cycle、1 个 content version、1 个 publish instance、1 个 feedback record）——均在该候选专用的测试 workspace/account 范围内，不触碰任何生产账号或其他工作区 |
+| **状态** | `EXECUTED`——`M2-AC-16` 由 `NOT_VERIFIED` 转 `PASS` |
+
+### SE-019 · Rebase/Errata Prompt 文件复制进任务分支
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | Founder 复核指出该 Prompt 文件此前只在主工作区作为未跟踪文件存在，未进入本任务分支或远程，脱离本分支单独审计时无法追溯授权来源 |
+| 执行 | 将 `/home/faye/diyu-demo/M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`（`sha256 = fbb65e1dcdb405a435f03fc8efa8f9828926d9881850aa7c86237bf267ef7c5d`）原样字节复制（保留原 CRLF 换行）进本任务分支 `business-persistence/M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`，`diff` 核验字节完全一致；未修改主工作区原文件（仍保留在原位，未删除） |
+| 顺带发现 | 该文件本身有一处未闭合 Markdown 代码围栏（外观像复制/转存截断），逐行核对至文末确认内容连续完整、以正常声明块结束，非内容缺失，仅格式缺陷；未修改原文件一字 |
+| **状态** | `EXECUTED`——只在 `business-persistence/`（本任务已获授权的修改范围）内新增文件，未触碰主工作区或其他任务资产 |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

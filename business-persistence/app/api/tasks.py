@@ -201,8 +201,11 @@ def import_legacy_snapshot(
     record are created in a single transaction, so a failure between them
     can never leave a Task with no snapshot stuck in that state forever.
 
-    `source` on the snapshot is always "legacy_dify_5slot_import" so it can
-    never be mistaken for a live, real-time user confirmation.
+    `source` on the snapshot is always "legacy_dify_v1_task_snapshot_import" so
+    it can never be mistaken for a live, real-time user confirmation. This
+    imports the full V1_TASK_SNAPSHOT_SCHEMA_v0.1.json state object, whose
+    `artifacts` sub-object has 3 named slots (matrix/campaign/content_brief) --
+    not 5, see M2_ACCEPTANCE_EVIDENCE.md AC-14 for the corrected terminology.
     """
 
     missing = LEGACY_SNAPSHOT_REQUIRED_KEYS - body.legacy_snapshot.keys()
@@ -253,10 +256,10 @@ def import_legacy_snapshot(
         task_id=task.id,
         payload={"note": note, "legacy_snapshot": body.legacy_snapshot},
         info_nature=info_nature,
-        source="legacy_dify_5slot_import",
+        source="legacy_dify_v1_task_snapshot_import",
         confirmation_status=confirmation_status,
         scope={
-            "imported_from": "v1_demo_5slot",
+            "imported_from": "v1_demo_task_snapshot_v1",
             "schema_version": body.legacy_snapshot.get("schema_version"),
             "legacy_task_id": body.legacy_snapshot.get("task_id"),
         },

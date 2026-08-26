@@ -134,8 +134,17 @@ supersede 的对象。修复：所有相关查询显式加 `workspace_id` 过滤
 `material_id` 是否存在，不检查是否已撤回、是否属于本 workspace。修复：新增校验，撤回
 后的素材返回 409，跨 workspace 的素材返回 404（与"不存在"同等对待，不泄漏存在性）。
 
-**已知残留、刻意不处理的问题：** `create_version` 的 `version_no` 分配
+**已知残留、刻意不处理的问题（原始记录，已被下方更正）：** `create_version` 的 `version_no` 分配
 （`max(version_no)+1`）在同一 artifact 上高并发创建时可能撞 `uq_version_artifact_no`
 唯一约束触发裸 500——这不是审查发现的 6 个阻断项之一，本次也未修（不属于本次 Execution
 Prompt 授权范围内的"新增重试循环"）。多个候选版本几乎同时创建本身在当前业务场景下
 概率低、后果轻（重试即可），留待未来若真实出现再处理，此处明确披露而非隐藏。
+
+> **更正（2026-08-25，Rebase/Errata 001 R-04，追加说明，不改写上文原意）**：上文"刻意不
+> 处理"的判断已被后续 Rebase 推翻——该问题实际已真实修复，不再残留。修复方式：在
+> `create_version` 分配 `version_no` 前，对 `artifact_id` 做 `SELECT ... FOR UPDATE`
+> 行锁序列化并发请求（`app/api/content.py`，只锁 `Artifact.id` 一列，不读取其他字段，
+> 避免 SQLAlchemy 身份图缓存导致的锁后读到脏数据）。修复前 8 路真实并发实测复现 5/8
+> 请求返回裸 500；修复后连续 5 轮 8/8 全部成功。回归测试
+> `tests/test_concurrency.py::test_concurrent_version_creation_on_same_artifact_never_produces_a_raw_500`
+> 固化保护。上文"此处明确披露而非隐藏"的态度依然成立，只是披露的事实本身已经过时。

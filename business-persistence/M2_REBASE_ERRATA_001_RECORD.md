@@ -1,7 +1,19 @@
 # M2 Rebase/Errata 001 执行记录
 
-> 依据 `M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`（仓库根目录）执行。
+> 依据 `M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`（原始位置：主仓库根目录，`sha256 = fbb65e1dcdb405a435f03fc8efa8f9828926d9881850aa7c86237bf267ef7c5d`）执行。
 > 本文件不改写、不覆盖原 Root Execution Prompt，也不建立新任务。
+>
+> **更正（本次提交）**：该 Prompt 文件此前只在主工作区作为未跟踪文件存在，未进入本 M2
+> 任务分支或远程——脱离本分支单独审计时无法追溯到实际授权本轮工作的文件。已按§6 授权
+> 范围内的 `business-persistence/` 目录，原样字节复制（保留原 CRLF 换行、未改一字）进本
+> 任务分支：[`M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`](M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md)，
+> `diff` 核验与原文件字节完全一致（哈希同为 `fbb65e1d...`）。**顺带发现**：该文件本身
+> Markdown 结构有一处未闭合代码围栏（第 11 行开 ` ```yaml `，全文只有这一处围栏标记，
+> 此后不再闭合），后续章节的类 YAML 片段也不带围栏——外观上像复制/转存时遗漏了闭合
+> 标记，与该文件 CRLF 换行（提示原始编辑环境为 Windows）一致。**但逐行读到第 486 行
+> 确认内容本身连续、完整、以正常的最终声明块结束（`task_entry_mode = REBASE_TASK`），
+> 不是内容被截断——只是 Markdown 渲染格式有缺陷，不影响文件实际授权内容的可读性和完整
+> 性。未修改原文件一字（不属于执行侧可裁量范围），仅如实记录这一格式缺陷。
 
 ## 1. Task Contract 哈希纠偏（登记，不是新决定）
 
@@ -37,8 +49,8 @@ Stage Baseline v0.2 以下约束继续有效，本 Rebase 未触碰：A/B 阶段
 | 编号 | 发现 | 修复 | commit |
 |---|---|---|---|
 | R-04 | `create_version` 并发 version_no 分配裸 500（此前披露为"已知限制、不修"）——先证伪（8 路并发实测 5/8 返回 500）后修复 | `SELECT ... FOR UPDATE` 锁 artifact 行序列化分配 | `3d23674` |
-| R-05 | 穷尽检索确认仓库内不存在独立的"3 槽"快照 Schema 文件（只有叙述提及，EP-00 §1.4 明确记录其已被 5 槽部署取代）；`decision-chain/evidence/` 下存在真实旧 Matrix/Campaign/Content Brief 生产产物 | 3 槽：标记 `NOT_VERIFIED`，不补造 fixture；旧产物：用真实文件真实 sha256，经既有 create_task/artifact/version 端点显式导入 | `fabffd8` |
-| R-09a | `c3f8b2e6d0a4` 的 `downgrade()` 对着真实累积测试数据（而非空/影子库）会因合法的跨账号同 key 数据而裸崩溃——此前"往返对称"结论只在空库上验证过 | 加前置冲突检测，崩溃前抛出清晰 `RuntimeError` 并列出具体冲突行；不做自动合并（业务决定，不是迁移脚本该猜的） | `6955d66` |
+| R-05 | 穷尽检索确认仓库内不存在独立的"3 槽"快照 Schema **文件**（只有叙述提及，EP-00 §1.4 提到"三槽旧 Schema 与五槽部署事实不一致"）；`decision-chain/evidence/` 下存在真实旧 Matrix/Campaign/Content Brief 生产产物。**更正（本轮补充授权后）**：当时止步于"无独立文件"就判定"3 槽对象不存在"是错误推论——直接读取 `V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 后确认其 `artifacts` 子对象真实拥有 3 个具名槽位（`matrix`/`campaign`/`content_brief`），对象本身真实存在，只是不作为独立文件存在；"5 槽"实际指同一 Schema 里可选字段 `last_acceptance.slot` 的 5 值枚举（后续扩展新增 `production_stage1`/`publishing_stage2`），与 `artifacts` 的 3 槽是两个不同字段，此前混为一谈 | 3 槽（`artifacts`）：结构已被 legacy-import 端点正确校验导入，此前错误标注为 `legacy_dify_5slot_import`，已更正为 `legacy_dify_v1_task_snapshot_import`；旧产物真实内容：用真实文件真实 sha256，经既有 create_task/artifact/version 端点显式导入；可选字段 `last_acceptance.slot`（5 值枚举）未被任何现有夹具覆盖，如实标记为已知窄口径缺口，非阻断项 | `fabffd8`（内容导入）；命名更正见本次 commit |
+| R-09a | `c3f8b2e6d0a4` 的 `downgrade()` 对着真实累积测试数据（而非空/影子库）会因合法的跨账号同 key 数据而裸崩溃——此前"往返对称"结论只在空库上验证过 | 加前置冲突检测，崩溃前抛出清晰 `RuntimeError` 并列出具体冲突行；不做自动合并（业务决定，不是迁移脚本该猜的）。**更正（本轮补充授权后）**：此前把这一修复描述为"迁移链本身正确、可逆"是过度声明——崩溃变清晰拒绝是真实改进，但清晰拒绝时 downgrade **仍不能完成**，不满足 AC-13 原文"失败可恢复/回滚"字面要求。已将 `M2-AC-13` 此维度的结论如实更正为 `NOT_VERIFIED`（而非此前误写的"迁移链可逆"），见 `M2_ACCEPTANCE_EVIDENCE.md` AC-13 行；是否要为此另行实现一套自动改键策略，需要 Founder 就"跨账号冲突时如何处理共享 idempotency_key"给出业务裁决，执行侧不会不经授权自行发明这条规则 | `6955d66` |
 | R-09b | `diyu_app` 角色实际可以 `CONNECT` 到 `dify`/`dify_plugin`（表级 SELECT 正确拒绝，未读到真实数据）——此前 TDR 声称的"REVOKE ALL 阻止连接"在 CONNECT 层面不准确 | 首次尝试 `REVOKE CONNECT ... FROM PUBLIC/diyu_app` 被权限分类器拦截；**Founder 2026-08-25 现场明确授权后**，在 `docker-db_postgres-1` 以 `postgres` 超级用户执行同一 REVOKE 语句（分别对 `dify`、`dify_plugin`），修复后现场负向复测确认 `diyu_app` 对两库的 `CONNECT` 均被拒绝，回归确认 `diyu_app` 自身库与 Dify 自身容器（用 `postgres` 超级用户连接）均不受影响 | 数据库 ACL 变更，非代码 commit；证据见本记录 §7（已更新）与 `M2_ACCEPTANCE_EVIDENCE.md` M2-AC-13 行 |
 
 ## 6. R-10：审查预算符合性
@@ -66,13 +78,13 @@ repair_units = 3（对应 3 轮真实修复：020bc58、f09e292，以及本 Reba
 3. 修复后现场重测：`diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；
 4. 回归验证无收害：`diyu_app` 连接自身 `diyu_business` 正常（`SELECT current_database()` 成功）；`docker-api-1`（Dify 自身应用容器）确认以 `DB_USERNAME=postgres` 连接 `dify` 库——PostgreSQL 超级用户天然绕过 CONNECT ACL，不受本次 REVOKE 影响，以 `postgres` 身份连接 `dify` 库现场复测仍然成功。
 
-`M2-AC-13` 结论由此从 `NOT_VERIFIED` 转为 `PASS`，见 `M2_ACCEPTANCE_EVIDENCE.md` 对应行。
+`M2-AC-13` 的 CONNECT 权限子维度由此从"可以连接"转为"正确拒绝"，但 `M2-AC-13` **整体**结论保持 `NOT_VERIFIED`——见上方 R-09a 更正：迁移降级恢复维度未达标，任一子维度不达标即整体不判 PASS，见 `M2_ACCEPTANCE_EVIDENCE.md` AC-13 行。
 
-**R-08（未解除）**：无可用的已认证 Dify Console 会话或 App API Key，无法在不猜测/重建凭据的前提下重新真实运行候选画布。这不是授权缺口——Founder 已就本轮其余动作明确授权——而是本会话确实不具备该外部系统的访问凭据。`M2-AC-16` 保持 `NOT_VERIFIED`，需要 Founder 提供有效会话/凭据，或自行完成 `FOUNDER_TEST_PACKAGE.md` 六步场景验证。
+**R-08（已解除）**：Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key（未索要 Console 会话或账号密码）。执行侧用该 Key 调用 Dify 自身 Service API `POST /v1/workflows/run`，真实触发 Dify 引擎执行同一份已发布 workflow 定义——这是真实画布重跑，不是绕开 Dify 直接调用 M2 后端的"API 等价证据"（R-08.8 明文禁止的正是后者）。运行结果：`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，对照 `FOUNDER_TEST_PACKAGE.md` 的 9 项判断标准逐项核验全部满足（详见 `M2_ACCEPTANCE_EVIDENCE.md` AC-16 行）。`M2-AC-16` 由 `NOT_VERIFIED` 转为 `PASS`。
 
 ## 8. 本轮终态
 
-`M2-AC-13` 已转 `PASS`。`M2-AC-16`（受 R-08 阻塞）仍非 CURRENT PASS，按 Prompt §8.1：
+`M2-AC-16` 已转 `PASS`。`M2-AC-13`（受迁移降级恢复维度未达标阻塞）仍非 CURRENT PASS——CONNECT 权限子维度已修复，但这不足以让整体 AC 判 PASS。按 Prompt §8.1：
 
 ```text
 execution_disposition = CONTINUE
@@ -81,4 +93,4 @@ module_delivery_state = IN_PROGRESS
 next_stage_allowed = false
 ```
 
-**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-00~15` 与新转正的 `M2-AC-13` 已达 CURRENT PASS，但 `M2-AC-16` 仍未满足 §8.2 前提，缺口仅剩 Dify 画布现场重跑这一项，等待 Founder 提供凭据或自行验证。
+**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-00~12`、`M2-AC-14~16` 已达 CURRENT PASS（`AC-17` 为预期非终态），但 `M2-AC-13` 的迁移降级恢复维度仍未满足 §8.2 前提。剩余缺口需要 Founder 决定：(a) 明确授权一套具体的跨账号冲突自动改键/合并规则，由执行侧实现并测试；或 (b) 接受"清晰拒绝＋人工介入"为最终设计，并同意将 `M2-AC-13` 原文"失败可恢复/回滚"的达标口径正式改写——这一改写超出执行侧单方面裁量范围，需要 Founder 或合同层面裁决。

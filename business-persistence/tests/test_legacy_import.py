@@ -43,11 +43,11 @@ def test_valid_legacy_import_creates_readable_snapshot(client, bootstrapped, uni
     assert r.status_code == 200, r.text
     body = r.json()
     task_id = body["task"]["id"]
-    assert body["snapshot"]["source"] == "legacy_dify_5slot_import"
+    assert body["snapshot"]["source"] == "legacy_dify_v1_task_snapshot_import"
 
     projection = client.get(f"/workspaces/{ws_id}/tasks/{task_id}/projection", headers=headers).json()
     assert projection["latest_snapshot"]["payload"]["note"] == "帮我看看这周三条内容能不能按时发"
-    assert projection["latest_snapshot"]["source"] == "legacy_dify_5slot_import"
+    assert projection["latest_snapshot"]["source"] == "legacy_dify_v1_task_snapshot_import"
 
 
 def test_legacy_import_is_idempotent(client, bootstrapped, unique):
@@ -107,7 +107,7 @@ def test_legacy_import_provenance_reflects_old_confirmation_state(client, bootst
     ).json()
     assert confirmed["snapshot"]["info_nature"] == "fact"
     assert confirmed["snapshot"]["confirmation_status"] == "confirmed"
-    assert confirmed["snapshot"]["source"] == "legacy_dify_5slot_import"
+    assert confirmed["snapshot"]["source"] == "legacy_dify_v1_task_snapshot_import"
 
     draft = client.post(
         f"/workspaces/{ws_id}/tasks/legacy-import",
@@ -119,7 +119,7 @@ def test_legacy_import_provenance_reflects_old_confirmation_state(client, bootst
     ).json()
     assert draft["snapshot"]["info_nature"] == "preference"
     assert draft["snapshot"]["confirmation_status"] == "inferred"
-    assert draft["snapshot"]["source"] == "legacy_dify_5slot_import"
+    assert draft["snapshot"]["source"] == "legacy_dify_v1_task_snapshot_import"
 
 
 def test_legacy_import_empty_confirmed_task_falls_back_to_draft_goal(client, bootstrapped, unique):

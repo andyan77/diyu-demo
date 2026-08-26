@@ -1496,4 +1496,17 @@ Founder 在本会话中被告知 R-09b 的具体内容（发现、被拦截的�
 |---|---|
 | 数据库隔离门（再纠正） | **PASS**——修复前现场负向复现确认 `diyu_app` 确实可 `CONNECT` 到 `dify`/`dify_plugin`；Founder 授权后以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify, dify_plugin FROM PUBLIC, diyu_app`；修复后现场重测确认两库 `CONNECT` 均被拒绝；回归确认 `diyu_app` 自身库 `diyu_business` 与 Dify 自身容器（`postgres` 超级用户连接）均不受影响 |
 | 验收标准（再纠正） | `M2-AC-13` 由 `NOT_VERIFIED` 转 `PASS`；`M2-RB-08`（此前遗留的"R-07 尚未执行"表述与同一文件内 PASS 判定自相矛盾，已一并更正为 PASS——R-07 实际已在 `1f8e6c0` 完成）、`M2-RB-10` 转 `PASS`。`M2-AC-16`/`M2-RB-09` 维持 `NOT_VERIFIED`（凭据缺口，非本次授权范围）。见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`（本次为行内更正，非整体重写） |
-| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——唯一剩余缺口是 `M2-AC-16`）；`next_stage_allowed = false:Dify 画布重跑` |
+| 任务终态（T-011.4 时点，历史记录，见 T-011.5） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——唯一剩余缺口是 `M2-AC-16`）；`next_stage_allowed = false:Dify 画布重跑` |
+
+### T-011.5 Founder 第二轮复核：指出 T-011.4 对 AC-13 的判定过度声明，并提供 Dify App API Key 解除 R-08（取代 T-011.4 的 AC-13/AC-16 判定，T-011.4 其余内容保留为历史）
+
+Founder 复核 T-011.4 后指出四类问题：(1) 3 槽/5 槽兼容存在事实偏差——真实旧 Schema 只有 3 槽，代码却把导入标注为"5 槽"；(2) 迁移降级"清晰拒绝"不等于"可恢复/回滚"，T-011.4 把 `M2-AC-13` 判 `PASS` 是过度声明；(3) 技术决策记录与证据绑定存在治理不一致（并发 500 的过期描述、证据绑定旧 commit 未区分代码/文档提交）；(4) Rebase/Errata Prompt 文件只在主工作区未跟踪存在，未进入任务分支/远程，且文件本身 Markdown 结构有复制截断外观。Founder 随后明确指示：修正三槽/五槽识别、夹具和验收结论；解决迁移降级恢复或诚实降级该项状态；修正技术决策记录和提交证据绑定；将结构完整的补丁 Prompt 纳入任务分支并推送远程。执行侧逐项核实后确认全部四点均为真实发现（非误报），据此更正：
+
+| 项 | 值 |
+|---|---|
+| 3 槽/5 槽命名（更正） | 直接读取 `V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 确认 `artifacts` 子对象真实拥有 3 个具名槽位（`matrix`/`campaign`/`content_brief`）；"5 槽"实际是同一 Schema 里可选字段 `last_acceptance.slot` 的 5 值枚举，与 `artifacts` 是两个不同字段，此前分析混为一谈。`source` 标注由 `legacy_dify_5slot_import` 更正为 `legacy_dify_v1_task_snapshot_import`（`app/api/tasks.py`、`tests/test_legacy_import.py`），已重新构建镜像、重启容器、69/69 测试重跑通过 |
+| 迁移降级恢复（更正，撤回 T-011.4 的过度声明） | `M2-AC-13` 由 T-011.4 误判的 `PASS` 更正回 `NOT_VERIFIED`——CONNECT 权限子项确已修复，但 downgrade 遇到合法跨账号同键真实数据时只能清晰拒绝、不能自动完成回滚，不满足验收标准原文"失败可恢复/回滚"；执行侧不会不经授权自行发明一套自动改键规则（这是业务决定），需 Founder 后续裁决 |
+| 治理一致性（更正） | `TECHNICAL_DECISION_RECORD.md` 遗留的"并发裸 500 未修复"过期描述已追加更正说明；`M2_ACCEPTANCE_EVIDENCE.md` 顶部"证据绑定基线"已改写为区分代码候选提交与纯文档/权限收口提交，不再笼统绑定单一旧 commit |
+| Rebase/Errata Prompt 分支归档（更正） | 原文件（`sha256 = fbb65e1d...`）已按 §6 授权范围原样字节复制进 `business-persistence/M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`，`diff` 核验字节一致；该文件确有一处未闭合 Markdown 代码围栏（外观像复制截断），但逐行核对到文末确认内容连续完整、以正常声明块结束，不是内容缺失，仅格式缺陷，未修改原文一字 |
+| R-08（本轮解除） | Founder 提供该候选应用专属 App API Key（未索要 Console 会话或账号密码）；执行侧用该 Key 调用 Dify 自身 Service API 真实重跑候选 workflow（`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`），对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，`M2-AC-16` 转 `PASS`，非 API 等价替代证据 |
+| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）；`next_stage_allowed = false:M2-AC-13 迁移降级恢复裁决`——唯一剩余缺口是 `M2-AC-13`，需要 Founder 决定自动改键规则或改写验收标准字面口径 |
