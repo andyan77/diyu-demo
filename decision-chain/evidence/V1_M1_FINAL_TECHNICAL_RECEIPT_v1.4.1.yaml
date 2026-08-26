@@ -75,8 +75,10 @@ finding_1_disposition: >-
   真实缺口：高风险 CTA 一旦获得授权，此后每轮 dialogue_directive 完全不再提及，
   用户无从发现或纠正一次可能错判的授权。拆分处置——确定性半部（发生授权后必须
   可见、可核对、可撤回）已在 commit 5f335c4 修复并有单测+活体验证；语义半部
-  （用户自证式表态"就这么定了"是否构成 §5.4.3 要求的显式授权）**明确不由执行侧
-  裁定**，原样写入 Founder 实测包第三节第 4 条，由 Founder 用真实对话给出裁决。
+  （用户自证式表态"就这么定了"是否构成 §5.4.3 要求的显式授权）原样写入 Founder
+  实测包第三节第 4 条。**Founder 已于 2026-08-26 用 AskUserQuestion 直接裁决：
+  保持现状**——断言式表态在用户身兼提议者与审批者时构成显式授权，无需代码改动。
+  `FOUNDER_CONFIRMED`，语义半部关闭，M1-AC-18 无遗留开放项。
 
 finding_2_disposition: >-
   证据绑定缺口：此前 §18.5 全部 PASS 绑定到 a5319d2/6d62eeac，但正式全集实际
@@ -91,6 +93,9 @@ production_dify_touched: false
 protected_skills_modified: false
 other_apps_touched: false  # 仅本任务专用候选 App dd638b91
 
-founder_dify_acceptance_status: AWAITING
-task_final_status: AWAITING_FOUNDER_DIFY_ACCEPTANCE
-next_stage_allowed: false  # 不启动 M2/M3/M4/M5，不合并 main
+founder_dify_acceptance_status: ACCEPTED
+# Founder 2026-08-26 在会话内直接确认："所有测试都已经完成，我认为已经通过测试，
+# 这一步可以通过。"
+
+task_final_status: DONE
+next_stage_allowed: false  # M1 本身 DONE 不构成 M2/M3/M4/M5 自动施工授权；不合并 main

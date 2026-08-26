@@ -24,6 +24,7 @@
 | `V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.7） | [L1 §T-005](L1_TASK_MANIFESTS.md) · [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ 0eba71a`（起算；终态见 §一.7） |
 | `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | 首次尝试 `BLOCKED`（§一.8），附件补齐后 P0-A `DONE`（§一.9），采用进 `main` 与桌面包见最终回执 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；P0-A 完成见 §一.9） |
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.10） | [L1 §T-007](L1_TASK_MANIFESTS.md) · [L3 §九 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ c085eb3`（起算；终态见 §一.10） |
+| `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十二 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（独立 worktree/任务分支，未合入 main，终态不改变 main） |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -175,9 +176,9 @@
 
 | task_id | 依赖 | 定位引用 | 动作 | 对象 | 输入／基线 | 完成信号 |
 |---|---|---|---|---|---|---|
-| `DIYU-V1-M1-NATURAL-CONTEXT-001` | [M1 施工 Execution Prompt v1.2](../decision-chain/docs/M1_ENGINEERING_EXECUTION_PROMPT_v1.2.md) | 本任务自身 Task Contract（内嵌于该 Prompt §2） | 工程实现 M1 全部 P0（自然语言交互、任务上下文编译、唯一调用意图/计划、真实 Dify 候选运行、独立审查、回滚包、远程任务分支收口） | 独立 worktree／任务分支 `task/m1-natural-interaction-context-v1` | `main @ 93377e404e9e29fe2cd41ee9691f7e966c50dbee` ＋ 该 Prompt 全文 | `M1-AC-00` 至 `M1-AC-15` 全部 PASS ＋ 提交 Founder Dify 实测包，见该 Prompt §13 |
+| （当前无活动 task_id——`DIYU-V1-M1-NATURAL-CONTEXT-001` 已于 2026-08-26 终结 `DONE`，移出本表，见 §一） | | | | | | |
 
-**`COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001`、`V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1–M4 Phase 0 共享编译前言已采用且前言内八项能力四类合同值、Matrix 局部降级口径均已 `FOUNDER_CONFIRMED`。Founder 2026-08-25 裁定"执行 Prompt 即授权"铁律（见 [COLLAB_CONTINUITY_PROTOCOL.md](COLLAB_CONTINUITY_PROTOCOL.md) §六 与 [L1 §T-009](L1_TASK_MANIFESTS.md)）后，M1 施工 Execution Prompt 视为已获执行授权，`DIYU-V1-M1-NATURAL-CONTEXT-001` 现为活动工程任务（见上表）；M2/M3/M4 施工 Execution Prompt 仍待规划侧编译，编译后同样适用该铁律。**
+**`COLLAB-LEDGER-BOOTSTRAP-001`、`V1-REBASE-EP00-CURRENT`、`M0-EP00-ADOPTION-CLOSEOUT-001`、`V1-M0-1B-SLICE-CONTRACT-REVISION-001`、`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001`、`V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001`、`V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001`、`V1-M1-ENGINEERING-PROMPT-ADOPTION-001`、`V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001`、`DIYU-V1-M1-NATURAL-CONTEXT-001` 均已终结 `DONE`（见 §一）。**M0 已全部完成；M1 工程实现（自然语言交互、任务上下文编译、CTA 三层权限、账号锚点、真实 Dify 候选运行、独立审查、回滚演练、Founder 实测验收）已于 2026-08-26 全部完成并经 Founder ACCEPT，`task_final_status: DONE`。M2/M3/M4 施工 Execution Prompt 仍待规划侧编译；`M1 本身 DONE` 不构成对 M2/M3/M4/M5 的自动施工授权，需另行明确新授权，编译后同样适用"执行 Prompt 即授权"铁律。**
 
 **已解决**：EP-00 报告 §十一「仍需 Founder 裁决的产品命题」已由 Founder 通过 F-01～F-10 十项裁决 + 四项定向纠偏答复，并落地进 v0.2（已 `ACCEPTED`）；四份共享合同已起草并经 Founder 接受（见 §一.7）。
 
@@ -209,19 +210,24 @@
 ```yaml
 task_id: DIYU-V1-M1-NATURAL-CONTEXT-001
 task_entry_mode: REBASE_TASK
-execution_disposition: CONTINUE
-task_final_status: null
+execution_disposition: COMPLETE
+task_final_status: DONE
 current_task_contract_version: "1.4"
 active_rebase_delta: M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md
 active_rebase_delta_sha256: 01bbe73a173091bdf4dc035c521466ef0c1aa95821808bc5283c1c68c1b1f8f3
-current_state: V1_4_1_CLOSING_REVIEWER_DONE_FINDING1_FIXED_FINDING2_CLOSED_TECHNICALLY_READY_FOR_FOUNDER_DIFY_ACCEPTANCE
-final_commit: 5f335c47116554ded225848f3a43534b8efc7321
+current_state: V1_4_1_FOUNDER_ACCEPTED_CTA_SEMANTIC_QUESTION_FOUNDER_CONFIRMED_KEEP_AS_IS_DONE
+final_commit: 024d6992b73e884355658f10e78da5d1c16a126f
 final_dsl_sha256: 845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a
 published_workflow_id: 3f96f47f-45bf-4138-9a56-940af199ebb9
-next_stage_allowed: false
+founder_dify_acceptance_status: ACCEPTED
+next_stage_allowed: false  # M1 本身 DONE ≠ M2/M3/M4/M5 自动获得施工授权，需另行明确新授权
 ```
 
-**2026-08-26 状态更新（独立收口 Reviewer 结论 + Finding 1 修复 + v0.13 最终冻结全集复验，最新）**：唯一一名 §9 授权的上下文隔离只读收口 Reviewer（agent `a37817485b8cc3100`）已运行完毕，结论：M1-B-20～26/28/29 与 AC-17/19 `PASS`（含活体复现）；**M1-B-27／M1-AC-18 判定 `FAIL`**（真实缺口：高风险 CTA 一旦获得授权，`dialogue_directive` 此后完全不再提及，用户没有任何机会发现或纠正一次可能错判的授权）；M1-B-30 `PARTIAL`（AC-15 回滚本身独立复核为真实，但正式全集实际跑在 v0.11 而非最终冻结配置，§6.5 字面要求未满足）；安全/权限/受保护资产/数据完整性 `CLEAN`。
+**2026-08-26 状态更新（Founder 实测验收 + CTA 授权语义裁决，任务终态 `DONE`，最新）**：Founder 在本会话内直接确认已完成 `V1_M1_FOUNDER_DIFY_TEST_PACKAGE_v0.13.md` 全部测试并接受（"所有测试都已经完成，我认为已经通过测试，这一步可以通过"）。针对实测包第三节第 4 条留给 Founder 的开放语义问题（高风险 CTA 场景下，用户自己的断言式表态是否构成显式授权），执行侧用 `AskUserQuestion` 原样复述判据边界供裁决，**Founder 明确选择"保持现状"**——当前代码行为（断言式表态即可触发授权）就此 `FOUNDER_CONFIRMED`，不需要任何代码改动。M1-AC-18 语义半部关闭，全部适用 AC-00～19 无遗留开放项。任务终态 `DONE`；`next_stage_allowed` 仍为 `false`，M2/M3/M4/M5 施工需另行明确授权，本次不自动开工。详见 [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+---
+
+**2026-08-26 状态更新（独立收口 Reviewer 结论 + Finding 1 修复 + v0.13 最终冻结全集复验，历史记录）**：唯一一名 §9 授权的上下文隔离只读收口 Reviewer（agent `a37817485b8cc3100`）已运行完毕，结论：M1-B-20～26/28/29 与 AC-17/19 `PASS`（含活体复现）；**M1-B-27／M1-AC-18 判定 `FAIL`**（真实缺口：高风险 CTA 一旦获得授权，`dialogue_directive` 此后完全不再提及，用户没有任何机会发现或纠正一次可能错判的授权）；M1-B-30 `PARTIAL`（AC-15 回滚本身独立复核为真实，但正式全集实际跑在 v0.11 而非最终冻结配置，§6.5 字面要求未满足）；安全/权限/受保护资产/数据完整性 `CLEAN`。
 
 执行侧处置：该缺口拆成确定性半部（一旦授权就必须每轮无条件复述，可核对可撤回）和语义半部（用户自己的断言式表态"就这么定了"在其身兼提议者与审批者时是否构成 §5.4.3 的显式授权——产品语义问题，不由执行侧代答）。**只修确定性半部**（commit `5f335c4`，216/216 单测通过，新增 2 条回归锁定），**语义半部原样写入 Founder 实测包，明确留给 Founder 用真实对话判断**，不落子 §11 强制停止条件（属"实现多解"范畴，非合同冲突）。随后在这个新 commit 上重新构建 DSL（SHA-256 `845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a`，两次构建字节一致）、导入发布到同一候选 App（`apps.workflow_id` 直查确认 = `3f96f47f-45bf-4138-9a56-940af199ebb9`，草稿/发布嵌入编译器源码与 Git HEAD 字节一致），**第一次真正在最终冻结配置上跑通 §6.1～6.4 全集**（31 场景/34 次真实调用，0 空回复、0 报错；新增用例活体证明 Finding 1 修复端到端生效——授权当轮 + 跨到无关话题的后续轮次均持续复述"已授权+具体目标+可撤回"）。全集阈值对照：34 次中 3 次 `partial-succeeded`，逐条查证均为同一已知 WSL2/Docker MTU 网络瞬断签名（`api.deepseek.com` SSL EOF），分布在互不相关的 3 个场景、功能上零失败，对 3 个具体输入重放 3/3 全部干净 `succeeded`——判定为 §11 明确排除的"模型波动"，如实记录字面差异（`partial_succeeded` 非 0）但不视为 P0 阻断。详见 [evidence §十九](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
 
