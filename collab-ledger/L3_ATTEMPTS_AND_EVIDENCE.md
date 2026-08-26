@@ -1793,3 +1793,26 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 #### ATT-001 结论
 
 文档落盘 `DONE`（含一处已披露的文档自证哈希不一致，Founder 已裁决按独立复算值登记）；M2 工程执行（`task_id: DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`）**未开工、未获授权**，`task/m2-business-persistence-version-feedback-v1` 分支不存在，未创建任何 PostgreSQL/Dify 对象。任务终态见最终回执与 [L2 §一.13](L2_TASK_STATE_AND_HANDOFF.md)、[L5](L5_SIDE_EFFECTS.md)。
+
+**状态更正**（2026-08-25，追加于本任务终结之后，不改写本任务自身历史）：上一段"未开工、未获授权"仅对**本落盘任务自身**在其执行时点为真，不代表该 task_id 此后的状态。`V1-M2-ENGINEERING-PROMPT-ADOPTION-001`（§一.14）登记 Founder 已就该具体 task_id 明确答复"就是要启动，铁律适用"后，`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 已实际开工并推进：`task/m2-business-persistence-version-feedback-v1` 分支与独立 worktree 已建立，PostgreSQL 隔离数据库 `diyu_business`、7 个 Alembic 迁移、Dify 候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）均已创建，9 个 commit 已推送远程任务分支（本地/远程 head 一致于 `f09e2923a7b57efbcb94cd83ed54c5b6cd94b3c4`）。详见新增 [L1 §T-011](L1_TASK_MANIFESTS.md)、[本文件 §十三](#十三-diyu-v1-m2-business-persistence-version-feedback-001)、[L5](L5_SIDE_EFFECTS.md) SE-014 起、以及 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` 的 `M2-AC-00`~`M2-AC-17` 逐条证据。
+
+---
+
+## 十三、`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`
+
+### ATT-001（多次会话延续，同一 task_id，同一分支/worktree，无重建）
+
+| 项 | 值 |
+|---|---|
+| 授权依据 | [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md#一14-v1-m2-engineering-prompt-adoption-001m2-工程执行授权确认追加于一13之后不覆盖一13)——Founder 2026-08-25 就该 task_id 当场明确答复"就是要启动，铁律适用" |
+| Task Contract | 见 [L1 §T-011](L1_TASK_MANIFESTS.md)，内容为 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md` §3 原文，独立复算 `task_contract_hash = 4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830`（与文档自称值不一致，已在 [L1 §T-010](L1_TASK_MANIFESTS.md) 披露并由 Founder 裁决采用独立复算值） |
+| 分支／worktree | `task/m2-business-persistence-version-feedback-v1`；独立 worktree `/home/faye/diyu-demo-worktrees/m2-business-persistence-version-feedback-v1` |
+| 数据库隔离 | PostgreSQL 15.19（`docker-db_postgres-1`）内独立数据库 `diyu_business`，owner `diyu_app`（`NOSUPERUSER NOCREATEDB NOCREATEROLE`），对 `dify`/`dify_plugin` 显式 `REVOKE ALL`；7 个 Alembic 迁移线性链，现场 `alembic current` = `c3f8b2e6d0a4 (head)` |
+| Dify 候选 | `app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`，workflow 类型，`diyu 's Workspace`，命名含 `DO NOT USE FOR PRODUCTION` 标记；六步验收场景已于早前会话真实运行 17/17 节点成功（见 `business-persistence/FOUNDER_TEST_PACKAGE.md`） |
+| 独立审查 | 本任务经过多轮独立、上下文隔离的对抗性审查：(1) 初版实现审查，发现 21 个真实缺陷（6 阻断级），已修复（commit `a3eeb2f`）；(2) 本轮 M2-AC-07/14/15 补齐后的双路并行审查，发现 4 个真实缺陷（含 1 阻断级——legacy-import 与活体任务共享 idempotency 命名空间），已修复（commit `020bc58`）；(3) 收口验证（仅复核受影响范围），发现修复本身引入的 1 个新缺陷，已修复（commit `f09e292`） |
+| 全量回归 | 现场 `pytest tests/ -q` = **66 passed**（对最终 commit `f09e292` 重跑，非历史缓存结果） |
+| Git 收口 | 9 个 commit；本地 HEAD 与远程 `origin/task/m2-business-persistence-version-feedback-v1` 一致于 `f09e2923a7b57efbcb94cd83ed54c5b6cd94b3c4`（`git push` 输出逐次核验，最后一次 `020bc58..f09e292`） |
+| 验收证据 | `M2-AC-00` 至 `M2-AC-16` 现场 PASS（`AC-16` 含一项已披露的证据新鲜度限制——本轮新增端点未触发 Dify 画布重新运行，等价 API 级回归已现场验证），`M2-AC-17` 待 Founder。逐条记录见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` |
+| 已知限制 | `create_version` 的 `version_no` 高并发分配裸 500（已披露，非本轮任一 AC 阻断项）；AC-14 只覆盖 5 槽 task_snapshot_json 一种旧兼容形态；AC-16 的 Dify 画布证据未在本轮变更后重新触发 |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、Dify 现有生产/共享应用与内部表——全程零改动，`diyu_app` 角色对 `dify`/`dify_plugin` 无连接权限 |
+| 任务终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE`；`next_stage_allowed = false`——技术侧已收口，等待 Founder 通过 Dify 画布完成产品/业务验收；退回时沿用同一 task_id 执行 `CONTINUE_TASK` |

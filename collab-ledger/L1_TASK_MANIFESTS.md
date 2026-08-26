@@ -1441,3 +1441,35 @@ scope_boundary: "只做文档原样落盘、引用哈希与自证哈希核验（
 | 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、M1 落盘文档执行前后 blob hash 逐一核对，全部一致 |
 | 独立复核 | 未触发——全部为对照文档正文的直接哈希核验、并发状态核验与状态字段登记，无需要多角度判断的实质分歧点 |
 | 任务终态 | 见最终回执 |
+
+---
+
+## §T-011 · `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`
+
+### T-011.1 Task Contract（稳定合同）
+
+本任务的稳定 Task Contract **就是** `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md` §3 `TASK_CONTRACT_BEGIN`/`TASK_CONTRACT_END` 围栏内的原文——不在本节重复整段 YAML，避免与源文档产生第二份可能漂移的副本。
+
+```yaml
+task_contract_source: decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md
+task_contract_fence: TASK_CONTRACT_BEGIN..TASK_CONTRACT_END（该文档 §3）
+task_contract_hash_self_declared: e17b354b97d53bfa52eeb30ffca50970e5469acabee98b3cfc32a1031b1b90ca
+task_contract_hash_independently_recomputed: 4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830
+task_contract_hash_authoritative_for_this_task: 4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830
+hash_discrepancy_disclosure: 见 [L1 §T-010.2](#t-1022-当前-manifest) DA-02——Founder 已裁决按独立复算值登记，本任务及其全部引用一律使用该值
+```
+
+### T-011.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| 授权确认 | [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md#一14-v1-m2-engineering-prompt-adoption-001m2-工程执行授权确认追加于一13之后不覆盖一13)——Founder 2026-08-25 就本 task_id 明确答复"就是要启动，铁律适用" |
+| 入口门 | 分支 `task/m2-business-persistence-version-feedback-v1`、独立 worktree 已建立；PostgreSQL/Dify 现场只读核验已完成（详见 `business-persistence/TECHNICAL_DECISION_RECORD.md`） |
+| 数据库隔离门 | PASS——独立数据库 `diyu_business`，owner `diyu_app`（`NOSUPERUSER NOCREATEDB NOCREATEROLE`），对 `dify`/`dify_plugin` `REVOKE ALL`；7 个 Alembic 迁移线性无分叉，现场 `alembic current` = `c3f8b2e6d0a4 (head)`，`upgrade→downgrade -1→upgrade` 往返已在收口验证中核验对称 |
+| P0 交付 | 应用后端（FastAPI+SQLAlchemy 2.0+Alembic）、业务身份/工作空间隔离、任务快照五维投影、版本原子晋升、发布/反馈证据隔离、素材撤回级联失效、幂等/并发/恢复、周期与 Campaign 覆盖、产能三分、打法版本化、Cycle N→N+1 双分支记录（M2-AC-07）、旧 Demo 5 槽快照兼容导入（M2-AC-14）、M1/M3/M4 接口边界契约测试（M2-AC-15）、Dify 候选（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）均已交付 |
+| 验收标准 | `M2-AC-00` 至 `M2-AC-16` 现场 PASS（`AC-16` 含一项已披露证据新鲜度限制）；`M2-AC-17` 待 Founder。逐条记录见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`，不在本表重复 |
+| 独立审查 | 三轮，见 [L3 §十三 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md#十三-diyu-v1-m2-business-persistence-version-feedback-001) |
+| Git 收口 | 9 个 commit，本地/远程 head 一致于 `f09e2923a7b57efbcb94cd83ed54c5b6cd94b3c4`；见 [L5](L5_SIDE_EFFECTS.md) SE-014 起 |
+| 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、Dify 生产/共享应用与内部表——全程零改动 |
+| 独立复核 | 已触发三次（见上「独立审查」行），均为上下文隔离、无写权限的对抗性审查，非本任务自证 |
+| 任务终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE`；`next_stage_allowed = false` |

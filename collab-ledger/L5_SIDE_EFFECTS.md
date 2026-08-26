@@ -239,6 +239,44 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 | **状态追加 1**（2026-08-25） | 集成分支 `chore/m2-engineering-prompt-adoption`（本地新建，源自 `main`，未推远程）完成两段 `--no-ff` 合并：① 接入任务分支 `task/v1-m2-engineering-prompt-adoption-001` tip `2db32b1`（零冲突，commit `a7d6944`）；② 合并进本地 `main`（合并提交 `1398c83a54fc5e9b89c397b20747818edb5616dc`）。推送前 `git fetch origin main` 核验 `origin/main` 仍为 `0de99930...`，未漂移。推送：`0de9993..1398c83  main -> main`。远程核验：`git ls-remote origin refs/heads/main` → `1398c83a54fc5e9b89c397b20747818edb5616dc`，与本地 `git rev-parse main` 完全一致。双向祖先核验通过（任务分支是新 main 祖先；旧 main tip `0de99930...` 仍是新 main 祖先，历史未改写）。全部受保护资产（四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、M1 落盘文档）blob hash 合并后重算，逐字未动。落盘的 `decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md` 最终 sha256 = `8008bebd04b35037e16f5462ea1b7284db7dec943e954263762bbdb4688bb0c6`，与落盘时一致。来源分支 `task/v1-m2-engineering-prompt-adoption-001` 远程保留，未删除 |
 
+### SE-014 · 推送任务分支 `task/m2-business-persistence-version-feedback-v1`（工程执行，非落盘）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 类型 | Git push（任务分支，独立于 `main`），3 次连续推送，同一目标 ref |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/m2-business-persistence-version-feedback-v1` |
+| 内容标识 | 见 [L3 §十三 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md#十三-diyu-v1-m2-business-persistence-version-feedback-001) |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；未触碰默认分支 |
+| 核验依据 | `git push` 命令本身回显的 ref-update 行（`旧hash..新hash`），逐次核对 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+| **状态追加 1** | `019df51..44f02dd`——首次工程执行修复批（`a3eeb2f` 独立审查 21 项缺陷修复、`0546f30` M2-AC-14、`d7f9e94` M2-AC-07、`44f02dd` M2-AC-15） |
+| **状态追加 2** | `44f02dd..020bc58`——两轮独立审查发现的 4 个真实缺陷修复批 |
+| **状态追加 3** | `020bc58..f09e292`——收口验证发现的 legacy-import 多快照 500 修复 |
+
+### SE-015 · PostgreSQL 迁移（独立数据库 `diyu_business`）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 类型 | Alembic 迁移，`docker-db_postgres-1` 内独立数据库 `diyu_business`（与 `dify`/`dify_plugin` 物理隔离，`diyu_app` 角色对后两者 `REVOKE ALL`） |
+| 内容标识 | 7 个迁移线性链：`fdbd31cee7f9`(initial)→`6033064ae1ed`→`6bc000bb178d`→`fb5e3889277c`→`db747c8a1f80`(auth+race fixes)→`a1c5e7d4f2b9`(cycle_decisions)→`c3f8b2e6d0a4`(account 级幂等+legacy-import 隔离) |
+| 幂等信息 | `alembic upgrade head` 对已应用版本为空操作；`downgrade`/`upgrade` 往返已在收口验证中核验对称（`c3f8b2e6d0a4` 一节） |
+| 受控状态 | 可逆——全部迁移均有对称 `downgrade()`；数据库内容目前仅为工程测试数据，非真实经营数据 |
+| 核验依据 | 现场 `alembic current` = `c3f8b2e6d0a4 (head)`；`alembic check` 无模型/schema 漂移 |
+| **状态** | **`CONFIRMED`**（现场核验，非自报） |
+
+### SE-016 · Dify 候选应用（沿用既有对象，本轮未新建/未发布新版本）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 对象 | `app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`，`diyu 's Workspace`，workflow 类型，命名含 `DO NOT USE FOR PRODUCTION` |
+| 本轮动作 | **无**——本轮新增的三个后端能力（M2-AC-07/14/15）未被该候选画布调用，候选契约未变，未重新导入/发布 |
+| 已披露限制 | 按 Prompt `evidence_reuse_policy.criterion_dependency_map` 字面要求，应用后端变化后 AC-16 证据应刷新；本轮未重新触发画布真实运行（无可用已认证 Dify 会话，且核验到的 `dify-platform-expert` MCP 连接指向另一个不相关的 Dify 1.9.2 实例，判断不可用后放弃采用，未用其伪造证据）。等价 API 级证据（66 项回归，覆盖候选实际调用的全部端点契约）已现场验证，详见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` M2-AC-16 行 |
+| **状态** | 沿用既有对象，**未产生新副作用**；限制已披露，非隐藏 |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
