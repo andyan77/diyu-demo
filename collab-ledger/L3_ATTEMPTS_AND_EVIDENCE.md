@@ -1914,4 +1914,4 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 | `M2-PDR-12` | `PASS`（`technical_result = PASS`，不登记 `founder_disposition = WAIVED_FOR_THIS_DELIVERY`——与 `M2-AC-13` 的"结果不达标+接受"先例不是同一情形） |
 | `M2-PDR-01～15` | 全部 `PASS` |
 | 终态（正式 `DONE`，不登记 `execution_disposition`，理由同 L1 §T-011.10） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`；`main_merge_authorized = true`（Founder 条件授权：分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`PDR-01～15` 全部完成，执行侧合并前逐项现场核验） |
-| Git/合并收口 | 任务分支提交推送后现场核验条件满足，合并进 `main` 并推送 `origin/main`；具体 commit/hash 见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md) |
+| Git/合并收口 | 任务分支收口 commit `4f57a32e61e2612f7f3de3699f5f5253fe270d5c` 推送后现场核验条件满足，以真实二亲合并（无冲突）commit `17ca3f70212f38048b37f739edffba8bf7cf8f85` 合并进 `main` 并推送 `origin/main`；详见 [L5 SE-027～SE-029](L5_SIDE_EFFECTS.md) |

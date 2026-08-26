@@ -409,7 +409,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 起点 | `ec77bfdb6a226d1e3f57f905754774174308bc95` |
 | 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force`/`amend`/`reset --hard`/`squash` |
 | 受控状态 | 可逆——任务分支可删；本条自身**未触碰** `main` |
-| 核验依据 | 现场 `git rev-parse HEAD` 与 `git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` 一致（本地=远程）；`git ls-remote origin refs/heads/main` 推送前仍为 `df2c5952551f386a0e9a509404357f23c1d223c9`；准确 commit hash 见任务收口回执（本文件不复述自身所在 commit 的 hash，结构性自指问题说明见 `M2_POST_DONE_REBASE_v1.2_RECORD.md` §11） |
+| 核验依据 | 推送后现场 `git rev-parse HEAD` 与 `git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` 均为 `4f57a32e61e2612f7f3de3699f5f5253fe270d5c`（本地=远程）；推送前 `git ls-remote origin refs/heads/main` 仍为 `df2c5952551f386a0e9a509404357f23c1d223c9`，本条自身未触碰 `main` |
 | **状态** | `CONFIRMED` |
 
 ### SE-028 · 任务分支合并进 `main`（Founder 条件授权，`M2-PDR-12 = PASS` 后触发）
@@ -421,7 +421,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 前置条件核验（Founder 要求，执行侧现场逐项核验，全部满足方可执行；详见 `M2_POST_DONE_REBASE_v1.2_RECORD.md` §14） | (1) 任务分支工作区干净；(2) 本地/远程任务分支一致；(3) 受保护资产未改变（`git diff --stat origin/main..HEAD` 排除 `business-persistence/`、`collab-ledger/` 后为空）；(4) 无真实合并冲突——现场发现 `origin/main`（`df2c595`）与任务分支合并基点（`c578921`）并非同一提交而是一次 `--no-ff` 式合并包装，但 `git diff c578921 df2c595` 为空，`main` 一侧相对基点无独立内容变化，合并可干净解析、无冲突 hunk，但不是简单 fast-forward；(5) `M2-PDR-01～15` 全部 `PASS` |
 | 合并方式 | 真实二亲合并提交（非 `--ff-only`，因 `origin/main` 与任务分支基点是不同 commit 对象），内容层面无冲突 hunk（`main` 一侧相对基点无独立差异） |
 | 受控状态 | 高风险但范围有限——只影响 `business-persistence/`、`collab-ledger/` 路径，未触碰 M1/M3/M4/M5、生产、真实发布 |
-| 核验依据 | 见任务收口回执；`main` 合并后 head 与任务分支 head 一致 |
+| 核验依据 | 合并 commit `17ca3f70212f38048b37f739edffba8bf7cf8f85`（父提交 `df2c5952551f386a0e9a509404357f23c1d223c9`、`4f57a32e61e2612f7f3de3699f5f5253fe270d5c`）；`git diff main origin/task/m2-business-persistence-version-feedback-v1` 为空，合并内容与任务分支字节级一致 |
 | **状态** | `CONFIRMED` |
 
 ### SE-029 · 推送 `origin/main`
@@ -433,7 +433,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/main` |
 | 幂等信息 | `fast-forward` push；**禁用** `--force` |
 | 受控状态 | **不可轻易逆转**——`main` 是共享默认分支；本次为 Founder 明确、有条件的授权动作，非自动发生 |
-| 核验依据 | 推送后现场 `git ls-remote origin refs/heads/main` 与本地 `main`/任务分支 head 一致；确认合并内容与任务分支字节级一致；确认未包含 M1/M3/M4/M5 或其他受保护资产改动；具体 hash 见任务收口回执 |
+| 核验依据 | 推送 `df2c595..17ca3f7`；`git ls-remote origin refs/heads/main` → `17ca3f70212f38048b37f739edffba8bf7cf8f85`，与本地一致；`git diff --stat df2c595..17ca3f7 -- . ':!business-persistence' ':!collab-ledger'` 为空；变更文件全部 10 个均位于 `business-persistence/`/`collab-ledger/`；迁移 head 仍为 `17368b750d3b`；容器 `diyu-m2-app` 内应用代码哈希与合并后工作区逐字节一致 |
 | **状态** | `CONFIRMED` |
 
 ### 状态值规范映射（2026-08-26，M2 治理收口纠偏新增，不改历史原文）

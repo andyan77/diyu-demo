@@ -211,9 +211,9 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 |---|---|
 | `M2-PDR-12` 最终判定 | `PASS`——本系统侧六条持久化记录现场核验一致，执行侧最初三项存疑（`is_manual_entry`/时间跨度/`was_selected`&`was_produced`）经 Founder 说明后不再成立，Dify 侧运行身份（`workflow_run_id: 5c122641-...`，`status: succeeded`）由 Founder 第一手见证并报告；据实标注：这一条 Dify 侧事实本身未经执行侧独立复算 |
 | `M2-PDR-01～15` | 全部 `PASS` |
-| 合并前置条件核验（Founder 要求的确定性条件，执行侧现场逐项核验） | 见任务收口回执与 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §14 |
-| 合并执行 | 见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)；任务分支合并进 `main`，推送 `origin/main`，具体 commit/hash 见任务收口回执 |
-| 任务终态（正式 `DONE`，不登记 `execution_disposition`） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论——Founder 本次授权明确排除这些项 |
+| 合并前置条件核验（Founder 要求的确定性条件，执行侧现场逐项核验） | 全部满足，见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §14 |
+| 合并执行 | 任务分支收口 commit `4f57a32e61e2612f7f3de3699f5f5253fe270d5c`（推送 `ec77bfd..4f57a32`）；真实二亲合并 commit `17ca3f70212f38048b37f739edffba8bf7cf8f85`（`git merge --no-ff`，内容层面无冲突）；`git push origin main` 推送 `df2c595..17ca3f7`；合并后核验 `git diff main origin/task/...` 为空、受保护资产 diff 为空、迁移/运行代码身份不漂移，详见 [L5 SE-027～SE-029](L5_SIDE_EFFECTS.md) 与 `M2_POST_DONE_REBASE_v1.2_RECORD.md` §15 |
+| 任务终态（正式 `DONE`，不登记 `execution_disposition`） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`M2_MODULE_LANDING = CLOSED`；`checkpoint = null`；`active_work_package = null`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论——Founder 本次授权明确排除这些项 |
 | Checkpoint | **无**（`null`）。原 §四 记录的 Checkpoint 已解除，从此移出 §四 |
 
 ---

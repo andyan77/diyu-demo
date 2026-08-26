@@ -161,6 +161,7 @@ M2_HISTORICAL_DONE_PRESERVED = true
 M2_TECHNICAL_RESULT_FOUNDER_DISPOSITION_LAYERING = VERIFIED
 M2_MARKET_OBSERVATION_PERMISSION_SEMANTICS = VERIFIED
 M2_POST_DONE_REBASE = PASS
+M2_MODULE_LANDING = CLOSED
 REAL_OPERATION_LOOP_VERIFIED = false
 BUSINESS_OUTCOME_IMPROVEMENT_VERIFIED = false
 M5_INTEGRATION_VERIFIED = false
@@ -175,6 +176,13 @@ active_work_package = null
 ```
 
 （`execution_disposition = CONTINUE` 字段已按本任务既有纠偏规则移除——`CONTINUE` 只用于非终态 Checkpoint 且要求 `task_final_status = null`；本任务已进入正式终态 `DONE`，二者不再同时出现，与 T-011.7/ATT-007 已确立的纠偏一致，不重复该失误。）
+
+## 15. 合并与推送最终证据（现场核验完成，回填 §11/§14 此前延后的准确值）
+
+- 任务分支收口 commit（§13/§13.1/§14 与两处措辞更正）：`4f57a32e61e2612f7f3de3699f5f5253fe270d5c`；推送 `ec77bfd..4f57a32`；`git ls-remote` 核验本地=远程
+- 合并 commit（真实二亲合并，`git merge --no-ff`，内容层面无冲突 hunk，理由见 §14）：`17ca3f70212f38048b37f739edffba8bf7cf8f85`；`git push origin main` 推送 `df2c595..17ca3f7`
+- 合并后核验：`git diff main origin/task/m2-business-persistence-version-feedback-v1` 为空（合并内容与任务分支字节级一致）；`git diff --stat df2c595..17ca3f7 -- . ':!business-persistence' ':!collab-ledger'` 为空（零 M1/M3/M4/M5 或其他受保护资产改动）；本次合并变更的全部 10 个文件均位于 `business-persistence/` 或 `collab-ledger/` 下；迁移 head 现场核验仍为 `17368b750d3b`；容器 `diyu-m2-app` 内 `app/api/knowledge.py`/`app/models/knowledge.py` 哈希与合并后 `main` 工作区逐字节一致
+- 任务分支随后 `git merge --ff-only origin/main` 同步至 `17ca3f70212f38048b37f739edffba8bf7cf8f85`，与 `main` 保持同一提交，不再存在未回合的分叉
 
 **（本节以下文字为本轮初次收口时所写，当时 `M2_POST_DONE_REBASE = NOT_VERIFIED`；同日会话内经 §13/§13.1 第二次证据核验后更正为 `PASS`，原文保留不删，供审计核验演进过程）**：`M2-PDR-01～11`/`13～15` 全部 `PASS`，唯独 `M2-PDR-12` 的 Dify 候选受影响回归因外部凭据缺口未获现场证据，如实登记为 `NOT_VERIFIED`，不满足 §10 全部停止条件的"没有未披露的...证据身份问题"这一项之外的"最终 commit 已推送远程原任务分支"以下各项均已满足。按 Prompt §10 保存为 Checkpoint，完成后立即停止：不继续润色、不扩建市场平台、不重跑不受影响的 M2 主体、不另开新 Reviewer、不合并 main、不进入 M5。**§13.1 更正后**：`M2-PDR-12 = PASS`，`M2_POST_DONE_REBASE = PASS`，Founder 条件授权合并 main，见 §14 合并前置条件核验。
 
