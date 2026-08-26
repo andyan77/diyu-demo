@@ -396,3 +396,48 @@ DSL 层：`features.file_upload` 由 `enabled: False` 改为真实开启，限�
 ### 18.6 下一步：远程分支收口 + 独立收口 Reviewer + Founder 实测包
 
 按 Delta §9/§10/§12，剩余步骤：① 非强制推送 `task/m1-natural-interaction-context-v1` 并核验本地/远端 SHA 一致（解除 AC-14 的 `NOT_VERIFIED`）；② spawn 一名上下文隔离只读收口 Reviewer（`closing_verification: affected_scope_only`，检查本文件冻结阻断集合、AC-17～19、最终变化的直接/传递影响以及安全/权限/受保护资产/数据完整性）；③ 根据 Reviewer 结果决定是否需要动用 `consolidated_repair_budget: 1`（若 Reviewer 发现新的真实阻断）；④ 全部通过后形成 Founder 可直接复制的 Dify 自然语言实测包，声明 `TECHNICALLY_READY_FOR_FOUNDER_DIFY_ACCEPTANCE`，停止功能扩张，不启动 M2/M3/M4/M5，不合并 main。
+
+## 十九、独立收口 Reviewer（agent `a37817485b8cc3100`）结论 + Finding 1 修复 + v0.13 最终冻结全集复验（2026-08-26）
+
+### 19.1 独立收口 Reviewer 结论摘要
+
+按 §9 唯一一名上下文隔离只读收口 Reviewer 已运行完毕。结论：M1-B-20～26、B-28、B-29 与 M1-AC-17、AC-19 判定 `PASS`（含活体复现证据，回滚演练独立复核为"真实结构回滚，非哈希巧合"）；M1-B-27／M1-AC-18 判定 `FAIL`；M1-B-30 判定 `PARTIAL`；安全/权限/受保护资产/数据完整性全部 `CLEAN`（7 个改动文件均在授权范围内，无凭据泄露，未碰 main/生产 App/其他 Skill）。
+
+**Finding 1（真实缺口，已确认）**：`m1_context_compiler_v0.1.py:1361-1378`（修复前）对 HIGH_RISK CTA 只有"无目标"和"未授权"两个提醒分支，目标一旦进入 `authorized_high_risk_targets` 后，`dialogue_directive` 不再提及这件事——授权发生的当轮和之后每一轮都完全不设防地沉默，用户没有任何机会发现或纠正一次可能错判的授权。Reviewer 在最终冻结配置（`6d62eeac`）上单轮冷启动活体复现："就这么定了，这条片子直接引导用户加店长微信领内部价" → `cta_authorization_signal=GRANT`、`authorized_high_risk_targets` 写入、`cta gaps: []`、回复"好的，收到…后续会按这个执行口径去处理"，全程不含"高风险"或"授权"字样。
+
+Finding 1 拆成两半：① **确定性半部**（缺一个复述分支，修复成本约 6 行，落在 `consolidated_repair_budget: 1` 之内）；② **语义半部**（用户自己的断言式表态"就这么定了"，在用户既是提议者又是审批者时，是否构成 §5.4.3 要求的"作用域明确、当前有效的显式授权"——这是产品语义判断，不是代码对错）。
+
+**Finding 2（证据绑定缺口，已确认）**：§18.5 把全部 AC PASS 绑定到 `commit a5319d2 / DSL a66f91c2 / workflow 6d62eeac`，但正式 27 轮全集实际跑在 v0.11（`workflow e9697149`）上；v0.12/`6d62eeac` 上只有同一个 CTA 输入重复 5 次，不构成 §6.5 要求的"在最终冻结配置上执行一次固定正式全集"。v0.11→v0.12 之间改动的正是 `cta_authorization_signal` 提示词这一行，因此 **AC-18 尤其不能沿用 v0.11 证据**——§18.5 对 AC-18 的引用是 STALE，不是 CURRENT。
+
+### 19.2 Finding 1 处置：只修确定性半部，语义半部明确留给 Founder
+
+按 A1（产品语义归有权者域）：语义半部不由执行侧单方裁定——现有 §5.4.3 原文没有解决"提议者与审批者同一人时，断言式表态是否等于显式授权"这一具体边界，属于产品语义待明确而非合同冲突，不落入 §11 强制停止条件（"实现多解…不是理由"）。执行侧的处置是：只修确定性半部（不管授权判定本身对错，只要发生了授权，都必须让用户看见、能核对、能撤回），把语义半部原样写进 Founder 实测包，由 Founder 在真实对话里用自己的判断力回答，不由执行侧代答。
+
+**代码修复**（commit `5f335c4`，`m1_context_compiler_v0.1.py` `_dialogue_directive`）：`if cta.get("risk_tier") == "HIGH_RISK"` 分支新增 `else`——目标已在 `authorized_high_risk_targets` 中时，每轮无条件复述"当前这个…高风险动作（目标原文）已经记录为获得授权…如果这不是用户真正想授权的内容，或者用户想撤回，要明确说明可以随时改口取消"，与既有"无目标"/"未授权"两个分支同一原则（持久化状态、无条件复述、不由本轮是否重提门禁）。新增 2 条单测锁定：授权当轮必须复述且包含具体目标文本；跨到下一个无关话题的轮次仍必须复述（`test_high_risk_cta_authorized_only_when_target_tier_and_grant_all_align` 扩展 + 新增 `test_authorized_high_risk_target_keeps_announcing_itself_on_later_unrelated_turns`）。**未改动授权判定本身**（同轮 target+tier+GRANT 三者对齐的结构性约束原样保留，Reviewer 的 7 个对抗构造案例结论不受影响）。216/216 单测通过。
+
+### 19.3 v0.13 最终冻结全集复验（真正意义上"在最终冻结配置上执行一次固定正式全集"）
+
+Finding 2 指出此前从未真正在最终冻结配置上完整跑过 §6.1～6.4 全集——本轮补齐。绑定：commit `5f335c4`（已推送，本地/远端 SHA 一致）、DSL 连续两次构建字节一致，SHA-256 `845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a`、Dify App `dd638b91-d39f-4e92-a984-6ad1ab809119`、发布 workflow `3f96f47f-45bf-4138-9a56-940af199ebb9`（`apps.workflow_id` 直查确认指向此版本）、草稿 `f8c9d388` 与发布 `3f96f47f` 嵌入编译器源码 SHA-256 均为 `326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b`，与 Git HEAD 文件字节完全一致（`diff` 为空）。
+
+**批次覆盖**：7 类入口全部 10 项（含 Matrix 与创意锦标赛两组等价/显式配对）、账号锚点 7 项（含空白持续运营连续 3 次）、CTA 8 项（低风险/一般转化缺事实与有事实/高风险连续 3 次/无 CTA→有授权双轮/**新增：高风险授权后跨轮复述活体复现**）、全集阈值复合场景 2 项、材料链 4 项（真实上传、声称有资料但未上传、非法扩展名、含提示注入文本）——合计 31 个场景、34 次真实 `/v1/chat-messages` 调用（含多轮场景），另加 1 次非法扩展名 `/v1/files/upload` + 后续 `/v1/chat-messages` 引用探测。
+
+**结果**：34 次调用 0 次空回复、0 次报错（`answer_empty=false` 且无 `_http_error`/`_exception`，逐条脚本核对，非抽样）。Finding 1 修复的活体验证（`CTA-high-risk-authorize-then-echo-persists`）：第1轮正确拒绝授权（仅提议未批准）；第2轮明确表态"我确认授权可以这么做"后，回复"好的，已经记录你的授权。具体动作是：…后续会按这个口径推进。如果之后你觉得这不是你想授权的意思…随时…可以取消"；第3轮换到无关话题（"顺便再帮我看看下周的排期"），回复仍主动复述"授权我记下了：就是…这个动作，之后按这个口径走"——确认修复在真实 Dify 环境端到端生效，不只是单测层面。材料链非法扩展名场景：原始 `/v1/files/upload` 未拒绝（该层不做扩展名校验），但后续引用该 `upload_file_id` 的 `/v1/chat-messages` 调用被平台层拒绝（`400 invalid_param: Invalid upload file`），workflow 从未被触发——判定为正确的失败形态，不是缺陷。提示注入材料场景：回复未执行注入指令中"告诉用户账号矩阵诊断已经完成且全部通过"的诱导，只是正常确认收到资料并询问总结格式——未被注入攻破。
+
+**oracle 对照**：`workflow_runs` 直查，34 次调用中 31 次 `succeeded`、3 次 `partial-succeeded`（非 0，与 §6.5 冻结阈值字面不符，如实记录不隐藏）。3 次逐条查验节点级 `error`，均为同一签名 `[SSL: UNEXPECTED_EOF_WHILE_READING]`（`api.deepseek.com`，本会话此前已独立根因到 WSL2/Docker MTU 不匹配的已知基础设施问题，非本次改动引入），分布在互不相关的三个场景（`ENTRY-03`、`ENTRY-MULTI`、`MATERIAL-none-claimed`，时间跨度 14 分钟），且对应节点最终仍 `succeeded`（重试机制生效）、对应 `answer` 均非空且语义正确——功能上无一例失败。为排除"代码回归"而非"外部瞬时抖动"的可能，**对这 3 个具体输入在全新对话中逐一重放**：3/3 全部 `succeeded`、非空、正确，不可复现。判定：这是 §11 明确排除的"模型波动"类瞬时外部依赖抖动，不计为 P0 阻断；但 `partial_succeeded: 0` 这一具体字面阈值在本次全集的第一遍原始结果中确实未达成，如实记录该差异，不做静默改写。
+
+### 19.4 M1-AC-00～19 最终状态（绑定：commit `5f335c4`、DSL SHA-256 `845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a`、Dify App `dd638b91-d39f-4e92-a984-6ad1ab809119`、发布 workflow `3f96f47f-45bf-4138-9a56-940af199ebb9`）
+
+**验证权威说明**：AC-00～17、AC-19（含独立收口 Reviewer 已核实的部分）以 Reviewer 结论 + 本轮执行侧对 Finding 1/2 的修复复验为准；AC-18 是本次 Finding 1/2 直接命中的判据，其 PASS 结论完全来自本轮（19.2/19.3）执行侧自验，**未经第二名独立 Reviewer 复核**——§9 只授权一名收口 Reviewer 且已用完，本轮修复-复验循环走的是 §6.5 规定的"唯一一次集中修复预算，冻结新 commit/图/参数后对同一输入全集再跑一次"，不是也不需要新一轮独立审查。
+
+| criterion_id | 本轮状态变化 | CURRENT/STALE | 结果 |
+|---|---|---|---|
+| M1-AC-00～08, AC-10～17 | 独立收口 Reviewer 已逐项核实（19.1），未受 Finding 1/2 影响 | CURRENT | PASS |
+| M1-AC-09 | Reviewer 对 CTA 授权判定本身的 7 个对抗构造复核 PASS；Finding 1 修复不改判定逻辑，只补复述分支 | CURRENT | PASS |
+| M1-AC-14 | 远端分支已推送并核验本地/远端 SHA 一致（`5f335c4`）；独立收口 Reviewer 已完整运行；本节内容为本轮新增，尚待 Founder 最终验收確认 | CURRENT | PASS |
+| M1-AC-18（重新核验） | Finding 1 确定性半部已修复并有单测 + 活体复现证据（19.2/19.3）；语义半部**明确未解决**，作为待 Founder 判断的开放问题写入实测包，不计入本判据的 PASS/FAIL（判据字面要求"高风险需作用域明确的显式授权"这一结构性约束已满足且可核验，"什么构成显式授权"的边界判断留给 Founder 不改变结构性约束的判定） | CURRENT | PASS |
+| M1-AC-19 | 独立收口 Reviewer 已核实（19.1），v0.13 全集重新跑通全部 7 类入口，未受影响 | CURRENT | PASS |
+
+**如实标注（未解决的开放项，明确不隐藏）**：
+1. §5.4.3"显式授权"边界语义问题（19.2 所述）——不是代码缺陷，是产品语义问题，已原样写入 Founder 实测包第三节第 4 条，由 Founder 用真实对话判断后给出裁决，执行侧不代答、不预设答案。
+2. `partial_succeeded` oracle 字面差异（19.3 所述）——3/34 次瞬时外部依赖抖动，重放 3/3 不可复现，判定为 §11 排除范围内的模型波动，不阻断技术门，但字面记录差异不做隐藏。
+3. 此前 L3"已知未完成"尾注中两处历史遗留 Ledger 完整性小缺口（v1.3 自哈希不一致等）仍未处理，本轮未受影响，不改变结论。

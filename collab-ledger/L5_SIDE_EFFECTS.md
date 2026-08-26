@@ -372,6 +372,32 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 每次导入/发布后 `SELECT` 直查 `workflows.graph`/`workflows.features`；`m1_compiler` 节点嵌入源码与对应 commit 的 `m1_context_compiler_v0.1.py` 用 `diff` 逐字节核对；`docker exec` 只读查询 `workflow_node_executions`/`messages` 取得真实 `patch_ok`/`call_intent_json`/`snapshot_json`/`dialogue_directive` |
 | **状态** | **`CONFIRMED`** |
 
+### SE-024 · 独立收口 Reviewer（agent `a37817485b8cc3100`）9 次只读 API 调用，用于活体复现 Finding 1
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同前，非新建） |
+| 操作序列 | Reviewer 自述以 `closing-reviewer-*`/`reviewer-cta-*`/`reviewer-anchor-*` 三类 user 标识对候选 App 发起 9 次 `/v1/chat-messages` 调用，用于活体复现 Finding 1（高风险 CTA 授权后沉默）与验证 M1-AC-17/19；Reviewer 明确自述**无**控制台登录、**无**导入/发布、**无**数据库写入 |
+| 内容标识 | 见 evidence §十九 19.1 引用的 Reviewer 原始结论文本 |
+| 幂等信息 | 只读对话调用，产生新的 conversation/message/workflow_run 记录，不修改任何既有资产 |
+| 受控状态 | 可逆——纯只读调用类副作用，等同于本任务此前历次真实回归调用的性质；仅作用于本任务专用候选 App |
+| 核验依据 | 执行侧读取 Reviewer 完整结论文本自述的操作范围；未独立复核 Reviewer 自身的数据库/控制台访问日志（Reviewer 报告的只读约束依赖其自身诚实自述，与本任务对执行侧自己一贯要求的"直连数据库核验"标准不完全对等，如实标注） |
+| **状态** | **`CONFIRMED`** |
+
+### SE-025 · v0.13 DSL 导入/发布（Finding 1 修复）+ 最终冻结全集复验 34 次真实调用 + 3 次网络瞬断重放
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同前，非新建） |
+| 操作序列 | ① 导入+发布 v0.13（commit `5f335c4`，DSL SHA-256 `845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a`，发布 workflow `3f96f47f-45bf-4138-9a56-940af199ebb9`，`apps.workflow_id` 直查确认指向此版本，草稿 `f8c9d388` 与发布 `3f96f47f` 嵌入编译器源码字节与 Git HEAD 一致）；② 31 场景/34 次真实 `/v1/chat-messages` 调用（§6.1～6.4 最终冻结全集，见 evidence §十九 19.3）+ 4 次 `/v1/files/upload`（含 1 次非法扩展名探测、1 次提示注入材料）；③ 1 次非法扩展名文件引用探测（`400 invalid_param`，workflow 未触发）；④ 对 3 个原始 `partial-succeeded` 场景对应的 3 个输入在全新对话中各重放 1 次（3 次追加真实调用，用于排除代码回归可能性，非"失败后换输入直到成功"式重抽样——重放的是完全相同的输入，不是新输入） |
+| 内容标识 | DSL 文件与 SHA-256 见 evidence §十九 19.3；34+3 次调用的完整结果见脚本 `m1_live_regression_v013_formal.py` 输出（本机 scratchpad，非仓库内容） |
+| 幂等信息 | 导入/发布为幂等覆盖（同一 app_id）；调用均为独立会话或多轮同一 conversation_id，不重放已存在的历史调用 |
+| 受控状态 | 可逆——仅作用于本任务专用候选 App；未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow、`main` 或生产流量 |
+| 核验依据 | `apps.workflow_id`/`workflows.graph`/嵌入代码 SHA-256 直查；`workflow_runs.status`/`workflow_node_executions.error` 直查确认 3 次 `partial-succeeded` 的根因签名与非可复现性；`answer_empty` 逐条脚本核对非抽样 |
+| **状态** | **`CONFIRMED`** |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

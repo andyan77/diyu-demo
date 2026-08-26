@@ -214,11 +214,22 @@ task_final_status: null
 current_task_contract_version: "1.4"
 active_rebase_delta: M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md
 active_rebase_delta_sha256: 01bbe73a173091bdf4dc035c521466ef0c1aa95821808bc5283c1c68c1b1f8f3
-current_state: V1_4_1_ALL_P0_FIXED_LIVE_VERIFIED_AC15_DONE_TECHNICALLY_READY_PENDING_CLOSING_REVIEWER_AND_FOUNDER_ACCEPTANCE
+current_state: V1_4_1_CLOSING_REVIEWER_DONE_FINDING1_FIXED_FINDING2_CLOSED_TECHNICALLY_READY_FOR_FOUNDER_DIFY_ACCEPTANCE
+final_commit: 5f335c47116554ded225848f3a43534b8efc7321
+final_dsl_sha256: 845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a
+published_workflow_id: 3f96f47f-45bf-4138-9a56-940af199ebb9
 next_stage_allowed: false
 ```
 
-**2026-08-26 状态更新（v1.4.1 Rebase：全部 P0 阻断修复 + 首次真正端到端 live 验证 + AC-15 完成）**：按 Founder 提供的 `M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md`（`REBASE_TASK`，继承原 task_id/分支/worktree/候选 App）修复冻结阻断集合 M1-B-20～M1-B-30，新增 M1-AC-17（最小账号锚点）、M1-AC-18（CTA 三层权限上下文）。同会话对抗式独立审查发现 13 处真实缺陷全部修复。单测 170→215 全绿。
+**2026-08-26 状态更新（独立收口 Reviewer 结论 + Finding 1 修复 + v0.13 最终冻结全集复验，最新）**：唯一一名 §9 授权的上下文隔离只读收口 Reviewer（agent `a37817485b8cc3100`）已运行完毕，结论：M1-B-20～26/28/29 与 AC-17/19 `PASS`（含活体复现）；**M1-B-27／M1-AC-18 判定 `FAIL`**（真实缺口：高风险 CTA 一旦获得授权，`dialogue_directive` 此后完全不再提及，用户没有任何机会发现或纠正一次可能错判的授权）；M1-B-30 `PARTIAL`（AC-15 回滚本身独立复核为真实，但正式全集实际跑在 v0.11 而非最终冻结配置，§6.5 字面要求未满足）；安全/权限/受保护资产/数据完整性 `CLEAN`。
+
+执行侧处置：该缺口拆成确定性半部（一旦授权就必须每轮无条件复述，可核对可撤回）和语义半部（用户自己的断言式表态"就这么定了"在其身兼提议者与审批者时是否构成 §5.4.3 的显式授权——产品语义问题，不由执行侧代答）。**只修确定性半部**（commit `5f335c4`，216/216 单测通过，新增 2 条回归锁定），**语义半部原样写入 Founder 实测包，明确留给 Founder 用真实对话判断**，不落子 §11 强制停止条件（属"实现多解"范畴，非合同冲突）。随后在这个新 commit 上重新构建 DSL（SHA-256 `845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a`，两次构建字节一致）、导入发布到同一候选 App（`apps.workflow_id` 直查确认 = `3f96f47f-45bf-4138-9a56-940af199ebb9`，草稿/发布嵌入编译器源码与 Git HEAD 字节一致），**第一次真正在最终冻结配置上跑通 §6.1～6.4 全集**（31 场景/34 次真实调用，0 空回复、0 报错；新增用例活体证明 Finding 1 修复端到端生效——授权当轮 + 跨到无关话题的后续轮次均持续复述"已授权+具体目标+可撤回"）。全集阈值对照：34 次中 3 次 `partial-succeeded`，逐条查证均为同一已知 WSL2/Docker MTU 网络瞬断签名（`api.deepseek.com` SSL EOF），分布在互不相关的 3 个场景、功能上零失败，对 3 个具体输入重放 3/3 全部干净 `succeeded`——判定为 §11 明确排除的"模型波动"，如实记录字面差异（`partial_succeeded` 非 0）但不视为 P0 阻断。详见 [evidence §十九](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**当前状态**：本轮修复-复验循环用的正是 §6.5 规定的"唯一一次集中修复预算，冻结新 commit/图/参数后对同一输入全集再跑一次"，不额外占用或需要第二名独立 Reviewer。技术门已达成，Founder 实测包已就绪，本任务在本会话内到此为止——不启动 M2/M3/M4/M5，不合并 main，等待 Founder 通过实测包做出验收裁决（含语义半部的开放判断）。
+
+---
+
+**2026-08-26 状态更新（v1.4.1 Rebase：全部 P0 阻断修复 + 首次真正端到端 live 验证 + AC-15 完成，历史记录）**：按 Founder 提供的 `M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md`（`REBASE_TASK`，继承原 task_id/分支/worktree/候选 App）修复冻结阻断集合 M1-B-20～M1-B-30，新增 M1-AC-17（最小账号锚点）、M1-AC-18（CTA 三层权限上下文）。同会话对抗式独立审查发现 13 处真实缺陷全部修复。单测 170→215 全绿。
 
 **方法论变化，需要 Founder 知悉**：本轮确认此前"控制台操作需 Founder 代跑"的限制来自 Bash 工具的沙箱网络策略，非硬限制——显式放开沙箱后可用 Founder 此前提供、存于本机固定路径 `~/.dify-console.env`（未写入仓库）的凭据完成真实控制台登录与 DSL 导入/发布/回滚。本轮起执行侧在本 task_id 唯一候选 App 范围内自主完成了全部 DSL 导入/发布与 AC-15 回滚演练，不再逐次请 Founder 代跑，严格未触碰任何其它 App、main 或生产流量。
 
