@@ -19,7 +19,7 @@
 | `V1-M1-ENGINEERING-PROMPT-ADOPTION-001` | §T-008.1（当前） | §T-008.2 | 规划侧 2026-08-25《Execution Prompt — M1 自然语言交互与任务上下文编译 v1.2》＋ Founder 2026-08-25「执行落盘」，范围经执行侧澄清未获工程执行明确授权，本任务只落盘文档本身 | `DONE`。文档已采用进 `main`；**M1 工程执行（`task_id: DIYU-V1-M1-NATURAL-CONTEXT-001`）未开工、未授权**，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` | §T-009.1（当前） | §T-009.2 | Founder 2026-08-25 当场裁决「铁律：后续只要注入执行prompt，即视为授权，不再重复」 | `DONE`。已采用进 `main`，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
 | `V1-M2-ENGINEERING-PROMPT-ADOPTION-001` | §T-010.1（当前） | §T-010.2 | 规划侧 2026-08-25《Execution Prompt — M2 业务持久化版本发布反馈投影 v1.1》＋ Founder 2026-08-25「授权推进落盘」，落盘完成后 Founder 另行就该 task_id 明确答复「就是要启动，铁律适用」（见 [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md)） | `DONE`。文档已采用进 `main`；`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 工程执行已获授权并已开工，见 [L2](L2_TASK_STATE_AND_HANDOFF.md) 与 [L3](L3_ATTEMPTS_AND_EVIDENCE.md) |
-| `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（起点登记，历史记录，当前状态见下方 §T-011～§T-011.7） | [M2 施工 Execution Prompt v1.1 §3](../decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md)（本行不复制合同正文，Task Contract 内嵌于该 Prompt 自身；文档自证 `task_contract_hash` 与实际内容不一致，已由 Founder 裁决改用独立复算值 `4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830` 登记，见 [L1 §T-010.2 DA-02](L1_TASK_MANIFESTS.md)） | 见下方 §T-011～§T-011.7 完整记录 | `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 生效后 Founder 就该具体 task_id 当场明确答复「就是要启动，铁律适用」（见 [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md)）；该 Prompt 自身 `allowed_delta`／`protected_assets`／`remote_target` 等边界照常有效 | 本行"不适用/`IN_PROGRESS`/`ba80d63`"为任务早期起点登记时的状态快照，已被后续 §T-011～§T-011.7 完整取代，当前最新状态以 §T-011.7 与 [L2 §一](L2_TASK_STATE_AND_HANDOFF.md) 为准，不以本行为准 |
+| `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（起点登记，历史记录，当前状态见下方 §T-011～§T-011.10） | [M2 施工 Execution Prompt v1.1 §3](../decision-chain/docs/M2_ENGINEERING_EXECUTION_PROMPT_v1.1.md)（本行不复制合同正文，Task Contract 内嵌于该 Prompt 自身；文档自证 `task_contract_hash` 与实际内容不一致，已由 Founder 裁决改用独立复算值 `4d14eb35c065b650b0380b0c309e0e08ec32e3aa608ece4d62e8d27b97450830` 登记，见 [L1 §T-010.2 DA-02](L1_TASK_MANIFESTS.md)） | 见下方 §T-011～§T-011.10 完整记录 | `V1-COLLAB-PROTOCOL-PROMPT-AUTHORIZATION-RULE-001` 生效后 Founder 就该具体 task_id 当场明确答复「就是要启动，铁律适用」（见 [L2 §一.14](L2_TASK_STATE_AND_HANDOFF.md)）；该 Prompt 自身 `allowed_delta`／`protected_assets`／`remote_target` 等边界照常有效 | 本行"不适用/`IN_PROGRESS`/`ba80d63`"为任务早期起点登记时的状态快照，已被后续 §T-011～§T-011.10 完整取代，当前最新状态以 §T-011.10 与 [L2 §一](L2_TASK_STATE_AND_HANDOFF.md) 为准，不以本行为准 |
 
 > **上位合同被接受 ≠ 子合同被接受 ≠ 授权 Skill／DSL／持久化／工作流施工。**（本条规则继续有效；`SINGLE-ACCOUNT-SLICE-EP00` 这一行是该规则下**已经解除**的具体实例，不代表规则本身改变）
 > 执行侧**不得**自行宣布任何合同「已接受」，也**不得**自行把状态往上推一级——`V1-M0-1B-SLICE-CONTRACT-REVISION-001` 行的 `ACCEPTED` 状态由 Founder 本人在执行过程中明确回答后推进，非执行侧自行判定。
@@ -1533,3 +1533,44 @@ Founder 于本次 Founder Dify 亲自验收、"接受 + 合并主干"裁决、�
 | 任务终态（当前有效，最终） | `task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`；`checkpoint = null`；`active_work_package = null`。**不再使用 `execution_disposition = CONTINUE` 字段**——该字段只适用于非终态 Checkpoint 且要求 `task_final_status = null`，与已进入的正式终态 `DONE` 同时出现属无效组合，本次予以移除，不改变本任务此前已经是 `DONE` 这一事实本身 |
 | 本次 Recovery 是否变更代码/数据库/Dify | **否**——`m2_engineering_reopened = false`；`m2_engineering_code_changed = false`；`database_write_performed = false`；`dify_write_performed = false`；只修改本表所列治理/证据/账本文件 |
 | Recovery Git 收口（现场核验完成） | 任务分支非破坏性快进至 `origin/main`（`74bc9e3` → `a903e49`）后提交 Recovery Delta，推送 `74bc9e3..894211b`，远端核验一致（`recovery_commit = 894211bb025228eb69c50b7c415c4f9de3c6c8dd`）；`git merge --no-ff` 合入 `main`（零冲突），推送 `a903e49..03a94ca`，远端核验一致（`merge_commit = final_origin_main = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`）；双向祖先核验通过，历史未改写；受保护路径与仓库内除 `business-persistence/`/`collab-ledger/` 外全部路径 `git diff --stat` 为空 |
+
+### T-011.8 M2 post-DONE 定向 Rebase v1.2（`REBASE_TASK`，市场观察权限语义 + 技术结果/Founder处置分层；不改变 T-011.7 已记录的历史 `DONE`）
+
+Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256 = c4f5e2de896320acaa82af40d0025f0fef8c43da3490a4f8d2e58787a18865c8`）以 `REBASE_TASK` 模式继续同一 `task_id`；`current_task_contract_hash = 9285e080c44456b2c468c3d47ea91187b19161bf76965d121bc0832ec0ead647`。完整记录见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md`。
+
+| 项 | 值 |
+|---|---|
+| 技术结果/Founder处置分层 | `M2-AC-13`/`M2-RB-10` 前向更正为分层表达：`technical_result = NOT_MET`、`technical_evidence_currency = CURRENT`、`founder_disposition = WAIVED_FOR_THIS_DELIVERY`、`blocking_effect = false`；不再把 `FOUNDER_WAIVED` 直接放进"结果"列 |
+| 市场观察权限语义 | `market_observations` 新增 `source_type`/`source_reference`/`source_provider`/`account_id`/`applicable_task_id`/`applicable_period_*`/`permission_status`（5态，默认 `unknown`）/`permission_basis`/`usage_limits`/`permission_confirmed_by`/`permission_confirmed_at`/`evidence_digest`/`idempotency_key`；新增 `GET .../market-observations/current`（最小投影，逐条给出排除原因，明确 gap）与 `POST .../{id}/permission`（权限确认，部分更新语义）端点；`Playbook`/既有字段/既有端点零改动 |
+| 迁移 | 新增 `17368b750d3b`（`Revises: c3f8b2e6d0a4`），仅新增列/索引，未改写既有迁移，未触碰 Dify 表；`permission_status` 回填全部既有记录为 `unknown`（现场核验 123 条，无一 `allowed`）；幂等改用部分唯一索引（`WHERE idempotency_key IS NOT NULL`）+ `NULLS NOT DISTINCT`，修复了与 `c3f8b2e6d0a4` 同源的跨账号幂等键碰撞缺陷；现场 upgrade/downgrade/upgrade 两轮往返验证（含一次真实失败即时安全回滚），`alembic check` 均无漂移 |
+| 独立审查（本合同版本预算：1 次审查 + 1 次修复，如实用尽） | 1 个上下文隔离只读 Reviewer 发现 2 项 BLOCKING（`/current` 范围排除原因被丢弃未暴露；权限确认端点无条件覆盖清空 `usage_limits`/`permission_basis`）+ 5 项 NOTE，全部在 1 次修复预算内修复并新增针对性测试；修复后全量回归 **92/92 通过**（较修复前 85/85 新增 7 条） |
+| `M2-PDR-01～15` | `01～11`、`13～15` 全部 `PASS`；`M2-PDR-12` 部分 `NOT_VERIFIED`——PostgreSQL/迁移head/应用镜像/全量回归均已 CURRENT，唯独"Dify 候选受影响回归"因本会话无可用 App API Key 未能现场重跑，如实披露，未用 API 等价证据或间接回归证据冒充 |
+| 终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`historical_m2_task_status = DONE`（不变）；`post_done_rebase_progress = IN_PROGRESS`；`next_stage_allowed = false`；`main_merge_authorized = false`（Founder 本次明确不授权合并，任务分支收口后停止，等待 Founder 对准确最终 commit 另行裁决） |
+| Git 收口 | 仅任务分支 `task/m2-business-persistence-version-feedback-v1`（起算 `c578921`），推送与最终 hash 核验见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)；**未合并 main**，未触碰其他任何 worktree 或受保护资产 |
+
+### T-011.9 M2 post-DONE 定向 Rebase v1.2 · 第二次 `M2-PDR-12` 证据核验尝试·执行侧初步判定（同日会话内，本判定被 T-011.10 取代；同时更正 T-011.8 两处措辞，该项更正不受取代影响）
+
+同日会话内收到第二组 `M2-PDR-12` 证据（Dify `workflow_run_id` + 六条本系统持久化记录 ID），Founder 同时附带条件授权「完成以上执行后，授权合并主干」。执行侧现场直连开发数据库独立核验，判定不构成 Prompt 要求的直接证据，条件未成立，未合并 main。完整记录见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §13。
+
+| 项 | 值 |
+|---|---|
+| 第二次证据核验 | 六条 DB 记录（`tasks`/`task_snapshots`/`cycles`/`content_versions`/`publish_instances`/`feedback_records`）现场核对存在且字段与转述一致；但 `feedback_records.is_manual_entry = true`、`source = 'dify-m2-candidate-manual-entry'`——系统自身数据即声明为手工录入；六条记录 `created_at` 跨度仅 `0.39` 秒，与含真实生成/决策步骤的 16 步工作流耗时不符；`content_versions.was_selected`/`was_produced` 均 `false`；schema 内无任何字段结构性绑定 Dify 的 `workflow_run_id`/`app_id`/`status`/`total_steps`；本会话可用的 Dify 相关 MCP 工具（`dify-platform-expert` 系列、`dify-workflow-1/2/3`）均无法按该 `workflow_run_id` 独立核对该次运行，且均不对应该 `app_id`；本会话仍无该候选应用的 App API Key |
+| 判定 | 不构成直接证据，属本任务先例 `R-08.8` 已排除的"API 等效替代证据"，且 `is_manual_entry = true` 构成对"真实运行"表述的直接反证；`M2-PDR-12` 维持 `NOT_VERIFIED`，未据此写入 `PASS` |
+| 措辞更正（对 T-011.8/Rebase Record 的既有内容，不是回滚，是补充精确度） | `M2-PDR-15` 与 §10 原表述"排除 `business-persistence/` 后为空"补齐为"排除 `business-persistence/` 与 `collab-ledger/` 后为空"（`collab-ledger/` 下的变更是本任务自身账本记录义务，非受保护资产越界，原表述遗漏系措辞不精确，非实质越界）；§11 拆分 `implementation_candidate_commit = e93773dff734cac9da94e87b4797700ceaba598c`（最后一次改动 `app/`/`migrations/`/`tests/` 的 commit，Reviewer 与 92/92 回归均针对此 commit）与随每次账本收口 commit 递增的远程分支实际 head（authoritative 值以 `git ls-remote` 现场结果为准，不以本记录文件内写死的值为准） |
+| Founder 条件授权「完成以上执行后，授权合并主干」 | 条件为 `M2-PDR-12 = PASS`；该条件未成立，故未触发，未合并 main |
+| 终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`historical_m2_task_status = DONE`（不变）；`post_done_rebase_progress = IN_PROGRESS`（不变）；`next_stage_allowed = false`；`main_merge_authorized = false`（不变） |
+| Git 收口 | 仅任务分支 `task/m2-business-persistence-version-feedback-v1`；推送与最终 hash 核验见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)；**未合并 main** |
+
+### T-011.10 M2 post-DONE 定向 Rebase v1.2 · Founder 裁决与最终判定（取代 T-011.9 的 `M2-PDR-12` 判定与任务终态，T-011.9 措辞更正部分保留有效；`M2_POST_DONE_REBASE` 由 Checkpoint 转为 `DONE`）
+
+Founder 就 T-011.9 执行侧三项存疑逐一说明，并以第一手见证补充 Dify 侧运行身份，明确裁决「这不是 Founder 豁免，不登记 `WAIVED_FOR_THIS_DELIVERY`；这是基于现有系统直接证据完成技术验收」。完整裁决记录见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §13.1。
+
+| 项 | 值 |
+|---|---|
+| Founder 说明（逐条对应 T-011.9 存疑） | (1) `is_manual_entry=true` 是反馈业务来源性质（人工看播放/评论数据），不是"是否经过 Dify"的标记，两者不是同一维度；(2) 本次候选是无 LLM 的 HTTP/代码技术验证 Workflow（验证后端持久化接口集成），16 步均为直连 API 的快节点，无生成式步骤，0.39 秒完成、`total_tokens=0` 均符合设计，不是选题/创意/脚本/内容生产链；(3) `was_selected=false`/`was_produced=false` 是技术集成验证场景下的正常状态，不涉及业务层"是否选中/产出"判断，符合 M2 只做持久化投影、不做业务判断的边界 |
+| 执行侧复核意见 | 三项说明均成立：执行侧此前把"反馈来源性质"和"是否经 Dify 调用"混为一谈、把"16 步"默认等同于"含 LLM 生成的完整创作链路"（未经核实的假设）、把技术验证场景下的默认字段值当成业务验收失败信号，均属过度解读，予以更正 |
+| Dify 侧运行身份（Founder 第一手见证，执行侧本会话仍无凭据独立复算） | `app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`、`workflow_run_id: 5c122641-cc7d-41a6-99df-2054ae559466`、`triggered_from: app-run`、`status: succeeded`、`total_steps: 16`；执行侧据实标注：这条"Dify 里确实存在该 `succeeded` 运行记录"的事实由 Founder 直接见证并报告，非执行侧独立复算确认（本会话无该应用 App API Key，亦无可用 MCP 通道按 `workflow_run_id` 查询） |
+| 最终判定 | `M2-PDR-12 = PASS`；判定依据 = 本系统侧六条记录现场核验一致 + 三项存疑经说明后不再成立 + Dify 侧运行身份由 Founder 直接见证并对应本系统六条记录；按 Founder 裁决计入 `technical_result = PASS`，不登记 `founder_disposition = WAIVED_FOR_THIS_DELIVERY`（与 `M2-AC-13`"结果不达标+Founder接受"的先例是不同情形：这里是证据经说明与第一手见证后达标，不是结果不达标后被豁免） |
+| `M2-PDR-01～15` | 全部 `PASS` |
+| 终态（正式 `DONE`，不登记 `execution_disposition`——该字段专用于非终态 Checkpoint，与已进入的正式终态同时出现属无效组合，不重复 T-011.7 已纠偏过的失误） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`；`main_merge_authorized = true`（Founder 条件授权：任务分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`M2-PDR-01～15` 均完成；执行侧合并前逐项现场核验，见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)） |
+| Git 收口 | 任务分支提交推送 + 核验通过后合并进 `main` 并推送 `origin/main`；具体 commit/hash 见 [L5](L5_SIDE_EFFECTS.md) 与任务收口回执 |

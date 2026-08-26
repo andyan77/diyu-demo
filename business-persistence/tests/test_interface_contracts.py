@@ -190,3 +190,37 @@ def test_m4_boundary_content_version_requires_preexisting_content_never_generate
 
     for p, methods in openapi["paths"].items():
         assert "generate" not in p.lower(), f"found a content-generation-shaped endpoint path: {p} ({list(methods)})"
+
+
+def test_m3_m4_boundary_market_observation_projection_is_a_plain_minimal_projection(
+    client, bootstrapped, unique
+):
+    """M2 post-DONE Rebase v1.2 R-04: M2 only saves and projects market
+    observations -- it must never interpret them (no causal/dialogue-shaped
+    field) and it must never emit a fabricated competitive conclusion (no
+    scarcity/uniqueness/"already avoided homogeneity" claim), whether the
+    projection is empty or populated.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    headers = bootstrapped["headers"]
+
+    empty = client.get(f"/workspaces/{ws_id}/market-observations/current", headers=headers)
+    assert empty.status_code == 200
+    _assert_no_dialogue_shape(empty.json())
+
+    client.post(
+        f"/workspaces/{ws_id}/market-observations",
+        json={
+            "source": f"contract-obs-{unique}",
+            "collected_at": "2026-08-01T00:00:00Z",
+            "permission_status": "allowed",
+            "mechanism_summary": "对照组数据仅一次样本，结论未知",
+        },
+        headers=headers,
+    )
+    populated = client.get(f"/workspaces/{ws_id}/market-observations/current", headers=headers)
+    assert populated.status_code == 200
+    body = populated.json()
+    assert body["observations"], "sanity check that this test actually inspects a populated payload"
+    _assert_no_dialogue_shape(body)

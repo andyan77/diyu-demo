@@ -203,6 +203,19 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 
 > **终态字段纠偏说明**：本节此前同时登记 `execution_disposition = CONTINUE` 与 `task_final_status = DONE`，这是无效组合——`CONTINUE` 只用于非终态 Checkpoint，且要求 `task_final_status = null`。M2 已进入正式终态 `DONE`，`execution_disposition` 字段已在上表移除，不改变本任务此前已经是 `DONE` 这一事实本身。同一纠偏已同步至 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`、`M2_REBASE_ERRATA_001_RECORD.md`、`collab-ledger/L1_TASK_MANIFESTS.md`（§T-011.7）、`collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md`（§ATT-007）。完整记录见 `business-persistence/M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`。
 
+### 一.16 `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（`M2_POST_DONE_REBASE_v1.2` 收口，`DONE`；取代 §四原 Checkpoint 登记，§一.15 历史 `DONE` 不受影响、不回滚）
+
+`M2_POST_DONE_REBASE_v1.2` 的完整过程（技术结果/Founder处置分层、市场观察权限语义、迁移、独立审查、第二次 `M2-PDR-12` 证据核验的存疑与 Founder 裁决）见 [L1 §T-011.8～§T-011.10](L1_TASK_MANIFESTS.md)、[L3 §ATT-008～§ATT-009](L3_ATTEMPTS_AND_EVIDENCE.md)、`business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md`，本条只登记最终收尾事实，不重复过程。
+
+| 项 | 值 |
+|---|---|
+| `M2-PDR-12` 最终判定 | `PASS`——本系统侧六条持久化记录现场核验一致，执行侧最初三项存疑（`is_manual_entry`/时间跨度/`was_selected`&`was_produced`）经 Founder 说明后不再成立，Dify 侧运行身份（`workflow_run_id: 5c122641-...`，`status: succeeded`）由 Founder 第一手见证并报告；据实标注：这一条 Dify 侧事实本身未经执行侧独立复算 |
+| `M2-PDR-01～15` | 全部 `PASS` |
+| 合并前置条件核验（Founder 要求的确定性条件，执行侧现场逐项核验） | 见任务收口回执与 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §14 |
+| 合并执行 | 见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)；任务分支合并进 `main`，推送 `origin/main`，具体 commit/hash 见任务收口回执 |
+| 任务终态（正式 `DONE`，不登记 `execution_disposition`） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论——Founder 本次授权明确排除这些项 |
+| Checkpoint | **无**（`null`）。原 §四 记录的 Checkpoint 已解除，从此移出 §四 |
+
 ---
 
 ## 二、项目当前可执行动作（Current Handoff）
@@ -242,6 +255,6 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 
 ## 四、非终态 Checkpoint 区
 
-`NONE_VERIFIED_SINCE_BASELINE`
+`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。
 
-`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。**当前没有任何任务处于「开工后被中断」状态。**
+**当前无非终态 Checkpoint。** `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 的 `M2_POST_DONE_REBASE_v1.2` 曾在此登记过一份 Checkpoint（唯一缺口：`M2-PDR-12` 因本会话无可用 App API Key 未能现场重跑 Dify 候选受影响回归，历史原文见本行的上一版本或 Git 历史）；Founder 已于同日会话内就该缺口给出说明并以第一手见证补充 Dify 侧运行身份，执行侧独立核验本系统侧对应记录后，`M2-PDR-12` 更正为 `PASS`，Checkpoint 解除，任务转为正式终态 `DONE`。完整记录见 [L1 §T-011.9～§T-011.10](L1_TASK_MANIFESTS.md)、[L3 §ATT-009](L3_ATTEMPTS_AND_EVIDENCE.md)、`business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §13/§13.1、[本文件 §一.16](#一16-diyu-v1-m2-business-persistence-version-feedback-001m2_post_done_rebase_v12-收口done取代四原-checkpoint-登记一15-历史-done-不受影响不回滚)。
