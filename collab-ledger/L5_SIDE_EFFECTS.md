@@ -292,6 +292,19 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 两次 `/v1/chat-messages` 响应（本机临时文件 `ce_v0_3_01_resp.json`/`ce_v0_3_02_resp.json`）：`answer` 字段经关键词扫描（`FACT`/`PREFERENCE`/`REFERENCE`/`UNSTATED`/`evidence_bundle`/`SYSTEM_TENTATIVE`/`SYSTEM_INFERENCE`/`ev_00`/`DISCUSS`/`FOCUS`/`THIS_ACCOUNT`/`NOT_CAPTURED_IN_P0_SNAPSHOT`）均未命中；`metadata.reasoning.m1_shadow` 第二轮逐字包含第一轮写入的证据条目与 `confirmation` 值 |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 
+### SE-018 · 补记远程任务分支 10 次推送（正式 §8 独立审查发现的账本缺口，补造历史）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 | 远程分支 `https://github.com/andyan77/diyu-demo.git` `task/m1-natural-interaction-context-v1` |
+| 触发原因 | 正式 §8 独立审查（见 evidence §十二）核对发现：本任务分支自开工以来共真实推送 10 次（`git reflog show refs/remotes/origin/task/m1-natural-interaction-context-v1` 逐条可查），但 L5 此前一条都没记录——本任务其余批次只记了 Dify 侧副作用（SE-012～017），Git 推送这一类side effect被漏记。本条是发现后的补记，不是本次新推送 |
+| 推送记录（commit hash / 本地推送时间，均已用 `git ls-remote` 核验远端与本地 `refs/remotes/origin/...` 一致） | `1c1fe4e`(09:55) → `146c39b`(09:59) → `083cd36`(10:37) → `25c1cc1`(10:49) → `500791d`(11:10) → `3a4ddb9`(11:19) → `875d6df`(11:32) → `b2258e7`(12:03) → `bc224aa`(13:17) → `7258fae`(18:18)，均为 2026-08-25 |
+| 幂等信息 | Git push 本身不可重放去重；每次推送对应一个真实 commit，commit 历史见 `git log --oneline task/m1-natural-interaction-context-v1` |
+| 受控状态 | 可逆——分支可回退到任一历史 commit；**未 force push、未改写历史、未合并/直推 `main`**（`git log main..task/m1-natural-interaction-context-v1` 与 `git log task/m1-natural-interaction-context-v1..main` 均可核验） |
+| 核验依据 | 本条记录时刻 `git ls-remote origin refs/heads/task/m1-natural-interaction-context-v1` 返回 `7258fae2d731c179b6a5dd980f809a8cb917c228`，与本地 `git rev-parse HEAD` 完全一致 |
+| **状态** | **`CONFIRMED`**（补记，非本次新触发） |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
