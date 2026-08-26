@@ -355,7 +355,7 @@ Matrix 长期定位权威与账号锚点身份；Campaign 目标、有效期、�
 | 失败 | 出现自动 fallback 到 Qwen；或 Prompt 文件存在/一次成功响应被当作通过 |
 | 反证探针 | 附件未加载条件下运行服装类请求：输出必须承认未加载而非凭记忆补行业惯例 |
 | 取证阶段 | EP-06 |
-| 本轮状态 | `PASS`（Skill → 条件引用 → 直连 DeepSeek 链路，见下）；`NOT_VERIFIED`（Dify Workflow/画布链路，见下） |
+| 本轮状态 | `PASS`（Skill → 条件引用 → 直连 DeepSeek 链路）＋ `PASS`（Skill → 条件引用 → **Dify Workflow 图** → DeepSeek 链路）；`NOT_VERIFIED`（**浏览器渲染画布**）。三条链路的分界见下方"EP-06 实测记录"与"第 3 轮追加" |
 
 **EP-06 实测记录（2026-08-26）**：
 
@@ -364,6 +364,15 @@ Matrix 长期定位权威与账号锚点身份；Campaign 目标、有效期、�
 - 第 2 轮（commit `a990d68`，Skill 版本 `af61b82`）：全部 9 次调用重跑，另一个独立 Reviewer（新实例，未见第 1 轮判定、未见任何 Checkpoint）判定 **7/7 `成功`**。见 `M3_ECC_RUNTIME_FIDELITY_001_VERDICT_v1.1.md`（commit `de13ec1`）。
 - **未计入判定、已记录为独立观察**：组 1 变体 A 的 system prompt 实测确实附有 `references/fashion-and-market.md` 全文（`include_fashion_ref=true`），但模型输出自称"行业/季节参考文件本轮未加载"——一次关于自身上下文使用状态的不准确自述（方向是少报而非多报，未造成事实污染或编造）。这类自述准确性不在本组冻结 Oracle 范围内（Oracle 只要求账号身份/商品事实一致），按 A2 不得看到结果后加严判据，本轮不计入 AC-16 判定；登记为独立观察，需要新开版本化判据才能纳入未来验收范围，不在本 commit 内处理。
 - **画布级证据仍未建立**：Dify Console 访问凭据缺失（见 `M3_CHECKPOINT_ROUND_2.md` §8），本轮全部证据来自直连 DeepSeek API，不经过 Dify Workflow/画布；按 §12.3，画布级 AC-16 证据保持 `NOT_VERIFIED`，不受本轮直连结果影响。
+
+**第 3 轮追加（Dify Workflow 图链路，2026-08-26 同日晚些时候）**：
+
+- Dify Console 凭据缺口于同日解除（Founder 本人执行 `flask reset-password`），随后建立 task-id 专用候选 App `b7fb5b1a-9278-426c-bb8a-f9f288639548`（图 = `start → llm → end` 三节点）并发布。
+- `ECC-M3-RUNTIME-FIDELITY-001` 的判据**一个字未改**，只更换绑定中的"Workflow 图"这一个锁定变量：9 例经 `POST /v1/workflows/run` 全部 `succeeded`。第三名独立判定者（未读任何 Checkpoint、未读前两轮判定、未读本文件）判 **7/7 成功**，见 `M3_ECC_RUNTIME_FIDELITY_001_VERDICT_DIFY_v1.0.md`。
+- **必须分清的两件事**：本轮建立的是"语义经 **Workflow 图** 之后没有丢失"。它**不是** Prompt §12.3 意义上的**画布验收**——§12.3 明确写着"Dify 交付真相是当前草稿图、实际配置和**浏览器渲染画布**，不是单次 API 运行历史"。草稿图与实际配置已逐项核验（`evidence/ep10-closeout/dify_graph_structural_check.json`），**浏览器渲染那一层没做**：本机无 playwright / chromium，不具备浏览器自动化能力。该半继续保持 `NOT_VERIFIED`，**不用运行历史顶替**。
+  （此处曾在 `M3_FOUNDER_ACCEPTANCE_PACKAGE_v1.0.md` 初稿中被合并成一个 ✅，由独立收口 Reviewer 指出后更正；更正记录见该文件 §13 与 `M3_INDEPENDENT_CLOSEOUT_REVIEW_v1.0.md`。）
+- **同一现象第二次复现**：第 3 轮 `G7-A` 在 `loaded_references` 实际传入 2799 字符（sha256 与其余 7 组完全相同）的情况下，正文写"专业参考附件（`fashion-and-market.md`）本轮未加载"。这与第 2 轮 `G1-A` 是同一失效模式，由**两名不同的**独立判定者各自发现，执行侧两次均亲自复核原始记录属实。按 A2 不得在看到结果后加严判据，本轮仍不计入 AC-16 判定；**但"一次性观察"已升级为"可复现失效"**，登记为新任务候选。
+- **判定者隔离性已机械核验**：五名独立判定者（保真 3 轮 + 纵向 + 行为）的执行记录逐条解析，只扫会造成文件访问的参数，结果全部 `CLEAN`、零违规，见 `evidence/ep10-closeout/judge_isolation_verification.json`。此前这一点只有判定者自述，由独立收口 Reviewer 判为未核验（阻断项 B-2），本轮以补证据关闭，**不是**靠降级措辞关闭。
 - **成本**：两轮共 18 次真实调用，`prompt_tokens≈165,268`，`completion_tokens≈200,637`（含真实 `reasoning_tokens`，`deepseek-v4-flash` 为推理模型）。
 
 ### M3-AC-17 · 纵向多周期可复现
@@ -557,33 +566,44 @@ WHY（合同 `why`）= *给一个账号一项以证据为界的持续运营能�
 
 ---
 
-## 7. 本轮状态矩阵
+## 7. 状态矩阵
 
-| AC | 状态 | 计划取证阶段 |
+### 7.1 冻结时（`f5a9aca`，2026-08-26T11:13:42Z）
+
+全部 21 条 = `NOT_VERIFIED`。冻结的是"判什么、怎么判"，不宣布任何一项已通过。
+
+### 7.2 当前（2026-08-26 EP-10 收口时点）
+
+> 本表是**状态投影**，随证据变化更新；判据本体（§3 各卡的命题／冻结输入／候选／锁定变量／
+> Oracle／成功／不足／无结果／失败／反证探针）**一个字未改**，`git log -p` 可验。
+
+| AC | 当前状态 | 依据 |
 |---|---|---|
-| M3-AC-00 | `NOT_VERIFIED` | EP-00 已部分 / EP-10 闭合 |
-| M3-AC-01 | `NOT_VERIFIED` | EP-05 / EP-08 |
-| M3-AC-02 | `NOT_VERIFIED` | EP-05 / EP-06 |
-| M3-AC-03 | `NOT_VERIFIED` | EP-06 |
-| M3-AC-04 | `NOT_VERIFIED` | EP-06 |
-| M3-AC-05 | `NOT_VERIFIED` | EP-05 / EP-06 |
-| M3-AC-06 | `NOT_VERIFIED` | EP-05 / EP-06 |
-| M3-AC-07 | `NOT_VERIFIED` | EP-06 |
-| M3-AC-08 | `NOT_VERIFIED` | EP-06 |
-| M3-AC-09 | `NOT_VERIFIED` | EP-05 / EP-06 |
-| M3-AC-10 | `NOT_VERIFIED` | EP-06 / EP-07 |
-| M3-AC-11 | `NOT_VERIFIED` | EP-07 |
-| M3-AC-12 | `NOT_VERIFIED` | EP-04 实现 / EP-05 取证 |
-| M3-AC-13 | `NOT_VERIFIED` | EP-04 实现 / EP-05 取证 |
-| M3-AC-14 | `NOT_VERIFIED` | EP-05 / EP-06 |
-| M3-AC-15 | `NOT_VERIFIED` | EP-05 / EP-06 |
-| M3-AC-16 | `NOT_VERIFIED` | EP-06 |
-| M3-AC-17 | `NOT_VERIFIED` | EP-07 |
-| M3-AC-18 | `NOT_VERIFIED` | EP-08 |
-| M3-AC-19 | `NOT_VERIFIED` | EP-09 |
-| M3-AC-20 | `NOT_VERIFIED` | EP-10 |
+| M3-AC-00 | `PARTIAL` → 记 `NOT_VERIFIED` | 授权、合同哈希、进入模式、分支/worktree/Dify 对象均可回指；**远端推送未发生**，本条须在远端 hash 落地后才能闭合 |
+| M3-AC-01 | `NOT_VERIFIED` | ①②（EP-05 结构与责任反搜）通过；反证探针 `B01-P` 成功；**③消融门（B vs B′ 盲评）未跑完** |
+| M3-AC-02 | `FAIL(INSUFFICIENT)` | `B02-1` 不足——账号锚点未标注来源/范围/不确定性/复验触发 |
+| M3-AC-03 | `FAIL(INSUFFICIENT)` | 八变体两两 28 对**全部满足**四轴差异；负向探针 `B03-N2` 不足 |
+| M3-AC-04 | **本 ECC 内四例全部成功** → 整条仍 `NOT_VERIFIED` | 卡上冻结输入已满足；等 EP-10 收口一并复核绑定 |
+| M3-AC-05 | **结构半 PASS ＋ 运行时半两例成功** → 整条 `PASS` | 结构：Dify 图中四类行为标签 0 命中、无枚举/分支/必填字段、节点类型仅 start/llm/end；运行时：`B05-1/2` 成功 |
+| M3-AC-06 | `FAIL` | `B06-1` 触发失败条款（把"每天 3 条"换算为"约 21 条/周"）；`B06-P` 不足。**判据措辞与语义主稿存在落差，登记为 v1.1 修订事项，只对未来轮次生效，本轮不放宽** |
+| M3-AC-07 | **本 ECC 内四例全部成功** → 整条 `NOT_VERIFIED` | 同 AC-04 |
+| M3-AC-08 | `FAIL(INSUFFICIENT)` | `B08-1` 探索提案缺反证 |
+| M3-AC-09 | `FAIL(INSUFFICIENT)` | `B09-2` 不足；`B09-N5` 无结果（余额耗尽） |
+| M3-AC-10 | `NOT_VERIFIED(ABSENT)` | 5 例全部无结果。EP-07 的 `E05/E06/E07` 提供了纵向补充证据，但不闭合本条 |
+| M3-AC-11 | **本 ECC 内三步全部成功** → 整条 `NOT_VERIFIED` | `E09/E10/E11` 成功；但其所属序列整体判 `FAIL(INSUFFICIENT)`，不据部分步骤单独放行 |
+| M3-AC-12 | `PASS` | ①五类状态两两不等 ②`additionalProperties:false` ③全字段消融门通过。**市场观察半原对 `main@df2c595` 为 `STALE`，现经逐文件实测确认容器代码与 `main@a7b8101` 逐字节一致且容器未重启，转 `CURRENT`**（见 `evidence/ep10-closeout/BASELINE_DRIFT_IMPACT_v1.0.md`） |
+| M3-AC-13 | `PASS` | ①无写调用/凭据 ②`candidate_status` 只能 `proposed` ③无自有持久化 ④**"+ Dify 图"冻结输入本轮补齐**：图中无 http-request/tool/code 节点、无环境变量与会话变量 |
+| M3-AC-14 | `NOT_VERIFIED` | 3 例全部无结果；下游消费半仍含一条已披露的 `ABSENT`（Content Brief v0.1 的上游错位） |
+| M3-AC-15 | `NOT_VERIFIED` | ①责任反搜通过；②③的 5 例全部无结果 |
+| M3-AC-16 | `PASS`（Skill → 条件引用 → **Workflow 图** → DeepSeek）<br>`NOT_VERIFIED`（**浏览器渲染画布**） | 直连链路第 2 轮 7/7、Workflow 图链路第 3 轮 7/7，两名不同独立判定者，隔离性已机械核验（`evidence/ep10-closeout/judge_isolation_verification.json`）。**画布那一半仍未做**：本机无浏览器自动化能力，按 Prompt §12.3，Service API 跑出来的是运行历史、不是画布验收 |
+| M3-AC-17 | `FAIL(INSUFFICIENT)` | 12 步中 `E04`/`E07` 不足；序列级三条（局部性/身份分离/责任边界）均成立 |
+| M3-AC-18 | `NOT_VERIFIED` | 12 次运行只跑完 6 次（余额耗尽），按 ECC §7 不得用部分场景宣称通过 |
+| M3-AC-19 | `NOT_VERIFIED` | Qwen 隔离核验按 Founder 指示 `NOT_APPLICABLE`（技术阻碍已解除，见 Checkpoint 4）；独立 Reviewer 已完成并报 2 条阻断项，均已在本轮闭合；Holdout 强度上限已如实记录 |
+| M3-AC-20 | `NOT_VERIFIED` | 回滚演练（Dify 导出→恢复、Git 非破坏式重建）已完成；**远端推送未发生**；Founder 产品接受未发生 |
 
-**本轮没有任何一条 AC 被判定为 `PASS`。** EP-05 起才开始正式取证。
+**汇总**：`PASS` 4 条（AC-05 / AC-12 / AC-13 / AC-16 的 Workflow 图半）｜`FAIL` 1 条（AC-06）｜`FAIL(INSUFFICIENT)` 4 条（AC-02 / AC-03 / AC-08 / AC-09 / AC-17，其中 AC-17 单独计）｜其余 `NOT_VERIFIED`。
+
+**没有任何一条被"部分满足即通过"地读。** 本轮的四条 `PASS` 中，AC-12/AC-13 是结构类判据（其冻结输入本轮全部补齐），AC-05 是结构＋两例运行时，AC-16 只是它的一半且另一半明写未验。
 
 ---
 
