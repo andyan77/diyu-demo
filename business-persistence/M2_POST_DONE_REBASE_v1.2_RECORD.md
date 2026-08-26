@@ -138,7 +138,38 @@ M2 只保存与投影；`tests/test_interface_contracts.py` 新增合同测试�
 
 沿用原分支 `task/m2-business-persistence-version-feedback-v1`，复用现有 worktree，未建立第二个 M2 根分支。写入前 `git fetch` 核验 `origin/main`/任务分支未漂移（见 §1）。全部改动限定在 `business-persistence/app/`、`business-persistence/migrations/`、`business-persistence/tests/`、本记录文件本身；`git diff --stat` 排除 `business-persistence/` 后为空，确认零受保护资产改动。未使用 `force push`/`amend`/`reset --hard`/`squash`。
 
-- 任务分支提交（本轮）：见下方"最终证据绑定"（提交后现场核验补齐）。
 - **`main_merge_authorized = false`**：Founder 本次明确不授权合并 main；本记录完成、提交、推送任务分支后立即停止，等待 Founder 对准确最终 commit 另行裁决是否合并。
 
-<!-- 最终证据绑定：提交与推送完成后现场核验并登记于此 -->
+## 11. 最终证据绑定（现场核验完成）
+
+- 起算任务分支 head：`c57892188caafc2318f5d353e7ed03b53256dba0`
+- **本轮最终任务分支 commit：`e93773dff734cac9da94e87b4797700ceaba598c`**
+- 推送：`git push origin task/m2-business-persistence-version-feedback-v1` → `c578921..e93773d`
+- 远端核验：`git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` → `e93773dff734cac9da94e87b4797700ceaba598c`，与本地 `git rev-parse HEAD` 一致
+- `origin/main` 核验：`git ls-remote origin refs/heads/main` → `df2c5952551f386a0e9a509404357f23c1d223c9`，与本轮起算前完全一致，**未被本轮任何操作触碰**
+- 未使用 `force push`/`amend`/`reset --hard`/`squash`；未删除来源分支
+
+## 12. 最终状态块
+
+```text
+task_id = DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001
+task_entry_mode = REBASE_TASK
+current_task_contract_hash = 9285e080c44456b2c468c3d47ea91187b19161bf76965d121bc0832ec0ead647
+
+M2_HISTORICAL_DONE_PRESERVED = true
+M2_TECHNICAL_RESULT_FOUNDER_DISPOSITION_LAYERING = VERIFIED
+M2_MARKET_OBSERVATION_PERMISSION_SEMANTICS = VERIFIED
+M2_POST_DONE_REBASE = NOT_VERIFIED
+REAL_OPERATION_LOOP_VERIFIED = false
+BUSINESS_OUTCOME_IMPROVEMENT_VERIFIED = false
+M5_INTEGRATION_VERIFIED = false
+MAIN_MERGE_AUTHORIZED = false
+
+execution_disposition = CONTINUE
+task_final_status = null
+historical_m2_task_status = DONE
+post_done_rebase_progress = IN_PROGRESS
+next_stage_allowed = false
+```
+
+`M2_POST_DONE_REBASE = NOT_VERIFIED`（不是 `PASS`，也不是 `FAIL`）：`M2-PDR-01～11`/`13～15` 全部 `PASS`，唯独 `M2-PDR-12` 的 Dify 候选受影响回归因外部凭据缺口未获现场证据，如实登记为 `NOT_VERIFIED`，不满足 §10 全部停止条件的"没有未披露的...证据身份问题"这一项之外的"最终 commit 已推送远程原任务分支"以下各项均已满足。按 Prompt §10 保存为 Checkpoint，完成后立即停止：不继续润色、不扩建市场平台、不重跑不受影响的 M2 主体、不另开新 Reviewer、不合并 main、不进入 M5。解除条件与后续动作见 `collab-ledger/L2_TASK_STATE_AND_HANDOFF.md` §四。

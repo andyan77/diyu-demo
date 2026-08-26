@@ -383,6 +383,19 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 现场 `alembic current` = `17368b750d3b (head)`；现场 SQL 核验 123 条既有记录 `permission_status` 全部回填为 `unknown`（无一 `allowed`） |
 | **状态** | `CONFIRMED`（现场核验，非自报） |
 
+### SE-026 · 推送任务分支（`M2_POST_DONE_REBASE_v1.2`）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（`task_entry_mode = REBASE_TASK`） |
+| 类型 | Git push（既有任务分支） |
+| 目标 | `https://github.com/andyan77/diyu-demo.git` → `refs/heads/task/m2-business-persistence-version-feedback-v1` |
+| 内容标识 | 市场观察权限语义（模型+API+迁移+测试）+ 独立审查修复 + `M2_POST_DONE_REBASE_v1.2_RECORD.md` + L1/L2/L3/L5 账本更新 |
+| 幂等信息 | 同一 commit 重复推送为空操作；**禁用** `--force` |
+| 受控状态 | 可逆——任务分支可删；**未触碰默认分支** `main`（Founder 本次明确不授权合并） |
+| 核验依据 | `git push` 回显 `c578921..e93773d`；`git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` → `e93773dff734cac9da94e87b4797700ceaba598c`，与本地一致；`git ls-remote origin refs/heads/main` 仍为 `df2c5952551f386a0e9a509404357f23c1d223c9`，未变 |
+| **状态** | `CONFIRMED` |
+
 ### 状态值规范映射（2026-08-26，M2 治理收口纠偏新增，不改历史原文）
 
 本文件 §一固定六值枚举为 `PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED`。SE-017/SE-018/SE-019/SE-020/SE-021 使用了枚举外的状态字面值（`ATTEMPTED`、`BLOCKED`、`EXECUTED`）。以下为口径对照，**只新增映射说明，不修改上述条目原文**：
