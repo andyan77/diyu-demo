@@ -149,7 +149,40 @@ M4_TASK_PROGRESS_STATE   = IN_PROGRESS      (不是终态；仍有授权内路�
 
 ---
 
+### A-008 · 远端 `main` 前移的定向影响面计算（DIAGNOSTIC，N-25 现场触发）
+
+本轮施工期间远端 `main` 从 `ca5281ae…15d4` 前移到 `a7b81010…96a3`：
+M1 模块落地（`DIYU-V1-M1-MODULE-LANDING-001`）已合并进 main，终态 DONE。
+
+- **未吸收、未改写任何 M1 资产**；任务分支从原基线起算，不 rebase 到新 main。
+- 影响面（A3）：
+  - **不受影响**（证据继续复用）：六份后继 Skill、六个能力应用、统一接缝、统一合同、夹具包、取证判据、确定性探针。
+  - **受影响 → `STALE`**：Founder 画布。
+- 我复用的意图层源文件 `DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml` 在新 `main` 上的 sha256
+  = `8b2fd35af5772a457514a75312aa382fd5b783903313cc8e5df060e98f7a68cc`，与本 worktree **完全一致**（未被改动）。
+- 顺带确认 M1 已落地编译器的能力枚举**已与 M4 对齐**（六项，非旧的五值 `PRODUCTION_STAGE1`/`PUBLISHING_STAGE2`），
+  且其设计文档把「创意锦标赛目前没有物理路由入口」标为待 M4 提供——M4 的 `ENTRY-04` 正是这一项。
+
+**定向核验查出的真实缺陷（自查）**：见阻断 `M4-BLK-002`。
+
+---
+
 ## 阻断登记
+
+```yaml
+blocker_id: "M4-BLK-002"
+kind: "SCOPE_DECISION_REQUIRES_FOUNDER"
+severity: "HIGH"
+what: "Founder 画布逐字节复用的 v1_state 里带着 UPSTREAM_OF 硬锁，使画布路径上 ENTRY-03/05/06/07 不可能成立"
+in_principle_m4_scope: true      # M1 落地设计文档 §四 + Phase 0 前言 §五/§七 均明确指派给 M4
+requires_founder_because: "它是对已被 Founder 接受、终态 DONE 的 M1 模块的行为改动（Prompt §3 上推条件）"
+executor_professional_opinion: "应当拆；建议外科式只改 UPSTREAM_OF 与 NEXT_SKILL 两处，v1_shadow 零改动，并由验证器机械断言差异恰好等于这两处"
+deliberately_unpatched: "DOWNSTREAM_OF_SLOT 按位置级联 STALE 保持原样——无依赖记录时标 STALE 不算少算，清空反而少算"
+attempted: true
+attempt_result: "被平台权限分类器拦截，未实施；与「不得自行改动他模块已落地资产」的边界判断一致"
+affected_scope: "仅 Founder 画布路径。统一能力接缝父应用与六个能力应用不经过 v1_state，不受影响"
+is_terminal: false
+```
 
 ```yaml
 blocker_id: "M4-BLK-001"

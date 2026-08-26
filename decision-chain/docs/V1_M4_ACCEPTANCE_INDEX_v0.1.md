@@ -30,7 +30,7 @@ final_status: "NOT_YET_DETERMINED"
 
 ---
 
-## 2. 当前唯一阻断
+## 2. 阻断一 · Dify Console 写入路径不可用
 
 ```yaml
 blocker_id: "M4-BLK-001"
@@ -54,6 +54,94 @@ unblock_options:
   - "或由 Founder 在宿主机自行执行该脚本三阶段（脚本已带写前完整性核验、幂等键、回滚锚点与写后目标系统确认）"
   - "或以环境变量 DIFY_CONSOLE_EMAIL / DIFY_CONSOLE_PASSWORD 提供凭据后放行执行"
 ```
+
+---
+
+## 2A. 第二个阻断：Founder 画布仍带着 M4 应当拆掉的那把线性锁
+
+```yaml
+blocker_id: "M4-BLK-002"
+kind: "SCOPE_DECISION_REQUIRES_FOUNDER"
+severity: "HIGH —— 不修则 Founder 画布路径上的 ENTRY-03/05/06/07 不可能成立"
+```
+
+### 2A.1 发生了什么
+
+本轮施工期间，远端 `main` 从 `ca5281ae…15d4` 前移到 `a7b81010…96a3`：
+**M1 模块落地（`DIYU-V1-M1-MODULE-LANDING-001`）已合并进 main，终态 DONE。**
+
+这属于 Prompt §1.2 预告的「M4 的并行保护与接口刷新影响面」。
+执行侧按 N-25 做了定向影响面计算，**未吸收、未改写任何 M1 资产**。
+
+### 2A.2 影响面计算结果
+
+| 对象 | 是否受影响 | 依据 |
+|---|---|---|
+| 六份后继 Skill | **否** | 不依赖 M1 意图层 |
+| 六个能力应用 + 统一接缝 DSL | **否** | 只接收结构化能力调用意图，与 M1 内部实现解耦 |
+| 统一合同 / 夹具包 / 取证判据 / 确定性探针 | **否** | 同上 |
+| 我复用的意图层源文件 `DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml` | **否** | 新 `main` 上的 sha256 = `8b2fd35a…a68c`，与本 worktree **完全一致**，未被改动 |
+| **Founder 画布（`DIYU_M4_FOUNDER_CANVAS_v1_3_TEST.yml`）** | **是 → `STALE`** | 见下 |
+
+### 2A.3 定向核验查出的真实缺陷（自查，非外部指出）
+
+Founder 画布逐字节复用了已部署的 `v1_state` 节点。该节点里有：
+
+```python
+UPSTREAM_OF = {"matrix": None, "campaign": "matrix", "content_brief": "campaign",
+               "production_stage1": "content_brief",
+               "publishing_stage2": "production_stage1"}
+```
+
+`gate_reason()` 用它做**硬阻断**：上游产物不存在或未被用户接受时，直接 `revoke_auth()`、
+把 route 打成 `HUMAN_DECISION`，并回一句「现在还不能执行 Content Brief，因为上游
+『Campaign 决策包』尚未被用户明确接受」。
+
+**后果**：在 Founder 画布路径上，`ENTRY-03`（直接 Brief）、`ENTRY-05`（直接 CS）、
+`ENTRY-06`（直接 PD）、`ENTRY-07`（直接 PP）**全部不可能成立**——正是 M4 存在的理由被这把锁抵消。
+
+同一节点里还有 `NEXT_SKILL`（「接受并继续」→ 自动跑**位置上**的下一环），
+同样是固定流水线假设，与统一合同 §3 `DEFAULT_CALL=[]` 冲突。
+
+> 这**只影响 Founder 画布这一条路径**。统一能力接缝父应用与六个能力应用不经过 `v1_state`，
+> 七入口在接缝层的确定性映射已由探针实跑验证（78/79 PASS）。
+
+### 2A.4 为什么这一处必须由 Founder 拍板，而不是执行侧自行改
+
+拆这把锁**在原则上确实是 M4 的活**，两处已落地真源都这么写：
+
+- M1 已落地的 `V1_M1_TASK_CONTEXT_COMPILER_DESIGN_v0.1.md` §四明写：
+  「`v1_state` 的 `UPSTREAM_OF` 线性锁——**那把锁前言暂定归 M4 施工范围**，本任务不触碰。」
+- M1–M4 Phase 0 共享编译前言 §五把「把现有 Skill／DSL／路由的全局终止改造成组件级或
+  分支级返回」明确指派给 M4；§七也把「决策链全有全无式硬停」列为受影响模块的施工差距。
+
+但它同时是**对一个已被 Founder 接受、终态 DONE 的模块（M1）的行为改动**：
+
+- Prompt §3 要求「改变 M1/M2/M3 职责」必须上推；
+- 拆锁会改变用户在画布上说「继续」时的实际行为；
+- 执行侧尝试实施该补丁时被平台权限分类器拦截，这与「不得自行改动他模块已落地资产」的
+  边界判断一致。
+
+**执行侧的专业意见（按 SBC-RF-04 如实披露，不因迎合而回避）**：这把锁应当拆，
+否则 M4 的七入口在 Founder 实际会用的那个入口上是空的。
+建议的改法是**外科式**的——只替换 `UPSTREAM_OF` 与 `NEXT_SKILL` 两处定义，
+其余每一个字节原样保留，`v1_shadow`（M1 的自然语言理解）**零改动**，
+并由验证器机械断言「差异恰好等于这两处，多一处即 FAIL」。
+
+**明确不做的一处**（一并登记，不静默保留也不静默删除）：`DOWNSTREAM_OF_SLOT`
+的按位置级联 STALE **保持原样**。`v1_state` 里没有依赖记录，无法判断真实依赖；
+按 A3 与七个动作之 #7，「无法判断者标 STALE」不算少算，清空它反而造成少算。
+精确的按 `semantic_keys` 定向失效在 M4 接缝层实现（统一合同 §10.4）。
+
+### 2A.5 需要 Founder 回答的唯一问题
+
+> 是否授权 M4 对已部署 `v1_state` 施加上述**两处**外科式改动（`UPSTREAM_OF` / `NEXT_SKILL`），
+> 其余字节与 `v1_shadow` 零改动？
+
+- **授权** → 执行侧实施补丁 + 机械差异断言，Founder 画布随后可覆盖全部七入口。
+- **不授权** → Founder 画布按现状发布，其上 `ENTRY-03/05/06/07` **不可达**，
+  这四项在画布路径上只能记 `NOT_APPLICABLE_ON_CANVAS`，
+  由统一能力接缝父应用单独承担七入口的技术验收。**这不是把判据降级，是把它挪到另一个入口去证。**
 
 ---
 
@@ -89,7 +177,7 @@ unblock_options:
 | Production Director 能力应用 | `content-production/workflows/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml` | 12 | ENTRY-06 |
 | Publishing & Packaging 能力应用 | `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml` | 12 | ENTRY-07 |
 | 统一能力接缝（父） | `decision-chain/workflows/DIYU_M4_CAPABILITY_SEAM_v1_3_TEST.yml` | 25 | 七入口分派、Return 聚合、失效集 |
-| Founder 画布 | `decision-chain/workflows/DIYU_M4_FOUNDER_CANVAS_v1_3_TEST.yml` | 14 | **M1 意图层 7 个节点逐字节复用**，不重建自然语言理解 |
+| Founder 画布 | `decision-chain/workflows/DIYU_M4_FOUNDER_CANVAS_v1_3_TEST.yml` | 14 | **M1 意图层 7 个节点逐字节复用**，不重建自然语言理解。**当前 `STALE`：仍带 `v1_state` 的线性硬锁，见 §2A** |
 
 **工具链**
 
@@ -266,6 +354,7 @@ external_side_effects:
 
 open_items:
   - "M4-BLK-001：Dify Console 写入路径被权限分类器拦截"
+  - "M4-BLK-002：Founder 画布仍带 v1_state 线性硬锁，拆锁需 Founder 授权（见 §2A）"
 
 next_single_action: >
   取得 Dify Console 写入放行后，依次执行
@@ -304,4 +393,7 @@ founder_product_acceptance:
 **给执行侧**：等待 Dify Console 写入放行（见 §2 三个选项之一），随后按 §8 `next_single_action` 继续。
 
 **给 Founder**：本轮**不需要**你做产品验收——后继应用尚未发布，`V1_M4_FOUNDER_TEST_PACKAGE_v0.1.md` 还不能跑。
-你现在只需要决定要不要放行那一条 Dify 写入。
+你现在只需要拍两件事：
+
+1. 要不要放行那一条 Dify 写入（§2）；
+2. 要不要授权拆掉 `v1_state` 的那把线性硬锁（§2A.5）。
