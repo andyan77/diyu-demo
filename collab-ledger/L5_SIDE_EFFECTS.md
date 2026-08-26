@@ -360,6 +360,29 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 合并后验证 | 远程 `main` 与本地一致（`03a94ca`）；双向祖先核验通过（`894211b`、`a903e49` 均为新 `main` 祖先，历史未改写）；未执行任何数据库/Dify/容器操作 |
 | **状态** | `CONFIRMED`——`main` 现真实包含本次治理收口纠偏；`task/m2-business-persistence-version-feedback-v1` 分支保留未删除 |
 
+### SE-024 · Alembic 迁移 `17368b750d3b` 首次尝试失败，事务性回滚，零残留
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（`task_entry_mode = REBASE_TASK`，`M2_POST_DONE_REBASE_v1.2`） |
+| 触发 | 首个迁移版本对 `(workspace_id, account_id, idempotency_key)` 使用无 `WHERE` 条件的 `NULLS NOT DISTINCT` 唯一约束 |
+| 执行 | `docker run --rm --network docker_default diyu-m2-app:dev alembic upgrade head`，目标为真实 `diyu_business` 开发/测试数据库（非影子库、非空库，含既有 61 条 `market_observations` 记录） |
+| 结果 | `psycopg2.errors.UniqueViolation`——既有 61 条记录均为 `(account_id=NULL, idempotency_key=NULL)`，被无条件 `NULLS NOT DISTINCT` 判定为互相重复；Alembic 事务性 DDL 当场完整回滚，现场核验 `alembic current` 退回 `c3f8b2e6d0a4`，`\d market_observations` 逐列核对与迁移前完全一致，无残留列/索引 |
+| 处置 | 改用带 `WHERE idempotency_key IS NOT NULL` 的部分唯一索引重写迁移，同一数据库重新 `upgrade` 成功；详见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §6 |
+| **状态** | `FAILED_NO_EFFECT`——失败但零外部效果残留，非本文件固定六值之外的字面值 |
+
+### SE-025 · Alembic 迁移 `17368b750d3b`（修正版）应用成功
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001`（`task_entry_mode = REBASE_TASK`） |
+| 类型 | Alembic 迁移，开发/测试数据库 `diyu_business`（独立于 Dify 自身库，未触碰 Dify 表） |
+| 内容标识 | 新增列（`source_type`/`source_reference`/`source_provider`/`account_id`/`applicable_task_id`/`applicable_period_start`/`applicable_period_end`/`permission_status`/`permission_basis`/`usage_limits`/`permission_confirmed_by`/`permission_confirmed_at`/`evidence_digest`/`idempotency_key`）+ 2 个新索引（含 1 个部分唯一索引），未改写任何既有迁移文件 |
+| 幂等信息 | `alembic upgrade head` 对已应用版本为空操作；现场完成 upgrade→downgrade→upgrade 往返验证两次（含 SE-024 的失败版本一次），`alembic check` 均报告无漂移 |
+| 受控状态 | 可逆——`downgrade()` 已现场验证可清洁回退；数据库内容为工程测试数据，非真实经营数据 |
+| 核验依据 | 现场 `alembic current` = `17368b750d3b (head)`；现场 SQL 核验 123 条既有记录 `permission_status` 全部回填为 `unknown`（无一 `allowed`） |
+| **状态** | `CONFIRMED`（现场核验，非自报） |
+
 ### 状态值规范映射（2026-08-26，M2 治理收口纠偏新增，不改历史原文）
 
 本文件 §一固定六值枚举为 `PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED`。SE-017/SE-018/SE-019/SE-020/SE-021 使用了枚举外的状态字面值（`ATTEMPTED`、`BLOCKED`、`EXECUTED`）。以下为口径对照，**只新增映射说明，不修改上述条目原文**：

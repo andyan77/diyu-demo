@@ -242,6 +242,17 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 
 ## 四、非终态 Checkpoint 区
 
-`NONE_VERIFIED_SINCE_BASELINE`
+`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。
 
-`V1-M0-SLICE-PREFLIGHT-AND-SHARED-CONTRACT-CLOSEOUT-001` 曾在 Phase C 等待 Founder 裁决期间登记过一份 Checkpoint（历史原文见 Git 历史该行的上一版本，或 [L3 §七](L3_ATTEMPTS_AND_EVIDENCE.md)）；Founder 已于 2026-08-25 明确回答，该任务已终结 `DONE`（见 §一.7），Checkpoint 解除。**当前没有任何任务处于「开工后被中断」状态。**
+**当前一份非终态 Checkpoint**：`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 的 `M2_POST_DONE_REBASE_v1.2`（`REBASE_TASK`，不影响 §一.15 已记录的历史 `DONE`）。完整记录见 [L1 §T-011.8](L1_TASK_MANIFESTS.md)、`business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md`。
+
+```yaml
+execution_disposition: CONTINUE
+task_final_status: null
+historical_m2_task_status: DONE
+post_done_rebase_progress: IN_PROGRESS
+next_stage_allowed: false
+main_merge_authorized: false
+```
+
+技术工作已完成并现场核验（市场观察权限语义、迁移、独立审查 2 项 BLOCKING + 5 项 NOTE 修复、全量回归 92/92），任务分支已收口推送（见 [L5](L5_SIDE_EFFECTS.md)）。**唯一剩余缺口**：`M2-PDR-12` 要求的"Dify 候选受影响回归"因本会话无可用 App API Key 未能现场重跑，如实登记为 `NOT_VERIFIED`（部分），未用间接回归证据或 API 等价证据冒充。**解除条件**（任一即可）：(a) Founder 提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）的 App API Key，供执行侧现场重跑一次六步候选、补齐 `M2-PDR-12` 的直接证据；(b) Founder 明确裁决豁免这一项直接证据、接受已披露的间接证据（本轮改动零触碰六步场景实际调用的端点 + 全量回归通过）。Founder 本次同时明确 `main_merge_authorized = false`：无论 (a)/(b) 如何解除，是否合并 main 需 Founder 对准确最终 commit 另行裁决，不随 Checkpoint 解除自动发生。

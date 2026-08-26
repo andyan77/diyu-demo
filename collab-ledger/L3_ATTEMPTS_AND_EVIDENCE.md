@@ -1888,3 +1888,17 @@ Founder 指出 ATT-006 登记的终态与相关账本存在治理矛盾：(1) `e
 | L5 纠偏 | 见 `collab-ledger/L5_SIDE_EFFECTS.md` 本次新增的状态映射与 §四 更正块；本文件不重复副作用细节 |
 | 本次 Recovery 范围 | 只修改治理/证据/账本文件；`m2_engineering_code_changed = false`；`database_write_performed = false`；`dify_write_performed = false`；完整记录见 `business-persistence/M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md` |
 | Recovery Git 收口（现场核验完成） | 推送任务分支：`74bc9e3..894211b`，`recovery_commit = 894211bb025228eb69c50b7c415c4f9de3c6c8dd`；`git merge --no-ff` 合入 `main`（零冲突）后推送：`a903e49..03a94ca`，`merge_commit = final_origin_main = 03a94ca5eb6ec713c223c62a9c67d01fd7070ff0`；本地/远程一致，双向祖先核验通过，受保护资产与非 `business-persistence`/`collab-ledger` 路径零 diff |
+
+### ATT-008（`M2_POST_DONE_REBASE_v1.2`，`REBASE_TASK`，市场观察权限语义 + 技术结果/Founder处置分层；不取代 ATT-007 已记录的历史 `DONE`，本任务的当前状态转为 Checkpoint，见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md)）
+
+Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256 = c4f5e2de896320acaa82af40d0025f0fef8c43da3490a4f8d2e58787a18865c8`，现场重算一致）以 `REBASE_TASK` 模式继续同一 task_id；`current_task_contract_hash = 9285e080c44456b2c468c3d47ea91187b19161bf76965d121bc0832ec0ead647`。仅处理 Prompt 冻结的两个 Delta：技术结果/Founder 处置分层、市场观察权限语义；不重做 M2 主体，不启动 M1/M3/M4/M5，不改变历史 `DONE`。完整记录见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md`。
+
+| 项 | 值 |
+|---|---|
+| 技术结果/Founder处置分层（R-02） | `M2-AC-13`/`M2-RB-10` 前向更正：`technical_result = NOT_MET`、`technical_evidence_currency = CURRENT`、`founder_disposition = WAIVED_FOR_THIS_DELIVERY`、`blocking_effect = false`——不再把 `FOUNDER_WAIVED` 直接放进"结果"列 |
+| 市场观察权限语义（R-03/R-04） | `market_observations` 新增 12 个字段（来源类型/引用/提供者、账号/任务/时间范围、权限状态五态+依据+限制+确认人/时间、证据摘要、幂等键）；访问控制（workspace 成员）与来源使用权限（`permission_status`）两道独立门；新增 `.../market-observations/current`（最小投影，逐条排除原因，明确 gap）与 `.../{id}/permission`（权限确认，部分更新）两个端点；既有字段/端点零改动 |
+| 迁移（R-05） | 新增 `17368b750d3b`（`Revises: c3f8b2e6d0a4`），仅新增列/索引；`permission_status` 回填全部既有 123 条记录为 `unknown`（无一 `allowed`）；幂等改为部分唯一索引（`WHERE idempotency_key IS NOT NULL`）+ `NULLS NOT DISTINCT`，修复与 `c3f8b2e6d0a4` 同源的跨账号幂等键碰撞缺陷；现场 upgrade/downgrade/upgrade 两轮往返（含一次真实失败——对全表应用 NULLS NOT DISTINCT 导致既有 123 条 NULL/NULL 记录互判重复，Alembic 事务性 DDL 当场完整回滚，无残留），`alembic check` 均无漂移 |
+| 独立审查（本合同版本预算：1 审查 + 1 修复，如实用尽） | 1 个上下文隔离只读 Reviewer：2 项 BLOCKING（`/current` 范围排除原因被丢弃未暴露；权限确认端点无条件覆盖清空 `usage_limits`/`permission_basis`）+ 5 项 NOTE，1 次修复预算内全部修复并新增针对性测试；全量回归 **92/92 通过**（修复前 85/85） |
+| `M2-PDR-01～15` | `01～11`、`13～15` 全部 `PASS`；`M2-PDR-12` 部分 `NOT_VERIFIED`——Dify 候选受影响回归因本会话无可用 App API Key 未能现场重跑，如实披露，未用间接证据或 API 等价证据冒充 |
+| 任务分支 Git 收口 | 起算 `c578921`；提交与推送后现场核验见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)；**未合并 main**（Founder 本次明确 `main_merge_authorized = false`），未触碰其他 worktree 或受保护资产 |
+| 终态（Checkpoint，非最终） | `execution_disposition = CONTINUE`；`task_final_status = null`；`historical_m2_task_status = DONE`（不变）；`post_done_rebase_progress = IN_PROGRESS`；`next_stage_allowed = false`；`main_merge_authorized = false`；解除条件见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md) |
