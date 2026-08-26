@@ -82,19 +82,21 @@ repair_units = 3（对应 3 轮真实修复：020bc58、f09e292，以及本 Reba
 
 **R-08（已解除）**：Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key（未索要 Console 会话或账号密码）。执行侧用该 Key 调用 Dify 自身 Service API `POST /v1/workflows/run`，真实触发 Dify 引擎执行同一份已发布 workflow 定义——这是真实画布重跑，不是绕开 Dify 直接调用 M2 后端的"API 等价证据"（R-08.8 明文禁止的正是后者）。运行结果：`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，对照 `FOUNDER_TEST_PACKAGE.md` 的 9 项判断标准逐项核验全部满足（详见 `M2_ACCEPTANCE_EVIDENCE.md` AC-16 行）。`M2-AC-16` 由 `NOT_VERIFIED` 转为 `PASS`。
 
-## 8. 本轮终态
+## 8. 本轮终态（`DONE`）
 
-`M2-AC-16` 已转 `PASS`。`M2-AC-13` 已由 Founder 明确豁免，标记 `FOUNDER_WAIVED`。按 Prompt §8.2（`M2-RB-01～14` 全部通过；`M2-AC-00～16` 全部对最终候选有 CURRENT 证据或 Founder 明确豁免；当前 Dify 候选已按最终代码真实运行；远程任务分支收口完成；没有未披露的权限/数据完整性/受保护资产问题——以上本轮已全部满足）：
+`M2-AC-16` 已转 `PASS`。`M2-AC-13` 已由 Founder 明确豁免，标记 `FOUNDER_WAIVED`。**`M2-AC-17` 已转 `PASS`**：Founder 本人在 Dify Studio 实际运行候选画布（`task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57`），逐项核验 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，明确表示"接受"，并进一步裁决"接受 + 合并主干"。任务分支已合并进 `main`（合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`），合并后现场核验的完整证据见 `M2_ACCEPTANCE_EVIDENCE.md`"合并与最终证据绑定"一节。按 Prompt §8.3（DONE 条件：审查预算偏差已确认披露、全部证据绑定远端最终 commit、`M2-AC-00～17`/`M2-RB-01～14` 全部通过或 `FOUNDER_WAIVED`、未用模拟数据声称真实运营闭环、未声称经营提升/生产可用/M5完成——本轮全部满足）：
 
 ```text
 execution_disposition = CONTINUE
-task_final_status = null
-module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE
+task_final_status = DONE
+module_delivery_state = DONE
 next_stage_allowed = false
 ```
 
-技术侧收口完成，按 Prompt §10 停止功能扩张，只提交更新后的 Founder 实测包。**唯一剩余事项是 `M2-AC-17`**——Founder 尚需通过 Dify 画布实际完成一次 M2 产品与业务实测并明确接受；这与本次 `M2-AC-13` 的技术治理豁免是两件不同的事，豁免本身不构成、也不能替代 `M2-AC-17` 的产品验收。
+按 Prompt §10 强制停止：合并 main 本身已由 Founder 在本次收尾中单独明确授权并执行完成（不是 `DONE` 状态自动带来的权限）；`DONE` 本身仍不额外授权任何其他事项——不授权 M5、不授权真实发布、不授权生产采用、不授权任何经营结果结论。本任务自此不再有 Active Work Package。
 
 ## 9. Git 收口
 
-本轮（Rebase/Errata 001 全程）新增 commit：`3d23674`（R-04）、`fabffd8`（R-05 旧产物内容导入）、`6955d66`（R-09a downgrade 冲突检测）、`1f8e6c0`（R-02/R-06/R-07 首次落盘）、`4010e25`（Founder 授权 R-09b 执行 + 命名/证据首轮更正）、`58807a0`（Founder 第二轮复核更正：3 槽/5 槽命名、迁移回滚过度声明撤回、证据绑定、Dify App API Key 真实重跑）。每次 `git push origin task/m2-business-persistence-version-feedback-v1` 后均现场核验本地 `HEAD` 与 `origin/task/m2-business-persistence-version-feedback-v1` 一致；全程只在本任务分支提交，未触碰 `main`，未创建第二个 M2 分支。
+本轮（Rebase/Errata 001 全程）新增 commit：`3d23674`（R-04）、`fabffd8`（R-05 旧产物内容导入）、`6955d66`（R-09a downgrade 冲突检测）、`1f8e6c0`（R-02/R-06/R-07 首次落盘）、`4010e25`（Founder 授权 R-09b 执行 + 命名/证据首轮更正）、`58807a0`（Founder 第二轮复核更正：3 槽/5 槽命名、迁移回滚过度声明撤回、证据绑定、Dify App API Key 真实重跑）、`74bc9e3`（Founder 明确裁决豁免迁移降级恢复，module_delivery_state 推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）。每次 `git push origin task/m2-business-persistence-version-feedback-v1` 后均现场核验本地 `HEAD` 与 `origin/task/m2-business-persistence-version-feedback-v1` 一致；全程只在本任务分支提交，直到此处均未触碰 `main`，未创建第二个 M2 分支。
+
+**任务收尾（Founder 明确授权"接受 + 合并主干"后执行）**：任务分支（最终 head `74bc9e3`）以 `git merge --no-ff` 合并进 `main`，合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`；唯一冲突在 `collab-ledger/L1_TASK_MANIFESTS.md` 顶部索引表（两侧各自插入一行索引，非逻辑冲突），已保留双方内容并为本任务的起点登记行追加指向 §T-011～§T-011.6 的说明。`git push origin main` 后 `git fetch` 复核，本地 `main` 与 `origin/main` 一致于 `17f5e57`。合并后现场重跑 `pytest tests/ -q` → 69 passed；`git diff task/m2-business-persistence-version-feedback-v1 main -- business-persistence/` 输出为空，确认合并内容与已验收候选字节级一致；`git diff --stat` 合并前后对比（排除 `business-persistence/`、`collab-ledger/`）输出为空，确认无受保护资产改动。

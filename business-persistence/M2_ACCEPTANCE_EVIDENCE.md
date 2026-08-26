@@ -52,7 +52,7 @@
 | M2-AC-14 | **PASS**（本轮更正分类与命名错误后重新确认，功能本身此前即真实有效） | **更正（本次提交）**：此前记录把真实存在的 3 槽对象错误命名/描述为"5 槽"，且错误得出"3 槽对象不存在"的结论——均已核实为不准确，改正如下。真实情况：`decision-chain/docs/V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 是**唯一**一份 Schema 文件，含 13 个必填顶层字段；其 `artifacts` 子对象**真实拥有 3 个具名槽位**（`matrix`/`campaign`/`content_brief`），这就是 Prompt/EP-00 提及的"3 槽"对象本身——它确实存在，只是不作为独立文件存在（嵌在这份 Schema 内），此前"穷尽检索无独立文件→判定对象不存在"的推论跳步错误。真正的"5"来自这份同一 Schema 里另一个**可选**字段 `last_acceptance.slot` 的 5 值枚举（比 3 槽多出 `production_stage1`/`publishing_stage2`，是后续对话编排修复新增的可选扩展，Schema 自身注释明确写明为保证旧快照合法而设为可选、不进 required）——与 `artifacts` 的 3 槽是两个不同字段，此前分析把二者混为一谈。(a) 本任务的 legacy-import 端点正确校验并导入这份真实 13 字段 Schema 的完整状态对象（含其真实 3 槽 `artifacts`，测试夹具里三槽均为 null，验证的是结构合规而非真实内容）——但此前代码把这次导入的 `source` 错误标注为 `legacy_dify_5slot_import`，本次已改正为 `legacy_dify_v1_task_snapshot_import`（`app/api/tasks.py`、`tests/test_legacy_import.py` 同步更正）；(b) 真实存在的旧 Matrix/Campaign/Content Brief 生产产物（`decision-chain/evidence/*.md`，真实 3 槽的真实内容）——用真实 sha256 经既有端点显式导入（`fabffd8`），这一半覆盖 3 槽的真实内容，(a)+(b) 合起来是"结构合规＋真实内容"两个维度都成立；(c) 可选字段 `last_acceptance.slot` 的 5 值枚举**未被任何现有夹具覆盖**——如实披露为已知窄口径缺口，非阻断项：Schema 自身设计保证旧快照本就不含该字段仍合法，不影响"旧 Demo 会话态兼容"这一验收标准的核心诉求 | `0546f30`, `fabffd8`, 本次命名更正 commit；穷尽检索证据见 `M2_REBASE_ERRATA_001_RECORD.md` §5 R-05（该记录本身的"3 槽不存在"结论已在本行更正） |
 | M2-AC-15 | **PASS** | `tests/test_interface_contracts.py` 钉住 M1/M3/M4 三条边界，现有实现下均未触发修复 | `44f02dd`, `020bc58` |
 | M2-AC-16 | **PASS**（Founder 提供该候选应用的 App API Key 后，针对本轮最新代码真实重跑，非 API 等价替代证据） | 目标环境应用后端真实运行、正向/负向/并发/回归全部通过（69/69，现场重跑）。**Dify 候选画布本身已针对本轮最新代码重新真实运行**：Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key（执行侧未索要 Console 会话或账号密码）；执行侧用该 Key 调用 Dify 自身 Service API `POST /v1/workflows/run`——这触发的是 Dify 引擎真实执行同一份已发布 workflow 定义（`workflow_id: 54339bd5-14dc-491a-b221-94c764c23544`），与在 Studio UI 点「运行」走的是同一条执行路径，只是认证信道不同，**不是**绕开 Dify、直接调用 M2 后端冒充等价证据（R-08.8 明文禁止的正是后一种）。运行结果：`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，`elapsed_time: 0.43s`，无 `error`。对照 `FOUNDER_TEST_PACKAGE.md` 判断标准逐项核验：`task_id` 为真实 UUID（`af4f9244-...`）；`snapshot_status = 200`；`cycle_created_body.is_current = true`；`projection_body.latest_snapshot.payload.note` 与本次填入的"首次任务原始诉求"原文逐字一致（状态真实存住、读回）；`version_id` 为真实 UUID；`promote_body.is_current = true` 且 `promoted_by = "founder-dify-candidate-demo"`（与填入的 Actor Ref 一致）；`publish_instance_id` 为真实 UUID；`feedback_body.is_test = true`、`is_manual_entry = true`，`payload.note` 与填入的反馈原文一致；`current_cycle_body.label` 含本次运行标识——9 项判断标准全部满足。**观察（非阻断）**：本次 `total_steps = 16`，早前一轮历史运行记录为"17/17 节点成功"，两次统计口径或节点组成可能不同，未深究原因，如实记录差异，不影响本次运行本身"成功、状态可读回"的结论 `workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`（Dify 自身执行记录），运行输入值与完整响应见 `collab-ledger/L5_SIDE_EFFECTS.md` SE-018 |
-| M2-AC-17 | **NOT_VERIFIED（预期状态，非缺陷）** | Founder 尚未通过 Dify 画布完成产品/业务验收 | 待 Founder 实测回执 |
+| M2-AC-17 | **PASS**（Founder 已通过 Dify 画布实际验收并明确接受） | Founder 本人在 Dify Studio 中打开候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）、按 `FOUNDER_TEST_PACKAGE.md` 六步场景手动填写表单并点击「运行」，运行产出 `task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57`；Founder 将 End 节点全部输出原文粘贴给执行侧核对，逐项核验：`projection_body.latest_snapshot.payload.note` 与 Founder 填入的"首次任务原始诉求"原文一致，`current_cycle_body.label` 含 Founder 填入的运行标识，其余 7 项输出均为真实 UUID / 状态字段符合预期，9 项判断标准全部满足。Founder 随后明确表示"接受"该结果，并进一步明确裁决"接受 + 合并主干"，构成 `M2-AC-17` 所要求的"Founder 通过 Dify 画布完成产品/业务验收并明确接受" | Founder 提供的运行输出原文（本文件与 `M2_REBASE_ERRATA_001_RECORD.md` §9 均已登记要点）；`task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57` |
 
 ## M2-RB 逐条记录（Rebase/Errata 001 自身验收标准）
 
@@ -71,25 +71,45 @@
 | M2-RB-11 | **PASS** | 审查历史与预算已如实分类登记（见"审查与自验记录"），未新增开放式审查，未删除超预算事实 |
 | M2-RB-12 | **PASS**（本次追加：Founder 豁免不算"降低标准"，理由见右列） | 原 `M2-AC-00`~`17` 重新获得一致、可复算状态，无执行侧删除或降低任何标准（`AC-12` 提升为真 PASS，`AC-14` 更正命名/分类错误后维持 PASS，`AC-16` 用真实重跑证据转 PASS）；`AC-13` 的技术事实如实保持"迁移回滚未达标"不变，只是 Founder 行使其对 ACCEPTANCE 的控制权明确豁免了这一项对任务收尾的阻塞——这是产品/业务决定，不是执行侧自行放宽 |
 | M2-RB-13 | **PASS** | 本轮全部 commit 本地=远程一致（见 `M2_REBASE_ERRATA_001_RECORD.md` §9"Git 收口"），未触碰 `main` 和无关工作树资产 |
-| M2-RB-14 | **PASS** | `M2-AC-17`（Founder 通过 Dify 画布的产品/业务验收）尚未完成前保持非终态；`M2-AC-13` 的豁免是一项独立的技术治理决定，不等同于、也不能替代 `M2-AC-17` 的画布产品验收；本文件与 `M2_REBASE_ERRATA_001_RECORD.md` 均未声明 `DONE` |
+| M2-RB-14 | **PASS** | `M2-AC-17`（Founder 通过 Dify 画布的产品/业务验收）已完成，Founder 明确接受，且明确裁决"接受 + 合并主干"；`M2-AC-13` 的豁免是独立的技术治理决定，未被冒充为 `M2-AC-17` 本身；`task_final_status = DONE` 在满足 §8.3 全部前提后于本节声明 |
 
-## 结论与当前终态
+## 结论与当前终态（`DONE`）
 
-`M2-AC-16`（Dify 画布现场运行）已用 Founder 提供的 App API Key 针对本轮最新代码真实重跑并转 `PASS`。`M2-AC-13`（数据库迁移/权限/隔离）**标记 `FOUNDER_WAIVED`**——CONNECT 权限子项已修复，迁移降级（downgrade）遇到合法跨账号同键真实数据时不能自动恢复/回滚这一技术事实不变，但 Founder 2026-08-25 在本会话内明确裁决豁免这一子项，不再作为任务收尾的阻塞项；`M2-RB-10` 同步标记 `FOUNDER_WAIVED`。按 Rebase Prompt §8.2（`M2-RB-01～14` 全部通过、`M2-AC-00～16` 全部对最终候选有 CURRENT 证据或明确的 Founder 裁决、当前 Dify 候选已按最终代码真实运行、远程任务分支收口完成、没有未披露的权限/数据完整性/受保护资产问题——以上条件本轮已全部满足）：
+`M2-AC-16`（Dify 画布现场运行）已用 Founder 提供的 App API Key 针对本轮最新代码真实重跑并转 `PASS`。`M2-AC-13`（数据库迁移/权限/隔离）标记 `FOUNDER_WAIVED`——技术事实不变，Founder 明确裁决豁免。**`M2-AC-17` 已转 `PASS`**：Founder 本人在 Dify Studio 实际运行候选画布（`task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57`），逐项核验 9 项判断标准全部满足，明确表示"接受"，并进一步裁决"接受 + 合并主干"。
+
+按 Rebase Prompt §8.3（DONE 条件）逐项核验：
+
+- 没有仍未确认的正式审查预算偏差——`REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT` 已如实登记并保留，未被隐藏或追认为"符合"；
+- 所有最终证据绑定远端最终 commit——见下方"合并与最终证据绑定"；
+- `M2-AC-00～17` 与 `M2-RB-01～14` 全部通过（`M2-AC-13`/`M2-RB-10` 为 `FOUNDER_WAIVED`，技术事实保留，不冒充 `PASS`）；
+- 没有用模拟/测试数据声称真实运营闭环——本文件与 `FOUNDER_TEST_PACKAGE.md` 全程标明测试身份、测试数据、非真实发布；
+- 没有声称经营结果提升、生产可用、M5 完成或完整纵向链完成——本文件与合并 commit message 均明确声明这些事项**未**随本次交付授权。
 
 ```text
 execution_disposition = CONTINUE
-task_final_status = null
-module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE
+task_final_status = DONE
+module_delivery_state = DONE
 next_stage_allowed = false
 ```
 
-技术侧收口完成，停止功能扩张。**唯一剩余事项是 `M2-AC-17`**——Founder 需要通过 Dify 画布实际完成一次 M2 产品与业务实测并明确接受；这与本次 `M2-AC-13` 的技术治理豁免是两件不同的事，豁免不能替代、也不构成 `M2-AC-17` 的产品验收。
+**M2 DONE 不授权**（原样继承 Rebase Prompt §8.3 边界，未被本次收尾扩大）：合并 main 之外的任何进一步动作——不授权 M5 集成、不授权真实社交平台发布、不授权生产采用、不授权任何真实经营结果结论。
 
-## 未完成事项（技术侧 Active Work Package 已全部执行完，仅剩 Founder 侧产品验收）
+## 合并与最终证据绑定
 
-- **`M2-AC-17`（Founder Dify 画布产品/业务验收）**：待 Founder 通过 `FOUNDER_TEST_PACKAGE.md` 六步场景实际操作并明确接受或退回；这是本任务唯一的剩余步骤，且只能由 Founder 完成。
-- **`M2-AC-13` 迁移降级恢复**：技术上仍未达到"失败可恢复/回滚"字面标准，已被 Founder 明确豁免（见上）；如未来业务确实需要跨账号冲突自动改键能力，需另行发起新的授权与规则裁决，不在本次收尾范围内。
+- 任务分支 `task/m2-business-persistence-version-feedback-v1`（最终 head `74bc9e32627b290c93827a4ff83b2bc79aa9befd`）经 Founder 明确授权合并进 `main`，合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`（`--no-ff`，保留完整任务历史）。
+- 合并冲突：仅 `collab-ledger/L1_TASK_MANIFESTS.md` 顶部索引表一处（两侧各自新增一行索引，非逻辑冲突），已保留双方行并为本任务的起点登记行追加"当前状态见 §T-011～§T-011.6"的指向说明，未删除任何一方内容。
+- 合并后现场核验（逐项对应 Founder 提出的收口检查清单）：
+  1. **远程 main 真实包含本次交付**——`git push origin main` 后 `git fetch` 复核，本地 `main` 与 `origin/main` 均为 `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`；`git ls-tree -r origin/main` 确认 `business-persistence/` 下 56 个文件真实存在于远端。
+  2. **合并内容与已验收候选一致**——`git diff task/m2-business-persistence-version-feedback-v1 main -- business-persistence/` 输出为空，字节级一致。
+  3. **受保护合同、共享资产和既有能力没有退化**——`git diff --stat` 合并前后对比（排除 `business-persistence/`、`collab-ledger/`）输出为空，未触碰任何其他路径。
+  4. **必要回归通过**——合并后现场重跑 `pytest tests/ -q` → **69 passed**。
+  5. **目标 Dify 候选仍与最终代码和配置相符**——运行 69 项测试的容器与 Founder 验收运行时使用的是同一个 `diyu-m2-app` 容器（未重建），且其代码已确认与合并后 `main` 字节一致；候选应用 `app_id`/`workflow_id` 未变。
+  6. **Git、账本和最终证据绑定更新完成**——本节与下方账本更新即为该项证据。
+
+## 未完成事项（无——本任务技术侧与 Founder 产品侧均已收口）
+
 - R-11（定向回归）、R-12（远程收口）均已完成，见 `M2_REBASE_ERRATA_001_RECORD.md` §9"Git 收口"。
+- `M2-AC-13` 迁移降级恢复：技术上仍未达到"失败可恢复/回滚"字面标准，已被 Founder 明确豁免；如未来业务确实需要跨账号冲突自动改键能力，需另行发起新的授权与规则裁决，不在本任务范围内。
+- M5 集成、M1/M3/M4 与 M2 的实际接入、真实社交平台发布、生产采用均为后续独立任务范围，不随本次 DONE 授权。
 
 （R-07、R-08、R-09b 均已在本轮完成，见上方对应 AC/RB 行。）

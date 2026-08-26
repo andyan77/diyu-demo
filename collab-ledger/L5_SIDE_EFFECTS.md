@@ -312,6 +312,28 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 顺带发现 | 该文件本身有一处未闭合 Markdown 代码围栏（外观像复制/转存截断），逐行核对至文末确认内容连续完整、以正常声明块结束，非内容缺失，仅格式缺陷；未修改原文件一字 |
 | **状态** | `EXECUTED`——只在 `business-persistence/`（本任务已获授权的修改范围）内新增文件，未触碰主工作区或其他任务资产 |
 
+### SE-020 · Founder 本人执行的 Dify 候选验收运行
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | `M2-AC-17` 要求 Founder 亲自通过 Dify 画布完成产品/业务验收 |
+| 执行 | Founder 本人在 Dify Studio 中打开候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`），按 `FOUNDER_TEST_PACKAGE.md` 六步场景手动填写表单并点击「运行」 |
+| 结果 | 真实 `task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57`；新增真实业务对象：1 个 task、1 个 cycle（`4901e264-...`）、1 个 content version（`b58ba48a-...`）、1 个 publish instance（`dee4c230-...`）、1 个 feedback record，均在该候选专用的测试 workspace（`68df687c-...`）/account（`12802f90-...`）范围内，不触碰任何生产账号或其他工作区；Founder 将 End 节点全部输出原文提供给执行侧核对，9 项判断标准全部满足 |
+| **状态** | `EXECUTED`——`M2-AC-17` 由此转 `PASS` |
+
+### SE-021 · 任务分支合并进 main
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | Founder 明确裁决"接受 + 合并主干" |
+| 执行 | `git merge --no-ff task/m2-business-persistence-version-feedback-v1`（任务分支最终 head `74bc9e32627b290c93827a4ff83b2bc79aa9befd`），产生合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`；`git push origin main` |
+| 冲突处理 | 仅 `collab-ledger/L1_TASK_MANIFESTS.md` 顶部索引表一处（两个不同 task_id 的索引行插入到同一位置，非逻辑冲突），保留双方内容，为本任务的起点登记行追加指向 §T-011～§T-011.6 的说明 |
+| 受影响范围 | 仅 `business-persistence/`（56 个文件，全部新增）与 `collab-ledger/`（L1/L2/L3/L5 追加/更新）；`git diff --stat` 排除这两个目录后合并前后对比为空，确认零受保护资产改动 |
+| 合并后验证 | 远程 main 与本地一致（`17f5e57`）；合并内容与已验收候选字节级一致；69/69 测试重跑通过；Dify 候选后端代码字节一致（容器未重建） |
+| **状态** | `EXECUTED`——`main` 现真实包含 M2 全部交付；`task/m2-business-persistence-version-feedback-v1` 分支保留未删除 |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

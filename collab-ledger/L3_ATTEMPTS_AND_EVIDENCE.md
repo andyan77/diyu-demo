@@ -1864,3 +1864,14 @@ Founder 复核 ATT-003 后指出四类问题（3 槽/5 槽命名事实偏差、�
 |---|---|
 | `M2-AC-13` 更正 | 标记 `FOUNDER_WAIVED`——技术事实不变（迁移降级遇跨账号冲突不能自动恢复），不拔高为 `PASS`；该子项已被 Founder 明确豁免，不再阻塞任务收尾。这是 Founder 行使其对 ACCEPTANCE 的控制权作出的决定，非执行侧自行放宽标准，也未使用 `PASS_WITH_LIMITATION` 类规避措辞 |
 | **任务终态（当前有效，取代 ATT-004 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state` 由 `IN_PROGRESS` **推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`**（Rebase Prompt §8.2 全部前提本轮已满足）；`next_stage_allowed = false:M2-AC-17`——唯一剩余事项是 `M2-AC-17`，只能由 Founder 通过 Dify 画布完成产品/业务验收 |
+
+### ATT-006（Founder 通过 Dify 画布实际验收并明确接受，进一步裁决"接受 + 合并主干"，任务终结 `DONE`）
+
+Founder 在本会话中通过 Dify Studio 实际运行候选画布，产出真实 `task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57`，将 End 节点全部输出原文提供给执行侧核对。执行侧逐项核验 `FOUNDER_TEST_PACKAGE.md` 的 9 项判断标准：`projection_body.latest_snapshot.payload.note` 与 Founder 填入的原始诉求逐字一致，`current_cycle_body.label` 含 Founder 填入的运行标识，其余 7 项均为真实 UUID/预期状态字段——全部满足。Founder 明确表示"接受"，并进一步明确裁决"接受 + 合并主干"。
+
+| 项 | 值 |
+|---|---|
+| `M2-AC-17` | 转 `PASS`——Founder 已通过 Dify 画布完成产品/业务验收并明确接受 |
+| 合并执行 | 任务分支（最终 head `74bc9e32627b290c93827a4ff83b2bc79aa9befd`）以 `git merge --no-ff` 合并进 `main`，合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`；唯一冲突为 `collab-ledger/L1_TASK_MANIFESTS.md` 顶部索引表一处插入位置重叠（非逻辑冲突，两个不同 task_id 的索引行插入到同一位置），已保留双方内容并为本任务的起点登记行追加指向 §T-011～§T-011.6 的说明 |
+| 合并后核验（六项，逐条对应 Founder 提出的收口检查清单） | (1) 远程 main 真实包含本次交付——`git push` 后 `git fetch` 复核本地/远程一致于 `17f5e57`，`git ls-tree` 确认 `business-persistence/` 56 个文件在远端真实存在；(2) 合并内容与已验收候选一致——`git diff task/m2-... main -- business-persistence/` 输出为空，字节级一致；(3) 受保护合同/共享资产/既有能力无退化——`git diff --stat` 排除 `business-persistence/`、`collab-ledger/` 后输出为空；(4) 必要回归通过——合并后现场重跑 `pytest tests/ -q` → 69 passed；(5) 目标 Dify 候选仍与最终代码相符——验收运行所用容器代码已确认与合并后 `main` 字节一致，容器未重建；(6) Git/账本/证据绑定更新完成——即本条与 `M2_ACCEPTANCE_EVIDENCE.md`/`M2_REBASE_ERRATA_001_RECORD.md`/L1/L2 的同步更新 |
+| **任务终态（最终，取代 ATT-005 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论；合并 main 本身是本次单独明确授权的动作，非 `DONE` 状态自动带来的权限 |
