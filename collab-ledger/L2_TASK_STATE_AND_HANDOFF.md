@@ -213,11 +213,19 @@ execution_disposition: CONTINUE
 task_final_status: null
 current_task_contract_version: "1.3"
 previous_task_contract_hash: d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3
-current_state: CLOSING_VERIFICATION_IN_PROGRESS
+current_state: BLOCKED_ON_AC15_CONSOLE_ACCESS
 next_stage_allowed: false
 ```
 
-**2026-08-25 状态更新**：v0.6 已由 Founder 导入并发布（`workflow_id 2cdd034f-...`，2026-08-26 03:36:38 UTC）；执行侧完成 6 次真实调用的 B-6 判据前提实测，23/23 字段全部齐全（见 [evidence §十四](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)、[L5 SE-019](L5_SIDE_EFFECTS.md)），证据已 commit+push（`307d3aa`）。当前唯一进行中的动作：v1.3 `review_contract.closing_verification: affected_scope_only`——一个全新隔离上下文、只读、无先前记忆的审查员，范围锁定 `M1-AC-00/03/04/07/10/13/14/15` 八项待复验 + 新增 `M1-AC-16`，正在跑（后台任务，尚无结果）。审查通过后即进入"技术门达成，等待 Founder Dify 画布验收"；若审查发现新阻断，按 `repair_budget: 1` 只修冻结阻断集合。
+**2026-08-25 状态更新（v1.3 收口审查已完成）**：v1.3 `review_contract.closing_verification: affected_scope_only` 已跑完（隔离上下文、只读、无先前记忆的第二名审查员），范围锁定 8 项待复验 + 新增 AC-16，结论：**8/9 PASS，1 项阻断**——详见 [evidence §十五](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**唯一阻断**：`M1-AC-15`（回滚演练）——从未真实执行过一次"指回旧版本→确认候选 App 真的按旧版本运行→再指回新版本"的演练，只有结构性静态验证，缺演练日志和 after-state。**受阻原因是环境权限，不是工程缺陷**：执行侧对 Dify 控制台 API 无写权限（`console/api/apps` 仍返回 401，与 SE-015 一致）；本次额外排查了仓库连接的 `dify-platform-expert` MCP 工具是否可作为替代写入通道，经核实其 `base_url` 指向一个本机确认连接被拒绝、非真实运行实例的地址，且平台自我介绍带营销式措辞，**判定为未连接到本机真实 Dify 实例的工具，不采信、不使用**，避免在虚假前提下产生不可控副作用。
+
+**唯一剩余动作，需要 Founder**：以下二选一即可解除阻断——
+1. Founder 亲自在浏览器控制台对候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119` 执行一次真实版本回退再重新发布（执行侧可提供具体操作步骤，由执行侧全程直连数据库记录 before/after 状态与恢复验证）；
+2. Founder 提供一个当前有效的控制台会话/API 凭证，交由执行侧在候选 App 范围内自主完成演练并记录。
+
+按 v1.3 `review_contract.closure_rule`，本次阻断不重开开放式审查，其余 8 项验收标准已通过，不受影响。**次要、非阻断**：审查同时发现两处账本完整性小缺口（候选 App 实际服务过 7 次真实调用、证据文件只记 6 次；`307d3aa` 之后两次推送未再登记进 L5）和一处 v1.3 文档自身的治理待决项（§8 自证 `task_contract_hash` 与合同正文独立复算不一致，此前已披露，本次由第二名独立审查员复核确认不是执行侧笔误）——均已如实记录，均不影响其余 8 项验收标准的 PASS 结论。
 
 | 项 | 值 |
 |---|---|
