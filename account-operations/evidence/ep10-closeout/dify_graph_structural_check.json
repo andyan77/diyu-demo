@@ -1,0 +1,75 @@
+{
+  "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+  "draft_hash": "689df355ec10d530f64d98ec798c8cbb37dd8e397588583e35264efce41fe29c",
+  "published_version": "2026-08-26 17:06:34.276971",
+  "node_count": 3,
+  "edge_count": 2,
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "title": "本轮投影输入"
+    },
+    {
+      "id": "operating_one_account_llm",
+      "type": "llm",
+      "title": "单账号持续运营决策"
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "title": "运营判断与内容任务候选"
+    }
+  ],
+  "edges": [
+    "start->operating_one_account_llm",
+    "operating_one_account_llm->end"
+  ],
+  "ac05_behaviour_label_hits": [],
+  "ac05_structural_hits": [],
+  "ac05_verdict_inputs": {
+    "hits_total": 0,
+    "hits_in_structural_sites": 0,
+    "start_node_variables": [
+      {
+        "variable": "account_context",
+        "label": "账号上下文（M2→M3 最小投影）",
+        "type": "paragraph",
+        "required": true,
+        "max_length": 60000,
+        "options": []
+      },
+      {
+        "variable": "user_request",
+        "label": "用户本轮请求（自然语言）",
+        "type": "paragraph",
+        "required": true,
+        "max_length": 20000,
+        "options": []
+      },
+      {
+        "variable": "loaded_references",
+        "label": "本轮已加载的条件附件全文（未加载则留空）",
+        "type": "paragraph",
+        "required": false,
+        "max_length": 60000,
+        "options": []
+      }
+    ],
+    "node_types": [
+      "end",
+      "llm",
+      "start"
+    ],
+    "branch_node_types_present": []
+  },
+  "ac13_write_marker_hits": [],
+  "ac13_verdict_inputs": {
+    "http_request_nodes": [],
+    "tool_nodes": [],
+    "code_nodes": [],
+    "environment_variables": [],
+    "conversation_variables": [],
+    "hits_outside_prompt_prose": []
+  }
+}
