@@ -213,9 +213,11 @@ execution_disposition: CONTINUE
 task_final_status: null
 current_task_contract_version: "1.3"
 previous_task_contract_hash: d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3
-current_state: IMPLEMENTING
+current_state: CLOSING_VERIFICATION_IN_PROGRESS
 next_stage_allowed: false
 ```
+
+**2026-08-25 状态更新**：v0.6 已由 Founder 导入并发布（`workflow_id 2cdd034f-...`，2026-08-26 03:36:38 UTC）；执行侧完成 6 次真实调用的 B-6 判据前提实测，23/23 字段全部齐全（见 [evidence §十四](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)、[L5 SE-019](L5_SIDE_EFFECTS.md)），证据已 commit+push（`307d3aa`）。当前唯一进行中的动作：v1.3 `review_contract.closing_verification: affected_scope_only`——一个全新隔离上下文、只读、无先前记忆的审查员，范围锁定 `M1-AC-00/03/04/07/10/13/14/15` 八项待复验 + 新增 `M1-AC-16`，正在跑（后台任务，尚无结果）。审查通过后即进入"技术门达成，等待 Founder Dify 画布验收"；若审查发现新阻断，按 `repair_budget: 1` 只修冻结阻断集合。
 
 | 项 | 值 |
 |---|---|
