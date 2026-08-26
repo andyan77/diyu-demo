@@ -70,6 +70,8 @@ repair_units = 3（对应 3 轮真实修复：020bc58、f09e292，以及本 Reba
 
 这一偏差不使已发现并修复的真实缺陷（含本轮 R-04/R-09a 两项此前完全未被任何审查覆盖到的新发现）失效，也不阻止本轮剩余安全技术工作；但不得在最终回执中声称"完全符合审查预算"。本轮 Rebase **未**另外派出任何新的正式 Reviewer，只由执行负责人做确定性自验（R-04/R-09 的证据均为本人直接在真实容器/数据库上操作复现，非委托 Agent 产生）。
 
+**Founder 确认（2026-08-26，治理收口纠偏，更正推论）**：此前"如实登记并保留"被直接等同于"没有未确认偏差"，这是逻辑跳步——登记是执行侧单方行为，确认需要 Founder 本人。准确表述：偏差存在 = `true`；Founder 知悉并明确确认该偏差 = `true`（Founder 指示"输出执行 prompt，让执行侧完善，把屁股擦干净"，构成明确确认）；该确认阻塞 M2 最终收口 = `false`（本偏差从未阻塞 M2 收口，此前只是缺少 Founder 本人的确认记录）；该确认追认历史偏差为"符合预算" = `false`（`actual_formal_review_units = 3` 与 `formal_review_budget = 1` 的差异如实保留）；该确认不构成对未来任何超预算审查的通用授权；已发生的审查单元未被重新分类或删除。完整记录见 `M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`。
+
 ## 7. 未解决阻塞项（R-09b 已解除，见下方更正记录；R-08 仍未解除）
 
 **R-09b（已解除）**：修复动作（`REVOKE CONNECT ON DATABASE dify/dify_plugin FROM PUBLIC/diyu_app`）首次尝试被 Claude Code 权限分类器拦截，理由是该操作触及不属于本 task_id 独占沙箱的共享数据库；执行侧未强行绕过，如实披露并等待授权。**Founder 于 2026-08-25 在本会话中明确表示"我授权，你是否可以执行？"**，构成对该具体操作的明确授权。执行侧随后：
@@ -86,11 +88,14 @@ repair_units = 3（对应 3 轮真实修复：020bc58、f09e292，以及本 Reba
 
 `M2-AC-16` 已转 `PASS`。`M2-AC-13` 已由 Founder 明确豁免，标记 `FOUNDER_WAIVED`。**`M2-AC-17` 已转 `PASS`**：Founder 本人在 Dify Studio 实际运行候选画布（`task_id: f7b96d1a-5dc2-4217-be0b-d618bfd36c57`），逐项核验 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，明确表示"接受"，并进一步裁决"接受 + 合并主干"。任务分支已合并进 `main`（合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`），合并后现场核验的完整证据见 `M2_ACCEPTANCE_EVIDENCE.md`"合并与最终证据绑定"一节。按 Prompt §8.3（DONE 条件：审查预算偏差已确认披露、全部证据绑定远端最终 commit、`M2-AC-00～17`/`M2-RB-01～14` 全部通过或 `FOUNDER_WAIVED`、未用模拟数据声称真实运营闭环、未声称经营提升/生产可用/M5完成——本轮全部满足）：
 
+> **终态字段治理纠偏（2026-08-26）**：本节此前同时给出 `execution_disposition = CONTINUE` 与 `task_final_status = DONE`，这是无效组合——`CONTINUE` 只应用于非终态 Checkpoint，且要求 `task_final_status = null`。M2 已进入正式终态，`execution_disposition` 字段在最终状态块中不再适用，已移除；不改变本任务已经是 `DONE` 这一事实本身。完整纠偏记录见 `M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`。
+
 ```text
-execution_disposition = CONTINUE
 task_final_status = DONE
 module_delivery_state = DONE
 next_stage_allowed = false
+checkpoint = null
+active_work_package = null
 ```
 
 按 Prompt §10 强制停止：合并 main 本身已由 Founder 在本次收尾中单独明确授权并执行完成（不是 `DONE` 状态自动带来的权限）；`DONE` 本身仍不额外授权任何其他事项——不授权 M5、不授权真实发布、不授权生产采用、不授权任何经营结果结论。本任务自此不再有 Active Work Package。

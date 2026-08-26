@@ -1520,4 +1520,15 @@ Founder 复核 T-011.4 后指出四类问题：(1) 3 槽/5 槽兼容存在事实
 |---|---|
 | `M2-AC-13`（再纠正） | 标记 `FOUNDER_WAIVED`——CONNECT 权限子项技术上已修复；迁移降级不能自动恢复/回滚这一技术事实**不变、不被拔高为 PASS**；该子项已被 Founder 明确豁免，不再阻塞任务收尾。区别于执行侧自行使用 `PASS_WITH_LIMITATION` 类措辞规避 P0——这是 Founder 依据其对 ACCEPTANCE 的控制权作出的产品/业务决定，执行侧只是如实登记，未自行放宽标准 |
 | `M2-RB-10`/`M2-RB-12` | 同步标记/说明 `FOUNDER_WAIVED`，`M2-RB-12`（"无删除或降低任何标准"）补充说明：技术事实未被降低，只是该项对任务收尾的阻塞被 Founder 明确解除 |
-| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state` 由 `IN_PROGRESS` **推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`**（按 Rebase Prompt §8.2 全部前提本轮已满足：`M2-RB-01～14` 全部通过、`M2-AC-00～16` 全部 CURRENT 证据或 Founder 明确豁免、Dify 候选已用最终代码真实运行、远程任务分支收口完成、无未披露权限/数据完整性/受保护资产问题）；`next_stage_allowed = false:M2-AC-17`——唯一剩余事项是 `M2-AC-17`，只能由 Founder 通过 Dify 画布实际完成产品/业务验收，技术治理豁免不构成、也不能替代这一步 |
+| 任务终态（T-011.6 时点，历史记录，见 T-011.7） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state` 由 `IN_PROGRESS` **推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`**（按 Rebase Prompt §8.2 全部前提本轮已满足：`M2-RB-01～14` 全部通过、`M2-AC-00～16` 全部 CURRENT 证据或 Founder 明确豁免、Dify 候选已用最终代码真实运行、远程任务分支收口完成、无未披露权限/数据完整性/受保护资产问题）；`next_stage_allowed = false:M2-AC-17`——唯一剩余事项是 `M2-AC-17`，只能由 Founder 通过 Dify 画布实际完成产品/业务验收，技术治理豁免不构成、也不能替代这一步 |
+
+### T-011.7 治理收口纠偏（`RECOVERY_TASK`，取代 T-011.6 的任务终态判定与 R-10 审查预算表述，T-011.6 其余内容与 T-011.6 之后 Founder 亲自验收/合并 main 的既成事实均保留为历史，不回滚）
+
+Founder 于本次 Founder Dify 亲自验收、"接受 + 合并主干"裁决、任务分支合并进 `main`（合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`，`main` 最终登记提交 `a903e49ab175eab8acf4b4e62b9dedea87eff901`）之后，指出当前终态记录与账本存在若干治理矛盾（终态字段无效组合 `execution_disposition = CONTINUE` 与 `task_final_status = DONE` 同时出现；`REVIEW_BUDGET_CONFORMANCE = DEVIATION` 已登记但 Founder 本人确认尚未单独记录；L5 副作用账本存在与自身记录矛盾的过期结论；本次 M2-AC-13 迁移降级恢复的 `FOUNDER_WAIVED` 事实继续保留、未被拔高为 PASS）。Founder 明确指示"输出执行 prompt，让执行侧完善，把屁股擦干净"，授权以 `RECOVERY_TASK` 模式（沿用同一 `task_id`，不新建任务、不改代码/数据库/Dify）修正上述治理记录。完整纠偏内容见 `business-persistence/M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`。
+
+| 项 | 值 |
+|---|---|
+| 审查预算偏差确认（本次新增，不改历史） | 偏差存在 = `true`（`actual_formal_review_units = 3` 超出冻结 `formal_review_budget = 1`）；Founder 知悉并明确确认该偏差 = `true`（本次"把屁股擦干净"指示构成明确确认）；该确认阻塞 M2 最终收口 = `false`；该确认追认历史偏差为"符合预算" = `false`——`REVIEW_BUDGET_CONFORMANCE` 仍如实登记为 `DEVIATION`，不因此次确认改写为"符合"；不构成对未来任何超预算审查的通用授权；已发生的审查单元未被删除、合并或重新分类 |
+| `M2-AC-13` / `M2-RB-10`（重申，技术事实不变） | 继续为 `FOUNDER_WAIVED`：`technical_result = NOT_FULLY_MET`（迁移降级遇跨账号同键真实数据不能自动恢复，需人工介入）；`founder_disposition = WAIVED`；`blocking_effect = false`。本次治理纠偏未将其改写为 `PASS` |
+| 任务终态（当前有效，最终） | `task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`；`checkpoint = null`；`active_work_package = null`。**不再使用 `execution_disposition = CONTINUE` 字段**——该字段只适用于非终态 Checkpoint 且要求 `task_final_status = null`，与已进入的正式终态 `DONE` 同时出现属无效组合，本次予以移除，不改变本任务此前已经是 `DONE` 这一事实本身 |
+| 本次 Recovery 是否变更代码/数据库/Dify | **否**——`m2_engineering_reopened = false`；`m2_engineering_code_changed = false`；`database_write_performed = false`；`dify_write_performed = false`；只修改本表所列治理/证据/账本文件 |

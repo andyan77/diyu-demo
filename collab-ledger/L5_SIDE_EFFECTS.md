@@ -266,6 +266,7 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 受控状态 | 可逆——全部迁移均有对称 `downgrade()`；数据库内容目前仅为工程测试数据，非真实经营数据 |
 | 核验依据 | 现场 `alembic current` = `c3f8b2e6d0a4 (head)`；`alembic check` 无模型/schema 漂移 |
 | **状态** | **`CONFIRMED`**（现场核验，非自报） |
+| **状态追加 1**（2026-08-26，M2 治理收口纠偏，更正过度声明） | 上一行"受控状态"称"全部迁移均有对称 `downgrade()`"为过度声明，与后续现场事实不符：`alembic upgrade head` 确认可重复、幂等（成立）；但最新一环 `c3f8b2e6d0a4` 的 `downgrade()` 遇到真实存在的跨账号同 `idempotency_key` 冲突数据时，只会清晰拒绝并列出冲突行（`_refuse_if_cross_account_duplicates`，较此前裸崩溃已是真实改进），**不能自动完成回滚**，需要人工先做业务决定（两个账号里谁保留原 key、谁改用新 key）。该技术差距已由 Founder 于 2026-08-25 明确裁决豁免（`FOUNDER_WAIVED`，见 `M2_ACCEPTANCE_EVIDENCE.md` M2-AC-13 行），不阻塞 M2 收口，但"全部迁移对称可逆"这一表述本身不成立，需与"upgrade 可重复"分开陈述，不得混同 |
 
 ### SE-016 · Dify 候选应用（沿用既有对象，本轮未新建/未发布新版本）
 
@@ -334,6 +335,18 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 合并后验证 | 远程 main 与本地一致（`17f5e57`）；合并内容与已验收候选字节级一致；69/69 测试重跑通过；Dify 候选后端代码字节一致（容器未重建） |
 | **状态** | `EXECUTED`——`main` 现真实包含 M2 全部交付；`task/m2-business-persistence-version-feedback-v1` 分支保留未删除 |
 
+### 状态值规范映射（2026-08-26，M2 治理收口纠偏新增，不改历史原文）
+
+本文件 §一固定六值枚举为 `PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED`。SE-017/SE-018/SE-019/SE-020/SE-021 使用了枚举外的状态字面值（`ATTEMPTED`、`BLOCKED`、`EXECUTED`）。以下为口径对照，**只新增映射说明，不修改上述条目原文**：
+
+| 历史非标准值 | 出现位置 | 映射为固定六值 | 映射理由 |
+|---|---|---|---|
+| `ATTEMPTED` | SE-017 初始状态 | `STARTED` | 已实际发起该动作（尝试执行 REVOKE 语句），尚未产生确认效果 |
+| `BLOCKED` | SE-017 中间状态 | `FAILED_NO_EFFECT` | 在该时点被 Claude Code 权限分类器拦截，命令未执行，对目标系统未产生任何外部效果；非永久性失败，后续 Founder 授权后转为已执行 |
+| `EXECUTED` | SE-017/SE-018/SE-019/SE-020/SE-021 终态 | `CONFIRMED` | 现场核验确认效果已真实发生（如 REVOKE 生效、Dify 运行成功、Git 合并/推送远端 ref 一致），语义等价于 `CONFIRMED` |
+
+跨条目比较状态时使用本映射的固定六值；条目原文中的字面值保留不动，作为该条目撰写时点的真实记录。
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
@@ -343,3 +356,14 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 对外消息发送 | **否** |
 
 `NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，Dify／业务数据库／对外消息发送三类均无写入。**Git 推送类副作用见 §三 索引表**（条目会随任务增加，不在本行重复计数，避免静态数字漂移）。
+
+> **状态追加（2026-08-26，M2 治理收口纠偏，不删除以上原表与 `NONE_VERIFIED_SINCE_BASELINE`）**：以上表格与结论写成于 `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 任务产生真实写入之前，此后未随 SE-015/SE-017/SE-018/SE-020 同步更新，与本文件自身记录的条目相互矛盾（A3 失效传播：绑定变化未同步全部引用）。当前准确结论，前向更正，不追溯改写上表：
+>
+> | 系统 | 是否曾被本仓库任务写入（自 `6ae78ab` 起，累计） |
+> |---|---|
+> | Dify（发布／重绑／工作流运行） | **是**——`DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` 任务下 SE-018（执行侧用 App API Key 触发）与 SE-020（Founder 本人在 Studio 触发）各产生一次真实 workflow 运行，均落在该候选专属测试 workspace/account（`68df687c-...`/`12802f90-...`）范围内，未触碰生产工作区、其他应用或未发布新版本 |
+> | 业务数据库（`diyu_business`，独立于 Dify 自身库） | **是**——同一任务下 SE-015（Alembic 迁移，7 个版本线性升级 + 现场测试数据）与 SE-017（对 `dify`/`dify_plugin` 的 `CONNECT` 权限撤销，Founder 授权，属数据库层写入而非 `diyu_business` 内容写入）均为真实写入；`diyu_business` 内容为工程测试数据，非真实经营数据 |
+> | Qdrant / ECS | 否——本任务未涉及 |
+> | 对外消息发送 | 否——本任务未涉及 |
+>
+> `NONE_VERIFIED_SINCE_BASELINE` 作为**历史时点结论**予以保留（原文不删），但**不再是当前有效结论**；当前有效结论以本追加块为准。本次治理纠偏（Recovery Task）本身**未**产生任何 Dify 或数据库写入——本追加块是对既有事实的文档纠偏，不是新的外部副作用。
