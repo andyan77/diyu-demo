@@ -2295,6 +2295,24 @@ class TestCtaPermissionContext(unittest.TestCase):
         self.assertEqual(snap["cta_context"]["authorized_high_risk_targets"], ["引导加微信领取超低价优惠券"])
         self.assertNotIn("cta_context.authorization", [g["field_ref"] for g in snap["gaps"]])
         self.assertNotIn("还没有获得明确", result["dialogue_directive"])
+        self.assertIn("已经记录为获得授权", result["dialogue_directive"],
+                       "独立收尾审查发现的真实缺口：授权发生的那一轮完全不设防地沉默，"
+                       "用户没有任何机会看见或纠正一次可能错判的授权——一旦目标进入"
+                       "authorized_high_risk_targets，必须在当轮就把具体动作复述给用户看")
+        self.assertIn("引导加微信领取超低价优惠券", result["dialogue_directive"])
+        self.assertIn("可以随时改口取消", result["dialogue_directive"])
+
+    def test_authorized_high_risk_target_keeps_announcing_itself_on_later_unrelated_turns(self):
+        """同一缺口的持久化变体：授权状态和上面两个未授权/拒绝提醒一样，都是每轮无条件
+        读快照——不是只在刚授权的那一轮说一次就沉默下去，否则隔了几轮之后用户仍然
+        没有任何线索可以发现或撤回一个早前可能误判的授权。"""
+        r1 = _run(None, _patch(
+            cta_target_text="引导加微信领取超低价优惠券", cta_risk_tier="HIGH_RISK",
+            cta_authorization_signal="GRANT",
+        ))
+        r2 = _run(r1["snapshot_json"], _patch(current_task_text="顺便再帮我看看下周的排期"))
+        self.assertIn("已经记录为获得授权", r2["dialogue_directive"])
+        self.assertIn("引导加微信领取超低价优惠券", r2["dialogue_directive"])
 
     def test_grant_signal_without_high_risk_tier_authorizes_nothing(self):
         """GRANT 信号本身不足以授权——必须同时是 HIGH_RISK 层级、且有具体目标。"""
