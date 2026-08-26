@@ -27,8 +27,16 @@ class Cycle(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin):
         Index(
             "uq_cycle_current", "account_id", unique=True, postgresql_where=text("is_current")
         ),
+        # scoped by account, not just workspace: two different accounts in
+        # the same workspace picking the same idempotency_key string must
+        # never collide and silently hand one account back the other's
+        # cycle (the exact bug class already fixed once at the workspace
+        # level -- this is that same bug at account granularity).
         UniqueConstraint(
-            "workspace_id", "idempotency_key", name="uq_cycle_workspace_idempotency"
+            "workspace_id",
+            "account_id",
+            "idempotency_key",
+            name="uq_cycle_workspace_account_idempotency",
         ),
     )
 
@@ -106,8 +114,13 @@ class CycleDecision(Base, UUIDPKMixin, CreatedAtMixin):
     __table_args__ = (
         Index("ix_cycle_decisions_workspace_id", "workspace_id"),
         Index("ix_cycle_decisions_account_id", "account_id"),
+        # scoped by account, not just workspace -- same reasoning as
+        # Cycle.uq_cycle_workspace_account_idempotency above.
         UniqueConstraint(
-            "workspace_id", "idempotency_key", name="uq_cycle_decision_workspace_idempotency"
+            "workspace_id",
+            "account_id",
+            "idempotency_key",
+            name="uq_cycle_decision_workspace_account_idempotency",
         ),
     )
 

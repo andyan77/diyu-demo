@@ -120,3 +120,85 @@ def test_legacy_import_provenance_reflects_old_confirmation_state(client, bootst
     assert draft["snapshot"]["info_nature"] == "preference"
     assert draft["snapshot"]["confirmation_status"] == "inferred"
     assert draft["snapshot"]["source"] == "legacy_dify_5slot_import"
+
+
+def test_legacy_import_empty_confirmed_task_falls_back_to_draft_goal(client, bootstrapped, unique):
+    """Regression: an earlier version picked which goal to read using
+    isinstance(confirmed_task, dict) but classified confirmed-vs-draft using
+    `if confirmed_task:` truthiness -- for confirmed_task={} (present but
+    empty, distinct from None) those two checks disagreed: it read the
+    (nonexistent) goal from the empty dict while classifying itself as an
+    unconfirmed draft, silently losing draft_task's real goal and leaving
+    payload.note == None.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    headers = bootstrapped["headers"]
+    snapshot = _legacy_snapshot(goal="draft 里的真实诉求")
+    snapshot["confirmed_task"] = {}
+
+    r = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": f"legacy-empty-confirmed-{unique}", "legacy_snapshot": snapshot},
+        headers=headers,
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["snapshot"]["payload"]["note"] == "draft 里的真实诉求"
+    assert body["snapshot"]["info_nature"] == "preference"
+    assert body["snapshot"]["confirmation_status"] == "inferred"
+
+
+def test_legacy_import_never_collides_with_a_live_task_idempotency_key(client, bootstrapped, unique):
+    """Regression for a confirmed cross-namespace collision: an earlier
+    version of legacy-import looked up (and created) its Task row keyed by
+    the SAME (workspace_id, idempotency_key) space as live task creation.
+    A live task and a legacy import choosing the same key string by pure
+    coincidence would collide -- whichever ran second silently got back the
+    first's row (a false-success 200 with the wrong task/no snapshot, or a
+    live user-confirmed task quietly gaining a legacy-tagged snapshot).
+    Both directions must now be impossible.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+    shared_key = f"shared-key-{unique}"
+
+    live_task = client.post(
+        f"/workspaces/{ws_id}/tasks",
+        json={"idempotency_key": shared_key, "account_id": account_id, "kind": "test"},
+        headers=headers,
+    ).json()
+
+    legacy = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": shared_key, "account_id": account_id, "legacy_snapshot": _legacy_snapshot()},
+        headers=headers,
+    )
+    assert legacy.status_code == 200, legacy.text
+    legacy_body = legacy.json()
+    assert legacy_body["task"]["id"] != live_task["id"], (
+        "a legacy import must never be handed back an unrelated live task just because "
+        "the idempotency_key string happened to collide"
+    )
+    assert legacy_body["snapshot"] is not None, (
+        "a legacy import must always actually import, never silently no-op with snapshot: null"
+    )
+
+    other_key = f"shared-key-reverse-{unique}"
+    legacy_first = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": other_key, "account_id": account_id, "legacy_snapshot": _legacy_snapshot()},
+        headers=headers,
+    ).json()
+    live_second = client.post(
+        f"/workspaces/{ws_id}/tasks",
+        json={"idempotency_key": other_key, "account_id": account_id, "kind": "test"},
+        headers=headers,
+    ).json()
+    assert live_second["id"] != legacy_first["task"]["id"], (
+        "a live task-creation call must never be handed back a legacy-imported task just "
+        "because the idempotency_key string happened to collide"
+    )
+    assert live_second["kind"] == "test"

@@ -56,9 +56,14 @@ def create_cycle(
 
     _require_account_in_workspace(db, workspace_id, body.account_id)
 
+    # scoped by account, not just workspace: two different accounts in the
+    # same workspace picking the same idempotency_key by coincidence must
+    # never collide and hand one account back the other's cycle.
     existing = db.execute(
         select(Cycle).where(
-            Cycle.workspace_id == workspace_id, Cycle.idempotency_key == body.idempotency_key
+            Cycle.workspace_id == workspace_id,
+            Cycle.account_id == body.account_id,
+            Cycle.idempotency_key == body.idempotency_key,
         )
     ).scalar_one_or_none()
     if existing:
@@ -103,7 +108,9 @@ def create_cycle(
         db.rollback()
         existing = db.execute(
             select(Cycle).where(
-                Cycle.workspace_id == workspace_id, Cycle.idempotency_key == body.idempotency_key
+                Cycle.workspace_id == workspace_id,
+                Cycle.account_id == body.account_id,
+                Cycle.idempotency_key == body.idempotency_key,
             )
         ).scalar_one_or_none()
         if existing:
@@ -180,9 +187,12 @@ def record_cycle_decision(
 
     _require_account_in_workspace(db, workspace_id, account_id)
 
+    # scoped by account, not just workspace -- same reasoning as
+    # create_cycle's idempotency lookup above.
     existing = db.execute(
         select(CycleDecision).where(
             CycleDecision.workspace_id == workspace_id,
+            CycleDecision.account_id == account_id,
             CycleDecision.idempotency_key == body.idempotency_key,
         )
     ).scalar_one_or_none()
@@ -214,10 +224,24 @@ def record_cycle_decision(
                 status_code=422,
                 detail="resulting_cycle_id must be a cycle for this account that supersedes cycle_id",
             )
-    elif body.resulting_cycle_id is not None:
-        raise HTTPException(
-            status_code=422, detail="decision='kept_unchanged' must not set resulting_cycle_id"
-        )
+    else:
+        if body.resulting_cycle_id is not None:
+            raise HTTPException(
+                status_code=422, detail="decision='kept_unchanged' must not set resulting_cycle_id"
+            )
+        # Purely structural, not a judgment call: "kept unchanged" only
+        # makes sense as a verdict on whatever cycle was current at
+        # decision time. A cycle that's already been superseded by the
+        # time this call arrives means some OTHER decision already moved
+        # things on -- recording "kept unchanged" against it now would
+        # make decisions/latest and /cycles/current visibly disagree about
+        # what happened to that cycle.
+        if not cycle.is_current:
+            raise HTTPException(
+                status_code=422,
+                detail="cycle_id is no longer the current cycle; kept_unchanged must reference "
+                "the cycle that was current at decision time",
+            )
 
     record = CycleDecision(
         workspace_id=workspace_id,
@@ -238,6 +262,7 @@ def record_cycle_decision(
         existing = db.execute(
             select(CycleDecision).where(
                 CycleDecision.workspace_id == workspace_id,
+                CycleDecision.account_id == account_id,
                 CycleDecision.idempotency_key == body.idempotency_key,
             )
         ).scalar_one_or_none()

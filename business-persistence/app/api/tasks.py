@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import MembershipContext, require_membership
 from app.api.serialize import row_to_dict
 from app.db import get_db
-from app.models.content import Artifact, ContentVersion, Task, TaskSnapshot
+from app.models.content import Artifact, ContentVersion, LegacyImportRecord, Task, TaskSnapshot
 from app.models.identity import Account
 from app.models.infra import TaskRunState
 from app.models.operations import Cycle
@@ -158,6 +158,14 @@ class LegacyImportRequest(BaseModel):
     legacy_snapshot: dict
 
 
+def _legacy_import_result(db: Session, record: LegacyImportRecord) -> dict:
+    task = db.get(Task, record.task_id)
+    snapshot = db.execute(
+        select(TaskSnapshot).where(TaskSnapshot.task_id == record.task_id)
+    ).scalar_one_or_none()
+    return {"task": row_to_dict(task), "snapshot": row_to_dict(snapshot) if snapshot else None}
+
+
 @router.post("/workspaces/{workspace_id}/tasks/legacy-import")
 def import_legacy_snapshot(
     workspace_id: uuid.UUID,
@@ -167,17 +175,26 @@ def import_legacy_snapshot(
 ):
     """Imports one V1 Demo task_snapshot_json object (the old Dify 5-slot
     session-state mechanism -- see decision-chain/docs/
-    V1_TASK_SNAPSHOT_SCHEMA_v0.1.json) as a single historical TaskSnapshot.
+    V1_TASK_SNAPSHOT_SCHEMA_v0.1.json) as a single historical Task +
+    TaskSnapshot representing exactly what was observed at import time --
+    the old mechanism kept no version history, so none is fabricated here.
 
-    The old mechanism only ever kept ONE current slot per artifact type and
-    overwrote it in place -- there is no version history behind it to
-    recover, so this creates exactly one Task + one TaskSnapshot representing
-    what was actually observed at import time. It never fabricates a
-    sequence of versions that never existed. `source` is always set to
-    "legacy_dify_5slot_import" so this can never be mistaken for a live,
-    real-time user confirmation captured by M2 itself -- that discriminator,
-    not confirmation_status, is what protects real business history from
-    being polluted by an import.
+    Idempotency is tracked in LegacyImportRecord, a namespace of its own,
+    NOT via Task.idempotency_key -- an earlier version of this endpoint
+    reused Task.idempotency_key directly, which meant a live task-creation
+    caller and a legacy-import caller choosing the same key string by
+    coincidence would collide: whichever wrote second got back the first's
+    row, reporting false success while importing nothing (or attaching a
+    live user-confirmed fact onto what looked like a legacy record). The
+    Task row created here always gets idempotency_key=NULL -- Postgres
+    never treats two NULLs as a UNIQUE-constraint collision -- so it is
+    structurally impossible for a legacy import to collide with, return, or
+    be returned by a live task's row. Task + TaskSnapshot + the idempotency
+    record are created in a single transaction, so a failure between them
+    can never leave a Task with no snapshot stuck in that state forever.
+
+    `source` on the snapshot is always "legacy_dify_5slot_import" so it can
+    never be mistaken for a live, real-time user confirmation.
     """
 
     missing = LEGACY_SNAPSHOT_REQUIRED_KEYS - body.legacy_snapshot.keys()
@@ -187,62 +204,80 @@ def import_legacy_snapshot(
             detail=f"legacy_snapshot missing required V1 schema keys: {sorted(missing)}",
         )
 
-    existing_task = db.execute(
-        select(Task).where(
-            Task.workspace_id == workspace_id, Task.idempotency_key == body.idempotency_key
+    existing_record = db.execute(
+        select(LegacyImportRecord).where(
+            LegacyImportRecord.workspace_id == workspace_id,
+            LegacyImportRecord.idempotency_key == body.idempotency_key,
         )
     ).scalar_one_or_none()
-    if existing_task:
-        existing_snapshot = db.execute(
-            select(TaskSnapshot).where(
-                TaskSnapshot.task_id == existing_task.id,
-                TaskSnapshot.idempotency_key == body.idempotency_key,
-            )
-        ).scalar_one_or_none()
-        return {
-            "task": row_to_dict(existing_task),
-            "snapshot": row_to_dict(existing_snapshot) if existing_snapshot else None,
-        }
+    if existing_record:
+        return _legacy_import_result(db, existing_record)
 
-    task = create_task(
-        workspace_id,
-        CreateTaskRequest(
-            idempotency_key=body.idempotency_key, account_id=body.account_id, kind="legacy_import"
-        ),
-        db=db,
-        ctx=ctx,
-    )
+    if body.account_id is not None:
+        account = db.get(Account, body.account_id)
+        if account is None or account.workspace_id != workspace_id:
+            raise HTTPException(status_code=404, detail="account_id not found in this workspace")
 
     confirmed_task = body.legacy_snapshot.get("confirmed_task")
     draft_task = body.legacy_snapshot.get("draft_task") or {}
-    goal_source = confirmed_task if isinstance(confirmed_task, dict) else draft_task
+    # the SAME truthiness check must drive both which goal to read and how
+    # to classify it -- an earlier version used isinstance() for one and
+    # truthiness for the other, so confirmed_task={} (present but empty)
+    # read its (nonexistent) goal from the empty dict while classifying
+    # itself as confirmed, silently losing draft_task's real goal.
+    goal_source = confirmed_task if confirmed_task else draft_task
     note = goal_source.get("goal") if isinstance(goal_source, dict) else None
-
     if confirmed_task:
         info_nature, confirmation_status = "fact", "confirmed"
     else:
         info_nature, confirmation_status = "preference", "inferred"
 
-    snapshot = create_snapshot(
-        workspace_id,
-        uuid.UUID(task["id"]),
-        CreateSnapshotRequest(
-            idempotency_key=body.idempotency_key,
-            payload={"note": note, "legacy_snapshot": body.legacy_snapshot},
-            info_nature=info_nature,
-            source="legacy_dify_5slot_import",
-            confirmation_status=confirmation_status,
-            scope={
-                "imported_from": "v1_demo_5slot",
-                "schema_version": body.legacy_snapshot.get("schema_version"),
-                "legacy_task_id": body.legacy_snapshot.get("task_id"),
-            },
-            availability_status="available",
-        ),
-        db=db,
-        ctx=ctx,
+    task = Task(
+        workspace_id=workspace_id,
+        account_id=body.account_id,
+        kind="legacy_import",
+        idempotency_key=None,
     )
-    return {"task": task, "snapshot": snapshot}
+    db.add(task)
+    db.flush()
+
+    snapshot = TaskSnapshot(
+        task_id=task.id,
+        payload={"note": note, "legacy_snapshot": body.legacy_snapshot},
+        info_nature=info_nature,
+        source="legacy_dify_5slot_import",
+        confirmation_status=confirmation_status,
+        scope={
+            "imported_from": "v1_demo_5slot",
+            "schema_version": body.legacy_snapshot.get("schema_version"),
+            "legacy_task_id": body.legacy_snapshot.get("task_id"),
+        },
+        availability_status="available",
+        idempotency_key=body.idempotency_key,
+    )
+    db.add(snapshot)
+
+    record = LegacyImportRecord(
+        workspace_id=workspace_id, idempotency_key=body.idempotency_key, task_id=task.id
+    )
+    db.add(record)
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        existing_record = db.execute(
+            select(LegacyImportRecord).where(
+                LegacyImportRecord.workspace_id == workspace_id,
+                LegacyImportRecord.idempotency_key == body.idempotency_key,
+            )
+        ).scalar_one_or_none()
+        if existing_record:
+            return _legacy_import_result(db, existing_record)
+        raise
+    db.refresh(task)
+    db.refresh(snapshot)
+    return {"task": row_to_dict(task), "snapshot": row_to_dict(snapshot)}
 
 
 class RunStateRequest(BaseModel):

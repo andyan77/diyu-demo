@@ -193,6 +193,7 @@ def test_cycle_decision_rejects_mismatched_decision_and_resulting_cycle(client, 
         headers=headers,
     )
     assert adjusted_without_target.status_code == 422
+    assert "resulting_cycle_id" in adjusted_without_target.json()["detail"]
 
     kept_with_target = client.post(
         f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
@@ -205,6 +206,113 @@ def test_cycle_decision_rejects_mismatched_decision_and_resulting_cycle(client, 
         headers=headers,
     )
     assert kept_with_target.status_code == 422
+    assert "must not set resulting_cycle_id" in kept_with_target.json()["detail"]
+
+
+def test_cycle_decision_rejects_kept_unchanged_on_an_already_superseded_cycle(client, bootstrapped, unique):
+    """A structural (not judgment) check: recording kept_unchanged only
+    makes sense against whatever cycle was current at decision time. If
+    cycle_1 has already been superseded by cycle_2 by the time this call
+    arrives, accepting a kept_unchanged verdict on cycle_1 would leave
+    decisions/latest and /cycles/current visibly disagreeing about it.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+
+    cycle_1 = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-stale-1-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-stale-1-{unique}",
+            "start_at": "2026-08-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+    client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-stale-2-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-stale-2-{unique}",
+            "start_at": "2026-09-01T00:00:00Z",
+        },
+        headers=headers,
+    )
+
+    r = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
+        json={
+            "idempotency_key": f"decision-stale-{unique}",
+            "cycle_id": cycle_1["id"],
+            "decision": "kept_unchanged",
+        },
+        headers=headers,
+    )
+    assert r.status_code == 422
+    assert "no longer the current cycle" in r.json()["detail"]
+
+
+def test_cycle_idempotency_is_scoped_per_account_not_just_workspace(client, bootstrapped, unique):
+    """Regression: create_cycle and record_cycle_decision used to scope
+    their idempotency lookup by workspace_id alone. Two different accounts
+    in the same workspace picking the same idempotency_key string by
+    coincidence would collide -- whichever called second silently got back
+    the first account's cycle/decision instead of creating its own.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    account_a = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+    account_b = client.post(
+        f"/workspaces/{ws_id}/accounts",
+        json={"platform": "test-platform", "handle": f"handle-b-{unique}"},
+        headers=headers,
+    ).json()["id"]
+
+    shared_key = f"shared-cycle-key-{unique}"
+    cycle_a = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": shared_key,
+            "account_id": account_a,
+            "label": "account-a-cycle",
+            "start_at": "2026-08-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+    cycle_b = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": shared_key,
+            "account_id": account_b,
+            "label": "account-b-cycle",
+            "start_at": "2026-08-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+    assert cycle_a["id"] != cycle_b["id"], (
+        "two different accounts must never collide on the same idempotency_key string"
+    )
+    assert cycle_a["account_id"] == account_a
+    assert cycle_b["account_id"] == account_b
+
+    shared_decision_key = f"shared-decision-key-{unique}"
+    decision_a = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_a}/cycles/decisions",
+        json={"idempotency_key": shared_decision_key, "cycle_id": cycle_a["id"], "decision": "kept_unchanged"},
+        headers=headers,
+    ).json()
+    decision_b = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_b}/cycles/decisions",
+        json={"idempotency_key": shared_decision_key, "cycle_id": cycle_b["id"], "decision": "kept_unchanged"},
+        headers=headers,
+    ).json()
+    assert decision_a["id"] != decision_b["id"]
+    assert decision_a["account_id"] == account_a
+    assert decision_b["account_id"] == account_b
 
 
 def test_cycle_idempotency_key_is_scoped_per_workspace(client, unique):

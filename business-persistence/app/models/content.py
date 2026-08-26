@@ -78,6 +78,36 @@ class TaskSnapshot(Base, UUIDPKMixin, CreatedAtMixin):
     idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))
 
 
+class LegacyImportRecord(Base, UUIDPKMixin, CreatedAtMixin):
+    """Tracks which legacy-snapshot imports have already run, keyed in its
+    OWN namespace rather than reusing Task.idempotency_key. A caller
+    importing an old Demo snapshot and a caller creating a live task pick
+    idempotency_key strings independently of each other -- if both wrote
+    into the same (workspace_id, idempotency_key) space, a coincidental
+    collision would let one silently return/merge into the other's
+    identity (confirmed live: a legacy import handed back an existing live
+    task with no snapshot attached at all, reporting success). The Task row
+    a legacy import creates therefore gets idempotency_key=NULL (multiple
+    NULLs never collide under a UNIQUE constraint), and this table is the
+    only thing legacy-import's own retries look up.
+    """
+
+    __tablename__ = "legacy_import_records"
+    __table_args__ = (
+        UniqueConstraint(
+            "workspace_id", "idempotency_key", name="uq_legacy_import_workspace_idempotency"
+        ),
+    )
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("workspaces.id"), nullable=False
+    )
+    idempotency_key: Mapped[str] = mapped_column(String(255), nullable=False)
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False
+    )
+
+
 class Material(Base, UUIDPKMixin, CreatedAtMixin):
     """资料/素材. Authorization is tracked per-action (analysis/generation/
     publish) because a material can be legal to analyze but not to publish
