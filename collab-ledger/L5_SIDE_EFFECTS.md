@@ -278,6 +278,20 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 两次 `/v1/chat-messages` 响应（本机临时文件 `ce_v0_2_01_resp.json`/`ce_v0_2_02_resp.json`）：`answer` 字段无内部字段泄漏，`metadata.reasoning.m1_shadow` 第二轮逐字包含第一轮写入的三组新字段值 |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 
+### SE-017 · Founder 本人完成 v0.5 DSL 导入与发布；执行侧用 App API Key 跑 v0.3 字段真实回归
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同 SE-012/013/014/016，非新建） |
+| 操作方 | **控制台导入与发布由 Founder 本人在浏览器里完成**——执行侧把重新生成的 DSL 文件（`m1_candidate_dsl_v0.5.yml`）通过 SendUserFile 交给 Founder，由 Founder 在已登录的控制台会话内完成导入（覆盖同一 App 草稿，非新建）与发布，覆盖 v0.4；执行侧全程未接触、未索取任何登录凭证 |
+| 执行侧后续操作 | 发布确认后，执行侧用 SE-013 已创建的 App 级 API Key（`app-fHRsI6...`）跑真实回归 CE-v0.3-01：① 新对话第一轮陈述一条 FACT 性质的经营事实；② 同会话第二轮提出一条 REFERENCE 性质的参考对象偏好，验证跨轮持久化与 nature 枚举的 REFERENCE 分支 |
+| 内容标识 | 两轮真实运行的 `conversation_id`/`message_id`、`m1_shadow` 推理轨迹逐字复述第一轮持久化证据条目（`ev_001`）及其 `confirmation: SYSTEM_TENTATIVE`，详见 [`V1_M1_CANDIDATE_RUN_001.md` §十一](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
+| 幂等信息 | 导入/发布为幂等覆盖（同一 app_id）；两轮对话共享同一 `conversation_id`，`message_id` 各自独立 |
+| 受控状态 | 可逆——工作流历史版本（v0.1～v0.4）未删除，可随时回退；仅作用于本任务专用候选 App；**未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow** |
+| 核验依据 | 两次 `/v1/chat-messages` 响应（本机临时文件 `ce_v0_3_01_resp.json`/`ce_v0_3_02_resp.json`）：`answer` 字段经关键词扫描（`FACT`/`PREFERENCE`/`REFERENCE`/`UNSTATED`/`evidence_bundle`/`SYSTEM_TENTATIVE`/`SYSTEM_INFERENCE`/`ev_00`/`DISCUSS`/`FOCUS`/`THIS_ACCOUNT`/`NOT_CAPTURED_IN_P0_SNAPSHOT`）均未命中；`metadata.reasoning.m1_shadow` 第二轮逐字包含第一轮写入的证据条目与 `confirmation` 值 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |

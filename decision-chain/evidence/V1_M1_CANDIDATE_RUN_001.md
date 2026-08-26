@@ -6,7 +6,7 @@
 
 - Dify：本机自托管 1.16.1（`/home/faye/dify/docker/`），与 A-0～A-4 证据同一实例
 - App：`DIYU V1 M1 Natural Context Candidate v0.1`，id `dd638b91-d39f-4e92-a984-6ad1ab809119`，advanced-chat
-- 工作流版本：v0.4（快照扩展 account_stage／expression_discretion／capacity_triad，Founder 本人 2026-08-25 在控制台完成导入与发布）；历史版本 v0.1/v0.2/v0.3 未删除，可随时回退
+- 工作流版本：v0.5（快照扩展 evidence_bundle[]／gaps[]，Founder 本人 2026-08-25 在控制台完成导入与发布）；历史版本 v0.1～v0.4 未删除，可随时回退
 - 节点：`m1_start → m1_shadow(llm) → m1_compiler(code) → m1_save_snapshot(assigner) → m1_chat_llm(llm) → m1_answer`
 - 源码：`decision-chain/workflows/m1_context_compiler_v0.1.py`（编译器）＋ `decision-chain/workflows/build_m1_candidate_dsl_v0.1.py`（DSL 生成脚本，可重新生成同一份 DSL）
 
@@ -144,4 +144,10 @@ DSL 用 `build_m1_candidate_dsl_v0.1.py` 重新生成后，执行侧尝试用已
 
 **测试**：35 → 88（首版实现）→ 83（对抗审查修复后，删除 8 个只测已删除守卫函数的用例，净增 48）。`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v` → `Ran 83 tests ... OK`，独立复核过两次（对抗审查阶段一次、修复后本次一次），均 0 失败。
 
-**尚未 live 验证**：本批改动（含上述三处修复）目前只有本地单测证据，DSL 已重新生成为 `m1_candidate_dsl_v0.5.yml`（58251 字符 / 75263 UTF-8 字节），但**尚未导入/发布到候选 App，尚未跑真实 Dify 回归**。`_may_modify_existing_evidence` 相关的 `NOT_VERIFIED_IN_LIVE` 标注因该函数已删除而不再适用；但 `evidence_bundle[]`/`gaps[]` 的其余全部行为，在这条记录写下的时刻，仍然只是单测证据，不是 live 证据——按既定纪律不得混称"已验证"。
+**live 验证（CE-v0.3-01，真实运行，`conversation_id 11d69307-d3c9-4505-b64e-604280493667`）**：Founder 本人在浏览器控制台完成 v0.5 导入与发布（覆盖 v0.4，见 L5 SE-017）后，执行侧用既有 App API Key 跑了两轮真实对话：
+
+- 第一轮 `message_id 9c3e51f7-a91c-4a3b-9803-8c6c5a0b8032`：用户陈述「我们家是杭州本地的女装买手店，已经开了三年，主要卖设计师联名款」。`m1_shadow` 推理轨迹显示正确判定 `evidence_nature=FACT`、`evidence_text` 贴合原话；`evidence_scope` 推理轨迹显示模型确有认真权衡（"用户没有明确说明适用到哪一层……但'我们家'inherently 指向本账号"），最终选了 `THIS_ACCOUNT` 而非默认 `UNSTATED`——这是模型基于"这是在描述自己账号"这一语境做出的合法枚举取值，不是编造，但比设计口径鼓励的保守默认更主动，记录为一个真实观察，供 Reviewer 判断这条界线是否需要收紧提示词。回复正确说明尚未形成具体任务，未越界给专业判断（"如果涉及账号定位、内容方向这类专业判断，那需要交给对应的专业能力"），未泄漏内部字段。
+- 第二轮 `message_id ae2ead36-b4fc-4d52-bdf4-8bb05e63b4df`（同会话）：用户陈述「另外，我个人比较喜欢参考@设计师薇薇安 的选品逻辑，他家风格跟我们很像」。**`m1_shadow` 的推理轨迹逐字复述了第一轮持久化后的证据条目**——"之前还有一条证据 ev_001：我们家是杭州本地的女装买手店，已经开了三年，主要卖设计师联名款……账号阶段'已经开了三年'是 SYSTEM_TENTATIVE"，与第一轮写入值完全一致，`id` 命名规则（`ev_%03d`）与 `confirmation` 值均如实持久化、未被伪造成 `USER_CONFIRMED`；本轮新证据被正确判定为 `evidence_nature=REFERENCE`（而非 FACT 或 PREFERENCE，推理轨迹显示模型认真区分了三者的边界），`evidence_scope` 这次正确留了 `UNSTATED`，推理原文明确写"不能把'喜欢参考'推断为长期规则，所以 scope 应该为 UNSTATED"——与共享合同一 §三 反例逐字对应，证明降级路径的口径确实被模型学到并正确应用，不是巧合。同时验证了"account_stage_text 只取本轮新说的内容，不从历史复制"这条 merge 语义在真实模型侧也被正确理解（推理轨迹："本轮没有描述，但上下文里有历史……本轮没说，所以留空。注意不要从上下文复制"）。回复正确拒绝给出选品逻辑的专业判断，未泄漏内部字段。
+- 两轮 `answer` 字段经关键词扫描（`FACT`/`PREFERENCE`/`REFERENCE`/`UNSTATED`/`evidence_bundle`/`SYSTEM_TENTATIVE`/`SYSTEM_INFERENCE`/`ev_00`/`DISCUSS`/`FOCUS`/`THIS_ACCOUNT`/`NOT_CAPTURED_IN_P0_SNAPSHOT`）均未命中。
+
+**结论**：`evidence_bundle[]` 的降级路径（LLM 只出扁平信号）在真实 DeepSeek V4 Flash 结构化输出下工作正常，`nature` 三个可选分支里 FACT／REFERENCE 均已在真实运行中触发过（PREFERENCE 尚未自然触发，不构成缺陷，只是这两轮对话没有恰好说出偏好句式）；纯追加、跨轮持久化、`confirmation` 不被伪造升级，均有真实证据而非仅单测证据。`gaps[]` 的 `include_structural` 拆分（8 条常量是否逐轮持久化）不影响对话层可观察行为，此前已由确定性单测覆盖，本次 live 验证未重复验证这一点。`_may_modify_existing_evidence` 相关的 `NOT_VERIFIED_IN_LIVE` 标注因该函数已删除而不再适用。候选 App 当前运行版本为 v0.5。
