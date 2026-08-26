@@ -1509,4 +1509,14 @@ Founder 复核 T-011.4 后指出四类问题：(1) 3 槽/5 槽兼容存在事实
 | 治理一致性（更正） | `TECHNICAL_DECISION_RECORD.md` 遗留的"并发裸 500 未修复"过期描述已追加更正说明；`M2_ACCEPTANCE_EVIDENCE.md` 顶部"证据绑定基线"已改写为区分代码候选提交与纯文档/权限收口提交，不再笼统绑定单一旧 commit |
 | Rebase/Errata Prompt 分支归档（更正） | 原文件（`sha256 = fbb65e1d...`）已按 §6 授权范围原样字节复制进 `business-persistence/M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`，`diff` 核验字节一致；该文件确有一处未闭合 Markdown 代码围栏（外观像复制截断），但逐行核对到文末确认内容连续完整、以正常声明块结束，不是内容缺失，仅格式缺陷，未修改原文一字 |
 | R-08（本轮解除） | Founder 提供该候选应用专属 App API Key（未索要 Console 会话或账号密码）；执行侧用该 Key 调用 Dify 自身 Service API 真实重跑候选 workflow（`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`），对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，`M2-AC-16` 转 `PASS`，非 API 等价替代证据 |
-| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）；`next_stage_allowed = false:M2-AC-13 迁移降级恢复裁决`——唯一剩余缺口是 `M2-AC-13`，需要 Founder 决定自动改键规则或改写验收标准字面口径 |
+| 任务终态（T-011.5 时点，历史记录，见 T-011.6） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）；`next_stage_allowed = false:M2-AC-13 迁移降级恢复裁决`——唯一剩余缺口是 `M2-AC-13`，需要 Founder 决定自动改键规则或改写验收标准字面口径 |
+
+### T-011.6 Founder 明确裁决豁免迁移降级恢复（取代 T-011.5 的 AC-13 判定与任务终态，T-011.5 其余内容保留为历史）
+
+执行侧向 Founder 解释迁移回滚（downgrade）的技术含义、当前具体卡点（跨账号共享 idempotency_key 冲突时的自动改键需要一条业务规则，不是纯技术判断）、以及两个可选方向（授权具体自动改键规则 / 接受人工介入并改写验收标准字面口径）后，Founder 在本会话中明确答复："可以跳过这一步，继续推进 M2 落盘收口，备注说明：我已经完全裁决豁免回滚这个环节步骤"。
+
+| 项 | 值 |
+|---|---|
+| `M2-AC-13`（再纠正） | 标记 `FOUNDER_WAIVED`——CONNECT 权限子项技术上已修复；迁移降级不能自动恢复/回滚这一技术事实**不变、不被拔高为 PASS**；该子项已被 Founder 明确豁免，不再阻塞任务收尾。区别于执行侧自行使用 `PASS_WITH_LIMITATION` 类措辞规避 P0——这是 Founder 依据其对 ACCEPTANCE 的控制权作出的产品/业务决定，执行侧只是如实登记，未自行放宽标准 |
+| `M2-RB-10`/`M2-RB-12` | 同步标记/说明 `FOUNDER_WAIVED`，`M2-RB-12`（"无删除或降低任何标准"）补充说明：技术事实未被降低，只是该项对任务收尾的阻塞被 Founder 明确解除 |
+| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state` 由 `IN_PROGRESS` **推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`**（按 Rebase Prompt §8.2 全部前提本轮已满足：`M2-RB-01～14` 全部通过、`M2-AC-00～16` 全部 CURRENT 证据或 Founder 明确豁免、Dify 候选已用最终代码真实运行、远程任务分支收口完成、无未披露权限/数据完整性/受保护资产问题）；`next_stage_allowed = false:M2-AC-17`——唯一剩余事项是 `M2-AC-17`，只能由 Founder 通过 Dify 画布实际完成产品/业务验收，技术治理豁免不构成、也不能替代这一步 |

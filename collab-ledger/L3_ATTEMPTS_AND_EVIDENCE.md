@@ -1855,3 +1855,12 @@ Founder 复核 ATT-003 后指出四类问题（3 槽/5 槽命名事实偏差、�
 | Rebase/Errata Prompt 分支归档 | 原文件（`sha256 = fbb65e1d...`）按 §6 授权范围字节级复制进 `business-persistence/`，`diff` 核验一致；文件确有一处未闭合 Markdown 代码围栏，逐行核对内容完整不缺失，仅格式缺陷 |
 | R-08 解除 | Founder 提供 App API Key（未索要 Console 会话/密码）；调用 Dify Service API 真实重跑候选 workflow，`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，对照 `FOUNDER_TEST_PACKAGE.md` 9 项判断标准全部满足，`M2-AC-16` 转 `PASS` |
 | **任务终态（当前有效，取代 ATT-003 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`；`next_stage_allowed = false:M2-AC-13 迁移降级恢复裁决`——唯一剩余缺口是 `M2-AC-13`，需 Founder 决定自动改键规则或改写验收标准字面口径 |
+
+### ATT-005（Founder 明确裁决豁免迁移降级恢复，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+执行侧向 Founder 解释迁移回滚的技术含义、当前具体卡点（跨账号共享 idempotency_key 冲突时自动改键需要业务规则，不是纯技术判断）后，Founder 明确答复"可以跳过这一步，继续推进 M2 落盘收口，备注说明：我已经完全裁决豁免回滚这个环节步骤"。
+
+| 项 | 值 |
+|---|---|
+| `M2-AC-13` 更正 | 标记 `FOUNDER_WAIVED`——技术事实不变（迁移降级遇跨账号冲突不能自动恢复），不拔高为 `PASS`；该子项已被 Founder 明确豁免，不再阻塞任务收尾。这是 Founder 行使其对 ACCEPTANCE 的控制权作出的决定，非执行侧自行放宽标准，也未使用 `PASS_WITH_LIMITATION` 类规避措辞 |
+| **任务终态（当前有效，取代 ATT-004 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state` 由 `IN_PROGRESS` **推进为 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`**（Rebase Prompt §8.2 全部前提本轮已满足）；`next_stage_allowed = false:M2-AC-17`——唯一剩余事项是 `M2-AC-17`，只能由 Founder 通过 Dify 画布完成产品/业务验收 |

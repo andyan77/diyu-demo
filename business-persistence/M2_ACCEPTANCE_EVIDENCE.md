@@ -17,7 +17,7 @@
 - **全量测试**：对重启后的容器现场重跑 `docker run --rm --network docker_default -e APP_BASE_URL=http://diyu-m2-app:8000 diyu-m2-app:dev pytest tests/ -q` → **69 passed**。
 - **数据库**：PostgreSQL 15.19，`docker-db_postgres-1`，独立数据库 `diyu_business`，owner `diyu_app`（`NOSUPERUSER NOCREATEDB NOCREATEROLE`）。
 - **迁移链**：`fdbd31cee7f9 → 6033064ae1ed → 6bc000bb178d → fb5e3889277c → db747c8a1f80 → a1c5e7d4f2b9 → c3f8b2e6d0a4`（现场 `alembic current` = `c3f8b2e6d0a4 (head)`，本轮迁移文件本身无新变化）。
-- **本地/远程一致性**：本次提交推送后核验（见 `M2_REBASE_ERRATA_001_RECORD.md` §8"Git 收口"或对应 L5 记录）。
+- **本地/远程一致性**：本次提交推送后核验（见 `M2_REBASE_ERRATA_001_RECORD.md` §9"Git 收口"）。
 
 ## 审查与自验记录
 
@@ -48,7 +48,7 @@
 | M2-AC-10 | **PASS** | `Playbook` 版本化链式历史，自由字段非固定枚举 | `app/models/knowledge.py::Playbook` |
 | M2-AC-11 | **PASS** | 素材撤回精确级联失效；`tests/test_material_withdrawal.py` 7 项，含 20 轮并发竞态回归 | `a3eeb2f` |
 | M2-AC-12 | **PASS**（本轮修复后转为真 PASS，非此前的"已知限制"） | 全部创建型端点复合唯一 + `IntegrityError` 重查；`create_cycle`/`record_cycle_decision` 的按-workspace-而非按-account 幂等漏洞已修复（`020bc58`）；`create_version` 的并发 version_no 裸 500 **此前披露为刻意不修的已知限制，本轮 R-04 已真实修复并现场证伪/证实**（回退代码复现 5/8 失败 → 恢复代码 5 轮 8/8 成功）；`tests/test_concurrency.py` 新增 `test_concurrent_version_creation_on_same_artifact_never_produces_a_raw_500` | `020bc58`, `3d23674` |
-| M2-AC-13 | **NOT_VERIFIED（本次更正：由 PASS 再次下修，CONNECT 半确已修复，迁移回滚半未达标）** | 验收标准原文三项要求：**数据库迁移可重复**、**失败可恢复/回滚**、**旧记录可读，Dify 内部表和数据未被改写**。逐项：(1) 迁移可重复——`alembic upgrade head` 幂等可重跑，成立；(2) **失败可恢复/回滚——不成立**：`c3f8b2e6d0a4` 的 downgrade 对存在合法跨账号同键真实数据时，此前会裸崩溃，本轮已修复为**清晰拒绝并列出冲突行**（`_refuse_if_cross_account_duplicates`），这是真实的工程改进（崩溃→清晰报错），但**清晰拒绝不等于可恢复/回滚**——该场景下 downgrade 仍然不能完成，需要人工先决定"两个账号里谁保留这个 idempotency_key、谁改用新 key"这一业务语义问题，这不是迁移脚本该替业务做的决定，执行侧不会不经授权就静默实现自动改键；因此这一子项如实标记 **NOT_VERIFIED**，不使用"可逆"这类过原文标准的措辞；(3) 旧记录可读、Dify 内部表和数据未被改写——成立，本轮 REVOKE CONNECT 只撤销数据库级连接权限（ACL），未触碰 Dify 任何表或数据行。数据库 CONNECT 权限缺口（**已修复**）：修复前现场负向复现确认 `diyu_app` **可以** `CONNECT` 到 `dify`/`dify_plugin`（`SELECT current_database()` 成功返回），与 `TECHNICAL_DECISION_RECORD.md` 原"REVOKE ALL 阻止连接"表述不一致。经 Founder 2026-08-25 现场明确授权后，在 `docker-db_postgres-1` 上以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;` 与同语句对 `dify_plugin`；修复后现场重测：`diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；回归确认 `diyu_app` 对自身 `diyu_business` 连接不受影响，Dify 自身容器（`docker-api-1` 等）以 `postgres` 超级用户连接（超级用户天然绕过 CONNECT ACL），未受此次 REVOKE 影响。**整体判定**：三项子要求中一项（失败可恢复/回滚）未达标，按本仓库"任一子项未满足即整体 AC 标 NOT_VERIFIED"的既有先例（见此前 R-09b 阶段对本行的处理），本行整体保持 `NOT_VERIFIED`，即使 CONNECT 子项已真实修复。**后续需要 Founder 决定**：要么明确授权一套自动改键策略（如"跨账号冲突时较早创建的行保留原 key，较晚的自动改名并记录原值"）由执行侧实现并测试，要么接受"清晰拒绝＋人工介入"为本迁移的最终设计、并把 AC-13 原文"失败可恢复/回滚"的达标口径正式改写为"失败清晰可诊断，恢复需人工介入"（这需要 Founder 或合同层面的裁决，不是执行侧能单方面放宽的） | Founder 2026-08-25 CONNECT 修复授权记录见 `M2_REBASE_ERRATA_001_RECORD.md` §7；downgrade 清晰拒绝证据见 R-09a、`migrations/versions/c3f8b2e6d0a4_*.py::_refuse_if_cross_account_duplicates` |
+| M2-AC-13 | **FOUNDER_WAIVED（技术事实不变，Founder 2026-08-25 明确裁决豁免；不是 PASS，也不是执行侧自行放宽）** | 验收标准原文三项要求：**数据库迁移可重复**、**失败可恢复/回滚**、**旧记录可读，Dify 内部表和数据未被改写**。逐项技术事实（**豁免不改变以下事实描述**）：(1) 迁移可重复——`alembic upgrade head` 幂等可重跑，成立；(2) **失败可恢复/回滚——技术上不成立**：`c3f8b2e6d0a4` 的 downgrade 对存在合法跨账号同键真实数据时，此前会裸崩溃，本轮已修复为**清晰拒绝并列出冲突行**（`_refuse_if_cross_account_duplicates`），这是真实的工程改进（崩溃→清晰报错），但**清晰拒绝不等于可恢复/回滚**——该场景下 downgrade 仍然不能自动完成，需要人工先决定"两个账号里谁保留这个 idempotency_key、谁改用新 key"这一业务语义问题；(3) 旧记录可读、Dify 内部表和数据未被改写——成立，本轮 REVOKE CONNECT 只撤销数据库级连接权限（ACL），未触碰 Dify 任何表或数据行。数据库 CONNECT 权限缺口（**已修复，与本次豁免无关**）：修复前现场负向复现确认 `diyu_app` **可以** `CONNECT` 到 `dify`/`dify_plugin`（`SELECT current_database()` 成功返回），与 `TECHNICAL_DECISION_RECORD.md` 原"REVOKE ALL 阻止连接"表述不一致。经 Founder 2026-08-25 现场明确授权后，在 `docker-db_postgres-1` 上以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;` 与同语句对 `dify_plugin`；修复后现场重测：`diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；回归确认 `diyu_app` 对自身 `diyu_business` 连接不受影响，Dify 自身容器（`docker-api-1` 等）以 `postgres` 超级用户连接（超级用户天然绕过 CONNECT ACL），未受此次 REVOKE 影响。**Founder 裁决（2026-08-25，本会话内明确表述）**：执行侧向 Founder 解释了迁移回滚的技术含义、当前具体卡点（跨账号共享 idempotency_key 的自动改键需要业务规则，不是纯技术判断）、以及两个可选方向（授权一套具体自动改键规则 / 接受人工介入并改写验收标准字面口径）后，Founder 明确答复"可以跳过这一步，继续推进 M2 落盘收口，备注说明：我已经完全裁决豁免回滚这个环节步骤"。这是 Founder 依据其对 ACCEPTANCE 的控制权作出的产品/业务决定，**不是执行侧自行宣布 PASS、不是执行侧用"已知限制"规避原 P0**——原 Rebase Prompt R-06 禁止的是执行侧自行使用 `PASS_WITH_LIMITATION` 等措辞掩盖未达标项，本行未使用这类措辞，而是如实标注 `FOUNDER_WAIVED` 并完整保留技术事实。**判定**：三项子要求中"失败可恢复/回滚"子项技术上仍不成立，但该子项已被 Founder 明确豁免、不再阻塞本任务收尾判定；整体标记 `FOUNDER_WAIVED`，区别于 `PASS`（技术达标）和阻塞性 `NOT_VERIFIED`（技术未达标且未被豁免） | Founder 2026-08-25 CONNECT 修复授权记录 + 回滚豁免裁决记录见 `M2_REBASE_ERRATA_001_RECORD.md` §7；downgrade 清晰拒绝证据见 R-09a、`migrations/versions/c3f8b2e6d0a4_*.py::_refuse_if_cross_account_duplicates` |
 | M2-AC-14 | **PASS**（本轮更正分类与命名错误后重新确认，功能本身此前即真实有效） | **更正（本次提交）**：此前记录把真实存在的 3 槽对象错误命名/描述为"5 槽"，且错误得出"3 槽对象不存在"的结论——均已核实为不准确，改正如下。真实情况：`decision-chain/docs/V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 是**唯一**一份 Schema 文件，含 13 个必填顶层字段；其 `artifacts` 子对象**真实拥有 3 个具名槽位**（`matrix`/`campaign`/`content_brief`），这就是 Prompt/EP-00 提及的"3 槽"对象本身——它确实存在，只是不作为独立文件存在（嵌在这份 Schema 内），此前"穷尽检索无独立文件→判定对象不存在"的推论跳步错误。真正的"5"来自这份同一 Schema 里另一个**可选**字段 `last_acceptance.slot` 的 5 值枚举（比 3 槽多出 `production_stage1`/`publishing_stage2`，是后续对话编排修复新增的可选扩展，Schema 自身注释明确写明为保证旧快照合法而设为可选、不进 required）——与 `artifacts` 的 3 槽是两个不同字段，此前分析把二者混为一谈。(a) 本任务的 legacy-import 端点正确校验并导入这份真实 13 字段 Schema 的完整状态对象（含其真实 3 槽 `artifacts`，测试夹具里三槽均为 null，验证的是结构合规而非真实内容）——但此前代码把这次导入的 `source` 错误标注为 `legacy_dify_5slot_import`，本次已改正为 `legacy_dify_v1_task_snapshot_import`（`app/api/tasks.py`、`tests/test_legacy_import.py` 同步更正）；(b) 真实存在的旧 Matrix/Campaign/Content Brief 生产产物（`decision-chain/evidence/*.md`，真实 3 槽的真实内容）——用真实 sha256 经既有端点显式导入（`fabffd8`），这一半覆盖 3 槽的真实内容，(a)+(b) 合起来是"结构合规＋真实内容"两个维度都成立；(c) 可选字段 `last_acceptance.slot` 的 5 值枚举**未被任何现有夹具覆盖**——如实披露为已知窄口径缺口，非阻断项：Schema 自身设计保证旧快照本就不含该字段仍合法，不影响"旧 Demo 会话态兼容"这一验收标准的核心诉求 | `0546f30`, `fabffd8`, 本次命名更正 commit；穷尽检索证据见 `M2_REBASE_ERRATA_001_RECORD.md` §5 R-05（该记录本身的"3 槽不存在"结论已在本行更正） |
 | M2-AC-15 | **PASS** | `tests/test_interface_contracts.py` 钉住 M1/M3/M4 三条边界，现有实现下均未触发修复 | `44f02dd`, `020bc58` |
 | M2-AC-16 | **PASS**（Founder 提供该候选应用的 App API Key 后，针对本轮最新代码真实重跑，非 API 等价替代证据） | 目标环境应用后端真实运行、正向/负向/并发/回归全部通过（69/69，现场重跑）。**Dify 候选画布本身已针对本轮最新代码重新真实运行**：Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key（执行侧未索要 Console 会话或账号密码）；执行侧用该 Key 调用 Dify 自身 Service API `POST /v1/workflows/run`——这触发的是 Dify 引擎真实执行同一份已发布 workflow 定义（`workflow_id: 54339bd5-14dc-491a-b221-94c764c23544`），与在 Studio UI 点「运行」走的是同一条执行路径，只是认证信道不同，**不是**绕开 Dify、直接调用 M2 后端冒充等价证据（R-08.8 明文禁止的正是后一种）。运行结果：`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，`elapsed_time: 0.43s`，无 `error`。对照 `FOUNDER_TEST_PACKAGE.md` 判断标准逐项核验：`task_id` 为真实 UUID（`af4f9244-...`）；`snapshot_status = 200`；`cycle_created_body.is_current = true`；`projection_body.latest_snapshot.payload.note` 与本次填入的"首次任务原始诉求"原文逐字一致（状态真实存住、读回）；`version_id` 为真实 UUID；`promote_body.is_current = true` 且 `promoted_by = "founder-dify-candidate-demo"`（与填入的 Actor Ref 一致）；`publish_instance_id` 为真实 UUID；`feedback_body.is_test = true`、`is_manual_entry = true`，`payload.note` 与填入的反馈原文一致；`current_cycle_body.label` 含本次运行标识——9 项判断标准全部满足。**观察（非阻断）**：本次 `total_steps = 16`，早前一轮历史运行记录为"17/17 节点成功"，两次统计口径或节点组成可能不同，未深究原因，如实记录差异，不影响本次运行本身"成功、状态可读回"的结论 `workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`（Dify 自身执行记录），运行输入值与完整响应见 `collab-ledger/L5_SIDE_EFFECTS.md` SE-018 |
@@ -64,32 +64,32 @@
 | M2-RB-04 | **PASS** | main 相对 M2 基线的影响已分析（仅 2 个账本登记 commit，无产品/合同/受保护资产变化），无 STALE 证据需要因此重验 |
 | M2-RB-05 | **PASS** | `create_version` 并发不再产生无边界裸 500，证据见 M2-AC-12 |
 | M2-RB-06 | **PASS**（本轮更正："5 槽"表述与"3 槽对象不存在"结论均已改正，见 M2-AC-14） | 旧产物实际兼容面成立：真实 3 槽（`matrix`/`campaign`/`content_brief`）状态结构 + 真实历史生产产物内容，均未补造 fixture；此前误命名的"5 槽"已更正，证据见 M2-AC-14 |
-| M2-RB-07 | **PASS**（本文件本身即该修正的产物，本次再次更正 AC-13） | 不再有"PASS 但证据过期"或"未完成但不在范围"的矛盾陈述——AC-16 已用真实画布重跑证据转 PASS；AC-13 的 CONNECT 子项已修复，但迁移回滚子项如实保持 NOT_VERIFIED，未因 CONNECT 修复而整体拔高 |
+| M2-RB-07 | **PASS**（本文件本身即该修正的产物，本次再次更正 AC-13） | 不再有"PASS 但证据过期"或"未完成但不在范围"的矛盾陈述——AC-16 已用真实画布重跑证据转 PASS；AC-13 的 CONNECT 子项已修复，迁移回滚子项技术上未达标但已被 Founder 明确豁免，标记 `FOUNDER_WAIVED` 而非拔高为 PASS |
 | M2-RB-08 | **PASS** | Founder Test Package 的纠正（R-07）已在同一次落盘中完成（`FOUNDER_TEST_PACKAGE.md` 已更正旧 Demo 兼容表述并补充说明）；本文件此前在"未完成事项"遗留的"R-07 尚未执行"表述与此矛盾，已更正删除 |
 | M2-RB-09 | **PASS**（本次更正：由 NOT_VERIFIED 转正） | Founder 提供该候选应用专属 App API Key 后，Dify 候选已针对本轮最新代码真实重跑（`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`），`M2-AC-16` 转 `PASS`，未使用 API 等价替代证据 |
-| M2-RB-10 | **NOT_VERIFIED（部分，本次更正：由 PASS 再次下修）** | CONNECT 权限半已在 Founder 授权后现场执行并验证；**迁移回滚半未达标**——downgrade 对合法跨账号同键真实数据不能自动恢复/回滚，只能清晰拒绝并要求人工介入，不满足 `M2-AC-13` 原文"失败可恢复/回滚"标准，`M2-AC-13` 整体保持 `NOT_VERIFIED` |
+| M2-RB-10 | **FOUNDER_WAIVED（技术事实不变，本次更正）** | CONNECT 权限半已在 Founder 授权后现场执行并验证，技术达标；**迁移回滚半技术上仍未达标**——downgrade 对合法跨账号同键真实数据不能自动恢复/回滚，只能清晰拒绝并要求人工介入，不满足 `M2-AC-13` 原文"失败可恢复/回滚"标准；Founder 2026-08-25 明确裁决豁免这一子项，不再阻塞任务收尾，见 `M2-AC-13` 行完整记录 |
 | M2-RB-11 | **PASS** | 审查历史与预算已如实分类登记（见"审查与自验记录"），未新增开放式审查，未删除超预算事实 |
-| M2-RB-12 | **PASS** | 原 `M2-AC-00`~`17` 重新获得一致、可复算状态，无删除或降低任何标准（`AC-12` 提升为真 PASS，`AC-14` 更正命名/分类错误后维持 PASS，`AC-16` 用真实重跑证据转 PASS，`AC-13` 如实保持 NOT_VERIFIED，均为纠正而非放宽） |
-| M2-RB-13 | **PASS** | 本轮全部 commit 本地=远程一致（见下"Git 收口"），未触碰 `main` 和无关工作树资产 |
-| M2-RB-14 | **PASS** | Founder 尚未完成 Dify 验收前保持非终态，本文件与 `M2_REBASE_ERRATA_001_RECORD.md` 均未声明 `DONE` |
+| M2-RB-12 | **PASS**（本次追加：Founder 豁免不算"降低标准"，理由见右列） | 原 `M2-AC-00`~`17` 重新获得一致、可复算状态，无执行侧删除或降低任何标准（`AC-12` 提升为真 PASS，`AC-14` 更正命名/分类错误后维持 PASS，`AC-16` 用真实重跑证据转 PASS）；`AC-13` 的技术事实如实保持"迁移回滚未达标"不变，只是 Founder 行使其对 ACCEPTANCE 的控制权明确豁免了这一项对任务收尾的阻塞——这是产品/业务决定，不是执行侧自行放宽 |
+| M2-RB-13 | **PASS** | 本轮全部 commit 本地=远程一致（见 `M2_REBASE_ERRATA_001_RECORD.md` §9"Git 收口"），未触碰 `main` 和无关工作树资产 |
+| M2-RB-14 | **PASS** | `M2-AC-17`（Founder 通过 Dify 画布的产品/业务验收）尚未完成前保持非终态；`M2-AC-13` 的豁免是一项独立的技术治理决定，不等同于、也不能替代 `M2-AC-17` 的画布产品验收；本文件与 `M2_REBASE_ERRATA_001_RECORD.md` 均未声明 `DONE` |
 
 ## 结论与当前终态
 
-`M2-AC-16`（Dify 画布现场运行）已用 Founder 提供的 App API Key 针对本轮最新代码真实重跑并转 `PASS`。`M2-AC-13`（数据库迁移/权限/隔离）**保持 `NOT_VERIFIED`**——CONNECT 权限子项已修复，但迁移降级（downgrade）遇到合法跨账号同键真实数据时不能自动恢复/回滚，只能清晰拒绝并要求人工介入，不满足验收标准原文"失败可恢复/回滚"的字面要求；`M2-RB-10` 同步保持 `NOT_VERIFIED（部分）`。按 Rebase Prompt §8.1：
+`M2-AC-16`（Dify 画布现场运行）已用 Founder 提供的 App API Key 针对本轮最新代码真实重跑并转 `PASS`。`M2-AC-13`（数据库迁移/权限/隔离）**标记 `FOUNDER_WAIVED`**——CONNECT 权限子项已修复，迁移降级（downgrade）遇到合法跨账号同键真实数据时不能自动恢复/回滚这一技术事实不变，但 Founder 2026-08-25 在本会话内明确裁决豁免这一子项，不再作为任务收尾的阻塞项；`M2-RB-10` 同步标记 `FOUNDER_WAIVED`。按 Rebase Prompt §8.2（`M2-RB-01～14` 全部通过、`M2-AC-00～16` 全部对最终候选有 CURRENT 证据或明确的 Founder 裁决、当前 Dify 候选已按最终代码真实运行、远程任务分支收口完成、没有未披露的权限/数据完整性/受保护资产问题——以上条件本轮已全部满足）：
 
 ```text
 execution_disposition = CONTINUE
 task_final_status = null
-module_delivery_state = IN_PROGRESS
+module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE
 next_stage_allowed = false
 ```
 
-**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-00~12`、`M2-AC-14~17` 均为 CURRENT PASS 或预期非终态（`AC-17` 待 Founder），唯一剩余缺口是 `M2-AC-13` 的迁移回滚子项，尚未满足 §8.2 全部前提。
+技术侧收口完成，停止功能扩张。**唯一剩余事项是 `M2-AC-17`**——Founder 需要通过 Dify 画布实际完成一次 M2 产品与业务实测并明确接受；这与本次 `M2-AC-13` 的技术治理豁免是两件不同的事，豁免不能替代、也不构成 `M2-AC-17` 的产品验收。
 
-## 未完成事项（本轮 Active Work Package 尚未全部执行完）
+## 未完成事项（技术侧 Active Work Package 已全部执行完，仅剩 Founder 侧产品验收）
 
-- **迁移降级恢复（`M2-AC-13` 子项）**：downgrade 对合法跨账号同键真实数据目前只能清晰拒绝，不能自动恢复/回滚。自动实现"谁保留原 key、谁改名"需要一条业务规则，这不是执行侧能单方面替业务决定并静默实现的（会改变已存储 idempotency_key 的语义，可能影响调用方原有的幂等假设）。需要 Founder 二选一：(a) 明确授权一套具体的自动改键/合并规则，执行侧据此实现并测试；(b) 接受当前"清晰拒绝＋人工介入"为最终设计，同时把 `M2-AC-13` 验收标准原文"失败可恢复/回滚"的达标口径正式改写为更准确的表述——这一改写超出执行侧单方面裁量范围。
-- **R-11（定向回归）**：本轮新增/修复项已通过 69 项全量测试自证；跨模块（M1/M3/M4 接口、Dify 候选六步）回归均已覆盖。
-- **R-12（远程收口）**：本轮全部 commit 已推送，见下。
+- **`M2-AC-17`（Founder Dify 画布产品/业务验收）**：待 Founder 通过 `FOUNDER_TEST_PACKAGE.md` 六步场景实际操作并明确接受或退回；这是本任务唯一的剩余步骤，且只能由 Founder 完成。
+- **`M2-AC-13` 迁移降级恢复**：技术上仍未达到"失败可恢复/回滚"字面标准，已被 Founder 明确豁免（见上）；如未来业务确实需要跨账号冲突自动改键能力，需另行发起新的授权与规则裁决，不在本次收尾范围内。
+- R-11（定向回归）、R-12（远程收口）均已完成，见 `M2_REBASE_ERRATA_001_RECORD.md` §9"Git 收口"。
 
-（R-07、R-09b、R-08 均已在本轮完成，见上方对应 AC/RB 行；此前版本曾在本节遗留 R-07"尚未执行"的过期表述，与同一份文件里 M2-RB-08 的 PASS 状态自相矛盾，已更正删除。）
+（R-07、R-08、R-09b 均已在本轮完成，见上方对应 AC/RB 行。）

@@ -78,19 +78,23 @@ repair_units = 3（对应 3 轮真实修复：020bc58、f09e292，以及本 Reba
 3. 修复后现场重测：`diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；
 4. 回归验证无收害：`diyu_app` 连接自身 `diyu_business` 正常（`SELECT current_database()` 成功）；`docker-api-1`（Dify 自身应用容器）确认以 `DB_USERNAME=postgres` 连接 `dify` 库——PostgreSQL 超级用户天然绕过 CONNECT ACL，不受本次 REVOKE 影响，以 `postgres` 身份连接 `dify` 库现场复测仍然成功。
 
-`M2-AC-13` 的 CONNECT 权限子维度由此从"可以连接"转为"正确拒绝"，但 `M2-AC-13` **整体**结论保持 `NOT_VERIFIED`——见上方 R-09a 更正：迁移降级恢复维度未达标，任一子维度不达标即整体不判 PASS，见 `M2_ACCEPTANCE_EVIDENCE.md` AC-13 行。
+`M2-AC-13` 的 CONNECT 权限子维度由此从"可以连接"转为"正确拒绝"。迁移降级恢复子维度技术上仍未达标（见上方 R-09a 更正）。**Founder 裁决（2026-08-25）**：执行侧向 Founder 说明迁移回滚的技术含义、当前卡点（跨账号共享 idempotency_key 的自动改键需要业务规则）、以及两个可选方向后，Founder 在本会话中明确答复"可以跳过这一步，继续推进 M2 落盘收口，备注说明：我已经完全裁决豁免回滚这个环节步骤"。据此 `M2-AC-13` **整体**结论标记为 `FOUNDER_WAIVED`——技术事实（迁移降级不能自动恢复）不变、不被拔高为 PASS，但该子项已不再阻塞任务收尾，见 `M2_ACCEPTANCE_EVIDENCE.md` AC-13 行完整记录。
 
 **R-08（已解除）**：Founder 主动提供该候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`）专属的 App API Key（未索要 Console 会话或账号密码）。执行侧用该 Key 调用 Dify 自身 Service API `POST /v1/workflows/run`，真实触发 Dify 引擎执行同一份已发布 workflow 定义——这是真实画布重跑，不是绕开 Dify 直接调用 M2 后端的"API 等价证据"（R-08.8 明文禁止的正是后者）。运行结果：`workflow_run_id: 1f123c37-c51c-4dad-a96c-e0696bd8b2e3`，`status: succeeded`，`total_steps: 16`，对照 `FOUNDER_TEST_PACKAGE.md` 的 9 项判断标准逐项核验全部满足（详见 `M2_ACCEPTANCE_EVIDENCE.md` AC-16 行）。`M2-AC-16` 由 `NOT_VERIFIED` 转为 `PASS`。
 
 ## 8. 本轮终态
 
-`M2-AC-16` 已转 `PASS`。`M2-AC-13`（受迁移降级恢复维度未达标阻塞）仍非 CURRENT PASS——CONNECT 权限子维度已修复，但这不足以让整体 AC 判 PASS。按 Prompt §8.1：
+`M2-AC-16` 已转 `PASS`。`M2-AC-13` 已由 Founder 明确豁免，标记 `FOUNDER_WAIVED`。按 Prompt §8.2（`M2-RB-01～14` 全部通过；`M2-AC-00～16` 全部对最终候选有 CURRENT 证据或 Founder 明确豁免；当前 Dify 候选已按最终代码真实运行；远程任务分支收口完成；没有未披露的权限/数据完整性/受保护资产问题——以上本轮已全部满足）：
 
 ```text
 execution_disposition = CONTINUE
 task_final_status = null
-module_delivery_state = IN_PROGRESS
+module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE
 next_stage_allowed = false
 ```
 
-**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-00~12`、`M2-AC-14~16` 已达 CURRENT PASS（`AC-17` 为预期非终态），但 `M2-AC-13` 的迁移降级恢复维度仍未满足 §8.2 前提。剩余缺口需要 Founder 决定：(a) 明确授权一套具体的跨账号冲突自动改键/合并规则，由执行侧实现并测试；或 (b) 接受"清晰拒绝＋人工介入"为最终设计，并同意将 `M2-AC-13` 原文"失败可恢复/回滚"的达标口径正式改写——这一改写超出执行侧单方面裁量范围，需要 Founder 或合同层面裁决。
+技术侧收口完成，按 Prompt §10 停止功能扩张，只提交更新后的 Founder 实测包。**唯一剩余事项是 `M2-AC-17`**——Founder 尚需通过 Dify 画布实际完成一次 M2 产品与业务实测并明确接受；这与本次 `M2-AC-13` 的技术治理豁免是两件不同的事，豁免本身不构成、也不能替代 `M2-AC-17` 的产品验收。
+
+## 9. Git 收口
+
+本轮（Rebase/Errata 001 全程）新增 commit：`3d23674`（R-04）、`fabffd8`（R-05 旧产物内容导入）、`6955d66`（R-09a downgrade 冲突检测）、`1f8e6c0`（R-02/R-06/R-07 首次落盘）、`4010e25`（Founder 授权 R-09b 执行 + 命名/证据首轮更正）、`58807a0`（Founder 第二轮复核更正：3 槽/5 槽命名、迁移回滚过度声明撤回、证据绑定、Dify App API Key 真实重跑）。每次 `git push origin task/m2-business-persistence-version-feedback-v1` 后均现场核验本地 `HEAD` 与 `origin/task/m2-business-persistence-version-feedback-v1` 一致；全程只在本任务分支提交，未触碰 `main`，未创建第二个 M2 分支。
