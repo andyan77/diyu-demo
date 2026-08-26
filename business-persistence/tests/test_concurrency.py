@@ -5,6 +5,58 @@ import httpx
 from tests.conftest import BASE_URL
 
 
+def test_concurrent_version_creation_on_same_artifact_never_produces_a_raw_500(bootstrapped, unique):
+    """Regression for a previously-disclosed, deliberately-unfixed defect
+    (M2 Rebase/Errata R-04): create_version computed max(version_no)+1 with
+    no lock, so N genuinely concurrent creates on the SAME artifact (each
+    with its OWN distinct idempotency_key -- the idempotency branch only
+    protects a *repeated* key, not distinct concurrent callers) could all
+    read the same max and race to insert the same version_no, and the
+    loser's IntegrityError on uq_version_artifact_no had no idempotency-key
+    match to recover onto, so it re-raised as a raw 500. Every one of these
+    calls represents a legitimate, distinct new version -- there is no
+    idempotent-hit or conflict outcome available to the losers the way
+    there is for a repeated-key retry; the only correct fix is to prevent
+    the collision from happening at all.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    artifact_id = bootstrapped["artifact"]["id"]
+    headers = bootstrapped["headers"]
+
+    N = 8
+
+    def create(i):
+        with httpx.Client(base_url=BASE_URL, timeout=10.0) as c:
+            return c.post(
+                f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions",
+                json={
+                    "idempotency_key": f"concurrent-create-{unique}-{i}",
+                    "content_hash": f"concurrent-create-{unique}-{i}",
+                    "content_ref": "s3://x",
+                },
+                headers=headers,
+            )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=N) as pool:
+        results = list(pool.map(create, range(N)))
+
+    statuses = [r.status_code for r in results]
+    assert all(s == 200 for s in statuses), f"expected all {N} distinct creates to succeed, got {statuses}"
+
+    version_nos = [r.json()["version_no"] for r in results]
+    assert len(set(version_nos)) == N, (
+        f"expected {N} distinct version_no values under concurrent creation, got {sorted(version_nos)}"
+    )
+
+    with httpx.Client(base_url=BASE_URL, timeout=10.0) as client:
+        all_versions = client.get(
+            f"/workspaces/{ws_id}/artifacts/{artifact_id}/versions", headers=headers
+        ).json()
+    matching = [v for v in all_versions if v["id"] in {r.json()["id"] for r in results}]
+    assert len(matching) == N, "no orphaned or missing rows -- exactly N versions must be persisted"
+
+
 def test_concurrent_promotion_of_different_versions_never_leaves_two_current(bootstrapped, unique):
     """Two callers race to promote two DIFFERENT candidate versions of the
     same artifact at (as close to) the same instant. This is a genuine

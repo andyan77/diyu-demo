@@ -110,6 +110,26 @@ def create_version(
             )
         materials.append(material)
 
+    # Lock the artifact row for the rest of this transaction before reading
+    # max(version_no). Without this, two concurrent create_version calls on
+    # the SAME artifact (different idempotency_key each -- the idempotency
+    # branch above only protects a *repeated* key, not two genuinely
+    # different concurrent creates) can both read the same max and both
+    # attempt to insert the same version_no, so the loser's INSERT violates
+    # uq_version_artifact_no. That IntegrityError used to propagate as a
+    # raw 500 -- the except-IntegrityError block below only re-checks by
+    # idempotency_key, which is different for each caller here, so it never
+    # found a match and just re-raised. A column-only select (not the full
+    # ORM object) is used deliberately -- it never populates the identity
+    # map, so there's no risk of a stale cached object being read after the
+    # lock is acquired (the earlier _require_artifact_in_workspace() call
+    # above already loaded a plain, unlocked Artifact into the identity
+    # map). We don't need any of the artifact's own columns here; the lock
+    # itself is the point -- it serializes the read-max-then-insert critical
+    # section so the second transaction only proceeds after the first
+    # commits, and by then sees the correct new max.
+    db.execute(select(Artifact.id).where(Artifact.id == artifact_id).with_for_update())
+
     next_no = (
         db.execute(
             select(func.coalesce(func.max(ContentVersion.version_no), 0)).where(
