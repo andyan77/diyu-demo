@@ -384,7 +384,7 @@ DSL 层：`features.file_upload` 由 `enabled: False` 改为真实开启，限�
 | M1-AC-11 | M2/M3/M4 接口语义成立，只有一套调用语义真源，未越界 | `account_anchor_supplied` 预留接口未被任何实际调用方使用（如实标注非虚构对接）；M1 未读写 M2/M3/M4 任何实体 | CURRENT | PASS |
 | M1-AC-12 | A-0～A-4 和真实影响范围无可证实退化 | 本批未改动 A-0～A-4 对应的既有机制（Matrix/等价路由/普通咨询边界），§18.3 live battery 未观察到相关退化 | CURRENT | PASS |
 | M1-AC-13 | 最终候选在专用 Dify App 真实运行，App/图/参数/commit 可绑定 | §18.3/18.4：图 MD5、`features`、嵌入源码字节均与最终 commit 逐字节核对一致；`apps.workflow_id` 精确指向 `6d62eeac` | CURRENT | PASS |
-| M1-AC-14 | 证据、失败历史、账本、Git、远端任务分支和独立审查完整 | 本节 + L2/L3/L5 本轮更新；远端分支尚未推送本批 commit（见 18.6） | STALE（待远端推送后转 CURRENT） | NOT_VERIFIED |
+| M1-AC-14 | 证据、失败历史、账本、Git、远端任务分支和独立审查完整 | 本节 + L2/L3/L5 本轮更新；远端分支已推送并核验本地/远端 SHA 一致（`d280abc`）；**独立审查尚未运行**（见 18.6） | CURRENT（Git/账本部分） | NOT_VERIFIED（独立审查部分待 18.6） |
 | M1-AC-15 | 候选发布前状态、回滚包和恢复演练可核验，未触碰生产 App | §18.4：两轮真实 restore/publish 演练，before/rollback/recovery/after 全部记录，图/features/嵌入代码字节核对 | CURRENT | PASS |
 | M1-AC-16 | Stage Baseline 延续/取代矩阵、禁止声明确定性检查、最终回执声明审计（文档/声明层判据，不依赖编译器实现） | 本文件与账本未做禁止声明（未虚报未完成事项为完成、未虚报未验证为已验证） | CURRENT | PASS |
 | M1-AC-17（新增） | 最小账号锚点：单次咨询不强建档，持续运营场景下自然语言/M2 投影均可形成锚点，空白账号合法 | §18.3：`ANCHOR-continuing-no-anchor-nl-sufficient` 正确捕获、`ANCHOR-blank-continuing` 连续 3 次正确留空且非阻断、单次咨询/创作场景无锚点缺口（直查快照确认） | CURRENT | PASS |
