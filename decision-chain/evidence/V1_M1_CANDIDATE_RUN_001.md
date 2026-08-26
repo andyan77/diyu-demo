@@ -202,3 +202,26 @@ DSL 用 `build_m1_candidate_dsl_v0.1.py` 重新生成后，执行侧尝试用已
 **B-7（回滚演练）静态验证（未做真实演练，如实标注限制）**：执行侧当前无控制台写权限（`console/api/apps` 返回 401，与此前 SE-015 记录的会话失效一致），无法安全地在候选 App 上执行真实的"发布回退再重新发布"演练；按设计文档 §9.2 允许的替代路径，改为**静态恢复验证**：直连数据库确认 `apps.workflow_id` 是指向 `workflows` 表某一行的单一外键，该 App 的 5 个历史发布版本（v0.1～v0.4 对应的行）全部完整存在、未被删除；Dify 的"发布"动作在数据库层面就是新建一行 `workflows` 并把 `apps.workflow_id` 指过去——这是单列更新，不删除任何历史行，结构上天然可逆。**限制**：这条链路的验证止于"结构上确认可逆"，未真实执行过一次"指回旧版本→确认候选 App 真的按旧版本运行→再指回新版本"的完整演练，也没有做过"仓库候选变更"这一侧的恢复点验证（该侧本身就是 git，`git log`/`git revert` 天然可用，风险远低于 Dify 侧）。
 
 **本批未 commit 前状态**：四项修复 + 六项修复后问题里的三项已处理完毕，`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v` → `Ran 120 tests ... OK`。DSL 已重新生成为 `m1_candidate_dsl_v0.6.yml`，**尚未导入/发布，尚未 live 验证**——尤其是 B-6 判据依赖的前提，必须有真实运行证据才能真正认定"已解决"。
+
+## 十四、v0.6 live 验证（Founder 2026-08-25 导入并发布后，真实调用，B-6 前提实测）
+
+**候选对象核验**：直连数据库确认 `dd638b91-d39f-4e92-a984-6ad1ab809119` 当前 `workflow_id` 指向 `2cdd034f-b4ae-4dde-a43e-ede5a09ff804`（发布时间 2026-08-26 03:36:38 UTC），图字节长度 118772；提取该图逐字节核对，`m1_shadow` 节点 `structured_output.schema.required` 确为 23 项且与本次修复新增的 `secondary_goal_text`／`priority_order_text`／`business_goal_category` 一致，"二十三个字段"字样在系统提示词中出现——确认发布对象即本批 v0.6，非误发旧版本。
+
+**B-6 判据前提实测（此前状态：仅是 DSL 声明要求，从未实测；本次目标：用真实调用检验"缺 1-2 个字段、其余都对"这种部分失败模式是否会自然出现）**：通过既有 App API Key 对候选 App 发起 6 次真实调用，覆盖新任务（含主目标+次目标+优先级+硬约束+经营类别五个新/相关字段同时非空的复合场景）、含糊表达、单轮内自我纠正的冲突陈述、跨轮真实矛盾优先级（两轮）、取消。直连数据库读取每次调用 `m1_shadow` 节点的原始 `outputs`（不经过下游 `dialogue_directive` 转述，避免自证）：
+
+| 场景 | message_id | status | 23 键齐全 |
+|---|---|---|---|
+| 复合新任务（提升到店/顺带涨粉/涨粉次于到店/价格不能打太低/STORE_VISIT） | `adb194c3` | succeeded | 是，23/23 |
+| 含糊表达（"先这样吧，随便弄弄"） | `40955a0c` | succeeded | 是，23/23 |
+| 单轮自纠正冲突（"涨粉最重要，不对，其实转化更重要"） | `eb385da8` | succeeded | 是，23/23 |
+| 取消（"算了，刚才说的不用改了"） | `73a15660` | succeeded | 是，23/23 |
+| 跨轮矛盾优先级·第一轮（"涨粉优先于转化"） | `b0d3c431` | succeeded | 是，23/23 |
+| 跨轮矛盾优先级·第二轮（"不对，转化优先于涨粉，按转化来"，同会话） | `7a207029` | succeeded | 是，23/23 |
+
+6/6 真实调用全部 23 键齐全、零缺失，未观察到"部分失败"模式。**这不是形式概率证明**（样本量小，不能排除低概率部分失败场景存在），但结合结构性事实——Dify 的 `structured_output` 是通过约束模型输出格式（而非事后校验再重试）实现的，模型在 API 层面就不能生成不满足 `required` 的 JSON，节点要么产出满足 schema 的完整对象，要么在无法满足时整体判定节点失败——6/6 的经验结果与这一结构性机制预期一致，支持"部分失败"在当前实现下不是一个真实存在的中间状态，B-6 判据成立的前提**从"仅声明"升级为"有真实调用支持，非形式化证明"。**
+
+**跨轮矛盾优先级测试同时验证了本批 B-6 修复批次内的 follow-up 修复（优先级替换语义）在真实模型 + 真实 Dify 执行环境下同样生效**：直连 `m1_compiler` 代码节点输出，第一轮压缩后 `goal_structure.priority_order = ["涨粉优先于转化"]`，第二轮（同一 `conversation_id f1f270bd-d6a8-4267-b5d8-5f877d23b7d6`）压缩后 `goal_structure.priority_order = ["转化优先于涨粉"]`——旧值被替换而非累积，与单测断言一致，且是单测从未覆盖过的真实模型输出路径（单测用手工构造的 patch，不经过真实 LLM 的自然语言到枚举/文本字段的转写）。
+
+**未在本轮验证范围内、如实标注**：6 次调用均未真实触发 Dify 侧的 `error_strategy: default-value` 降级（即真实 SHADOW_NODE_FAILED 路径本身未被真实复现，B-6 的原始 bug 复现记录仍以此前的独立审查阶段的复现为准）；`permission`／`freshness` 恒定值在真实运行下的落库未单独复核（属确定性常量赋值，风险低，此前单测已覆盖）；`business_goal_category` 枚举其余取值（`LONG_TERM_VALUE`/`ACCOUNT_GROWTH`/`FOLLOWER_GROWTH`/`TRAFFIC`/`LEADS`）未在本轮自然触发，不构成缺陷。
+
+**结论**：v0.6 候选与本批四项修复+三项 follow-up 修复的源码状态一致，B-6 判据前提首次获得真实调用支持，可视为本批修复的收口证据完整。下一步：Execution Prompt v1.3 `review_contract.closing_verification: affected_scope_only` 收口确认。

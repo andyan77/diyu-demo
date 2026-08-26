@@ -305,6 +305,20 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 本条记录时刻 `git ls-remote origin refs/heads/task/m1-natural-interaction-context-v1` 返回 `7258fae2d731c179b6a5dd980f809a8cb917c228`，与本地 `git rev-parse HEAD` 完全一致 |
 | **状态** | **`CONFIRMED`**（补记，非本次新触发） |
 
+### SE-019 · Founder 本人完成 v0.6 DSL 导入与发布；执行侧用 App API Key 跑 B-6 判据前提 live 实测
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同前，非新建） |
+| 操作方 | **控制台导入与发布由 Founder 本人完成**——执行侧把 `m1_candidate_dsl_v0.6.yml` 通过 SendUserFile 交给 Founder，由 Founder 完成导入（覆盖同一 App 草稿）与发布，覆盖 v0.5；执行侧全程未接触登录凭证 |
+| 执行侧后续操作 | 发布确认后，直连数据库核验发布对象（`workflow_id 2cdd034f-...`，发布时间 2026-08-26 03:36:38 UTC，图字节 118772，逐字节核对 23 键 required 与三个新字段存在）；随后用 App API Key 发起 6 次真实调用，专项验证 B-6 判据前提（"缺 1-2 个字段"的部分失败模式是否真实存在）及优先级替换语义在真实模型下是否生效 |
+| 内容标识 | 6 次调用的 `conversation_id`/`message_id`（`adb194c3`/`40955a0c`/`eb385da8`/`73a15660`/`b0d3c431`+`7a207029` 同会话）；直连 `m1_shadow`/`m1_compiler` 节点 `outputs` 原始 JSON，非经 `answer` 转述；详见 [`V1_M1_CANDIDATE_RUN_001.md` §十四](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
+| 幂等信息 | 导入/发布为幂等覆盖（同一 app_id）；6 次调用中 5 个各自独立会话，1 组为同一 `conversation_id` 下的两轮 |
+| 受控状态 | 可逆——工作流历史版本（v0.1～v0.6）未删除；仅作用于本任务专用候选 App；未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow |
+| 核验依据 | 直连数据库 `workflow_node_executions.outputs`，逐条解析确认 23/23 键齐全（6/6）；`m1_compiler` 输出的 `goal_structure.priority_order` 两轮分别为 `["涨粉优先于转化"]`→`["转化优先于涨粉"]`，替换而非累积 |
+| **状态** | `PLANNED` → **`CONFIRMED`** |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
