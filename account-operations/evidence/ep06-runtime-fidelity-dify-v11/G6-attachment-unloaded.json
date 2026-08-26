@@ -1,0 +1,41 @@
+{
+  "case_id": "G6-attachment-unloaded",
+  "carrier": "dify_workflow",
+  "dify_app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+  "dify_service_url": "http://localhost/v1/workflows/run",
+  "model": "deepseek-v4-flash",
+  "provider": "langgenius/deepseek/deepseek",
+  "temperature": 0.4,
+  "include_fashion_ref": false,
+  "workflow_inputs": {
+    "account_context": "[账号上下文 — 由投影/上游状态提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\ncampaign_overlay: 无覆盖\nprimary_objective: 长期价值\n",
+    "user_request": "今天要发的这条搭配内容，能不能帮我判断一下这件针织马甲适合哪些身材和场景搭配，给点专业的版型建议？",
+    "loaded_references": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: NOT_LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>"
+  },
+  "http_status": 200,
+  "elapsed_seconds": 6.85,
+  "raw_response_body": {
+    "task_id": "c058a511-b1a2-4671-9bbc-c51e749ff043",
+    "workflow_run_id": "866472da-1ba0-40b2-89fb-3f380126072a",
+    "data": {
+      "id": "866472da-1ba0-40b2-89fb-3f380126072a",
+      "workflow_id": "af0e6aae-fd94-4381-abd1-7f63a52a81ec",
+      "status": "succeeded",
+      "outputs": {
+        "operating_judgment": "[参考文件加载状态] 不适用：参考文件未加载。",
+        "gate_report": "{\"triggers_self_reported\": {\"explore\": null, \"anchor\": null, \"conflict\": null, \"notask\": null}, \"trigger_line_found\": false, \"missing_labels\": [\"[参考文件加载状态]\"], \"decorative_labels\": [], \"trigger_crosscheck_advisory\": [\"explore: 自报行缺失或不可解析\", \"anchor: 自报行缺失或不可解析\", \"conflict: 自报行缺失或不可解析\", \"notask: 自报行缺失或不可解析\"], \"manifest_present\": true, \"manifest_loaded\": [], \"manifest_not_loaded\": [\"references/fashion-and-market.md\", \"references/six-skill-methods.md\"], \"manifest_contradiction\": []}",
+        "gate_path": "gate_repaired",
+        "post_gate_report": "{\"first_pass_needs_fix\": true, \"first_pass_missing\": [\"[参考文件加载状态]\"], \"first_pass_decorative\": [], \"first_pass_contradiction\": [], \"still_missing\": [], \"still_decorative\": [], \"still_contradiction\": [], \"gaps_closed\": true, \"control_line_leaked\": false, \"think_leaked\": false}",
+        "gaps_closed": "yes",
+        "draft_raw": "<think>\n<!--dify-deepseek-reasoning-->`\n</think>"
+      },
+      "error": null,
+      "elapsed_time": 6.688476,
+      "total_tokens": 10297,
+      "total_steps": 7,
+      "created_at": 1787772440,
+      "finished_at": 1787772447
+    }
+  },
+  "timestamp_utc": "2026-08-26T19:27:27Z"
+}

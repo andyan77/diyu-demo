@@ -1,0 +1,97 @@
+{
+  "round": "v1.1 / 第 4 轮",
+  "purpose": "机械核验六名独立判定者是否真的只读了被允许读的东西；此前只有判定者自述。",
+  "method": "解析判定者自己的执行记录，只扫会造成文件访问的参数（Read.file_path / Bash.command / Grep|Glob 的 pattern 与 path），不扫 Write/Edit 正文——写进自己文件里的文件名是提及，不是读取。",
+  "repo_judge_forbidden_markers": [
+    "M3_CHECKPOINT_",
+    "M3_ACCEPTANCE_CRITERIA_FROZEN",
+    "M3_ECC_REBIND_002",
+    "M3_FOUNDER_",
+    "GATE_DEFECTS_",
+    "_VERDICT_",
+    "git log",
+    "git show",
+    "git reflog"
+  ],
+  "blind_judge_forbidden_markers": [
+    "diyu-demo",
+    "diyu-demo-worktrees",
+    "_SEALED",
+    "_arms_and_holdouts",
+    "SKILL.md",
+    "M3_",
+    "git log",
+    "git show",
+    "git reflog",
+    "git "
+  ],
+  "blind_judge_note": "三名盲评者的 allow-list 里没有任何仓库路径：ADDENDUM_001 §2.1 要求盲评包在仓库之外。注意：本核验只能证明他们没有读过去盲文件，**不能**证明盲评有效——本轮盲评正是被输出自身的结构指纹去盲的，那条通道不需要读任何文件。见 GATE_DEFECTS_FOUND_v1.1.md 缺陷 C。",
+  "judges": {
+    "fidelity-v11": {
+      "transcript_found": true,
+      "transcript": "a881a72d746ceb73a.output",
+      "tool_use_count": 19,
+      "distinct_path_refs": 9,
+      "refs_outside_allowlist": [
+        "/home/faye/.claude/projects/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/tool-results/bj5rqbxbc.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad",
+        "SKILL.md"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "longitudinal-v11": {
+      "transcript_found": true,
+      "transcript": "ab49e8bfb7f5bc056.output",
+      "tool_use_count": 23,
+      "distinct_path_refs": 9,
+      "refs_outside_allowlist": [
+        "/home/faye/.claude/projects/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/tool-results/b3h33f2hp.txt",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "behavior-002-v11": {
+      "transcript_found": true,
+      "transcript": "a50263a867ee53927.output",
+      "tool_use_count": 38,
+      "distinct_path_refs": 10,
+      "refs_outside_allowlist": [
+        "/home/faye/.claude/projects/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/tool-results/bag638pjq.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/VERDICT.md",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/cases_summary.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/outputs"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-1": {
+      "transcript_found": true,
+      "transcript": "a7cf631cf558cd9ef.output",
+      "tool_use_count": 16,
+      "distinct_path_refs": 0,
+      "repo_or_sealed_refs": [],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-2": {
+      "transcript_found": true,
+      "transcript": "a9fed25c35cd236e7.output",
+      "tool_use_count": 12,
+      "distinct_path_refs": 0,
+      "repo_or_sealed_refs": [],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-3": {
+      "transcript_found": true,
+      "transcript": "ac92ef03986053a31.output",
+      "tool_use_count": 20,
+      "distinct_path_refs": 0,
+      "repo_or_sealed_refs": [],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    }
+  }
+}
