@@ -41,6 +41,16 @@ CAPABILITIES = [
 ]
 NO_ENTRY_CAPABILITIES = ["SINGLE_ACCOUNT_OPERATION", "CREATIVE_TOURNAMENT"]  # CAP-03 / CAP-05
 
+# **v1.4.1 Rebase 修复 M1-B-24**：requested_capabilities_text 的合法性校验此前只认
+# CAPABILITIES 六项——用户直接点名 ENTRY-04（创意锦标赛）或 CAP-03（单账号持续运营）时，
+# 影子模型如实输出 "CREATIVE_TOURNAMENT"/"SINGLE_ACCOUNT_OPERATION"，却被 `_validate_patch`
+# 当成非法枚举整体拒绝——这两项业务上合法可路由，只是物理 Runtime 未接线（NO_ENTRY_
+# CAPABILITIES 的定义本身就是"合法但当前无入口"，`compute_call_intent` 也早已为它们产出
+# 正确的 BLOCKED/NO_PHYSICAL_ENTRY_YET 状态），"没有物理入口"不等于"不该出现在合法枚举里"
+# ——这正是 Delta v1.4.1 §5.2 逐字要求的"业务上合法可路由与物理 Runtime 是否已接通分开表达；
+# CAP-05 不得因 M4 尚未接线而从 M1 意图空间删除"。校验改为对照这个合并后的全集。
+ALL_CAPABILITY_CODES = CAPABILITIES + NO_ENTRY_CAPABILITIES
+
 
 def _parse_capabilities_text(raw):
     """把 requested_capabilities_text 这个逗号分隔的扁平字符串解析成去重、保序的列表。
@@ -131,6 +141,16 @@ VALID_CONFIRMATION_SIGNAL = ["NONE", "AFFIRM", "DECLINE"]
 VALID_ROUTE_INTENT = ["DISCUSS", "FOCUS", "EXECUTE_REQUEST", "CANCEL", "OUT_OF_SCOPE"]
 VALID_DISCRETION = ["UNSTATED", "ALLOWED", "NOT_ALLOWED"]
 DISCRETION_KEYS = ["plot_allowed", "remix_allowed", "conflict_allowed", "controversy_allowed"]
+
+# ---- M1-AC-18（CTA 三层权限上下文，Delta v1.4.1 §5.4）----
+# M1 只编译 CTA 目标/风险层级/事实/承接路径/授权，不写最终 CTA 文案本身。三层对应
+# §5.4 逐字的三类风险：关注/评论/收藏等低风险平台互动｜商品点击/咨询/线索/到店/购买等
+# 一般经营转化｜站外导流/价格优惠/强购买承诺等高风险动作。
+VALID_CTA_RISK_TIER = ["UNSTATED", "LOW_RISK", "BUSINESS_CONVERSION", "HIGH_RISK"]
+# 不建审批系统、不建第二套权限真源：授权只是本会话内、针对具体目标文本的一次性信号，
+# 见 _merge_patch 里 authorized_high_risk_targets 的写入条件。
+VALID_CTA_AUTHORIZATION_SIGNAL = ["NONE", "GRANT", "DECLINE"]
+VALID_CTA_PREFERENCE_SIGNAL = ["NONE", "REQUEST_NO_CTA", "REQUEST_CTA"]
 
 # 经营目标类别（设计文档 §二 #4 / 共享合同一 §二.4）。**是集合不是单值**：合同逐字要求
 # "须能表达账号／周期层面的'混合'而非强制单选"，所以快照里的物理承载是顶层数组
@@ -284,6 +304,15 @@ PATCH_KEYS = {
     # B-5 修复第五批：短指代绑定（handled_thread_id）与实际撤销机制（cancel_target）。
     "handled_thread_id",
     "cancel_target",
+    # v1.4.1 Rebase 新增批次：M1-AC-17 最小账号锚点（account_anchor_text）与
+    # M1-AC-18 CTA 三层权限上下文（cta_* 六项）。同样只加扁平字符串/枚举。
+    "account_anchor_text",
+    "cta_target_text",
+    "cta_risk_tier",
+    "cta_conversion_goal_text",
+    "cta_access_path_text",
+    "cta_authorization_signal",
+    "cta_preference_signal",
 }
 
 
@@ -327,6 +356,13 @@ def _default_snapshot():
         # 如实固定为 SYSTEM_TENTATIVE，不伪造 USER_CONFIRMED（与 open_threads 的已知限制
         # 同一类问题：真正的按字段确认状态机需要设计判断，不在本批擅自决定）。
         "account_stage": {"text": None, "confirmation": "SYSTEM_TENTATIVE"},
+        # 最小账号锚点（M1-AC-17，Delta v1.4.1 §5.3）：普通咨询/单次创作不要求这个字段有值
+        # （见 _compute_gaps 里按 temporal_scope 收窄的判断，不强行建档）；持续运营场景下
+        # 从自然语言形成 SYSTEM_TENTATIVE 最小锚点即可，空白账号是合法事实。source=
+        # CALLER_SUPPLIED 是留给未来 M2 最小投影消费路径的入口（见 main() 的
+        # account_anchor_supplied 形参），P0 当前 Dify DSL 没有任何调用方会传这个参数，
+        # 行为等价于本字段一直是 NONE/USER_DIRECT 二选一。M1 不因此建账号库、不直写 M2。
+        "account_anchor": {"identity_text": None, "source": "NONE", "confirmation": "SYSTEM_TENTATIVE"},
         # 表达裁量与风险边界（设计文档 §二 #6）：剧情/二创/冲突/争议四项裁量，
         # 每项 ALLOWED｜NOT_ALLOWED｜UNSTATED。
         "expression_discretion": {
@@ -338,6 +374,20 @@ def _default_snapshot():
         # 产能三分（设计文档 §二 #7）：期望发布量／当前周期可用产能／基线产能，
         # 三者分别承载，不得静默取其一覆盖三个。
         "capacity_triad": {"desired_output": None, "cycle_available": None, "baseline": None},
+        # CTA 三层权限上下文（M1-AC-18，Delta v1.4.1 §5.4）：M1 只编译目标/风险层级/经营
+        # 目标事实/承接路径/授权，不写最终 CTA 文案。authorized_high_risk_targets 纯追加，
+        # 只有"本轮同时点名具体目标 + 当前层级是 HIGH_RISK + 用户本轮显式 GRANT 信号"三者
+        # 同时成立才会写入（见 _merge_patch）——流量/吸粉/GMV/线索/到店目标本身不经过这条
+        # 写入路径，不会自动变成授权，这是"目标不自动授权高风险 CTA"的结构性保证，不是
+        # 靠对话文本口头劝阻。不建立独立的第二套权限真源，也不建审批系统。
+        "cta_context": {
+            "risk_tier": "UNSTATED",
+            "target_text": None,
+            "conversion_goal_text": None,
+            "access_path_text": None,
+            "authorized_high_risk_targets": [],
+            "no_cta_requested": False,
+        },
         # 可用事实/偏好/参考及其全部维度（设计文档 §二 #9 + 维度表）。纯追加，永不修改既有条目：
         # 冻结硬约束「参考资料和历史产物不得覆盖用户已经确认的事实」在 P0 因此天然不可违反。
         "evidence_bundle": [],
@@ -402,7 +452,7 @@ def _validate_patch(patch):
     if not isinstance(rc_text, str):
         return False, "ILLEGAL_TYPE:requested_capabilities_text:NOT_STRING"
     for item in _parse_capabilities_text(rc_text):
-        if item not in CAPABILITIES:
+        if item not in ALL_CAPABILITY_CODES:
             return False, "ILLEGAL_ENUM:requested_capabilities_text:" + item
     for key in DISCRETION_KEYS:
         val = patch.get(key, "UNSTATED")
@@ -437,6 +487,17 @@ def _validate_patch(patch):
     ct = patch.get("cancel_target", "NONE")
     if ct not in VALID_CANCEL_TARGET:
         return False, "ILLEGAL_ENUM:cancel_target:" + str(ct)
+    # v1.4.1 Rebase：CTA 三层权限上下文三个枚举字段，同一整体拒绝语义。account_anchor_text/
+    # cta_target_text/cta_conversion_goal_text/cta_access_path_text 是自由文本，无枚举可校验。
+    crt = patch.get("cta_risk_tier", "UNSTATED")
+    if crt not in VALID_CTA_RISK_TIER:
+        return False, "ILLEGAL_ENUM:cta_risk_tier:" + str(crt)
+    cas = patch.get("cta_authorization_signal", "NONE")
+    if cas not in VALID_CTA_AUTHORIZATION_SIGNAL:
+        return False, "ILLEGAL_ENUM:cta_authorization_signal:" + str(cas)
+    cps = patch.get("cta_preference_signal", "NONE")
+    if cps not in VALID_CTA_PREFERENCE_SIGNAL:
+        return False, "ILLEGAL_ENUM:cta_preference_signal:" + str(cps)
     return True, ""
 
 
@@ -718,6 +779,116 @@ def _merge_patch(snap, patch, material_present=False):
         snap["capacity_triad"]["baseline"] = baseline
         changed = True
 
+    # M1-AC-17 修复（最小账号锚点）：扁平自由文本，遇到才写入，不强制建档。confirmation
+    # 恒为 SYSTEM_TENTATIVE（与 account_stage.confirmation 同一类已裁决理由：P0 没有按
+    # 字段的用户确认通道）。source 标 USER_DIRECT——本轮真是从自然语言里抽出来的，不是
+    # 调用方注入的（后者走 main() 的 account_anchor_supplied，发生在 _merge_patch 之外）。
+    #
+    # **对抗式审查发现的真实缺口，已修复**：此前一旦 source 已经是 CALLER_SUPPLIED（未来
+    # M2 真实锚点），本轮任何一句自然语言旁白（哪怕只是顺口提一句"我们好像还有个小号"）
+    # 都会把它静默覆盖成 USER_DIRECT，且遗留的 confirmation 仍是调用方给的高等级值——
+    # 变成一条被模型临时文本冒名的"高置信度"记录。M2 锚点的权威性应该高于对话里的临时
+    # 线索，这里改为 source 已是 CALLER_SUPPLIED 时不接受自然语言覆盖；写入 USER_DIRECT
+    # 的同时也把 confirmation 一并重置为 SYSTEM_TENTATIVE，不遗留旧等级。
+    snap.setdefault("account_anchor", {"identity_text": None, "source": "NONE", "confirmation": "SYSTEM_TENTATIVE"})
+    anchor_text = (patch.get("account_anchor_text") or "").strip()
+    if anchor_text and snap["account_anchor"].get("source") != "CALLER_SUPPLIED":
+        # 幂等写入（同 priority_order 先例）：文本和来源都已经是这个状态时不重复置 changed，
+        # 避免用户逐轮重复同一句账号身份陈述也在无意义地推进 revision（对抗式审查发现
+        # 的同一类回归，见下方 cta_context 几处写入的相同修复）。
+        if snap["account_anchor"].get("identity_text") != anchor_text or snap["account_anchor"].get("source") != "USER_DIRECT":
+            snap["account_anchor"]["identity_text"] = anchor_text
+            snap["account_anchor"]["source"] = "USER_DIRECT"
+            snap["account_anchor"]["confirmation"] = "SYSTEM_TENTATIVE"
+            changed = True
+
+    # M1-AC-18 修复（CTA 三层权限上下文）：M1 只编译，不写最终 CTA 文案。
+    snap.setdefault(
+        "cta_context",
+        {
+            "risk_tier": "UNSTATED",
+            "target_text": None,
+            "conversion_goal_text": None,
+            "access_path_text": None,
+            "authorized_high_risk_targets": [],
+            "no_cta_requested": False,
+        },
+    )
+    cta_ctx = snap["cta_context"]
+    # 对抗式审查发现的真实 KeyError 隐患（helper 被直接喂一份手工构造、只有部分键的
+    # cta_context 时）：不可达 main()（升级循环已补齐整份默认对象），但同 evidence_bundle/
+    # business_goal_categories 一样的防御风格，保护直接调用 helper 的场景。
+    cta_ctx.setdefault("authorized_high_risk_targets", [])
+    cta_ctx.setdefault("no_cta_requested", False)
+
+    # 本轮 patch 的原始取值——**下面的授权判定必须只用这两个"本轮"值，不能读
+    # cta_ctx 里可能是很多轮以前留下的持久化值**（见下方授权判定的详细说明）。
+    cta_target_this_turn = (patch.get("cta_target_text") or "").strip()
+    cta_tier_this_turn = patch.get("cta_risk_tier", "UNSTATED")
+
+    # 幂等写入（同 priority_order/business_goal_categories 先例）：值真的变化才置
+    # changed，避免同一件事逐轮重复陈述也在无意义地推进 revision，也避免在 CANCEL
+    # 分支"没有绑定到具体动作"的诚实反馈判断里被一次单纯的重复陈述污染（对抗式审查
+    # 发现的真实回归：此前无条件 changed=True 会让"CANCEL + 恰好重复同一个 CTA 层级"
+    # 这种轮次错误地跳过那句诚实反馈）。
+    if cta_target_this_turn and cta_ctx.get("target_text") != cta_target_this_turn:
+        cta_ctx["target_text"] = cta_target_this_turn
+        changed = True
+    if cta_tier_this_turn != "UNSTATED" and cta_ctx.get("risk_tier") != cta_tier_this_turn:
+        cta_ctx["risk_tier"] = cta_tier_this_turn
+        changed = True
+
+    cta_goal = (patch.get("cta_conversion_goal_text") or "").strip()
+    if cta_goal and cta_ctx.get("conversion_goal_text") != cta_goal:
+        cta_ctx["conversion_goal_text"] = cta_goal
+        changed = True
+
+    cta_path = (patch.get("cta_access_path_text") or "").strip()
+    if cta_path and cta_ctx.get("access_path_text") != cta_path:
+        cta_ctx["access_path_text"] = cta_path
+        changed = True
+
+    # 高风险 CTA 授权：只有"本轮同时点名具体目标 + 本轮同时给出 HIGH_RISK 层级 + 用户
+    # 本轮显式 GRANT 信号"三者同时成立才写入。**对抗式审查发现的真实缺口，已修复**：
+    # 此前用的是 cta_ctx 里跨轮持久化的 risk_tier/target_text，只有 GRANT 信号本身是
+    # 本轮的——层级和目标一旦在早前某一轮被设置就不会自动清零，导致很多轮之后一句和
+    # CTA 毫无关系、只是被模型误判成 GRANT 的"行"/"好啊"，就能把一个早就不在讨论的
+    # 目标授权掉；目标本身又是单值覆盖，同样可能把 GRANT 错配给"当前挂着的"另一个目标，
+    # 而不是用户这一轮真正想授权的那个。改为要求三者都在同一轮 patch 里同时出现，
+    # 结构上不再存在"跨轮授权"这条路径——这也是"缺一就暂停该 CTA 分支"在授权维度最
+    # 严格的落地：不但缺一暂停，任何一项不是本轮同时说出口的，也一律不采信。
+    cta_auth_signal = patch.get("cta_authorization_signal", "NONE")
+    if (
+        cta_auth_signal == "GRANT"
+        and cta_tier_this_turn == "HIGH_RISK"
+        and cta_target_this_turn
+        and cta_target_this_turn not in cta_ctx["authorized_high_risk_targets"]
+    ):
+        cta_ctx["authorized_high_risk_targets"].append(cta_target_this_turn)
+        changed = True
+
+    # 对抗式审查发现的真实缺口，已修复：DECLINE 此前没有任何消费方，授权只能单向累加，
+    # 一次误判的 GRANT 永久生效，一次真实的 DECLINE 却完全不生效。只在用户本轮明确
+    # 针对同一个目标文本表示 DECLINE 时才移除——同 handled_thread_id 的先例一致：只做
+    # 精确文本匹配，不做模糊匹配，宁可漏判也不凭空编造一次撤销。
+    if (
+        cta_auth_signal == "DECLINE"
+        and cta_target_this_turn
+        and cta_target_this_turn in cta_ctx["authorized_high_risk_targets"]
+    ):
+        cta_ctx["authorized_high_risk_targets"].remove(cta_target_this_turn)
+        changed = True
+
+    # "无 CTA ↔ 有授权 CTA"的多轮调整（§6.3）：双向开关，不是纯追加，用户改变方向时
+    # 只重算这一处受影响的偏好本身。
+    cta_pref = patch.get("cta_preference_signal", "NONE")
+    if cta_pref == "REQUEST_NO_CTA" and not cta_ctx["no_cta_requested"]:
+        cta_ctx["no_cta_requested"] = True
+        changed = True
+    elif cta_pref == "REQUEST_CTA" and cta_ctx["no_cta_requested"]:
+        cta_ctx["no_cta_requested"] = False
+        changed = True
+
     # evidence_bundle 必须在 revision 自增之前合并：captured_at_revision 取的是增量前的
     # revision（与 open_threads.raised_at_revision 同一时序先例）。
     evidence_appended, evidence_dropped_incomplete, evidence_provenance_downgraded = (
@@ -869,6 +1040,49 @@ def _compute_gaps(snapshot, include_structural=True):
         # 聚合一条即可：提醒下游"存在未声明作用域的证据"，不得自行把它扩张为长期规则。
         gaps.append({"field_ref": "evidence_bundle[].scope", "status": "DEGRADED", "degraded_to": "UNSTATED"})
 
+    # M1-AC-17：账号锚点只在持续运营场景（CYCLE/LONG_TERM）下才算缺口——普通咨询/单次
+    # 创作（ONE_ITEM/UNSTATED）不要求建档，问了也没地方用，不得强行追问（§5.3 原文）。
+    # **对抗式审查发现的真实缺口，已修复**：此前额外要求 `source == "NONE"`，导致调用方
+    # 传入一个没有 identity_text 的退化 account_anchor_supplied（比如只给了 confirmation
+    # 没给 identity_text）时，source 变成 CALLER_SUPPLIED 但账号身份其实什么都没有，这条
+    # 缺口却因为 source 不等于 NONE 而被静默吞掉——判据应该只看"有没有真实身份内容"，
+    # 不看来源标签，和其它字段（如 account_stage.text）的缺口判据同一口径。
+    anchor = snapshot.get("account_anchor") or {}
+    temporal_scope = current_task.get("temporal_scope", "UNSTATED")
+    if temporal_scope in ("CYCLE", "LONG_TERM") and not anchor.get("identity_text"):
+        gaps.append({"field_ref": "account_anchor.identity_text", "status": "MISSING", "degraded_to": None})
+
+    # M1-AC-18：只在真的有 CTA 在讨论时才登记缺口——没有话题就没有"缺信息"可言。经营
+    # 目标/承接路径缺一，只暂停 CTA 这一个分支（不是整任务拒绝），且用户已表示这个阶段
+    # 不要 CTA 时不必追问这两项（不打算做就不用先备齐材料）。
+    #
+    # **对抗式审查发现的真实缺口，已修复**：授权缺口此前和 no_cta_requested 共用同一个
+    # 判断分支，导致"用户说了不要 CTA，之后又在同一/后续轮次真的提到一个具体高风险动作"
+    # 时，授权检查被 no_cta_requested 短路跳过——一个仍然真实存在、尚未获得授权的高风险
+    # 目标就这样从缺口清单和对话提醒里同时消失。这不是"要不要主动建议 CTA"的开关能覆盖
+    # 的范围：授权是安全门槛，不是建议开关，必须独立判断、不受 no_cta_requested 影响。
+    # 同时补上"层级是 HIGH_RISK 但没有具体目标"本身也是缺口——一个连目标都不清楚的高
+    # 风险动作，结构上不可能满足"作用域明确"的授权前提，不能因为没有 target 就悄悄放行。
+    cta = snapshot.get("cta_context") or {}
+    cta_tier = cta.get("risk_tier", "UNSTATED")
+    if cta_tier in ("BUSINESS_CONVERSION", "HIGH_RISK") and not cta.get("no_cta_requested"):
+        if not cta.get("conversion_goal_text"):
+            gaps.append({"field_ref": "cta_context.conversion_goal_text", "status": "MISSING", "degraded_to": None})
+        if not cta.get("access_path_text"):
+            gaps.append({"field_ref": "cta_context.access_path_text", "status": "MISSING", "degraded_to": None})
+    if cta_tier == "HIGH_RISK":
+        target = cta.get("target_text")
+        if not target:
+            gaps.append({"field_ref": "cta_context.target_text", "status": "MISSING", "degraded_to": None})
+        elif target not in (cta.get("authorized_high_risk_targets") or []):
+            gaps.append({"field_ref": "cta_context.authorization", "status": "MISSING", "degraded_to": None})
+    # **已知限制，如实登记（对抗式审查指出，本批不做结构性修复）**：risk_tier 是单值、
+    # 逐轮由模型现判现写，target_text 也是单值覆盖——如果某一轮模型把 risk_tier 判成
+    # LOW_RISK/BUSINESS_CONVERSION（哪怕 target_text 实际还是同一个客观上高风险的动作，
+    # 只是这一轮分类判轻了），上面这条 HIGH_RISK 专属的授权缺口会跟着消失，不会有
+    # "曾经是 HIGH_RISK、现在被降级但目标没变"这种更细的追踪。要正确处理需要把风险层级
+    # 按目标分别记录（而不是一个全局单值），是真正的结构调整，不在本批范围内。
+
     return gaps
 
 
@@ -962,7 +1176,7 @@ def compute_call_intent(snap, requested_capabilities):
 
 def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capabilities,
                         current_route_intent=None, changed=False, cancel_effect=None,
-                        material_present=False):
+                        material_present=False, cta_authorization_signal_this_turn="NONE"):
     """给对话 LLM 的确定性指令，不让模型自己判断状态或编造原因（继承 A-4 纪律）。
 
     current_route_intent：**本轮 patch 里的原始 route_intent**，不是 snap["last_route_intent"]。
@@ -1000,6 +1214,14 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
     的确定性断言，也避免把材料原文的任意内容拼进对话 LLM 的指令通道（m1_chat_llm 的
     prompt/system 提示词里没有 SHADOW_SYSTEM_PROMPT 那样的抗注入条款，材料原文一旦被
     整段引用进这里就是一个新的、没有任何缓解措施的注入面）。
+
+    cta_authorization_signal_this_turn：v1.4.1 Rebase 新增（M1-AC-18），本轮 patch 里的
+    原始 cta_authorization_signal。只用于 DECLINE 确认这一处——DECLINE 是一次性动作
+    信号，没有持久化状态可读，天然只能靠本轮值驱动。CTA 的"无 CTA 偏好"和"高风险未
+    授权"这两段提醒改读 snap["cta_context"] 的持久化状态、每轮无条件如实反映现状（同
+    current_task.text 的既有做法），不再用"这一轮有没有重提"做门禁——对抗式审查发现
+    那样做会在用户恰好在同一轮要求执行、但没有重复给出分类时制造一个真空窗口，让
+    "不要再问、直接推进"和"其实还没授权"这两个本该同时出现的信号变成只出现一个。
     """
     if not patch_ok:
         if reject_reason == SHADOW_NODE_FAILED:
@@ -1011,9 +1233,17 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
                 "就是这一步系统这边没跑通。如实把这件事告诉用户，请他把刚才想说的内容再说一遍。"
                 "保持旧任务状态不变，不要推测具体是什么故障，也不要声称任何确认、授权或执行已经生效。"
             )
+        # **对抗式审查发现的真实缺口，已修复**：此前把原始 reject_reason（形如
+        # "ILLEGAL_ENUM:cta_risk_tier:EXTREME_RISK"）直接拼进这句话——这正是
+        # CAPABILITY_LABEL_ZH/BLOCK_REASON_LABEL_ZH/BUSINESS_GOAL_CATEGORY_LABEL_ZH 三处
+        # 已经在防的同一类 CE-A2 缺陷（内部字段名/枚举代码经这条指令通道被对话 LLM 当成
+        # 用户说过的话复述出来），新增的七个字段只是又开了七条新的泄漏路径，不是新问题。
+        # 不给具体是哪个字段/取值出了问题——诚实到"校验没通过"这一层即可，不需要归因到
+        # 内部实现细节。
         return (
-            "补丁校验未通过（" + reject_reason + "）。保持旧任务状态不变，正常回答用户，"
-            "不要声称任何确认、授权或执行已经生效。"
+            "补丁校验未通过（内部取值不合法，不是用户表达得不清楚）。保持旧任务状态不变，"
+            "正常回答用户，不要声称任何确认、授权或执行已经生效，也不要提及具体是哪个"
+            "字段或代码出了问题。"
         )
 
     parts = []
@@ -1070,6 +1300,18 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
         # "算了"之外还给了新内容，新内容已经正常合并，交给下面的分支如实描述当前状态，
         # 不重复"什么都没变"这句现在已经是假话的断言。
 
+    # **v1.4.1 Rebase 修复 M1-B-25**：用户已经明确要求现在执行，系统这边却继续追问
+    # "要不要调用/推进"——真实 live 审计发现的对话稳定性缺陷（Delta v1.4.1 §5.5「明确执行
+    # 请求已经足够时，直接形成调用意图，不再问"要不要调用"」）。此前 dialogue_directive
+    # 对 EXECUTE_REQUEST 和 DISCUSS/FOCUS 一视同仁，没有任何文本告诉 m1_chat_llm 不要再
+    # 征求同意，模型只能自己猜、猜错就变成重复确认。
+    if current_route_intent == "EXECUTE_REQUEST":
+        parts.append(
+            "用户这一轮已经明确要求现在执行或接受结果。不要再问\"要不要调用\"或\"是否需要"
+            "现在处理\"这类确认性问题，直接确认已经识别到这个执行请求，并如实说明当前状态"
+            "（比如具体还在等哪个信息、还是已经可以说明接下来会怎么处理）。"
+        )
+
     if snap["current_task"]["text"]:
         parts.append("当前任务：" + snap["current_task"]["text"])
     else:
@@ -1085,6 +1327,55 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
             "本轮确实收到并处理了你上传的资料。如实确认收到了资料，不要声称没有收到"
             "资料或内容；具体内容不必复述，除非用户追问细节。"
         )
+
+    # M1-AC-18 修复（CTA 三层权限上下文）。**对抗式审查发现的真实缺口，已修复**：
+    # 此前这三段提醒都套在"本轮 patch 是否重新给出 cta_risk_tier"这个此前设想的
+    # 反噪音开关下面，且授权提醒还和 no_cta_requested 共用同一个 if/elif——制造了两个
+    # 真实的不设防窗口：①用户已表示不要 CTA、之后真的又提到一个具体高风险动作时，
+    # no_cta_requested 直接短路掉授权检查；②只要这一轮的 patch 没有重新给出
+    # cta_risk_tier（哪怕快照里仍然记着一个未授权的 HIGH_RISK 目标——比如用户这一轮说
+    # "行，就按这个来"，route_intent=EXECUTE_REQUEST 但没有重复分类），提醒和上面
+    # "不要再问、直接推进"的指令会同时出现在同一轮指令里，是最危险的组合。改为下面
+    # 三段全部只读**持久化快照状态**、每轮无条件如实反映现状（与 current_task.text 的
+    # 既有做法同一原则），不再用"这一轮有没有重提"做门禁——授权是安全门槛，不是
+    # "要不要建议 CTA"这种可以随话题淡出的建议开关。cta_target_text 是用户本轮说出口
+    # 的原话/贴近原话，直接引用与 current_task.text、CANCEL 分支的 removed_text 是
+    # 同一类已确立的做法，不需要经 *_LABEL_ZH 翻译（那类映射只处理内部枚举代码）。
+    cta = snap.get("cta_context") or {}
+    if cta.get("no_cta_requested"):
+        parts.append(
+            "用户已经表示这个阶段不需要 CTA，如实遵从这一点，不要主动建议 CTA 内容，"
+            "除非用户之后又明确改变说法。"
+        )
+
+    # 对抗式审查发现的真实缺口，已修复：cta_authorization_signal=DECLINE 此前没有任何
+    # 消费方，用户明确拒绝授权这件事完全不会被告知给对话 LLM。只在本轮 patch 真的给出
+    # DECLINE 信号时确认一次（这是瞬时动作，不是持久化状态，天然只能靠本轮信号驱动，
+    # 和上面两段"读持久化状态"性质不同）。
+    if cta_authorization_signal_this_turn == "DECLINE":
+        parts.append(
+            "用户这一轮明确表示不同意/拒绝这个 CTA 动作。如实确认没有获得授权，"
+            "不要建议或推进这个动作。"
+        )
+
+    if cta.get("risk_tier") == "HIGH_RISK":
+        target = cta.get("target_text")
+        if not target:
+            # 对抗式审查发现的真实缺口，已修复：层级已经是 HIGH_RISK 但没有具体目标时，
+            # 此前两处判断都用 `if target and ...`，一个连目标都不清楚的高风险动作就这样
+            # 完全不设防——一个空目标结构上不可能满足"作用域明确"的授权前提。
+            parts.append(
+                "识别到当前在讨论一个高风险动作（站外导流／价格优惠／强购买承诺等），"
+                "但还不清楚具体是什么行动。如实说明需要先弄清楚具体想做什么，才能再谈"
+                "是否可以执行，不要假设或编造具体内容。"
+            )
+        elif target not in (cta.get("authorized_high_risk_targets") or []):
+            parts.append(
+                "当前在讨论的这类站外导流／价格优惠／强购买承诺等高风险动作（" + target
+                + "），还没有获得明确、针对这个具体动作的授权。如实告知这一点，不要声称"
+                "已经可以这样做，也不要因为用户提到起号、吸粉、流量、成交额或线索这类"
+                "经营目标就当作已经获得授权——这些目标不自动授权高风险动作。"
+            )
 
     # B-4 修复：本轮可能同时点名了多个能力，逐个描述各自状态，不再只能报告单一能力。
     for cap_id in requested_capabilities or []:
@@ -1173,6 +1464,19 @@ def project_content_task(snapshot, source_override=None, caller_supplied=None):
         "audience_shift": caller_supplied.get("audience_shift"),
         "content_promise": caller_supplied.get("content_promise"),
         "account_stage": (snapshot.get("account_stage") or {}).get("text"),
+        # v1.4.1 Rebase 新增：M1-AC-17 最小账号锚点 + M1-AC-18 CTA 三层权限上下文透传。
+        # 与其它维度同一原则：整条保留，不摊平，下游自行判断 confirmation/risk_tier。
+        "account_anchor": dict(
+            snapshot.get("account_anchor") or {"identity_text": None, "source": "NONE", "confirmation": "SYSTEM_TENTATIVE"}
+        ),
+        "cta_context": {
+            "risk_tier": (snapshot.get("cta_context") or {}).get("risk_tier", "UNSTATED"),
+            "target_text": (snapshot.get("cta_context") or {}).get("target_text"),
+            "conversion_goal_text": (snapshot.get("cta_context") or {}).get("conversion_goal_text"),
+            "access_path_text": (snapshot.get("cta_context") or {}).get("access_path_text"),
+            "authorized_high_risk_targets": list((snapshot.get("cta_context") or {}).get("authorized_high_risk_targets") or []),
+            "no_cta_requested": bool((snapshot.get("cta_context") or {}).get("no_cta_requested", False)),
+        },
         "expression_discretion": dict(
             snapshot.get("expression_discretion")
             or {"plot_allowed": "UNSTATED", "remix_allowed": "UNSTATED", "conflict_allowed": "UNSTATED", "controversy_allowed": "UNSTATED"}
@@ -1195,11 +1499,20 @@ def project_content_task(snapshot, source_override=None, caller_supplied=None):
     }
 
 
-def main(user_query: str, snapshot_json: str, shadow_patch: dict, material_text: str = "") -> dict:
+def main(user_query: str, snapshot_json: str, shadow_patch: dict, material_text: str = "",
+         account_anchor_supplied: dict = None) -> dict:
     """material_text：m1_join 节点抽取并拼接后的本轮上传材料原文，默认空字符串（B-3 修复；
     Dify 节点接线见 build_m1_candidate_dsl_v0.1.py 里 m1_compiler.variables 新增的
     material_text 输入）。只用于核实 evidence_provenance=SOURCED_MATERIAL 的声明，不直接
-    进入快照或对话文本。"""
+    进入快照或对话文本。
+
+    account_anchor_supplied：v1.4.1 Rebase 新增（M1-AC-17），可选。留给未来"持续运营且
+    M2 有当前合法锚点"这条路径的消费入口——调用方（未来的 M2 最小投影读取方）已经确认的
+    账号锚点，形如 {"identity_text": ..., "confirmation": "..."}。提供时覆盖 account_anchor
+    且 source=CALLER_SUPPLIED，不依赖本轮自然语言重新提取。**当前 Dify DSL 图里没有任何
+    节点会传这个参数**（M2 本身还不存在），默认 None，行为与不传完全一致——这只是一个纯
+    参数注入点，M1 不因此读取或写入任何外部数据库，真正的 M2 读取动作（如果将来存在）
+    发生在调用方，不在本文件内。"""
     try:
         snap = json.loads(snapshot_json) if snapshot_json else _default_snapshot()
     except Exception:
@@ -1261,6 +1574,22 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict, material_text:
         cancel_effect = None
         content_changed = False
 
+    # M1-AC-17：调用方显式提供的账号锚点（当前无实际调用方，见形参说明）覆盖本轮自然语言
+    # 提取结果——真实 M2 锚点的权威性高于对话里的临时线索。放在 _merge_patch 之后，确保
+    # 不被本轮 account_anchor_text 覆盖回去。
+    #
+    # **对抗式审查发现的真实缺口，已修复**：此前只判断 account_anchor_supplied 这个字典
+    # 本身是否非空，一个没带 identity_text 的退化调用（比如只给了 confirmation）也会被
+    # 接受，把 source 标成 CALLER_SUPPLIED 却没有任何真实身份内容——账号锚点缺口的判据
+    # 已经改成只看 identity_text 是否有值（见 _compute_gaps），这里必须同一个口径，否则
+    # 这种退化调用会让一个其实什么都没有的账号锚点悄悄不再被追问。
+    if account_anchor_supplied and account_anchor_supplied.get("identity_text"):
+        snap["account_anchor"] = {
+            "identity_text": account_anchor_supplied.get("identity_text"),
+            "source": "CALLER_SUPPLIED",
+            "confirmation": account_anchor_supplied.get("confirmation", "SYSTEM_TENTATIVE"),
+        }
+
     # gaps[] 每轮整体重算并覆写。**无条件执行**（不放在 if patch_ok 分支内）：patch 被拒绝的
     # 轮次同样重算，结果与上一轮相同，因为快照没变。这次覆写**不置 changed、不推进 revision**
     # ——缺口清单是既有状态的派生视图，不是用户造成的状态变化。
@@ -1270,9 +1599,14 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict, material_text:
     snap["gaps"] = _compute_gaps(snap, include_structural=False)
 
     call_intent = compute_call_intent(snap, requested_capabilities)
+    # M1-AC-18：本轮原始 cta_authorization_signal，同 current_route_intent 一样只能取本轮
+    # patch 的值（DECLINE 是一次性动作信号，理由同 _dialogue_directive 的形参说明）。
+    cta_authorization_signal_this_turn = (
+        patch.get("cta_authorization_signal", "NONE") if patch_ok and isinstance(patch, dict) else "NONE"
+    )
     directive = _dialogue_directive(
         snap, patch_ok, reject_reason, call_intent, requested_capabilities, current_route_intent,
-        content_changed, cancel_effect, material_present,
+        content_changed, cancel_effect, material_present, cta_authorization_signal_this_turn,
     )
 
     return {

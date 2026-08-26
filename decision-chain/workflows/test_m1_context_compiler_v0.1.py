@@ -43,6 +43,9 @@ _BLAND_ENUM_DEFAULTS = {
     "evidence_provenance": "USER_DIRECT",
     "business_goal_category": "UNSTATED",
     "cancel_target": "NONE",
+    "cta_risk_tier": "UNSTATED",
+    "cta_authorization_signal": "NONE",
+    "cta_preference_signal": "NONE",
 }
 
 
@@ -1452,8 +1455,8 @@ class TestDslSyncDriftGuard(unittest.TestCase):
         self.assertFalse(schema["additionalProperties"])
 
     def test_shadow_prompt_field_count_matches_patch_keys(self):
-        self.assertEqual(len(compiler.PATCH_KEYS), 26)
-        self.assertIn("二十六个字段", self.builder.SHADOW_SYSTEM_PROMPT)
+        self.assertEqual(len(compiler.PATCH_KEYS), 33)
+        self.assertIn("三十三个字段", self.builder.SHADOW_SYSTEM_PROMPT)
 
     def test_enums_in_schema_match_compiler(self):
         props = self._schema()["properties"]
@@ -1462,6 +1465,9 @@ class TestDslSyncDriftGuard(unittest.TestCase):
         self.assertEqual(props["evidence_provenance"]["enum"], compiler.VALID_EVIDENCE_PROVENANCE_PATCH)
         self.assertEqual(props["business_goal_category"]["enum"], compiler.VALID_BUSINESS_GOAL_CATEGORY)
         self.assertEqual(props["cancel_target"]["enum"], compiler.VALID_CANCEL_TARGET)
+        self.assertEqual(props["cta_risk_tier"]["enum"], compiler.VALID_CTA_RISK_TIER)
+        self.assertEqual(props["cta_authorization_signal"]["enum"], compiler.VALID_CTA_AUTHORIZATION_SIGNAL)
+        self.assertEqual(props["cta_preference_signal"]["enum"], compiler.VALID_CTA_PREFERENCE_SIGNAL)
 
     def test_new_v0_4_patch_keys_documented_in_shadow_prompt(self):
         """字段在 schema 里存在但 system prompt 没有口径说明，模型只会瞎填。"""
@@ -1568,6 +1574,58 @@ class TestDslSyncDriftGuard(unittest.TestCase):
         模型会对新能力完全没有识别依据——这里保证新增能力至少会被这条用例逼着补写文档。"""
         for cap in compiler.CAPABILITIES:
             self.assertIn(cap, self.builder.SHADOW_SYSTEM_PROMPT)
+
+    def test_no_entry_capabilities_also_documented_in_prompt(self):
+        """v1.4.1 Rebase 修复 M1-B-24：CREATIVE_TOURNAMENT/SINGLE_ACCOUNT_OPERATION 现在
+        也是 requested_capabilities_text 的合法取值（业务合法、只是无物理入口），prompt
+        必须教模型认得这两个代码，否则校验放开了但模型永远不会真的输出它们。"""
+        for cap in compiler.NO_ENTRY_CAPABILITIES:
+            self.assertIn(cap, self.builder.SHADOW_SYSTEM_PROMPT)
+
+    def test_shadow_retry_bumped_for_reliability(self):
+        """v1.4.1 Rebase 修复 M1-B-28/M1-B-29：冻结审计发现高风险 CTA 固定场景连续两次
+        结构化输出解析失败、15 次运行里 4 次 partial-succeeded。单次重试不够，加到两次。"""
+        shadow = self._node("m1_shadow")
+        self.assertEqual(shadow["data"]["retry_config"]["max_retries"], 2)
+        self.assertTrue(shadow["data"]["retry_config"]["retry_enabled"])
+
+    def test_answer_guard_node_wired_between_chat_llm_and_answer(self):
+        """v1.4.1 Rebase 修复 M1-B-26/M1-B-29：m1_answer 此前直接读 m1_chat_llm.text，
+        LLM 只产出推理没产出正文时用户收到空字符串。确定性兜底节点必须真的接在中间，
+        不能只是加了节点却没重新接线。"""
+        guard = self._node("m1_answer_guard")
+        answer = self._node("m1_answer")
+        self.assertIsNotNone(guard)
+        self.assertEqual(answer["data"]["answer"], "{{#m1_answer_guard.final_text#}}")
+        edge_pairs = {(e["source"], e["target"]) for e in self.builder.edges}
+        self.assertIn(("m1_chat_llm", "m1_answer_guard"), edge_pairs)
+        self.assertIn(("m1_answer_guard", "m1_answer"), edge_pairs)
+        self.assertNotIn(("m1_chat_llm", "m1_answer"), edge_pairs)
+
+    def test_answer_guard_code_compiles_and_guarantees_non_empty(self):
+        guard = self._node("m1_answer_guard")
+        compile(guard["data"]["code"], "<m1_answer_guard>", "exec")
+        ns = {}
+        exec(guard["data"]["code"], ns)  # noqa: S102 - 对自己生成的代码字符串求值
+        main_fn = ns["main"]
+        self.assertEqual(main_fn("正常回复")["final_text"], "正常回复")
+        self.assertTrue(main_fn("")["final_text"].strip())
+        self.assertTrue(main_fn("   ")["final_text"].strip())
+        self.assertTrue(main_fn(None)["final_text"].strip())
+
+    def test_account_anchor_and_cta_fields_documented_in_prompt(self):
+        """M1-AC-17/M1-AC-18 新增字段必须真的写进 prompt，否则模型永远不会填它们，
+        required 里有这个 key 但 prompt 没教，只会持续触发 default-value 降级路径。"""
+        for field in (
+            "account_anchor_text",
+            "cta_target_text",
+            "cta_risk_tier",
+            "cta_conversion_goal_text",
+            "cta_access_path_text",
+            "cta_authorization_signal",
+            "cta_preference_signal",
+        ):
+            self.assertIn(field, self.builder.SHADOW_SYSTEM_PROMPT)
 
 
 class TestB4MultiCapabilitySelection(unittest.TestCase):
@@ -2009,6 +2067,378 @@ class TestB5CancelMechanism(unittest.TestCase):
         result = _run(None, _patch(route_intent="CANCEL", cancel_target="SOMETHING_MADE_UP"))
         self.assertEqual(result["patch_ok"], "false")
         self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:cancel_target"))
+
+
+class TestB24NoEntryCapabilitiesLegalInRequest(unittest.TestCase):
+    """v1.4.1 Rebase 修复 M1-B-24：live 冻结审计发现用户直接点名"创意锦标赛"（ENTRY-04）
+    时，影子模型如实输出 requested_capabilities_text="CREATIVE_TOURNAMENT"，却被
+    _validate_patch 当非法枚举整体拒绝——NO_ENTRY_CAPABILITIES 的定义本身就是"业务合法，
+    只是当前无物理入口"，不该在这道校验里被当成不存在的代码。"""
+
+    def test_creative_tournament_no_longer_rejects_whole_patch(self):
+        result = _run(None, _patch(
+            current_task_text="想搞一次创意锦标赛",
+            route_intent="EXECUTE_REQUEST",
+            requested_capabilities_text="CREATIVE_TOURNAMENT",
+        ))
+        self.assertEqual(result["patch_ok"], "true")
+        intent = json.loads(result["call_intent_json"])
+        self.assertEqual(intent["needed_capabilities"], ["CREATIVE_TOURNAMENT"])
+        self.assertEqual(intent["per_capability"]["CREATIVE_TOURNAMENT"]["status"], "BLOCKED")
+        self.assertEqual(intent["per_capability"]["CREATIVE_TOURNAMENT"]["block_reason"], "NO_PHYSICAL_ENTRY_YET")
+
+    def test_single_account_operation_no_longer_rejects_whole_patch(self):
+        result = _run(None, _patch(
+            current_task_text="想做单账号持续运营",
+            requested_capabilities_text="SINGLE_ACCOUNT_OPERATION",
+        ))
+        self.assertEqual(result["patch_ok"], "true")
+
+    def test_directive_describes_creative_tournament_with_human_label_not_raw_code(self):
+        """同 CE-A2 那一类纪律：不得把内部枚举代码原样拼进对话 LLM 的指令文本。"""
+        result = _run(None, _patch(
+            current_task_text="想搞一次创意锦标赛",
+            requested_capabilities_text="CREATIVE_TOURNAMENT",
+        ))
+        self.assertIn("创意锦标赛", result["dialogue_directive"])
+        self.assertNotIn("CREATIVE_TOURNAMENT", result["dialogue_directive"])
+
+    def test_still_rejects_truly_unknown_capability_code(self):
+        result = _run(None, _patch(requested_capabilities_text="NOT_A_REAL_CAPABILITY"))
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:requested_capabilities_text"))
+
+
+class TestB25ExecuteRequestNoRedundantConfirmation(unittest.TestCase):
+    """v1.4.1 Rebase 修复 M1-B-25：live 冻结审计发现用户已经明确要求执行，系统仍在追问
+    "要不要调用/推进"。"""
+
+    def test_execute_request_tells_chat_llm_not_to_ask_for_confirmation(self):
+        result = _run(None, _patch(current_task_text="做一版脚本", route_intent="EXECUTE_REQUEST"))
+        self.assertIn("不要再问", result["dialogue_directive"])
+
+    def test_discuss_does_not_trigger_the_no_confirmation_instruction(self):
+        result = _run(None, _patch(current_task_text="做一版脚本", route_intent="DISCUSS"))
+        self.assertNotIn("不要再问", result["dialogue_directive"])
+
+    def test_focus_does_not_trigger_the_no_confirmation_instruction(self):
+        result = _run(None, _patch(current_task_text="做一版脚本", route_intent="FOCUS"))
+        self.assertNotIn("不要再问", result["dialogue_directive"])
+
+
+class TestAccountAnchorContext(unittest.TestCase):
+    """M1-AC-17（Delta v1.4.1 §5.3）：最小账号锚点。"""
+
+    def test_natural_language_anchor_captured_as_system_tentative(self):
+        result = _run(None, _patch(account_anchor_text="我们是杭州一家女装线下店"))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["account_anchor"]["identity_text"], "我们是杭州一家女装线下店")
+        self.assertEqual(snap["account_anchor"]["source"], "USER_DIRECT")
+        self.assertEqual(snap["account_anchor"]["confirmation"], "SYSTEM_TENTATIVE")
+
+    def test_one_item_single_shot_task_does_not_require_anchor(self):
+        """普通单次创作/咨询（ONE_ITEM）不要求建档，不得强行追问账号身份。"""
+        result = _run(None, _patch(current_task_text="写一条国庆文案", temporal_scope="ONE_ITEM"))
+        snap = json.loads(result["snapshot_json"])
+        self.assertNotIn(
+            "account_anchor.identity_text",
+            [g["field_ref"] for g in snap["gaps"]],
+        )
+
+    def test_unstated_temporal_scope_does_not_require_anchor(self):
+        result = _run(None, _patch(current_task_text="随便聊聊"))
+        snap = json.loads(result["snapshot_json"])
+        self.assertNotIn(
+            "account_anchor.identity_text",
+            [g["field_ref"] for g in snap["gaps"]],
+        )
+
+    def test_cycle_continuing_operation_without_anchor_is_a_gap_not_a_blocker(self):
+        """空白账号是合法事实：登记为可追问的 gap，不整任务拒绝，不阻塞其它内容。"""
+        result = _run(None, _patch(current_task_text="接下来这周按节奏更新", temporal_scope="CYCLE"))
+        self.assertEqual(result["patch_ok"], "true")
+        snap = json.loads(result["snapshot_json"])
+        self.assertIn("account_anchor.identity_text", [g["field_ref"] for g in snap["gaps"]])
+
+    def test_cycle_continuing_operation_with_anchor_has_no_gap(self):
+        result = _run(None, _patch(
+            current_task_text="接下来这周按节奏更新",
+            temporal_scope="CYCLE",
+            account_anchor_text="我们是那家杭州女装店",
+        ))
+        snap = json.loads(result["snapshot_json"])
+        self.assertNotIn("account_anchor.identity_text", [g["field_ref"] for g in snap["gaps"]])
+
+    def test_blank_account_continuing_operation_never_produces_empty_final_reply(self):
+        """B-26 live 审计真实发现：空白账号持续运营场景连续 2 次最终回复为空字符串。
+        编译器侧至少保证 dialogue_directive 本身不是空字符串（m1_chat_llm 的输入永远
+        有内容可依据）；真正的"最终用户可见文本不为空"由 DSL 的 m1_answer_guard 节点
+        兜底，见 TestDslSyncDriftGuard.test_answer_guard_code_compiles_and_guarantees_non_empty。"""
+        result = _run(None, _patch(current_task_text="接下来这周按节奏更新", temporal_scope="CYCLE"))
+        self.assertTrue(result["dialogue_directive"].strip())
+
+    def test_caller_supplied_anchor_overrides_and_is_marked_caller_supplied(self):
+        """M2 最小投影消费路径的入口——当前 Dify DSL 没有调用方会传这个参数，这里直接
+        用 compiler.main() 验证机制本身是通的。"""
+        result = compiler.main(
+            "（测试输入）", None, _patch(current_task_text="按节奏更新", temporal_scope="CYCLE"),
+            account_anchor_supplied={"identity_text": "M2 确认的账号：杭州旗舰店", "confirmation": "CALLER_CONFIRMED"},
+        )
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["account_anchor"]["identity_text"], "M2 确认的账号：杭州旗舰店")
+        self.assertEqual(snap["account_anchor"]["source"], "CALLER_SUPPLIED")
+        self.assertEqual(snap["account_anchor"]["confirmation"], "CALLER_CONFIRMED")
+        self.assertNotIn("account_anchor.identity_text", [g["field_ref"] for g in snap["gaps"]])
+
+    def test_caller_supplied_anchor_not_passed_leaves_behavior_unchanged(self):
+        result = _run(None, _patch(current_task_text="写一条文案"))
+        self.assertEqual(result["patch_ok"], "true")
+
+    def test_project_content_task_carries_account_anchor(self):
+        result = _run(None, _patch(account_anchor_text="杭州女装店"))
+        snap = json.loads(result["snapshot_json"])
+        projected = compiler.project_content_task(snap)
+        self.assertEqual(projected["account_anchor"]["identity_text"], "杭州女装店")
+
+    def test_caller_supplied_anchor_not_overwritten_by_a_later_ordinary_turn(self):
+        """对抗式审查发现的真实缺口：M2 锚点的权威性应该高于对话里的临时线索，但此前
+        一句顺口的自然语言旁白（哪怕只是提一句"我们好像还有个小号"）就会把 CALLER_SUPPLIED
+        静默覆盖成 USER_DIRECT，且遗留的 confirmation 仍是调用方给的高等级值——变成一条
+        被模型临时文本冒名的"高置信度"记录。"""
+        r1 = compiler.main(
+            "（测试输入）", None, _patch(current_task_text="按节奏更新", temporal_scope="CYCLE"),
+            account_anchor_supplied={"identity_text": "M2 确认：杭州旗舰店", "confirmation": "CALLER_CONFIRMED"},
+        )
+        r2 = _run(r1["snapshot_json"], _patch(account_anchor_text="呃我们好像还有个小号"))
+        snap2 = json.loads(r2["snapshot_json"])
+        self.assertEqual(snap2["account_anchor"]["identity_text"], "M2 确认：杭州旗舰店")
+        self.assertEqual(snap2["account_anchor"]["source"], "CALLER_SUPPLIED")
+        self.assertEqual(snap2["account_anchor"]["confirmation"], "CALLER_CONFIRMED")
+
+    def test_user_direct_anchor_write_resets_confirmation_not_just_identity(self):
+        """普通场景（没有 CALLER_SUPPLIED 在先）：写入 USER_DIRECT 时 confirmation 必须
+        跟着一起归位到 SYSTEM_TENTATIVE，不遗留任何更早、语义上不再适用的取值。"""
+        result = _run(None, _patch(account_anchor_text="杭州女装店"))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["account_anchor"]["confirmation"], "SYSTEM_TENTATIVE")
+
+    def test_account_anchor_supplied_without_identity_text_does_not_suppress_the_gap(self):
+        """对抗式审查发现的真实缺口：一个没带 identity_text 的退化 account_anchor_supplied
+        调用（比如只给了 confirmation）此前会被接受、把 source 标成 CALLER_SUPPLIED，却
+        没有任何真实身份内容——账号锚点其实还是空的，缺口却因为 source 不是 NONE 而消失。"""
+        result = compiler.main(
+            "（测试输入）", None, _patch(current_task_text="按节奏更新", temporal_scope="CYCLE"),
+            account_anchor_supplied={"confirmation": "CALLER_CONFIRMED"},
+        )
+        snap = json.loads(result["snapshot_json"])
+        self.assertIsNone(snap["account_anchor"]["identity_text"])
+        self.assertIn("account_anchor.identity_text", [g["field_ref"] for g in snap["gaps"]])
+
+    def test_idempotent_anchor_restatement_does_not_bump_revision(self):
+        r1 = _run(None, _patch(account_anchor_text="杭州女装店"))
+        r2 = _run(r1["snapshot_json"], _patch(account_anchor_text="杭州女装店"))
+        self.assertEqual(r2["state_changed"], "false")
+
+
+class TestCtaPermissionContext(unittest.TestCase):
+    """M1-AC-18（Delta v1.4.1 §5.4）：CTA 三层权限上下文。M1 只编译，不写最终 CTA。"""
+
+    def test_low_risk_cta_recorded_without_requiring_goal_or_path(self):
+        result = _run(None, _patch(cta_target_text="引导关注账号", cta_risk_tier="LOW_RISK"))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["cta_context"]["risk_tier"], "LOW_RISK")
+        self.assertEqual(snap["cta_context"]["target_text"], "引导关注账号")
+        self.assertNotIn("cta_context.conversion_goal_text", [g["field_ref"] for g in snap["gaps"]])
+
+    def test_business_conversion_missing_goal_and_path_pauses_only_cta_branch(self):
+        result = _run(None, _patch(
+            current_task_text="写一条带转化的文案", cta_target_text="引导到店", cta_risk_tier="BUSINESS_CONVERSION",
+        ))
+        self.assertEqual(result["patch_ok"], "true", "缺一只暂停 CTA 分支，不是整任务拒绝")
+        snap = json.loads(result["snapshot_json"])
+        gap_refs = [g["field_ref"] for g in snap["gaps"]]
+        self.assertIn("cta_context.conversion_goal_text", gap_refs)
+        self.assertIn("cta_context.access_path_text", gap_refs)
+        # 整任务其余内容照常合并，不受 CTA 分支缺口影响。
+        self.assertEqual(snap["current_task"]["text"], "写一条带转化的文案")
+
+    def test_business_conversion_with_goal_and_path_has_no_gap(self):
+        result = _run(None, _patch(
+            cta_target_text="引导到店",
+            cta_risk_tier="BUSINESS_CONVERSION",
+            cta_conversion_goal_text="促成到店",
+            cta_access_path_text="到店二维码",
+        ))
+        snap = json.loads(result["snapshot_json"])
+        gap_refs = [g["field_ref"] for g in snap["gaps"]]
+        self.assertNotIn("cta_context.conversion_goal_text", gap_refs)
+        self.assertNotIn("cta_context.access_path_text", gap_refs)
+
+    def test_high_risk_cta_without_authorization_is_a_gap_and_not_silently_allowed(self):
+        result = _run(None, _patch(
+            cta_target_text="引导加微信领取超低价优惠券",
+            cta_risk_tier="HIGH_RISK",
+            cta_conversion_goal_text="促成私域转化",
+            cta_access_path_text="客服微信",
+        ))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["cta_context"]["authorized_high_risk_targets"], [])
+        self.assertIn("cta_context.authorization", [g["field_ref"] for g in snap["gaps"]])
+        self.assertIn("还没有获得明确、针对这个具体动作的授权", result["dialogue_directive"])
+
+    def test_high_risk_cta_authorized_only_when_target_tier_and_grant_all_align(self):
+        result = _run(None, _patch(
+            cta_target_text="引导加微信领取超低价优惠券", cta_risk_tier="HIGH_RISK",
+            cta_authorization_signal="GRANT",
+        ))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["cta_context"]["authorized_high_risk_targets"], ["引导加微信领取超低价优惠券"])
+        self.assertNotIn("cta_context.authorization", [g["field_ref"] for g in snap["gaps"]])
+        self.assertNotIn("还没有获得明确", result["dialogue_directive"])
+
+    def test_grant_signal_without_high_risk_tier_authorizes_nothing(self):
+        """GRANT 信号本身不足以授权——必须同时是 HIGH_RISK 层级、且有具体目标。"""
+        result = _run(None, _patch(
+            cta_target_text="引导关注账号", cta_risk_tier="LOW_RISK", cta_authorization_signal="GRANT",
+        ))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["cta_context"]["authorized_high_risk_targets"], [])
+
+    def test_business_goal_category_alone_never_authorizes_high_risk_cta(self):
+        """结构性保证：流量/吸粉/GMV/线索/到店目标不会自动授权高风险 CTA——本用例甚至
+        不传 cta_authorization_signal，只传经营目标类别，确认没有任何隐藏的推导路径。"""
+        result = _run(None, _patch(
+            cta_target_text="引导加微信领取超低价优惠券",
+            cta_risk_tier="HIGH_RISK",
+            business_goal_category="GMV",
+        ))
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["cta_context"]["authorized_high_risk_targets"], [])
+        self.assertIn("这些目标不自动授权高风险动作", result["dialogue_directive"])
+
+    def test_no_cta_preference_toggle_both_directions(self):
+        r1 = _run(None, _patch(cta_target_text="引导到店", cta_risk_tier="BUSINESS_CONVERSION", cta_preference_signal="REQUEST_NO_CTA"))
+        snap1 = json.loads(r1["snapshot_json"])
+        self.assertTrue(snap1["cta_context"]["no_cta_requested"])
+        self.assertIn("这个阶段不需要 CTA", r1["dialogue_directive"])
+        # 缺目标/路径本该是 gap，但用户已经表示这个阶段不要 CTA，不应该继续追问。
+        self.assertNotIn("cta_context.conversion_goal_text", [g["field_ref"] for g in snap1["gaps"]])
+
+        r2 = _run(r1["snapshot_json"], _patch(cta_risk_tier="BUSINESS_CONVERSION", cta_preference_signal="REQUEST_CTA"))
+        snap2 = json.loads(r2["snapshot_json"])
+        self.assertFalse(snap2["cta_context"]["no_cta_requested"])
+
+    def test_unauthorized_high_risk_warning_persists_across_turns_until_resolved(self):
+        """对抗式审查纠正：授权提醒是安全门槛，不是可以随话题淡出的建议开关——只要快照
+        里仍然记着一个未授权的 HIGH_RISK 目标，即使这一轮的 patch 没有重新给出
+        cta_risk_tier，也必须继续提醒。第一版实现（只在本轮重提时才提醒）曾经在这里
+        制造过一个真空窗口，已废弃。"""
+        r1 = _run(None, _patch(cta_target_text="引导加微信领 9.9 元优惠券", cta_risk_tier="HIGH_RISK"))
+        self.assertIn("还没有获得明确", r1["dialogue_directive"])
+        r2 = _run(r1["snapshot_json"], _patch(current_task_text="行，就按这个来，你给我讲讲怎么写", route_intent="EXECUTE_REQUEST"))
+        self.assertIn("还没有获得明确", r2["dialogue_directive"], "EXECUTE_REQUEST 不得关闭尚未解除的授权提醒")
+
+    def test_authorization_requires_target_tier_and_grant_in_the_same_turn(self):
+        """对抗式审查发现的真实缺口：此前授权判定读的是快照里跨轮持久化的 risk_tier/
+        target_text，只有 GRANT 信号本身是本轮的——导致很多轮之后一句和 CTA 毫无关系、
+        只是被模型误判成 GRANT 的"行"/"好啊"，就能把一个早就不在讨论的目标授权掉。"""
+        r1 = _run(None, _patch(cta_target_text="引导加微信领 9.9 元优惠券", cta_risk_tier="HIGH_RISK"))
+        r2 = _run(r1["snapshot_json"], _patch(
+            current_task_text="先不聊这个了，说说下周排期", cta_authorization_signal="GRANT",
+        ))
+        snap2 = json.loads(r2["snapshot_json"])
+        self.assertEqual(snap2["cta_context"]["authorized_high_risk_targets"], [],
+                          "跨轮 GRANT（本轮没有同时重提目标和 HIGH_RISK 层级）不得授权任何东西")
+
+    def test_authorization_does_not_leak_onto_a_different_persisted_target(self):
+        """同一缺口的"错配目标"变体：目标字段是单值覆盖，GRANT 若只看持久化状态，
+        可能把授权错配给"当前挂着的"另一个目标，而不是用户这一轮真正想授权的那个。"""
+        r1 = _run(None, _patch(cta_target_text="A：引导加微信发优惠券", cta_risk_tier="HIGH_RISK"))
+        r2 = _run(r1["snapshot_json"], _patch(cta_target_text="B：引导跳转第三方商城下单"))
+        r3 = _run(r2["snapshot_json"], _patch(cta_authorization_signal="GRANT"))
+        snap3 = json.loads(r3["snapshot_json"])
+        self.assertEqual(snap3["cta_context"]["authorized_high_risk_targets"], [])
+
+    def test_decline_revokes_a_previously_authorized_target(self):
+        """对抗式审查发现的真实缺口：DECLINE 此前没有任何消费方，授权只能单向累加。"""
+        r1 = _run(None, _patch(
+            cta_target_text="引导加微信领 9.9 元优惠券", cta_risk_tier="HIGH_RISK", cta_authorization_signal="GRANT",
+        ))
+        snap1 = json.loads(r1["snapshot_json"])
+        self.assertEqual(snap1["cta_context"]["authorized_high_risk_targets"], ["引导加微信领 9.9 元优惠券"])
+
+        r2 = _run(r1["snapshot_json"], _patch(
+            current_task_text="不行，我改主意了，别这么干",
+            cta_target_text="引导加微信领 9.9 元优惠券", cta_risk_tier="HIGH_RISK",
+            cta_authorization_signal="DECLINE",
+        ))
+        snap2 = json.loads(r2["snapshot_json"])
+        self.assertEqual(snap2["cta_context"]["authorized_high_risk_targets"], [])
+        self.assertIn("明确表示不同意/拒绝这个 CTA 动作", r2["dialogue_directive"])
+
+    def test_decline_of_untracked_target_is_a_no_op_not_an_error(self):
+        result = _run(None, _patch(cta_target_text="从没提过的目标", cta_authorization_signal="DECLINE"))
+        self.assertEqual(result["patch_ok"], "true")
+
+    def test_no_cta_requested_does_not_silence_authorization_gap_for_a_real_high_risk_target(self):
+        """对抗式审查发现的真实缺口：授权缺口此前和 no_cta_requested 共用同一个判断分支，
+        用户说了"不要 CTA"之后如果真的又提到一个具体高风险动作，这个仍然真实存在、
+        尚未获得授权的目标会从缺口清单和提醒里同时消失——授权是安全门槛，不是"要不要
+        建议 CTA"的开关能覆盖的范围。"""
+        r1 = _run(None, _patch(cta_preference_signal="REQUEST_NO_CTA"))
+        r2 = _run(r1["snapshot_json"], _patch(
+            cta_target_text="引导加微信领超低价优惠券", cta_risk_tier="HIGH_RISK",
+        ))
+        snap2 = json.loads(r2["snapshot_json"])
+        self.assertTrue(snap2["cta_context"]["no_cta_requested"])
+        self.assertEqual(snap2["cta_context"]["authorized_high_risk_targets"], [])
+        self.assertIn("cta_context.authorization", [g["field_ref"] for g in snap2["gaps"]])
+        self.assertIn("还没有获得明确、针对这个具体动作的授权", r2["dialogue_directive"])
+
+    def test_high_risk_tier_without_any_target_is_itself_a_gap(self):
+        """对抗式审查发现的真实缺口：层级已经是 HIGH_RISK 但没有具体目标时，此前两处
+        判断都是 `if target and ...`，一个连目标都不清楚的高风险动作完全不设防——空目标
+        结构上不可能满足"作用域明确"的授权前提。"""
+        result = _run(None, _patch(current_task_text="我想搞点站外导流", cta_risk_tier="HIGH_RISK"))
+        snap = json.loads(result["snapshot_json"])
+        self.assertIsNone(snap["cta_context"]["target_text"])
+        self.assertIn("cta_context.target_text", [g["field_ref"] for g in snap["gaps"]])
+        self.assertNotIn("cta_context.authorization", [g["field_ref"] for g in snap["gaps"]],
+                          "目标本身缺失时登记的是 target_text 缺口，不是授权缺口——两者不是一回事")
+        self.assertIn("还不清楚具体是什么行动", result["dialogue_directive"])
+
+    def test_idempotent_cta_restatement_does_not_bump_revision_or_break_cancel_honesty(self):
+        """对抗式审查发现的真实回归：此前 cta_target_text/cta_risk_tier 无条件 changed=True，
+        重复陈述同一件事也会推进 revision，且会让 CANCEL 分支"没有绑定到具体动作"的
+        诚实反馈被一次纯粹的重复陈述错误地跳过。"""
+        r1 = _run(None, _patch(cta_target_text="引导到店", cta_risk_tier="BUSINESS_CONVERSION"))
+        r2 = _run(r1["snapshot_json"], _patch(cta_target_text="引导到店", cta_risk_tier="BUSINESS_CONVERSION"))
+        self.assertEqual(r2["state_changed"], "false")
+
+        r3 = _run(r1["snapshot_json"], _patch(route_intent="CANCEL", cta_target_text="引导到店", cta_risk_tier="BUSINESS_CONVERSION"))
+        self.assertIn("没有把这次撤回绑定到任何具体动作", r3["dialogue_directive"])
+
+    def test_project_content_task_carries_cta_context(self):
+        result = _run(None, _patch(cta_target_text="引导到店", cta_risk_tier="BUSINESS_CONVERSION"))
+        snap = json.loads(result["snapshot_json"])
+        projected = compiler.project_content_task(snap)
+        self.assertEqual(projected["cta_context"]["target_text"], "引导到店")
+        self.assertEqual(projected["cta_context"]["risk_tier"], "BUSINESS_CONVERSION")
+
+    def test_illegal_cta_risk_tier_rejects_whole_patch(self):
+        result = _run(None, _patch(cta_risk_tier="EXTREME_RISK"))
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:cta_risk_tier"))
+
+    def test_illegal_cta_authorization_signal_rejects_whole_patch(self):
+        result = _run(None, _patch(cta_authorization_signal="MAYBE"))
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:cta_authorization_signal"))
+
+    def test_illegal_cta_preference_signal_rejects_whole_patch(self):
+        result = _run(None, _patch(cta_preference_signal="MAYBE"))
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:cta_preference_signal"))
 
 
 if __name__ == "__main__":
