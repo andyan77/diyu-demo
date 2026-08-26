@@ -202,3 +202,36 @@ def test_legacy_import_never_collides_with_a_live_task_idempotency_key(client, b
         "because the idempotency_key string happened to collide"
     )
     assert live_second["kind"] == "test"
+
+
+def test_legacy_import_retry_survives_a_later_snapshot_added_to_the_same_task(client, bootstrapped, unique):
+    """Regression: closing-verification found that adding a second snapshot
+    to a legacy-imported task via the normal snapshots endpoint (nothing
+    forbids this -- a legacy-imported task can keep receiving live
+    snapshots afterward) made a subsequent legacy-import retry raise
+    MultipleResultsFound (a 500) instead of returning cleanly.
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    headers = bootstrapped["headers"]
+    key = f"legacy-plus-snapshot-{unique}"
+
+    first = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": key, "legacy_snapshot": _legacy_snapshot()},
+        headers=headers,
+    ).json()
+
+    client.post(
+        f"/workspaces/{ws_id}/tasks/{first['task']['id']}/snapshots",
+        json={"idempotency_key": f"live-followup-{unique}", "payload": {}, "info_nature": "fact"},
+        headers=headers,
+    )
+
+    retry = client.post(
+        f"/workspaces/{ws_id}/tasks/legacy-import",
+        json={"idempotency_key": key, "legacy_snapshot": _legacy_snapshot()},
+        headers=headers,
+    )
+    assert retry.status_code == 200, retry.text
+    assert retry.json()["task"]["id"] == first["task"]["id"]

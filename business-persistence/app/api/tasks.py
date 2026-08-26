@@ -160,8 +160,16 @@ class LegacyImportRequest(BaseModel):
 
 def _legacy_import_result(db: Session, record: LegacyImportRecord) -> dict:
     task = db.get(Task, record.task_id)
+    # Nothing stops a caller from adding further snapshots to a
+    # legacy-imported task afterwards via the normal snapshots endpoint --
+    # scalar_one_or_none() would then raise MultipleResultsFound (a 500) on
+    # a legacy-import retry. Order by recency instead of assuming exactly
+    # one row will ever exist.
     snapshot = db.execute(
-        select(TaskSnapshot).where(TaskSnapshot.task_id == record.task_id)
+        select(TaskSnapshot)
+        .where(TaskSnapshot.task_id == record.task_id)
+        .order_by(TaskSnapshot.created_at.desc())
+        .limit(1)
     ).scalar_one_or_none()
     return {"task": row_to_dict(task), "snapshot": row_to_dict(snapshot) if snapshot else None}
 
