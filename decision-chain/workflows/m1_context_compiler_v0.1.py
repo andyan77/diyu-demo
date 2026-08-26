@@ -500,8 +500,8 @@ def _merge_evidence_item(snap, patch, material_present):
 
     # provenance 的取值门禁与 nature 放在同一处、同一时机（对抗式审查发现的真实不一致：
     # 此前这条检查放在下面的去重判断之后，导致"重复 text + 非法 provenance"的手工调用会
-    # 静默走去重分支返回 (False, False)，而不是像 nature 那样直接抛错——两条门禁语义相同，
-    # 必须在去重判断生效之前统一处理，不能因为写入顺序不同而表现不同）。
+    # 静默走去重分支返回 (False, False, False)，而不是像 nature 那样直接抛错——两条门禁
+    # 语义相同，必须在去重判断生效之前统一处理，不能因为写入顺序不同而表现不同）。
     provenance = patch.get("evidence_provenance", "USER_DIRECT")
     if provenance not in VALID_EVIDENCE_PROVENANCE_PATCH:
         raise ValueError("ILLEGAL_EVIDENCE_PROVENANCE:" + str(provenance))
@@ -961,7 +961,8 @@ def compute_call_intent(snap, requested_capabilities):
 
 
 def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capabilities,
-                        current_route_intent=None, changed=False, cancel_effect=None):
+                        current_route_intent=None, changed=False, cancel_effect=None,
+                        material_present=False):
     """给对话 LLM 的确定性指令，不让模型自己判断状态或编造原因（继承 A-4 纪律）。
 
     current_route_intent：**本轮 patch 里的原始 route_intent**，不是 snap["last_route_intent"]。
@@ -980,6 +981,25 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
     cancel_effect：B-5 修复新增，_merge_patch 算好的实际撤销结果（见该函数注释），三种取值：
     None（本轮没有指明具体撤销分类）／{"removed_text": 具体内容}（真的撤销了一条）／
     {"removed_text": None}（指明了分类但那个分类下当前没有可撤销的内容）。
+
+    material_present：本轮 m1_join 是否真的抽出了非空材料文本（由 main() 传入，与
+    _merge_evidence_item 核实 SOURCED_MATERIAL 声明用的是同一个信号）。**live 验证
+    发现的真实缺口，已修复**：m1_chat_llm 的 prompt 里看不到材料原文（只有 m1_shadow
+    才看得到 {{#m1_join.material_text#}}），它判断"有没有收到资料"的唯一信息来源就是
+    这份 dialogue_directive；这里不说，它就只能诚实地猜"没收到"，跟系统内部真实收到并
+    处理了材料的事实矛盾——真实 Dify 环境里实测到这个场景。
+
+    **两次真实回归都发现的问题，已修复为直接用 material_present 而不是"本轮是否真的
+    追加了一条 evidence_bundle 条目"**：后者会在材料被重复上传（去重跳过追加）、
+    evidence_nature 缺失（整条证据被丢弃）、或模型把材料内容写进了 evidence_text 以外
+    的字段这三种情况下都不成立，而这三种情况下 material_present 仍然是 True——用同一个
+    "有没有材料"的问题接了两种不同、可能不一致的答案，是真实的活口。改用 material_present
+    后这三种情况都能正确触发确认，且不再需要把 _merge_evidence_item 追加的具体证据文本
+    往上传：只做一句不含材料原文的事实确认（"本轮确实收到了资料"），不复述、不引用
+    材料里的具体字句——避免把未经代码核实"这句话真的来自材料"的模型自称，包装成对用户
+    的确定性断言，也避免把材料原文的任意内容拼进对话 LLM 的指令通道（m1_chat_llm 的
+    prompt/system 提示词里没有 SHADOW_SYSTEM_PROMPT 那样的抗注入条款，材料原文一旦被
+    整段引用进这里就是一个新的、没有任何缓解措施的注入面）。
     """
     if not patch_ok:
         if reject_reason == SHADOW_NODE_FAILED:
@@ -1055,6 +1075,16 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
     else:
         parts.append("当前系统这边确实还没有记录任何任务内容（不是用户表达得不够清楚，"
                       "也不是落库失败，就是还没有形成任务）。")
+
+    # **live 验证发现的真实缺口，已修复**：本轮客观上真的收到了上传材料，如实告知对话
+    # LLM——它自己看不到材料原文，不说这句它就只能猜"没收到"。只做事实确认，不复述材料
+    # 具体内容（原因见函数 docstring：避免未经核实的内容归属断言，也避免材料原文经这条
+    # 通道拼进对话 LLM 的指令里）。
+    if material_present:
+        parts.append(
+            "本轮确实收到并处理了你上传的资料。如实确认收到了资料，不要声称没有收到"
+            "资料或内容；具体内容不必复述，除非用户追问细节。"
+        )
 
     # B-4 修复：本轮可能同时点名了多个能力，逐个描述各自状态，不再只能报告单一能力。
     for cap_id in requested_capabilities or []:
@@ -1242,7 +1272,7 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict, material_text:
     call_intent = compute_call_intent(snap, requested_capabilities)
     directive = _dialogue_directive(
         snap, patch_ok, reject_reason, call_intent, requested_capabilities, current_route_intent,
-        content_changed, cancel_effect,
+        content_changed, cancel_effect, material_present,
     )
 
     return {

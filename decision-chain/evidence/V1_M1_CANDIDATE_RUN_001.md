@@ -293,3 +293,25 @@ DSL 层：`features.file_upload` 由 `enabled: False` 改为真实开启，限�
 ### 综合状态
 
 单测从 145（v0.7 最初版本）增至 162，全部通过（`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v` → `Ran 162 tests ... OK`）；DSL 重新生成为 `m1_candidate_dsl_v0.7.yml`（91343 字节）。**明确的证据边界，不夸大**：以上全部验证止于 `executor_self_check`（确定性单测）+ 两轮对抗式审查（同一执行会话内发起，不满足 §8"未参与实现、上下文隔离"的正式独立审查标准，正式审查预算已在 v1.2 阶段耗尽）；**没有任何一次真实 Dify 调用验证过 B-3/B-4/B-5**——file_upload/document-extractor 节点链路是否真的能在真实 Dify 运行时里正确抽取文件、真实模型是否真的会按新口径填写 `requested_capabilities_text`/`evidence_provenance`/`handled_thread_id`/`cancel_target`，均是未经证实的假设。v0.7 尚未导入/发布，live 验证依赖 Founder 完成一次真实候选导入/发布——与 AC-15 回滚演练卡在同一个环境权限阻断上（执行侧对 Dify 控制台无写权限）。
+
+## 十七、v0.7 live 验证（Founder 2026-08-26 导入并发布后，真实调用，直连数据库取证）＋ 修复 B-3 阻断（应用配置 + 一处新发现的真实代码缺陷）
+
+**验证方式说明**：候选 App 的 App 级 API Key 无控制台/发布权限，只能调 `/v1/chat-messages`／`/v1/files/upload` 等公开运行时接口，执行侧本身不持有该 Key（此前会话生成后只落在本机 scratchpad）；本轮由 Founder 在本机终端直接执行执行侧准备好的 curl 脚本、把完整响应贴回，执行侧据此判读，另配合对本机 Docker 内 `docker-db_postgres-1`（本机自建的 Dify 数据库，非远程/非生产）的只读 `psql` 查询，直接核对 `workflow_node_executions`/`messages`/`message_files` 等表的真实落库内容，比只看模型最终回复文本更强的证据（能确认节点级真实输入输出，不受模型自己描述是否准确的影响）。
+
+**B-4（多能力选择）—— PASS，有数据库直查证据**：单轮同时请求"内容简报"和"创意脚本"，`m1_compiler` 真实产出 `needed_capabilities: ["CONTENT_BRIEF", "CREATIVE_SCRIPT"]`（直查 `workflow_node_executions.outputs`，非只看回复文本）。
+
+**B-5 短指代绑定 —— PASS，有数据库直查证据**：第一轮夹带附带问题"后面要不要单独开一个账号做私域"，`m1_shadow` 正确产出 `side_question`；第二轮"私域账号的事先不用管了"，`m1_shadow` 真实产出 `handled_thread_id: "thread_001"`，`m1_compiler` 后续 `call_intent_json.continuation.open_threads_to_surface` 变空，`dialogue_directive` 正确回到主线任务、未泄漏内部字段。
+
+**B-5 撤销机制 —— PASS，有数据库直查证据**：第一轮"顺便想涨粉"写入 `secondary_goals`；第二轮"算了刚才涨粉那个不用管了"，`m1_shadow` 真实产出 `cancel_target: "SECONDARY_GOAL"`，`m1_compiler` 快照 `secondary_goals` 变回空数组，`dialogue_directive` 明确写出具体撤销内容（"借这条内容涨一点粉"），未被复述成其它内容。
+
+**顺带证实一次真实环境不稳定性（非阻断，B-6 判据的正面证据）**：诊断过程中额外跑出一次真实 `m1_shadow` 调用失败，`m1_compiler` 正确落 `patch_ok: false / reject_reason: SHADOW_NODE_FAILED`，`dialogue_directive` 给出诚实降级提示（"请把刚才想说的内容再说一遍"），未伪造成功——这是 B-6 那次修复（此前只是声明、未经 live 实测的判据前提）第一次在真实环境里被真实触发并证实生效。
+
+**B-3（材料上传）—— 首次测试 FAIL，根因定位到应用配置而非代码**：上传文件、引用文件发起对话，系统回复"没有收到这份资料"。直连数据库查明：候选 App 当前生效的 workflow 记录里，`graph`（节点/prompt/schema）确认是 v0.7，但 `features.file_upload` 仍是系统默认值（`enabled: false`，只认图片类型），与 DSL 里写的配置完全对不上——`upload_files` 表里文件本身是好的，但 `message_files` 表零记录，证实文件在进入工作流前就被这个应用级开关拦掉了（`enabled: false` 时 Dify 后端 `core/app/apps/advanced_chat/app_generator.py` 直接把 `sys.files` 清空，不走到任何文件校验逻辑）。**这是 Dify 覆盖导入这次没有把 `features` 一起带过去，DSL 内容本身是对的**（逐行核对过 `build_m1_candidate_dsl_v0.1.py` 里的 `file_upload` 块）。
+
+**修复方式，如实披露**：这是候选 App 本身运行在本机自建 Docker 里，执行侧对本机 Docker/数据库已有既存的只读排障权限（本次定位根因正是靠这条权限），Founder 明确指示"应用级开关没有被这次导入正确应用这个问题，你应该在后台修复，不能什么问题都推给 founder"后，执行侧准备了一条只替换 `workflows.features.file_upload` 一个字段、其余字段原样保留的 SQL（改前完整读取并保留全部既有字段，只用 Python 做字典级合并，不是整段替换），**由 Founder 在自己终端里执行这条写入命令**（执行侧的 Bash 沙箱对数据库写操作有权限分类器拦截，同网络调用一样需要 Founder 代跑；执行侧只准备命令、验证结果，不持有能绕过该拦截的通道）。写入后重新测试，`message_files` 表出现记录、`m1_extract`/`m1_join` 真实抽取出文件内容，确认应用级开关问题已解决。
+
+**复测又发现一个真实代码缺陷（不是配置问题）：`dialogue_directive` 从不告知对话 LLM"材料已收到"**——`m1_extract`/`m1_join`/`m1_shadow` 全部正确工作（`m1_shadow` 真实产出 `evidence_text: "上周复购率提升到38%"`、`evidence_provenance: "SOURCED_MATERIAL"`，直查数据库确认），但最终回复仍然说"没有收到具体内容"。原因：`m1_chat_llm`（生成最终自然语言回复的节点）的 prompt 里没有材料原文（原文只喂给了 `m1_shadow`），它判断"有没有收到资料"的唯一信息来源是 `m1_compiler.dialogue_directive`；这个函数之前完全不提这一轮捕获到的材料，`m1_chat_llm` 只能诚实地猜"没收到"（其自身系统提示词明确要求"指令里没说明的事不要推测"），于是产生了这句和系统内部真实状态矛盾的回复。
+
+**修复（代码级，已提交进本文件对应的源码）**：`_dialogue_directive` 新增 `material_present` 形参（`main()` 已有的、独立于 patch 内容的信号：本轮 `m1_join` 是否真的抽出了非空材料文本），当为真时追加一句不含材料原文的事实确认："本轮确实收到并处理了你上传的资料……不要声称没有收到"。**第一版实现走了弯路，经对抗式审查（read-only，独立 agent，未参与实现）纠正**：最初把确认语句挂在"本轮是否真的追加了一条新的 `evidence_bundle` 条目"上，并把该条目的原文拼进指令文本——审查抓出两个真实问题：①材料被重复上传（去重跳过追加）、`evidence_nature` 缺失（整条被丢弃）、材料内容被模型写进 `evidence_text` 以外的字段这三种情况下，"是否追加了条目"和"是否真的收到了材料"这两个问题的答案会不一致，导致这三种情况下确认语句仍然不会出现；②把证据原文整段拼进 `m1_chat_llm` 的指令通道，一是把模型未经代码核实的"这句话来自材料"的自称包装成对用户的确定性断言，二是给一个本身没有 `SHADOW_SYSTEM_PROMPT` 那种抗注入条款的 prompt 通道新开了一个材料原文可以直接落地的注入面。修复为直接用 `material_present`（不看是否真的产生了新条目）、且只做不含任何材料原文/证据文本的静态事实确认（不复述具体内容）。单测覆盖：材料确认要出现、被降级的证据仍算收到材料因此照常确认、重复上传同一材料仍确认、`evidence_nature` 缺失丢弃证据后仍确认、材料内容被路由到其它字段后仍确认、纯口头证据不触发确认、真正没有材料时不触发确认、确认语句不含材料原文——单测 162 → 170，全部通过。DSL 重新生成为 `m1_candidate_dsl_v0.8.yml`。
+
+**当前状态，如实标注**：v0.8 尚未导入/发布/live 复验；`features.file_upload` 这条应用级配置是否会在下一次导入时被再次覆盖回默认值，执行侧无法确认（不清楚 Founder 实际使用的导入操作细节），下一次导入后需要**重新核对**这个字段，不能假设一次修复永久生效。B-3/B-4/B-5 三项 P0 能力目前状态：B-4、B-5（短指代绑定+撤销）已完成真实 live 验证（数据库直查证据）；B-3 端到端链路已在应用配置修复后实测跑通（文件真的被抽取），但"对话 LLM 正确告知用户已收到材料"这一环节的代码修复尚未做过任何真实 Dify 调用验证——只有单测覆盖。

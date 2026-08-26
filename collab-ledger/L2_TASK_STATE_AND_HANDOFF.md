@@ -213,9 +213,15 @@ execution_disposition: CONTINUE
 task_final_status: null
 current_task_contract_version: "1.3"
 previous_task_contract_hash: d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3
-current_state: B3_B4_B5_IMPLEMENTED_SELF_VERIFIED_BLOCKED_ON_CONSOLE_ACCESS
+current_state: V0_7_LIVE_VERIFIED_B4_B5_PASS_B3_FIXED_TWICE_PENDING_V0_8_LIVE_RECHECK
 next_stage_allowed: false
 ```
+
+**2026-08-26 状态更新（v0.7 live 验证 + B-3 两处真实缺陷发现并修复）**：Founder 导入并发布 v0.7 后，执行侧用 App API Key（由 Founder 在本机终端代跑 curl，执行侧不持有绕过沙箱写权限的通道）跑真实回归，并直连本机 Docker 内的 Dify 数据库（只读）核对节点级真实产出。**B-4、B-5（短指代绑定+撤销）三项均 PASS，有数据库直查证据**，详见 [evidence §十七](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
+
+**B-3 先后发现两处真实缺陷，均已修复**：①应用配置层——候选 App 这次导入没有把 `features.file_upload` 一起带过去，DSL 内容本身是对的，只是运行中的 App 配置没跟上，Founder 明确要求"你应该在后台修复"后，执行侧对本机自建 Docker 数据库（既有只读排障权限范围内，本次定位根因正是靠这条权限）做了一次只替换 `file_upload` 一个字段、其余原样保留的精确修正，由 Founder 在自己终端执行该写入（同网络调用一样受 Bash 沙箱权限分类器限制）；②代码层——配置修好后复测，文件真的被抽取、`m1_shadow` 也正确判定来源，但最终回复仍说"没收到"，根因是 `_dialogue_directive` 从不告知负责生成回复的 `m1_chat_llm` 材料已收到。**已在源码里修复**，且第一版实现本身又被同会话对抗式审查（read-only、未参与实现）挑出两个真实问题（确认信号挂错、材料原文被拼进无抗注入措施的指令通道）后重新设计。单测 162→170 全绿，DSL 重新生成为 v0.8。
+
+**当前唯一剩余动作，需要 Founder**：导入并发布 v0.8（覆盖 v0.7），执行侧随后重新核对 `features.file_upload` 是否又被这次导入覆盖（无法假设上次的修复永久生效），并跑真实回归验证"对话 LLM 正确告知用户已收到材料"这一环节——这部分目前只有单测覆盖，未经任何真实 Dify 调用验证。
 
 **2026-08-25 状态更新（B-3/B-4/B-5 真实实现，收口审查后继续施工）**：Founder 指出此前把 B-3/B-4 列为"需要架构判断故本批不做"不构成合法延期理由，B-5 也只修了诚实反馈这一部分——执行侧据此完成三者的真实机制（`requested_capabilities_text` 多能力选择、真实文件上传通道 + `evidence_provenance` 真实来源核实、`handled_thread_id` 短指代绑定 + `HANDLED` 闭环 + `cancel_target` 真实撤销）。每批各跑一轮对抗式独立审查，均发现真实缺陷并已修复（详见 [evidence §十六](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)）。单测 145→162 全绿，DSL 重新生成为 v0.7。
 

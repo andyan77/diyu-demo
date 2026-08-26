@@ -1675,6 +1675,98 @@ class TestB3MaterialEvidenceProvenance(unittest.TestCase):
         report = json.loads(result["turn_report_json"])
         self.assertFalse(report["evidence_provenance_downgraded"])
 
+    def test_material_present_is_acknowledged_in_dialogue_directive(self):
+        """live 验证发现的真实缺口，已修复：真实 Dify 环境实测到，用户上传材料、
+        m1_extract/m1_join 真的抽出文本、m1_shadow 也正确给出 evidence_provenance=
+        SOURCED_MATERIAL，但 dialogue_directive 完全不提这件事——m1_chat_llm 的 prompt
+        里看不到材料原文，只能诚实地猜"没收到"，最终回复说"你提到的资料我这边还没收到"，
+        跟系统内部已经真实捕获的事实直接矛盾。dialogue_directive 必须显式告知这一点。"""
+        result = _run(None, _patch(evidence_text="上周复购率提升到38%", evidence_nature="FACT",
+                                    evidence_provenance="SOURCED_MATERIAL"),
+                      material_text="上周复购率提升到38%（来自上传文件）")
+        self.assertIn("确实收到并处理了你上传的资料", result["dialogue_directive"])
+        self.assertIn("不要声称没有收到", result["dialogue_directive"])
+
+    def test_acknowledgment_does_not_quote_material_text_verbatim(self):
+        """**对抗式审查发现的真实问题，已修复**：第一版实现把 new_evidence_item["text"]
+        原样拼进 dialogue_directive——(1) 材料内容一旦被判定为某条证据文本，就被当成"确定
+        来自材料"直接告诉用户，但这个归属本身只是模型自称、代码从未核实这句话真的出自材料
+        （用户同一轮里上传了材料又打字说了别的话，模型完全可能把打字内容误标成 SOURCED_
+        MATERIAL，这样会把用户自己的话说成是材料里的）；(2) 材料原文经这条通道被整段接进
+        m1_chat_llm 的指令文本，而 m1_chat_llm 的 prompt 没有 SHADOW_SYSTEM_PROMPT 那样的
+        抗注入条款，等于新开一个未加固的注入面。修复后只做不含材料原文的事实确认，不复述
+        证据文本本身。"""
+        result = _run(None, _patch(evidence_text="上周复购率提升到38%", evidence_nature="FACT",
+                                    evidence_provenance="SOURCED_MATERIAL"),
+                      material_text="上周复购率提升到38%（来自上传文件）")
+        self.assertNotIn("上周复购率提升到38%", result["dialogue_directive"])
+
+    def test_material_present_is_acknowledged_even_when_same_evidence_was_already_captured(self):
+        """**对抗式审查发现的真实缺口，已修复**：第一版实现把确认语句挂在"本轮是否真的
+        追加了一条新的 evidence_bundle 条目"上——但用户完全可能在第二轮重新上传同一份材料
+        （比如担心第一轮没处理成功），这时 _merge_evidence_item 因为文本去重直接返回未追加，
+        material_present 却仍然是 True。挂在追加与否上会导致这一轮系统明明真的收到了材料，
+        却对用户一声不吭。改用 material_present 后不再看这一轮有没有产生新条目。"""
+        turn1 = _run(None, _patch(evidence_text="上周复购率提升到38%", evidence_nature="FACT",
+                                   evidence_provenance="SOURCED_MATERIAL"),
+                     material_text="上周复购率提升到38%（来自上传文件）")
+        turn2 = _run(turn1["snapshot_json"],
+                     _patch(evidence_text="上周复购率提升到38%", evidence_nature="FACT",
+                            evidence_provenance="SOURCED_MATERIAL"),
+                     material_text="上周复购率提升到38%（来自上传文件，同一份材料再次上传）")
+        snap2 = json.loads(turn2["snapshot_json"])
+        self.assertEqual(len(snap2["evidence_bundle"]), 1, "重复文本不应该追加第二条")
+        self.assertIn("确实收到并处理了你上传的资料", turn2["dialogue_directive"])
+
+    def test_material_present_is_acknowledged_even_when_evidence_nature_missing(self):
+        """**对抗式审查发现的真实缺口，已修复**：模型给出了材料原文摘要作为 evidence_text，
+        却没给出 evidence_nature（留了 UNSTATED）——_merge_evidence_item 会整条丢弃这条证据
+        （见该函数注释），但材料本身客观上是真的收到了。挂在"是否追加了条目"上会让这一轮
+        因为一个不相关的字段缺失，连"收到材料"这个更基础的事实都不告诉用户。"""
+        result = _run(None, _patch(evidence_text="上周复购率提升到38%", evidence_nature="UNSTATED"),
+                      material_text="上周复购率提升到38%（来自上传文件）")
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["evidence_bundle"], [], "nature 缺失应该整条丢弃")
+        self.assertIn("确实收到并处理了你上传的资料", result["dialogue_directive"])
+
+    def test_material_present_is_acknowledged_even_when_material_not_routed_into_evidence_text(self):
+        """**对抗式审查发现的真实缺口，已修复**：模型这一轮把材料相关的内容写进了
+        current_task_text／user_message_summary，evidence_text 干脆留空（比如模型判断这轮
+        材料对应的是"当前任务"而不是"一条证据"）——这时 _merge_evidence_item 在第一步就
+        直接返回，压根不会追加任何证据。material_present 是本轮 m1_join 是否真的抽出材料
+        的独立信号，不依赖 evidence_text 是否被填，因此这种情况下依然能正确触发确认。"""
+        result = _run(None, _patch(current_task_text="根据这份资料，帮我看看这周经营情况怎么样"),
+                      material_text="上周复购率提升到38%（来自上传文件）")
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["evidence_bundle"], [], "本用例模拟材料内容没有落进 evidence_text")
+        self.assertIn("确实收到并处理了你上传的资料", result["dialogue_directive"])
+
+    def test_no_material_no_acknowledgment(self):
+        """没有材料的普通一轮不应该出现材料确认语句——这条确认是根据 material_present
+        触发的，不是逢证据必说。"""
+        result = _run(None, _patch(evidence_text="我们店开了三年", evidence_nature="FACT",
+                                    evidence_provenance="USER_DIRECT"))
+        self.assertNotIn("确实收到并处理了你上传的资料", result["dialogue_directive"])
+
+    def test_downgraded_provenance_still_acknowledged_since_material_was_present(self):
+        """声称 SOURCED_MATERIAL 但被代码降级回 USER_DIRECT 的那条——降级只影响这条
+        evidence_bundle 条目自己的 provenance/freshness 取值，不影响"本轮是否真的收到过
+        材料"这个更基础的事实；本用例里 material_text 非空，所以确认语句仍然应该出现。"""
+        result = _run(None, _patch(evidence_text="资料里写着上季度复购率是三成", evidence_nature="FACT",
+                                    evidence_provenance="SOURCED_MATERIAL"),
+                      material_text="上季度复购率是三成（来自上传文件）")
+        snap = json.loads(result["snapshot_json"])
+        self.assertEqual(snap["evidence_bundle"][0]["provenance"], "SOURCED_MATERIAL")
+        self.assertIn("确实收到并处理了你上传的资料", result["dialogue_directive"])
+
+    def test_no_material_and_no_evidence_no_acknowledgment(self):
+        """声称 SOURCED_MATERIAL 但本轮客观没有材料文本——降级为 USER_DIRECT，且这一轮
+        material_present 本身就是 False，不应该出现材料确认语句。"""
+        result = _run(None, _patch(evidence_text="资料里写着上季度复购率是三成", evidence_nature="FACT",
+                                    evidence_provenance="SOURCED_MATERIAL"),
+                      material_text="")
+        self.assertNotIn("确实收到并处理了你上传的资料", result["dialogue_directive"])
+
     def test_sourced_material_claim_without_actual_material_is_downgraded(self):
         """本轮客观没有材料文本（material_text 为空，即没有上传任何文件），模型却声称
         SOURCED_MATERIAL——代码不能采信一条无法核实的第三方来源断言，必须降级回

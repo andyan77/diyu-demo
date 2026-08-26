@@ -319,6 +319,34 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 核验依据 | 直连数据库 `workflow_node_executions.outputs`，逐条解析确认 23/23 键齐全（6/6）；`m1_compiler` 输出的 `goal_structure.priority_order` 两轮分别为 `["涨粉优先于转化"]`→`["转化优先于涨粉"]`，替换而非累积 |
 | **状态** | `PLANNED` → **`CONFIRMED`** |
 
+### SE-020 · Founder 本人完成 v0.7 DSL 导入与发布；执行侧跑 B-3/B-4/B-5 live 回归，直连数据库取证
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 目标 App | `dd638b91-d39f-4e92-a984-6ad1ab809119`（同前，非新建） |
+| 操作方 | **控制台导入与发布由 Founder 本人完成**（覆盖 v0.6）；执行侧全程未接触登录凭证 |
+| 执行侧后续操作 | 执行侧准备 curl 脚本（App API Key，仅 `/v1/chat-messages`／`/v1/files/upload` 权限），**由 Founder 在本机终端代跑**（执行侧 Bash 沙箱对带 `Authorization` 头的网络调用有权限分类器拦截，同 SE-013 起沿用的做法一致，只是这次连读操作也被拦，需要 Founder 代跑）；执行侧随后直连本机 Docker 内 Dify 数据库（`docker exec docker-db_postgres-1 psql`，只读）核对 `workflow_node_executions`/`messages`/`message_files` 等表的真实落库内容 |
+| 内容标识 | B-4/B-5 相关多组 `conversation_id`/`message_id`（详见 evidence §十七正文引用的具体值）；B-3 诊断定位到 `workflows.id = 900e8c67-e952-432b-9e62-fe3c4112df41` 的 `features.file_upload` 字段与已发布 DSL 内容不一致 |
+| 幂等信息 | 导入/发布为幂等覆盖（同一 app_id）；每次调用各自独立会话或同一 `conversation_id` 下的多轮 |
+| 受控状态 | 可逆——工作流历史版本未删除；仅作用于本任务专用候选 App；未触碰任何既有 App、既有 Skill 正文、既有主 Chatflow |
+| 核验依据 | 直连数据库逐字段核对 `m1_shadow`/`m1_compiler` 节点 `outputs`；B-3 根因用 `workflows.features::text` 与已生成 DSL 源码逐字段比对确认不一致 |
+| **状态** | **`CONFIRMED`** |
+
+### SE-021 · 执行侧对本机 Dify 数据库执行一次定向 UPDATE，修正候选 App 的 `features.file_upload` 配置（Founder 授权、Founder 本人执行写入命令）
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M1-NATURAL-CONTEXT-001` |
+| 触发 | Founder 会话内消息原文：「卡在应用级"文件上传"开关没有被这次导入正确应用，这个问题，你应该在后台修复，不能什么问题都推给founder」——明确指示这类问题不应止步于诊断/转交 Founder，执行侧应在自身权限范围内直接修复 |
+| 目标 | 本机自建 Docker 内的 Dify Postgres 数据库（非远程、非生产实例，与前述 SE-019/SE-020 用于取证的只读连接是同一个数据库容器）；`workflows` 表 `id = 900e8c67-e952-432b-9e62-fe3c4112df41`（候选 App `dd638b91-...` 当前生效的 workflow 记录）一行的 `features` 列 |
+| 操作方 | 执行侧先只读取出完整现有 `features` JSON，用 Python 做字典级合并（只替换 `file_upload` 一个子键，`opening_statement`/`speech_to_text`/`retriever_resource` 等其余全部字段原样保留），生成新 JSON 与对应 `UPDATE ... WHERE id = '...'` 语句，写入本地脚本文件；**执行侧 Bash 沙箱的权限分类器拦截了直接执行该 UPDATE**（数据库写操作与此前网络调用一样被拦），**由 Founder 在自己终端里执行该条已经准备好的命令**，执行侧不持有绕过该拦截的通道 |
+| 变更内容 | `file_upload.enabled` 由 `false` 改为 `true`；`allowed_file_types` 由 `["image"]` 改为 `["custom"]`；`allowed_file_extensions` 由图片扩展名列表改为 `[".txt", ".md"]`；`allowed_file_upload_methods` 由 `["local_file", "remote_url"]` 改为 `["local_file"]`；`number_limits` 由 `3` 改为 `1`；新增 `fileUploadConfig` 子对象——**全部取值与本仓库 `build_m1_candidate_dsl_v0.1.py` 里声明的 `file_upload` 配置逐字段一致**，不是执行侧自行拟定的新配置 |
+| 幂等信息 | UPDATE 按主键定点覆盖，可重复执行、结果幂等；执行前已用 `SELECT` 读出并保存修改前的完整 `features` 原文（本条记录内可见），可据此逐字段还原 |
+| 受控状态 | **可逆**——修改前的完整 `features` 原文已如实记录在本条与 evidence §十七；仅影响候选 App 这一条记录，未触碰生产库、未触碰其他 App、未触碰用户账号/凭证类数据；本机自建测试环境，非远程/共享基础设施 |
+| 核验依据 | 写入后 `SELECT features::text ilike '%"enabled": true%'` 返回真；随后重新上传文件测试，`message_files` 表出现记录、`m1_extract`/`m1_join` 真实产出非空文本，确认修复生效 |
+| **状态** | **`CONFIRMED`** |
+
 ## 四、其他外部系统
 
 | 系统 | 本任务是否写入 |
