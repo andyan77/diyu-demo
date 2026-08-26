@@ -58,21 +58,32 @@ FORBIDDEN_WRITEBACK_KEYS = frozenset(
 )
 
 
+# 「调用方没提这个维度」与「调用方说了这个维度是 None」是两件事。
+# 用 None 同时表达两者，会让"我们不知道这个数字的来源"和"我们根本没考虑来源"
+# 不可区分——而 M3-AC-12 要求"保留来源"是可检查的。
+_OMIT = object()
+
+
 def field(
     value=None,
     availability=UNKNOWN,
-    info_nature=None,
-    provenance=None,
-    confirmation=None,
-    scope=None,
-    as_of=None,
-    valid_until=None,
-    source_ref=None,
+    info_nature=_OMIT,
+    provenance=_OMIT,
+    confirmation=_OMIT,
+    scope=_OMIT,
+    as_of=_OMIT,
+    valid_until=_OMIT,
+    source_ref=_OMIT,
 ):
     """构造一个状态信封。
 
     不可用时 `value` 强制为 None：允许 `availability=REFUSED` 同时带一个值，等于给
     "拒绝提供"留了一个偷偷携带数据的后门。
+
+    维度键的取舍：**显式传入的 `None` 会被保留成 `null`，只有完全没传才省略。**
+    早先的实现把两者都省略掉，后果是 `source_ref` 这类键在"来源确实不知道"时
+    直接消失，于是"没有来源"这件事在投影里不可见，字段消融门也抓不住它
+    （删掉一个本来就常常不存在的键，当然不会有任何检查失败）。
     """
 
     if availability not in AVAILABILITY_VALUES:
@@ -87,8 +98,14 @@ def field(
         ("valid_until", valid_until),
         ("source_ref", source_ref),
     ):
-        if val is not None:
-            out[key] = val
+        if val is _OMIT:
+            continue
+        # 一个「我们不知道」的产能没有来源可言，一条不存在的记录也没有 as_of。
+        # 在不可用状态下仍然挂着这两个键，它们就成了永远为 null 的装饰位——
+        # 删掉不会有任何检查失败，也就没挣到自己的存在（A5）。
+        if availability != PRESENT and key in ("as_of", "source_ref"):
+            continue
+        out[key] = val
     return out
 
 
@@ -476,6 +493,45 @@ def build_projection(
     return projection
 
 
+# 每个具名信封**必须**承载哪些维度。JSON Schema 表达不了"按站点不同"的必填，
+# 而"一律必填"是错的：`source_ref` 对 objectives.primary 没有意义。
+#
+# 这张表是 M3-AC-12 ③（字段消融门）的直接产物：没有它时，五个正交维度全部是可选键，
+# 删掉任何一个都不会有任何检查失败——也就是说它们在结构上没有挣到自己的存在。
+MANDATORY_DIMENSIONS = {
+    "account_anchor": ("info_nature", "provenance", "confirmation", "scope"),
+    "objectives.primary": ("info_nature", "provenance", "scope"),
+    "objectives.priority_note": ("info_nature", "provenance"),
+    "stage_evidence": ("info_nature", "provenance"),
+    "capacity.expected_publish_count": ("info_nature", "provenance", "source_ref"),
+    "capacity.baseline_capacity": ("info_nature", "source_ref"),
+    "capacity.actual_capacity": ("info_nature", "source_ref"),
+    "current_cycle": ("info_nature", "provenance", "as_of"),
+    "latest_cycle_decision": ("info_nature", "provenance", "as_of"),
+    "permissions.expression_permission": ("info_nature", "provenance"),
+}
+
+# 数组站点。同一条要求，只是承载在列表元素上——漏掉它们，等于让"次要目标"和
+# "不可牺牲条件"这两组信封的维度全部退回可选。
+MANDATORY_LIST_DIMENSIONS = {
+    "objectives.secondary": ("info_nature", "provenance", "scope"),
+    "objectives.non_sacrifice_conditions": ("info_nature", "provenance"),
+    "permissions.cta_authorizations": ("info_nature", "provenance"),
+}
+
+# 这些维度只在"确实有值"时才必须在场：一个 UNKNOWN 的周期没有 `as_of` 可言。
+_PRESENT_ONLY_DIMENSIONS = ("as_of", "source_ref", "valid_until")
+
+
+def _dig(projection, dotted):
+    node = projection
+    for part in dotted.split("."):
+        if not isinstance(node, dict) or part not in node:
+            return None
+        node = node[part]
+    return node
+
+
 def validate_projection(projection):
     """跨字段不变量。返回违规说明列表；空列表 = 通过。
 
@@ -520,6 +576,33 @@ def validate_projection(projection):
         problems.append("permissions.expression_permission 缺失")
     else:
         check_field(permissions["expression_permission"], "permissions.expression_permission")
+
+    for dotted, dimensions in MANDATORY_DIMENSIONS.items():
+        envelope = _dig(projection, dotted)
+        if not isinstance(envelope, dict):
+            continue  # 缺失本身已由上面的 check_field / required 检查负责
+        for dimension in dimensions:
+            if dimension in _PRESENT_ONLY_DIMENSIONS and envelope.get("availability") != PRESENT:
+                continue
+            if dimension not in envelope:
+                problems.append(
+                    "%s 缺维度 '%s'——五个正交维度不是可选装饰：省略它等于让"
+                    "「不知道」和「没考虑过」不可区分" % (dotted, dimension)
+                )
+
+    for dotted, dimensions in MANDATORY_LIST_DIMENSIONS.items():
+        rows = _dig(projection, dotted)
+        if not isinstance(rows, list):
+            continue
+        for i, envelope in enumerate(rows):
+            if not isinstance(envelope, dict):
+                problems.append("%s[%d] 不是状态信封" % (dotted, i))
+                continue
+            for dimension in dimensions:
+                if dimension in _PRESENT_ONLY_DIMENSIONS and envelope.get("availability") != PRESENT:
+                    continue
+                if dimension not in envelope:
+                    problems.append("%s[%d] 缺维度 '%s'" % (dotted, i, dimension))
 
     for i, obs in enumerate(projection.get("market_observations") or []):
         if obs.get("availability") not in AVAILABILITY_VALUES:

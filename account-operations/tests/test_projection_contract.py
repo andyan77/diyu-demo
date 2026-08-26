@@ -478,6 +478,9 @@ VALID_CONTENT_TASK = {
             {
                 "statement": "该外套材质为羊毛混纺",
                 "source": "商品资料库",
+                # 事实确认人与素材来源是两种身份（Content Brief v0.1 §1）。
+                # required 且允许 null，见 M3_CONTENT_TASK schema 里的说明。
+                "confirmed_by": "门店主理人（2026-08-20 当面确认）",
                 "evidence_identity": "confirmed_fact",
                 "valid_until": None,
             }

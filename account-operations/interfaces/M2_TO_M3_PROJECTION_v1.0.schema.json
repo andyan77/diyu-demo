@@ -42,7 +42,8 @@
       "required": [
         "workspace_id",
         "account_id",
-        "m2_interface_baseline"
+        "m2_interface_baseline",
+        "task_id"
       ],
       "properties": {
         "workspace_id": {
@@ -61,7 +62,8 @@
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "任务身份绑定。§14 要求每份证据可回指任务；允许 null，但键必须在——省略它会让「这份投影不属于任何任务」和「忘了绑」不可区分。"
         }
       }
     },
@@ -157,7 +159,9 @@
           "name",
           "status",
           "targeted_positions",
-          "scope_start"
+          "scope_start",
+          "scope_end",
+          "rationale"
         ],
         "properties": {
           "overlay_id": {
@@ -183,7 +187,8 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "description": "Campaign 到期时间。AC-11 的整条命题建立在「到期后默认恢复仍然有效的基线」之上，到期时间因此不可省略；null = 未设结束时间，与「忘了带」必须可区分。"
           },
           "rationale": {
             "type": [
@@ -385,7 +390,14 @@
         "is_simulated",
         "is_manual_entry",
         "is_pre_publish_review",
-        "bound_to"
+        "bound_to",
+        "source",
+        "observed_at",
+        "window_start",
+        "window_end",
+        "window_closed",
+        "goal_at_the_time",
+        "payload"
       ],
       "properties": {
         "feedback_id": {
@@ -460,13 +472,14 @@
             "boolean",
             "null"
           ],
-          "description": "观察窗是否已结束。null 表示无法判断；未结束时不得据此改判。"
+          "description": "观察窗是否已结束。null = 判断不了，既不是「已结束」也不是「未结束」；观察窗未结束时不得据此改判（AC-10）。三态都必须可见，所以此键 required。"
         },
         "goal_at_the_time": {
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "写入当时的目标。复盘必须按当时的目标判断，而不是按现在的目标——省略此键会让「目标变过」这件事在复盘时不可见（AC-10）。"
         },
         "payload": {
           "type": "object"
@@ -482,7 +495,13 @@
         "availability",
         "usage_permission",
         "usable_for_inference",
-        "collected_at"
+        "source",
+        "platform",
+        "collected_at",
+        "applicable_track",
+        "scope_ref",
+        "mechanism_summary",
+        "valid_until"
       ],
       "properties": {
         "observation_id": {
@@ -536,7 +555,8 @@
           "type": [
             "string",
             "null"
-          ]
+          ],
+          "description": "有效窗。AC-09 要求外部市场证据的时效可见；省略此键会让「这条证据没有有效期」和「不知道有效期」不可区分。"
         },
         "usage_permission": {
           "type": "object",
