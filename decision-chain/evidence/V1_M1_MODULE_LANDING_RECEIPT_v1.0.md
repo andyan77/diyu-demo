@@ -19,8 +19,8 @@ pre_merge_main_commit: ca5281aee70943f02cf5b3be50c8c139ebfd15d4
 m1_source_commit: b3ac43f0d1752051b24860092c2e668ce2de139a
 merge_base: 0de99930ff5da5c24aa2fbe34615abe52cc6c7db
 integration_commit: 20b38467fe5f0a91bcdc261bf606c4aaf36b3b7a
-final_local_main_commit: PENDING_PUSH  # 见下方"远端收口"一节，push 后由收口提交补记
-final_remote_main_commit: PENDING_PUSH
+final_local_main_commit: cdd11dec3bca913848c7179ef773f4e4d1ec9410
+final_remote_main_commit: cdd11dec3bca913848c7179ef773f4e4d1ec9410
 
 pre_merge_main_is_ancestor: PASS
 m1_source_is_ancestor: PASS
@@ -40,9 +40,9 @@ m1_test_count: 216
 dsl_build_deterministic: PASS
 dsl_sha256: 845fa75d2e5d5a860add346c614a6e1f96d7831054e76697a69993be4ba8ec5a
 
-reviewer_result: PENDING
-reviewer_evidence_ref: PENDING
-repair_budget_used: 0
+reviewer_result: PASS
+reviewer_evidence_ref: 见下方"独立审查结论"一节
+repair_budget_used: 1
 
 dify_touched: false
 database_touched: false
@@ -52,14 +52,14 @@ m3_m4_m5_started: false
 user_untracked_files_touched: false
 
 integration_worktree_dirty: false
-unpushed_commits: PENDING_PUSH
+unpushed_commits: 0
 remote_m1_branch_preserved: true
-side_effect_ledger_ref: collab-ledger/L5_SIDE_EFFECTS.md（本任务新增 side effect 条目见下方"远端收口"一节完成后补记）
+side_effect_ledger_ref: collab-ledger/L5_SIDE_EFFECTS.md（本任务本身未产生 Dify/数据库/生产类副作用，仅 Git 操作；Git 推送记录见下方"远端收口"一节）
 landing_receipt_ref: decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md
 
-M1_MODULE_LANDING: PENDING
-M1_AVAILABLE_ON_MAIN: false
-task_final_status: PENDING
+M1_MODULE_LANDING: CLOSED
+M1_AVAILABLE_ON_MAIN: true
+task_final_status: DONE
 next_stage_allowed: false
 ```
 
@@ -147,10 +147,27 @@ $ sha256sum <tmp_a>
 
 ## 独立审查结论
 
-PENDING
+一名上下文隔离、只读、无先前记忆的独立 Reviewer 对本次合并（截至集成提交 `20b38467fe5f0a91bcdc261bf606c4aaf36b3b7a` + 本回执首版提交 `80def8e945509e41a0017f26cc88a882ac0775ec`）逐项核验 M1-ML-00／01／02／03／04／06，方法为真实执行 `git ls-remote`／`git merge-base --is-ancestor`／`git rev-list --parents`／`sha256sum`／`git diff --stat`／`git grep` 等命令，非转述自证。
 
----
+**结论：M1-ML-00／01／02／03／04／06 全部 `PASS`**，无阻断项。Reviewer 独立重跑了 216 项单测（全绿）与两次 DSL 构建（字节一致，`sha256 = 845fa75d...`），均与本回执声明一致；并交叉核对本回执自身全部可验证字段，**未发现任何回执声明与其独立核验结果矛盾**。
+
+Reviewer 额外发现两处本次合并自身引入、不构成阻断的账本交叉引用缺陷（均在 `collab-ledger/L2_TASK_STATE_AND_HANDOFF.md` §一状态表 `DIYU-V1-M1-NATURAL-CONTEXT-001` 一行）：
+1. 终结依据链接指向 `L3 §十二`（合并后该编号已属于 M2 记录），应指向 M1 记录合并后实际所在的 `L3 §十四`；
+2. 起算基线列仍写"未合入 main"，与同文件 §四 Checkpoint 区段已经写明的"已合入 main"相矛盾。
+
+按 Execution Prompt §8"只允许一次集中修复，修复后只对受影响范围做确定性收口复验，不重开开放式审查"，执行侧已在 commit `cdd11dec3bca913848c7179ef773f4e4d1ec9410` 完成两处修正（`repair_budget_used: 1`），受影响范围复验：`git grep` 确认全仓无遗留冲突标记、目标章节号与链接文本核对一致、216/216 单测复跑仍全绿、本次修复只触碰 `L2` 一个文件，M1 九份受保护资产哈希未受影响（未重新全量核验，因改动范围与这些文件无交集，此前已核验的结果继续有效）。
 
 ## 远端收口
 
-PENDING
+1. 修复提交完成后，`git fetch origin main` 重新核验 `origin/main` 仍为合并前基线 `ca5281aee70943f02cf5b3be50c8c139ebfd15d4`，未漂移。
+2. 双向祖先条件在最终提交上重新核验：
+   ```
+   git merge-base --is-ancestor ca5281aee70943f02cf5b3be50c8c139ebfd15d4 HEAD  → PASS
+   git merge-base --is-ancestor b3ac43f0d1752051b24860092c2e668ce2de139a HEAD  → PASS
+   ```
+3. 非强制推送：`git push origin integration/m1-module-landing-v1:main` → `ca5281a..cdd11de  integration/m1-module-landing-v1 -> main`（快进推送，未使用 `--force`）。
+4. 推送后核验：`git ls-remote origin refs/heads/main` → `cdd11dec3bca913848c7179ef773f4e4d1ec9410`，与本地 `git rev-parse HEAD` 完全一致；`git status --short` 工作树干净，无未提交/未跟踪改动；无未推送提交。
+5. `git ls-remote origin refs/heads/task/m1-natural-interaction-context-v1` → 仍为 `b3ac43f0d1752051b24860092c2e668ce2de139a`，源任务分支未被删除、未被改写。
+6. 未触发任何分支保护/PR 要求——普通直推成功，未使用 PR 路径。
+
+**最终状态**：`M1_MODULE_LANDING: CLOSED`；`M1_AVAILABLE_ON_MAIN: true`；`task_final_status: DONE`；`next_stage_allowed: false`——本任务只证明 M1 已进入统一 Git 主干，不构成对 M2 之外的 M3/M4/M5 的自动施工授权，也不构成对完整 V1 纵向切片已完成的结论。任务到此为止，不启动 M3/M4/M5，不做额外重构，不清理远程 M1 任务分支。
