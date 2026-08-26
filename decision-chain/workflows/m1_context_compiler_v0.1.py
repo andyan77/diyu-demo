@@ -41,6 +41,40 @@ CAPABILITIES = [
 ]
 NO_ENTRY_CAPABILITIES = ["SINGLE_ACCOUNT_OPERATION", "CREATIVE_TOURNAMENT"]  # CAP-03 / CAP-05
 
+
+def _parse_capabilities_text(raw):
+    """把 requested_capabilities_text 这个逗号分隔的扁平字符串解析成去重、保序的列表。
+
+    **B-4 修复**：此前 requested_capability 是单值枚举，一轮只能点名一个能力，`needed`
+    结构性地不可能超过一个元素，不符合"按真实依赖选择零个、一个或多个能力"（P0 observable_
+    changes 原文）。修复不引入 JSON 数组类型的 patch 字段——那会跳出本文件目前唯一验证过的
+    "扁平字符串/枚举"结构（DeepSeek V4 Flash 不支持嵌套对象的既有观察，见 PATCH_KEYS 注释），
+    在缺少 live 实测的情况下引入一个全新的未验证结构本身就是风险。改为让模型在同一个扁平
+    字符串字段里用英文逗号列出多个能力代码（"CAMPAIGN,CONTENT_BRIEF"），由确定性代码解析，
+    不新增未验证的 schema 结构。合法性由调用方对每个元素单独校验（不在本函数里做，本函数
+    只负责去重、保序、丢弃空白项）。
+
+    **对抗式审查发现的真实回归，已修复**：旧的单值字段有 `"NONE"` 这个官方哨兵值表示
+    "这一轮没点名"；本字段改用空字符串表示同样的意思（system prompt 已改口径），但模型
+    仍可能沿用同一份 schema 里其它字段（如 confirmation_signal）的 `"NONE"` 习惯，写出
+    `"NONE"` 或 `"MATRIX,NONE"`。修复前 `"NONE"` 不在 CAPABILITIES 里，会被
+    `_validate_patch` 判成非法枚举、**整轮拒绝**——一个语义上完全合理、只是格式沿用旧习惯
+    的输出，被罚以最重的整任务拒绝，直接违反"资料不足时不得整任务拒绝"。这里把 `"NONE"`
+    当无操作词元过滤掉，不进入后续合法性校验，其余真正无法识别的代码仍然会在
+    `_validate_patch` 里触发整体拒绝（不改变既有"非法枚举整体拒绝"纪律，只是补一个
+    历史遗留的合法哨兵词）。
+    """
+    if not isinstance(raw, str):
+        return []
+    items = []
+    for part in raw.split(","):
+        item = part.strip()
+        if not item or item == "NONE":
+            continue
+        if item not in items:
+            items.append(item)
+    return items
+
 # 给对话 LLM 的人话标签：dialogue_directive 面向对话 LLM 组织自然语言，不得把内部枚举代码
 # （如 "MATRIX"）原样拼进指令文本——这类代码本质是 Prompt 内部字段值，chat LLM 系统提示词
 # 明确禁止"出现 Prompt 内部字段名"，直接拼代码会被它当作用户说过的原话复述出来（真实发现，
@@ -65,10 +99,36 @@ BLOCK_REASON_LABEL_ZH = {
     "UNKNOWN_CAPABILITY": "无法识别这项能力",
 }
 
+# B-5 修复（实际撤销机制）：只覆盖三个纯追加、此前完全没有移除路径的集合。
+# 不含 priority_order（替换语义，"撤销"语义不明确，需要历史栈才能真正回退，属于需要
+# 额外设计判断的范畴，本批不做）、不含 requested_capabilities_text（本身就是逐轮瞬时
+# 信号，不持久化，天然不需要撤销）、不含 primary_goal/current_task（单值替换字段，
+# 撤销等价于"回到上一个值"，同样需要历史栈，同一类范围裁定）。
+VALID_CANCEL_TARGET = ["NONE", "SECONDARY_GOAL", "NON_SACRIFICE_CONSTRAINT", "BUSINESS_GOAL_CATEGORY"]
+CANCEL_TARGET_LABEL_ZH = {
+    "SECONDARY_GOAL": "次要目标",
+    "NON_SACRIFICE_CONSTRAINT": "不可让步条件",
+    "BUSINESS_GOAL_CATEGORY": "经营目标类别",
+}
+
+# 对抗式审查发现的真实泄漏：business_goal_categories[] 存的是内部枚举代码（如
+# "STORE_VISIT"），撤销机制把 target_list.pop() 的原始返回值直接拼进 dialogue_directive
+# 就会把这个代码原样递给对话 LLM——与 CAPABILITY_LABEL_ZH/BLOCK_REASON_LABEL_ZH 同一类
+# CE-A2 缺陷。取值与 SHADOW_SYSTEM_PROMPT 里 business_goal_category 字段口径的中文说明
+# 逐一对应，不新造一套措辞。
+BUSINESS_GOAL_CATEGORY_LABEL_ZH = {
+    "LONG_TERM_VALUE": "长期价值",
+    "ACCOUNT_GROWTH": "起号",
+    "FOLLOWER_GROWTH": "吸粉",
+    "TRAFFIC": "流量",
+    "GMV": "成交额",
+    "LEADS": "线索",
+    "STORE_VISIT": "到店",
+}
+
 VALID_TEMPORAL_SCOPE = ["UNSTATED", "ONE_ITEM", "CYCLE", "LONG_TERM"]
 VALID_CONFIRMATION_SIGNAL = ["NONE", "AFFIRM", "DECLINE"]
 VALID_ROUTE_INTENT = ["DISCUSS", "FOCUS", "EXECUTE_REQUEST", "CANCEL", "OUT_OF_SCOPE"]
-VALID_REQUESTED_CAPABILITY = ["NONE"] + CAPABILITIES
 VALID_DISCRETION = ["UNSTATED", "ALLOWED", "NOT_ALLOWED"]
 DISCRETION_KEYS = ["plot_allowed", "remix_allowed", "conflict_allowed", "controversy_allowed"]
 
@@ -111,20 +171,27 @@ VALID_BUSINESS_GOAL_CATEGORY = [
 # 读者，避免把声明当成已实现的能力（计划不等于现实）：
 #   nature       ── **P0 唯一有真实代码读者的维度**：_merge_evidence_item 写入前的取值门禁
 #                   （词表外取值抛 ValueError）。
-#   provenance   ── **P0 无代码读者**，纯声明（写入恒为 USER_DIRECT）。
+#   provenance   ── **B-3 修复后有真实代码读者**：写入取 patch 的 evidence_provenance
+#                   （USER_DIRECT / SOURCED_MATERIAL），不再是恒定常量。VALID_HISTORICAL_
+#                   ARTIFACT / AUTHORIZED_EXTERNAL / SYSTEM_DERIVED 仍不可达——本批只新增
+#                   了"文件上传材料"这一个真实非对话输入通道，没有历史产物库、没有外部工具
+#                   调用、没有系统推断证据生成器，如实只声明已建成的这一条。
 #   confirmation ── **P0 无代码读者**，纯声明（写入恒为 SYSTEM_TENTATIVE）。
 #   scope        ── **P0 无代码读者**（写入只取 patch 值或 UNSTATED；patch 侧的合法性由
 #                   VALID_EVIDENCE_SCOPE 承担）。此处纯声明。
 #   availability ── **P0 无代码读者**，纯声明。P0 恒为 AVAILABLE，其余四值不可达，
 #                   已由 _compute_gaps 的结构性缺口条目如实登记。
-#   permission   ── **P0 无代码读者**，纯声明。P0 唯一可达值是 OWNED_BY_USER：本环境唯一的
-#                   信息入口是用户自己陈述自己的经营信息，不存在第三方材料的使用权限问题。
-#                   THIRD_PARTY_REQUIRES_CONSENT / UNKNOWN 要等真正的材料／历史产物输入通道
-#                   建成后才可能被真实使用。**刻意不新增 LLM patch key**——本环境没有任何
-#                   可变的权限信息来源，硬加一个模型字段只是制造"这一维在被判断"的假象。
-#   freshness    ── **P0 无代码读者**，纯声明。P0 唯一可达值是 FRESH：证据刚被用户在当前
-#                   会话里说出口，天然新鲜；P0 没有生命周期时钟，无法判断一条证据是否已过期，
-#                   所以 STALE / UNKNOWN 不可达。同样不新增 LLM patch key，理由同上。
+#   permission   ── **P0 无代码读者**，纯声明，写入仍恒为 OWNED_BY_USER。**B-3 修复后这条
+#                   注释的旧理由（"不存在第三方材料"）不再成立**——文件上传通道建成后，
+#                   用户完全可能上传第三方材料；但本批没有引入"这份材料的使用权限是谁给的"
+#                   这一问询机制，如实保持常量、不假装已经判断，登记为新的已知限制（见
+#                   P0_STRUCTURAL_GAPS 对应条目），不是延续旧理由。
+#   freshness    ── **B-3 修复后有真实代码读者**：不再恒为 FRESH。verbatim 陈述
+#                   （provenance=USER_DIRECT）仍是 FRESH（刚说出口，天然新鲜）；上传材料
+#                   （provenance=SOURCED_MATERIAL）改判 UNKNOWN——P0 拿不到文件的真实生成
+#                   时间，声称"新鲜"是编造，声称"过期"同样是编造，UNKNOWN 才是诚实值。
+#                   由确定性代码从 provenance 派生，不新增 LLM patch key（模型无法可靠判断
+#                   一份文件内容的真实新旧）。
 #
 # 为什么 provenance / confirmation 这两维没有、也不需要一个运行时守卫：P0 的
 # _merge_evidence_item 是**纯追加、永不修改既有条目**，所以两条冻结硬约束
@@ -161,6 +228,12 @@ VALID_EVIDENCE_NATURE_PATCH = ["UNSTATED", "FACT", "PREFERENCE", "REFERENCE"]
 # 推导——任务的时间作用域不等于某条证据的适用层级。
 VALID_EVIDENCE_SCOPE = ["UNSTATED"] + EVIDENCE_DIMENSION_VOCAB["scope"]
 
+# B-3 修复：evidence_provenance 的 LLM patch 侧合法取值。**只开放词表五个真实取值里已经
+# 建成物理通道的两个**：USER_DIRECT（对话原话）、SOURCED_MATERIAL（本轮上传材料，见
+# m1_extract/m1_join 节点）。VALID_HISTORICAL_ARTIFACT/AUTHORIZED_EXTERNAL/SYSTEM_DERIVED
+# 没有对应输入通道，开放给模型只会诱导它编造来源，故不在此列。
+VALID_EVIDENCE_PROVENANCE_PATCH = ["USER_DIRECT", "SOURCED_MATERIAL"]
+
 # 影子节点必须原样返回的扁平字段集合（v0.1 最小切片覆盖 P0 核心行为；v0.2 扩展第一批：
 # account_stage / expression_discretion / capacity_triad；v0.3 扩展第二批：evidence_bundle[]
 # 的三个粗粒度信号 evidence_text / evidence_nature / evidence_scope）。
@@ -179,6 +252,10 @@ VALID_EVIDENCE_SCOPE = ["UNSTATED"] + EVIDENCE_DIMENSION_VOCAB["scope"]
 # business_goal_categories[]（设计文档 §二 #3/#4）。这三项此前在快照里要么有物理数组却
 # **没有任何写入路径**（前两个恒为空数组），要么连物理字段都没有（第三个）——即"结构在、
 # 语义不可达"。同样只加扁平字符串/枚举，每轮各最多一条，由 _merge_patch 去重 append。
+# v0.7 扩展第四批：B-3（合法资料输入通道）／B-4（多能力选择）。
+#   requested_capability → requested_capabilities_text：**改名不改型**，仍是扁平字符串，
+#     不引入数组/嵌套对象（见 _parse_capabilities_text 注释，B-4 修复）。
+#   evidence_provenance：新增字段，B-3 修复后 provenance 维度首次有真实可变取值。
 PATCH_KEYS = {
     "route_intent",
     "current_task_text",
@@ -188,7 +265,7 @@ PATCH_KEYS = {
     "priority_order_text",
     "non_sacrifice_constraint_text",
     "business_goal_category",
-    "requested_capability",
+    "requested_capabilities_text",
     "confirmation_signal",
     "side_question",
     "user_message_summary",
@@ -203,6 +280,10 @@ PATCH_KEYS = {
     "evidence_text",
     "evidence_nature",
     "evidence_scope",
+    "evidence_provenance",
+    # B-5 修复第五批：短指代绑定（handled_thread_id）与实际撤销机制（cancel_target）。
+    "handled_thread_id",
+    "cancel_target",
 }
 
 
@@ -261,10 +342,13 @@ def _default_snapshot():
         # 冻结硬约束「参考资料和历史产物不得覆盖用户已经确认的事实」在 P0 因此天然不可违反。
         "evidence_bundle": [],
         # 市场观察（设计文档 §二 #10）：本批 **DEFER，未实现**。
-        # M1 候选环境里没有任何合法的市场数据通道（DSL 无 Tool 节点、file_upload.enabled=False、
-        # 无联网；仓库红线与共享合同一 §八 均把全平台市场情报爬虫列为非目标），消费者
-        # CAP-03/CAP-05 又正是当前 NO_ENTRY_CAPABILITIES；observed_at 由编译器补即伪造采集
-        # 时间，validity 由代码评级即新增自动评分器。
+        # **B-3 修复后更正**：DSL 已有 Tool 无关的 file_upload 通道（不再是 enabled=False），
+        # 但这条 DEFER 结论不受影响——file_upload 建成的是"用户主动提供一份自己的资料"这条
+        # 通道，不是自动化的市场情报采集；market_observations 语义上要求的是运行期主动
+        # 联网/调用工具获取的外部市场数据，本环境仍然没有 Tool 节点、没有联网能力，仓库红线
+        # 与共享合同一 §八也仍把全平台市场情报爬虫列为非目标，消费者 CAP-03/CAP-05 仍是
+        # NO_ENTRY_CAPABILITIES；observed_at 由编译器补即伪造采集时间，validity 由代码评级
+        # 即新增自动评分器。
         # **口径（不得只留空数组）**：孤零零的 [] 会被下游读成"查过了，没有"——那是不实主张
         # （共享合同一 §六「没有市场资料时不得声称已完成市场比较」）。因此 _compute_gaps 恒定
         # 输出一条 market_observations 的 DEGRADED/NOT_CAPTURED_IN_P0_SNAPSHOT 缺口，二者必须
@@ -314,9 +398,12 @@ def _validate_patch(patch):
     ri = patch.get("route_intent")
     if ri is not None and ri not in VALID_ROUTE_INTENT:
         return False, "ILLEGAL_ENUM:route_intent:" + str(ri)
-    rc = patch.get("requested_capability", "NONE")
-    if rc not in VALID_REQUESTED_CAPABILITY:
-        return False, "ILLEGAL_ENUM:requested_capability:" + str(rc)
+    rc_text = patch.get("requested_capabilities_text", "")
+    if not isinstance(rc_text, str):
+        return False, "ILLEGAL_TYPE:requested_capabilities_text:NOT_STRING"
+    for item in _parse_capabilities_text(rc_text):
+        if item not in CAPABILITIES:
+            return False, "ILLEGAL_ENUM:requested_capabilities_text:" + item
     for key in DISCRETION_KEYS:
         val = patch.get(key, "UNSTATED")
         if val not in VALID_DISCRETION:
@@ -332,17 +419,39 @@ def _validate_patch(patch):
     es = patch.get("evidence_scope", "UNSTATED")
     if es not in VALID_EVIDENCE_SCOPE:
         return False, "ILLEGAL_ENUM:evidence_scope:" + str(es)
+    # B-3：evidence_provenance 校验，缺省 USER_DIRECT（没有材料被采纳的一轮，来源就是对话本身）。
+    ep = patch.get("evidence_provenance", "USER_DIRECT")
+    if ep not in VALID_EVIDENCE_PROVENANCE_PATCH:
+        return False, "ILLEGAL_ENUM:evidence_provenance:" + str(ep)
     # v0.4：同样只追加一条枚举校验，整体拒绝语义不变（secondary_goal_text /
     # priority_order_text 是自由文本，没有枚举空间可校验）。
     bgc = patch.get("business_goal_category", "UNSTATED")
     if bgc not in VALID_BUSINESS_GOAL_CATEGORY:
         return False, "ILLEGAL_ENUM:business_goal_category:" + str(bgc)
+    # B-5：handled_thread_id 是自由文本（模型原样复制一个 open_threads[].id 或留空），
+    # 没有枚举空间可校验，只校验类型；真正存在性校验在 _merge_patch 里做（那里才有
+    # snap["open_threads"] 的实际内容，找不到匹配就静默忽略，不是校验失败）。
+    hti = patch.get("handled_thread_id", "")
+    if not isinstance(hti, str):
+        return False, "ILLEGAL_TYPE:handled_thread_id:NOT_STRING"
+    ct = patch.get("cancel_target", "NONE")
+    if ct not in VALID_CANCEL_TARGET:
+        return False, "ILLEGAL_ENUM:cancel_target:" + str(ct)
     return True, ""
 
 
-def _merge_evidence_item(snap, patch):
+def _merge_evidence_item(snap, patch, material_present):
     """把本轮 patch 的单条粗粒度证据信号写入 evidence_bundle[]，返回
-    (appended: bool, dropped_incomplete: bool)。
+    (appended: bool, dropped_incomplete: bool, provenance_downgraded: bool)。
+
+    material_present：本轮 m1_join 抽取出的材料文本是否非空（由 main() 传入，来自
+    m1_extract/m1_join 节点链路，不是 patch 的一部分）。**对抗式审查发现的真实缺口，
+    已修复**：此前 evidence_provenance 完全由模型自称，m1_compiler 节点根本没有接入
+    m1_join 的输出，模型说 SOURCED_MATERIAL 就是 SOURCED_MATERIAL，没有任何代码核实
+    ——这正是 B-3 修复之前就在批判的"伪造来源"，只是把伪造的主体从代码换成了模型。
+    现在如果模型声称 SOURCED_MATERIAL 但本轮客观上没有材料文本，代码把它降级回
+    USER_DIRECT（更保守的默认，而不是维持一条无法核实的第三方来源断言），并把这次
+    降级如实记录进 turn_report_json（机器可读通道，不进 dialogue_directive）。
 
     **P0 纯追加：任何情况下都不修改既有条目。** 这件事本身就是冻结约束二（参考资料和历史
     产物不得覆盖用户已经确认的事实）的完整实现——本函数只有 append 一条路径，没有任何修改
@@ -356,45 +465,54 @@ def _merge_evidence_item(snap, patch):
     用户确认；同理轮级 DECLINE 也不得写成 REJECTED（与 v0.2 account_stage.confirmation 固定
     SYSTEM_TENTATIVE 是同一条已裁决的理由）。
 
-    七个维度的默认值（P0 只有 nature / scope 两维可以偏离，其余五维不可偏离——偏离需要新的
-    物理通道：资料上传／工具调用／按字段确认交互／生命周期时钟，属 M4/M5 范围）：
+    七个维度的默认值（B-3 修复后 P0 有 nature / scope / provenance / freshness 四维可以
+    偏离，confirmation / availability / permission 三维仍不可偏离——偏离仍需要新的物理
+    通道：工具调用／按字段确认交互／生命周期时钟／材料权属问询，属后续批次或 M4/M5 范围）：
       nature       ← LLM 给出（唯一只有模型能读出的维度：代码分不清"我们店在杭州"是事实、
                      "我不喜欢强 CTA"是偏好），代码不得代填默认值
-      provenance   ← 恒为 USER_DIRECT（本环境唯一的信息入口就是用户这一轮的自然语言；
-                     写成 SOURCED_MATERIAL 等值即伪造来源，所以也不需要 LLM 字段）
+      provenance   ← 取 patch 的 evidence_provenance，缺省 USER_DIRECT。**B-3 新增的真实
+                     可变维度**：本轮证据若来自 m1_extract/m1_join 抽取的上传材料内容，模型
+                     应给 SOURCED_MATERIAL；来自对话原话仍是 USER_DIRECT。
       confirmation ← 恒为 SYSTEM_TENTATIVE（见上）
       scope        ← 取 patch 值，缺省 UNSTATED；**绝不从 current_task.temporal_scope 推导**
       availability ← 恒为 AVAILABLE（本数组只承载"已经拿到的信息"；UNKNOWN/NOT_PROVIDED/
                      DECLINED/STALE 属于"没拿到"，归 gaps[]；STALE/EXPIRED 还需要生命周期
                      时钟，P0 没有，已由 _compute_gaps 结构性条目如实登记）
       permission   ← 恒为 OWNED_BY_USER（Execution Prompt v1.2 §4.3 逐字要求的权限维度）。
-                     本环境唯一的输入渠道是用户自己陈述自己的经营信息，不涉及第三方材料的
-                     使用权限问题，所以 P0 唯一可达值就是它；THIRD_PARTY_REQUIRES_CONSENT /
-                     UNKNOWN 要等材料／历史产物输入通道真正建成后才可能被真实使用。
-                     **不接受任何入参覆盖，也不新增 LLM 字段**——没有可变的信息来源时，加一个
-                     模型字段只会制造"这一维在被判断"的假象。已由 _compute_gaps 结构性条目登记。
-      freshness    ← 恒为 FRESH（Prompt §4.3 的时效维度，同时承接共享合同一 §三"作用域与
-                     有效期"后半句"生效时间是否仍有效"）。这条证据刚被用户在当前会话里说出口，
-                     天然新鲜；P0 没有生命周期时钟，无法判断一条证据是否"已过期"，所以 STALE /
-                     UNKNOWN 不可达。同样是字面常量、不接受入参覆盖、不新增 LLM 字段，
-                     已由 _compute_gaps 结构性条目登记。
+                     B-3 修复后本环境已有材料上传通道，第三方材料在物理上可能出现，但本批
+                     没有引入"这份材料的使用权限归属"问询机制，如实保持常量、不假装已判断，
+                     **不接受入参覆盖，也不新增 LLM 字段**——加一个模型字段只会制造"这一维
+                     在被判断"的假象，登记为已知限制（见 P0_STRUCTURAL_GAPS）。
+      freshness    ← 由 provenance 派生（确定性代码，非 LLM 字段）：USER_DIRECT → FRESH
+                     （刚说出口，天然新鲜）；SOURCED_MATERIAL → UNKNOWN（P0 拿不到文件的
+                     真实生成时间，声称新鲜或过期都是编造）。承接 Prompt §4.3 的时效维度
+                     与共享合同一 §三"作用域与有效期"后半句"生效时间是否仍有效"。
     """
     text = (patch.get("evidence_text") or "").strip()
     if not text:
-        return False, False
+        return False, False, False
 
     nature = patch.get("evidence_nature", "UNSTATED")
     if nature not in VALID_EVIDENCE_NATURE_PATCH:
         # 正常路径下 _validate_patch 已整体拒绝；这里是 helper 被直接调用时的取值门禁，
         # 防止绕过校验写进一个词表外的（或 SYSTEM_INFERENCE 这种模型不得自称的）性质。
         raise ValueError("ILLEGAL_EVIDENCE_NATURE:" + str(nature))
+
+    # provenance 的取值门禁与 nature 放在同一处、同一时机（对抗式审查发现的真实不一致：
+    # 此前这条检查放在下面的去重判断之后，导致"重复 text + 非法 provenance"的手工调用会
+    # 静默走去重分支返回 (False, False)，而不是像 nature 那样直接抛错——两条门禁语义相同，
+    # 必须在去重判断生效之前统一处理，不能因为写入顺序不同而表现不同）。
+    provenance = patch.get("evidence_provenance", "USER_DIRECT")
+    if provenance not in VALID_EVIDENCE_PROVENANCE_PATCH:
+        raise ValueError("ILLEGAL_EVIDENCE_PROVENANCE:" + str(provenance))
+
     if nature == "UNSTATED":
         # 维度不全（模型给了原话却没给性质）：**只跳过这一条证据**，本轮其余捕获（任务、
         # 目标、产能、裁量……）照常合并，reject_reason 保持不变，dialogue_directive 不变。
         # 不整体拒绝的四条理由见 _validate_patch 注释与设计说明；代码无法诚实推导一条信息
         # 是事实还是偏好，所以宁可不写，也不补一个默认 nature。这一轮的丢弃由
         # turn_report_json.evidence_dropped_incomplete 如实登记在不面向用户的通道里。
-        return False, True
+        return False, True, False
 
     # 与 _compute_gaps / compute_call_intent 的 `.get(...) or []` / isinstance 防御同一风格：
     # helper 可能被直接喂一份手工构造的、或早于 v0.3 持久化的快照（没有这个顶层键）。
@@ -404,33 +522,48 @@ def _merge_evidence_item(snap, patch):
         # 去重沿用 non_sacrifice_constraints 的 `not in` 先例：同 text 已存在则不追加、
         # 不 bump revision，也不修改既有条目。
         if item.get("text") == text:
-            return False, False
+            return False, False, False
+
+    # B-3 的核实修复：SOURCED_MATERIAL 是模型对"这条信息来自本轮上传材料"的自我声明，
+    # 不是代码独立核实的事实。唯一能核实的信号是 material_present（本轮 m1_join 是否真的
+    # 抽出了非空文本）——声称来自材料但本轮客观没有材料，代码不予采信，降级为 USER_DIRECT。
+    downgraded = False
+    if provenance == "SOURCED_MATERIAL" and not material_present:
+        provenance = "USER_DIRECT"
+        downgraded = True
+    freshness = "FRESH" if provenance == "USER_DIRECT" else "UNKNOWN"
 
     snap["evidence_bundle"].append(
         {
             "id": "ev_%03d" % (len(snap["evidence_bundle"]) + 1),
             "text": text,
             "nature": nature,
-            "provenance": "USER_DIRECT",
+            "provenance": provenance,
             "confirmation": "SYSTEM_TENTATIVE",
             "scope": patch.get("evidence_scope", "UNSTATED"),
             "availability": "AVAILABLE",
             "permission": "OWNED_BY_USER",
-            "freshness": "FRESH",
+            "freshness": freshness,
             # 取增量前的 revision，与 open_threads.raised_at_revision 同一时序先例。
             # 只有这一个整数，没有变更历史、没有事件流、没有回放——不是事件溯源。
             "captured_at_revision": snap["revision"],
         }
     )
-    return True, False
+    return True, False, downgraded
 
 
-def _merge_patch(snap, patch):
+def _merge_patch(snap, patch, material_present=False):
     """把校验通过的 patch 合并进快照。只有用户本轮真的说出口的内容才写入
     （不得把 §四 冻结的"不得把用户没说的目标写成已确认"违反）。
 
-    返回 (snap, changed, evidence_dropped_incomplete)。第三个值只用于机器可读的
-    turn_report_json，不进入 dialogue_directive、不影响 patch_ok。
+    material_present：本轮 m1_join 是否真的抽出了非空材料文本，透传给
+    _merge_evidence_item 核实 evidence_provenance=SOURCED_MATERIAL 的声明（B-3 修复）。
+
+    返回 (snap, changed, evidence_dropped_incomplete, evidence_provenance_downgraded,
+    cancel_effect, content_changed)。除 changed 外均只用于机器可读通道或
+    _dialogue_directive 组织如实反馈，不影响 patch_ok。cancel_effect 见下方 B-5 撤销
+    机制注释，None 表示本轮不涉及。content_changed 见函数末尾注释——与 changed 的唯一
+    差异是排除了"仅仅是线程被标记 HANDLED"这一种情况。
     """
     changed = False
 
@@ -444,6 +577,69 @@ def _merge_patch(snap, patch):
     if goal:
         snap["goal_structure"]["primary_goal"] = goal
         changed = True
+
+    # **对抗式审查发现的两个真实缺口，已修复，均通过把下面两块提到本轮任何"追加新内容"
+    # 之前来解决**：
+    #
+    # 缺口一（数据丢失）：如果这两块放在 secondary_goal/non_sacrifice_constraint/
+    # business_goal_category 的追加逻辑**之后**（此前的顺序），用户在同一句话里"撤销 A、
+    # 同时说出 B"（比如"算了，不要涨粉了，改成兼顾口碑"）会先把 B 追加进列表，再撤销逻辑
+    # 弹出列表最后一项——弹出的是刚追加的 B，不是本该撤销的 A，直接吞掉用户这一轮真正说
+    # 出口的新内容，且对话反馈还会把这个错误当成"成功撤销"讲给用户听。
+    #
+    # 缺口二（状态被污染）：handled_thread_id 如果放在 side_question 追加**之后**，模型
+    # 引用一个本轮才由 side_question 新建的 id（这个 id 在模型看到的快照里根本不存在，
+    # 纯属幻觉）会被当成合法匹配，把用户刚提出的新问题直接判定成"已处理"，不会被
+    # 追问、不会被计入 open_threads_open_count——一个查无实据的 id 反而生效了，
+    # 而不是被安全忽略。
+    #
+    # 把这两块移到这里（在任何本轮追加动作之前），它们看到的 open_threads/secondary_goals/
+    # non_sacrifice_constraints/business_goal_categories 都严格是**本轮开始前**的状态，
+    # 不可能撤销或匹配到本轮才刚写入的内容。
+
+    # B-5 修复（短指代绑定）：模型能看到 snapshot_json 里 open_threads[] 的全部 id/text/
+    # status（跟着 {{#conversation.snapshot_json#}} 一起进它的 prompt），当用户本轮的话
+    # 是在回应/处理其中一条时，只需要原样复制这条已存在的 id 回来——不需要模型做模糊匹配，
+    # 代码只负责校验这个 id 真的存在且状态还没到终态。找不到匹配（模型引用了不存在的、或
+    # 已经是 HANDLED 的 id）时静默忽略：这是模型自己的判断信号，不是用户直接陈述的事实，
+    # 宁可漏判，也不能凭一个查无实据的 id 编造一次状态转换。
+    #
+    # **对抗式审查发现的第三个真实缺口，已修复**：这里不直接把 `changed` 置 True，只记录
+    # thread_handled_this_turn——纯粹的"线程标记已处理"不是用户本轮说出口的新内容，如果
+    # 直接算进 changed，会让下面 CANCEL 分支的"没有绑定到具体动作"诚实反馈被错误跳过
+    # （用户说"这件事不用管了"时，route_intent=CANCEL 与 handled_thread_id 很自然地同时
+    # 出现，见 _dialogue_directive 里 content_changed 的计算与使用）。函数末尾会再把
+    # thread_handled_this_turn 并入最终返回的 changed（该状态转换仍然是真实变化，仍然
+    # 推进 revision），只是不计入"是否有值得对话 LLM 描述的新内容"这个更窄的判断。
+    thread_handled_this_turn = False
+    handled_id = (patch.get("handled_thread_id") or "").strip()
+    if handled_id:
+        for t in snap["open_threads"]:
+            if t.get("id") == handled_id and t.get("status") in ("OPEN", "SURFACED"):
+                t["status"] = "HANDLED"
+                thread_handled_this_turn = True
+                break
+
+    # B-5 修复（实际撤销机制）：只覆盖三个纯追加、此前完全没有移除路径的集合（见
+    # VALID_CANCEL_TARGET 注释）。两个信号必须同时成立才触发移除：route_intent=CANCEL
+    # （用户确实在表达撤销）且 cancel_target 指明具体分类（不是含混的"算了"）——避免模型
+    # 单独填错 cancel_target 却没有真正的撤销意图时误删用户数据。只移除**最近一条**，
+    # 定点删除历史中某一条需要额外的指代能力，本批不做。
+    cancel_target = patch.get("cancel_target", "NONE")
+    cancel_effect = None
+    if patch.get("route_intent") == "CANCEL" and cancel_target != "NONE":
+        if cancel_target == "SECONDARY_GOAL":
+            target_list = snap["goal_structure"]["secondary_goals"]
+        elif cancel_target == "NON_SACRIFICE_CONSTRAINT":
+            target_list = snap["goal_structure"]["non_sacrifice_constraints"]
+        else:  # BUSINESS_GOAL_CATEGORY —— VALID_CANCEL_TARGET 里唯一剩下的非 NONE 取值
+            target_list = snap.setdefault("business_goal_categories", [])
+        if target_list:
+            removed_text = target_list.pop()
+            changed = True
+            cancel_effect = {"target": cancel_target, "removed_text": removed_text}
+        else:
+            cancel_effect = {"target": cancel_target, "removed_text": None}
 
     # 次目标：与 non_sacrifice_constraints 同构（自由文本、每轮最多一条、`not in` 去重、
     # 追加不覆盖）——次目标彼此不互斥，用户说"也想兼顾 A""也想兼顾 B"是在累加，不是在
@@ -524,14 +720,25 @@ def _merge_patch(snap, patch):
 
     # evidence_bundle 必须在 revision 自增之前合并：captured_at_revision 取的是增量前的
     # revision（与 open_threads.raised_at_revision 同一时序先例）。
-    evidence_appended, evidence_dropped_incomplete = _merge_evidence_item(snap, patch)
+    evidence_appended, evidence_dropped_incomplete, evidence_provenance_downgraded = (
+        _merge_evidence_item(snap, patch, material_present)
+    )
     if evidence_appended:
+        changed = True
+
+    # content_changed：**在**并入 thread_handled_this_turn 之前的 changed 快照，供
+    # _dialogue_directive 判断"本轮有没有值得对话 LLM 描述的新内容"（对抗式审查发现的
+    # 第四个真实缺口的修复：纯粹的线程标记已处理不算这类新内容，否则会错误跳过 CANCEL
+    # 分支"没有绑定到具体动作"的诚实反馈——用户说"这件事不用管了"时 route_intent=CANCEL
+    # 与 handled_thread_id 很自然地同时出现）。
+    content_changed = changed
+    if thread_handled_this_turn:
         changed = True
 
     if changed:
         snap["revision"] = snap["revision"] + 1
 
-    return snap, changed, evidence_dropped_incomplete
+    return snap, changed, evidence_dropped_incomplete, evidence_provenance_downgraded, cancel_effect, content_changed
 
 
 # ---- gaps[]：缺失信息与已降级项（设计文档 §二 #11）----
@@ -582,17 +789,22 @@ P0_STRUCTURAL_GAPS = [
         "status": "DEGRADED",
         "degraded_to": "ALWAYS_AVAILABLE_NO_LIFECYCLE_CLOCK",
     },
-    # v0.4 新增的两个维度同理：两者在 P0 都只有一个可达值，不是真正被逐条判断出来的结果。
-    # 写进条目却不登记降级，等于让下游把"恒定常量"读成"系统判断过权限/时效"。
+    # permission 在 P0 仍只有一个可达值，不是真正被逐条判断出来的结果。写进条目却不登记
+    # 降级，等于让下游把"恒定常量"读成"系统判断过权限"。**B-3 修复后旧的 degraded_to 理由
+    # （"没有第三方材料通道"）已经失真**——材料上传通道已建成，第三方材料在物理上可能出现，
+    # 只是本批没有引入材料权属问询机制，如实改写为新理由，不是延续旧结论。
     {
         "field_ref": "evidence_bundle[].permission",
         "status": "DEGRADED",
-        "degraded_to": "ALWAYS_OWNED_BY_USER_NO_THIRD_PARTY_MATERIAL_CHANNEL",
+        "degraded_to": "ALWAYS_OWNED_BY_USER_NO_MATERIAL_OWNERSHIP_INQUIRY_CHANNEL",
     },
+    # freshness 自 B-3 起不再是恒定常量（USER_DIRECT→FRESH，SOURCED_MATERIAL→UNKNOWN，
+    # 见 _merge_evidence_item），这条改登记为"仍只有粗粒度二值判断，无法判断材料的真实
+    # 生成时间"，不是"全恒定"。
     {
         "field_ref": "evidence_bundle[].freshness",
         "status": "DEGRADED",
-        "degraded_to": "ALWAYS_FRESH_NO_LIFECYCLE_CLOCK",
+        "degraded_to": "COARSE_TWO_VALUE_NO_REAL_DOCUMENT_AGE_FOR_SOURCED_MATERIAL",
     },
 ]
 
@@ -693,12 +905,11 @@ def _capability_input_status(snap, cap_id):
     return "BLOCKED", "UNKNOWN_CAPABILITY"
 
 
-def compute_call_intent(snap, requested_capability):
+def compute_call_intent(snap, requested_capabilities):
+    """requested_capabilities：已解析、去重、保序的能力代码列表（见
+    _parse_capabilities_text，B-4 修复）。空列表表示本轮没有点名任何能力。"""
     per_capability = {}
-    needed = []
-
-    if requested_capability and requested_capability != "NONE":
-        needed = [requested_capability]
+    needed = list(requested_capabilities or [])
 
     for cap_id in CAPABILITIES:
         status, reason = _capability_input_status(snap, cap_id)
@@ -723,12 +934,13 @@ def compute_call_intent(snap, requested_capability):
     open_now = [t for t in snap["open_threads"] if t.get("status") == "OPEN"]
 
     # 共享合同一 §五「只追问真正阻塞当前任务的一项，其余作为缺口继续运行」的机制化落地。
-    # 阻塞集合只在"本轮请求了某项能力、且该能力当轮判定为 BLOCKED"时才非空；否则为空集，
-    # 全部缺口都是非阻塞缺口——这与"没有任何一项在阻塞"是同一件事，不需要额外分支。
+    # 阻塞集合是本轮**全部**被请求且判定为 BLOCKED 的能力的阻塞字段并集（B-4 修复前只可能
+    # 有一项被请求，并集退化成单项，行为不变；现在可能有多项同时被请求并同时 BLOCKED）。
     blocking_field_refs = set()
-    requested_info = per_capability.get(requested_capability) if requested_capability else None
-    if requested_info and requested_info["status"] == "BLOCKED":
-        blocking_field_refs = set(BLOCK_REASON_BLOCKING_FIELD_REFS.get(requested_info["block_reason"], []))
+    for cap_id in needed:
+        requested_info = per_capability.get(cap_id)
+        if requested_info and requested_info["status"] == "BLOCKED":
+            blocking_field_refs |= set(BLOCK_REASON_BLOCKING_FIELD_REFS.get(requested_info["block_reason"], []))
 
     # gaps 正常由 main() 在合并后、调用本函数前重算写入；若调用方喂来的快照没有该键，
     # 这里自行重算而不是退化成空列表——空列表会被读成"查过了，没有缺口"，那是不实主张。
@@ -748,18 +960,26 @@ def compute_call_intent(snap, requested_capability):
     }
 
 
-def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capability,
-                        current_route_intent=None, changed=False):
+def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capabilities,
+                        current_route_intent=None, changed=False, cancel_effect=None):
     """给对话 LLM 的确定性指令，不让模型自己判断状态或编造原因（继承 A-4 纪律）。
 
     current_route_intent：**本轮 patch 里的原始 route_intent**，不是 snap["last_route_intent"]。
     后者是跨轮持久化的"最后一次"，只读它会让一次取消表达在之后每一轮都被误判成"还在撤销中"。
     patch 未通过时调用方传 None（那种轮次本来就没有可信的本轮意图）。
 
-    changed：本轮 _merge_patch 是否真的改动了快照其他部分。用来防止 CANCEL 分支说出"没有任何
-    内容被撤销或删除"这句话——如果用户在同一轮里既说了"算了取消"又给出了新内容（比如"算了，
-    改成做家居内容"），新内容会正常覆盖旧值，"没有任何内容被撤销或删除"在这种轮次就是假话
-    （对抗式审查真实发现的问题）。changed=True 时跳过这句断言，只让其余分支如实描述当前状态。
+    changed：**调用方传入的实为 _merge_patch 返回的 content_changed，不是它返回的 changed**
+    （对抗式审查发现的真实问题：早期版本直接传 changed，会把"仅仅是某条 open_thread 被标记
+    HANDLED"也算作"有内容变化"，导致用户说"这件事不用管了"——route_intent=CANCEL 与
+    handled_thread_id 同时出现的自然表达——时，下面的诚实反馈被错误跳过，变成整轮沉默）。
+    用来防止 CANCEL 分支说出"没有任何内容被撤销或删除"这句话——如果用户在同一轮里既说了
+    "算了取消"又给出了新内容（比如"算了，改成做家居内容"），新内容会正常覆盖旧值，"没有
+    任何内容被撤销或删除"在这种轮次就是假话（对抗式审查真实发现的问题）。changed=True 时
+    跳过这句断言，只让其余分支如实描述当前状态。
+
+    cancel_effect：B-5 修复新增，_merge_patch 算好的实际撤销结果（见该函数注释），三种取值：
+    None（本轮没有指明具体撤销分类）／{"removed_text": 具体内容}（真的撤销了一条）／
+    {"removed_text": None}（指明了分类但那个分类下当前没有可撤销的内容）。
     """
     if not patch_ok:
         if reject_reason == SHADOW_NODE_FAILED:
@@ -778,24 +998,57 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
 
     parts = []
 
-    # 用户本轮表达了撤回/取消。**本批只做诚实反馈，不实现撤销状态机**：按字段撤销需要什么样的
-    # 状态机是设计判断，与 account_stage/open_threads 的"按字段确认状态机"同一类，不在本批
-    # 擅自新建。此前 route_intent 写进 last_route_intent 后从未被任何分支读过，用户说"算了、
-    # 取消"时系统一声不吭继续走别的逻辑——那是靠沉默造成的不实。
+    # 用户本轮表达了撤回/取消。**B-5 修复：cancel_target 指明具体分类时，是真实撤销机制**
+    # （见 _merge_patch 注释），不再是"只做诚实反馈,不实现撤销状态机"——那句旧话只对
+    # "没有指明具体分类"这种含混情况仍然成立，因为按其它字段撤销需要的历史栈/额外指代能力
+    # 是真正的设计判断，不在本批擅自新建（同一类范围裁定见 VALID_CANCEL_TARGET 注释）。
     #
-    # 只在本轮**没有其他状态变化**时才说"没有任何内容被撤销或删除"——用户完全可能在同一句话
-    # 里既说取消又给出新内容（"算了，改成做家居内容"），这种情况下旧值确实被新值覆盖了，
-    # 断言"什么都没变"就是假话（对抗式审查真实发现的问题，不是假设）。changed=True 时只让
-    # 其余分支如实描述当前状态（比如下面会附加"当前任务：改成做家居内容"），不再重复这句话。
-    # 追问措辞也刻意不要求用户"说清楚具体想撤回哪一项"——系统本来就接不住任何具体答案，
-    # 追问一个自己无法处理的答案本身就是一种隐含的虚假承诺；改为如实说明限制、正常继续对话。
-    if current_route_intent == "CANCEL" and not changed:
-        parts.append(
-            "用户这一轮表达了要取消或撤回。当前系统这边并没有把撤回绑定到任何具体动作上，"
-            "所以实际上没有任何内容被撤销或删除。如实告诉用户这一点，不要说已经撤销了什么，"
-            "也不要说正在处理撤销；不必追问具体想撤销哪一项（当前环境接不住这类追问的答案），"
-            "直接请用户按自己的想法继续说明接下来要做什么即可。"
-        )
+    # 三条分支，按 cancel_effect 的形状区分：
+    #   1) 真的撤销了一条内容（removed_text 非空）→ 明确告知撤销的具体分类和内容。
+    #   2) 指明了分类但那个分类下当前没有可撤销的内容（removed_text 是 None）→ 如实说明
+    #      "没有可撤销的内容"，不得声称已经撤销了什么。
+    #   3) 没有指明具体分类（cancel_effect 是 None）且本轮**没有其他状态变化**→ 沿用此前
+    #      已修复的诚实反馈："没有把撤回绑定到任何具体动作"。用户完全可能在同一句话里既说
+    #      取消又给出新内容（"算了，改成做家居内容"），这种情况下旧值确实被新值覆盖了，
+    #      断言"什么都没变"就是假话（对抗式审查真实发现的问题，不是假设）——changed=True
+    #      时跳过这句断言，交给下面的分支如实描述当前状态即可。
+    if current_route_intent == "CANCEL":
+        if cancel_effect and cancel_effect["removed_text"] is not None:
+            label = CANCEL_TARGET_LABEL_ZH.get(cancel_effect["target"], cancel_effect["target"])
+            removed_display = cancel_effect["removed_text"]
+            # **对抗式审查发现的真实泄漏，已修复**：business_goal_categories 存的是内部
+            # 枚举代码（如 "STORE_VISIT"），不是用户原话；直接拼进指令文本会被对话 LLM
+            # 当成用户说过的话复述出来，是 CE-A2 那一类缺陷的新触发口（CAPABILITY_LABEL_ZH/
+            # BLOCK_REASON_LABEL_ZH 已经在处理这一类问题，这里补上第三处遗漏）。
+            if cancel_effect["target"] == "BUSINESS_GOAL_CATEGORY":
+                removed_display = BUSINESS_GOAL_CATEGORY_LABEL_ZH.get(removed_display, removed_display)
+            parts.append(
+                "用户这一轮要求撤销，已经把最近说的一条" + label + "去掉了：" + removed_display
+                + "。如实告知这个具体撤销结果，不要复述成其它内容。"
+            )
+        elif cancel_effect and cancel_effect["removed_text"] is None:
+            label = CANCEL_TARGET_LABEL_ZH.get(cancel_effect["target"], cancel_effect["target"])
+            parts.append(
+                "用户这一轮要求撤销" + label + "，但当前这个分类下没有记录任何可撤销的内容。"
+                "如实告知这一点，不要声称已经撤销了什么。"
+            )
+        elif not changed:
+            # **对抗式审查发现的措辞问题，已修复**：不得断言"用户没有指明"——cancel_target
+            # 是影子模型的解析结果，指明不明确既可能是用户真的说得含混，也可能是模型没
+            # 解析出来；把这个不确定性单方面归给用户是不实归因，与
+            # test_directive_does_not_overclaim_user_named_the_capability 锁定的同一条
+            # 纪律（不得断言"用户点名"）性质相同。措辞改回只描述系统这边的状态，不对用户
+            # 表达的清晰度下判断。
+            parts.append(
+                "用户这一轮表达了要取消或撤回。当前系统这边并没有把这次撤回绑定到任何具体"
+                "动作上，所以实际上没有任何内容被撤销或删除。如实告诉用户这一点，不要说"
+                "已经撤销了什么，也不要说正在处理撤销；可以提示用户，如果是想撤销最近说过"
+                "的某一条次要目标、不可让步条件或经营目标类别，可以再具体说明是哪一类；"
+                "不必追问其它当前环境接不住答案的撤销请求。"
+            )
+        # 剩下一种情况：cancel_effect 是 None 且 changed=True——用户同一轮里除了含混的
+        # "算了"之外还给了新内容，新内容已经正常合并，交给下面的分支如实描述当前状态，
+        # 不重复"什么都没变"这句现在已经是假话的断言。
 
     if snap["current_task"]["text"]:
         parts.append("当前任务：" + snap["current_task"]["text"])
@@ -803,22 +1056,24 @@ def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_ca
         parts.append("当前系统这边确实还没有记录任何任务内容（不是用户表达得不够清楚，"
                       "也不是落库失败，就是还没有形成任务）。")
 
-    if requested_capability and requested_capability != "NONE":
-        info = call_intent["per_capability"].get(requested_capability)
-        if info:
-            label = CAPABILITY_LABEL_ZH.get(requested_capability, requested_capability)
-            if info["status"] == "BLOCKED":
-                reason_label = BLOCK_REASON_LABEL_ZH.get(info["block_reason"], str(info["block_reason"]))
-                parts.append(
-                    "当前识别到你想调用的能力是" + label + "，判定为阻塞，原因是：" + reason_label
-                    + "。如实告知，不编造网络或系统故障之类的原因。"
-                )
-            else:
-                parts.append(
-                    "当前识别到你想调用的能力是" + label + "，业务语义上可以直接进入，"
-                    "但本候选环境是独立评估，不代表主 Chatflow 会立即放行——如实说明这是"
-                    "M1 候选环境下的意图判定，不代表已经执行。"
-                )
+    # B-4 修复：本轮可能同时点名了多个能力，逐个描述各自状态，不再只能报告单一能力。
+    for cap_id in requested_capabilities or []:
+        info = call_intent["per_capability"].get(cap_id)
+        if not info:
+            continue
+        label = CAPABILITY_LABEL_ZH.get(cap_id, cap_id)
+        if info["status"] == "BLOCKED":
+            reason_label = BLOCK_REASON_LABEL_ZH.get(info["block_reason"], str(info["block_reason"]))
+            parts.append(
+                "当前识别到你想调用的能力是" + label + "，判定为阻塞，原因是：" + reason_label
+                + "。如实告知，不编造网络或系统故障之类的原因。"
+            )
+        else:
+            parts.append(
+                "当前识别到你想调用的能力是" + label + "，业务语义上可以直接进入，"
+                "但本候选环境是独立评估，不代表主 Chatflow 会立即放行——如实说明这是"
+                "M1 候选环境下的意图判定，不代表已经执行。"
+            )
 
     open_now = [t for t in snap["open_threads"] if t.get("status") == "OPEN"]
     if open_now:
@@ -910,7 +1165,11 @@ def project_content_task(snapshot, source_override=None, caller_supplied=None):
     }
 
 
-def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
+def main(user_query: str, snapshot_json: str, shadow_patch: dict, material_text: str = "") -> dict:
+    """material_text：m1_join 节点抽取并拼接后的本轮上传材料原文，默认空字符串（B-3 修复；
+    Dify 节点接线见 build_m1_candidate_dsl_v0.1.py 里 m1_compiler.variables 新增的
+    material_text 输入）。只用于核实 evidence_provenance=SOURCED_MATERIAL 的声明，不直接
+    进入快照或对话文本。"""
     try:
         snap = json.loads(snapshot_json) if snapshot_json else _default_snapshot()
     except Exception:
@@ -957,13 +1216,20 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
     # 不能读 snap["last_route_intent"]，那是跨轮的"最后一次"）。
     current_route_intent = patch.get("route_intent") if patch_ok and isinstance(patch, dict) else None
 
-    requested_capability = "NONE"
+    material_present = bool((material_text or "").strip())
+
+    requested_capabilities = []
     if patch_ok:
-        snap, changed, evidence_dropped_incomplete = _merge_patch(snap, patch)
-        requested_capability = patch.get("requested_capability", "NONE")
+        snap, changed, evidence_dropped_incomplete, evidence_provenance_downgraded, cancel_effect, content_changed = (
+            _merge_patch(snap, patch, material_present)
+        )
+        requested_capabilities = _parse_capabilities_text(patch.get("requested_capabilities_text", ""))
     else:
         changed = False
         evidence_dropped_incomplete = False
+        evidence_provenance_downgraded = False
+        cancel_effect = None
+        content_changed = False
 
     # gaps[] 每轮整体重算并覆写。**无条件执行**（不放在 if patch_ok 分支内）：patch 被拒绝的
     # 轮次同样重算，结果与上一轮相同，因为快照没变。这次覆写**不置 changed、不推进 revision**
@@ -973,9 +1239,10 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
     # 22 条合规视图的调用点（project_content_task）自行以 include_structural=True 重算。
     snap["gaps"] = _compute_gaps(snap, include_structural=False)
 
-    call_intent = compute_call_intent(snap, requested_capability)
+    call_intent = compute_call_intent(snap, requested_capabilities)
     directive = _dialogue_directive(
-        snap, patch_ok, reject_reason, call_intent, requested_capability, current_route_intent, changed
+        snap, patch_ok, reject_reason, call_intent, requested_capabilities, current_route_intent,
+        content_changed, cancel_effect,
     )
 
     return {
@@ -990,7 +1257,7 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
                 "patch_ok": patch_ok,
                 "reject_reason": reject_reason,
                 "revision": snap["revision"],
-                "requested_capability": requested_capability,
+                "requested_capabilities": requested_capabilities,
                 "needed_capabilities": call_intent["needed_capabilities"],
                 "open_threads_open_count": len(
                     [t for t in snap["open_threads"] if t.get("status") in ("OPEN", "SURFACED")]
@@ -999,6 +1266,10 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
                 # 用户**的机器可读通道里：dialogue_directive 不变、reject_reason 不变，
                 # 不给"内部枚举被对话 LLM 复述给用户"（CE-A2）这个已知缺陷新增触发器。
                 "evidence_dropped_incomplete": evidence_dropped_incomplete,
+                # B-3 修复：本轮是否发生了"模型声称材料来源，但客观没有材料文本"的降级。
+                # 如实登记在不面向用户的通道里，供 Reviewer/后续批次判断模型是否常态化
+                # 误判来源（若这条经常为 true，说明 evidence_provenance 判据需要重新设计）。
+                "evidence_provenance_downgraded": evidence_provenance_downgraded,
             },
             ensure_ascii=False,
         ),

@@ -33,13 +33,13 @@
 | criterion_id | prior_status（§8 正式审查独立判定） | prior_evidence_ref | contract_semantics_changed | implementation_or_environment_changed | action |
 |---|---|---|---|---|---|
 | M1-AC-00 | PARTIAL（缺 Run Manifest ID/Hash，基线引用有一处历史误记） | evidence §十二；L1/L2/L3 | 否 | 否（本 Manifest 本身即在补这个缺口） | REVERIFY_AFFECTED_SCOPE |
-| M1-AC-01 | PARTIAL→阻断 B-3（材料/历史产物无输入通道） | evidence §十二 | 否 | 否（B-3 本批明确不做，见 evidence §十三） | NOT_VERIFIED |
-| M1-AC-02 | PARTIAL（负向场景有覆盖，正向"显式长期表述→LONG_TERM_SUBJECT"未测） | evidence §十二 | 否 | 否 | NOT_VERIFIED |
+| M1-AC-01 | PARTIAL→阻断 B-3（材料/历史产物无输入通道） | evidence §十二 | 否 | **是**（B-3 已实现：真实 file_upload 通道 + document-extractor/join 节点链路 + evidence_provenance 真实来源区分；两轮对抗式审查各发现真实缺陷并已修复——详见 evidence §十六。**未经 live Dify 验证、未经独立 Reviewer 核验**，仅 executor_self_check + 确定性单测，行动值仍是 NOT_VERIFIED） | NOT_VERIFIED |
+| M1-AC-02 | PARTIAL（负向场景有覆盖，正向"显式长期表述→LONG_TERM_SUBJECT"未测） | evidence §十二 | 否 | 否（本批未处理，仍是已知缺口，不在 B-3/B-4/B-5 范围内） | NOT_VERIFIED |
 | M1-AC-03 | PARTIAL→阻断 B-1（次目标/优先级/经营目标类别无物理承载） | evidence §十二 | 否 | **是**（B-1 已修复：新增 3 个 patch key，`priority_order` 改为替换语义） | REVERIFY_AFFECTED_SCOPE |
-| M1-AC-04 | PARTIAL→阻断 B-2（`permission`/`freshness` 维度缺失） | evidence §十二 | 否 | **是**（B-2 已修复：新增两个常量维度 + gaps 登记 + 存量条目升级） | REVERIFY_AFFECTED_SCOPE |
+| M1-AC-04 | PARTIAL→阻断 B-2（`permission`/`freshness` 维度缺失） | evidence §十二 | 否 | **是**（B-2 已修复：新增两个常量维度 + gaps 登记 + 存量条目升级；B-3 进一步把 provenance/freshness 从恒定常量升级为真实可变值） | REVERIFY_AFFECTED_SCOPE |
 | M1-AC-05 | PARTIAL→阻断（`last_confirmation_signal` 从未被读取，拒绝补充后合法降级不可表达） | evidence §十二 | 否 | 否（本批未处理，范围内已知限制） | NOT_VERIFIED |
-| M1-AC-06 | PARTIAL→阻断 B-4（`needed_capabilities` 单值+关键词决定） | evidence §十二 | 措辞新增"不依赖固定链、**内部表单**或关键词标签"，语义方向不变 | 否（B-4 本批明确不做） | NOT_VERIFIED |
-| M1-AC-07 | PARTIAL→阻断 B-5（`CANCEL`/短指代/`HANDLED` 均无机制） | evidence §十二 | 否 | **是**（B-5 已修复诚实反馈；`HANDLED`/短指代仍未处理） | REVERIFY_AFFECTED_SCOPE |
+| M1-AC-06 | PARTIAL→阻断 B-4（`needed_capabilities` 单值+关键词决定） | evidence §十二 | 措辞新增"不依赖固定链、**内部表单**或关键词标签"，语义方向不变 | **是**（B-4 已实现：`requested_capabilities_text` 逗号分隔多能力，一轮可同时点名多项，阻塞字段并集正确处理；仍是扁平字符串，未引入未验证的数组结构。**未经 live Dify 验证、未经独立 Reviewer 核验**，行动值仍是 NOT_VERIFIED） | NOT_VERIFIED |
+| M1-AC-07 | PARTIAL→阻断 B-5（`CANCEL`/短指代/`HANDLED` 均无机制） | evidence §十二 | 否 | **是**（B-5 已实现：`handled_thread_id` 真实短指代绑定 + `HANDLED` 终态闭环 + `cancel_target` 三类真实撤销机制；两轮对抗式审查各发现真实缺陷并已修复，详见 evidence §十六。**未经 live Dify 验证、未经独立 Reviewer 核验**，行动值仍是 NOT_VERIFIED——AC-07 全量的短指代仍只覆盖"回应已有 open_thread"这一种，通用短指代解析仍是已知缺口） | NOT_VERIFIED |
 | M1-AC-08 | NOT_VERIFIED（无调整类测试或真实运行） | evidence §十二 | 否 | 否 | NOT_VERIFIED |
 | M1-AC-09 | PARTIAL（负向已证，正向在 M1 范围内无主体） | evidence §十二 | 否 | 否 | REUSE_CURRENT |
 | M1-AC-10 | PARTIAL→阻断 B-6（影子节点失败被当合法空 patch，产生虚假断言） | evidence §十二 | 否 | **是**（B-6 已修复，`SHADOW_NODE_FAILED` 检测；判据依赖的模型行为前提未经 live 实测，见 evidence §十三"需 Reviewer 裁决"） | REVERIFY_AFFECTED_SCOPE |
@@ -58,3 +58,23 @@
 - 按 §4 步骤 4 起继续：v1.2 阶段已完成的 B-1/B-2/B-5/B-6 修复批次（在 v1.3 交付前、v1.2 授权下完成）视为已在原 P0 范围内的接续工作，予以保留（`preserve_existing_work: true`）。
 - 按 §4 步骤 6-7：审查预算已耗尽（见 §二），下一步只能是 `closing_verification: affected_scope_only`——只看 `REVERIFY_AFFECTED_SCOPE` 标记的 8 项（AC-00/03/04/07/10/13/14/15）与新增的 AC-16，不重开对 `NOT_VERIFIED`／`REUSE_CURRENT` 项的开放式审查。
 - 收口复验前提：候选需先完成 DSL v0.6 的导入/发布与真实 Dify 回归（尤其是 AC-10/AC-13，B-6 判据的模型行为前提需要 live 证据，见 evidence §十三）。
+
+## 五、`closing_verification` 通过之后的继续施工与证据时效（B-3/B-4/B-5，evidence §十六）
+
+`closing_verification: affected_scope_only` 已经跑完并给出结论（AC-00/03/04/07/10/13/14/16 PASS，AC-15 阻断，见 evidence §十五）。**在这之后**，Founder 指出 B-3（材料输入通道）、B-4（多能力选择）此前被执行侧以"需要架构判断"为由不当延期，且 B-5（短指代绑定／`HANDLED` 闭环／实际撤销机制）只修了诚实反馈这一部分——均不构成合法延期理由，执行侧已实现三者的真实机制（见 evidence §十六）。
+
+**这一动作产生一个必须如实登记的治理后果**：按 v1.3 `evidence_reuse_policy.criterion_dependency_map`——"上下文编译或路由变化影响 M1-AC-01 至 M1-AC-12"——这批改动直接修改了 `m1_context_compiler_v0.1.py` 与 `build_m1_candidate_dsl_v0.1.py`，即将产生新的 commit 与新的候选 DSL（v0.7）。`closing_verification` 对 AC-03/04/07/10/13/14 给出的 PASS，其证据绑定（commit hash、已发布工作流图字节、`m1_shadow` 结构化输出 schema 现状）在源码变更后**必然过期**，不能被继续当作描述当前代码状态的有效结论引用：
+
+| criterion_id | closing_verification 结论（旧 commit） | 本批之后的状态 |
+|---|---|---|
+| M1-AC-00 | PASS | **继续有效**——不依赖编译器代码内容，是治理/基线事实 |
+| M1-AC-03 | PASS | **PASS_STALE_PENDING_REVERIFICATION**——`_merge_patch` 内部顺序已重排（B-5 修复把撤销/短指代逻辑移到次目标等追加逻辑之前），需在新 commit 上重新跑确定性测试+live 回归才能重新确认 |
+| M1-AC-04 | PASS | **PASS_STALE_PENDING_REVERIFICATION**——`evidence_provenance`/`freshness` 派生逻辑本批又变了（新增 material_present 核实），需重新确认 |
+| M1-AC-07 | PASS（仅覆盖诚实反馈这一子情形） | **NOT_VERIFIED**——`handled_thread_id`/`cancel_target` 是全新代码路径，closing_verification 从未看过，不是"过期"而是"从未被独立核验过" |
+| M1-AC-10 | PASS | **PASS_STALE_PENDING_REVERIFICATION**——`_merge_patch`/`main()` 签名与调用链本批改动，B-6 判据本身逻辑未动但周边代码已变 |
+| M1-AC-13 | PASS（候选运行与旧 commit/旧发布图字节级绑定） | **必然过期**——AC-13 的定义就是"与当前 commit 绑定"，新 commit 产生的瞬间旧绑定就不再描述当前状态，这是正常的、非病态的过期，不是缺陷 |
+| M1-AC-14 | PASS | **本地/远端 hash 一致性验证需要新 commit 推送后重新核对**，不是失效，只是需要新一轮核对 |
+| M1-AC-15 | BLOCKED（回滚演练） | **不受影响**——阻断原因是环境权限（控制台无写权限），与源码内容无关，源码变更不改变这条阻断 |
+| M1-AC-16 | PASS | **继续有效**——是文档/声明层面的检查，不依赖编译器代码具体实现 |
+
+**这不是重开第二次开放式正式审查**（`closure_rule` 仍然有效，不违反）：本次改动是执行侧在 Founder 直接指出延期不当之后，在原 P0、原 `allowed_delta` 范围内完成剩余工程实现，不是新的产品范围。真正需要的是：新 commit 推送后，对**受影响范围**（AC-03/04/07/10/13/14，加上原本就还没做过独立审查的 AC-01/06）做一次新的 `affected_scope_only` 收口确认——这仍然是 v1.3 `review_contract` 定义的同一种机制的自然延续，不是"第二次"从头开始的开放式审查。**这次收口确认目前同样卡在 AC-15 的同一个环境权限阻断上**：需要 Founder 完成一次真实候选导入/发布（v0.7），执行侧才能跑 live 回归和最终的受影响范围确认。

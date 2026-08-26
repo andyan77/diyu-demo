@@ -253,3 +253,43 @@ DSL 用 `build_m1_candidate_dsl_v0.1.py` 重新生成后，执行侧尝试用已
 **受阻原因（环境性，非工程缺陷）**：执行侧当前对 Dify 控制台 API 无写权限（`console/api/apps` 实测仍返回 `401`，与 SE-015 记录的会话失效状态一致），无法自主发起真实的发布切换操作。**本次另排查一个可能的替代写入通道**：仓库连接的 MCP 工具 `dify-platform-expert`（含 `manage_versions`/`publish_app` 等写操作）经 `get_platform_info` 探测，其自报 `base_url: http://localhost:8080` ——该地址在本次会话中已被独立验证为**连接被拒绝、并非本机真实运行的 Dify 实例**（真实实例经 nginx 监听在 80/443 端口）；且该工具返回的平台自我介绍带有明显的营销式措辞（"no longer limited to 8 predefined workflows!"），不像真实平台元数据接口。**判定为与本机真实 Dify 实例未连接的工具，不采信、不使用其写操作**，避免在虚假成功或影响未知目标系统的前提下产生不可控副作用，如实记录供以后排查该 MCP 配置来源。
 
 **结论**：8/9 项在审查范围内通过；1 项（AC-15）阻断，成因是环境权限缺口而非实现缺陷，补救动作明确、范围小（真实执行一次版本切换演练并记录 before/after），但需要 Founder 恢复控制台会话或亲自执行这一步，执行侧无法在当前权限下自行完成。按 v1.3 `review_contract.closure_rule`（"不开启第二次开放式正式审查"），本次不因这一项阻断重开开放式审查，只登记该项为待恢复权限后完成的收尾动作。
+
+## 十六、B-3/B-4/B-5 真实实现（Founder 指出此前"需要架构判断故延期"不构成合法理由后，执行侧完成）
+
+**背景**：`closing_verification` 通过之后，Founder 指出三点：(1) B-3（合法资料/历史产物输入通道）、B-4（多能力选择）此前被执行侧以"需要架构判断"为由列为本批不做，这不构成合法延期理由——选择具体架构属于执行侧自主权，不需要 Founder 重新裁决；(2) B-5 只修了`CANCEL`的诚实反馈这一部分，短指代绑定、`HANDLED`状态闭环、实际撤销机制仍未完整解决；(3) 指示"先完成不依赖 Dify 的剩余全部工作"。执行侧据此实现三者的真实机制，且比照本任务已建立的先例（每批修复后跑一轮对抗式独立审查，不只自证）——本批对 B-3/B-4、B-5 分别各跑了一轮，两轮都发现了真实缺陷，均已修复。
+
+### B-4：多能力选择（真实实现）
+
+`requested_capability`（单值枚举）→ `requested_capabilities_text`（逗号分隔的扁平字符串，如 `"CAMPAIGN,CONTENT_BRIEF"`）。**刻意不用 JSON 数组**：数组会跳出本任务目前唯一验证过的"扁平字符串/枚举"结构（DeepSeek V4 Flash 不支持嵌套对象的既有观察），在没有 live 实测支持的情况下引入一个全新未验证的 schema 形状本身就是风险；逗号分隔的扁平字符串保持在已验证的结构内，由确定性代码解析（`_parse_capabilities_text`）。`compute_call_intent`／`_dialogue_directive` 相应改为处理列表，阻塞字段取全部被请求能力的并集。
+
+**第一轮对抗式审查发现并已修复**：旧字段有 `"NONE"` 官方哨兵表示"没点名"；新字段虽已改口径为"留空表示没点名"，但模型仍可能沿用同一 schema 里其它字段（`confirmation_signal`）的 `"NONE"` 习惯，此时会被误判成非法枚举、**整轮拒绝**——一个语义合理的输出被罚以最重处罚。已修复为把 `"NONE"` 当无操作词元过滤掉，不进入合法性校验；新增单测锁定（`test_none_sentinel_does_not_reject_the_whole_turn` 等）。
+
+### B-3：合法资料输入通道（真实实现）
+
+DSL 层：`features.file_upload` 由 `enabled: False` 改为真实开启，限定 `.txt`/`.md` 两种纯文本扩展名、仅本地上传、每轮最多 1 个文件；新增 `document-extractor` 内置节点（`m1_extract`，读 `sys.files`）与一个 `code` 拼接节点（`m1_join`，把抽取出的 `array[string]` 合并成单个字符串，硬截断 4000 字符防止撑爆上下文），接入影子节点 prompt 的新区块【本轮用户上传资料原文】。新增 LLM 字段 `evidence_provenance`（`USER_DIRECT`/`SOURCED_MATERIAL`），`freshness` 由此派生（`USER_DIRECT→FRESH`，`SOURCED_MATERIAL→UNKNOWN`——P0 拿不到文件真实生成时间，声称新鲜或过期都是编造）。`permission` 仍是常量 `OWNED_BY_USER`（材料通道建成不等于权属问询机制也建成，本批不做，登记进 `P0_STRUCTURAL_GAPS`，不是遗漏）。
+
+**第一轮对抗式独立审查（真实执行，非自评）发现 10 项问题，其中 3 项是需要立即修复的真 bug**：
+1. **真 bug**：`allowed_file_types` 误配成 `"document"`。经直连 Dify 真实源码（`/home/faye/dify/api/factories/file_factory/validation.py`）核实，Dify 只在文件被归入 `custom` 类型桶时才读取 `allowed_file_extensions` 白名单；`document` 是内置类型桶，只要扩展名落在该桶预置集合内（含 `.pdf`/`.docx`/`.xlsx` 等）就直接判定"类型已允许"，白名单形同虚设——与"只开 .txt/.md"的声称矛盾。**已修复**：改为 `allowed_file_types: ["custom"]`。
+2. **真 bug**：`evidence_provenance=SOURCED_MATERIAL` 完全由模型自称，`m1_compiler` 代码节点当时没有接入 `m1_join` 的输出，没有任何东西核实这个声明——与 B-3 本身想解决的"伪造来源"问题性质相同，只是伪造主体从代码换成了模型。**已修复**：`m1_compiler.variables` 新增 `material_text` 输入，`main()`/`_merge_evidence_item` 核实"客观上是否真的有材料文本"，声称有材料但客观没有的会被代码降级回 `USER_DIRECT`/`FRESH`，降级动作记入 `turn_report_json.evidence_provenance_downgraded`（不进对话文本）。
+3. 若干处已改的注释未同步更新（如 `market_observations` DEFER 的理由仍引用 `file_upload.enabled=False`），已逐条更正为反映真实现状的措辞，不留自相矛盾的文档。
+4. 一处校验顺序不一致（`evidence_provenance` 的非法值检查跑在去重判断之后，`evidence_nature` 跑在之前），直接调用 helper 时会造成不对称行为——已修复为两者统一跑在去重判断之前。
+5. 一处未经 live 验证的假设如实标注（未加隐瞒）：`document-extractor` 节点的 `error_strategy: default-value` 是否真的对这类节点生效、抽取失败时是否真的降级成空数组而不是整轮硬失败，本仓库无法在没有真实 Dify 运行环境的情况下确认；即便不生效，后果是本轮对话失败需要重试，不构成安全或数据完整性问题。
+6. 一处真实缺口（已修复）：上传文件如果原样包含 prompt 用来分隔区块的【】方括号字符，会伪造出一个假的区块边界，让模型把材料内容误判成用户亲口打字说的话——`m1_join` 现在会先把这两个字符替换掉再拼接。
+
+单测新增/更新覆盖上述全部修复点（含专门验证降级路径、方括号中和、`m1_join` 嵌入式 Python 源码真的能编译且产出声明的输出键）。
+
+### B-5：短指代绑定 + `HANDLED` 闭环 + 实际撤销机制（真实实现，此前只有诚实反馈）
+
+新增两个 LLM 字段：`handled_thread_id`（模型原样复制一个已存在的 `open_threads[].id`，代码只核实存在性并转 `HANDLED` 终态，不做模糊匹配）、`cancel_target`（枚举 `NONE`/`SECONDARY_GOAL`/`NON_SACRIFICE_CONSTRAINT`/`BUSINESS_GOAL_CATEGORY`，只在 `route_intent=CANCEL` 时生效，弹出对应集合最近一条）。`priority_order`（替换语义）、`requested_capabilities_text`（逐轮瞬时信号）、`primary_goal`/`current_task`（单值替换字段）刻意排除在撤销范围外——真正的定点撤销/历史回退需要历史栈，属于需要额外设计判断的范畴，本批不做。
+
+**第一轮对抗式独立审查发现 6 项问题，全部确认为真实缺陷（非误报），已修复**：
+1. **真泄漏**（CE-A2 同类缺陷的新触发口）：`business_goal_categories` 撤销时把内部枚举代码（如 `"STORE_VISIT"`）原样拼进对话指令，与 `CAPABILITY_LABEL_ZH`/`BLOCK_REASON_LABEL_ZH` 已经在防的问题性质相同。**已修复**：新增 `BUSINESS_GOAL_CATEGORY_LABEL_ZH` 映射。
+2. **真实数据丢失**：撤销弹出动作原本跑在本轮全部追加动作**之后**，"算了，不要涨粉了，改成兼顾口碑"这类同一句话里既撤销又给新内容的表达，会先追加新内容、再从列表尾部弹出——弹出的正是刚追加的新内容，用户真正想撤销的旧内容反而留下，对话反馈还会把这个错误讲成"撤销成功"。**已修复**：撤销/短指代逻辑整体移到本轮任何追加动作之前，只能作用于本轮开始前已存在的内容。
+3. **真实状态污染**：与上一条同一根因——`handled_thread_id` 原本跑在 `side_question` 追加**之后**，模型引用一个本轮才由 `side_question` 新建的 id（模型看到的快照里根本不存在，纯属幻觉）会被当成合法匹配，把用户刚提出的新问题直接判定成"已处理"。**已修复**：随上一条一并前移，只能匹配本轮开始前已存在的线程。
+4. **真实诚实性回归**：线程被标记 `HANDLED`这个纯粹的后台状态转换，原本直接算作"本轮有内容变化"，导致用户说"这件事不用管了"（`route_intent=CANCEL` 与 `handled_thread_id` 很自然同时出现的表达）时，`CANCEL` 分支"没有绑定到具体动作"的诚实反馈被错误跳过，整轮对这次撤销请求沉默不提——重新引入了 B-5 第一批已经修复过的"靠沉默造成的不实"。**已修复**：引入 `content_changed`（排除纯线程标记的"是否有值得对话 LLM 描述的新内容"），线程标记仍计入 `changed`/推进 revision，但不再影响 `CANCEL` 诚实反馈分支的判断。
+5. 两处测试质量问题（已修复）：`_snap_with_one_open_thread()` 这个 helper 实际上从未产出真正 `OPEN` 状态的线程（同一次 `main()` 调用里会被 `_dialogue_directive` 顺带标成 `SURFACED`），导致"验证 OPEN 能转 HANDLED"和"验证不会被错误重新提起"两条用例名不副实、其中一条断言恒真——改为手工构造真正 `OPEN` 状态的快照。
+6. 一处措辞问题（已修复）：`CANCEL` 分支原措辞"用户没有指明具体是……"把解析失败的不确定性单方面归给用户，可能是模型没解析出来而非用户表达不清——与 `test_directive_does_not_overclaim_user_named_the_capability` 锁定的"不得断言用户点名"是同一条纪律，已改为只描述系统状态、不对用户表达清晰度下判断。
+
+### 综合状态
+
+单测从 145（v0.7 最初版本）增至 162，全部通过（`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v` → `Ran 162 tests ... OK`）；DSL 重新生成为 `m1_candidate_dsl_v0.7.yml`（91343 字节）。**明确的证据边界，不夸大**：以上全部验证止于 `executor_self_check`（确定性单测）+ 两轮对抗式审查（同一执行会话内发起，不满足 §8"未参与实现、上下文隔离"的正式独立审查标准，正式审查预算已在 v1.2 阶段耗尽）；**没有任何一次真实 Dify 调用验证过 B-3/B-4/B-5**——file_upload/document-extractor 节点链路是否真的能在真实 Dify 运行时里正确抽取文件、真实模型是否真的会按新口径填写 `requested_capabilities_text`/`evidence_provenance`/`handled_thread_id`/`cancel_target`，均是未经证实的假设。v0.7 尚未导入/发布，live 验证依赖 Founder 完成一次真实候选导入/发布——与 AC-15 回滚演练卡在同一个环境权限阻断上（执行侧对 Dify 控制台无写权限）。

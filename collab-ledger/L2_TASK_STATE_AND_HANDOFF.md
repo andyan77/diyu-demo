@@ -213,9 +213,21 @@ execution_disposition: CONTINUE
 task_final_status: null
 current_task_contract_version: "1.3"
 previous_task_contract_hash: d6b0b3d84cdf18f0c19f224cd5e9e43ca03839e53b95b7b667411cfb8e647df3
-current_state: BLOCKED_ON_AC15_CONSOLE_ACCESS
+current_state: B3_B4_B5_IMPLEMENTED_SELF_VERIFIED_BLOCKED_ON_CONSOLE_ACCESS
 next_stage_allowed: false
 ```
+
+**2026-08-25 状态更新（B-3/B-4/B-5 真实实现，收口审查后继续施工）**：Founder 指出此前把 B-3/B-4 列为"需要架构判断故本批不做"不构成合法延期理由，B-5 也只修了诚实反馈这一部分——执行侧据此完成三者的真实机制（`requested_capabilities_text` 多能力选择、真实文件上传通道 + `evidence_provenance` 真实来源核实、`handled_thread_id` 短指代绑定 + `HANDLED` 闭环 + `cancel_target` 真实撤销）。每批各跑一轮对抗式独立审查，均发现真实缺陷并已修复（详见 [evidence §十六](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)）。单测 145→162 全绿，DSL 重新生成为 v0.7。
+
+**重要治理后果，已如实登记**：这批改动发生在 `closing_verification` 通过**之后**，修改了编译器/DSL 源码。按 v1.3 `evidence_reuse_policy.criterion_dependency_map`，此前收口审查对 AC-03/04/07/10/13/14 给出的 PASS，其证据绑定（commit hash、已发布图字节）随新 commit 必然过期，已在 [Rebase Manifest §五](../decision-chain/docs/M1_REBASE_MANIFEST_v1.3.md) 逐条标注为 `PASS_STALE_PENDING_REVERIFICATION`（AC-07 因改动的是全新代码路径，直接改记 `NOT_VERIFIED`，不是"过期"）；AC-00/AC-16 不依赖编译器代码内容，继续有效；AC-15 阻断原因是环境权限、与源码无关，不受影响。
+
+**证据边界，如实标注**：以上全部只是 `executor_self_check`（确定性单测）+ 两轮同会话内对抗式审查，**不是** §8 标准的正式独立审查（预算已在 v1.2 阶段耗尽），**也没有任何一次真实 Dify 调用验证过**——file_upload/document-extractor 链路能否真的在真实运行时工作、真实模型是否真的按新口径填写这几个新字段，均是未经证实的假设。
+
+**唯一剩余动作，需要 Founder（与之前一致，二选一）**：
+1. Founder 亲自在浏览器控制台对候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119` 导入并发布 v0.7（覆盖 v0.6），执行侧随后跑真实回归验证 B-3/B-4/B-5，并完成 AC-15 的真实回滚演练；
+2. Founder 提供一个当前有效的控制台会话/API 凭证，交由执行侧自主完成上述全部动作并记录。
+
+在此之前，v0.7 的全部新增机制、以及此前已过期的 6 项 PASS，均无法进一步推进。
 
 **2026-08-25 状态更新（v1.3 收口审查已完成）**：v1.3 `review_contract.closing_verification: affected_scope_only` 已跑完（隔离上下文、只读、无先前记忆的第二名审查员），范围锁定 8 项待复验 + 新增 AC-16，结论：**8/9 PASS，1 项阻断**——详见 [evidence §十五](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。
 
