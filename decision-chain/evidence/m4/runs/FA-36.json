@@ -1,0 +1,488 @@
+{
+  "attempt_id": "FA-36",
+  "attempt_kind": "FORMAL",
+  "fixture_id": "FX-M4-CT-USER-DIRECT",
+  "fixture_pack_section": "§3",
+  "fixture_pack_sha256": "9ac684d27acec7572934bd4f4c179212be7f196f5b7c81d9c4af6e2b48367a5a",
+  "fidelity": "包正文逐字节引用 + 统一外壳必填槽映射头；已机械断言 pack_body in PACK_TEXT",
+  "pack_body_sha256": "e20d03950463aeff6affbada99f86ef0a05da22770f1985fbf4a255d8452c83b",
+  "pack_body_verbatim": "provenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+  "capability": "CONTENT_BRIEF",
+  "serves_criteria": [
+    "AC-04",
+    "AC-21",
+    "AC-03"
+  ],
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "seam_app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+  "provider_bindings": {
+    "_seam": {
+      "app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+      "provider_id": "2daa2d27-4305-4d24-95ec-3cb424eaeb2f",
+      "tool_name": "diyu_m4_capability_seam"
+    },
+    "campaign": {
+      "app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+      "provider_id": "0737d719-10c8-4799-8310-6579d20c86f1",
+      "published_workflow_id": "9402aa80-08ad-4e67-b6ca-955b85d2f828",
+      "tool_name": "diyu_m4_campaign"
+    },
+    "content_brief": {
+      "app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+      "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+      "published_workflow_id": "4cb57c58-1d2b-4239-b649-1ef6e4ff2b6b",
+      "tool_name": "diyu_m4_content_brief"
+    },
+    "creative_script": {
+      "app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+      "provider_id": "08a225b4-268f-4eb8-80c1-66f8792da71f",
+      "published_workflow_id": "25903677-f27b-4cdb-94c5-0eb568691796",
+      "tool_name": "diyu_m4_creative_script"
+    },
+    "matrix": {
+      "app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+      "provider_id": "36905561-5728-4581-93b0-09ea5baec97b",
+      "published_workflow_id": "98aeaf51-b6ba-423b-b5cc-e06cac9f422b",
+      "tool_name": "diyu_m4_matrix"
+    },
+    "production_director": {
+      "app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+      "provider_id": "e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0",
+      "published_workflow_id": "143b3837-3e7b-4aaf-9cb5-9f086ed5b20f",
+      "tool_name": "diyu_m4_production_director"
+    },
+    "publishing_packaging": {
+      "app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+      "provider_id": "e34c2aaa-c8b1-4026-af07-a031e3b3d759",
+      "published_workflow_id": "edd3442e-7a95-4125-9e9a-b4fe34fd5d41",
+      "tool_name": "diyu_m4_publishing_packaging"
+    }
+  },
+  "input_sha256": "931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67",
+  "input_text": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+  "run_id": "dcc918b5-13f6-48e8-8aaa-d2fc81f20040",
+  "elapsed_s": 41.1,
+  "error": null,
+  "raw_response": {
+    "task_id": "12b2624b-94da-4b80-809c-9ac405a6ac2c",
+    "workflow_run_id": "dcc918b5-13f6-48e8-8aaa-d2fc81f20040",
+    "data": {
+      "id": "dcc918b5-13f6-48e8-8aaa-d2fc81f20040",
+      "workflow_id": "488aa802-dff5-4665-a796-d9c5b651d43e",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。",
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+        "seam_trace_json": "{\"call_hash\": \"48de7cedcdb2c38d41202a79b673ec9ff8e82349d9c2805a8420142f666e2d1a\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 40.976712,
+      "total_tokens": 15757,
+      "total_steps": 6,
+      "created_at": 1787782614,
+      "finished_at": 1787782655
+    }
+  },
+  "node_trace": [
+    {
+      "id": "28817334-1446-47f5-b4d3-740f30b706b7",
+      "index": 1,
+      "predecessor_node_id": null,
+      "node_id": "1788000000001",
+      "node_type": "start",
+      "title": "能力调用意图",
+      "inputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "professional_input": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "example_reference_requested": "NO"
+      },
+      "process_data": {},
+      "outputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "professional_input": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "example_reference_requested": "NO"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000101,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787782614,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787782614,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "9a701d08-7f18-491f-982a-663e3ee205c8",
+      "index": 2,
+      "predecessor_node_id": null,
+      "node_id": "entry_resolver",
+      "node_type": "code",
+      "title": "入口解析（确定性）",
+      "inputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "professional_input": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n"
+      },
+      "process_data": {},
+      "outputs": {
+        "call_hash": "48de7cedcdb2c38d41202a79b673ec9ff8e82349d9c2805a8420142f666e2d1a",
+        "capability_resolved": "CONTENT_BRIEF",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "entry_resolved": "ENTRY-03",
+        "route": "CONTENT_BRIEF",
+        "run_mode": "DEFAULT"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.046996,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787782614,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787782614,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "139068f4-dea4-46e6-8131-b21f397fa7a2",
+      "index": 3,
+      "predecessor_node_id": null,
+      "node_id": "seam_dispatch",
+      "node_type": "if-else",
+      "title": "能力分派",
+      "inputs": {
+        "conditions": [
+          {
+            "actual_value": "CONTENT_BRIEF",
+            "expected_value": "CONTENT_BRIEF",
+            "comparison_operator": "is"
+          }
+        ]
+      },
+      "process_data": {
+        "condition_results": [
+          {
+            "group": {
+              "case_id": "matrix",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "MATRIX",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "campaign",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CAMPAIGN",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "content_brief",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CONTENT_BRIEF",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              true
+            ],
+            "final_result": true
+          }
+        ]
+      },
+      "outputs": {
+        "result": true,
+        "selected_case_id": "content_brief"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000128,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787782614,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787782614,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "fcd2a18c-ef2c-4e39-90de-38087a761231",
+      "index": 4,
+      "predecessor_node_id": null,
+      "node_id": "tool_content_brief",
+      "node_type": "tool",
+      "title": "调用 DIYU M4 v1.3 TEST · Content Brief Architect",
+      "inputs": {
+        "capability_call": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "entry": "ENTRY-03",
+        "example_reference_requested": "NO",
+        "professional_input": "objective: {primary_goal: 让顾客学会用两个条件自己判断, goal_family: LONG_TERM_VALUE}\naudience_problem: 顾客问过很多次『马甲到底要不要买』\nexpected_change: 她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\ncontent_promise: 说清楚马甲这件东西在什么条件下成立、什么条件下不成立\nfacts_registered: 见下方 content_task.facts_assets_gaps.registered\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景\ncta_level: LOW_RISK_INTERACTION\ncta_contract: LOW_RISK_INTERACTION\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\nprovenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-CT-USER-DIRECT\"\n  confirmation_state: STATED_BY_USER\n  permission_scope: \"内容制作与公域发布\"\n  evidence_grade: USER_STATEMENT\ncontent_task:\n  audience_problem: \"顾客问过很多次『马甲到底要不要买』\"\n  expected_change: \"她知道这件马甲成立与否取决于什么，而不是听到一个『值得买』的结论\"\n  content_promise: \"说清楚马甲这件东西在什么条件下成立、什么条件下不成立\"\n  core_claim: \"马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好\"\n  primary_goal: \"让顾客学会用两个条件自己判断\"\n  goal_family: LONG_TERM_VALUE\n  secondary_goals: []\n  priority: \"只做这一件事\"\n  non_sacrificable: [\"不得给出无条件的『买』或『不买』结论\"]\n  cycle_role:\n    applicable: false          # NOT_APPLICABLE：用户直接任务，无周期\n    reason: \"用户直接提出的单条任务，不属于任何已确认周期\"\n  expression_latitude: \"允许显式标注的演示场景\"\n  risk_boundary: \"低风险\"\n  facts_assets_gaps:\n    registered:\n      - \"[夹具登记事实] 苏禾的试穿记录里写明：马甲成立与否取决于内搭体积和袖窿空间\"\n    gaps:\n      - \"[夹具故意缺失] 无 Matrix 产物、无 Campaign 决策包、无 M3 周期\"\n  platform_form: {platform: NOT_LOCKED, content_type: \"短视频\", duration_band: SHORT}\n",
+        "run_mode": "DEFAULT"
+      },
+      "process_data": {},
+      "outputs": {
+        "text": "{\"artifact\": \"# Content Brief Pack\\n\\n## 0. 运行结论\\n- 顶层状态：READY_WITH_CONDITIONS\\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\\n\\n## 1. 内容单元索引\\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\\n|---|---|---|---|---|---|---|\\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\\n\\n## 2. 已授权发布内容的独立 Brief\\n\\n### brief_id：BRIEF-001-VEST-CONDITIONS\\n\\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\\n- 内容类型与顺序：短视频，单条，顺序 1\\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\\n- 证据地图：\\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\\n  - 无待验证变量与亲历观察需额外标注\\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\\n\\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\\n- 本条有限次要贡献：无（次要贡献清单为空）\\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\\n\\n## 3. 条件性内容与不发布账号\\n- 条件尚未触发：无\\n- 本轮不发布：无\\n- 仅提供事实确认：无\\n- 仅承担后台承接：无\\n- 取消：无\\n\\n## 4. 跨内容共享制作计划\\n- 可共享素材：不适用（单条内容）\\n- 不得重复拍摄的事实：不适用\\n- 素材与人员优先级：不适用\\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\\n\\n## 5. 统一事实、承接与审核边界\\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\\n- 跨账号引用纪律：不适用（无跨账号)\\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\\n- 申请与确认边界：不适用（无经营承接入口）\\n- 普通问题与升级边界：不适用（无经营承接入口）\", \"user_delivery\": \"# 内容 Brief：马甲要不要买——两个判断条件\\n\\n## 这份 Brief 是做什么的\\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\\n\\n## 核心判断\\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\\n\\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\\n\\n## 内容结构（供脚本参考）\\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\\n3. 给判断条件：看内搭体积、看袖窿空间\\n4. 收束：不是马甲好不好，是这两个条件成不成立\\n\\n## 制作要求\\n- 出镜人：苏禾\\n- 事实确认人：苏禾（试穿记录引用需经她确认）\\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\\n- 时长：短视频（短时长）\\n- 必须表达：两个判断条件；两个条件之间的关系\\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\\n\\n## 行动引导\\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\\n\\n## 进入脚本与拍摄前需确认三件事\\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\\n3. **收藏引导**：确认锁定平台是否支持收藏引导\\n\\n## 发布与降级条件\\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\\n\\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。\", \"user_delivery_status\": \"OK\", \"user_delivery_leaks\": [], \"returns_json\": \"[]\", \"returns_status\": \"NONE\", \"returns_parse_note\": \"显式声明无回改\", \"returns_raw\": \"NONE\", \"local_block\": \"false\", \"raw_preserved\": \"---M4_ARTIFACT---\\n# Content Brief Pack\\n\\n## 0. 运行结论\\n- 顶层状态：READY_WITH_CONDITIONS\\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\\n\\n## 1. 内容单元索引\\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\\n|---|---|---|---|---|---|---|\\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\\n\\n## 2. 已授权发布内容的独立 Brief\\n\\n### brief_id：BRIEF-001-VEST-CONDITIONS\\n\\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\\n- 内容类型与顺序：短视频，单条，顺序 1\\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\\n- 证据地图：\\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\\n  - 无待验证变量与亲历观察需额外标注\\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\\n\\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\\n- 本条有限次要贡献：无（次要贡献清单为空）\\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\\n\\n## 3. 条件性内容与不发布账号\\n- 条件尚未触发：无\\n- 本轮不发布：无\\n- 仅提供事实确认：无\\n- 仅承担后台承接：无\\n- 取消：无\\n\\n## 4. 跨内容共享制作计划\\n- 可共享素材：不适用（单条内容）\\n- 不得重复拍摄的事实：不适用\\n- 素材与人员优先级：不适用\\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\\n\\n## 5. 统一事实、承接与审核边界\\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\\n- 跨账号引用纪律：不适用（无跨账号)\\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\\n- 申请与确认边界：不适用（无经营承接入口）\\n- 普通问题与升级边界：不适用（无经营承接入口）\\n\\n---END_M4_ARTIFACT---\\n\\n---M4_USER_DELIVERY---\\n# 内容 Brief：马甲要不要买——两个判断条件\\n\\n## 这份 Brief 是做什么的\\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\\n\\n## 核心判断\\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\\n\\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\\n\\n## 内容结构（供脚本参考）\\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\\n3. 给判断条件：看内搭体积、看袖窿空间\\n4. 收束：不是马甲好不好，是这两个条件成不成立\\n\\n## 制作要求\\n- 出镜人：苏禾\\n- 事实确认人：苏禾（试穿记录引用需经她确认）\\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\\n- 时长：短视频（短时长）\\n- 必须表达：两个判断条件；两个条件之间的关系\\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\\n\\n## 行动引导\\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\\n\\n## 进入脚本与拍摄前需确认三件事\\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\\n3. **收藏引导**：确认锁定平台是否支持收藏引导\\n\\n## 发布与降级条件\\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\\n\\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。\\n---END_M4_USER_DELIVERY---\\n\\n---M4_RETURNS---\\nNONE\\n---END_M4_RETURNS---\", \"binding_json\": \"{\\\"artifact_sha256\\\": \\\"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\\\", \\\"capability\\\": \\\"CONTENT_BRIEF\\\", \\\"completion_params\\\": {\\\"max_tokens\\\": 384000, \\\"reasoning_effort\\\": \\\"low\\\", \\\"thinking\\\": true, \\\"top_p\\\": 0.8}, \\\"entry\\\": \\\"ENTRY-03\\\", \\\"goal_family_readonly_inherited\\\": \\\"LONG_TERM_VALUE\\\", \\\"input_envelope_sha256\\\": \\\"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\\\", \\\"input_professional_sha256\\\": \\\"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\\\", \\\"model_name\\\": \\\"deepseek-v4-flash\\\", \\\"model_provider\\\": \\\"langgenius/deepseek/deepseek\\\", \\\"note\\\": \\\"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\\\", \\\"reference_load_matrix\\\": {\\\"examples\\\": \\\"NEVER\\\", \\\"industry\\\": \\\"NONE\\\", \\\"platforms\\\": \\\"NONE\\\"}, \\\"reference_projection_declared\\\": \\\"{\\\\n  \\\\\\\"capability\\\\\\\": \\\\\\\"CONTENT_BRIEF\\\\\\\",\\\\n  \\\\\\\"loaded_reference_sections\\\\\\\": [\\\\n    \\\\\\\"SKILL.md :: 后继版全文（始终加载）\\\\\\\"\\\\n  ],\\\\n  \\\\\\\"load_matrix_ref\\\\\\\": \\\\\\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\\\\\",\\\\n  \\\\\\\"second_attachment_library_built\\\\\\\": false,\\\\n  \\\\\\\"rag_first_layer_built\\\\\\\": false\\\\n}\\\", \\\"run_mode\\\": \\\"COMPILE_SINGLE_CONTENT_CONTRACT\\\", \\\"self_reported_only\\\": true, \\\"source_skill_path\\\": \\\"decision-chain/skills/Content_Brief_Architect_v0.1.md\\\", \\\"source_skill_sha256\\\": \\\"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\\\", \\\"successor_skill_path\\\": \\\"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\\\", \\\"successor_skill_sha256\\\": \\\"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\\\", \\\"system_prompt_sha256\\\": \\\"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\\\", \\\"target_environment\\\": \\\"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\\\", \\\"task_contract_hash\\\": \\\"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\\\", \\\"task_id\\\": \\\"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\\\", \\\"user_prompt_sha256\\\": \\\"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\\\"}\", \"reference_projection\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"reference_projection_text\": \"## 参考投影 · 本次未加载任何参考文件\\n\\n按 M4 统一能力合同 §12 加载矩阵，本能力（CONTENT_BRIEF）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。\\n\\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**\", \"entry\": \"ENTRY-03\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"sufficiency_status\": \"SUFFICIENT\", \"goal_family\": \"LONG_TERM_VALUE\", \"conditionalized\": \"platform 未锁定：只产出平台中立母版，锁定平台列为条件\"}",
+        "files": [],
+        "json": [
+          {
+            "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（...",
+            "binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+            "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件",
+            "entry": "ENTRY-03",
+            "goal_family": "LONG_TERM_VALUE",
+            "local_block": "false",
+            "raw_preserved": "---M4_ARTIFACT---\n# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）\n\n---END_M4_ARTIFACT---\n\n---M4_USER_DELIVERY---\n# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁...",
+            "reference_projection": "{\n  \"capability\": \"CONTENT_BRIEF\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+            "reference_projection_text": "## 参考投影 · 本次未加载任何参考文件\n\n按 M4 统一能力合同 §12 加载矩阵，本能力（CONTENT_BRIEF）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+            "returns_json": "[]",
+            "returns_parse_note": "显式声明无回改",
+            "returns_raw": "NONE",
+            "returns_status": "NONE",
+            "run_mode": "COMPILE_SINGLE_CONTENT_CONTRACT",
+            "sufficiency_status": "SUFFICIENT",
+            "user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。",
+            "user_delivery_leaks": [],
+            "user_delivery_status": "OK"
+          }
+        ],
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）",
+        "user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。",
+        "user_delivery_status": "OK",
+        "user_delivery_leaks": [],
+        "returns_json": "[]",
+        "returns_status": "NONE",
+        "returns_parse_note": "显式声明无回改",
+        "returns_raw": "NONE",
+        "local_block": "false",
+        "raw_preserved": "---M4_ARTIFACT---\n# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）\n\n---END_M4_ARTIFACT---\n\n---M4_USER_DELIVERY---\n# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。\n---END_M4_USER_DELIVERY---\n\n---M4_RETURNS---\nNONE\n---END_M4_RETURNS---",
+        "binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+        "reference_projection": "{\n  \"capability\": \"CONTENT_BRIEF\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+        "reference_projection_text": "## 参考投影 · 本次未加载任何参考文件\n\n按 M4 统一能力合同 §12 加载矩阵，本能力（CONTENT_BRIEF）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+        "entry": "ENTRY-03",
+        "run_mode": "COMPILE_SINGLE_CONTENT_CONTRACT",
+        "sufficiency_status": "SUFFICIENT",
+        "goal_family": "LONG_TERM_VALUE",
+        "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 40.780208,
+      "execution_metadata": {
+        "tool_info": {
+          "provider_type": "workflow",
+          "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+          "plugin_unique_identifier": null
+        },
+        "total_tokens": 15757,
+        "total_price": "0",
+        "currency": "USD"
+      },
+      "extras": {
+        "icon": {
+          "background": "#E4FBCC",
+          "content": "🧩"
+        }
+      },
+      "created_at": 1787782614,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787782655,
+      "inputs_truncated": false,
+      "outputs_truncated": true,
+      "process_data_truncated": false
+    },
+    {
+      "id": "691a2f61-dc5c-4c03-ba7d-8dca798f4921",
+      "index": 5,
+      "predecessor_node_id": null,
+      "node_id": "fin_content_brief",
+      "node_type": "code",
+      "title": "接缝收口｜CONTENT_BRIEF",
+      "inputs": {
+        "capability_resolved": "CONTENT_BRIEF",
+        "entry_resolved": "ENTRY-03",
+        "run_mode": "DEFAULT",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "tool_artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）",
+        "tool_user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。",
+        "tool_returns_json": "[]",
+        "tool_binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+        "call_hash": "48de7cedcdb2c38d41202a79b673ec9ff8e82349d9c2805a8420142f666e2d1a"
+      },
+      "process_data": {},
+      "outputs": {
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）",
+        "binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "capability_invoked": "CONTENT_BRIEF",
+        "returns_json": "[]",
+        "seam_trace_json": "{\"call_hash\": \"48de7cedcdb2c38d41202a79b673ec9ff8e82349d9c2805a8420142f666e2d1a\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.055644,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787782655,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787782655,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "e9009e85-a495-4a2d-8530-e607d75d14c7",
+      "index": 6,
+      "predecessor_node_id": null,
+      "node_id": "end_content_brief",
+      "node_type": "end",
+      "title": "结束｜CONTENT_BRIEF",
+      "inputs": {
+        "user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。",
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+        "seam_trace_json": "{\"call_hash\": \"48de7cedcdb2c38d41202a79b673ec9ff8e82349d9c2805a8420142f666e2d1a\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "process_data": {},
+      "outputs": {
+        "user_delivery": "# 内容 Brief：马甲要不要买——两个判断条件\n\n## 这份 Brief 是做什么的\n这条内容帮助顾客从“反复问马甲要不要买”变成一个清晰自检：**一件马甲成不成立，看内搭体积和袖窿空间。** 它不替顾客下“买”或“不买”的结论。内容已具备制作条件，可以进入脚本和拍摄设计。\n\n## 核心判断\n**马甲成立与否取决于内搭体积和袖窿空间，不取决于马甲本身好不好。**\n\n依据是苏禾的试穿记录。内容里会出现同一件马甲在不同内搭下的演示对比，演示场景会明确标注为演示。\n\n## 内容结构（供脚本参考）\n1. 开场：苏禾说被顾客反复问过“马甲到底要不要买”，并说明“答案不是买或不买”\n2. 演示：同一件马甲，配不同体积的内搭，展示效果差异（画面中标注为演示）\n3. 给判断条件：看内搭体积、看袖窿空间\n4. 收束：不是马甲好不好，是这两个条件成不成立\n\n## 制作要求\n- 出镜人：苏禾\n- 事实确认人：苏禾（试穿记录引用需经她确认）\n- 素材：同一件马甲 + 至少两种不同体积的内搭（演示画面）；可选马甲静态展示\n- 时长：短视频（短时长）\n- 必须表达：两个判断条件；两个条件之间的关系\n- 不得出现：无条件“买/不买”结论；未登记的材质与功能断言；演示被误读为真实顾客案例\n\n## 行动引导\n引导评论（“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）。不做购买、私信、到店、预约引导。\n\n## 进入脚本与拍摄前需确认三件事\n1. **锁定发布平台**：目前未锁定，先按平台中立母版制作，确定平台后再定时长与首帧呈现\n2. **演示场景安排**：确认用几组内搭、演示怎么拍\n3. **收藏引导**：确认锁定平台是否支持收藏引导\n\n## 发布与降级条件\n- 可发布条件：完成演示拍摄，演示已标注；苏禾确认事实引用无误\n- 降级可发布：演示画面做不了时，用静态对比或口述保留两个条件，结论不变\n- 不发布条件：无法区分两个条件，或内容滑向无条件“买/不买”结论\n\n状态：**可进入制作，带两个条件（平台、演示安排）**。平台与演示确认后即为完全就绪。",
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（用户直接提出的单条任务，无 Campaign 来源）\n- 已接受项：经营任务与目标顾客（本任务）；唯一主要顾客变化（顾客知道判断条件）；主讲账号（苏禾）；内容数量上限（1 条短视频）；已确认的核心内容顺序（单条，不涉及多单元接力）；统一行动入口（无经营承接，仅低风险互动）；主承接人与替补（不适用）；申请、确认与履约边界（不适用）；已确认的事实负责人（苏禾，依据为其试穿记录）；升级边界（不适用）\n- 本次来源类型与来源标识：用户直接提出的明确选题（source_ref: FX-M4-CT-USER-DIRECT）\n- 本次不适用项（NOT_APPLICABLE）及其理由：周期角色（用户直接任务，不属于任何已确认周期）；参战账号组合（无 Campaign）；接力关系（单条内容）；行动入口与承接人（无经营承接）；内容数量与顺序（单条内容）\n- 被条件化的已接受项：平台未锁定（不选择平台，输出平台中立 Brief，锁定平台列为进入平台规格制作前的条件）\n- 当前成立条件：有明确选题；有主目标与不可牺牲条件；有内容承诺与核心命题；有一条已登记事实链且有事实确认人；表达主体与风险边界已确认；具备短视频最低制作条件；无 Campaign/周期不构成阻断\n- 当前未成立条件：平台未锁定；演示场景的具体安排未确认\n\n## 1. 内容单元索引\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| 马甲要不要买——两个判断条件 | 苏禾 | 苏禾（本人） | 1（唯一） | 短视频 | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：BRIEF-001-VEST-CONDITIONS\n\n- 本条来源与来源标识：用户直接提出的明确选题（USER_DIRECT）\n- 账号与本轮责任：苏禾出镜；负责演示与说明两个判断条件；事实确认责任在苏禾（试穿记录）\n- 内容类型与顺序：短视频，单条，顺序 1\n- 当前状态：BRIEF_READY_WITH_CONDITIONS\n- 唯一顾客情境与问题：顾客反复问『马甲到底要不要买』——她们卡在不知道用什么标准判断一件马甲是否适合自己\n- 顾客当前卡点：用“好不好看”“值不值得”“别人穿好看”这类外部标准衡量，没有属于自己的判断依据\n- 内容后需要形成的唯一新判断：马甲是否成立取决于内搭体积与袖窿空间这两个条件，而不是马甲本身好不好\n- 核心内容判断：内搭体积与袖窿空间的关系决定了马甲穿出来的成立度（是否为已登记事实：是，来自苏禾试穿记录；是否可公开：是，已授权公域发布）\n- 证据地图：\n  - 事实（已登记）：苏禾试穿记录中写明马甲成立与否取决于内搭体积和袖窿空间——来源：苏禾试穿记录；事实确认人：苏禾\n  - 设计情境（须显式标注）：演示场景——苏禾以不同内搭在同一件马甲下演示对比效果；标注为演示，不作真实顾客案例\n  - 无待验证变量与亲历观察需额外标注\n- 事实、观察、专业判断与待验证变量的区分：仅一条已登记事实（试穿记录）作为核心依据；演示场景显式标注为演示；不新增任何未经登记的功能、质量或适配结论\n- 叙事结构：从苏禾反复被顾客问『马甲到底要不要买』这一真实高频问题进入 → 说出“我之前也被问过很多次，答案不是买或不买” → 展示同一件马甲在不同内搭体积下的实际效果（演示）→ 给出两个判断条件：内搭体积、袖窿空间 → 收束为“不是马甲好不好，是这两个条件成不成立”\n- 真实摩擦或决定性张力：同一件马甲在不同内搭下的成立度差异（演示中可见的对比），即真实的决定性张力；不虚构顾客故事、不虚构冲突\n- 账号关系姿态：苏禾作为有试穿记录、能给出可操作判断的真人账号，以“我拿自己穿过的记录说话”的姿态，不以上帝视角说教\n- 与上一条和下一条的接力：不适用（单条内容，无接力）\n- 必须使用的素材：苏禾试穿记录（用以支撑两个判断条件）；同一件马甲至少两种不同体积内搭的演示画面\n- 可选素材：马甲单独静态展示（用于开场”；不同内搭的体积对比特写（用于强调判断方法，优先级高）\n- 出镜人与事实确认人：出镜人——苏禾；事实确认人——苏禾（试穿记录来源）\n- 制作要求：需拍摄同一件马甲配至少两种内搭的对比画面；演示场景须在画面内或口播中明确标注为演示；短视频时长短时长；无需外部场地与额外人员\n- 必须表达：两个判断条件（内搭体积、袖窿空间）；两个条件之间关系的核心判断；不替代顾客做买或不买的决定\n- 明确不得表达：不得给出无条件的“买”或“不买”结论；不得新增未登记的材质、版型、适用人群或功能断言；不得把演示场景表述为真实顾客案例\n- CTA 或无 CTA 的决定：设低风险互动——引导评论（例如“你用这两个条件看过自己的马甲吗？”）与收藏（便于回看判断方法）；不做任何购买、私信、到店、预约引导\n- 发布条件：完成演示场景拍摄；演示场景已显式标注；平台已锁定或按平台中立母版进入制作；经苏禾事实确认（试穿记录引用准确）\n- 降级条件：若演示画面无法完成，可改为静态对比图或口述两个条件，结论强度不变；若收藏引导不适用，可只留评论引导\n- 取消或不发条件：无法区分两个条件时；内容滑向无条件“买/不买”结论时；演示场景未标注被误读为真实案例时\n- 进入脚本与拍摄设计前必须确认的事项：锁定发布平台（影响时长与首帧呈现）；确认演示场景具体安排（几组内搭、是否出镜部位）；确认收藏引导是否在平台支持范围内\n\n- 本条唯一主要工作：让顾客学会用内搭体积与袖窿空间两个条件自行判断马甲是否成立\n- 本条有限次要贡献：无（次要贡献清单为空）\n- 本条明确不承担的目标：不承担起号、吸粉、流量、GMV、线索、到店等周期目标；不承担无条件结论或品牌口号输出\n- 目标取舍方案、代价与推荐（无冲突时写“无”）：无（唯一主要工作与不可牺牲条件不冲突）\n- 本条被下游消费的关键语义与失效范围：主目标（教判断方法）；核心命题（两个条件）；受众问题（反复问“要不要买”）；证据地图（试穿记录 + 显式标注的演示场景）；表达边界（不得给无条件结论）；素材条件（同一件马甲 + 两种内搭）；CTA 条件（仅低风险互动）。下游仅在这些语义实质变化时失效。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：不适用（单条内容）\n- 不得重复拍摄的事实：不适用\n- 素材与人员优先级：不适用\n- 事实确认顺序：苏禾确认试穿记录引用与演示标注无误，进入制作\n- 最低运行版本：口述两个条件 + 同一件马甲至少一张静态图 / 一段演示（演示若无法完成，用静态对比）\n- 产能不足时的缩减顺序：删演示画面 → 保留口述与静态对比 → 仍不足则延后发布，不以重复内容补量\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾对试穿记录引用负确认责任；演示场景标注由苏禾确认\n- 跨账号引用纪律：不适用（无跨账号)\n- 平台条件：平台未锁定——不选平台，输出平台中立母版；锁定平台列为进入平台规格制作前的条件\n- CTA 条件：仅低风险互动（评论、收藏）；不出现任何购买、私信、到店、预约、优惠、领取引导\n- 申请与确认边界：不适用（无经营承接入口）\n- 普通问题与升级边界：不适用（无经营承接入口）",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"2a1dd09014b55f71fa59fb0bc06797e7356b654388760a8d3862b1ddfe41aec0\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"input_professional_sha256\": \"931f2e32a5c3ff201ba901abe82399a62f552bf82b003fdb146009440fc2eb67\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f19624fa4cce6a8dc8bfc58550349801f0c17ba5e0b5b643bbdd22b2b56fe676\"}",
+        "seam_trace_json": "{\"call_hash\": \"48de7cedcdb2c38d41202a79b673ec9ff8e82349d9c2805a8420142f666e2d1a\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 9.7e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787782655,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787782655,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    }
+  ],
+  "timestamp": "2026-08-26T15:17:35-0700"
+}

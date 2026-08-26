@@ -465,3 +465,199 @@ M4-FND-002: {status: OPEN, belongs_to: "M1（DONE）", impact: "5 次确认轮�
 M4-FND-003: {status: RESOLVED, what: "固定顺序叙述残留，对话节点编出「依次产出」与不存在的界面操作"}
 M4-FND-004: {status: OPEN, what: "同轮多能力请求：AC-06 合取项②与 Founder 实测包场景 2b 均要求，当前架构不支持", note: "真实缺口，登记而非绕过"}
 ```
+
+---
+
+## 权威事件 · RULESIDE-2026-08-26-M4-003
+
+```yaml
+event_id: "RULESIDE-2026-08-26-M4-003"
+date: "2026-08-26"
+authority_domain: "有权者决定"
+raw_instruction: |
+  以 0dcd66fd39692ed07df80e39c1f27511d9cbf283 为唯一冻结候选，立即停止继续修改代码和重新发布；
+  不再向 Founder 询问普通技术处置、是否复审或是否降低验收标准。
+  FND-001 和 FND-003 可保留为 M4 Founder Canvas 内部的局部兼容修复，但不得修改或宣称修复 M1 正式资产。
+  只执行原合同的一次 affected-scope closing verification，并继续完成尚未裁定的技术验收。
+  FND-002 如实保留为 M1 外部依赖和 AC-21 FAIL，不由 M4 越界修复。
+  FND-004 不再询问"要不要支持"：该行为已经由 AC-06 和场景 2b 冻结；
+  请提交一个边界清晰的 M1→M4 多诉求接口 Rebase 建议，不得在 M4 建第二套路由。
+  凡需 Founder 裁定的 AC-05 语义项、AC-15/17/18/26/27、AC-22 候选差异，
+  必须逐项提供可直接在 Dify 运行的测试卡：准确应用与 app_id、新会话要求、原样输入、
+  操作步骤、实际候选输出、自然语言判断点和 PASS/退回条件。
+  没有可运行测试卡的项目继续 NOT_VERIFIED，不得只把执行侧结论交给 Founder 拍板。
+resolves:
+  - "上一轮悬而未决的解读问题（FND-001/003 是越权还是授权）—— 裁定为『保留，但重新定界』"
+  - "是否复审 —— 不问"
+  - "FND-004 是否支持 —— 不问，改为提交接口 Rebase 建议"
+contract_effect: "无 REBASE。task_contract_hash 不变"
+task_contract_hash: "b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6"
+```
+
+### A-015 · 一次 affected-scope 收口核验（FORMAL，只读）
+
+```yaml
+attempt_id: "A-015"
+kind: "FORMAL"
+authority: "RULESIDE-2026-08-26-M4-003"
+what: "原合同授权的那一次影响面收口核验"
+result:
+  deliverable_zero_drift: true          # 交付物相对 0dcd66f 零字节
+  modified_files_since_frozen: 0        # 只有新增，没有修改
+  protected_apps_zero_change: true      # 与写前锚点同算法现场复算
+  m1_live_v1_state_lines: 743
+  m1_live_locks_intact: true            # 两处线性锁原封不动 ⇒ M4 从未改 M1 正式资产
+  m4_objects: 8
+  provider_version_lag: none
+  dify_writes: 0
+  git_in_sync: true
+self_caught_defect: |
+  收口脚本初版把 graph 重新序列化后算 md5，误报「8 个保护应用发生变化」。
+  定向复核确认是量尺错（写前锚点用 md5(w.graph) 直取数据库列）。
+  换回同一算法后为零变化，并由发布脚本自己的 preflight 独立复核。
+  如实登记：这一处若不复核就上报，就是一次假警报。
+evidence: "decision-chain/evidence/m4/M4_AFFECTED_SCOPE_CLOSING.json"
+```
+
+### A-016 · 剩余冻结夹具补跑（FORMAL）
+
+```yaml
+attempt_id: "A-016"
+kind: "FORMAL"
+what: "把冻结夹具包 v0.1 里此前从未运行的条目跑完（FA-14…FA-33，20 条）"
+covers: ["AC-07", "AC-09", "AC-10", "AC-11", "AC-13", "AC-14", "AC-18",
+         "AC-19", "AC-20", "AC-24", "AC-25", "AC-27", "AC-28"]
+first_attempt_defect: |
+  首次运行时 8 条转写漏掉了统一能力合同 §4.3 的部分必填语义槽
+  （CAMPAIGN 缺 capacity_or_owner / audience_problem；MATRIX 缺 facts_registered；
+   PP 三例缺 facts_registered / cta_contract / explicit_non_promise）。
+  后果：这几次在结构性充分性闸就被局部 Return 拦下，根本没走到被测逻辑，
+  对 AC-07/AC-10/AC-19/AC-20 不提供任何信息 —— 既不是 PASS 也不是这些 criterion 的 FAIL。
+  处置：按夹具包 §0/§1/§5 既有正文补齐槽位，判别变量一个没动
+  （PLAN-ONLY 仍 manifest_present:false，UNCONFIRMED 仍三项未确认…）。
+  首次运行的原始记录全部保留在 runs/attempt1/（N-30）。
+first_attempt_is_still_evidence: |
+  首次运行本身是有效的正向证据，只是服务别的 criterion：
+  它证明结构性不足时输出的是组件级 Return 且 precise_gap 指名到字段
+  （FA-18 的 precise_gap = "facts_registered"，不是"信息不足"）。
+evidence_grade: "RUNTIME_VERIFIED"
+```
+
+### A-017 · M4-FND-005 定向复验（FORMAL）
+
+```yaml
+attempt_id: "A-017"
+kind: "FORMAL"
+finding: "M4-FND-005"
+what: "冻结夹具的可运行转写与夹具包正文不一致，逐条换成逐字节引用后重跑（FA-34…FA-46）"
+how_found: "写测试卡时核对 AC-17 的『原样输入』，发现 GOAL_A/B 缺 §8 common 的到店承接路径"
+worst_case: |
+  FX-M4-CT-USER-DIRECT 在夹具包 §3 是「马甲到底要不要买」，
+  而 DIYU_M4_DETERMINISTIC_PROBE_v0.1.py 的转写是 CT_M3 改一个 source_kind ——
+  完全不同的内容任务。FA-03 与 FA-36 的 input_sha256 不同，可机械核对。
+mechanism: |
+  不再手抄：从冻结夹具包 Markdown 按小节抓 ```yaml 代码块逐字节作为 payload 主体，
+  运行前 assert pack_body in PACK_TEXT。统一外壳必填槽另起映射头，与包正文分开落盘。
+stale_set_rule: "SBC-RF-02 —— 只把真实依赖它的 criterion 置 NOT_VERIFIED + STALE，定向复验"
+not_invalidated: ["AC-01", "AC-03", "AC-12", "AC-16"]   # 与夹具无关，继续复用
+evidence_grade: "RUNTIME_VERIFIED"
+```
+
+### A-018 · AC-02 两两互换（FORMAL）
+
+```yaml
+attempt_id: "A-018"
+kind: "FORMAL"
+what: "6 个能力的**全部有序对** 30 组，无抽样"
+result: |
+  24 组下游消费失败或输出组件级 Return；
+  6 组正常消费但产出结构实质不同（把 Brief 的 payload 喂给 Campaign，
+  出来的是参战账号与主讲关系，不是 Brief）。
+  30/30 差异成立，无一组「正常消费且产出无实质变化」。
+evidence: "decision-chain/evidence/m4/M4_AC02_SWAP_RESULTS.json"
+```
+
+### A-019 · AC-01…30 终判（FORMAL）
+
+```yaml
+attempt_id: "A-019"
+kind: "FORMAL"
+what: "按冻结 Oracle 逐条裁定全部 30 条，合取项纪律"
+result: "PASS=17  FAIL=2  NOT_VERIFIED=11"
+fail:
+  - "AC-21 · 画布确认轮稳定进入执行 —— M4-FND-002，按 Founder 裁定保留为 M1 外部依赖"
+  - "AC-28 · 高风险例未落 cta_contract=KNOWN_BUT_NOT_AUTHORIZED —— 行为对，取值缺，M4-FND-010"
+not_verified_blockers:
+  founder_bounded_judgement: 9      # 已配可运行测试卡
+  architecture_gap_FND_004: 1       # AC-06 合取项②
+  unfair_comparison_FND_007: 1      # AC-15 合取项②
+  criterion_cites_missing_fixture_FND_009: 1   # AC-26 负向
+  no_real_recovery_event_this_round: 1         # AC-14 合取项⑤
+instrument_corrections: 5          # 换量尺不换判据，逐条登记在取证判据合同 §10.5
+evidence: "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json"
+```
+
+## 发现登记（本轮新增）
+
+```yaml
+- id: "M4-FND-005"
+  what: "冻结夹具的可运行转写与夹具包正文不一致；FX-M4-CT-USER-DIRECT 是完全不同的内容任务"
+  severity: "HIGH"
+  status: "RESOLVED_BY_RERUN"
+  note: "受影响 criterion 已按 SBC-RF-02 定向复验，不受影响的继续复用"
+
+- id: "M4-FND-006"
+  what: "夹具 §7.2『已确认决定包』未写是否要带显式 campaign_run_mode 标记；实现只认显式标记"
+  severity: "LOW"
+  status: "OPEN"
+  to: "Founder"
+  executor_opinion: |
+    倾向认为实现是对的 —— 「决定已被确认」是权威事实（A1 有权者决定），
+    不该从散文里推断出来。但这是判据口径问题，不由执行侧裁决。
+
+- id: "M4-FND-007"
+  what: "AC-15 的公平对照纪律不可满足：两侧 completion_params 不相等，对齐需改保护应用或改冻结交付物"
+  severity: "MEDIUM"
+  status: "OPEN"
+  to: "Founder"
+  options: ["(a) 授权临时对齐参数再跑一次对照", "(b) 版本化修订 §3.1 公平对照口径"]
+  asymmetry: "判『M4 明显劣于源版本』是有效 FAIL；判『不劣于』不能记 PASS"
+
+- id: "M4-FND-009"
+  what: "AC-26 判据引用『模板腔注入探针』，但夹具包 v0.1 里没有这个具名夹具"
+  severity: "MEDIUM"
+  status: "OPEN"
+  to: "Founder"
+  options: ["补 v0.2 夹具", "修判据"]
+
+- id: "M4-FND-010"
+  what: "AC-28 高风险例行为正确但未落 cta_contract=KNOWN_BUT_NOT_AUTHORIZED 这个冻结判据指名的取值"
+  severity: "LOW"
+  status: "FAIL"
+  note: "不因『意思到了』放行；也不因『只是个字面量』降级"
+```
+
+## 本轮不做的（Founder 已明令）
+
+```yaml
+- "不再修改代码、不再重新发布 —— 交付物相对 0dcd66f 零字节，Dify 零写操作"
+- "不问普通技术处置、不问是否复审、不问是否降低验收标准"
+- "不修 M4-FND-002（属 M1），AC-21 如实 FAIL"
+- "不在 M4 建第二套路由；FND-004 只提交接口 Rebase 建议，不实施"
+- "不把执行侧结论当成 Founder 裁定；无可运行测试卡的项目一律留 NOT_VERIFIED"
+```
+
+### A-015 补记 · 收口核验脚本的调用次数（如实登记）
+
+```yaml
+note: |
+  「一次 affected-scope closing verification」指的是**合同意义上的一次收口核验**，
+  不是「脚本只准执行一次」。该只读脚本实际被调用 3 次：
+    1. 初版 —— 量尺错（重新序列化 graph 后算 md5），误报 8 个保护应用变化，**作废**
+    2. 修正量尺后 —— 结果正确，但当时本轮证据尚未落全
+    3. 全部证据落盘后 —— **这一次是收口核验的记录版本**
+  三次都是只读，对 Dify 与交付物零影响。之所以逐条写出来，是因为「跑了几次、
+  哪一次算数」本身就是 N-29/N-30 关心的东西，不写清楚就等于只留一个好看的结果。
+of_record: "第 3 次"
+evidence: "decision-chain/evidence/m4/M4_AFFECTED_SCOPE_CLOSING.json"
+```

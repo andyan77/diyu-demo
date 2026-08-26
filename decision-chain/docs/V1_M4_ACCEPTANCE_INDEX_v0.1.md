@@ -692,3 +692,115 @@ PASS = 5    FAIL = 1    NOT_VERIFIED = 9
 Reviewer 运行只读子命令 `preflight` 时，该脚本会落盘，导致
 `decision-chain/evidence/m4/M4_DIFY_PREFLIGHT.json` 被刷新（+42/−1 行，内容为新增的 8 个 M4 对象列表）。
 这是**只读核验的正常产物刷新**，不是越权写入，予以保留并在此登记。
+
+---
+
+# 附录 C · 冻结候选收口轮与 AC-01…30 终判（2026-08-26）
+
+> 权威事件 `RULESIDE-2026-08-26-M4-003`。本附录**只追加**，不改 §1–§10 与附录 A / B 的原文。
+> 冻结候选：`0dcd66fd39692ed07df80e39c1f27511d9cbf283`。
+
+## C.1 一次 affected-scope 收口核验的结果
+
+| 项 | 结果 |
+|---|---|
+| 交付物相对冻结候选零字节改动 | **是**（自冻结候选以来被修改、非新增的文件数 = 0） |
+| 九个受保护应用（与写前锚点同一种 `md5(w.graph)` 算法现场复算） | **零变化** |
+| 线上 M1 `v1_state` | **743 行；两处线性锁原封不动**（M4 从未改动 M1 正式资产） |
+| `M4 v1.3 TEST` 对象数 | 8（应为 8） |
+| provider 钉住版本 vs 应用当前已发布版本 | **无滞后** |
+| 本轮 Dify 写操作 | **0**（只有 workflow run 执行记录） |
+| 远端与本地 | 一致 |
+
+> **一处自查**：收口脚本初版把 graph 重新序列化后算 md5，报出「8 个保护应用发生变化」。
+> 定向复核发现是**量尺错**——写前锚点用的是 `md5(w.graph)` 直取数据库列，重新序列化会改变字节。
+> 换回同一算法后为零变化，并已由发布脚本自己的 `preflight` 独立复核确认。
+> 如实登记：这一处若不复核就上报，就是一次假警报。
+
+## C.2 本轮新增的正式运行
+
+| 批次 | 条数 | 说明 |
+|---|---|---|
+| `FA-14…FA-33` | 20 | 冻结夹具包里**此前从未运行**的条目（Campaign 四例、Matrix 充分、PP 三态、局部改动、无关附件、无平台证据、CTA 三级、用户投影、演绎、短入口、Return 两例） |
+| `FA-34…FA-46` | 13 | `M4-FND-005` 的定向复验：夹具正文**逐字节引用**，运行前机械断言 `pack_body in PACK_TEXT` |
+| `SW-01…SW-30` | 30 | `AC-02` 两两互换，**6 能力全部有序对，无抽样** |
+| 保留的失败/中断尝试 | 9 | `runs/attempt1/`（8 条转写缺槽的首次运行 + 1 条模型瞬时故障的 partial） |
+
+## C.3 AC-01…30 终判
+
+
+| 判据 | 结果 | V | 名称 | 卡在哪 |
+|---|---|---|---|---|
+| `AC-01` | **PASS** | D | Rebase、worktree、回滚、连续性 | — |
+| `AC-02` | **PASS** | S | 统一外壳保留能力差异 | — |
+| `AC-03` | **PASS** | D | 非固定上游与按需组合 | — |
+| `AC-04` | **PASS** | S | 合法等价输入 | — |
+| `AC-05` | **NOT_VERIFIED** | S+H | M3 / Campaign 同种 Content Task | **NOT_VERIFIED** 12 项业务核心逐项同义 |
+| `AC-06` | **NOT_VERIFIED** | S+H | Matrix 局部 Return | **NOT_VERIFIED** 同轮的 PP 请求继续执行并正常产出，不被 Matrix 阻断；**NOT_VERIFIED** 不生成任何假 Matrix 内容 |
+| `AC-07` | **PASS** | S | Campaign 策划与 compile 保真 | — |
+| `AC-08` | **PASS** | S | Brief / CS-1 / CS 接缝 | — |
+| `AC-09` | **PASS** | S+D | CS / PD 独立与局部重跑 | — |
+| `AC-10` | **PASS** | D+S | PP 直达与三状态 | — |
+| `AC-11` | **PASS** | D+S | 条件附件 | — |
+| `AC-12` | **PASS** | D | 源到 Runtime 保真 | — |
+| `AC-13` | **NOT_VERIFIED** | D+S | 内部与用户交付分离 | **NOT_VERIFIED** 必要选择与成立条件未被投影掉（『不泄露』不是『少给』） |
+| `AC-14` | **NOT_VERIFIED** | D+S | Return / 失效 / 恢复 / 幂等 | **NOT_VERIFIED** 恢复前先查目标系统副作用（幂等） |
+| `AC-15` | **NOT_VERIFIED** | S+H | 六 Skill 专业非退化 | **NOT_VERIFIED** 每项能力的关键专业行为在后继版本上可达；**NOT_VERIFIED** 盲评不劣于源版本（公平对照） |
+| `AC-16` | **PASS** | D | Runtime、Founder、远程收口 | — |
+| `AC-17` | **NOT_VERIFIED** | H+S | F-10 目标忠实（硬门） | **NOT_VERIFIED** 只改 objective ⇒ 内容承诺、结构、CTA / 承接实质变化；B  |
+| `AC-18` | **NOT_VERIFIED** | H+S | 专业方法保留且非全链硬门 | **NOT_VERIFIED** 短入口仍调用或无损承接适用方法；必要事实 / 风险 / 质量未降 |
+| `AC-19` | **PASS** | D+S | ENTRY-01 Matrix-only | — |
+| `AC-20` | **PASS** | D+S | ENTRY-02 Campaign-only | — |
+| `AC-21` | **FAIL** | D+S | ENTRY-03 Direct Brief | **NOT_VERIFIED** 冲突时显式给取舍方案、代价与推荐，由用户裁决；**FAIL** 画布路径上确认轮稳定进入执行 |
+| `AC-22` | **NOT_VERIFIED** | D+S+H | ENTRY-04 Direct Tournament | **NOT_VERIFIED** 候选实质不同（用户可见） |
+| `AC-23` | **PASS** | S | ENTRY-05 Direct CS | — |
+| `AC-24` | **PASS** | D+S | ENTRY-06 Direct PD | — |
+| `AC-25` | **NOT_VERIFIED** | D+S | ENTRY-07 Direct PP | **NOT_VERIFIED** 承诺不超兑现 / 权限 |
+| `AC-26` | **NOT_VERIFIED** | H+S | 共同质量底线 | **NOT_VERIFIED** 正向：适用质量维度不因目标 / 短入口退化；**NOT_VERIFIED** 负向：模板腔 / 无用废话 / 机械复制被拦 |
+| `AC-27` | **NOT_VERIFIED** | H+S | 合法演绎与局部事实阻断 | **NOT_VERIFIED** 创意深度与成品质量不降 |
+| `AC-28` | **FAIL** | S | CTA 三级接缝 | **FAIL** 高风险例显式取 cta_contract = KNOWN_BUT_NOT_A |
+| `AC-29` | **PASS** | S | 三层候选裁量 | — |
+| `AC-30` | **PASS** | D+S | 治理与定向失效 | — |
+
+**统计**：`PASS` = 17 ｜ `FAIL` = 2 ｜ `NOT_VERIFIED` = 11 （共 30 条）
+
+证据等级：`RUNTIME_VERIFIED`（全部绑定真实 Dify `run_id`）。
+
+## C.4 与上一轮口径的差
+
+上一轮（附录 B 修复轮）是 `PASS=5 FAIL=1 NOT_VERIFIED=9`，但那只裁定了 16 条，
+另有 14 条**根本没判**。本轮把 30 条全部裁完，所以两组数字**不可直接相减**。
+
+真正的变化只有三类，逐类说清：
+
+1. **补跑**：此前 14 条未裁定的判据，其冻结夹具本轮全部跑完并裁定。
+2. **换保真输入重判**：`M4-FND-005` 使若干条原本绑定「缩写夹具」的证据失效，
+   换成逐字节引自包正文的输入后重判。**这是定向复验，不是把旧结论抹掉重来**——
+   不受影响的项（`AC-01` / `AC-03` / `AC-12` / `AC-16`）继续复用旧证据。
+3. **换量尺**：五处（登记在取证判据合同 §10.5）。**判据文字一字未动**，
+   其中一处反而拆出了新的 `FAIL`。
+
+## C.5 两条 `FAIL`
+
+| 判据 | FAIL 的合取项 | 处置 |
+|---|---|---|
+| `AC-21` | 画布路径上确认轮稳定进入执行 | `M4-FND-002`：5 次确认轮里 1 次只确认不执行（M1 影子层意图分类波动）。按 Founder 裁定**如实保留为 M1 外部依赖，不由 M4 越界修复**。分母含该轮，故 FAIL。 |
+| `AC-28` | 高风险例显式取 `cta_contract = KNOWN_BUT_NOT_AUTHORIZED` | `M4-FND-010`：**行为是对的**（拒绝、写明「权限条件未成立…非信息缺失」、未吐出任何具体折扣价），但冻结夹具 §15 指名的合同取值在产出里不存在。不因「意思到了」放行。 |
+
+## C.6 归 Founder 的 9 条
+
+全部已配**可直接在 Dify 运行的测试卡**：
+[V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md](V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md)
+（10 张卡，每张含准确应用与 `app_id`、新会话要求、可逐字粘贴的原样输入、操作步骤、
+执行侧已跑出的实际候选输出、大白话判断点、PASS / 退回条件）。
+
+**没有可运行测试卡的项目继续 `NOT_VERIFIED`。** 执行侧不把自评结论交给 Founder 拍板。
+
+## C.7 仍然不承诺（不因本轮取证而上推）
+
+- 不宣称完整纵向链、运营闭环、整体增益或经营提升（`N-27`）。
+- 不宣称 `AC-15` 的「不劣于源版本」——公平对照纪律不满足，见 `M4-FND-007`。
+- 不宣称同轮多诉求可用——架构缺口 `M4-FND-004` 仍开着。
+- 不宣称 `M4-FND-002` 已修——它属于 M1，本轮按 Founder 裁定不碰。
+- 技术 `PASS` 不替代 Founder 产品接受；Founder 接受也不替代技术 `PASS`。
+- 本任务终态**仍未收敛**：`AC-01…30` 未全部 `PASS`，不得宣告 `DONE`。

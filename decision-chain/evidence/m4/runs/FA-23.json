@@ -1,0 +1,530 @@
+{
+  "attempt_id": "FA-23",
+  "attempt_kind": "FORMAL",
+  "fixture_id": "FX-M4-LOCAL-EDIT",
+  "fixture_pack_section": "§16.3",
+  "fixture_pack_sha256": "9ac684d27acec7572934bd4f4c179212be7f196f5b7c81d9c4af6e2b48367a5a",
+  "fixture_transcription_note": "可运行转写：逐字取自冻结夹具包 v0.1 §16.3（含 §0 共用背景中的真实组织角色与表达边界）；只做散文→同义字段的形式变换，未新增任何夹具未提供的经营事实。",
+  "capability": "PRODUCTION_DIRECTOR",
+  "entry_requested": "(由确定性充分性规则推导)",
+  "serves_criteria": [
+    "AC-09",
+    "AC-14",
+    "AC-24",
+    "N-11"
+  ],
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "seam_app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+  "provider_bindings": {
+    "_seam": {
+      "app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+      "provider_id": "2daa2d27-4305-4d24-95ec-3cb424eaeb2f",
+      "tool_name": "diyu_m4_capability_seam"
+    },
+    "campaign": {
+      "app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+      "provider_id": "0737d719-10c8-4799-8310-6579d20c86f1",
+      "published_workflow_id": "9402aa80-08ad-4e67-b6ca-955b85d2f828",
+      "tool_name": "diyu_m4_campaign"
+    },
+    "content_brief": {
+      "app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+      "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+      "published_workflow_id": "4cb57c58-1d2b-4239-b649-1ef6e4ff2b6b",
+      "tool_name": "diyu_m4_content_brief"
+    },
+    "creative_script": {
+      "app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+      "provider_id": "08a225b4-268f-4eb8-80c1-66f8792da71f",
+      "published_workflow_id": "25903677-f27b-4cdb-94c5-0eb568691796",
+      "tool_name": "diyu_m4_creative_script"
+    },
+    "matrix": {
+      "app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+      "provider_id": "36905561-5728-4581-93b0-09ea5baec97b",
+      "published_workflow_id": "98aeaf51-b6ba-423b-b5cc-e06cac9f422b",
+      "tool_name": "diyu_m4_matrix"
+    },
+    "production_director": {
+      "app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+      "provider_id": "e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0",
+      "published_workflow_id": "143b3837-3e7b-4aaf-9cb5-9f086ed5b20f",
+      "tool_name": "diyu_m4_production_director"
+    },
+    "publishing_packaging": {
+      "app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+      "provider_id": "e34c2aaa-c8b1-4026-af07-a031e3b3d759",
+      "published_workflow_id": "edd3442e-7a95-4125-9e9a-b4fe34fd5d41",
+      "tool_name": "diyu_m4_publishing_packaging"
+    }
+  },
+  "input_sha256": "2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0",
+  "input_text": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+  "run_id": "d2859bad-0a86-486e-96bd-92189c4b7b21",
+  "elapsed_s": 77.75,
+  "error": null,
+  "raw_response": {
+    "task_id": "75f706f9-5614-4476-8271-11f52d50fb26",
+    "workflow_run_id": "d2859bad-0a86-486e-96bd-92189c4b7b21",
+    "data": {
+      "id": "d2859bad-0a86-486e-96bd-92189c4b7b21",
+      "workflow_id": "488aa802-dff5-4665-a796-d9c5b651d43e",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "",
+        "artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+        "seam_trace_json": "{\"call_hash\": \"d2942b55d665b34320fec1d79bcdca19804f90645922340d79127b7472456357\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 77.658233,
+      "total_tokens": 21072,
+      "total_steps": 6,
+      "created_at": 1787781216,
+      "finished_at": 1787781294
+    }
+  },
+  "node_trace": [
+    {
+      "id": "9e722cf2-0bcd-4a4d-abf3-dbee99872a9d",
+      "index": 1,
+      "predecessor_node_id": null,
+      "node_id": "1788000000001",
+      "node_type": "start",
+      "title": "能力调用意图",
+      "inputs": {
+        "capability": "PRODUCTION_DIRECTOR",
+        "entry": "",
+        "capability_call": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "professional_input": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "example_reference_requested": "NO"
+      },
+      "process_data": {},
+      "outputs": {
+        "capability": "PRODUCTION_DIRECTOR",
+        "entry": "",
+        "capability_call": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "professional_input": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "example_reference_requested": "NO"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 8e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787781216,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787781216,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "76d08cd7-e61f-4c7c-b8a1-1d9693587e37",
+      "index": 2,
+      "predecessor_node_id": null,
+      "node_id": "entry_resolver",
+      "node_type": "code",
+      "title": "入口解析（确定性）",
+      "inputs": {
+        "capability": "PRODUCTION_DIRECTOR",
+        "entry": "",
+        "capability_call": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "professional_input": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n"
+      },
+      "process_data": {},
+      "outputs": {
+        "call_hash": "d2942b55d665b34320fec1d79bcdca19804f90645922340d79127b7472456357",
+        "capability_resolved": "PRODUCTION_DIRECTOR",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "entry_resolved": "ENTRY-06",
+        "route": "PRODUCTION_DIRECTOR",
+        "run_mode": "PLAN"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.045296,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787781216,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787781216,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "56da644a-4a67-40b2-9459-82b9dce1ef7e",
+      "index": 3,
+      "predecessor_node_id": null,
+      "node_id": "seam_dispatch",
+      "node_type": "if-else",
+      "title": "能力分派",
+      "inputs": {
+        "conditions": [
+          {
+            "actual_value": "PRODUCTION_DIRECTOR",
+            "expected_value": "PRODUCTION_DIRECTOR",
+            "comparison_operator": "is"
+          }
+        ]
+      },
+      "process_data": {
+        "condition_results": [
+          {
+            "group": {
+              "case_id": "matrix",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "MATRIX",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "campaign",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CAMPAIGN",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "content_brief",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CONTENT_BRIEF",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "creative_script",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CREATIVE_SCRIPT",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "production_director",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "PRODUCTION_DIRECTOR",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              true
+            ],
+            "final_result": true
+          }
+        ]
+      },
+      "outputs": {
+        "result": true,
+        "selected_case_id": "production_director"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000137,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787781216,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787781216,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "be58e682-b2d8-4dd5-9619-76e1587a735a",
+      "index": 4,
+      "predecessor_node_id": null,
+      "node_id": "tool_production_director",
+      "node_type": "tool",
+      "title": "调用 DIYU M4 v1.3 TEST · Production Director",
+      "inputs": {
+        "capability_call": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "entry": "ENTRY-06",
+        "example_reference_requested": "NO",
+        "professional_input": "\nprovenance:\n  source_kind: HISTORICAL_ARTIFACT\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexplicit_non_promise: 不承诺哪一件更好\ncontent_origin_mode: 现拍\nproduction_profile: 单人手机\ntime_window: 半天\nscript_or_equivalent_beats: B1/B2/B3/B4 四个节拍，逐条带事实与素材两问\nobjective:\n  goal_family: LONG_TERM_VALUE\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\n\nchange: \"只把 B2 的『三处』改成『领口、袖窿、下摆这三处』（同一事实的更精确表述）\"\nsemantic_keys_changed: []\nprior_production_units_present: true\nprior_units: [\"U1(B1)\", \"U2(B2)\", \"U3(B3)\", \"U4(B4)\"]\n",
+        "run_mode": "PLAN"
+      },
+      "process_data": {},
+      "outputs": {
+        "text": "{\"artifact\": \"## 这份生产方案的判断前提\\n\\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\\n\\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\\n\\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\\n\\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\\n\\n---\\n\\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\\n\\n每个单元都标注了「这个单元为什么要存在」。\\n\\n### U2 · 三层同穿，逐点证据（重做）\\n\\n| 项目 | 内容 |\\n|---|---|\\n| 单元类型 | `SHOT`（实拍） |\\n| 对应 beat | B2 |\\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\\n| 画面语言关系 | **证明**（PD-4） |\\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\\n| 素材 | 待产出·可控（现拍） |\\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\\n\\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\\n\\n| 项目 | 内容 |\\n|---|---|\\n| 单元类型 | `SHOT`（实拍） |\\n| 对应 beat | B3 |\\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\\n| 事实 | B3（同一条件比较） |\\n| 素材 | 待产出·可控（现拍） |\\n\\n### U1 / U4 · 保持有效，未受本次变更影响\\n\\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\\n\\n---\\n\\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\\n\\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\\n\\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\\n\\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\\n\\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\\n\\n---\\n\\n## 表演指导（七维，照做即可）\\n\\n| 维度 | 具体指导 |\\n|---|---|\\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\\n\\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\\n\\n---\\n\\n## 拍摄顺序（最省时间，单人半天内）\\n\\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\\n3. **U3 单层状态 + 中间空画面**（同一机位）\\n4. **U1 引入**（可换回正面机位）\\n5. **U4 结论**（正面机位）\\n\\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\\n\\n---\\n\\n## 声音\\n\\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\\n\\n---\\n\\n## 可截图帧\\n\\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\\n\\n---\\n\\n## 低资源预案（同一档下的失败预案，不是降级）\\n\\n| 情况 | 预案 |\\n|---|---|\\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\\n\\n---\\n\\n## 本次没有产出 manifest 的原因\\n\\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\\n\\n---\\n\\n## 并置检查（逐对，不是逐条）\\n\\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\\n- 没有任何一条关系是观众自己脑补出来的。\\n\\n---\\n\\n## 结论\\n\\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\\n\\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\\n\\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**\", \"user_delivery\": \"\", \"user_delivery_status\": \"MISSING\", \"user_delivery_leaks\": [], \"returns_json\": \"[]\", \"returns_status\": \"PARSE_FAILED\", \"returns_parse_note\": \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\", \"returns_raw\": \"ABSENT\", \"local_block\": \"true\", \"raw_preserved\": \"## 这份生产方案的判断前提\\n\\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\\n\\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\\n\\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\\n\\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\\n\\n---\\n\\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\\n\\n每个单元都标注了「这个单元为什么要存在」。\\n\\n### U2 · 三层同穿，逐点证据（重做）\\n\\n| 项目 | 内容 |\\n|---|---|\\n| 单元类型 | `SHOT`（实拍） |\\n| 对应 beat | B2 |\\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\\n| 画面语言关系 | **证明**（PD-4） |\\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\\n| 素材 | 待产出·可控（现拍） |\\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\\n\\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\\n\\n| 项目 | 内容 |\\n|---|---|\\n| 单元类型 | `SHOT`（实拍） |\\n| 对应 beat | B3 |\\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\\n| 事实 | B3（同一条件比较） |\\n| 素材 | 待产出·可控（现拍） |\\n\\n### U1 / U4 · 保持有效，未受本次变更影响\\n\\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\\n\\n---\\n\\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\\n\\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\\n\\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\\n\\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\\n\\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\\n\\n---\\n\\n## 表演指导（七维，照做即可）\\n\\n| 维度 | 具体指导 |\\n|---|---|\\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\\n\\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\\n\\n---\\n\\n## 拍摄顺序（最省时间，单人半天内）\\n\\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\\n3. **U3 单层状态 + 中间空画面**（同一机位）\\n4. **U1 引入**（可换回正面机位）\\n5. **U4 结论**（正面机位）\\n\\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\\n\\n---\\n\\n## 声音\\n\\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\\n\\n---\\n\\n## 可截图帧\\n\\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\\n\\n---\\n\\n## 低资源预案（同一档下的失败预案，不是降级）\\n\\n| 情况 | 预案 |\\n|---|---|\\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\\n\\n---\\n\\n## 本次没有产出 manifest 的原因\\n\\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\\n\\n---\\n\\n## 并置检查（逐对，不是逐条）\\n\\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\\n- 没有任何一条关系是观众自己脑补出来的。\\n\\n---\\n\\n## 结论\\n\\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\\n\\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\\n\\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**\", \"binding_json\": \"{\\\"artifact_sha256\\\": \\\"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\\\", \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\", \\\"completion_params\\\": {\\\"max_tokens\\\": 384000, \\\"reasoning_effort\\\": \\\"low\\\", \\\"thinking\\\": true, \\\"top_p\\\": 0.8}, \\\"entry\\\": \\\"ENTRY-06\\\", \\\"goal_family_readonly_inherited\\\": \\\"LONG_TERM_VALUE\\\", \\\"input_envelope_sha256\\\": \\\"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\\\", \\\"input_professional_sha256\\\": \\\"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\\\", \\\"model_name\\\": \\\"deepseek-v4-flash\\\", \\\"model_provider\\\": \\\"langgenius/deepseek/deepseek\\\", \\\"note\\\": \\\"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\\\", \\\"reference_load_matrix\\\": {\\\"examples\\\": \\\"ON_REQUEST\\\", \\\"industry\\\": \\\"BY_DOMAIN\\\", \\\"platforms\\\": \\\"STRUCTURAL\\\"}, \\\"reference_projection_declared\\\": \\\"{\\\\n  \\\\\\\"capability\\\\\\\": \\\\\\\"PRODUCTION_DIRECTOR\\\\\\\",\\\\n  \\\\\\\"loaded_reference_sections\\\\\\\": [\\\\n    \\\\\\\"SKILL.md :: 后继版全文（始终加载）\\\\\\\"\\\\n    ,\\\\\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\\\\\"\\\\n    ,\\\\\\\"industry-conditions.md :: 服装 / 门店零售\\\\\\\"\\\\n  ],\\\\n  \\\\\\\"load_matrix_ref\\\\\\\": \\\\\\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\\\\\",\\\\n  \\\\\\\"second_attachment_library_built\\\\\\\": false,\\\\n  \\\\\\\"rag_first_layer_built\\\\\\\": false\\\\n}\\\", \\\"run_mode\\\": \\\"PLAN\\\", \\\"self_reported_only\\\": true, \\\"source_skill_path\\\": \\\"content-production/skills/directing-content-production/SKILL.md\\\", \\\"source_skill_sha256\\\": \\\"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\\\", \\\"successor_skill_path\\\": \\\"content-production/skills/directing-content-production-m4/SKILL.md\\\", \\\"successor_skill_sha256\\\": \\\"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\\\", \\\"system_prompt_sha256\\\": \\\"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\\\", \\\"target_environment\\\": \\\"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\\\", \\\"task_contract_hash\\\": \\\"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\\\", \\\"task_id\\\": \\\"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\\\", \\\"user_prompt_sha256\\\": \\\"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\\\"}\", \"reference_projection\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"reference_projection_text\": \"## 参考投影 · 按 M4 统一能力合同 §12 加载矩阵确定性选出\\n\\n### platforms.md :: 结构性参数（只取影响内容结构 / 构图的部分）\\n\\n**只在它改变结构时读。** 数值型参数若在主本中无当前有效条目，置 `PLATFORM_SPEC_UNVERIFIED` 并改写为定性制作要求，**不得自造数字**；分支型参数改写为条件式，两支都写完整。\\n\\n本次 `platform` = NOT_LOCKED。`NOT_LOCKED` 时只产出平台中立母版，不出任何平台改写。\\n### industry-conditions.md :: 服装 / 门店零售\\n\\n按 `subject_domain` 条件加载该行业段落。\\n### examples.md :: 未加载\\n\\n本次未显式请求案例参考 ⇒ 不加载。**不得凭记忆补一个案例上去。**\\n\\n\\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**\", \"entry\": \"ENTRY-06\", \"run_mode\": \"PLAN\", \"sufficiency_status\": \"SUFFICIENT_WITH_CONDITIONS\", \"goal_family\": \"LONG_TERM_VALUE\", \"conditionalized\": \"platform 未锁定：只产出平台中立母版，锁定平台列为条件；疑似语义单薄项：content_origin_mode, time_window\"}",
+        "files": [],
+        "json": [
+          {
+            "artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（...",
+            "binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+            "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件；疑似语义单薄项：content_origin_mode, time_window",
+            "entry": "ENTRY-06",
+            "goal_family": "LONG_TERM_VALUE",
+            "local_block": "true",
+            "raw_preserved": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+            "reference_projection": "{\n  \"capability\": \"PRODUCTION_DIRECTOR\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n    ,\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\"\n    ,\"industry-conditions.md :: 服装 / 门店零售\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+            "reference_projection_text": "## 参考投影 · 按 M4 统一能力合同 §12 加载矩阵确定性选出\n\n### platforms.md :: 结构性参数（只取影响内容结构 / 构图的部分）\n\n**只在它改变结构时读。** 数值型参数若在主本中无当前有效条目，置 `PLATFORM_SPEC_UNVERIFIED` 并改写为定性制作要求，**不得自造数字**；分支型参数改写为条件式，两支都写完整。\n\n本次 `platform` = NOT_LOCKED。`NOT_LOCKED` 时只产出平台中立母版，不出任何平台改写。\n### industry-conditions.md :: 服装 / 门店零售\n\n按 `subject_domain` 条件加载该行业段落。\n### examples.md :: 未加载\n\n本次未显式请求案例参考 ⇒ 不加载。**不得凭记忆补一个案例上去。**\n\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+            "returns_json": "[]",
+            "returns_parse_note": "缺少 RETURNS 块，无法判定是无回改还是产出被截断",
+            "returns_raw": "ABSENT",
+            "returns_status": "PARSE_FAILED",
+            "run_mode": "PLAN",
+            "sufficiency_status": "SUFFICIENT_WITH_CONDITIONS",
+            "user_delivery": "",
+            "user_delivery_leaks": [],
+            "user_delivery_status": "MISSING"
+          }
+        ],
+        "artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "user_delivery": "",
+        "user_delivery_status": "MISSING",
+        "user_delivery_leaks": [],
+        "returns_json": "[]",
+        "returns_status": "PARSE_FAILED",
+        "returns_parse_note": "缺少 RETURNS 块，无法判定是无回改还是产出被截断",
+        "returns_raw": "ABSENT",
+        "local_block": "true",
+        "raw_preserved": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+        "reference_projection": "{\n  \"capability\": \"PRODUCTION_DIRECTOR\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n    ,\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\"\n    ,\"industry-conditions.md :: 服装 / 门店零售\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+        "reference_projection_text": "## 参考投影 · 按 M4 统一能力合同 §12 加载矩阵确定性选出\n\n### platforms.md :: 结构性参数（只取影响内容结构 / 构图的部分）\n\n**只在它改变结构时读。** 数值型参数若在主本中无当前有效条目，置 `PLATFORM_SPEC_UNVERIFIED` 并改写为定性制作要求，**不得自造数字**；分支型参数改写为条件式，两支都写完整。\n\n本次 `platform` = NOT_LOCKED。`NOT_LOCKED` 时只产出平台中立母版，不出任何平台改写。\n### industry-conditions.md :: 服装 / 门店零售\n\n按 `subject_domain` 条件加载该行业段落。\n### examples.md :: 未加载\n\n本次未显式请求案例参考 ⇒ 不加载。**不得凭记忆补一个案例上去。**\n\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+        "entry": "ENTRY-06",
+        "run_mode": "PLAN",
+        "sufficiency_status": "SUFFICIENT_WITH_CONDITIONS",
+        "goal_family": "LONG_TERM_VALUE",
+        "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件；疑似语义单薄项：content_origin_mode, time_window"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 77.512444,
+      "execution_metadata": {
+        "tool_info": {
+          "provider_type": "workflow",
+          "provider_id": "e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0",
+          "plugin_unique_identifier": null
+        },
+        "total_tokens": 21072,
+        "total_price": "0",
+        "currency": "USD"
+      },
+      "extras": {
+        "icon": {
+          "background": "#E4FBCC",
+          "content": "🧩"
+        }
+      },
+      "created_at": 1787781216,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787781294,
+      "inputs_truncated": false,
+      "outputs_truncated": true,
+      "process_data_truncated": false
+    },
+    {
+      "id": "e0a52608-bf92-40f4-bf9c-38620662557f",
+      "index": 5,
+      "predecessor_node_id": null,
+      "node_id": "fin_production_director",
+      "node_type": "code",
+      "title": "接缝收口｜PRODUCTION_DIRECTOR",
+      "inputs": {
+        "capability_resolved": "PRODUCTION_DIRECTOR",
+        "entry_resolved": "ENTRY-06",
+        "run_mode": "PLAN",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "tool_artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "tool_user_delivery": "",
+        "tool_returns_json": "[]",
+        "tool_binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+        "call_hash": "d2942b55d665b34320fec1d79bcdca19804f90645922340d79127b7472456357"
+      },
+      "process_data": {},
+      "outputs": {
+        "artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PUBLISHING_PACKAGING"
+        ],
+        "capability_invoked": "PRODUCTION_DIRECTOR",
+        "returns_json": "[]",
+        "seam_trace_json": "{\"call_hash\": \"d2942b55d665b34320fec1d79bcdca19804f90645922340d79127b7472456357\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "user_delivery": ""
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.04542,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787781294,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787781294,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "fb376cd2-80a6-40cc-9024-eda498cf29bd",
+      "index": 6,
+      "predecessor_node_id": null,
+      "node_id": "end_production_director",
+      "node_type": "end",
+      "title": "结束｜PRODUCTION_DIRECTOR",
+      "inputs": {
+        "user_delivery": "",
+        "artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+        "seam_trace_json": "{\"call_hash\": \"d2942b55d665b34320fec1d79bcdca19804f90645922340d79127b7472456357\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "process_data": {},
+      "outputs": {
+        "user_delivery": "",
+        "artifact": "## 这份生产方案的判断前提\n\n上游脚本的这次变更——把 B2 的「三处」写成「领口、袖窿、下摆这三处」——我按 **局部重跑** 处理：\n\n**不重排整条拍摄计划。** U1、U3、U4 的有效性不因这次改动而失效。真正被影响的是：\n\n1. **U2（B2 的证据单元）**——镜头设计从「三层同穿会显得拥挤（泛指三处）」升级为「三个具体点的逐点特写」。每个特写都有独立的存在理由（PD-2），不再是含糊带过的中景。\n2. **U3（B3 的同条件对照）**——它的「锁死清单」里与位置相关的锚点，必须同步成「领口、袖窿、下摆」三个点，否则 U2 拍的是这三处、U3 对照的却是别的位置，对照关系直接作废（PD-3）。\n\n其余部分——B1 引入、B4 结论、整体节奏、声音方案、拍摄顺序的骨架——保持不变。\n\n---\n\n## 镜头计划（更新后的 U2，以及同步锚点的 U3）\n\n每个单元都标注了「这个单元为什么要存在」。\n\n### U2 · 三层同穿，逐点证据（重做）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B2 |\n| 景别 / 机位 | 近距特写；手机固定，正面偏侧 45°，与身体约 40–50cm；三个点位各拍一段，段之间人自然换位或微调机位 |\n| 内容 | 三层同穿状态下，**领口、袖窿、下摆**三个点位各一段静态/微推特写 |\n| 每一段的目的 | 领口段：证明「三层在领口处堆叠/拥挤」；袖窿段：证明「袖窿处紧绷/厚度堆积」；下摆段：证明「下摆厚度叠加」。**三个点各是一个独立证据，不是同一个镜头三次重复** |\n| 画面语言关系 | **证明**（PD-4） |\n| 失败条件 | 如果三层穿起来实际不拥挤，特写当场露馅——**保留真实结果**，这是真实结果，走回改建议而不是重拍到成功 |\n| 事实 | B2（三层同穿会显得拥挤，且具体在领口、袖窿、下摆三处） |\n| 素材 | 待产出·可控（现拍） |\n| 降级路径 | 手机对焦跟不上 → 手动点屏逐点对焦；仍不清晰 → 改一个中景，用手逐点指认三处，保留指向性但证明强度降为「补充」 |\n\n### U3 · 同条件对照：单层 vs 三层（仅同步锁死锚点）\n\n| 项目 | 内容 |\n|---|---|\n| 单元类型 | `SHOT`（实拍） |\n| 对应 beat | B3 |\n| 景别 / 机位 | 与 U2 相同的机位、距离、高度、姿态——**锁死清单逐条沿用，仅把「位置」锚点同步为领口、袖窿、下摆** |\n| 内容 | 同一件内搭：单层状态 + 三层状态下，三处各拍一次；两个状态之间有一段同机位空画面，人走出画面再走回来 |\n| 目的 | 让观众自己看到同一点位上有层次和无层次的差异——**对照只证明「不同」，不推出「哪个更好」**（这对应 explicit_non_promise） |\n| 画面语言关系 | 证明（失败条件：如果单层与三层在三个点位上没有可察觉差异，这句「会显得拥挤」不成立） |\n| 事实 | B3（同一条件比较） |\n| 素材 | 待产出·可控（现拍） |\n\n### U1 / U4 · 保持有效，未受本次变更影响\n\n- **U1（B1 引入）**：衣橱前建立场景。不涉及「三处」，保持原有单元有效。\n- **U4（B4 结论）**：「看这三处」的操作指引。它依赖的是「三处」存在这一事实——现在事实更精确了，结论反而更扎实，不需要改动。\n- 这两个单元的既有内容、素材状态、降级路径**照常执行**，不重做、不复查、不推倒。\n\n---\n\n## 一个贯穿 U2→U3 的机械关卡（PD-3 锁死清单）\n\n**两个状态之间必须有一段同机位空画面**——人走出画面再走回来。那两秒是「这不是两次拍摄」的唯一证据。\n\n锁死项逐条进单元内容（不是备注）：机位、距离、高度、脚位、姿态、内搭（同一件）、三层顺序、墙面背景、光线方向（面向窗）。\n\n**禁止**：分两次拍、隔天拍、换机位拍、悄悄换内搭。\n\n如果你在拍 U2 时换了机位，请回到 U3 时也保持同一机位——这是这套对照成立的前提。\n\n---\n\n## 表演指导（七维，照做即可）\n\n| 维度 | 具体指导 |\n|---|---|\n| 状态 | 刚从衣橱里拿出三层衣服，正在试穿中段，**还没下结论** |\n| 动作 | 边说边穿；拍到领口时手自然拉一下领口；拍袖窿时抬一下手臂示意活动感；拍下摆时手往下摆一捋 |\n| 停顿 | 穿到第三层、手还没拉领口之前，**停一句**再开口——让观众先看到「三层堆在这」的现场 |\n| 视线 | 说「领口」时看领口方向，说「袖窿」时看袖窿，说「下摆」时看下摆；最后看镜头说结论 |\n| 说给谁听 | 讲给一个你认识、也常叠穿但总穿厚的人（不是「观众」）——按这个对象调整语气 |\n| 强度 | 证据展示段平实，结论段稍放慢半拍 |\n| 可发挥范围 | 语序可微调，但「领口、袖窿、下摆」这三个名词**不可改**——这是事实，不是修辞 |\n\n**关于热身**：前两遍当热身，不默认采用——第三遍开始才是可用素材。\n\n---\n\n## 拍摄顺序（最省时间，单人半天内）\n\n1. **先架机位，拍 U2 三段特写**（光线最好的时段先拍核心证据）\n2. **同一机位，直接进 U3 三层状态**（不用重新架位）\n3. **U3 单层状态 + 中间空画面**（同一机位）\n4. **U1 引入**（可换回正面机位）\n5. **U4 结论**（正面机位）\n\n中间空画面的那两秒，**不要剪掉**——它是对照成立的证据，不是废片。\n\n---\n\n## 声音\n\n- **保留现场声**：衣料摩擦声、脚步声。这是「真的在穿」的证据，不要压掉。\n- 三个特写段，环境声里衣料声自然浮出；对照的空画面段，留约 1 秒静默再进下一段。\n- **不铺 BGM**——成本/证据型内容用音乐会把注意力换成节奏，观众记住的是「很专业」而不是「真的拥挤」。\n\n---\n\n## 可截图帧\n\n选 **U4 结论段**：出镜人面对镜头，手上拿着三层衣服，「看这三处」的信息在画面里完整成立。这一帧单独发出去，别人看得懂。\n\n---\n\n## 低资源预案（同一档下的失败预案，不是降级）\n\n| 情况 | 预案 |\n|---|---|\n| 出镜人当天没空 | 改用此前已有三层试穿素材（如有）——**但那会变成「已有素材剪辑」模式**，得重新走素材检索逻辑，不再是现拍方案 |\n| 光线不足（阴天） | 面向窗的计划对天气依赖不大；如房间过暗，改台灯侧光，**接受色温变化声明**，不要硬拉 ISO |\n| 手机没电 | 半天窗口内留出充电时间，拍摄顺序里 U2 优先保证 |\n| 拍完发现 U2 三个点对焦失败 | 当天补拍——这是「待产出·可控」内的补录，不是重拍 |\n\n---\n\n## 本次没有产出 manifest 的原因\n\n素材还没回来，`realization_manifest` 不在此刻产出——这是计划，不是既有素材清单。素材拍完后，按 beat 级逐条填（哪段素材覆盖领口、哪段覆盖袖窿、哪段覆盖下摆，各自起止时间码），而不是交一份「拍了 40 分钟」的资产级清单。\n\n---\n\n## 并置检查（逐对，不是逐条）\n\n- U2 三段特写连播：观众读出的关系是「三层在这三点堆积」——有来源（B2），不越界。\n- U2→U3 相邻：观众读出「同一点位，单层 vs 三层的差异」——有来源（B3 的比较任务），且锁死清单保证可比。\n- U3→U4：结论「看这三处」与前面的证据指向一致——有来源。\n- 没有任何一条关系是观众自己脑补出来的。\n\n---\n\n## 结论\n\n这次上游改动不需要你重拍任何东西、不需要新增镜头、不需要调整时间窗口。**只做一件事**：拍 U2 时，把「三处」从脑子里的泛指变成「领口、袖窿、下摆」三个明确的特写，然后让 U3 的对照沿用同一组位置。\n\n拍摄顺序、表演指导、声音方案、低资源预案全部照旧执行。半天窗口**只会在 U2 的拍摄步骤上多花约 10 分钟**（三个特写替代一个中景），不影响整体进度。\n\n**没有需要你决策的事项，也没有需要回改上游的内容——这次变更是纯收益，镜头反而更有目的性了。**",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"6a343534ae90c2769b536bc7c99514e541886d2a1c184752f81eb6150c1b97d8\", \"capability\": \"PRODUCTION_DIRECTOR\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-06\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"input_professional_sha256\": \"2955213e85388e812cd664cb815323669552f80e7efe9f7222fe95941b51b7c0\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"PRODUCTION_DIRECTOR\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"PLAN\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/directing-content-production/SKILL.md\", \"source_skill_sha256\": \"87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c\", \"successor_skill_path\": \"content-production/skills/directing-content-production-m4/SKILL.md\", \"successor_skill_sha256\": \"b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02\", \"system_prompt_sha256\": \"61b17de95dfd8a98dc7b0e9b71f2a3c4631d903bb254e4dfb9492d1756a41ff1\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"daadc84c0db0a9864e44a867a57b6bb9419bfb1c9bad63256069502de33242b8\"}",
+        "seam_trace_json": "{\"call_hash\": \"d2942b55d665b34320fec1d79bcdca19804f90645922340d79127b7472456357\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 9.9e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787781294,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787781294,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    }
+  ],
+  "timestamp": "2026-08-26T14:54:54-0700"
+}
