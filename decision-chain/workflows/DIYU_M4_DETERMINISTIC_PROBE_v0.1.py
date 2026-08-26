@@ -41,16 +41,25 @@ APPS = {
     "PUBLISHING_PACKAGING": os.path.join(CP_WF, "DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml"),
 }
 SEAM = os.path.join(DC_WF, "DIYU_M4_CAPABILITY_SEAM_v1_3_TEST.yml")
+CANVAS = os.path.join(DC_WF, "DIYU_M4_FOUNDER_CANVAS_v1_3_TEST.yml")
 
 
-def load_node_code(path, node_id):
+def load_node_code(path, node_id, preload=None):
     """从已生成的 DSL 里取出代码节点正文并编译成可调用的 main()。
-    被测对象就是将要导入 Dify 的那份字节。"""
+    被测对象就是将要导入 Dify 的那份字节。
+
+    preload：Dify 代码节点沙箱预置在全局里的模块。M1 已落地的 v1_state 正文里
+    没有 `import json` 却直接用 `json.dumps` —— 这是 M1 原文的既有写法，
+    在真实 Dify 里可运行（该 Chatflow 已发布且 Founder 已验收）。本地探针不在
+    Dify 沙箱里，必须把同名模块补进命名空间，才能跑同一份字节；这是复现运行环境，
+    不是修改被测代码。"""
     with open(path, encoding="utf-8") as fh:
         d = yaml.safe_load(fh)
     nodes = {n["id"]: n for n in d["workflow"]["graph"]["nodes"]}
     code = nodes[node_id]["data"]["code"]
     mod = types.ModuleType("dsl_%s_%s" % (os.path.basename(path), node_id))
+    if preload:
+        mod.__dict__.update(preload)
     exec(compile(code, "<%s:%s>" % (os.path.basename(path), node_id), "exec"), mod.__dict__)
     return mod.main
 
@@ -501,6 +510,176 @@ def probe_provider_binding_honesty():
     })
 
 
+
+
+# ---------------------------------------------------------------------------
+# M4-BLK-002 解锁后的画布行为（Founder 2026-08-26 授权后新增）
+#
+# 判据来源（**先于结果冻结**，不是看到结果才写的）：
+#   · 统一能力合同 §2「七入口 / REQUIRED_ALWAYS: [] / DEFAULT_CALL: [] /
+#     FIXED_ORDER: false / FULL_CHAIN_GATE: false」
+#   · CLAUDE.md §3「Campaign 既不默认调用，也不默认绕过」
+#     「不得为进入某组件暗中补跑前置组件」
+# 新增的只是**探针**（测量手段），不是新判据。判据早于结果，A2 第 3 项成立。
+# ---------------------------------------------------------------------------
+
+def _canvas_snap(confirmed=True, artifacts=None, last_result_ref=None,
+                 last_acceptance=None, no_goal=False):
+    art = {"matrix": None, "campaign": None, "content_brief": None,
+           "production_stage1": None, "publishing_stage2": None}
+    if artifacts:
+        art.update(artifacts)
+    task = {"goal": "初秋通勤这批货，想让顾客早上不再纠结怎么穿", "target_object": "初秋通勤系列"}
+    draft = {"goal": None, "target_object": None} if no_goal else dict(task)
+    return {
+        "schema_version": 1,
+        "task_id": "task_001",
+        "revision": 1,
+        "phase": "READY" if confirmed else "FORMING",
+        "candidate_skill": "NONE",
+        "draft_task": draft,
+        "confirmed_task": dict(task) if confirmed else None,
+        "pending_action": None,
+        "authorization": {"skill": "NONE", "task_revision": None,
+                          "confirmation_id": None, "granted": False, "consumed": True},
+        "artifacts": art,
+        "blocking_gap": None,
+        "last_result_ref": last_result_ref,
+        "last_error": None,
+        "open_threads": [],
+        "last_acceptance": last_acceptance,
+    }
+
+
+def probe_canvas_linear_lock_removed():
+    """M4-BLK-002：画布路径上的线性硬锁已拆，且用户授权门原样保留。"""
+    main = load_node_code(CANVAS, "v1_state", preload={"json": json})
+
+    # N-51 直达入口：上游产物一份都没有，仍必须能执行
+    direct = [("CONTENT_BRIEF", "EXECUTE_CONTENT_BRIEF", "ENTRY-03 直达 Content Brief"),
+              ("PRODUCTION_STAGE1", "EXECUTE_PRODUCTION_STAGE1", "ENTRY-05/06 直达脚本与拍摄方案"),
+              ("PUBLISHING_STAGE2", "EXECUTE_PUBLISHING_STAGE2", "ENTRY-07 直达发布包"),
+              ("CAMPAIGN", "EXECUTE_CAMPAIGN", "ENTRY-02 直达 Campaign（不先跑矩阵）"),
+              ("MATRIX", "EXECUTE_MATRIX", "ENTRY-01 矩阵")]
+    for skill, want_route, label in direct:
+        r = main("这一步直接做，别的先不做。", json.dumps(_canvas_snap()),
+                 {"route_intent": "EXECUTE_REQUEST", "requested_skill": skill}, "")
+        tr = json.loads(r["turn_report"])
+        check("N-51", "无任何上游产物时 %s 仍可执行" % label,
+              r["effective_route"] == want_route,
+              "route=%s blocking_gap=%s notes=%s"
+              % (r["effective_route"], tr.get("blocking_gap"), tr.get("notes")))
+
+    # N-52 差分判据：与 M1 原文同输入对跑，行为差异必须**恰好**等于被授权拆掉的那把锁。
+    #
+    # 判据修正说明（A2 如实登记）：本探针初版把「用户授权门」写成
+    # 「confirmed_task 为空就一定不执行」，跑出 3 条 FAIL。定向复核后确认那是
+    # **我的判据写错**，不是补丁削弱了门：M1 原文本来就允许在用户自己那句话里
+    # 确认任务（notes 里的 TASK_CONFIRMED_BY_EXPLICIT_EXECUTION_REQUEST），
+    # 打补丁前后**完全一致**。冻结判据（统一能力合同 §2「只拆固定顺序，
+    # 不动用户授权」）没有变，变的只是测量方式，而且换成了更强的差分测量。
+    m1_main = load_node_code(
+        os.path.join(DC_WF, "DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml"),
+        "v1_state", preload={"json": json})
+
+    ALLOWED_DELTA = "EXECUTION_BLOCKED:UPSTREAM_"      # 唯一被授权消失的行为
+    states = [("有草稿目标但未确认", _canvas_snap(confirmed=False)),
+              ("完全没有任务", _canvas_snap(confirmed=False, no_goal=True)),
+              ("已确认任务", _canvas_snap())]
+    unexpected, blocked_both = [], 0
+    for label, sc in states:
+        for skill in ["MATRIX", "CAMPAIGN", "CONTENT_BRIEF",
+                      "PRODUCTION_STAGE1", "PUBLISHING_STAGE2"]:
+            p = {"route_intent": "EXECUTE_REQUEST", "requested_skill": skill}
+            a = m1_main("跑一下。", json.dumps(sc), dict(p), "")
+            b = main("跑一下。", json.dumps(sc), dict(p), "")
+            ra, rb = a["effective_route"], b["effective_route"]
+            na = json.loads(a["turn_report"])["notes"]
+            if ra == rb:
+                if not rb.startswith("EXECUTE_"):
+                    blocked_both += 1
+                continue
+            # 只允许这一种差异：M1 因上游锁拦下、M4 放行
+            if not (any(n.startswith(ALLOWED_DELTA) for n in na)
+                    and rb == "EXECUTE_" + skill):
+                unexpected.append("%s/%s: M1=%s M4=%s notes=%s" % (label, skill, ra, rb, na))
+
+    check("N-52", "解锁前后的行为差异恰好等于被授权拆掉的上游锁，没有第二种差异",
+          not unexpected, "越界差异：" + ("；".join(unexpected) if unexpected else "无"))
+
+    r_none = main("跑一下。", json.dumps(_canvas_snap(confirmed=False, no_goal=True)),
+                  {"route_intent": "EXECUTE_REQUEST", "requested_skill": "PUBLISHING_STAGE2"}, "")
+    check("N-52", "完全没有任务时仍然不执行（用户授权门保留，不是流水线锁）",
+          not r_none["effective_route"].startswith("EXECUTE_")
+          and blocked_both >= 5,
+          "route=%s 两版同时拦下的组合数=%d" % (r_none["effective_route"], blocked_both))
+
+    r_ctrl = main("跑一下。", json.dumps(_canvas_snap()),
+                  {"route_intent": "EXECUTE_REQUEST", "requested_skill": "MATRIX"}, "")
+    r_ctrl_m1 = m1_main("跑一下。", json.dumps(_canvas_snap()),
+                        {"route_intent": "EXECUTE_REQUEST", "requested_skill": "MATRIX"}, "")
+    check("N-52", "对照组 MATRIX（本来就没有上游锁）行为与 M1 原文完全一致",
+          r_ctrl["effective_route"] == r_ctrl_m1["effective_route"] == "EXECUTE_MATRIX",
+          "M1=%s M4=%s" % (r_ctrl_m1["effective_route"], r_ctrl["effective_route"]))
+
+    # N-53 「接受并继续」不再自动授权固定的下一棒
+    snap = _canvas_snap(artifacts={"matrix": {"status": "VALIDATED"}},
+                        last_result_ref="matrix")
+    r = main("这份可以，继续。", json.dumps(snap),
+             {"route_intent": "CONFIRM_TASK", "acceptance_signal": "ACCEPT_CURRENT_ARTIFACT",
+              "continue_signal": "YES"}, "")
+    tr = json.loads(r["turn_report"])
+    notes = tr.get("notes") or []
+    check("N-53", "接受矩阵并说「继续」不自动调用 Campaign（DEFAULT_CALL 为空）",
+          r["effective_route"] != "EXECUTE_CAMPAIGN"
+          and not any(n.startswith("CONTINUE_TO_NEXT_SKILL") for n in notes),
+          "route=%s notes=%s" % (r["effective_route"], notes))
+    check("N-54", "接受仍然生效，且回执落到既有分支而不是死路",
+          any(n.startswith("ARTIFACT_ACCEPTED:") for n in notes)
+          and r["effective_route"] == "CONFIRM_TASK",
+          "route=%s notes=%s" % (r["effective_route"], notes))
+
+    # N-55 回归：撤销接受时的保守失效（DOWNSTREAM_OF_SLOT）未被误删
+    snap2 = _canvas_snap(artifacts={"matrix": {"status": "USER_ACCEPTED",
+                                              "accepted_turn_id": "rev_001"},
+                                    "content_brief": {"status": "USER_ACCEPTED",
+                                                      "accepted_turn_id": "rev_001"}},
+                         last_result_ref="matrix",
+                         last_acceptance={"slot": "matrix", "revision": 1})
+    r2 = main("刚才那个矩阵先不算接受了。", json.dumps(snap2),
+              {"route_intent": "DISCUSS", "acceptance_signal": "REVOKE_LAST_ACCEPTANCE"}, "")
+    st = json.loads(r2["snapshot_json"])["artifacts"]
+    check("N-55", "撤销接受仍级联标 STALE（A3 保守失效未被误删）",
+          st["matrix"]["status"] == "VALIDATED" and st["content_brief"]["status"] == "STALE",
+          "matrix=%s content_brief=%s" % (st["matrix"]["status"], st["content_brief"]["status"]))
+
+    # N-56 越界断言：差异恰好等于两处定义
+    import difflib
+    with open(os.path.join(DC_WF, "DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml"), encoding="utf-8") as fh:
+        m1 = yaml.safe_load(fh)
+    with open(CANVAS, encoding="utf-8") as fh:
+        cv = yaml.safe_load(fh)
+    mn = {n["id"]: n for n in m1["workflow"]["graph"]["nodes"]}
+    cn = {n["id"]: n for n in cv["workflow"]["graph"]["nodes"]}
+    a = mn["v1_state"]["data"]["code"].splitlines()
+    b = cn["v1_state"]["data"]["code"].splitlines()
+    changed = [i for i, (x, y) in enumerate(zip(a, b)) if x != y]
+    ok_len = len(a) == len(b)
+    touched = set()
+    for i in changed:
+        touched.add("NEXT_SKILL" if a[i].startswith(("NEXT_SKILL", '              "')) else
+                    "UPSTREAM_OF" if a[i].startswith(("UPSTREAM_OF", '               "')) else
+                    "OTHER:" + a[i][:40])
+    check("N-56", "v1_state 相对 M1 原文的差异恰好等于 NEXT_SKILL 与 UPSTREAM_OF 两处定义",
+          ok_len and touched == {"NEXT_SKILL", "UPSTREAM_OF"} and len(changed) == 6,
+          "行数 %d->%d 变更行数=%d 涉及=%s" % (len(a), len(b), len(changed), sorted(touched)))
+
+    same = json.dumps(mn["v1_shadow"]["data"], ensure_ascii=False, sort_keys=True) == \
+           json.dumps(cn["v1_shadow"]["data"], ensure_ascii=False, sort_keys=True)
+    check("N-56", "v1_shadow（M1 的自然语言理解）零改动", same,
+          "byte_identical=%s" % same)
+
+
 def main():
     probe_sufficiency()
     probe_goal_fidelity_readonly()
@@ -514,6 +693,7 @@ def main():
     probe_reference_matrix()
     probe_fidelity_chain()
     probe_provider_binding_honesty()
+    probe_canvas_linear_lock_removed()
 
     n_pass = sum(1 for r in RESULTS if r["result"] == "PASS")
     n_fail = sum(1 for r in RESULTS if r["result"] == "FAIL")

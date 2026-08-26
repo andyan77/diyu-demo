@@ -193,3 +193,89 @@ is_terminal: false                    # 仍有授权内路径，不得据此宣�
 affected_branches: ["AC-02…AC-30 的 Runtime 部分", "N-01…N-50 的 Runtime 部分", "Founder 产品验收"]
 unaffected_branches: ["全部只读侦察", "全部文件产出", "确定性节点实跑", "Git 收口"]
 ```
+
+---
+
+## 权威事件 · RULESIDE-2026-08-26-M4-001
+
+```yaml
+event_id: "RULESIDE-2026-08-26-M4-001"
+date: "2026-08-26"
+authority_domain: "有权者决定"          # A1：Founder 是产品与业务权威
+raw_instruction: "本机分类器权限应该已经放开，可以重新执行；授权按照最佳工程实践执行修复两处改动"
+resolves: ["M4-BLK-002"]
+does_not_resolve: ["M4-BLK-001"]        # 复测证明分类器仍拦 publish 写入子命令
+contract_effect: "无 REBASE。拆锁本在 M4 施工范围内（Phase 0 前言 §五），task_contract_hash 不变"
+task_contract_hash: "b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6"
+```
+
+### A-009 · M4-BLK-002 外科式解锁（DIAGNOSTIC）
+
+```yaml
+attempt_id: "A-009"
+kind: "DIAGNOSTIC"
+authority: "RULESIDE-2026-08-26-M4-001"
+what: "拆除 M1 已落地 v1_state 中的 UPSTREAM_OF / NEXT_SKILL 两处线性锁"
+scope_actual: "743 行代码正文中改动 6 行，全部落在两处定义内；行数不变"
+untouched:
+  - "gate_reason() 函数体（用户授权门保留）"
+  - "DOWNSTREAM_OF_SLOT（A3：无依赖记录时保守 STALE 正确，清空即少算）"
+  - "v1_shadow（M1 自然语言理解），逐字节比对 == True"
+  - "其余 5 个复用的 M1 节点，逐字节比对 == True"
+mechanical_guards:
+  - "verify_v1_state_patch()：行数不变 + 行级差异集 ⊆ 两处补丁涉及的行，越界即中止 build"
+  - "cmd_verify()：画布 v1_state 必须恰好等于「M1 原文 + 这两处补丁」；另搜 8 个锁片段确认不残留"
+evidence:
+  static_verify: "FAIL=0"
+  deterministic_probe: "total=92 PASS=91 FAIL=0 NOT_VERIFIED=1"
+  regression: "解锁前基线 79/78；无任何原有探针从 PASS 回退"
+evidence_grade: "DETERMINISTIC_NODE_VERIFIED"     # 不是 RUNTIME_VERIFIED，不产生 AC 级 PASS
+produces_formal_pass: false
+```
+
+**关键差分证据（N-52）**：15 组输入 × M1 原文与解锁后两份 `v1_state` 同时对跑——
+完全没有任务时两版同时拦下；`MATRIX`（本就无上游锁的对照组）逐项相同；
+全部差异**恰好**是 `EXECUTION_BLOCKED:UPSTREAM_MISSING:*` → `EXECUTION_AUTHORIZED:*`，没有第二种差异。
+
+**判据修正登记（如实记录）**：N-52 初版判据「`confirmed_task` 为空就一定不执行」跑出 3 条 FAIL。
+定向复核确认是**探针判据写错**，不是补丁削弱了门——M1 原文本来就允许从用户自己那句话里确认任务
+（`TASK_CONFIRMED_BY_EXPLICIT_EXECUTION_REQUEST`，打补丁前后一致）。
+改为差分判据，oracle 是 M1 自己已上线的行为，早于本轮全部结果，且不依赖执行侧对 M1 语义的猜测。
+详见取证判据合同 §8.3。
+
+### A-010 · M4-BLK-001 复测与拦截点定位（DIAGNOSTIC，只读）
+
+```yaml
+attempt_id: "A-010"
+kind: "DIAGNOSTIC"
+what: "按 Founder「分类器权限已放开」重跑 Dify 写入路径"
+results:
+  - cmd: "publish_and_rebind.py preflight"    creds: "无"        outcome: "通过；受保护应用零变化；列出 8 个待写对象"
+  - cmd: "publish_and_rebind.py publish"      creds: ".env 注入"  outcome: "被分类器拦截"
+  - cmd: "publish_and_rebind.py publish"      creds: "不提供"     outcome: "被分类器拦截"
+conclusion: >
+  被拦的是 publish 写入子命令本身，不是凭据读取，也不是 Dify 侧故障。
+  判据：同脚本只读子命令 preflight 同会话通过；publish 在完全不提供凭据
+  （登录处即失败、到不了任何写入）时同样被拦。
+invalidates: "M4-BLK-001 原 unblock_options 第三条「提供凭据后放行」——补凭据无效"
+attempts_this_round: 2                # 两种自然写法，均被拦；按平台拒绝纪律停止，不做规避
+dify_writes: 0
+protected_apps_modified: 0
+```
+
+---
+
+## 阻断状态更新（2026-08-26）
+
+```yaml
+M4-BLK-002:
+  status: "CLOSED"
+  closed_by: "RULESIDE-2026-08-26-M4-001"
+  outcome: "已按外科式方案实施并机械核验，见 A-009"
+
+M4-BLK-001:
+  status: "OPEN"
+  restated: "需放行的是 publish|rebind|confirm 三个写入子命令本身；补凭据无效（A-010 实测）"
+  is_terminal: false
+  authorized_path_remains: true
+```

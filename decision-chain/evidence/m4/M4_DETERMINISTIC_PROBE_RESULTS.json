@@ -1,8 +1,8 @@
 {
   "evidence_grade": "DETERMINISTIC_NODE_VERIFIED",
   "runtime_verified": false,
-  "total": 79,
-  "pass": 78,
+  "total": 92,
+  "pass": 91,
   "fail": 0,
   "not_verified": 1,
   "results": [
@@ -479,6 +479,84 @@
       "name": "provider 绑定当前状态",
       "result": "NOT_VERIFIED",
       "detail": "6/6 个 tool 节点仍为 PENDING_PUBLISH。未解析前不得宣称 Runtime 入口可达成立。"
+    },
+    {
+      "probe": "N-51",
+      "name": "无任何上游产物时 ENTRY-03 直达 Content Brief 仍可执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_CONTENT_BRIEF blocking_gap=None notes=['SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:CONTENT_BRIEF', 'EXECUTION_AUTHORIZED:CONTENT_BRIEF']"
+    },
+    {
+      "probe": "N-51",
+      "name": "无任何上游产物时 ENTRY-05/06 直达脚本与拍摄方案 仍可执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_PRODUCTION_STAGE1 blocking_gap=None notes=['SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:PRODUCTION_STAGE1', 'EXECUTION_AUTHORIZED:PRODUCTION_STAGE1']"
+    },
+    {
+      "probe": "N-51",
+      "name": "无任何上游产物时 ENTRY-07 直达发布包 仍可执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_PUBLISHING_STAGE2 blocking_gap=None notes=['SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:PUBLISHING_STAGE2', 'EXECUTION_AUTHORIZED:PUBLISHING_STAGE2']"
+    },
+    {
+      "probe": "N-51",
+      "name": "无任何上游产物时 ENTRY-02 直达 Campaign（不先跑矩阵） 仍可执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_CAMPAIGN blocking_gap=None notes=['SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:CAMPAIGN', 'EXECUTION_AUTHORIZED:CAMPAIGN']"
+    },
+    {
+      "probe": "N-51",
+      "name": "无任何上游产物时 ENTRY-01 矩阵 仍可执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_MATRIX blocking_gap=None notes=['SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:MATRIX', 'EXECUTION_AUTHORIZED:MATRIX']"
+    },
+    {
+      "probe": "N-52",
+      "name": "解锁前后的行为差异恰好等于被授权拆掉的上游锁，没有第二种差异",
+      "result": "PASS",
+      "detail": "越界差异：无"
+    },
+    {
+      "probe": "N-52",
+      "name": "完全没有任务时仍然不执行（用户授权门保留，不是流水线锁）",
+      "result": "PASS",
+      "detail": "route=CONFIRM_TASK 两版同时拦下的组合数=5"
+    },
+    {
+      "probe": "N-52",
+      "name": "对照组 MATRIX（本来就没有上游锁）行为与 M1 原文完全一致",
+      "result": "PASS",
+      "detail": "M1=EXECUTE_MATRIX M4=EXECUTE_MATRIX"
+    },
+    {
+      "probe": "N-53",
+      "name": "接受矩阵并说「继续」不自动调用 Campaign（DEFAULT_CALL 为空）",
+      "result": "PASS",
+      "detail": "route=CONFIRM_TASK notes=['ARTIFACT_ACCEPTED:matrix']"
+    },
+    {
+      "probe": "N-54",
+      "name": "接受仍然生效，且回执落到既有分支而不是死路",
+      "result": "PASS",
+      "detail": "route=CONFIRM_TASK notes=['ARTIFACT_ACCEPTED:matrix']"
+    },
+    {
+      "probe": "N-55",
+      "name": "撤销接受仍级联标 STALE（A3 保守失效未被误删）",
+      "result": "PASS",
+      "detail": "matrix=VALIDATED content_brief=STALE"
+    },
+    {
+      "probe": "N-56",
+      "name": "v1_state 相对 M1 原文的差异恰好等于 NEXT_SKILL 与 UPSTREAM_OF 两处定义",
+      "result": "PASS",
+      "detail": "行数 743->743 变更行数=6 涉及=['NEXT_SKILL', 'UPSTREAM_OF']"
+    },
+    {
+      "probe": "N-56",
+      "name": "v1_shadow（M1 的自然语言理解）零改动",
+      "result": "PASS",
+      "detail": "byte_identical=True"
     }
   ]
 }

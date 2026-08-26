@@ -1488,6 +1488,90 @@ M1_SOURCE_DSL = os.path.join(DC_WF, "DIYU_DEMO_V1_FULL_CHAIN_CHATFLOW_v0.2.yml")
 M1_REUSED_NODES = ["v1_start", "v1_shadow", "v1_state", "save_runtime",
                    "v1_chat_save", "v1_chat_llm", "v1_chat_answer"]
 
+
+# --------------------------------------------------------------------------
+# M4-BLK-002 外科式解锁（Founder 2026-08-26 授权）
+#
+# M1 已落地的 v1_state 里有一把线性硬锁：
+#   · UPSTREAM_OF 把五个能力钉成
+#     matrix → campaign → content_brief → production_stage1 → publishing_stage2；
+#     gate_reason() 只要看到上游不是 USER_ACCEPTED，就 revoke_auth() 并把
+#     route 打成 HUMAN_DECISION。
+#   · NEXT_SKILL 把「接受并继续」自动推进到固定的下一棒。
+# 两者合起来使 ENTRY-03 / 05 / 06 / 07 在 Founder 画布路径上不可能成立，
+# 与上位合同 REQUIRED_ALWAYS=[] / DEFAULT_CALL=[] / FIXED_ORDER=false 直接冲突。
+#
+# 修法是外科式的：只替换这两处**定义**，其余每一个字节原样保留。
+#   · gate_reason() 函数体不动 —— UPSTREAM_OF[slot] 变 None 后自动走
+#     「up is None」那条 M1 本来就为 matrix 准备好的分支，仍然要求 confirmed_task。
+#     「用户必须先确认任务」是真实的用户授权门，不是流水线锁，必须保留。
+#   · NEXT_SKILL 全部置 "NONE" 后，「接受并继续」只接受产物、不自动授权下一棒，
+#     落到既有的 ARTIFACT_ACCEPTED 分支（回执 + 说明下一步用户可以做什么），
+#     不是死路，也不再替用户默认调用任何能力。
+#   · DOWNSTREAM_OF_SLOT **不动**：快照里没有逐产物的依赖记录，
+#     按 A3「无法判断者置 STALE」保守失效是正确的，清空反而是少算。
+#   · v1_shadow（M1 的自然语言理解）零改动。
+#
+# 差异由 verify_v1_state_patch() 机械断言：恰好等于这两处，多一处即 FAIL。
+# --------------------------------------------------------------------------
+
+V1_STATE_PATCHES = [
+    (
+        'NEXT_SKILL = {"matrix": "CAMPAIGN", "campaign": "CONTENT_BRIEF",\n'
+        '              "content_brief": "PRODUCTION_STAGE1",\n'
+        '              "production_stage1": "PUBLISHING_STAGE2",\n'
+        '              "publishing_stage2": "NONE"}',
+
+        'NEXT_SKILL = {"matrix": "NONE", "campaign": "NONE",\n'
+        '              "content_brief": "NONE",\n'
+        '              "production_stage1": "NONE",\n'
+        '              "publishing_stage2": "NONE"}',
+    ),
+    (
+        'UPSTREAM_OF = {"matrix": None, "campaign": "matrix", "content_brief": "campaign",\n'
+        '               "production_stage1": "content_brief",\n'
+        '               "publishing_stage2": "production_stage1"}',
+
+        'UPSTREAM_OF = {"matrix": None, "campaign": None, "content_brief": None,\n'
+        '               "production_stage1": None,\n'
+        '               "publishing_stage2": None}',
+    ),
+]
+
+
+def apply_v1_state_patch(code):
+    """外科式替换两处定义；任一处不是恰好命中一次即中止。"""
+    out = code
+    for old, new in V1_STATE_PATCHES:
+        hits = out.count(old)
+        if hits != 1:
+            raise SystemExit("v1_state 补丁未唯一命中（命中 %d 次）：%s"
+                             % (hits, old.splitlines()[0]))
+        out = out.replace(old, new)
+    return out
+
+
+def verify_v1_state_patch(src_code, patched_code):
+    """机械断言：行级差异恰好等于两处补丁涉及的行；多一处即返回非空。"""
+    import difflib
+    allowed_minus, allowed_plus = set(), set()
+    for old, new in V1_STATE_PATCHES:
+        allowed_minus |= set(old.splitlines())
+        allowed_plus |= set(new.splitlines())
+    bad = []
+    a = src_code.splitlines()
+    b = patched_code.splitlines()
+    if len(a) != len(b):
+        bad.append("行数变化 %d -> %d（补丁必须逐行等量替换）" % (len(a), len(b)))
+    for line in difflib.unified_diff(a, b, lineterm="", n=0):
+        if line.startswith(("---", "+++", "@@")):
+            continue
+        if line.startswith("-") and line[1:] not in allowed_minus:
+            bad.append("越界删除：" + line[1:])
+        elif line.startswith("+") and line[1:] not in allowed_plus:
+            bad.append("越界新增：" + line[1:])
+    return bad
+
 M4_INTENT_ADAPTER_CODE = r'''
 import json
 import re
@@ -1641,9 +1725,21 @@ def build_founder_canvas():
     seam_provider = b.get("_seam", {}).get("provider_id", "PENDING_PUBLISH")
 
     nodes = []
+    patched = 0
     for nid in M1_REUSED_NODES:
         n = json.loads(json.dumps(src_nodes[nid]))     # 逐字节深拷贝，不改 data
+        if nid == "v1_state":
+            # M4-BLK-002：唯一被授权改动的 M1 节点，且只允许两处外科替换。
+            _src = n["data"]["code"]
+            _new = apply_v1_state_patch(_src)
+            _bad = verify_v1_state_patch(_src, _new)
+            if _bad:
+                raise SystemExit("v1_state 外科补丁越界：\n  " + "\n  ".join(_bad))
+            n["data"]["code"] = _new
+            patched += 1
         nodes.append(n)
+    if patched != 1:
+        raise SystemExit("v1_state 节点未找到或不唯一（%d）" % patched)
 
     nodes.append(node("m4_intent_adapter", {
         "code": M4_INTENT_ADAPTER_CODE, "code_language": "python3",
@@ -1899,10 +1995,32 @@ def cmd_verify():
         for nid in M1_REUSED_NODES:
             if nid not in cn:
                 fails.append("CANVAS: 缺少复用的 M1 节点 %s" % nid); continue
+            expect = json.loads(json.dumps(mn[nid]["data"]))
+            if nid == "v1_state":
+                # M4-BLK-002：只有这个节点被授权改动，且差异必须恰好等于两处外科补丁。
+                _src = expect["code"]
+                expect["code"] = apply_v1_state_patch(_src)
+                _bad = verify_v1_state_patch(_src, expect["code"])
+                if _bad:
+                    fails.append("CANVAS: v1_state 外科补丁越界 -> " + "；".join(_bad))
+                _live = cn[nid]["data"].get("code", "")
+                if _live == _src:
+                    fails.append("CANVAS: v1_state 仍是未解锁的原文（M4-BLK-002 未生效）")
+                for _lock in ('"campaign": "matrix"', '"content_brief": "campaign"',
+                              '"production_stage1": "content_brief"',
+                              '"publishing_stage2": "production_stage1"',
+                              '"matrix": "CAMPAIGN"', '"campaign": "CONTENT_BRIEF"',
+                              '"content_brief": "PRODUCTION_STAGE1"',
+                              '"production_stage1": "PUBLISHING_STAGE2"'):
+                    if _lock in _live:
+                        fails.append("CANVAS: v1_state 仍残留线性锁片段 %s" % _lock)
+                if "DOWNSTREAM_OF_SLOT" not in _live:
+                    fails.append("CANVAS: v1_state 的 DOWNSTREAM_OF_SLOT 被误删（A3 保守失效必须保留）")
             a = json.dumps(cn[nid]["data"], ensure_ascii=False, sort_keys=True)
-            b2 = json.dumps(mn[nid]["data"], ensure_ascii=False, sort_keys=True)
+            b2 = json.dumps(expect, ensure_ascii=False, sort_keys=True)
             if a != b2:
-                fails.append("CANVAS: M1 节点 %s 的 data 被改动（必须逐字节复用）" % nid)
+                fails.append("CANVAS: M1 节点 %s 的 data 与授权基线不一致"
+                             "（除 M4-BLK-002 两处外科补丁外必须逐字节复用）" % nid)
         # 画布内不得出现第二个自然语言意图识别节点
         llms = [n for n in cn.values() if n["data"].get("type") == "llm"]
         extra = [n["id"] for n in llms if n["id"] not in ("v1_shadow", "v1_chat_llm")]

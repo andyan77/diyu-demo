@@ -489,43 +489,42 @@ workflow:
           CAMPAIGN\": \"campaign\", \"CONTENT_BRIEF\": \"content_brief\",\n                 \"PRODUCTION_STAGE1\": \"production_stage1\"\
           ,\n                 \"PUBLISHING_STAGE2\": \"publishing_stage2\"}\nSLOT_TO_SKILL = {\"matrix\": \"MATRIX\", \"campaign\"\
           : \"CAMPAIGN\", \"content_brief\": \"CONTENT_BRIEF\",\n                 \"production_stage1\": \"PRODUCTION_STAGE1\"\
-          ,\n                 \"publishing_stage2\": \"PUBLISHING_STAGE2\"}\nNEXT_SKILL = {\"matrix\": \"CAMPAIGN\", \"campaign\"\
-          : \"CONTENT_BRIEF\",\n              \"content_brief\": \"PRODUCTION_STAGE1\",\n              \"production_stage1\"\
-          : \"PUBLISHING_STAGE2\",\n              \"publishing_stage2\": \"NONE\"}\nUPSTREAM_OF = {\"matrix\": None, \"campaign\"\
-          : \"matrix\", \"content_brief\": \"campaign\",\n               \"production_stage1\": \"content_brief\",\n     \
-          \          \"publishing_stage2\": \"production_stage1\"}\nSLOT_CN = {\"matrix\": \"账号矩阵\", \"campaign\": \"Campaign\
-          \ 决策包\", \"content_brief\": \"Content Brief\",\n           \"production_stage1\": \"脚本与拍摄方案\", \"publishing_stage2\"\
-          : \"发布包\"}\nDOWNSTREAM_OF_SLOT = {\n    \"matrix\": [\"campaign\", \"content_brief\", \"production_stage1\", \"\
-          publishing_stage2\"],\n    \"campaign\": [\"content_brief\", \"production_stage1\", \"publishing_stage2\"],\n  \
-          \  \"content_brief\": [\"production_stage1\", \"publishing_stage2\"],\n    \"production_stage1\": [\"publishing_stage2\"\
-          ],\n    \"publishing_stage2\": [],\n}\n\nMAX_GOAL = 400\nMAX_TARGET = 200\n# A task goal invented in the SAME turn\
-          \ as the execution request must actually\n# state a business problem. Observed live: after a cancel the shadow turned\
-          \ the\n# bare command \"把矩阵跑一下\" (6 chars) into a task goal and the system re-ran the\n# Skill. A command is not\
-          \ a task.\nMIN_SAME_TURN_GOAL = 12\nPATCH_KEYS = [\"route_intent\", \"task_action\", \"change_goal\", \"change_target_object\"\
-          ,\n              \"confirmation_signal\", \"requested_skill\", \"acceptance_signal\",\n              \"continue_signal\"\
-          , \"user_message_summary\", \"side_question\"]\n\n\ndef initial_snapshot():\n    return {\n        \"schema_version\"\
-          : SCHEMA_VERSION,\n        \"task_id\": None,\n        \"revision\": 0,\n        \"phase\": \"IDLE\",\n        \"\
-          candidate_skill\": \"NONE\",\n        \"draft_task\": {\"goal\": None, \"target_object\": None},\n        \"confirmed_task\"\
-          : None,\n        \"pending_action\": None,\n        \"authorization\": {\"skill\": \"NONE\", \"task_revision\":\
-          \ None, \"confirmation_id\": None,\n                          \"granted\": False, \"consumed\": True},\n       \
-          \ \"artifacts\": {\"matrix\": None, \"campaign\": None, \"content_brief\": None,\n                      \"production_stage1\"\
-          : None, \"publishing_stage2\": None},\n        \"blocking_gap\": None,\n        \"last_result_ref\": None,\n   \
-          \     \"last_error\": None,\n        \"open_threads\": [],\n        \"last_acceptance\": None,\n    }\n\n\ndef clip(v,\
-          \ n):\n    if not isinstance(v, str):\n        return None\n    v = v.strip()\n    if not v:\n        return None\n\
-          \    return v[:n]\n\n\ndef normalise_snapshot(raw):\n    \"\"\"Accept only a well-formed snapshot; anything else\
-          \ restarts from initial.\"\"\"\n    if not isinstance(raw, dict):\n        return initial_snapshot(), False\n  \
-          \  base = initial_snapshot()\n    for k in base:\n        if k in raw:\n            base[k] = raw[k]\n    if base.get(\"\
-          schema_version\") != SCHEMA_VERSION:\n        return initial_snapshot(), False\n    if base.get(\"phase\") not in\
-          \ PHASES:\n        return initial_snapshot(), False\n    if not isinstance(base.get(\"artifacts\"), dict):\n   \
-          \     base[\"artifacts\"] = {s: None for s in ARTIFACT_SLOTS}\n    for slot in ARTIFACT_SLOTS:\n        base[\"\
-          artifacts\"].setdefault(slot, None)\n    for extra in [k for k in base[\"artifacts\"] if k not in ARTIFACT_SLOTS]:\n\
-          \        del base[\"artifacts\"][extra]\n    if not isinstance(base.get(\"authorization\"), dict):\n        base[\"\
-          authorization\"] = initial_snapshot()[\"authorization\"]\n    if not isinstance(base.get(\"revision\"), int) or\
-          \ base[\"revision\"] < 0:\n        base[\"revision\"] = 0\n    if not isinstance(base.get(\"open_threads\"), list):\n\
-          \        base[\"open_threads\"] = []\n    base[\"open_threads\"] = [t for t in base[\"open_threads\"]\n        \
-          \                    if isinstance(t, dict) and t.get(\"id\") and t.get(\"text\")]\n    la = base.get(\"last_acceptance\"\
-          )\n    if not (isinstance(la, dict) and la.get(\"slot\") in ARTIFACT_SLOTS):\n        base[\"last_acceptance\"]\
-          \ = None\n    return base, True\n\n\ndef validate_patch(patch):\n    \"\"\"Reject unknown fields and illegal enums.\
+          ,\n                 \"publishing_stage2\": \"PUBLISHING_STAGE2\"}\nNEXT_SKILL = {\"matrix\": \"NONE\", \"campaign\"\
+          : \"NONE\",\n              \"content_brief\": \"NONE\",\n              \"production_stage1\": \"NONE\",\n      \
+          \        \"publishing_stage2\": \"NONE\"}\nUPSTREAM_OF = {\"matrix\": None, \"campaign\": None, \"content_brief\"\
+          : None,\n               \"production_stage1\": None,\n               \"publishing_stage2\": None}\nSLOT_CN = {\"\
+          matrix\": \"账号矩阵\", \"campaign\": \"Campaign 决策包\", \"content_brief\": \"Content Brief\",\n           \"production_stage1\"\
+          : \"脚本与拍摄方案\", \"publishing_stage2\": \"发布包\"}\nDOWNSTREAM_OF_SLOT = {\n    \"matrix\": [\"campaign\", \"content_brief\"\
+          , \"production_stage1\", \"publishing_stage2\"],\n    \"campaign\": [\"content_brief\", \"production_stage1\", \"\
+          publishing_stage2\"],\n    \"content_brief\": [\"production_stage1\", \"publishing_stage2\"],\n    \"production_stage1\"\
+          : [\"publishing_stage2\"],\n    \"publishing_stage2\": [],\n}\n\nMAX_GOAL = 400\nMAX_TARGET = 200\n# A task goal\
+          \ invented in the SAME turn as the execution request must actually\n# state a business problem. Observed live: after\
+          \ a cancel the shadow turned the\n# bare command \"把矩阵跑一下\" (6 chars) into a task goal and the system re-ran the\n\
+          # Skill. A command is not a task.\nMIN_SAME_TURN_GOAL = 12\nPATCH_KEYS = [\"route_intent\", \"task_action\", \"\
+          change_goal\", \"change_target_object\",\n              \"confirmation_signal\", \"requested_skill\", \"acceptance_signal\"\
+          ,\n              \"continue_signal\", \"user_message_summary\", \"side_question\"]\n\n\ndef initial_snapshot():\n\
+          \    return {\n        \"schema_version\": SCHEMA_VERSION,\n        \"task_id\": None,\n        \"revision\": 0,\n\
+          \        \"phase\": \"IDLE\",\n        \"candidate_skill\": \"NONE\",\n        \"draft_task\": {\"goal\": None,\
+          \ \"target_object\": None},\n        \"confirmed_task\": None,\n        \"pending_action\": None,\n        \"authorization\"\
+          : {\"skill\": \"NONE\", \"task_revision\": None, \"confirmation_id\": None,\n                          \"granted\"\
+          : False, \"consumed\": True},\n        \"artifacts\": {\"matrix\": None, \"campaign\": None, \"content_brief\":\
+          \ None,\n                      \"production_stage1\": None, \"publishing_stage2\": None},\n        \"blocking_gap\"\
+          : None,\n        \"last_result_ref\": None,\n        \"last_error\": None,\n        \"open_threads\": [],\n    \
+          \    \"last_acceptance\": None,\n    }\n\n\ndef clip(v, n):\n    if not isinstance(v, str):\n        return None\n\
+          \    v = v.strip()\n    if not v:\n        return None\n    return v[:n]\n\n\ndef normalise_snapshot(raw):\n   \
+          \ \"\"\"Accept only a well-formed snapshot; anything else restarts from initial.\"\"\"\n    if not isinstance(raw,\
+          \ dict):\n        return initial_snapshot(), False\n    base = initial_snapshot()\n    for k in base:\n        if\
+          \ k in raw:\n            base[k] = raw[k]\n    if base.get(\"schema_version\") != SCHEMA_VERSION:\n        return\
+          \ initial_snapshot(), False\n    if base.get(\"phase\") not in PHASES:\n        return initial_snapshot(), False\n\
+          \    if not isinstance(base.get(\"artifacts\"), dict):\n        base[\"artifacts\"] = {s: None for s in ARTIFACT_SLOTS}\n\
+          \    for slot in ARTIFACT_SLOTS:\n        base[\"artifacts\"].setdefault(slot, None)\n    for extra in [k for k\
+          \ in base[\"artifacts\"] if k not in ARTIFACT_SLOTS]:\n        del base[\"artifacts\"][extra]\n    if not isinstance(base.get(\"\
+          authorization\"), dict):\n        base[\"authorization\"] = initial_snapshot()[\"authorization\"]\n    if not isinstance(base.get(\"\
+          revision\"), int) or base[\"revision\"] < 0:\n        base[\"revision\"] = 0\n    if not isinstance(base.get(\"\
+          open_threads\"), list):\n        base[\"open_threads\"] = []\n    base[\"open_threads\"] = [t for t in base[\"open_threads\"\
+          ]\n                            if isinstance(t, dict) and t.get(\"id\") and t.get(\"text\")]\n    la = base.get(\"\
+          last_acceptance\")\n    if not (isinstance(la, dict) and la.get(\"slot\") in ARTIFACT_SLOTS):\n        base[\"last_acceptance\"\
+          ] = None\n    return base, True\n\n\ndef validate_patch(patch):\n    \"\"\"Reject unknown fields and illegal enums.\
           \ Returns (clean, ok, reason).\"\"\"\n    if isinstance(patch, str):\n        try:\n            patch = json.loads(patch)\n\
           \        except Exception:\n            return None, False, \"PATCH_NOT_JSON\"\n    if not isinstance(patch, dict)\
           \ or not patch:\n        return None, False, \"PATCH_NOT_OBJECT\"\n    unknown = sorted(k for k in patch if k not\

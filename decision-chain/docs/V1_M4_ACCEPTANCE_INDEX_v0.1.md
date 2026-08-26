@@ -55,9 +55,33 @@ unblock_options:
   - "或以环境变量 DIFY_CONSOLE_EMAIL / DIFY_CONSOLE_PASSWORD 提供凭据后放行执行"
 ```
 
+### 2.1 2026-08-26 复测：仍未解除，且已定位到确切拦截点
+
+Founder 于 2026-08-26 表示分类器权限已放开，授权重跑。复测三次，结论如下：
+
+| 命令 | 凭据 | 结果 |
+|---|---|---|
+| `... publish_and_rebind.py preflight` | 无 | **通过**。受保护应用完整性零变化；列出将写入的 8 个对象 |
+| `... publish_and_rebind.py publish` | 由 `.env` 注入 | 被分类器拦截 |
+| `... publish_and_rebind.py publish` | **不给凭据** | 被分类器拦截 |
+
+**诊断结论**：被拦的是 **`publish` 这个写入子命令本身**，不是凭据文件的读取，
+也不是 Dify 侧故障。证据是同一脚本的只读子命令 `preflight` 在同一会话内正常通过，
+而 `publish` 在**完全不提供凭据**（会在登录处失败、根本到不了任何写入）时**同样被拦**。
+
+因此 §2 的 `unblock_options` 第三条（「提供凭据后放行」）**不成立**——补凭据不解决问题。
+仍然有效的是第一条与第二条：为本会话放行该脚本的 `publish|rebind|confirm` 子命令，
+或由 Founder 在宿主机自行执行这三个阶段。
+
+执行侧在本轮已尝试两种自然写法（经 `.env` 注入、不带凭据），均被拦；
+按平台拒绝纪律停止继续尝试，不做规避。
+
 ---
 
-## 2A. 第二个阻断：Founder 画布仍带着 M4 应当拆掉的那把线性锁
+## 2A. 第二个阻断（**已解除 2026-08-26**）：Founder 画布仍带着 M4 应当拆掉的那把线性锁
+
+> **状态更新**：Founder 已于 2026-08-26 授权「按照最佳工程实践执行修复两处改动」。
+> 本节 2A.1—2A.5 保留原文不改（记录当时的判断与上报过程）；实际处置见新增的 **§2A.6**。
 
 ```yaml
 blocker_id: "M4-BLK-002"
@@ -145,6 +169,66 @@ UPSTREAM_OF = {"matrix": None, "campaign": "matrix", "content_brief": "campaign"
 
 ---
 
+### 2A.6 实际处置（Founder 2026-08-26 授权后执行）
+
+**授权口径**：「授权按照最佳工程实践执行修复两处改动」。
+**合同影响**：无 REBASE。拆锁本就在 M4 施工范围内（Phase 0 前言 §五），`task_contract_hash` 不变。
+
+**实际改了什么**——`v1_state` 代码正文 743 行，**只动了 6 行，全部落在两处定义内**：
+
+```diff
+@@ -25,3 +25,3 @@
+-NEXT_SKILL = {"matrix": "CAMPAIGN", "campaign": "CONTENT_BRIEF",
+-              "content_brief": "PRODUCTION_STAGE1",
+-              "production_stage1": "PUBLISHING_STAGE2",
++NEXT_SKILL = {"matrix": "NONE", "campaign": "NONE",
++              "content_brief": "NONE",
++              "production_stage1": "NONE",
+@@ -29,3 +29,3 @@
+-UPSTREAM_OF = {"matrix": None, "campaign": "matrix", "content_brief": "campaign",
+-               "production_stage1": "content_brief",
+-               "publishing_stage2": "production_stage1"}
++UPSTREAM_OF = {"matrix": None, "campaign": None, "content_brief": None,
++               "production_stage1": None,
++               "publishing_stage2": None}
+```
+
+**明确没有动的**（逐项机械核验）：
+
+| 未动的东西 | 为什么不动 | 核验方式 |
+|---|---|---|
+| `gate_reason()` 函数体 | `UPSTREAM_OF[slot]` 变 `None` 后自动走 M1 本来就为 `matrix` 准备好的 `up is None` 分支，仍然要求 `confirmed_task`。**「用户必须先确认任务」是真实的用户授权门，不是流水线锁** | N-52 差分 + N-56 行级断言 |
+| `DOWNSTREAM_OF_SLOT` | 快照里没有逐产物的依赖记录。按 A3「无法判断者置 STALE」，保守失效是正确的，**清空反而是少算** | N-55 回归实跑 |
+| `v1_shadow`（M1 的自然语言理解） | 不在授权范围内，也不需要改 | N-56 逐字节比对 = `True` |
+| 其余 5 个复用的 M1 节点 | 同上 | 静态验证器逐字节断言 |
+
+**机械保证**：生成器里的 `verify_v1_state_patch()` 断言「行数不变 + 行级差异集 ⊆ 两处补丁涉及的行」，
+静态验证器 `cmd_verify()` 另行断言「画布里的 `v1_state` 必须**恰好等于**『M1 原文 + 这两处补丁』」，
+并逐条搜 8 个线性锁片段确认不残留、搜 `DOWNSTREAM_OF_SLOT` 确认未被误删。
+两者中任一处越界，`build` 直接中止、`verify` 报 `FAIL`。
+
+**行为差分证据**（N-52，15 组输入 × 两份 `v1_state` 同时对跑）：
+
+| 状态 | 结论 |
+|---|---|
+| 完全没有任务 | 两版**同时拦下**（`CONFIRM_TASK`），用户授权门完好 |
+| `MATRIX`（本就无上游锁的对照组） | 三种任务状态下两版**逐项相同** |
+| 全部差异 | **恰好**是 `EXECUTION_BLOCKED:UPSTREAM_MISSING:*` → `EXECUTION_AUTHORIZED:*`，**没有第二种差异** |
+
+**解锁效果**（N-51）：上游产物一份都没有时，`MATRIX` / `CAMPAIGN` / `CONTENT_BRIEF` /
+`PRODUCTION_STAGE1` / `PUBLISHING_STAGE2` 在画布路径上**逐个直达**，
+即 ENTRY-01…07 在画布上不再被结构性堵死。
+
+**「接受并继续」的新语义**（N-53 / N-54）：接受产物仍然生效，但不再自动授权固定的下一棒，
+落到 M1 既有的 `ARTIFACT_ACCEPTED` 回执分支（回执 + 说明下一步用户可以做什么）——
+不是死路，也不再替用户默认调用任何能力，与 `CLAUDE.md` §3「Campaign 既不默认调用，也不默认绕过」一致。
+
+> **证据等级**：以上全部为 `DETERMINISTIC_NODE_VERIFIED`。
+> 被执行的是将要导入 Dify 的那一份字节，但**不是** Dify Runtime 实跑，
+> 因此**不产生任何 AC 级 `PASS`**。画布在真实 Dify 中的行为仍须 Formal Attempt 证明。
+
+---
+
 ## 3. 已完成的工程产出
 
 ### 3.1 六份后继 Skill（源 Skill 零改动，逐行机械核验）
@@ -205,11 +289,14 @@ DIYU_M4_DSL_BUILD_v0.1.py verify   →  FAIL: 0   WARN: 2
 ### 3.4 确定性节点实跑结果
 
 ```text
-DIYU_M4_DETERMINISTIC_PROBE_v0.1.py
-  total=79   PASS=78   FAIL=0   NOT_VERIFIED=1
+DIYU_M4_DETERMINISTIC_PROBE_v0.1.py（2026-08-26 解锁后重跑）
+  total=92   PASS=91   FAIL=0   NOT_VERIFIED=1
   evidence_grade = DETERMINISTIC_NODE_VERIFIED（不是 RUNTIME_VERIFIED）
   原始结果：decision-chain/evidence/m4/M4_DETERMINISTIC_PROBE_RESULTS.json
 ```
+
+新增的 13 项来自 M4-BLK-002 解锁后的负向探针 N-51…N-56（判据登记见取证判据合同 §8）。
+解锁前的基线是 `total=79 PASS=78 FAIL=0 NOT_VERIFIED=1`，两次之间**没有任何原有探针从 PASS 掉下来**。
 
 唯一 `NOT_VERIFIED`：provider 绑定当前 6/6 为 `PENDING_PUBLISH`。
 
@@ -315,9 +402,9 @@ DIYU_M4_DETERMINISTIC_PROBE_v0.1.py
 ## 8. Checkpoint
 
 ```yaml
-checkpoint_id: "M4-CP-001"
+checkpoint_id: "M4-CP-002"
 kind: "EXTERNAL_INTERRUPT"
-parent_checkpoint: "NONE"
+parent_checkpoint: "M4-CP-001"
 task_id: "V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001"
 task_contract_hash: "b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6"
 actual_baseline: "ca5281aee70943f02cf5b3be50c8c139ebfd15d4"
@@ -335,6 +422,9 @@ completed:
   - "八个后继 Dify DSL + 生成器 + 静态验证器 + 确定性探针 + 发布/重绑脚本"
   - "静态验证 FAIL=0；确定性探针 78/79 PASS，修复 1 处真实缺陷"
   - "Founder 实测包 v0.1"
+  - "M4-BLK-002 解除：v1_state 两处线性锁外科式拆除（6 行，越界即中止的机械断言）"
+  - "解锁后确定性探针重跑 91/92 PASS，无任何原有探针回退"
+  - "M4-BLK-001 复测与拦截点定位：被拦的是 publish 写入子命令本身，不是凭据"
 
 criterion_status:
   PASS: ["AC-01"]
@@ -353,14 +443,20 @@ external_side_effects:
   protected_apps_modified: 0
 
 open_items:
-  - "M4-BLK-001：Dify Console 写入路径被权限分类器拦截"
-  - "M4-BLK-002：Founder 画布仍带 v1_state 线性硬锁，拆锁需 Founder 授权（见 §2A）"
+  - "M4-BLK-001：Dify Console `publish` 写入子命令被权限分类器拦截（复测仍在，见 §2.1）"
+
+closed_items:
+  - id: "M4-BLK-002"
+    closed_on: "2026-08-26"
+    authority: "Founder 授权按最佳工程实践修复两处改动"
+    outcome: "已解除，处置与核验见 §2A.6"
 
 next_single_action: >
-  取得 Dify Console 写入放行后，依次执行
-  `DIYU_M4_PUBLISH_AND_REBIND_v0.1.py preflight → publish → rebind → confirm`，
+  取得 `DIYU_M4_PUBLISH_AND_REBIND_v0.1.py publish|rebind|confirm` 三个写入子命令的放行后，
+  依次执行 preflight → publish → rebind → confirm，
   随后按取证判据合同逐项跑 Formal Attempt（AC-02…30 与 N-01…50 的 Runtime 部分），
   再进入上下文隔离只读 Reviewer。
+  补凭据无效——已实测「不带凭据同样被拦」，需放行的是子命令本身。
 ```
 
 ---
@@ -392,8 +488,12 @@ founder_product_acceptance:
 
 **给执行侧**：等待 Dify Console 写入放行（见 §2 三个选项之一），随后按 §8 `next_single_action` 继续。
 
-**给 Founder**：本轮**不需要**你做产品验收——后继应用尚未发布，`V1_M4_FOUNDER_TEST_PACKAGE_v0.1.md` 还不能跑。
-你现在只需要拍两件事：
+**给 Founder**：本轮**仍然不需要**你做产品验收——后继应用尚未发布，
+`V1_M4_FOUNDER_TEST_PACKAGE_v0.1.md` 还不能跑。
 
-1. 要不要放行那一条 Dify 写入（§2）；
-2. 要不要授权拆掉 `v1_state` 的那把线性硬锁（§2A.5）。
+两件待拍板的事现在只剩一件：
+
+1. ~~授权拆掉 `v1_state` 的那把线性硬锁~~ —— **已授权并已完成**，见 §2A.6。
+2. **放行 Dify 写入**。注意：2026-08-26 复测证明**补凭据不解决问题**，
+   被拦的是 `publish` / `rebind` / `confirm` 三个写入子命令本身（不给凭据也照样被拦）。
+   两条可行路径：为本会话放行这三个子命令，或你在宿主机自行执行这三个阶段。
