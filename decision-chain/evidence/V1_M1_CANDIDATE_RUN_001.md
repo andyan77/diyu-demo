@@ -6,7 +6,7 @@
 
 - Dify：本机自托管 1.16.1（`/home/faye/dify/docker/`），与 A-0～A-4 证据同一实例
 - App：`DIYU V1 M1 Natural Context Candidate v0.1`，id `dd638b91-d39f-4e92-a984-6ad1ab809119`，advanced-chat
-- 工作流版本：v0.5（快照扩展 evidence_bundle[]／gaps[]，Founder 本人 2026-08-25 在控制台完成导入与发布）；历史版本 v0.1～v0.4 未删除，可随时回退
+- 工作流版本：v0.5（快照扩展 evidence_bundle[]／gaps[]，Founder 本人 2026-08-25 在控制台完成导入与发布）；v0.6（§8 正式审查阻断修复批次）已生成待导入，见 §十三；历史版本 v0.1～v0.4 未删除，可随时回退
 - 节点：`m1_start → m1_shadow(llm) → m1_compiler(code) → m1_save_snapshot(assigner) → m1_chat_llm(llm) → m1_answer`
 - 源码：`decision-chain/workflows/m1_context_compiler_v0.1.py`（编译器）＋ `decision-chain/workflows/build_m1_candidate_dsl_v0.1.py`（DSL 生成脚本，可重新生成同一份 DSL）
 
@@ -151,3 +151,54 @@ DSL 用 `build_m1_candidate_dsl_v0.1.py` 重新生成后，执行侧尝试用已
 - 两轮 `answer` 字段经关键词扫描（`FACT`/`PREFERENCE`/`REFERENCE`/`UNSTATED`/`evidence_bundle`/`SYSTEM_TENTATIVE`/`SYSTEM_INFERENCE`/`ev_00`/`DISCUSS`/`FOCUS`/`THIS_ACCOUNT`/`NOT_CAPTURED_IN_P0_SNAPSHOT`）均未命中。
 
 **结论**：`evidence_bundle[]` 的降级路径（LLM 只出扁平信号）在真实 DeepSeek V4 Flash 结构化输出下工作正常，`nature` 三个可选分支里 FACT／REFERENCE 均已在真实运行中触发过（PREFERENCE 尚未自然触发，不构成缺陷，只是这两轮对话没有恰好说出偏好句式）；纯追加、跨轮持久化、`confirmation` 不被伪造升级，均有真实证据而非仅单测证据。`gaps[]` 的 `include_structural` 拆分（8 条常量是否逐轮持久化）不影响对话层可观察行为，此前已由确定性单测覆盖，本次 live 验证未重复验证这一点。`_may_modify_existing_evidence` 相关的 `NOT_VERIFIED_IN_LIVE` 标注因该函数已删除而不再适用。候选 App 当前运行版本为 v0.5。
+
+## 十二、Execution Prompt §8 正式独立审查（第一次，隔离上下文、只读、无先前记忆）
+
+首次对本任务运行设计文档规定的正式独立审查流程（区别于之前各批次执行侧自己发起的对抗式合规检查——那些都是实现方自己安排的自验手段，不满足 §8 "未参与实现"这条硬性要求）。审查员：全新 Agent 会话，无本任务任何先前上下文，只读权限，被要求"逐条独立核验，找不到证据就判未证实，发现相反证据就判与事实不符，不许只信文档自述"。
+
+**审查方法（不是自述，逐条列出）**：实际重跑 `python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v`；独立重算 Execution Prompt v1.2 §14 的 Task Contract Hash 并与文档比对；直连本机 Dify Postgres（只读查询）逐条核对 11 个证据引用的 `conversation_id`/`message_id` 是否真实存在、`query` 文本是否与证据文件引述一致；从数据库提取已发布工作流图，与从 HEAD 重新生成的 DSL 逐节点比对字节级是否一致；`git diff --name-status` 核对受保护资产是否被触碰。
+
+**结论（M1-AC-00～15 逐条独立判定，非自述）**：3 项相对扎实（`AC-12` 真实无退化——受保护基线与主 Chatflow 均未被触碰；`AC-13` 候选真实运行且与 commit/发布图字节级绑定），其余全部为 `PARTIAL`，其中 **8 项构成阻断**（§8.2 唯一允许的两类理由之一：明确违反某条 `M1-AC`；未发现任何受保护资产/安全边界类阻断）：
+
+| 编号 | 违反的 AC | 一句话证据 |
+|---|---|---|
+| B-1 | AC-03 | `secondary_goals[]`／`priority_order[]`／`business_goal_categories` 从无物理承载能被写入，永远空数组 |
+| B-2 | AC-04 | Prompt §4.3 要求的 `permission`／`freshness` 两个维度全仓零出现 |
+| B-3 | AC-01 | "合法资料""有效历史产物"两类输入渠道在候选环境里完全不存在（无文件上传、无工具节点） |
+| B-4 | AC-06 | `needed_capabilities` 结构上只能容纳一个值，且由影子提示词里的关键词映射表单一决定 |
+| B-5 | AC-07 | `route_intent=CANCEL`／短指代无任何机制或反馈，`open_threads` 终态 `HANDLED` 全仓从未被赋值过 |
+| B-6 | AC-10 | 影子节点真实失败（Dify `error_strategy: default-value` 降级为 `{}`）时被当作合法空 patch 处理，对话断言"确实不是落库失败"——真实失败场景下这是假话 |
+| B-7 | AC-15 | 从未做过一次回滚/恢复演练，无回滚包 |
+| B-8 | AC-14 | `git reflog` 显示 10 次真实远程推送，账本 `L5` 一条 Git 副作用记录都没有；真实运行清单不完整 |
+
+**一处审查报告本身需要更正的表述（执行侧独立复核，已用数据库时间戳证实）**：审查报告把 `b39c9e21`（17:19:48）描述为"与 RUN-002 相同缺陷的第二次未记录实例"，读起来像修复后又复发的活跃缺陷。直连数据库核对时间线：候选 App 工作流发布记录显示 v0.1 于 17:16:00 发布、v0.2（RUN-002 缺陷的修复版本）于 17:27:36 发布；`b39c9e21` 发生在 17:19:48，比 v0.2 发布早了近 8 分钟，且查询文本与 `7e7d74cc`（即证据文件记录的 RUN-002）逐字相同——这是同一句测试话在 v0.2 发布前被重复发送了两次，只有一条被写入证据文件，**不是修复失效后的复发**。真实性质是运行清单完整性问题（B-8 的一部分：16 条真实消息，证据文件只记录了约 12 条，另外几条包括两次连通性探测和一次模型身份探测，均为良性、非缺陷），不是活跃缺陷。
+
+**执行侧对三个此前自行提出的问题的处理，经审查确认**：
+- `evidence_nature=UNSTATED` 局部跳过而非整批拒绝——行为正确，符合"资料不足时不得整任务拒绝"；措辞已改为"未决、需核对"是恰当姿态。
+- `market_observations`／`runtime_evidence` 的 DEFER——诚实、被单测锁定，是治理判断非工程判断，正确未由执行侧单方宣布。
+- `evidence_scope` 被模型主动推断为 `THIS_ACCOUNT`——合法但比口径鼓励的保守默认更主动，收紧提示词与否不是任何 AC 硬性要求，留作可选项。
+
+## 十三、B-1／B-2／B-5／B-6 修复 + 修复后二次对抗式审查发现的新问题 + 执行侧自行收口
+
+按 §8.1 步骤 4"执行负责人只修阻断项，自验直接/传递影响"，本轮只修 B-1/B-2/B-5/B-6（均为 HOW 层面、已授权范围内的工程缺口）。**B-3（材料/历史产物输入通道）与 B-4（多能力路由）本批明确不做**：两者都需要真正的架构判断（B-3 涉及在候选 Dify App 上开放新的外部输入面，B-4 涉及重新设计 `call_intent` 的多值语义与稳定性风险），仓促补一个半吊子实现的风险高于暂缓——与此前 v0.2/v0.3 批次对"按字段确认状态机"的同一类范围裁定一致，留作独立批次处理。
+
+**四项修复**（`decision-chain/workflows/m1_context_compiler_v0.1.py` 等三个源文件，单测 83→116）：
+- B-1：新增扁平 patch 字段 `secondary_goal_text`／`priority_order_text`／`business_goal_category`（PATCH_KEYS 20→23），`business_goal_categories` 新增顶层快照键。
+- B-2：`EVIDENCE_DIMENSION_VOCAB` 新增 `permission`（恒 `OWNED_BY_USER`）／`freshness`（恒 `FRESH`）两个常量维度，`P0_STRUCTURAL_GAPS` 同步登记单值限制，不新增 LLM patch key。
+- B-5：`route_intent=CANCEL` 增加诚实反馈（本轮没有其他状态变化时，明确告知"没有把撤回绑定到任何具体动作"），不新建撤销状态机。
+- B-6（最关键，真实 bug，已用真实调用独立复现）：新增 `SHADOW_NODE_FAILED` 检测——patch 缺少任一必需 key（含影子节点失败后 Dify 降级产出的 `{}`）时判定为节点失败，区别于"patch 合法但内容平淡"，避免继续对话时断言"确实不是落库失败"这类在真实失败场景下的假话。判据依据的不变量：DSL 的 `structured_output.schema.required` 覆盖全部 `PATCH_KEYS`，真正的合法输出无论内容多平淡都会带满全部 key，只有失败降级路径才产出缺 key 的字典。
+
+**修复后独立对抗式审查（同一批次内的第二轮，非 §8 正式审查）发现 6 个新问题，均已核实为真实、非误报**：
+
+1. `priority_order` 追加语义会累积互相矛盾的排序（"涨粉优先于转化"和"转化优先于涨粉"同时留在数组里）——**已修复**：改为替换语义，只保留用户最近一次的完整表述，新增单测锁定矛盾场景。
+2. 存量（v0.4 及更早）持久化会话里的 `evidence_bundle[]` 条目缺 `permission`／`freshness` 两个新键，此前的顶层键升级循环不会补条目内部字段，下游按新设计文档"每条必须携带全部维度"读取会 KeyError——**已修复**：`main()` 新增条目级 `setdefault`，只补缺失键、不覆盖已有值，新增单测覆盖升级场景与"已有值不被覆盖"两种情况。
+3. `route_intent=CANCEL` 与同轮真实状态变化并存时（例如"算了，改成做家居内容"），断言"没有任何内容被撤销或删除"是假话——**已修复**：`_dialogue_directive` 新增 `changed` 形参，只在本轮确实没有其他状态变化时才发出这句断言；同时把"请说清楚具体想撤回哪一项"这句系统本身接不住答案的追问改为如实说明限制、正常继续对话，新增单测锁定"CANCEL+真实变更"场景不再产生假断言。
+4. `secondary_goals`／`priority_order`／`business_goal_categories` 的去重都是逐字匹配，改述会被当成新增，长会话下可能无界增长——**未处理**：与 `non_sacrifice_constraints` 早已存在的同类风险同一性质，模糊去重需要语义相似度判断，本身有误判风险，不在本批新增语义匹配逻辑，登记为已知限制。
+5. `business_goal_categories` 没有"改主意/撤销某个类别"的通道，且这条限制没有像 permission/freshness 那样登记进 `gaps[]`——**未处理**，口径不一致已如实记录，留待下一批一并处理经营目标类别与次目标/优先级的"撤销"语义（如果需要的话，本身也是 B-5 那类需要设计判断的范畴）。
+6. `PATCH_UNKNOWN_FIELDS`／`ILLEGAL_ENUM:*`／`PATCH_NOT_OBJECT` 三类内部码仍然原样拼进 `dialogue_directive`（`V1_M1_CANDIDATE_RUN_001.md:78` 记录的 CE-A2 那类缺陷的另一处未修分支）——**确认为本批之前就存在、非本批引入的回归**（经 `git show HEAD:` 逐行比对确认改动前后该分支代码相同），但 B-1 新增的 8 值枚举 `business_goal_category` 客观上给这条老泄漏路径新增了一个自然触发口。是否借这次机会一并收口，留待下一批或 Reviewer 裁决，不在本批擅自扩大范围顺手处理。
+
+**需要 Reviewer/Founder 裁决的一处真实取舍（B-6 判据的可靠性前提）**：SHADOW_NODE_FAILED 判据完全建立在"Dify + DeepSeek V4 Flash 会严格执行 `schema.required`"这一前提上——这是**声明的**（DSL 配置如此要求），不是**实测的**：仓库现有证据只记录过该模型不支持嵌套对象，5 次真实运行至今未自然撞见过一次影子非法输出，从未验证过"缺 1-2 个字段、其余都对"这种部分失败模式是否会真实出现。如果这个前提不成立，本次修复是把"沉默的假话"换成了"沉默的内容丢失"（一份 22/23 键都对的高质量 patch 会被整轮丢弃）。这需要真实 live 回归提供实测证据，不能停留在单测层面自证；本批暂不擅自放宽判据（比如"只有全空才算失败，缺 1-2 个字段宽松合并"），先如实登记这一前提待验证，见下方"尚待 live 验证"。
+
+**B-7（回滚演练）静态验证（未做真实演练，如实标注限制）**：执行侧当前无控制台写权限（`console/api/apps` 返回 401，与此前 SE-015 记录的会话失效一致），无法安全地在候选 App 上执行真实的"发布回退再重新发布"演练；按设计文档 §9.2 允许的替代路径，改为**静态恢复验证**：直连数据库确认 `apps.workflow_id` 是指向 `workflows` 表某一行的单一外键，该 App 的 5 个历史发布版本（v0.1～v0.4 对应的行）全部完整存在、未被删除；Dify 的"发布"动作在数据库层面就是新建一行 `workflows` 并把 `apps.workflow_id` 指过去——这是单列更新，不删除任何历史行，结构上天然可逆。**限制**：这条链路的验证止于"结构上确认可逆"，未真实执行过一次"指回旧版本→确认候选 App 真的按旧版本运行→再指回新版本"的完整演练，也没有做过"仓库候选变更"这一侧的恢复点验证（该侧本身就是 git，`git log`/`git revert` 天然可用，风险远低于 Dify 侧）。
+
+**本批未 commit 前状态**：四项修复 + 六项修复后问题里的三项已处理完毕，`python3 decision-chain/workflows/test_m1_context_compiler_v0.1.py -v` → `Ran 120 tests ... OK`。DSL 已重新生成为 `m1_candidate_dsl_v0.6.yml`，**尚未导入/发布，尚未 live 验证**——尤其是 B-6 判据依赖的前提，必须有真实运行证据才能真正认定"已解决"。

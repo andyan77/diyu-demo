@@ -28,20 +28,67 @@ compiler = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(compiler)
 
 
+# 未在 overrides 里指定时，每个枚举字段"这一轮没说"的平淡取值。文本字段一律空字符串。
+_BLAND_ENUM_DEFAULTS = {
+    "route_intent": "DISCUSS",
+    "temporal_scope": "UNSTATED",
+    "requested_capability": "NONE",
+    "confirmation_signal": "NONE",
+    "plot_allowed": "UNSTATED",
+    "remix_allowed": "UNSTATED",
+    "conflict_allowed": "UNSTATED",
+    "controversy_allowed": "UNSTATED",
+    "evidence_nature": "UNSTATED",
+    "evidence_scope": "UNSTATED",
+    "business_goal_category": "UNSTATED",
+}
+
+
+def _patch(**overrides):
+    """构造一份**完整**的候选 patch：全部 PATCH_KEYS 都在，未指定的字段取"这一轮没说"的
+    平淡值（文本空字符串、枚举 UNSTATED/NONE/DISCUSS）。
+
+    为什么模拟"影子节点正常工作"的用例必须走本 helper、不能手写偏字典：m1_shadow 的
+    structured_output.schema 把全部 PATCH_KEYS 放进 required，所以影子节点**成功**产出的
+    输出一定携带全部 key；缺 key 只可能来自 error_strategy: default-value 的降级路径。
+    编译器据此把"缺任意一个必需 key"判定为 compiler.SHADOW_NODE_FAILED（见该常量注释）。
+    因此在本套件里手写一份偏字典 = 在模拟节点失败，不是在模拟"这一轮没说什么"。
+    """
+    patch = {key: "" for key in compiler.PATCH_KEYS}
+    patch.update(_BLAND_ENUM_DEFAULTS)
+    patch.update(overrides)
+    return patch
+
+
 def _run(snapshot_json, shadow_patch, user_query="（测试输入，内容不影响编译器判定）"):
     return compiler.main(user_query, snapshot_json, shadow_patch)
+
+
+class TestPatchHelperItselfStaysValid(unittest.TestCase):
+    """本套件几乎所有用例都建立在 _patch() 之上，所以 helper 自身必须先被锁住：
+    它必须始终覆盖全部 PATCH_KEYS，且每个枚举字段都给出合法的平淡取值。新增一个枚举型
+    patch key 却忘了在 _BLAND_ENUM_DEFAULTS 里登记，会让 helper 退化成空字符串、
+    整套测试以"整体拒绝"的方式集体失败——这条用例把原因直接指出来。"""
+
+    def test_bland_full_patch_covers_every_patch_key(self):
+        self.assertEqual(set(_patch().keys()), set(compiler.PATCH_KEYS))
+
+    def test_bland_full_patch_passes_validation(self):
+        ok, reason = compiler._validate_patch(_patch())
+        self.assertTrue(ok, "平淡但完整的 patch 必须合法，实际拒绝原因：" + reason)
+        self.assertEqual(reason, "")
 
 
 class TestFreshTurnBasics(unittest.TestCase):
     """对应 RUN-001：空快照 + 任务陈述 + 点名能力。"""
 
     def setUp(self):
-        self.patch = {
-            "route_intent": "FOCUS",
-            "current_task_text": "我想为账号规划一下长期人设和分工",
-            "temporal_scope": "LONG_TERM",
-            "requested_capability": "MATRIX",
-        }
+        self.patch = _patch(
+            route_intent="FOCUS",
+            current_task_text="我想为账号规划一下长期人设和分工",
+            temporal_scope="LONG_TERM",
+            requested_capability="MATRIX",
+        )
         self.result = _run(None, self.patch)
 
     def test_patch_accepted(self):
@@ -76,10 +123,8 @@ class TestWholePatchRejection(unittest.TestCase):
 
     def test_unknown_field_rejects_whole_patch(self):
         empty_snapshot = json.dumps(compiler._default_snapshot(), ensure_ascii=False)
-        patch = {
-            "current_task_text": "这段文本不应该被写入",
-            "made_up_field": "不存在的字段",
-        }
+        patch = _patch(current_task_text="这段文本不应该被写入")
+        patch["made_up_field"] = "不存在的字段"
         result = _run(empty_snapshot, patch)
         self.assertEqual(result["patch_ok"], "false")
         self.assertIn("PATCH_UNKNOWN_FIELDS", result["reject_reason"])
@@ -89,9 +134,17 @@ class TestWholePatchRejection(unittest.TestCase):
         self.assertIsNone(snap["current_task"]["text"], "被拒绝的 patch 内容不得泄漏进快照")
         self.assertEqual(result["state_changed"], "false")
 
-    def test_illegal_enum_rejects_whole_patch(self):
-        patch = {"temporal_scope": "SOMEDAY_MAYBE_NOT_A_REAL_VALUE"}
+    def test_unknown_field_on_complete_patch_is_not_mistaken_for_node_failure(self):
+        """必需 key 全在、只是多了一个未知字段 → 影子节点其实成功了，只是输出越界，
+        必须走既有的 PATCH_UNKNOWN_FIELDS 整体拒绝，不能被新增的失败检测抢先误判。"""
+        patch = _patch()
+        patch["made_up_field"] = "x"
         result = _run(None, patch)
+        self.assertNotEqual(result["reject_reason"], compiler.SHADOW_NODE_FAILED)
+        self.assertIn("PATCH_UNKNOWN_FIELDS", result["reject_reason"])
+
+    def test_illegal_enum_rejects_whole_patch(self):
+        result = _run(None, _patch(temporal_scope="SOMEDAY_MAYBE_NOT_A_REAL_VALUE"))
         self.assertEqual(result["patch_ok"], "false")
         self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:temporal_scope"))
 
@@ -101,19 +154,154 @@ class TestWholePatchRejection(unittest.TestCase):
         self.assertEqual(result["reject_reason"], "PATCH_NOT_OBJECT")
 
 
+class TestShadowNodeFailureDetection(unittest.TestCase):
+    """真实 bug 修复（B-6）：影子节点失败被当成合法空 patch 处理，产生虚假断言。
+
+    DSL 里 m1_shadow 配置了 error_strategy: "default-value"，default_value 的
+    structured_output 是 {}。修复前 main(query, None, {}) 会得到 patch_ok=true、
+    reject_reason=""、dialogue_directive 断言"不是落库失败，就是还没有形成任务"——在影子
+    节点真的失败的场景下这是**假话**，且系统不留任何痕迹，违反 M1-AC-10「内部失败诚实可
+    恢复，不伪装成功」与宪法「不编造失败原因」。
+
+    判据的可靠性来自 DSL 层已成立的不变量（由 TestDslSyncDriftGuard 锁定）：schema 的
+    required 覆盖全部 PATCH_KEYS，因此成功输出一定 key 全在；缺 key 只可能来自降级路径。"""
+
+    def test_empty_dict_from_default_value_path_is_reported_as_node_failure(self):
+        result = _run(None, {})
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertEqual(result["reject_reason"], compiler.SHADOW_NODE_FAILED)
+
+    def test_node_failure_directive_does_not_reuse_the_old_false_wording(self):
+        """修复前这一轮会输出"不是落库失败，就是还没有形成任务"——那是假话。
+        也不得沿用纪律 2 的"补丁校验未通过"措辞（两种性质不同的失败），
+        更不得把内部代码原样拼给对话 LLM（CE-A2 纪律）。"""
+        directive = _run(None, {})["dialogue_directive"]
+        self.assertNotIn("落库", directive)
+        self.assertNotIn("确实还没有记录任何任务内容", directive)
+        self.assertNotIn("补丁校验未通过", directive)
+        self.assertNotIn(compiler.SHADOW_NODE_FAILED, directive)
+        self.assertNotIn("SHADOW", directive)
+
+    def test_node_failure_directive_says_it_is_an_internal_failure_and_asks_to_retry(self):
+        directive = _run(None, {})["dialogue_directive"]
+        self.assertIn("没有正常完成", directive)
+        self.assertIn("再说一遍", directive)
+
+    def test_missing_exactly_one_required_key_is_also_node_failure(self):
+        """覆盖的是"缺任意一个"，不是只覆盖"全部缺"。修复前缺一个 key 会被
+        _validate_patch 的 `.get(key, 默认值)` 宽松取值悄悄放过，既不算未知字段、
+        也不算非法枚举，于是照常当成合法的一轮合并进快照。"""
+        for missing_key in ("evidence_scope", "route_intent", "current_task_text"):
+            patch = _patch(current_task_text="这一轮不该被合并进快照")
+            del patch[missing_key]
+            result = _run(None, patch)
+            self.assertEqual(result["patch_ok"], "false", "缺 " + missing_key + " 应判定为节点失败")
+            self.assertEqual(result["reject_reason"], compiler.SHADOW_NODE_FAILED)
+            snap = json.loads(result["snapshot_json"])
+            self.assertIsNone(snap["current_task"]["text"], "节点失败的一轮不得写入任何内容")
+
+    def test_bland_but_complete_patch_is_not_mistaken_for_node_failure(self):
+        """反向锁定：全部必需 key 都在、每个字段都是 UNSTATED/None/空字符串的"平淡但完整"
+        的一轮，是影子节点**正常工作**但用户这轮确实没说新东西，必须照常处理。"""
+        patch = _patch(route_intent=None)
+        self.assertEqual(set(patch.keys()), set(compiler.PATCH_KEYS))
+        result = _run(None, patch)
+        self.assertEqual(result["patch_ok"], "true")
+        self.assertEqual(result["reject_reason"], "")
+        self.assertEqual(result["state_changed"], "false", "没有新信息的一轮不应推进 revision")
+
+    def test_node_failure_leaves_previous_state_untouched(self):
+        turn1 = _run(None, _patch(current_task_text="做女装穿搭内容"))
+        turn2 = _run(turn1["snapshot_json"], {})
+        snap2 = json.loads(turn2["snapshot_json"])
+        self.assertEqual(snap2["current_task"]["text"], "做女装穿搭内容")
+        self.assertEqual(snap2["revision"], 1, "节点失败的一轮不得推进 revision")
+        self.assertEqual(turn2["state_changed"], "false")
+
+    def test_node_failure_recorded_in_machine_readable_turn_report(self):
+        """turn_report_json 已有 reject_reason，会自动带上失败码——这是留痕的地方；
+        面向用户的文本里则不得出现它（见上面的措辞用例）。"""
+        report = json.loads(_run(None, {})["turn_report_json"])
+        self.assertFalse(report["patch_ok"])
+        self.assertEqual(report["reject_reason"], compiler.SHADOW_NODE_FAILED)
+
+
+class TestCancelRouteIntentHonestFeedback(unittest.TestCase):
+    """B-5：route_intent=CANCEL 此前完全没有任何用户可见的诚实反馈。
+
+    修复前 route_intent 只写进 last_route_intent，从未被 _dialogue_directive 读过——用户说
+    "算了，取消这个"，系统假装什么都没发生继续走别的分支，这是靠沉默造成的不实。
+
+    **范围边界**：本批只做诚实反馈，**不实现撤销/回滚状态机**。按字段撤销需要什么样的状态机
+    是设计判断，与 account_stage/open_threads 的"按字段确认状态机"同一类，不擅自新建。"""
+
+    def _directive(self, snapshot_json, **overrides):
+        return _run(snapshot_json, _patch(**overrides))["dialogue_directive"]
+
+    def test_cancel_turn_gets_explicit_honest_feedback(self):
+        """纯 CANCEL、本轮没有任何其他状态变化时，才断言"没有任何内容被撤销或删除"。"""
+        directive = self._directive(None, route_intent="CANCEL")
+        self.assertIn("取消或撤回", directive)
+        self.assertIn("没有任何内容被撤销", directive)
+
+    def test_cancel_with_concurrent_real_change_does_not_claim_nothing_changed(self):
+        """对抗式审查真实发现的问题：用户完全可能一句话里既说取消又给新内容
+        （"算了，改成做家居内容"），这种轮次里旧值确实被新值覆盖了，"没有任何内容被撤销或
+        删除"在这种场景下是假话。changed=True 时必须跳过这句断言。"""
+        directive = self._directive(None, route_intent="CANCEL", current_task_text="做女装穿搭内容")
+        self.assertNotIn("没有任何内容被撤销", directive)
+        self.assertNotIn("取消或撤回", directive)
+        self.assertIn("当前任务：做女装穿搭内容", directive)
+
+    def test_cancel_feedback_promises_no_undo_effect_that_did_not_happen(self):
+        """必须满足两点：不承诺任何实际未发生的撤销效果；不编造"系统正在处理撤销"这类
+        进度性说法。"""
+        directive = self._directive(None, route_intent="CANCEL")
+        self.assertNotIn("已撤销", directive)
+        self.assertNotIn("已经撤回", directive)
+        self.assertNotIn("正在撤销", directive)
+        self.assertNotIn("CANCEL", directive, "内部枚举代码不得拼进给对话 LLM 的文本（CE-A2）")
+
+    def test_non_cancel_turn_carries_no_cancel_wording(self):
+        directive = self._directive(None, route_intent="FOCUS", current_task_text="做女装穿搭内容")
+        self.assertNotIn("撤回", directive)
+        self.assertNotIn("撤销", directive)
+
+    def test_cancel_does_not_stick_to_later_turns(self):
+        """这正是 _dialogue_directive 取**本轮** route_intent、而不是读 snap["last_route_intent"]
+        的原因：后者是跨轮持久化的"最后一次"，只读它会让一次取消表达在之后每一轮都被误判成
+        "还在撤销中"。第二轮用 route_intent=None（_validate_patch 明确容忍 None，且
+        _merge_patch 不会用它覆盖 last_route_intent）来暴露这个区别。"""
+        turn1 = _run(None, _patch(route_intent="CANCEL", current_task_text="做女装穿搭内容"))
+        snap1 = json.loads(turn1["snapshot_json"])
+        self.assertEqual(snap1["last_route_intent"], "CANCEL")
+
+        turn2 = _run(turn1["snapshot_json"], _patch(route_intent=None))
+        snap2 = json.loads(turn2["snapshot_json"])
+        self.assertEqual(snap2["last_route_intent"], "CANCEL", "跨轮持久值本身没变，变的是读哪一个")
+        self.assertNotIn("取消或撤回", turn2["dialogue_directive"])
+
+    def test_cancel_on_rejected_patch_turn_does_not_emit_the_notice(self):
+        """patch 未通过的轮次没有可信的本轮意图（调用方传 None），走既有的拒绝分支，
+        不叠加撤回说明。"""
+        patch = _patch(route_intent="CANCEL")
+        patch["made_up_field"] = "x"
+        directive = _run(None, patch)["dialogue_directive"]
+        self.assertIn("补丁校验未通过", directive)
+        self.assertNotIn("撤回", directive)
+
+
 class TestSideQuestionCapture(unittest.TestCase):
     """侧问必须被捕获为 open_threads，且不得被当场回答掉（对应 RUN-002/RUN-003 场景背景）。"""
 
     def test_side_question_becomes_open_thread(self):
         """_merge_patch 落库时线程状态是 OPEN；但 main() 单次调用内 _dialogue_directive
         紧接着在同一轮把它标 SURFACED 再序列化输出（因为同一轮 directive 已经把线程文本带给了
-        对话 LLM）——这是当前代码的真实行为，不是本测试断言错误。真正的"仍为 OPEN"状态只在
-        同一轮内、且它不是本轮唯一/最早的 open 线程时才会被观察到，见
-        test_second_open_thread_in_same_turn_stays_open。"""
-        patch = {
-            "current_task_text": "主要是做女装穿搭内容",
-            "side_question": "如果不做剧情类的内容会不会不好起量？",
-        }
+        对话 LLM）——这是当前代码的真实行为，不是本测试断言错误。"""
+        patch = _patch(
+            current_task_text="主要是做女装穿搭内容",
+            side_question="如果不做剧情类的内容会不会不好起量？",
+        )
         result = _run(None, patch)
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(len(snap["open_threads"]), 1)
@@ -126,19 +314,17 @@ class TestSideQuestionCapture(unittest.TestCase):
         """真实发现（非测试书写错误）：PATCH_KEYS 每轮只支持一个 side_question，
         新线程诞生时永远是本轮唯一的 OPEN 线程，会在同一次 main() 调用内被
         _dialogue_directive 立刻标 SURFACED 再序列化输出。结果是"先记录、留到下一轮
-        才主动提"这个设计意图目前从未在持久化快照里被观察到——两轮各自的线程最终都是
-        SURFACED，不存在跨轮仍为 OPEN 的情形。是否要改成"确认对话 LLM 真的说出口了才转
-        SURFACED"或"至少跨一轮再表面化"，是设计判断，不在本次测试形式化范围内擅自改动，
-        如实记录为已知限制（另见 evidence/V1_M1_CANDIDATE_RUN_001.md 已知限制章节）。"""
-        turn1 = _run(None, {"side_question": "第一个追问"})
-        turn2 = _run(turn1["snapshot_json"], {"side_question": "第二个追问"})
+        才主动提"这个设计意图目前从未在持久化快照里被观察到。是否要改成"确认对话 LLM 真的
+        说出口了才转 SURFACED"是设计判断，不在本次测试形式化范围内擅自改动，如实记录为
+        已知限制（另见 evidence/V1_M1_CANDIDATE_RUN_001.md 已知限制章节）。"""
+        turn1 = _run(None, _patch(side_question="第一个追问"))
+        turn2 = _run(turn1["snapshot_json"], _patch(side_question="第二个追问"))
         snap2 = json.loads(turn2["snapshot_json"])
         self.assertEqual(snap2["open_threads"][0]["status"], "SURFACED")
         self.assertEqual(snap2["open_threads"][1]["status"], "SURFACED")
 
     def test_dialogue_directive_surfaces_open_thread_without_answering_it(self):
-        patch = {"side_question": "会不会不好起量？"}
-        result = _run(None, patch)
+        result = _run(None, _patch(side_question="会不会不好起量？"))
         self.assertIn("会不会不好起量", result["dialogue_directive"])
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["open_threads"][0]["status"], "SURFACED",
@@ -149,7 +335,7 @@ class TestNoEntryCapabilitiesHonestBlocking(unittest.TestCase):
     """CAP-03 / CAP-05 当前无物理入口，必须如实标 BLOCKED，不得伪造入口。"""
 
     def test_single_account_operation_blocked(self):
-        result = _run(None, {"current_task_text": "帮我做单账号持续运营"})
+        result = _run(None, _patch(current_task_text="帮我做单账号持续运营"))
         intent = json.loads(result["call_intent_json"])
         cap = intent["per_capability"]["SINGLE_ACCOUNT_OPERATION"]
         self.assertEqual(cap["status"], "BLOCKED")
@@ -157,7 +343,7 @@ class TestNoEntryCapabilitiesHonestBlocking(unittest.TestCase):
         self.assertFalse(cap["reachable_if_requested"])
 
     def test_creative_tournament_blocked(self):
-        result = _run(None, {"current_task_text": "来一场创意锦标赛"})
+        result = _run(None, _patch(current_task_text="来一场创意锦标赛"))
         intent = json.loads(result["call_intent_json"])
         cap = intent["per_capability"]["CREATIVE_TOURNAMENT"]
         self.assertEqual(cap["status"], "BLOCKED")
@@ -169,13 +355,13 @@ class TestKnownLimitationAnnotation(unittest.TestCase):
     （不得把不适用的免责话术泛化到所有能力上）。"""
 
     def test_campaign_and_content_brief_carry_lock_limitation(self):
-        result = _run(None, {"current_task_text": "占位任务，仅用于触发 call_intent 计算"})
+        result = _run(None, _patch(current_task_text="占位任务，仅用于触发 call_intent 计算"))
         intent = json.loads(result["call_intent_json"])
         for cap_id in ("CAMPAIGN", "CONTENT_BRIEF"):
             self.assertIsNotNone(intent["per_capability"][cap_id]["known_limitation"])
 
     def test_matrix_and_others_do_not_carry_lock_limitation(self):
-        result = _run(None, {"current_task_text": "占位任务，仅用于触发 call_intent 计算"})
+        result = _run(None, _patch(current_task_text="占位任务，仅用于触发 call_intent 计算"))
         intent = json.loads(result["call_intent_json"])
         for cap_id in ("MATRIX", "CREATIVE_SCRIPT", "PRODUCTION_DIRECTOR", "PUBLISHING_PACKAGING"):
             self.assertIsNone(intent["per_capability"][cap_id]["known_limitation"])
@@ -188,14 +374,14 @@ class TestDialogueDirectiveNoRawCodeLeak(unittest.TestCase):
     修复：改用人话标签 + 不再宣称"用户点名"。此处锁定修复后的行为，防止再次回归。"""
 
     def test_requested_capability_raw_code_does_not_leak_into_directive(self):
-        result = _run(None, {"current_task_text": "占位任务", "requested_capability": "MATRIX"})
+        result = _run(None, _patch(current_task_text="占位任务", requested_capability="MATRIX"))
         self.assertNotIn("MATRIX", result["dialogue_directive"])
         self.assertIn("账号矩阵", result["dialogue_directive"])
 
     def test_directive_does_not_overclaim_user_named_the_capability(self):
         """requested_capability 也可能是模型从语义推断出来的，不一定是用户逐字点名——
         指令文本不应断言"用户点名"，避免对话 LLM 复述成不实归因。"""
-        result = _run(None, {"current_task_text": "占位任务", "requested_capability": "MATRIX"})
+        result = _run(None, _patch(current_task_text="占位任务", requested_capability="MATRIX"))
         self.assertNotIn("用户点名", result["dialogue_directive"])
 
     def test_block_reason_raw_code_does_not_leak_into_directive(self):
@@ -203,14 +389,14 @@ class TestDialogueDirectiveNoRawCodeLeak(unittest.TestCase):
         无法通过 requested_capability 字段点名，因此 BLOCKED 分支的 directive 只能用
         MATRIX/CAMPAIGN 等六项有物理入口能力在"没有任务描述"时触发（block_reason=
         NO_CURRENT_TASK_STATED），这里用这一真实可达路径验证不泄漏原始代码。"""
-        result = _run(None, {"requested_capability": "MATRIX"})
+        result = _run(None, _patch(requested_capability="MATRIX"))
         self.assertNotIn("NO_CURRENT_TASK_STATED", result["dialogue_directive"])
         self.assertIn("还没有听你说过具体任务内容", result["dialogue_directive"])
 
     def test_call_intent_json_still_carries_raw_machine_readable_codes(self):
         """结构化的 call_intent_json 不面向用户展示，机器可读代码原样保留是正确的，
         不应该被这次修复误伤。"""
-        result = _run(None, {"requested_capability": "MATRIX"})
+        result = _run(None, _patch(requested_capability="MATRIX"))
         intent = json.loads(result["call_intent_json"])
         self.assertEqual(intent["per_capability"]["MATRIX"]["block_reason"], "NO_CURRENT_TASK_STATED")
 
@@ -219,8 +405,8 @@ class TestMultiTurnPersistence(unittest.TestCase):
     """第二轮必须在第一轮快照基础上合并，而不是从零重建（真实对话是多轮的）。"""
 
     def test_second_turn_preserves_first_turn_task_when_not_restated(self):
-        turn1 = _run(None, {"current_task_text": "做女装穿搭内容", "temporal_scope": "CYCLE"})
-        turn2 = _run(turn1["snapshot_json"], {"confirmation_signal": "AFFIRM"})
+        turn1 = _run(None, _patch(current_task_text="做女装穿搭内容", temporal_scope="CYCLE"))
+        turn2 = _run(turn1["snapshot_json"], _patch(confirmation_signal="AFFIRM"))
 
         snap2 = json.loads(turn2["snapshot_json"])
         self.assertEqual(snap2["current_task"]["text"], "做女装穿搭内容",
@@ -229,8 +415,10 @@ class TestMultiTurnPersistence(unittest.TestCase):
         self.assertEqual(snap2["revision"], 2, "两轮都产生了真实变化，revision 应累加而非重置")
 
     def test_rejected_second_turn_leaves_first_turn_state_untouched(self):
-        turn1 = _run(None, {"current_task_text": "做女装穿搭内容"})
-        turn2 = _run(turn1["snapshot_json"], {"unknown_field": "x"})
+        turn1 = _run(None, _patch(current_task_text="做女装穿搭内容"))
+        bad = _patch()
+        bad["unknown_field"] = "x"
+        turn2 = _run(turn1["snapshot_json"], bad)
 
         self.assertEqual(turn2["patch_ok"], "false")
         snap2 = json.loads(turn2["snapshot_json"])
@@ -244,7 +432,7 @@ class TestV0_2SnapshotExpansion(unittest.TestCase):
     稳定性风险。"""
 
     def test_account_stage_text_captured(self):
-        result = _run(None, {"current_task_text": "占位", "account_stage_text": "已经有稳定粉丝但没转化"})
+        result = _run(None, _patch(current_task_text="占位", account_stage_text="已经有稳定粉丝但没转化"))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["account_stage"]["text"], "已经有稳定粉丝但没转化")
         self.assertEqual(snap["account_stage"]["confirmation"], "SYSTEM_TENTATIVE",
@@ -252,26 +440,25 @@ class TestV0_2SnapshotExpansion(unittest.TestCase):
                           "如实固定为 SYSTEM_TENTATIVE，不得伪造 USER_CONFIRMED")
 
     def test_discretion_fields_only_overwrite_when_stated(self):
-        turn1 = _run(None, {"current_task_text": "占位", "plot_allowed": "NOT_ALLOWED"})
-        turn2 = _run(turn1["snapshot_json"], {"remix_allowed": "ALLOWED"})
+        turn1 = _run(None, _patch(current_task_text="占位", plot_allowed="NOT_ALLOWED"))
+        turn2 = _run(turn1["snapshot_json"], _patch(remix_allowed="ALLOWED"))
         snap2 = json.loads(turn2["snapshot_json"])
         self.assertEqual(snap2["expression_discretion"]["plot_allowed"], "NOT_ALLOWED",
                           "第二轮没有重新提到剧情裁量时，第一轮的表态不应被 UNSTATED 覆盖掉")
         self.assertEqual(snap2["expression_discretion"]["remix_allowed"], "ALLOWED")
 
     def test_illegal_discretion_enum_rejects_whole_patch(self):
-        patch = {"plot_allowed": "MAYBE_SOMETIMES"}
-        result = _run(None, patch)
+        result = _run(None, _patch(plot_allowed="MAYBE_SOMETIMES"))
         self.assertEqual(result["patch_ok"], "false")
         self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:plot_allowed"))
 
     def test_capacity_triad_three_fields_independently_carried(self):
-        result = _run(None, {
-            "current_task_text": "占位",
-            "desired_output_text": "每周 5 条",
-            "cycle_available_text": "本周期只能做 2 条",
-            "baseline_text": "团队长期稳定产出 3 条/周",
-        })
+        result = _run(None, _patch(
+            current_task_text="占位",
+            desired_output_text="每周 5 条",
+            cycle_available_text="本周期只能做 2 条",
+            baseline_text="团队长期稳定产出 3 条/周",
+        ))
         snap = json.loads(result["snapshot_json"])
         triad = snap["capacity_triad"]
         self.assertEqual(triad["desired_output"], "每周 5 条")
@@ -279,7 +466,7 @@ class TestV0_2SnapshotExpansion(unittest.TestCase):
         self.assertEqual(triad["baseline"], "团队长期稳定产出 3 条/周")
 
     def test_pre_v0_2_persisted_snapshot_upgrades_without_crashing(self):
-        """向前兼容：模拟 v0.3 及更早持久化的快照（没有 account_stage 等三个新字段），
+        """向前兼容：模拟 v0.1 持久化的快照（没有 account_stage 等三个新字段），
         必须能被本版本正常读取、补齐缺失字段、继续合并新 patch，而不是抛异常或丢失旧数据。"""
         old_snapshot_json = json.dumps({
             "schema_version": 1,
@@ -293,10 +480,143 @@ class TestV0_2SnapshotExpansion(unittest.TestCase):
             "last_route_intent": None,
         }, ensure_ascii=False)
 
-        result = _run(old_snapshot_json, {"account_stage_text": "新会话里才第一次提到阶段"})
+        result = _run(old_snapshot_json, _patch(account_stage_text="新会话里才第一次提到阶段"))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["current_task"]["text"], "旧会话已经存在的任务", "补齐新字段不得丢失旧字段的真实数据")
         self.assertEqual(snap["account_stage"]["text"], "新会话里才第一次提到阶段")
+
+
+class TestV0_4GoalStructureReachability(unittest.TestCase):
+    """v0.4 修复（B-1）：goal_structure.secondary_goals[] / priority_order[] 与
+    business_goal_categories[] 此前**从未可达**。
+
+    审查证据：把 PATCH_KEYS 全部合法字段填满跑一遍 main()，前两个数组永远是空数组
+    （没有任何 patch key 或 merge 分支能写入），第三个字段在快照里根本不存在——即
+    "结构在、语义不可达"。修复方式沿用既有范式：扁平字符串/枚举 patch key + `not in` 去重
+    append，不引入嵌套对象或数组。"""
+
+    def test_secondary_goal_appended_and_deduplicated(self):
+        turn1 = _run(None, _patch(primary_goal_text="把到店转化做起来", secondary_goal_text="顺带把粉丝量做上去"))
+        snap1 = json.loads(turn1["snapshot_json"])
+        self.assertEqual(snap1["goal_structure"]["secondary_goals"], ["顺带把粉丝量做上去"])
+
+        turn2 = _run(turn1["snapshot_json"], _patch(secondary_goal_text="顺带把粉丝量做上去"))
+        snap2 = json.loads(turn2["snapshot_json"])
+        self.assertEqual(snap2["goal_structure"]["secondary_goals"], ["顺带把粉丝量做上去"],
+                          "去重规则同 non_sacrifice_constraints 的 `not in` 先例")
+        self.assertEqual(turn2["state_changed"], "false")
+
+        turn3 = _run(turn2["snapshot_json"], _patch(secondary_goal_text="也想沉淀一点长期内容资产"))
+        snap3 = json.loads(turn3["snapshot_json"])
+        self.assertEqual(snap3["goal_structure"]["secondary_goals"],
+                         ["顺带把粉丝量做上去", "也想沉淀一点长期内容资产"])
+
+    def test_priority_order_replaced_not_appended(self):
+        """对抗式审查真实发现的问题：优先级是一句排序断言，不是独立事实。追加语义会让
+        "涨粉优先于转化"和"转化优先于涨粉"同时留在数组里，自相矛盾。修复为替换语义：
+        只保留用户最近一次的完整表述。"""
+        turn1 = _run(None, _patch(priority_order_text="涨粉优先于转化"))
+        snap1 = json.loads(turn1["snapshot_json"])
+        self.assertEqual(snap1["goal_structure"]["priority_order"], ["涨粉优先于转化"])
+
+        turn2 = _run(turn1["snapshot_json"], _patch(priority_order_text="转化优先于涨粉"))
+        snap2 = json.loads(turn2["snapshot_json"])
+        self.assertEqual(snap2["goal_structure"]["priority_order"], ["转化优先于涨粉"],
+                          "新表述必须整体替换旧表述，不得两条矛盾的排序同时并存")
+
+    def test_priority_order_repeat_does_not_bump_revision(self):
+        turn1 = _run(None, _patch(priority_order_text="涨粉优先于转化"))
+        turn2 = _run(turn1["snapshot_json"], _patch(priority_order_text="涨粉优先于转化"))
+        self.assertEqual(json.loads(turn2["snapshot_json"])["goal_structure"]["priority_order"],
+                         ["涨粉优先于转化"])
+        self.assertEqual(turn2["state_changed"], "false")
+
+    def test_business_goal_categories_is_a_set_not_a_single_value(self):
+        """共享合同一 §二.4 逐字要求能表达账号／周期层面的"混合"而非强制单选：
+        第二个类别必须是**追加**，不得覆盖第一个。"""
+        turn1 = _run(None, _patch(business_goal_category="FOLLOWER_GROWTH"))
+        self.assertEqual(json.loads(turn1["snapshot_json"])["business_goal_categories"], ["FOLLOWER_GROWTH"])
+
+        turn2 = _run(turn1["snapshot_json"], _patch(business_goal_category="STORE_VISIT"))
+        self.assertEqual(json.loads(turn2["snapshot_json"])["business_goal_categories"],
+                         ["FOLLOWER_GROWTH", "STORE_VISIT"])
+
+        turn3 = _run(turn2["snapshot_json"], _patch(business_goal_category="STORE_VISIT"))
+        self.assertEqual(json.loads(turn3["snapshot_json"])["business_goal_categories"],
+                         ["FOLLOWER_GROWTH", "STORE_VISIT"])
+        self.assertEqual(turn3["state_changed"], "false")
+
+    def test_unstated_business_goal_category_writes_nothing(self):
+        result = _run(None, _patch(current_task_text="占位任务", business_goal_category="UNSTATED"))
+        self.assertEqual(json.loads(result["snapshot_json"])["business_goal_categories"], [])
+
+    def test_illegal_business_goal_category_rejects_whole_patch(self):
+        result = _run(None, _patch(current_task_text="不应写入", business_goal_category="VIBES"))
+        self.assertEqual(result["patch_ok"], "false")
+        self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:business_goal_category"))
+        self.assertIsNone(json.loads(result["snapshot_json"])["current_task"]["text"])
+
+    def test_all_seven_contract_categories_are_reachable(self):
+        """共享合同一 §二.4：长期价值、起号、吸粉、流量、GMV、线索、到店，一个都不能少。"""
+        expected = ["LONG_TERM_VALUE", "ACCOUNT_GROWTH", "FOLLOWER_GROWTH", "TRAFFIC",
+                    "GMV", "LEADS", "STORE_VISIT"]
+        self.assertEqual(compiler.VALID_BUSINESS_GOAL_CATEGORY, ["UNSTATED"] + expected)
+        snapshot_json = None
+        for category in expected:
+            snapshot_json = _run(snapshot_json, _patch(business_goal_category=category))["snapshot_json"]
+        self.assertEqual(json.loads(snapshot_json)["business_goal_categories"], expected)
+
+    def test_projection_passes_through_secondary_goals_and_priority_order(self):
+        """project_content_task 早就是透传（goal.get(...)），此前只是永远拿到空数组。"""
+        result = _run(None, _patch(
+            primary_goal_text="把到店转化做起来",
+            secondary_goal_text="顺带把粉丝量做上去",
+            priority_order_text="转化优先于涨粉",
+            non_sacrifice_constraint_text="不做剧情类内容",
+        ))
+        ct = compiler.project_content_task(json.loads(result["snapshot_json"]))
+        self.assertEqual(ct["secondary_goals"], ["顺带把粉丝量做上去"])
+        self.assertEqual(ct["priority_order"], ["转化优先于涨粉"])
+        self.assertEqual(ct["non_sacrifice_constraints"], ["不做剧情类内容"])
+
+    def test_business_goal_categories_gap_flips_from_missing_to_absent(self):
+        """有物理承载但用户还没说 → MISSING（可追问）；说了以后该缺口消失。
+        **不再是** NOT_CAPTURED_IN_P0_SNAPSHOT（那是"没地方放、不得追问"）。"""
+        before = json.loads(_run(None, _patch(current_task_text="占位任务"))["snapshot_json"])["gaps"]
+        entry = [g for g in before if g["field_ref"] == "business_goal_categories"]
+        self.assertEqual(len(entry), 1)
+        self.assertEqual(entry[0]["status"], "MISSING")
+        self.assertIsNone(entry[0]["degraded_to"])
+
+        after = json.loads(_run(None, _patch(business_goal_category="GMV"))["snapshot_json"])["gaps"]
+        self.assertNotIn("business_goal_categories", [g["field_ref"] for g in after])
+
+    def test_business_goal_categories_no_longer_declared_structurally_uncarried(self):
+        """它已经有真实物理承载，再登记成 NOT_CAPTURED_IN_P0_SNAPSHOT 就是一句假话。"""
+        self.assertNotIn("business_goal_categories",
+                         [g["field_ref"] for g in compiler.P0_STRUCTURAL_GAPS])
+
+    def test_pre_v0_4_snapshot_gets_new_top_level_key_from_existing_upgrade_loop(self):
+        """main() 既有的升级循环遍历 _default_snapshot() 全部顶层键，新增顶层键自动补齐，
+        无需为这一批另写升级代码。"""
+        old = json.dumps({
+            "schema_version": 1,
+            "task_id": None,
+            "revision": 2,
+            "current_task": {"text": "v0.3 时期的任务", "temporal_scope": "CYCLE", "source_ref": "USER_DIRECT"},
+            "goal_structure": {"primary_goal": "旧目标", "secondary_goals": [], "priority_order": [],
+                               "non_sacrifice_constraints": []},
+            "account_stage": {"text": None, "confirmation": "SYSTEM_TENTATIVE"},
+            "expression_discretion": {"plot_allowed": "UNSTATED", "remix_allowed": "UNSTATED",
+                                      "conflict_allowed": "UNSTATED", "controversy_allowed": "UNSTATED"},
+            "capacity_triad": {"desired_output": None, "cycle_available": None, "baseline": None},
+            "evidence_bundle": [], "market_observations": [], "gaps": [],
+            "allowed_capabilities": [], "open_threads": [], "runtime_evidence": [],
+            "last_confirmation_signal": "NONE", "last_route_intent": None,
+        }, ensure_ascii=False)
+        snap = json.loads(_run(old, _patch(business_goal_category="LEADS"))["snapshot_json"])
+        self.assertEqual(snap["current_task"]["text"], "v0.3 时期的任务", "补齐新键不得丢失旧数据")
+        self.assertEqual(snap["business_goal_categories"], ["LEADS"])
 
 
 class TestContentTaskProjection(unittest.TestCase):
@@ -324,13 +644,13 @@ class TestContentTaskProjection(unittest.TestCase):
         self.assertEqual(ct["platform_and_form"], "PLATFORM_UNCONFIRMED")
 
     def test_captured_account_stage_discretion_and_capacity_pass_through_projection(self):
-        result = _run(None, {
-            "current_task_text": "占位任务",
-            "account_stage_text": "刚起号，还没有稳定粉丝",
-            "plot_allowed": "NOT_ALLOWED",
-            "controversy_allowed": "ALLOWED",
-            "cycle_available_text": "本周期能做 3 条",
-        })
+        result = _run(None, _patch(
+            current_task_text="占位任务",
+            account_stage_text="刚起号，还没有稳定粉丝",
+            plot_allowed="NOT_ALLOWED",
+            controversy_allowed="ALLOWED",
+            cycle_available_text="本周期能做 3 条",
+        ))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         self.assertEqual(ct["account_stage"], "刚起号，还没有稳定粉丝")
@@ -371,7 +691,7 @@ class TestContentTaskProjection(unittest.TestCase):
             compiler.project_content_task(snap, caller_supplied={"made_up_field": "x"})
 
     def test_cycle_role_not_applicable_when_temporal_scope_is_not_cycle(self):
-        result = _run(None, {"current_task_text": "做一条长期人设内容", "temporal_scope": "LONG_TERM"})
+        result = _run(None, _patch(current_task_text="做一条长期人设内容", temporal_scope="LONG_TERM"))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         self.assertEqual(ct["cycle_role"], "NOT_APPLICABLE")
@@ -379,17 +699,17 @@ class TestContentTaskProjection(unittest.TestCase):
     def test_cycle_role_marked_as_structural_gap_when_temporal_scope_is_cycle(self):
         """temporal_scope=CYCLE 时设计文档要求取真实 cycle_role，但 P0 快照没有承载该
         字段的位置——不得从 temporal_scope 本身编造一个 cycle_role，如实标记缺口。"""
-        result = _run(None, {"current_task_text": "本周期发三条穿搭", "temporal_scope": "CYCLE"})
+        result = _run(None, _patch(current_task_text="本周期发三条穿搭", temporal_scope="CYCLE"))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         self.assertEqual(ct["cycle_role"], "NOT_CAPTURED_IN_P0_SNAPSHOT")
 
     def test_goal_structure_passthrough_not_flattened(self):
-        result = _run(None, {
-            "current_task_text": "占位任务",
-            "primary_goal_text": "三个月内起量到万粉",
-            "non_sacrifice_constraint_text": "不做剧情类内容",
-        })
+        result = _run(None, _patch(
+            current_task_text="占位任务",
+            primary_goal_text="三个月内起量到万粉",
+            non_sacrifice_constraint_text="不做剧情类内容",
+        ))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         self.assertEqual(ct["primary_goal"], "三个月内起量到万粉")
@@ -405,19 +725,19 @@ class TestContentTaskProjection(unittest.TestCase):
 
 
 class TestV0_3EvidenceBundle(unittest.TestCase):
-    """v0.3 扩展：evidence_bundle[]（设计文档 §二 #9 + §三 五个正交维度）。
+    """v0.3 扩展：evidence_bundle[]（设计文档 §二 #9 + §三 维度表）。
 
     采用设计文档 §七 官方登记的降级路径：LLM 只出三个扁平粗粒度信号
-    （evidence_text / evidence_nature / evidence_scope），五维度里其余三维由确定性代码
+    （evidence_text / evidence_nature / evidence_scope），其余维度由确定性代码
     按固定常量组装。不重试"LLM 直出嵌套对象"这条已有先例证据的路线。"""
 
-    def test_evidence_entry_carries_all_five_dimensions(self):
-        result = _run(None, {
-            "current_task_text": "占位任务",
-            "evidence_text": "我们店在杭州，主要卖通勤女装",
-            "evidence_nature": "FACT",
-            "evidence_scope": "THIS_ACCOUNT",
-        })
+    def test_evidence_entry_carries_all_seven_dimensions(self):
+        result = _run(None, _patch(
+            current_task_text="占位任务",
+            evidence_text="我们店在杭州，主要卖通勤女装",
+            evidence_nature="FACT",
+            evidence_scope="THIS_ACCOUNT",
+        ))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(len(snap["evidence_bundle"]), 1)
         item = snap["evidence_bundle"][0]
@@ -428,12 +748,14 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
         self.assertEqual(item["confirmation"], "SYSTEM_TENTATIVE")
         self.assertEqual(item["scope"], "THIS_ACCOUNT")
         self.assertEqual(item["availability"], "AVAILABLE")
+        self.assertEqual(item["permission"], "OWNED_BY_USER")
+        self.assertEqual(item["freshness"], "FRESH")
         self.assertEqual(item["captured_at_revision"], 0, "取增量前的 revision，与 open_threads 同一时序先例")
 
     def test_provenance_is_always_user_direct_never_fabricated_source(self):
         """本候选环境唯一的信息入口就是用户这一轮的自然语言（无 Tool 节点、无联网、
         file_upload.enabled=False），写成 SOURCED_MATERIAL 等值即伪造来源。"""
-        result = _run(None, {"evidence_text": "我不喜欢强 CTA", "evidence_nature": "PREFERENCE"})
+        result = _run(None, _patch(evidence_text="我不喜欢强 CTA", evidence_nature="PREFERENCE"))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["evidence_bundle"][0]["provenance"], "USER_DIRECT")
 
@@ -441,12 +763,12 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
         """冻结硬约束一：系统推断不因为被写入持久化就升级为用户确认事实。
         轮级 confirmation_signal=AFFIRM 无法归因到具体哪一条证据，**不得**被解释成对某条
         证据的用户确认；轮级 DECLINE 同样不得写成 REJECTED。"""
-        turn1 = _run(None, {"evidence_text": "去年双十一我们卖得最好的是大衣", "evidence_nature": "FACT"})
-        turn2 = _run(turn1["snapshot_json"], {
-            "confirmation_signal": "AFFIRM",
-            "evidence_text": "客单价大概三百多",
-            "evidence_nature": "FACT",
-        })
+        turn1 = _run(None, _patch(evidence_text="去年双十一我们卖得最好的是大衣", evidence_nature="FACT"))
+        turn2 = _run(turn1["snapshot_json"], _patch(
+            confirmation_signal="AFFIRM",
+            evidence_text="客单价大概三百多",
+            evidence_nature="FACT",
+        ))
         snap = json.loads(turn2["snapshot_json"])
         self.assertEqual(snap["last_confirmation_signal"], "AFFIRM")
         self.assertEqual(len(snap["evidence_bundle"]), 2)
@@ -455,8 +777,8 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
                               "既有条目与新写入条目都不得因为一次轮级 AFFIRM 变成 USER_CONFIRMED")
 
     def test_decline_turn_does_not_write_rejected(self):
-        turn1 = _run(None, {"evidence_text": "我们只有两个人做内容", "evidence_nature": "FACT"})
-        turn2 = _run(turn1["snapshot_json"], {"confirmation_signal": "DECLINE"})
+        turn1 = _run(None, _patch(evidence_text="我们只有两个人做内容", evidence_nature="FACT"))
+        turn2 = _run(turn1["snapshot_json"], _patch(confirmation_signal="DECLINE"))
         snap = json.loads(turn2["snapshot_json"])
         self.assertEqual(snap["evidence_bundle"][0]["confirmation"], "SYSTEM_TENTATIVE")
 
@@ -464,12 +786,12 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
         """共享合同一 §三 反例：不得把"这条不要剧情"静默扩张成长期规则。用户没说作用域时
         只能是 UNSTATED——**绝不**从 current_task.temporal_scope 推导条目作用域，任务的时间
         作用域不等于某条证据的适用层级。"""
-        result = _run(None, {
-            "current_task_text": "做一条长期人设内容",
-            "temporal_scope": "LONG_TERM",
-            "evidence_text": "这条不要剧情",
-            "evidence_nature": "PREFERENCE",
-        })
+        result = _run(None, _patch(
+            current_task_text="做一条长期人设内容",
+            temporal_scope="LONG_TERM",
+            evidence_text="这条不要剧情",
+            evidence_nature="PREFERENCE",
+        ))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["current_task"]["temporal_scope"], "LONG_TERM")
         self.assertEqual(snap["evidence_bundle"][0]["scope"], "UNSTATED")
@@ -479,12 +801,12 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
         既有"整体拒绝"纪律的适用范围是"未知字段或非法枚举值"，而 UNSTATED 是 evidence_nature
         的合法取值——不得把它扩成整体拒绝（否则模型漏填一个枚举就作废用户这一轮说的任务和
         目标，与「资料不足时不得整任务拒绝」相冲）。"""
-        result = _run(None, {
-            "current_task_text": "本周期发三条穿搭",
-            "primary_goal_text": "把到店转化做起来",
-            "evidence_text": "我们店在杭州",
-            "evidence_nature": "UNSTATED",
-        })
+        result = _run(None, _patch(
+            current_task_text="本周期发三条穿搭",
+            primary_goal_text="把到店转化做起来",
+            evidence_text="我们店在杭州",
+            evidence_nature="UNSTATED",
+        ))
         self.assertEqual(result["patch_ok"], "true", "不得因维度不全整体拒绝 patch")
         self.assertEqual(result["reject_reason"], "")
         snap = json.loads(result["snapshot_json"])
@@ -495,30 +817,30 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
     def test_dropped_evidence_recorded_in_turn_report_not_in_dialogue_directive(self):
         """丢弃事实如实登记在机器可读通道；dialogue_directive 不变——不给 CE-A2（内部枚举被
         对话 LLM 复述给用户）这个已知缺陷新增触发器。"""
-        result = _run(None, {
-            "current_task_text": "占位任务",
-            "evidence_text": "我们店在杭州",
-            "evidence_nature": "UNSTATED",
-        })
+        result = _run(None, _patch(
+            current_task_text="占位任务",
+            evidence_text="我们店在杭州",
+            evidence_nature="UNSTATED",
+        ))
         report = json.loads(result["turn_report_json"])
         self.assertTrue(report["evidence_dropped_incomplete"])
         self.assertNotIn("evidence", result["dialogue_directive"])
         self.assertNotIn("我们店在杭州", result["dialogue_directive"])
 
     def test_evidence_dropped_flag_false_on_normal_turn(self):
-        ok = _run(None, {"evidence_text": "客单价三百多", "evidence_nature": "FACT"})
+        ok = _run(None, _patch(evidence_text="客单价三百多", evidence_nature="FACT"))
         self.assertFalse(json.loads(ok["turn_report_json"])["evidence_dropped_incomplete"])
-        none_at_all = _run(None, {"current_task_text": "占位任务"})
+        none_at_all = _run(None, _patch(current_task_text="占位任务"))
         self.assertFalse(json.loads(none_at_all["turn_report_json"])["evidence_dropped_incomplete"],
                           "本轮根本没有证据信号时不算被丢弃")
 
     def test_empty_evidence_text_writes_nothing(self):
-        result = _run(None, {"current_task_text": "占位任务", "evidence_text": "   ", "evidence_nature": "FACT"})
+        result = _run(None, _patch(current_task_text="占位任务", evidence_text="   ", evidence_nature="FACT"))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["evidence_bundle"], [])
 
     def test_illegal_evidence_nature_rejects_whole_patch(self):
-        result = _run(None, {"current_task_text": "不应写入", "evidence_nature": "VIBES"})
+        result = _run(None, _patch(current_task_text="不应写入", evidence_nature="VIBES"))
         self.assertEqual(result["patch_ok"], "false")
         self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:evidence_nature"))
         snap = json.loads(result["snapshot_json"])
@@ -527,7 +849,7 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
     def test_system_inference_not_accepted_from_llm_patch(self):
         """SYSTEM_INFERENCE 刻意不在 patch 枚举内：系统推断只能由确定性代码写入，模型不得
         给自己对用户原话的复述贴上"系统判断"标签。P0 没有任何代码路径产出它。"""
-        result = _run(None, {"evidence_text": "我猜你是想起号", "evidence_nature": "SYSTEM_INFERENCE"})
+        result = _run(None, _patch(evidence_text="我猜你是想起号", evidence_nature="SYSTEM_INFERENCE"))
         self.assertEqual(result["patch_ok"], "false")
         self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:evidence_nature"))
         self.assertNotIn("SYSTEM_INFERENCE", compiler.VALID_EVIDENCE_NATURE_PATCH)
@@ -535,14 +857,14 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
                       "词表仍保留该取值供下游识别，只是 P0 无产出路径")
 
     def test_illegal_evidence_scope_rejects_whole_patch(self):
-        result = _run(None, {"evidence_text": "x", "evidence_nature": "FACT", "evidence_scope": "FOREVER"})
+        result = _run(None, _patch(evidence_text="x", evidence_nature="FACT", evidence_scope="FOREVER"))
         self.assertEqual(result["patch_ok"], "false")
         self.assertTrue(result["reject_reason"].startswith("ILLEGAL_ENUM:evidence_scope"))
 
     def test_duplicate_evidence_text_not_appended_and_revision_not_bumped(self):
-        turn1 = _run(None, {"evidence_text": "我们只有两个人做内容", "evidence_nature": "FACT"})
+        turn1 = _run(None, _patch(evidence_text="我们只有两个人做内容", evidence_nature="FACT"))
         snap1 = json.loads(turn1["snapshot_json"])
-        turn2 = _run(turn1["snapshot_json"], {"evidence_text": "我们只有两个人做内容", "evidence_nature": "FACT"})
+        turn2 = _run(turn1["snapshot_json"], _patch(evidence_text="我们只有两个人做内容", evidence_nature="FACT"))
         snap2 = json.loads(turn2["snapshot_json"])
         self.assertEqual(len(snap2["evidence_bundle"]), 1)
         self.assertEqual(snap2["revision"], snap1["revision"], "重复内容不构成真实状态变化")
@@ -550,9 +872,9 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
 
     def test_ids_increment_and_existing_entries_never_modified(self):
         """P0 纯追加：既有条目在任何情况下都不被修改——冻结硬约束二在 P0 天然不可违反。"""
-        turn1 = _run(None, {"evidence_text": "第一条事实", "evidence_nature": "FACT", "evidence_scope": "THIS_ACCOUNT"})
+        turn1 = _run(None, _patch(evidence_text="第一条事实", evidence_nature="FACT", evidence_scope="THIS_ACCOUNT"))
         first_before = json.loads(turn1["snapshot_json"])["evidence_bundle"][0]
-        turn2 = _run(turn1["snapshot_json"], {"evidence_text": "第二条偏好", "evidence_nature": "PREFERENCE"})
+        turn2 = _run(turn1["snapshot_json"], _patch(evidence_text="第二条偏好", evidence_nature="PREFERENCE"))
         bundle = json.loads(turn2["snapshot_json"])["evidence_bundle"]
         self.assertEqual([i["id"] for i in bundle], ["ev_001", "ev_002"])
         self.assertEqual(bundle[0], first_before, "既有条目必须逐字保持不变")
@@ -561,15 +883,114 @@ class TestV0_3EvidenceBundle(unittest.TestCase):
     def test_no_user_confirmed_anywhere_in_p0_output(self):
         """全局规则：任何写入路径都不得把任何条目的 confirmation 置为 USER_CONFIRMED
         （不只是不得改既有条目，新建条目同样不可）。P0 没有按字段的用户确认交互。"""
-        turn1 = _run(None, {
-            "current_task_text": "占位任务",
-            "account_stage_text": "刚起号",
-            "evidence_text": "我们店在杭州",
-            "evidence_nature": "FACT",
-            "confirmation_signal": "AFFIRM",
-        })
-        turn2 = _run(turn1["snapshot_json"], {"confirmation_signal": "AFFIRM"})
+        turn1 = _run(None, _patch(
+            current_task_text="占位任务",
+            account_stage_text="刚起号",
+            evidence_text="我们店在杭州",
+            evidence_nature="FACT",
+            confirmation_signal="AFFIRM",
+        ))
+        turn2 = _run(turn1["snapshot_json"], _patch(confirmation_signal="AFFIRM"))
         self.assertNotIn("USER_CONFIRMED", turn2["snapshot_json"])
+
+
+class TestV0_4EvidencePermissionAndFreshness(unittest.TestCase):
+    """v0.4 修复（B-2）：evidence_bundle[] 此前缺 permission／freshness 两个维度。
+
+    审查证据：Execution Prompt v1.2 §4.3 逐字要求"对进入上下文的事实或产物至少保留：
+    source、permission、scope、freshness、confirmation"；修复前的词表是
+    nature/provenance/confirmation/scope/availability，完全没有 permission，freshness 被
+    含混地折进了 availability 的 STALE 取值里，两者都不是真正独立被追踪的维度。
+
+    沿用"能诚实推导就推导，不能就给常量哨兵 + 登记 gaps"这条已在
+    provenance/confirmation/availability 上用过的纪律，**不新增 LLM patch key**：本环境
+    唯一输入是用户自己说的话，permission 和 freshness 在 P0 本来就没有可变的信息来源，
+    硬加模型字段只是制造假象。"""
+
+    def _item(self, **overrides):
+        kwargs = {"evidence_text": "我们店在杭州", "evidence_nature": "FACT"}
+        kwargs.update(overrides)
+        result = _run(None, _patch(**kwargs))
+        return json.loads(result["snapshot_json"])["evidence_bundle"][0]
+
+    def test_vocab_declares_both_new_dimensions(self):
+        self.assertEqual(compiler.EVIDENCE_DIMENSION_VOCAB["permission"],
+                         ["OWNED_BY_USER", "THIRD_PARTY_REQUIRES_CONSENT", "UNKNOWN"])
+        self.assertEqual(compiler.EVIDENCE_DIMENSION_VOCAB["freshness"],
+                         ["FRESH", "STALE", "UNKNOWN"])
+
+    def test_permission_is_constant_owned_by_user(self):
+        """P0 唯一可达值：本环境唯一输入渠道是用户自己陈述自己的经营信息，不涉及第三方
+        材料的使用权限问题。后两个值要等材料/历史产物输入通道真正建成后才可能被真实使用。"""
+        self.assertEqual(self._item()["permission"], "OWNED_BY_USER")
+
+    def test_freshness_is_constant_fresh(self):
+        """P0 没有生命周期时钟，无法判断一条证据是否"已过期"；刚被用户在当前会话里说出口
+        的证据天然新鲜。"""
+        self.assertEqual(self._item()["freshness"], "FRESH")
+
+    def test_neither_dimension_is_overridable_by_patch(self):
+        """字面常量，和 provenance/confirmation/availability 同样的写法：不接受任何入参
+        覆盖。也不存在任何能影响它们的 patch key。"""
+        item = self._item(evidence_nature="PREFERENCE", evidence_scope="LONG_TERM_SUBJECT",
+                          confirmation_signal="AFFIRM")
+        self.assertEqual(item["permission"], "OWNED_BY_USER")
+        self.assertEqual(item["freshness"], "FRESH")
+        for key in compiler.PATCH_KEYS:
+            self.assertNotIn("permission", key)
+            self.assertNotIn("freshness", key)
+
+    def test_single_value_limits_registered_as_structural_gaps(self):
+        """写进条目却不登记降级，等于让下游把"恒定常量"读成"系统判断过权限/时效"。"""
+        by_ref = {g["field_ref"]: g for g in compiler.P0_STRUCTURAL_GAPS}
+        self.assertEqual(by_ref["evidence_bundle[].permission"]["status"], "DEGRADED")
+        self.assertEqual(by_ref["evidence_bundle[].permission"]["degraded_to"],
+                         "ALWAYS_OWNED_BY_USER_NO_THIRD_PARTY_MATERIAL_CHANNEL")
+        self.assertEqual(by_ref["evidence_bundle[].freshness"]["status"], "DEGRADED")
+        self.assertEqual(by_ref["evidence_bundle[].freshness"]["degraded_to"],
+                         "ALWAYS_FRESH_NO_LIFECYCLE_CLOCK")
+
+    def test_pre_v0_4_evidence_item_gets_permission_and_freshness_on_upgrade(self):
+        """对抗式审查真实发现的问题：顶层键升级循环只补 `_default_snapshot()` 的顶层键，
+        不会去补"已经存在的顶层数组"里每个既有条目缺的新字段。手工构造一份 v0.3 期持久化的
+        快照（evidence_bundle 条目只有旧的 8 个键），main() 必须把缺的两维补齐，且补的值和
+        新写入条目一致——不能让旧会话的证据条目在下游读取时 KeyError，也不能让设计文档
+        "每条必须携带全部维度"这句话对旧数据是假的。"""
+        old_item = {
+            "id": "ev_001", "text": "我们店在杭州", "nature": "FACT",
+            "provenance": "USER_DIRECT", "confirmation": "SYSTEM_TENTATIVE",
+            "scope": "UNSTATED", "availability": "AVAILABLE", "captured_at_revision": 0,
+        }
+        old_snapshot = compiler._default_snapshot()
+        old_snapshot["evidence_bundle"] = [old_item]
+        result = _run(json.dumps(old_snapshot), _patch())
+        upgraded_item = json.loads(result["snapshot_json"])["evidence_bundle"][0]
+        self.assertEqual(upgraded_item["permission"], "OWNED_BY_USER")
+        self.assertEqual(upgraded_item["freshness"], "FRESH")
+        self.assertEqual(upgraded_item["text"], "我们店在杭州", "补新键不得动既有数据")
+
+    def test_upgrade_does_not_override_permission_or_freshness_if_already_present(self):
+        """setdefault 语义：如果条目已经有这两个键（比如未来批次真的引入了非常量取值），
+        升级循环不得覆盖已有值。"""
+        old_snapshot = compiler._default_snapshot()
+        old_snapshot["evidence_bundle"] = [{
+            "id": "ev_001", "text": "x", "nature": "FACT", "provenance": "USER_DIRECT",
+            "confirmation": "SYSTEM_TENTATIVE", "scope": "UNSTATED", "availability": "AVAILABLE",
+            "captured_at_revision": 0, "permission": "UNKNOWN", "freshness": "STALE",
+        }]
+        result = _run(json.dumps(old_snapshot), _patch())
+        item = json.loads(result["snapshot_json"])["evidence_bundle"][0]
+        self.assertEqual(item["permission"], "UNKNOWN")
+        self.assertEqual(item["freshness"], "STALE")
+
+    def test_availability_still_five_values_known_misalignment_not_silently_patched(self):
+        """**已知不对齐，本批不动**：共享合同一 §三 的可用性状态有 6 个取值
+        （已具备｜未知｜未提供｜不适用｜拒绝提供｜已失效），本词表只有 5 个（缺"不适用"）。
+        自行补一个 NOT_APPLICABLE 等于执行侧单方修改共享合同的枚举空间，不在本批授权范围内，
+        故只在代码注释与设计文档 §三 如实登记，待 Reviewer 裁决。这条用例锁定"没有被顺手
+        改掉"，不是在锁定 5 个是对的。"""
+        self.assertEqual(len(compiler.EVIDENCE_DIMENSION_VOCAB["availability"]), 5)
+        self.assertNotIn("NOT_APPLICABLE", compiler.EVIDENCE_DIMENSION_VOCAB["availability"])
 
 
 # 曾经这里有一个 TestEvidenceOverwriteGuard 类，测的是 _may_modify_existing_evidence
@@ -594,9 +1015,9 @@ class TestV0_3Gaps(unittest.TestCase):
 
     两种视图（见 _compute_gaps 的 include_structural 参数）：
       - **持久化视图**（main() 写进 snapshot_json，include_structural=False）：只有随对话
-        状态变化的动态子集。8 条 P0_STRUCTURAL_GAPS 内容恒定，逐轮序列化不携带任何新信息。
+        状态变化的动态子集。P0_STRUCTURAL_GAPS 内容恒定，逐轮序列化不携带任何新信息。
       - **完整合规视图**（include_structural=True，project_content_task 给下游的那一份）：
-        动态子集 + 8 条结构性常量。
+        动态子集 + 结构性常量。
     `_gaps`/`_refs` 读持久化视图，`_full_gaps`/`_full_refs` 读完整视图。"""
 
     def _gaps(self, result):
@@ -610,22 +1031,28 @@ class TestV0_3Gaps(unittest.TestCase):
         return compiler._compute_gaps(snap, include_structural=True)
 
     def test_gap_entry_shape_is_exactly_three_keys(self):
-        for gap in self._full_gaps(_run(None, {})):
+        for gap in self._full_gaps(_run(None, _patch())):
             self.assertEqual(set(gap.keys()), {"field_ref", "status", "degraded_to"})
             self.assertIn(gap["status"], ("MISSING", "DEGRADED"))
 
     def test_fresh_snapshot_gap_inventory(self):
-        """空快照：持久化视图 12 条动态；完整视图 = 12 + 8 条结构性常量 = 20 条。
-        全部机器可读、不进用户可见文本。"""
-        self.assertEqual(len(compiler.P0_STRUCTURAL_GAPS), 8)
-        self.assertEqual(len(self._gaps(_run(None, {}))), 12)
-        self.assertEqual(len(self._full_gaps(_run(None, {}))), 20)
+        """空快照：持久化视图 13 条动态；完整视图 = 13 + 9 条结构性常量 = 22 条。
+        全部机器可读、不进用户可见文本。
+
+        v0.4 计数变化的真实来源（不是随手改数字）：
+          结构性常量 8 → 9：移除 business_goal_categories（已有物理承载，再标
+          NOT_CAPTURED 就是假话），新增 evidence_bundle[].permission 与
+          evidence_bundle[].freshness 两条。
+          动态子集 12 → 13：business_goal_categories 转为动态 MISSING（可追问）。"""
+        self.assertEqual(len(compiler.P0_STRUCTURAL_GAPS), 9)
+        self.assertEqual(len(self._gaps(_run(None, _patch()))), 13)
+        self.assertEqual(len(self._full_gaps(_run(None, _patch()))), 22)
 
     def test_persisted_gaps_exclude_constant_structural_entries(self):
-        """8 条结构性常量内容恒定、不携带"这一轮独有"的信息——逐轮序列化进 Dify 会话变量
+        """结构性常量内容恒定、不携带"这一轮独有"的信息——逐轮序列化进 Dify 会话变量
         只会让持久化快照白白膨胀。需要它们的消费方直接读 P0_STRUCTURAL_GAPS 常量，或用
         include_structural=True 现拼完整视图。"""
-        persisted_refs = self._refs(_run(None, {"current_task_text": "占位任务"}))
+        persisted_refs = self._refs(_run(None, _patch(current_task_text="占位任务")))
         for gap in compiler.P0_STRUCTURAL_GAPS:
             self.assertNotIn(gap["field_ref"], persisted_refs,
                              gap["field_ref"] + " 是恒定常量，不应逐轮写进持久化快照")
@@ -637,20 +1064,23 @@ class TestV0_3Gaps(unittest.TestCase):
         main() 显式传 False 的持久化路径。"""
         snap = compiler._default_snapshot()
         self.assertEqual(compiler._compute_gaps(snap), compiler._compute_gaps(snap, include_structural=True))
-        self.assertEqual(len(compiler._compute_gaps(snap)), 20)
+        self.assertEqual(len(compiler._compute_gaps(snap)), 22)
 
     def test_structural_gaps_declare_no_carrier_not_a_missing_answer(self):
         """结构性未承载必须是 DEGRADED/NOT_CAPTURED_IN_P0_SNAPSHOT（**不得向用户追问**，
-        问了也没地方放），不能标成 MISSING（那会被读成"用户还没说"）。"""
-        by_ref = {g["field_ref"]: g for g in self._full_gaps(_run(None, {}))}
-        for ref in ("subject_scope", "business_goal_categories", "cycle_ref"):
+        问了也没地方放），不能标成 MISSING（那会被读成"用户还没说"）。
+
+        v0.4 起 business_goal_categories 不再属于这一类——它已经有物理承载，改由
+        TestV0_4GoalStructureReachability 断言它是可追问的 MISSING。"""
+        by_ref = {g["field_ref"]: g for g in self._full_gaps(_run(None, _patch()))}
+        for ref in ("subject_scope", "cycle_ref"):
             self.assertEqual(by_ref[ref]["status"], "DEGRADED")
             self.assertEqual(by_ref[ref]["degraded_to"], "NOT_CAPTURED_IN_P0_SNAPSHOT")
 
     def test_confirmation_and_availability_single_value_limits_registered(self):
         """确认维度五值里 P0 只可达 SYSTEM_TENTATIVE，可用性维度里 STALE/EXPIRED 需要生命
         周期时钟——如实登记为结构缺口，不假装这两维在正常运转。"""
-        by_ref = {g["field_ref"]: g for g in self._full_gaps(_run(None, {}))}
+        by_ref = {g["field_ref"]: g for g in self._full_gaps(_run(None, _patch()))}
         self.assertEqual(by_ref["account_stage.confirmation"]["degraded_to"],
                           "ALWAYS_SYSTEM_TENTATIVE_NO_PER_FIELD_CONFIRM_CHANNEL")
         self.assertEqual(by_ref["evidence_bundle[].confirmation"]["degraded_to"],
@@ -660,39 +1090,41 @@ class TestV0_3Gaps(unittest.TestCase):
 
     def test_capacity_triad_three_gaps_never_merged_into_one(self):
         """共享合同一 §二.7 逐字要求三者分别承载、不得静默取其一覆盖三个。"""
-        refs = self._refs(_run(None, {"cycle_available_text": "本周期只能做 2 条"}))
+        refs = self._refs(_run(None, _patch(cycle_available_text="本周期只能做 2 条")))
         self.assertIn("capacity_triad.desired_output", refs)
         self.assertIn("capacity_triad.baseline", refs)
         self.assertNotIn("capacity_triad.cycle_available", refs, "已说出口的一项应从缺口里消失")
 
     def test_unstated_discretion_registered_as_degraded_not_assumed_allowed(self):
         """未表态不得被推定为允许或不允许。"""
-        by_ref = {g["field_ref"]: g for g in self._gaps(_run(None, {"plot_allowed": "NOT_ALLOWED"}))}
+        by_ref = {g["field_ref"]: g for g in self._gaps(_run(None, _patch(plot_allowed="NOT_ALLOWED")))}
         self.assertNotIn("expression_discretion.plot_allowed", by_ref)
         for key in ("remix_allowed", "conflict_allowed", "controversy_allowed"):
             self.assertEqual(by_ref["expression_discretion." + key]["degraded_to"], "UNSTATED")
 
     def test_gaps_shrink_as_user_states_things(self):
-        turn1 = _run(None, {})
-        turn2 = _run(turn1["snapshot_json"], {
-            "current_task_text": "本周期发三条穿搭",
-            "temporal_scope": "CYCLE",
-            "primary_goal_text": "把到店转化做起来",
-            "account_stage_text": "刚起号",
-            "evidence_text": "我们店在杭州",
-            "evidence_nature": "FACT",
-            "evidence_scope": "THIS_ACCOUNT",
-        })
+        turn1 = _run(None, _patch())
+        turn2 = _run(turn1["snapshot_json"], _patch(
+            current_task_text="本周期发三条穿搭",
+            temporal_scope="CYCLE",
+            primary_goal_text="把到店转化做起来",
+            business_goal_category="STORE_VISIT",
+            account_stage_text="刚起号",
+            evidence_text="我们店在杭州",
+            evidence_nature="FACT",
+            evidence_scope="THIS_ACCOUNT",
+        ))
         refs1, refs2 = self._refs(turn1), self._refs(turn2)
         self.assertLess(len(refs2), len(refs1))
         for gone in ("current_task.text", "current_task.temporal_scope",
-                     "goal_structure.primary_goal", "account_stage.text", "evidence_bundle"):
+                     "goal_structure.primary_goal", "business_goal_categories",
+                     "account_stage.text", "evidence_bundle"):
             self.assertIn(gone, refs1)
             self.assertNotIn(gone, refs2)
         self.assertNotIn("evidence_bundle[].scope", refs2, "用户说明了作用域时不应再登记该缺口")
 
     def test_unstated_evidence_scope_aggregated_into_one_gap(self):
-        result = _run(None, {"evidence_text": "这条不要剧情", "evidence_nature": "PREFERENCE"})
+        result = _run(None, _patch(evidence_text="这条不要剧情", evidence_nature="PREFERENCE"))
         refs = self._refs(result)
         self.assertEqual(refs.count("evidence_bundle[].scope"), 1)
         self.assertNotIn("evidence_bundle", refs, "已有条目时不再是 MISSING")
@@ -700,8 +1132,10 @@ class TestV0_3Gaps(unittest.TestCase):
     def test_gaps_recomputed_on_rejected_turn_without_bumping_revision(self):
         """缺口清单是既有状态的派生视图，不是用户造成的状态变化：patch 被拒绝的轮次同样
         重算，且不得推进 revision、不得置 state_changed。"""
-        turn1 = _run(None, {"current_task_text": "做女装穿搭内容"})
-        turn2 = _run(turn1["snapshot_json"], {"made_up_field": "x"})
+        turn1 = _run(None, _patch(current_task_text="做女装穿搭内容"))
+        bad = _patch()
+        bad["made_up_field"] = "x"
+        turn2 = _run(turn1["snapshot_json"], bad)
         self.assertEqual(turn2["patch_ok"], "false")
         self.assertEqual(turn2["state_changed"], "false")
         snap1, snap2 = json.loads(turn1["snapshot_json"]), json.loads(turn2["snapshot_json"])
@@ -711,7 +1145,7 @@ class TestV0_3Gaps(unittest.TestCase):
     def test_gaps_never_leak_into_dialogue_directive(self):
         """field_ref 是纯内部路径字符串，一旦拼进指令文本必然泄漏（CE-A2 的真实教训）。
         用户可见的追问仍然只有既有的人话标签那一项。"""
-        result = _run(None, {"requested_capability": "MATRIX"})
+        result = _run(None, _patch(requested_capability="MATRIX"))
         directive = result["dialogue_directive"]
         for gap in json.loads(result["snapshot_json"])["gaps"]:
             self.assertNotIn(gap["field_ref"], directive)
@@ -734,7 +1168,7 @@ class TestNonBlockingGaps(unittest.TestCase):
         return json.loads(result["call_intent_json"])["continuation"]["non_blocking_gaps"]
 
     def test_blocking_field_excluded_when_requested_capability_is_blocked(self):
-        result = _run(None, {"requested_capability": "MATRIX"})
+        result = _run(None, _patch(requested_capability="MATRIX"))
         intent = json.loads(result["call_intent_json"])
         self.assertEqual(intent["per_capability"]["MATRIX"]["block_reason"], "NO_CURRENT_TASK_STATED")
         non_blocking = self._cont(result)
@@ -742,7 +1176,7 @@ class TestNonBlockingGaps(unittest.TestCase):
         self.assertIn("goal_structure.primary_goal", non_blocking, "其余缺口带着继续跑")
 
     def test_two_blocking_fields_excluded_for_task_or_goal_block_reason(self):
-        result = _run(None, {"requested_capability": "CAMPAIGN"})
+        result = _run(None, _patch(requested_capability="CAMPAIGN"))
         intent = json.loads(result["call_intent_json"])
         self.assertEqual(intent["per_capability"]["CAMPAIGN"]["block_reason"], "NO_TASK_OR_GOAL_STATED")
         non_blocking = self._cont(result)
@@ -750,18 +1184,18 @@ class TestNonBlockingGaps(unittest.TestCase):
         self.assertNotIn("goal_structure.primary_goal", non_blocking)
 
     def test_all_gaps_non_blocking_when_nothing_is_blocked(self):
-        result = _run(None, {"current_task_text": "本周期发三条穿搭", "requested_capability": "CONTENT_BRIEF"})
+        result = _run(None, _patch(current_task_text="本周期发三条穿搭", requested_capability="CONTENT_BRIEF"))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(self._cont(result), [g["field_ref"] for g in snap["gaps"]])
 
     def test_all_gaps_non_blocking_when_no_capability_requested(self):
-        result = _run(None, {})
+        result = _run(None, _patch())
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(self._cont(result), [g["field_ref"] for g in snap["gaps"]])
 
     def test_non_blocking_gaps_carries_only_field_ref_strings(self):
         """完整对象留在 snapshot.gaps，call_intent 里只放字符串，避免膨胀。"""
-        for item in self._cont(_run(None, {})):
+        for item in self._cont(_run(None, _patch())):
             self.assertIsInstance(item, str)
 
 
@@ -777,7 +1211,7 @@ class TestDeferredArrayFieldsHonestSentinels(unittest.TestCase):
     ——那才是"空数组 + 缺口登记必须同时被下游看到"这条口径真正落地的地方。"""
 
     def _assert_empty_array_paired_with_gap(self, field):
-        result = _run(None, {"current_task_text": "占位任务"})
+        result = _run(None, _patch(current_task_text="占位任务"))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap[field], [])
         full_gaps = compiler.project_content_task(snap)["evidence_and_gaps"]["gaps"]
@@ -802,8 +1236,9 @@ class TestDeferredArrayFieldsHonestSentinels(unittest.TestCase):
 class TestV0_3BackwardCompatibility(unittest.TestCase):
     def test_pre_v0_3_persisted_snapshot_upgrades_without_crashing(self):
         """向前兼容：模拟 v0.2 持久化的快照（有 account_stage 等三项，但没有 v0.3 新增的
-        evidence_bundle/market_observations/gaps/runtime_evidence 四个顶层键）。main() 既有的
-        升级循环遍历 _default_snapshot() 全部顶层键，应自动补齐，且不丢失旧数据。"""
+        evidence_bundle/market_observations/gaps/runtime_evidence 四个顶层键，也没有 v0.4 新增的
+        business_goal_categories）。main() 既有的升级循环遍历 _default_snapshot() 全部顶层键，
+        应自动补齐，且不丢失旧数据。"""
         old_snapshot = {
             "schema_version": 1,
             "task_id": None,
@@ -820,21 +1255,22 @@ class TestV0_3BackwardCompatibility(unittest.TestCase):
             "last_confirmation_signal": "NONE",
             "last_route_intent": None,
         }
-        result = _run(json.dumps(old_snapshot, ensure_ascii=False), {
-            "evidence_text": "我们主要卖通勤女装",
-            "evidence_nature": "FACT",
-        })
+        result = _run(json.dumps(old_snapshot, ensure_ascii=False), _patch(
+            evidence_text="我们主要卖通勤女装",
+            evidence_nature="FACT",
+        ))
         snap = json.loads(result["snapshot_json"])
         self.assertEqual(snap["current_task"]["text"], "旧会话已经存在的任务", "补齐新字段不得丢失旧数据")
         self.assertEqual(snap["goal_structure"]["non_sacrifice_constraints"], ["不做剧情类内容"])
         self.assertEqual(snap["market_observations"], [])
         self.assertEqual(snap["runtime_evidence"], [])
+        self.assertEqual(snap["business_goal_categories"], [])
         self.assertEqual(len(snap["evidence_bundle"]), 1)
         self.assertEqual(snap["evidence_bundle"][0]["captured_at_revision"], 5)
         self.assertTrue(snap["gaps"])
 
     def test_pre_v0_2_persisted_snapshot_still_upgrades(self):
-        """更早的 v0.1 快照（连 account_stage 都没有）也必须能一次补齐到 v0.3。"""
+        """更早的 v0.1 快照（连 account_stage 都没有）也必须能一次补齐到当前版本。"""
         very_old = json.dumps({
             "schema_version": 1,
             "task_id": None,
@@ -847,7 +1283,7 @@ class TestV0_3BackwardCompatibility(unittest.TestCase):
             "last_confirmation_signal": "NONE",
             "last_route_intent": None,
         }, ensure_ascii=False)
-        snap = json.loads(_run(very_old, {})["snapshot_json"])
+        snap = json.loads(_run(very_old, _patch())["snapshot_json"])
         for key in compiler._default_snapshot():
             self.assertIn(key, snap)
         self.assertEqual(snap["current_task"]["text"], "很旧的任务")
@@ -857,19 +1293,20 @@ class TestV0_3ContentTaskProjectionEvidence(unittest.TestCase):
     """project_content_task 的 evidence_and_gaps 从哨兵改为真实拼装（设计文档 §三：
     保留来源与确认状态，不摊平）。"""
 
-    def test_evidence_projected_with_five_dimensions_not_flattened(self):
-        result = _run(None, {
-            "current_task_text": "占位任务",
-            "evidence_text": "我们店在杭州",
-            "evidence_nature": "FACT",
-            "evidence_scope": "THIS_ACCOUNT",
-        })
+    def test_evidence_projected_with_all_dimensions_not_flattened(self):
+        result = _run(None, _patch(
+            current_task_text="占位任务",
+            evidence_text="我们店在杭州",
+            evidence_nature="FACT",
+            evidence_scope="THIS_ACCOUNT",
+        ))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         evidence = ct["evidence_and_gaps"]["evidence"]
         self.assertEqual(len(evidence), 1)
-        for dim in ("nature", "provenance", "confirmation", "scope", "availability"):
-            self.assertIn(dim, evidence[0], "五维度必须逐条保留，不得摊平成一段文本")
+        for dim in ("nature", "provenance", "confirmation", "scope", "availability",
+                    "permission", "freshness"):
+            self.assertIn(dim, evidence[0], "每个维度必须逐条保留，不得摊平成一段文本")
         self.assertEqual(evidence[0]["confirmation"], "SYSTEM_TENTATIVE")
 
     def test_projection_gaps_full_passthrough_with_relevance_filter_registered(self):
@@ -878,7 +1315,7 @@ class TestV0_3ContentTaskProjectionEvidence(unittest.TestCase):
 
         投影取的是**完整视图**（include_structural=True），不是持久化快照里的动态子集
         ——设计文档 §三 要求 evidence_and_gaps 完整、不摊平。"""
-        result = _run(None, {"current_task_text": "占位任务"})
+        result = _run(None, _patch(current_task_text="占位任务"))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         self.assertEqual(ct["evidence_and_gaps"]["gaps"],
@@ -887,10 +1324,10 @@ class TestV0_3ContentTaskProjectionEvidence(unittest.TestCase):
         self.assertNotIn("evidence_and_gaps", ct["projection_gaps"])
 
     def test_projection_gaps_include_every_structural_entry_no_information_lost(self):
-        """持久化路径只留动态子集，但投影这条完整合规视图**不得因此丢信息**：8 条结构性
-        常量必须全部出现（含 market_observations / runtime_evidence 这两条 DEFER 登记），
-        且动态子集的每一条也都在。"""
-        result = _run(None, {"current_task_text": "占位任务"})
+        """持久化路径只留动态子集，但投影这条完整合规视图**不得因此丢信息**：结构性常量
+        必须全部出现（含 market_observations / runtime_evidence 这两条 DEFER 登记，以及
+        v0.4 新增的 permission / freshness 两条），且动态子集的每一条也都在。"""
+        result = _run(None, _patch(current_task_text="占位任务"))
         snap = json.loads(result["snapshot_json"])
         projected_refs = [g["field_ref"] for g in
                           compiler.project_content_task(snap)["evidence_and_gaps"]["gaps"]]
@@ -899,7 +1336,8 @@ class TestV0_3ContentTaskProjectionEvidence(unittest.TestCase):
         for ref in ("subject_scope", "business_goal_categories", "cycle_ref",
                     "market_observations", "runtime_evidence",
                     "account_stage.confirmation", "evidence_bundle[].confirmation",
-                    "evidence_bundle[].availability"):
+                    "evidence_bundle[].availability", "evidence_bundle[].permission",
+                    "evidence_bundle[].freshness"):
             self.assertIn(ref, projected_refs)
         for gap in snap["gaps"]:
             self.assertIn(gap["field_ref"], projected_refs, "动态子集不得在完整视图里丢失")
@@ -917,7 +1355,7 @@ class TestV0_3ContentTaskProjectionEvidence(unittest.TestCase):
         self.assertTrue(compiler.project_content_task(stale)["evidence_and_gaps"]["gaps"])
 
     def test_projection_does_not_mutate_snapshot_evidence(self):
-        result = _run(None, {"evidence_text": "我们店在杭州", "evidence_nature": "FACT"})
+        result = _run(None, _patch(evidence_text="我们店在杭州", evidence_nature="FACT"))
         snap = json.loads(result["snapshot_json"])
         ct = compiler.project_content_task(snap)
         ct["evidence_and_gaps"]["evidence"][0]["confirmation"] = "USER_CONFIRMED"
@@ -958,6 +1396,12 @@ class TestDslSyncDriftGuard(unittest.TestCase):
             os.environ["M1_DSL_OUT"] = cls._prev_out
         cls._tmpdir.cleanup()
 
+    def _schema(self):
+        for n in self.builder.nodes:
+            if n["id"] == "m1_shadow":
+                return n["data"]["structured_output"]["schema"]
+        return None
+
     def test_default_snapshot_json_matches_compiler_default(self):
         dsl_default = json.loads(self.builder.DEFAULT_SNAPSHOT_JSON)
         compiler_default = compiler._default_snapshot()
@@ -966,35 +1410,44 @@ class TestDslSyncDriftGuard(unittest.TestCase):
         self.assertEqual(list(dsl_default.keys()), list(compiler_default.keys()), "键序也必须一致")
 
     def test_structured_output_required_matches_patch_keys(self):
-        schema = None
-        for n in self.builder.nodes:
-            if n["id"] == "m1_shadow":
-                schema = n["data"]["structured_output"]["schema"]
+        """**这条同时是 SHADOW_NODE_FAILED 判据的前提**：required 覆盖全部 PATCH_KEYS，
+        才能保证影子节点成功输出一定 key 全在、缺 key 一定来自 default-value 降级路径。
+        一旦有人把某个字段移出 required，缺 key 就不再是可靠的失败信号——那时必须重新设计
+        判据，而不是让它继续沉默地失效。"""
+        schema = self._schema()
         self.assertIsNotNone(schema)
         self.assertEqual(set(schema["required"]), set(compiler.PATCH_KEYS))
         self.assertEqual(set(schema["properties"].keys()), set(compiler.PATCH_KEYS))
+        self.assertFalse(schema["additionalProperties"])
 
     def test_shadow_prompt_field_count_matches_patch_keys(self):
-        self.assertEqual(len(compiler.PATCH_KEYS), 20)
-        self.assertIn("二十个字段", self.builder.SHADOW_SYSTEM_PROMPT)
+        self.assertEqual(len(compiler.PATCH_KEYS), 23)
+        self.assertIn("二十三个字段", self.builder.SHADOW_SYSTEM_PROMPT)
 
-    def test_evidence_enums_in_schema_match_compiler(self):
-        schema = None
-        for n in self.builder.nodes:
-            if n["id"] == "m1_shadow":
-                schema = n["data"]["structured_output"]["schema"]
-        props = schema["properties"]
+    def test_enums_in_schema_match_compiler(self):
+        props = self._schema()["properties"]
         self.assertEqual(props["evidence_nature"]["enum"], compiler.VALID_EVIDENCE_NATURE_PATCH)
         self.assertEqual(props["evidence_scope"]["enum"], compiler.VALID_EVIDENCE_SCOPE)
+        self.assertEqual(props["business_goal_category"]["enum"], compiler.VALID_BUSINESS_GOAL_CATEGORY)
+
+    def test_new_v0_4_patch_keys_documented_in_shadow_prompt(self):
+        """字段在 schema 里存在但 system prompt 没有口径说明，模型只会瞎填。"""
+        for key in ("secondary_goal_text", "priority_order_text", "business_goal_category"):
+            self.assertIn(key, self.builder.SHADOW_SYSTEM_PROMPT)
+
+    def test_permission_and_freshness_are_invisible_to_the_llm(self):
+        """两者是纯代码常量，不接受模型输入。schema 里不得出现，system prompt 也不该提
+        ——提了只会诱导模型以为自己该判断这两维。"""
+        props = self._schema()["properties"]
+        self.assertNotIn("permission", props)
+        self.assertNotIn("freshness", props)
+        self.assertNotIn("freshness", self.builder.SHADOW_SYSTEM_PROMPT)
+        self.assertNotIn("时效", self.builder.SHADOW_SYSTEM_PROMPT)
 
     def test_no_nested_object_in_structured_output(self):
         """v1_shadow 已观察到的限制：DeepSeek V4 Flash 只能稳定处理扁平字符串/枚举。
         新增字段必须全部是扁平 string，不引入嵌套对象、数组或布尔。"""
-        schema = None
-        for n in self.builder.nodes:
-            if n["id"] == "m1_shadow":
-                schema = n["data"]["structured_output"]["schema"]
-        for name, prop in schema["properties"].items():
+        for name, prop in self._schema()["properties"].items():
             self.assertEqual(prop["type"], "string", name + " 必须是扁平字符串")
 
 

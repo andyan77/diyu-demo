@@ -72,11 +72,43 @@ VALID_REQUESTED_CAPABILITY = ["NONE"] + CAPABILITIES
 VALID_DISCRETION = ["UNSTATED", "ALLOWED", "NOT_ALLOWED"]
 DISCRETION_KEYS = ["plot_allowed", "remix_allowed", "conflict_allowed", "controversy_allowed"]
 
-# ---- evidence_bundle 五个正交维度（共享合同一 §三 / 设计文档 §二「五个正交维度」）----
+# 经营目标类别（设计文档 §二 #4 / 共享合同一 §二.4）。**是集合不是单值**：合同逐字要求
+# "须能表达账号／周期层面的'混合'而非强制单选"，所以快照里的物理承载是顶层数组
+# business_goal_categories[]，patch 侧每轮只出一个类别（扁平枚举，沿用不引入嵌套/数组的
+# DeepSeek V4 Flash 约束），由 _merge_patch 去重 append 成集合。
+# UNSTATED 是"这一轮没表达经营目标类别"的哨兵，不写入数组。
+VALID_BUSINESS_GOAL_CATEGORY = [
+    "UNSTATED",
+    "LONG_TERM_VALUE",
+    "ACCOUNT_GROWTH",
+    "FOLLOWER_GROWTH",
+    "TRAFFIC",
+    "GMV",
+    "LEADS",
+    "STORE_VISIT",
+]
+
+# ---- evidence_bundle 的维度词表（共享合同一 §三 五行 ＋ Execution Prompt v1.2 §4.3 两项）----
 #
-# EVIDENCE_DIMENSION_VOCAB 的定位：它是共享合同一 §三 五维度取值空间的**机器可读声明**，
-# 供下游消费方与未来的写入路径引用，不是"这五张表都在被本文件执行"的意思。逐条如实标注
-# P0 内的真实代码读者，避免把声明当成已实现的能力（计划不等于现实）：
+# **维度来源如实对照**（设计文档 §三 有同一张对照表，两处必须一致；此前代码与文档都只笼统
+# 写"五个正交维度"，没写清楚哪一维出自哪份真源，现补齐）：
+#   nature / provenance / confirmation / scope / availability
+#       ← 共享合同一 §三 逐行对应的五个正交维度（信息性质／来源与证据／确认与生命周期状态／
+#         作用域与有效期／可用性状态）。
+#   permission / freshness
+#       ← Execution Prompt v1.2 §4.3 逐字要求「对进入上下文的事实或产物至少保留：source、
+#         permission、scope、freshness、confirmation」；共享合同一 §二 末段（「来源、权限、
+#         可信度差异保留」）与 §五（「不表示…用户授权…适用范围、时效、确认状态相同」）同向。
+#         freshness 同时承接共享合同一 §三「作用域与有效期」那一行的后半句「生效时间是否仍
+#         有效」——在此之前没有任何字段承载它，它被含混地折进了 availability 的 STALE 取值。
+#
+# **已知不对齐（本批不动，只如实登记，待 Reviewer 裁决）**：共享合同一 §三 的可用性状态有
+# 6 个取值（已具备｜未知｜未提供｜**不适用**｜拒绝提供｜已失效），本词表只有 5 个（缺"不适用"）。
+# 自行补一个 NOT_APPLICABLE 等于执行侧单方修改共享合同的枚举空间，不在本批授权范围内。
+#
+# EVIDENCE_DIMENSION_VOCAB 的定位：它是上述维度取值空间的**机器可读声明**，供下游消费方与
+# 未来的写入路径引用，不是"这几张表都在被本文件执行"的意思。逐条如实标注 P0 内的真实代码
+# 读者，避免把声明当成已实现的能力（计划不等于现实）：
 #   nature       ── **P0 唯一有真实代码读者的维度**：_merge_evidence_item 写入前的取值门禁
 #                   （词表外取值抛 ValueError）。
 #   provenance   ── **P0 无代码读者**，纯声明（写入恒为 USER_DIRECT）。
@@ -85,6 +117,14 @@ DISCRETION_KEYS = ["plot_allowed", "remix_allowed", "conflict_allowed", "controv
 #                   VALID_EVIDENCE_SCOPE 承担）。此处纯声明。
 #   availability ── **P0 无代码读者**，纯声明。P0 恒为 AVAILABLE，其余四值不可达，
 #                   已由 _compute_gaps 的结构性缺口条目如实登记。
+#   permission   ── **P0 无代码读者**，纯声明。P0 唯一可达值是 OWNED_BY_USER：本环境唯一的
+#                   信息入口是用户自己陈述自己的经营信息，不存在第三方材料的使用权限问题。
+#                   THIRD_PARTY_REQUIRES_CONSENT / UNKNOWN 要等真正的材料／历史产物输入通道
+#                   建成后才可能被真实使用。**刻意不新增 LLM patch key**——本环境没有任何
+#                   可变的权限信息来源，硬加一个模型字段只是制造"这一维在被判断"的假象。
+#   freshness    ── **P0 无代码读者**，纯声明。P0 唯一可达值是 FRESH：证据刚被用户在当前
+#                   会话里说出口，天然新鲜；P0 没有生命周期时钟，无法判断一条证据是否已过期，
+#                   所以 STALE / UNKNOWN 不可达。同样不新增 LLM patch key，理由同上。
 #
 # 为什么 provenance / confirmation 这两维没有、也不需要一个运行时守卫：P0 的
 # _merge_evidence_item 是**纯追加、永不修改既有条目**，所以两条冻结硬约束
@@ -106,6 +146,8 @@ EVIDENCE_DIMENSION_VOCAB = {
     "confirmation": ["USER_CONFIRMED", "SYSTEM_TENTATIVE", "REJECTED", "SUPERSEDED", "EXPIRED"],
     "scope": ["THIS_ITEM_ONLY", "THIS_CYCLE_ONLY", "THIS_ACCOUNT", "LONG_TERM_SUBJECT"],
     "availability": ["AVAILABLE", "UNKNOWN", "NOT_PROVIDED", "DECLINED", "STALE"],
+    "permission": ["OWNED_BY_USER", "THIRD_PARTY_REQUIRES_CONSENT", "UNKNOWN"],
+    "freshness": ["FRESH", "STALE", "UNKNOWN"],
 }
 
 # LLM patch 侧允许的 nature 取值：刻意**不含 SYSTEM_INFERENCE**——系统推断只能由确定性代码
@@ -132,12 +174,20 @@ VALID_EVIDENCE_SCOPE = ["UNSTATED"] + EVIDENCE_DIMENSION_VOCAB["scope"]
 # gaps[] 零新增 patch key（完全由确定性代码从既有快照状态推导）；market_observations[] 与
 # runtime_evidence[] 本批 DEFER（无真实产出通道、M1 内无消费者、关键字段无法诚实填充），
 # 理由见 _default_snapshot 里对应注释与 _compute_gaps 的结构性缺口条目。
+#
+# v0.4 扩展第三批：goal_structure 的 secondary_goals[]／priority_order[] 与顶层
+# business_goal_categories[]（设计文档 §二 #3/#4）。这三项此前在快照里要么有物理数组却
+# **没有任何写入路径**（前两个恒为空数组），要么连物理字段都没有（第三个）——即"结构在、
+# 语义不可达"。同样只加扁平字符串/枚举，每轮各最多一条，由 _merge_patch 去重 append。
 PATCH_KEYS = {
     "route_intent",
     "current_task_text",
     "temporal_scope",
     "primary_goal_text",
+    "secondary_goal_text",
+    "priority_order_text",
     "non_sacrifice_constraint_text",
+    "business_goal_category",
     "requested_capability",
     "confirmation_signal",
     "side_question",
@@ -156,6 +206,24 @@ PATCH_KEYS = {
 }
 
 
+# 影子节点这一轮没有产出一份完整候选 patch 的可靠信号，**不是**格式校验失败。
+#
+# 判据的依据（DSL 层已成立的不变量，不需要新增任何显式失败标记）：m1_shadow 的
+# structured_output.schema 把全部 PATCH_KEYS 都放进 `required`（由 DSL 防漂移单测锁定两者
+# 集合相等），所以影子节点**真正成功**产出的合法输出，无论内容多"空"，字典里一定有全部
+# key（值可能是 UNSTATED / NONE / 空字符串，但 key 本身一定在）。只有 error_strategy:
+# default-value 的降级路径才会产出字面上完全没有这些 key 的空字典 {}。因此"patch 是 dict
+# 但缺少一个或多个必需 key"这件事本身，就是"影子节点失败了"的可靠信号，和"影子节点成功、
+# 但这轮确实没有新信息"（后者 key 全在、只是值平淡）结构性不同。
+#
+# 修复的是一个真实 bug：此前 {} 会被 _validate_patch 判成完全合法的"什么都没说"的一轮
+# （没有未知字段、每个字段都走 .get(key, 默认值) 的宽松取值），于是 patch_ok=true、
+# reject_reason 为空，dialogue_directive 断言"不是落库失败，就是还没有形成任务"——在影子
+# 节点真的失败的场景下这是假话，且系统不留任何痕迹。违反 M1-AC-10「内部失败诚实可恢复，
+# 不伪装成功」与宪法「不编造失败原因」。
+SHADOW_NODE_FAILED = "SHADOW_NODE_FAILED"
+
+
 def _default_snapshot():
     return {
         "schema_version": SCHEMA_VERSION,
@@ -168,6 +236,11 @@ def _default_snapshot():
             "priority_order": [],
             "non_sacrifice_constraints": [],
         },
+        # 经营目标类别（设计文档 §二 #4）：**集合，不是单值**——共享合同一 §二.4 逐字要求
+        # 能表达账号／周期层面的"混合"而非强制单选。v0.4 之前快照里根本没有这个物理字段，
+        # 设计文档 §二 #4 的语义完全没有承载位置；现由 business_goal_category 这个扁平
+        # patch key 逐轮 append（去重、UNSTATED 不写入）。
+        "business_goal_categories": [],
         # 账号阶段：自由文本 + confirmation 维度（设计文档 §二 #5）。P0 扁平 patch 每轮只有
         # 一个通用 confirmation_signal，无法可靠归因到"正在确认的是账号阶段"这一具体字段，
         # 如实固定为 SYSTEM_TENTATIVE，不伪造 USER_CONFIRMED（与 open_threads 的已知限制
@@ -184,7 +257,7 @@ def _default_snapshot():
         # 产能三分（设计文档 §二 #7）：期望发布量／当前周期可用产能／基线产能，
         # 三者分别承载，不得静默取其一覆盖三个。
         "capacity_triad": {"desired_output": None, "cycle_available": None, "baseline": None},
-        # 可用事实/偏好/参考及其五维度（设计文档 §二 #9）。纯追加，永不修改既有条目：
+        # 可用事实/偏好/参考及其全部维度（设计文档 §二 #9 + 维度表）。纯追加，永不修改既有条目：
         # 冻结硬约束「参考资料和历史产物不得覆盖用户已经确认的事实」在 P0 因此天然不可违反。
         "evidence_bundle": [],
         # 市场观察（设计文档 §二 #10）：本批 **DEFER，未实现**。
@@ -201,7 +274,7 @@ def _default_snapshot():
         "market_observations": [],
         # 缺失信息与已降级项（设计文档 §二 #11）。**当轮派生结果的快照，不是累积状态**：
         # 每轮由 _compute_gaps 整体重算覆写，消费方要么用它、要么自己重算，二者等价。
-        # 持久化的是 include_structural=False 的动态子集（空快照上 12 条）；完整 20 条视图由
+        # 持久化的是 include_structural=False 的动态子集（空快照上 13 条）；完整 22 条视图由
         # 需要它的调用点自行重算，见 _compute_gaps 的 include_structural 说明。
         "gaps": [],
         "allowed_capabilities": [],  # 由 call_intent 现算，不在快照里静态存
@@ -259,6 +332,11 @@ def _validate_patch(patch):
     es = patch.get("evidence_scope", "UNSTATED")
     if es not in VALID_EVIDENCE_SCOPE:
         return False, "ILLEGAL_ENUM:evidence_scope:" + str(es)
+    # v0.4：同样只追加一条枚举校验，整体拒绝语义不变（secondary_goal_text /
+    # priority_order_text 是自由文本，没有枚举空间可校验）。
+    bgc = patch.get("business_goal_category", "UNSTATED")
+    if bgc not in VALID_BUSINESS_GOAL_CATEGORY:
+        return False, "ILLEGAL_ENUM:business_goal_category:" + str(bgc)
     return True, ""
 
 
@@ -278,8 +356,8 @@ def _merge_evidence_item(snap, patch):
     用户确认；同理轮级 DECLINE 也不得写成 REJECTED（与 v0.2 account_stage.confirmation 固定
     SYSTEM_TENTATIVE 是同一条已裁决的理由）。
 
-    五维度默认值（P0 只有 nature / scope 两维可以偏离，其余三维不可偏离——偏离需要新的物理
-    通道：资料上传／工具调用／按字段确认交互，属 M4/M5 范围）：
+    七个维度的默认值（P0 只有 nature / scope 两维可以偏离，其余五维不可偏离——偏离需要新的
+    物理通道：资料上传／工具调用／按字段确认交互／生命周期时钟，属 M4/M5 范围）：
       nature       ← LLM 给出（唯一只有模型能读出的维度：代码分不清"我们店在杭州"是事实、
                      "我不喜欢强 CTA"是偏好），代码不得代填默认值
       provenance   ← 恒为 USER_DIRECT（本环境唯一的信息入口就是用户这一轮的自然语言；
@@ -289,6 +367,17 @@ def _merge_evidence_item(snap, patch):
       availability ← 恒为 AVAILABLE（本数组只承载"已经拿到的信息"；UNKNOWN/NOT_PROVIDED/
                      DECLINED/STALE 属于"没拿到"，归 gaps[]；STALE/EXPIRED 还需要生命周期
                      时钟，P0 没有，已由 _compute_gaps 结构性条目如实登记）
+      permission   ← 恒为 OWNED_BY_USER（Execution Prompt v1.2 §4.3 逐字要求的权限维度）。
+                     本环境唯一的输入渠道是用户自己陈述自己的经营信息，不涉及第三方材料的
+                     使用权限问题，所以 P0 唯一可达值就是它；THIRD_PARTY_REQUIRES_CONSENT /
+                     UNKNOWN 要等材料／历史产物输入通道真正建成后才可能被真实使用。
+                     **不接受任何入参覆盖，也不新增 LLM 字段**——没有可变的信息来源时，加一个
+                     模型字段只会制造"这一维在被判断"的假象。已由 _compute_gaps 结构性条目登记。
+      freshness    ← 恒为 FRESH（Prompt §4.3 的时效维度，同时承接共享合同一 §三"作用域与
+                     有效期"后半句"生效时间是否仍有效"）。这条证据刚被用户在当前会话里说出口，
+                     天然新鲜；P0 没有生命周期时钟，无法判断一条证据是否"已过期"，所以 STALE /
+                     UNKNOWN 不可达。同样是字面常量、不接受入参覆盖、不新增 LLM 字段，
+                     已由 _compute_gaps 结构性条目登记。
     """
     text = (patch.get("evidence_text") or "").strip()
     if not text:
@@ -326,6 +415,8 @@ def _merge_evidence_item(snap, patch):
             "confirmation": "SYSTEM_TENTATIVE",
             "scope": patch.get("evidence_scope", "UNSTATED"),
             "availability": "AVAILABLE",
+            "permission": "OWNED_BY_USER",
+            "freshness": "FRESH",
             # 取增量前的 revision，与 open_threads.raised_at_revision 同一时序先例。
             # 只有这一个整数，没有变更历史、没有事件流、没有回放——不是事件溯源。
             "captured_at_revision": snap["revision"],
@@ -354,10 +445,39 @@ def _merge_patch(snap, patch):
         snap["goal_structure"]["primary_goal"] = goal
         changed = True
 
+    # 次目标：与 non_sacrifice_constraints 同构（自由文本、每轮最多一条、`not in` 去重、
+    # 追加不覆盖）——次目标彼此不互斥，用户说"也想兼顾 A""也想兼顾 B"是在累加，不是在
+    # 否定前一条，所以追加语义正确。此前该数组有物理位置却没有任何写入路径，恒为空数组。
+    sec_goal = (patch.get("secondary_goal_text") or "").strip()
+    if sec_goal and sec_goal not in snap["goal_structure"]["secondary_goals"]:
+        snap["goal_structure"]["secondary_goals"].append(sec_goal)
+        changed = True
+
+    # 优先级：**替换语义，不是追加**。"优先级"本质是一句排序断言而不是一条独立事实——
+    # 用户先说"涨粉优先于转化"、后说"转化优先于涨粉"，后一句是对前一句的更正而不是并列
+    # 陈述，追加会让快照同时携带两条互相矛盾的排序（对抗式审查真实发现的问题，不是假设）。
+    # 保留数组形状（设计文档 §二 #3 declares 为 `priority_order[]`）但语义上只保留用户
+    # 最近一次的完整表述——一句话本身可能已经把多个目标的相对顺序都说清楚了，不需要也
+    # 不应该由代码去拆解、合并成跨轮的排序图。
+    prio = (patch.get("priority_order_text") or "").strip()
+    if prio and snap["goal_structure"]["priority_order"] != [prio]:
+        snap["goal_structure"]["priority_order"] = [prio]
+        changed = True
+
     nsc = (patch.get("non_sacrifice_constraint_text") or "").strip()
     if nsc and nsc not in snap["goal_structure"]["non_sacrifice_constraints"]:
         snap["goal_structure"]["non_sacrifice_constraints"].append(nsc)
         changed = True
+
+    # 经营目标类别：集合语义（可混合），UNSTATED 是哨兵不写入，去重同上。
+    # setdefault 与 _merge_evidence_item 同一风格：helper 可能被直接喂一份手工构造的、
+    # 或早于 v0.4 持久化的快照（没有这个顶层键）；走 main() 时升级循环已经补齐。
+    bgc = patch.get("business_goal_category", "UNSTATED")
+    if bgc and bgc != "UNSTATED":
+        snap.setdefault("business_goal_categories", [])
+        if bgc not in snap["business_goal_categories"]:
+            snap["business_goal_categories"].append(bgc)
+            changed = True
 
     side_q = (patch.get("side_question") or "").strip()
     if side_q:
@@ -428,14 +548,17 @@ def _merge_patch(snap, patch):
 # 条目严格只有设计文档 §二 #11 的三个键，不加第四个。
 GAP_NOT_CAPTURED = "NOT_CAPTURED_IN_P0_SNAPSHOT"
 
-# 下面这 8 条是**内容恒定的常量**（不随对话状态变化），因此不进逐轮持久化快照——它们由
+# 下面这 9 条是**内容恒定的常量**（不随对话状态变化），因此不进逐轮持久化快照——它们由
 # _compute_gaps(..., include_structural=True) 在需要完整合规视图的调用点（project_content_task）
 # 现拼出来，需要它们的消费方也可以直接读本常量。见 _compute_gaps 的 include_structural 说明。
 P0_STRUCTURAL_GAPS = [
     # 本批范围外、快照里根本没有承载位置的语义。一份自称"缺口登记"的数组如果隐瞒已知缺口，
-    # 本身就是误导，所以 #1/#4/#8 这三条虽然不在本批实现范围内，也如实登记。
+    # 本身就是误导，所以 #1/#8 这两条虽然不在本批实现范围内，也如实登记。
+    # **v0.4 移除了 business_goal_categories（设计文档 §二 #4）**：它已经有真实的物理承载
+    # （顶层数组 + business_goal_category patch key），再标 NOT_CAPTURED_IN_P0_SNAPSHOT 就是
+    # 一句假话。它改由 _compute_gaps 按"有承载位置但用户还没说"登记为动态的 MISSING/None
+    # ——语义差别是实的：结构性未承载**不得向用户追问**（问了也没地方放），MISSING 可追问。
     {"field_ref": "subject_scope", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
-    {"field_ref": "business_goal_categories", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
     {"field_ref": "cycle_ref", "status": "DEGRADED", "degraded_to": GAP_NOT_CAPTURED},
     # 本批明确 DEFER 的两个数组：空数组 + 这两条缺口条目在**完整视图里必须同时存在**
     # （include_structural=True，即 project_content_task 给下游的那一份），否则空数组会被
@@ -459,6 +582,18 @@ P0_STRUCTURAL_GAPS = [
         "status": "DEGRADED",
         "degraded_to": "ALWAYS_AVAILABLE_NO_LIFECYCLE_CLOCK",
     },
+    # v0.4 新增的两个维度同理：两者在 P0 都只有一个可达值，不是真正被逐条判断出来的结果。
+    # 写进条目却不登记降级，等于让下游把"恒定常量"读成"系统判断过权限/时效"。
+    {
+        "field_ref": "evidence_bundle[].permission",
+        "status": "DEGRADED",
+        "degraded_to": "ALWAYS_OWNED_BY_USER_NO_THIRD_PARTY_MATERIAL_CHANNEL",
+    },
+    {
+        "field_ref": "evidence_bundle[].freshness",
+        "status": "DEGRADED",
+        "degraded_to": "ALWAYS_FRESH_NO_LIFECYCLE_CLOCK",
+    },
 ]
 
 
@@ -467,8 +602,8 @@ def _compute_gaps(snapshot, include_structural=True):
 
     每轮整体重算、不留历史，快照里只有当下这一份清单，不存在缺口变更流水（不是事件溯源）。
 
-    include_structural：控制 P0_STRUCTURAL_GAPS 那 8 条**内容恒定的常量条目**是否包含在
-    返回值里。这 8 条不随对话状态变化，不携带任何"这一轮/这次会话独有"的信息——需要它们的
+    include_structural：控制 P0_STRUCTURAL_GAPS 那 9 条**内容恒定的常量条目**是否包含在
+    返回值里。这 9 条不随对话状态变化，不携带任何"这一轮/这次会话独有"的信息——需要它们的
     消费方直接读代码常量即可，逐轮序列化进 Dify 会话变量纯属浪费，还会让持久化快照每轮都
     背着同一份不变内容。因此：
       - main() 传 include_structural=False，只持久化真正随对话状态变化的动态子集；
@@ -495,6 +630,12 @@ def _compute_gaps(snapshot, include_structural=True):
 
     if not goal.get("primary_goal"):
         gaps.append({"field_ref": "goal_structure.primary_goal", "status": "MISSING", "degraded_to": None})
+
+    # v0.4：有物理承载（顶层数组）但用户还没表达过任何经营目标类别 → MISSING（可追问），
+    # 不是 NOT_CAPTURED_IN_P0_SNAPSHOT（那是"没地方放、不得追问"，v0.4 之前才成立）。
+    # 次目标／优先级不在此登记：它们是"允许兼顾"的可选项，没有不等于缺信息。
+    if not (snapshot.get("business_goal_categories") or []):
+        gaps.append({"field_ref": "business_goal_categories", "status": "MISSING", "degraded_to": None})
 
     if not stage.get("text"):
         gaps.append({"field_ref": "account_stage.text", "status": "MISSING", "degraded_to": None})
@@ -592,7 +733,7 @@ def compute_call_intent(snap, requested_capability):
     # gaps 正常由 main() 在合并后、调用本函数前重算写入；若调用方喂来的快照没有该键，
     # 这里自行重算而不是退化成空列表——空列表会被读成"查过了，没有缺口"，那是不实主张。
     # fallback 用 include_structural=False，与 main() 实际持久化的口径一致：
-    # non_blocking_gaps 是调用路由信号，不是审计副本，8 条恒定常量不必塞进每轮 call_intent。
+    # non_blocking_gaps 是调用路由信号，不是审计副本，9 条恒定常量不必塞进每轮 call_intent。
     gaps = snap["gaps"] if isinstance(snap.get("gaps"), list) else _compute_gaps(snap, include_structural=False)
     # 只放 field_ref 字符串，完整对象留在 snapshot.gaps，避免 call_intent 膨胀。
     non_blocking_gaps = [g["field_ref"] for g in gaps if g["field_ref"] not in blocking_field_refs]
@@ -607,15 +748,55 @@ def compute_call_intent(snap, requested_capability):
     }
 
 
-def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capability):
-    """给对话 LLM 的确定性指令，不让模型自己判断状态或编造原因（继承 A-4 纪律）。"""
+def _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capability,
+                        current_route_intent=None, changed=False):
+    """给对话 LLM 的确定性指令，不让模型自己判断状态或编造原因（继承 A-4 纪律）。
+
+    current_route_intent：**本轮 patch 里的原始 route_intent**，不是 snap["last_route_intent"]。
+    后者是跨轮持久化的"最后一次"，只读它会让一次取消表达在之后每一轮都被误判成"还在撤销中"。
+    patch 未通过时调用方传 None（那种轮次本来就没有可信的本轮意图）。
+
+    changed：本轮 _merge_patch 是否真的改动了快照其他部分。用来防止 CANCEL 分支说出"没有任何
+    内容被撤销或删除"这句话——如果用户在同一轮里既说了"算了取消"又给出了新内容（比如"算了，
+    改成做家居内容"），新内容会正常覆盖旧值，"没有任何内容被撤销或删除"在这种轮次就是假话
+    （对抗式审查真实发现的问题）。changed=True 时跳过这句断言，只让其余分支如实描述当前状态。
+    """
     if not patch_ok:
+        if reject_reason == SHADOW_NODE_FAILED:
+            # **与"补丁校验未通过"是两种性质不同的失败，措辞不得混用。** 这一轮压根没有产出
+            # 一份完整候选 patch（影子节点走了 default-value 降级路径），不是格式校验没过，
+            # 更不是落库失败。不提内部代码（CE-A2 纪律），不编造网络/系统故障之类的具体原因。
+            return (
+                "这一轮系统内部的处理没有正常完成——不是用户表达得不清楚，也不是任务保存失败，"
+                "就是这一步系统这边没跑通。如实把这件事告诉用户，请他把刚才想说的内容再说一遍。"
+                "保持旧任务状态不变，不要推测具体是什么故障，也不要声称任何确认、授权或执行已经生效。"
+            )
         return (
             "补丁校验未通过（" + reject_reason + "）。保持旧任务状态不变，正常回答用户，"
             "不要声称任何确认、授权或执行已经生效。"
         )
 
     parts = []
+
+    # 用户本轮表达了撤回/取消。**本批只做诚实反馈，不实现撤销状态机**：按字段撤销需要什么样的
+    # 状态机是设计判断，与 account_stage/open_threads 的"按字段确认状态机"同一类，不在本批
+    # 擅自新建。此前 route_intent 写进 last_route_intent 后从未被任何分支读过，用户说"算了、
+    # 取消"时系统一声不吭继续走别的逻辑——那是靠沉默造成的不实。
+    #
+    # 只在本轮**没有其他状态变化**时才说"没有任何内容被撤销或删除"——用户完全可能在同一句话
+    # 里既说取消又给出新内容（"算了，改成做家居内容"），这种情况下旧值确实被新值覆盖了，
+    # 断言"什么都没变"就是假话（对抗式审查真实发现的问题，不是假设）。changed=True 时只让
+    # 其余分支如实描述当前状态（比如下面会附加"当前任务：改成做家居内容"），不再重复这句话。
+    # 追问措辞也刻意不要求用户"说清楚具体想撤回哪一项"——系统本来就接不住任何具体答案，
+    # 追问一个自己无法处理的答案本身就是一种隐含的虚假承诺；改为如实说明限制、正常继续对话。
+    if current_route_intent == "CANCEL" and not changed:
+        parts.append(
+            "用户这一轮表达了要取消或撤回。当前系统这边并没有把撤回绑定到任何具体动作上，"
+            "所以实际上没有任何内容被撤销或删除。如实告诉用户这一点，不要说已经撤销了什么，"
+            "也不要说正在处理撤销；不必追问具体想撤销哪一项（当前环境接不住这类追问的答案），"
+            "直接请用户按自己的想法继续说明接下来要做什么即可。"
+        )
+
     if snap["current_task"]["text"]:
         parts.append("当前任务：" + snap["current_task"]["text"])
     else:
@@ -711,7 +892,7 @@ def project_content_task(snapshot, source_override=None, caller_supplied=None):
             snapshot.get("expression_discretion")
             or {"plot_allowed": "UNSTATED", "remix_allowed": "UNSTATED", "conflict_allowed": "UNSTATED", "controversy_allowed": "UNSTATED"}
         ),
-        # 五维度整条保留，不摊平；gaps **自行重算而不是读 snapshot["gaps"] 的存量值**——
+        # 各维度整条保留，不摊平；gaps **自行重算而不是读 snapshot["gaps"] 的存量值**——
         # 投影可能被喂一份手工构造的、或早于 v0.3 持久化的快照，此时存量值是 [] 或缺失，
         # 直接透传就会输出 "gaps": []，下游只能读成"查过了，没有缺口"。_compute_gaps 是纯
         # 函数、幂等、无副作用，重算成本可忽略。
@@ -746,6 +927,17 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
         if _key not in snap:
             snap[_key] = _default_val
 
+    # 条目级向前兼容：v0.4 给 evidence_bundle[] 每条追加了 permission/freshness 两个维度，
+    # 但上面的循环只补顶层键，不会去补"已经存在的顶层数组"里每个既有条目缺的新字段。旧会话
+    # （v0.3 及更早）持久化的条目只有 8 个键，缺这两维；如果不补，project_content_task 会把
+    # 一份异构数组原样透传给下游，而设计文档已经写死"每条必须携带全部维度"——对这些旧条目
+    # 那句话会是假的，下游按新 schema 读 item["permission"] 还会直接 KeyError。这里只补
+    # 缺失的键、不覆盖已有值，且补的值和 _merge_evidence_item 对新条目写入的值完全一致
+    # （旧条目同样只可能来自用户直接陈述，补真实值不是编造）。
+    for _item in snap.get("evidence_bundle") or []:
+        _item.setdefault("permission", "OWNED_BY_USER")
+        _item.setdefault("freshness", "FRESH")
+
     # Dify 把 LLM 节点的 structured_output 作为原生 object 传给下游 Code 节点
     # （非 JSON 字符串），故这里直接按 dict 校验，不做 json.loads。
     patch = shadow_patch if isinstance(shadow_patch, dict) else None
@@ -753,8 +945,17 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
     if patch is None:
         patch_ok = False
         reject_reason = "PATCH_NOT_OBJECT"
+    elif set(PATCH_KEYS) - set(patch.keys()):
+        # 缺任意一个必需 key（含 {} 这种全缺的降级输出）= 这一轮压根没有一份完整候选 patch，
+        # 不是"格式校验没通过"，所以**不再往下调用 _validate_patch**，理由见 SHADOW_NODE_FAILED。
+        patch_ok = False
+        reject_reason = SHADOW_NODE_FAILED
     else:
         patch_ok, reject_reason = _validate_patch(patch)
+
+    # 本轮原始 route_intent，只在 patch 真的可信时才取（见 _dialogue_directive 的形参说明：
+    # 不能读 snap["last_route_intent"]，那是跨轮的"最后一次"）。
+    current_route_intent = patch.get("route_intent") if patch_ok and isinstance(patch, dict) else None
 
     requested_capability = "NONE"
     if patch_ok:
@@ -767,13 +968,15 @@ def main(user_query: str, snapshot_json: str, shadow_patch: dict) -> dict:
     # gaps[] 每轮整体重算并覆写。**无条件执行**（不放在 if patch_ok 分支内）：patch 被拒绝的
     # 轮次同样重算，结果与上一轮相同，因为快照没变。这次覆写**不置 changed、不推进 revision**
     # ——缺口清单是既有状态的派生视图，不是用户造成的状态变化。
-    # include_structural=False：只持久化随对话状态变化的动态子集（空快照上 12 条）。8 条结构性
+    # include_structural=False：只持久化随对话状态变化的动态子集（空快照上 13 条）。9 条结构性
     # 常量内容恒定、不携带任何本轮独有信息，逐轮写进 Dify 会话变量只会让快照白白膨胀；需要完整
-    # 20 条合规视图的调用点（project_content_task）自行以 include_structural=True 重算。
+    # 22 条合规视图的调用点（project_content_task）自行以 include_structural=True 重算。
     snap["gaps"] = _compute_gaps(snap, include_structural=False)
 
     call_intent = compute_call_intent(snap, requested_capability)
-    directive = _dialogue_directive(snap, patch_ok, reject_reason, call_intent, requested_capability)
+    directive = _dialogue_directive(
+        snap, patch_ok, reject_reason, call_intent, requested_capability, current_route_intent, changed
+    )
 
     return {
         "snapshot_json": json.dumps(snap, ensure_ascii=False),

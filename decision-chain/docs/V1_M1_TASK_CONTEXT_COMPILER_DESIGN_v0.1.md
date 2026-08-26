@@ -37,27 +37,56 @@
 | 6 | 表达裁量与风险边界 | `expression_discretion` | `{plot_allowed, remix_allowed, conflict_allowed, controversy_allowed, notes}`，每项可为 `ALLOWED｜NOT_ALLOWED｜UNSTATED` |
 | 7 | 期望发布量／当前周期可用产能／基线产能（三者分别承载） | `capacity_triad` | `{desired_output, cycle_available, baseline}`，**不得只取一个覆盖三个** |
 | 8 | 当前运营周期 | `cycle_ref` | `{cycle_id｜null, applicable: BOOL}` |
-| 9 | 可用事实/偏好/参考/系统判断及缺口 | `evidence_bundle[]` | 每条见 §三 五维度 |
+| 9 | 可用事实/偏好/参考/系统判断及缺口 | `evidence_bundle[]` | 每条见下方维度表 |
 | 10 | 市场观察 | `market_observations[]` | `{source, platform, observed_at, applicable_niche, mechanism_summary, validity}` |
 | 11 | 缺失信息与已降级项 | `gaps[]` | `{field_ref, status: MISSING｜DEGRADED, degraded_to}` |
 | 12 | 本轮允许调用的能力（集合，非单值） | `allowed_capabilities[]` | `{capability_id, reachable: BOOL, block_reason｜null}`，覆盖 CAP-01～CAP-08 |
 | 13 | 附带诉求 | `open_threads[]` | `{id, text, raised_at_revision, status: OPEN｜SURFACED｜HANDLED}`（**在 v1_state 的 OPEN／SURFACED 二值基础上补终态 HANDLED，解决侦察发现的"永不消失"缺陷；本对象与 v1_state 的 open_threads 是两个独立实现，互不覆盖**） |
 | 14 | 运行中新增的联网/外部证据 | `runtime_evidence[]` | `{source, obtained_at, applicable_scope, snapshot_version}` |
 
-### 五个正交维度（§三，适用于 #9 evidence_bundle 及其他标注"见五维度"的字段）
+### 实现状态如实标注（只描述"当前是否已落地"，**不改上表的冻结语义**）
+
+上表的"字段名／形状"是设计选型，不等于已经有写入路径。#3 与 #4 此前存在"结构在、语义不可达"的情况，现已修复，如实记录：
+
+- **#3 `goal_structure`**：四个子字段现在**全部有物理写入路径**——`primary_goal` ← `primary_goal_text`，`secondary_goals[]` ← `secondary_goal_text`，`priority_order[]` ← `priority_order_text`，`non_sacrifice_constraints[]` ← `non_sacrifice_constraint_text`。四者都是扁平字符串 patch key，每轮最多一条，由确定性代码按 `not in` 去重后 append。**此前 `secondary_goals[]` 与 `priority_order[]` 虽然在快照里有数组位置，却没有任何 patch key 或 merge 分支能写入，恒为空数组。**
+- **#4 `business_goal_categories[]`**：**此前快照里根本没有这个物理字段**，该语义完全没有承载位置（当时由 `gaps[]` 的结构性条目 `NOT_CAPTURED_IN_P0_SNAPSHOT` 如实登记）。现已新增为顶层数组，由扁平枚举 patch key `business_goal_category`（`UNSTATED｜LONG_TERM_VALUE｜ACCOUNT_GROWTH｜FOLLOWER_GROWTH｜TRAFFIC｜GMV｜LEADS｜STORE_VISIT`）逐轮去重 append。**集合语义不变**：第二个类别是追加不是覆盖（共享合同一 §二.4 逐字要求能表达"混合"而非强制单选），`UNSTATED` 是哨兵、不写入。相应地它在 `gaps[]` 里从"结构性未承载（不得向用户追问）"改为动态的 `MISSING`（有承载位置、用户还没说，可追问）——已经有承载位置还继续标 `NOT_CAPTURED_IN_P0_SNAPSHOT`，那是一句假话。
+
+其余各条的实现状态（含 #1／#8 未承载、#10／#14 本批 DEFER）由 `gaps[]` 的结构性条目逐条登记，不在本节重复。
+
+### 维度表（共享合同一 §三 的五个正交维度 ＋ Execution Prompt v1.2 §4.3 的 `permission`／`freshness`）
+
+适用于 #9 `evidence_bundle[]` 及其他标注"见维度表"的字段。
 
 ```text
-nature        : FACT | PREFERENCE | REFERENCE | SYSTEM_INFERENCE
+nature         : FACT | PREFERENCE | REFERENCE | SYSTEM_INFERENCE
 provenance     : USER_DIRECT | SOURCED_MATERIAL | VALID_HISTORICAL_ARTIFACT | AUTHORIZED_EXTERNAL | SYSTEM_DERIVED
 confirmation   : USER_CONFIRMED | SYSTEM_TENTATIVE | REJECTED | SUPERSEDED | EXPIRED
 scope          : THIS_ITEM_ONLY | THIS_CYCLE_ONLY | THIS_ACCOUNT | LONG_TERM_SUBJECT
 availability   : AVAILABLE | UNKNOWN | NOT_PROVIDED | DECLINED | STALE
+permission     : OWNED_BY_USER | THIRD_PARTY_REQUIRES_CONSENT | UNKNOWN
+freshness      : FRESH | STALE | UNKNOWN
 ```
+
+**来源对照**（此前本节只笼统写"五个正交维度"，没写清楚哪一维出自哪份真源，也没有 `permission`／`freshness`；现补齐，**不改共享合同原文**）：
+
+| 本设计的维度 | 出处 | 说明 |
+|---|---|---|
+| `nature` | 共享合同一 §三「信息性质」 | 事实｜偏好｜参考｜系统判断，逐值对应 |
+| `provenance` | 共享合同一 §三「来源与证据」 | 五值逐值对应 |
+| `confirmation` | 共享合同一 §三「确认与生命周期状态」 | 五值逐值对应 |
+| `scope` | 共享合同一 §三「作用域与有效期」的**前半句** | 该行还有后半句「生效时间是否仍有效」，`scope` 不承载它 |
+| `availability` | 共享合同一 §三「可用性状态」 | **已知不对齐，见下** |
+| `permission` | Execution Prompt v1.2 §4.3 | 逐字要求「对进入上下文的事实或产物至少保留：`source`、`permission`、`scope`、`freshness`、`confirmation`」。共享合同一 §二 末段「来源、**权限**、可信度差异保留」与 §五「不表示…用户授权…相同」同向。**它不是共享合同一 §三 表格里的一行**，是 Prompt 层的独立要求 |
+| `freshness` | Execution Prompt v1.2 §4.3 | 同上。同时承接共享合同一 §三「作用域与有效期」的后半句「生效时间是否仍有效」——此前没有任何字段承载它，它被含混地折进了 `availability` 的 `STALE` 取值里，两者都不是真正独立被追踪的维度 |
+
+**已知不对齐（本批不动，只如实登记，待 Reviewer 裁决）**：共享合同一 §三「可用性状态」有 **6** 个取值（已具备｜未知｜未提供｜**不适用**｜拒绝提供｜已失效；Execution Prompt v1.2 §4.3 同样列了 `not_applicable`），本设计与实现目前只有 **5** 个，缺"不适用"。自行补一个 `NOT_APPLICABLE` 等于执行侧单方修改共享合同的枚举空间，不在本批授权范围内，因此只标注、不改。
+
+**P0 实际可达值**（词表是取值空间的声明，**不等于**"这几维在被判断"）：`nature` 与 `scope` 由 LLM 的粗粒度信号决定；`provenance` 恒为 `USER_DIRECT`、`confirmation` 恒为 `SYSTEM_TENTATIVE`、`availability` 恒为 `AVAILABLE`、`permission` 恒为 `OWNED_BY_USER`、`freshness` 恒为 `FRESH`。理由是同一条：本环境唯一的输入渠道是用户自己陈述自己的经营信息（无 Tool 节点、无联网、`file_upload.enabled=False`），也没有生命周期时钟，这五维在 P0 没有真正可变的信息来源。因此**不为它们新增 LLM patch key**（硬加只会制造"系统判断过权限/时效"的假象），并逐条登记进 `gaps[]` 的结构性缺口。
 
 冻结硬约束（共享合同一 §三 末段，逐字保留）：
 - 「系统推断不因为被写入持久化就升级为用户确认事实」
 - 「参考资料和历史产物不得覆盖用户已经确认的事实」
-- 不要求每条记录机械具备五个物理字段——本设计里 `evidence_bundle[]` 每条**必须**携带全部五维度（因为它就是该规则的直接落地对象），但 `market_observations[]`／`runtime_evidence[]` 等其他数组按各自需要选用，不强求。
+- 不要求每条记录机械具备五个物理字段——本设计里 `evidence_bundle[]` 每条**必须**携带上表全部维度（因为它就是该规则的直接落地对象），但 `market_observations[]`／`runtime_evidence[]` 等其他数组按各自需要选用，不强求。
 
 ---
 
