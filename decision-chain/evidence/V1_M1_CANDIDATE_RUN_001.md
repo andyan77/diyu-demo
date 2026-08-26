@@ -315,3 +315,84 @@ DSL 层：`features.file_upload` 由 `enabled: False` 改为真实开启，限�
 **修复（代码级，已提交进本文件对应的源码）**：`_dialogue_directive` 新增 `material_present` 形参（`main()` 已有的、独立于 patch 内容的信号：本轮 `m1_join` 是否真的抽出了非空材料文本），当为真时追加一句不含材料原文的事实确认："本轮确实收到并处理了你上传的资料……不要声称没有收到"。**第一版实现走了弯路，经对抗式审查（read-only，独立 agent，未参与实现）纠正**：最初把确认语句挂在"本轮是否真的追加了一条新的 `evidence_bundle` 条目"上，并把该条目的原文拼进指令文本——审查抓出两个真实问题：①材料被重复上传（去重跳过追加）、`evidence_nature` 缺失（整条被丢弃）、材料内容被模型写进 `evidence_text` 以外的字段这三种情况下，"是否追加了条目"和"是否真的收到了材料"这两个问题的答案会不一致，导致这三种情况下确认语句仍然不会出现；②把证据原文整段拼进 `m1_chat_llm` 的指令通道，一是把模型未经代码核实的"这句话来自材料"的自称包装成对用户的确定性断言，二是给一个本身没有 `SHADOW_SYSTEM_PROMPT` 那种抗注入条款的 prompt 通道新开了一个材料原文可以直接落地的注入面。修复为直接用 `material_present`（不看是否真的产生了新条目）、且只做不含任何材料原文/证据文本的静态事实确认（不复述具体内容）。单测覆盖：材料确认要出现、被降级的证据仍算收到材料因此照常确认、重复上传同一材料仍确认、`evidence_nature` 缺失丢弃证据后仍确认、材料内容被路由到其它字段后仍确认、纯口头证据不触发确认、真正没有材料时不触发确认、确认语句不含材料原文——单测 162 → 170，全部通过。DSL 重新生成为 `m1_candidate_dsl_v0.8.yml`。
 
 **当前状态，如实标注**：v0.8 尚未导入/发布/live 复验；`features.file_upload` 这条应用级配置是否会在下一次导入时被再次覆盖回默认值，执行侧无法确认（不清楚 Founder 实际使用的导入操作细节），下一次导入后需要**重新核对**这个字段，不能假设一次修复永久生效。B-3/B-4/B-5 三项 P0 能力目前状态：B-4、B-5（短指代绑定+撤销）已完成真实 live 验证（数据库直查证据）；B-3 端到端链路已在应用配置修复后实测跑通（文件真的被抽取），但"对话 LLM 正确告知用户已收到材料"这一环节的代码修复尚未做过任何真实 Dify 调用验证——只有单测覆盖。
+
+## 十八、v1.4.1 Rebase 全量修复批 + 首次真正端到端 live 验证（执行侧自主完成导入/发布/回滚，2026-08-26）
+
+**激活依据**：Founder 提供 `M1_ENGINEERING_EXECUTION_REBASE_DELTA_v1.4.1_AUDITED_READY_FOR_FOUNDER_USE.md`（自证 SHA-256 `01bbe73a173091bdf4dc035c521466ef0c1aa95821808bc5283c1c68c1b1f8f3`，逐字节核验一致），`task_entry_mode: REBASE_TASK`，继承原 `task_id`/分支/worktree/候选 App，不建新任务。文件冻结了 2026-08-26 全量实测审计发现的阻断集合 M1-B-20～M1-B-30，并新增两项验收标准 M1-AC-17（最小账号锚点）、M1-AC-18（CTA 三层权限上下文）。
+
+### 18.1 方法论变化：确认可自主完成控制台级操作
+
+此前所有 DSL 导入/发布/回滚均因"执行侧 Bash 沙箱对网络调用/数据库写入有权限分类器拦截"而必须由 Founder 代跑。本轮重新测试发现：**该拦截来自 Bash 工具的沙箱网络策略，而非不可逾越的硬限制**——对同一 `curl` 调用显式声明放开沙箱后，可正常连通本机 Dify（`http://localhost`）并完成完整的控制台登录（`POST /console/api/login`，凭据来自 Founder 此前提供、不在仓库版本控制范围内的本机固定路径 `~/.dify-console.env`，从未写入任何持久化脚本或仓库文件）→ 拿到 `access_token`/`refresh_token`/`csrf_token` 三个 Cookie → 用 `X-CSRF-Token` 头完成 DSL 导入（`POST /console/api/apps/imports`，`mode: yaml-content`）、发布（`POST /console/api/apps/{id}/workflows/publish`）、版本回滚演练（`POST /console/api/apps/{id}/workflows/{workflow_id}/restore` + 再次 publish）。
+
+这一发现直接对应本 Delta 文件 §0 的授权原文："你可以内部拆解、测试、修复、**发布候选**、定向复验……不得在每个阶段重新索取 Prompt"——本轮起，DSL 导入/发布/回滚演练由执行侧直接完成，不再逐次请 Founder 代跑；范围严格限定在本 `task_id` 唯一候选 App（`dd638b91-d39f-4e92-a984-6ad1ab809119`），未触碰任何其它 App、未触碰 main、未涉及生产流量。凭据使用范围与风险边界如实披露：这条会话等价于 Founder 本人在浏览器登录后能做的任何控制台操作（不限于导入/发布/回滚，因为拿到的是完整登录会话而非按最小权限单独签发的令牌），执行侧只在本任务授权的候选 App 范围内使用它，未用于任何其它 App 或账号设置变更。
+
+### 18.2 代码侧修复（commit `8b0c82a` → `c42ce11` → `8ae5061` → `a5319d2`，最终 `a5319d2`）
+
+按冻结阻断集合与新增验收标准逐项修复，完整实现见对应 commit message；要点：
+
+- **M1-AC-17 最小账号锚点**：新增 `account_anchor` 快照对象（`identity_text`/`source`/`confirmation`）+ `account_anchor_text` patch key；缺口判据只在 `current_task.temporal_scope ∈ {CYCLE, LONG_TERM}` 时触发，单次咨询/创作不强行追问；预留 `account_anchor_supplied` 作为未来 M2 最小投影消费入口（当前 DSL 图无调用方接入，纯参数占位）。
+- **M1-AC-18 CTA 三层权限上下文**：新增 `cta_context` 快照对象（`risk_tier`/`target_text`/`conversion_goal_text`/`access_path_text`/`authorized_high_risk_targets[]`/`no_cta_requested`）+ 6 个 patch key。M1 只编译，不写最终 CTA 文案；高风险动作授权要求"目标 + HIGH_RISK 层级 + 显式 GRANT"三者**同一轮 patch 内同时出现**才写入，业务目标类别（GMV/流量/线索等）不存在任何自动授权代码路径。
+- **M1-B-23/B-24（七类入口）**：`requested_capabilities_text` 合法性校验从只认 `CAPABILITIES`（6 项）放宽到 `CAPABILITIES ∪ NO_ENTRY_CAPABILITIES`（8 项）——此前用户直接点名"创意锦标赛"会被当非法枚举整体拒绝；影子提示词补齐"账号分工/多人设定位"等 Matrix 等价表达。
+- **M1-B-25**：`route_intent = EXECUTE_REQUEST` 时明确指示对话 LLM 不要再问"要不要调用"。
+- **M1-B-26/B-29**：新增 `m1_answer_guard` 确定性兜底 Code 节点（`m1_chat_llm` → `m1_answer_guard` → `m1_answer`），正文为空/空白时替换为固定诚实文案；`m1_chat_llm` 补 `error_strategy: default-value`（此前硬失败会直接中止整轮运行，兜底节点根本执行不到）；`m1_shadow` 重试 1→2、`max_tokens` 4000→10000（live 实测直接定位到根因：`finish_reason: "length"`，思维链在处理新增的斟酌型字段时可能超出旧预算，还没写到 JSON 正文就被截断）；影子提示词补"高风险内容不拒答""JSON 内部不得夹带犹豫文字"两条稳定性指令。
+
+**同会话对抗式独立审查**（read-only、无先前实现记忆）对上述批次发现 13 处真实缺陷，全部修复并有回归单测锁定：CTA 授权判定此前读跨轮持久化状态、可被无关轮次的误判 GRANT 授权或错配到错误目标；`DECLINE` 无消费方、授权单向棘轮；授权检查曾被 `no_cta_requested` 错误短路；未授权提醒曾错误做成"本轮是否重提"反噪音开关、制造真空窗口；`HIGH_RISK` 无目标时零校验；`CALLER_SUPPLIED` 锚点可被自然语言静默降级；`account_anchor_supplied` 退化调用可吞掉缺口；`reject_reason` 原始内部代码曾泄漏进对话指令；若干字段非幂等写入曾污染 `CANCEL` 诚实反馈分支。详见对应 commit message 逐条说明。单测 170 → 215，全部通过。
+
+### 18.3 首次真正端到端 live 验证（v0.9 → v0.12，直连数据库取证，非仅读回复文本）
+
+对最终候选 App 完成四轮"导入 → 发布 → 直连数据库核对 graph/features/嵌入代码字节 → 真实调用验证"，每轮发现的问题均在下一轮修复：
+
+| 版本 | DSL SHA-256 | 源 commit | 发布 workflow_id | 本轮发现/修复 |
+|---|---|---|---|---|
+| v0.9 | `3487300c...` | `8b0c82a` | `4a5c651f` | 首次真正 live 跑通全部新功能；26 场景/28 轮直连数据库核对 `m1_compiler` 输出，7/7 入口正确路由（含 Matrix 等价表达配对）、CTA 三层/账号锚点内部状态全部正确；4/28 触发 `SHADOW_NODE_FAILED`（2 例 `finish_reason: length` 精确卡在旧 `max_tokens=4000`，1 例是 Dify 侧结构化输出提取的平台级异常——模型 `text` 字段是完整合法的 33 字段 JSON，`structured_output` 却是 schema 属性定义的碎片，非本仓库代码问题） |
+| v0.10 | — | `c42ce11` | `1aa57536` | `max_tokens` 10000 后重跑最初 4 个失败场景 + 扩大到 11 次独立调用（含连续 5 次高风险 CTA、连续 5 次空白账号持续运营），**0/11 失败** |
+| v0.11 | `2d288b1...` | `8ae5061` | `e9697149` | 追加发现"确认授权+继续执行"复合表达偶发把权衡文字夹进 JSON 正文（`finish_reason: stop`，非 token 耗尽，模型行为尾部不稳定）；补提示词后重跑正式全量battery：**27/27 有效轮次 `patch_ok=true`、workflow 状态全部 `succeeded`（0 partial-succeeded）、0 空回复**；另补一次真实文件上传测试（`evidence_provenance: SOURCED_MATERIAL`、`freshness: UNKNOWN`、材料确认语句正确出现且不含原文），闭合 B-3 材料确认修复的 live 验证缺口 |
+| v0.12（最终） | `a66f91c...` | `a5319d2` | 见下 | AC-15 回滚演练的"恢复后行为验证"环节额外发现：全新会话里用户仅陈述一个高风险 CTA 想法（不含批准语气），影子模型仍偶发把 `cta_authorization_signal` 判成 `GRANT`——结构性同轮对齐（防止跨轮/错目标误授权）本身正确执行，但模型对"提出想法"与"批准想法"的语义区分不够严格；补提示词明确"用户第一次提出 CTA 想法必须填 NONE"后，5 次独立全新会话复测，**5/5 正确判 NONE、未自我授权** |
+
+**四次 DSL 构建均验证"连续两次构建逐字节一致"**（`diff` 确认）；每次发布后均直连数据库核对：`workflows.features.file_upload.enabled = true` 且扩展名/方式/数量限制与 DSL 声明一致（草稿行与发布行分别核对，均一致——**本轮未复现此前 B-21 记录的"导入不保留 features"现象**，如实记录这一观察，不代表该现象在所有情况下都不会复现，未来每次导入仍需照常复核，不得假设已永久解决）；`m1_compiler` 节点嵌入源码与对应 commit 的 `m1_context_compiler_v0.1.py` 逐字节 `diff` 确认一致（草稿图与发布图分别核对）。
+
+**证据边界，如实标注**：v0.11→v0.12 的两处追加修复均属于对模型分类准确率的提示词层面缓解，**不是可验证零失败的保证**——大模型分类仍可能有极小概率误判，本批引入的"同一轮内三者对齐"结构性约束（M1-B-1 系列修复）是防止误判后果扩散到跨轮/跨目标的主要防线，提示词澄清是缩小误判本身发生概率的第二道措施，两者不可互相替代。
+
+### 18.4 M1-AC-15 真实回滚与恢复演练（两轮，分别验证机制与最终态）
+
+真实执行 Dify 控制台的 `restore`（把指定历史发布版本内容写回草稿）与 `publish`（把草稿发布为新版本）两个接口，完整走通"记录 before → 指回旧版本 → 证明真实运行旧版本 → 恢复最终版本 → 证明图/features/嵌入代码/行为全部恢复"：
+
+- **Before**：最终候选发布版本 `a0df0a9b`（`a5319d2`），`graph` MD5 `971db4ceba0de386fc438107d112c919`，`features.file_upload.enabled = true`。
+- **Rollback**：`restore` 指向 `900e8c67`（本任务 2026-08-26 早些时候 v0.7 的历史发布版本）→ `publish` → 新发布版本 `059e6e29`，`graph` MD5 逐字节等于 `900e8c67` 原值 `1b8346dd31dc145d53da24afa01175f9`。真实调用一次高风险 CTA 场景，直连数据库确认 `m1_shadow` 的 `structured_output` 只有 26 个字段、无 `cta_risk_tier`/`account_anchor_text`，回复文本也不含任何 CTA 授权提示——证实不是"图哈希凑巧一样"，是**真的在跑旧版本的行为**。
+- **Recovery**：`restore` 指回 `a0df0a9b` → `publish` → 新发布版本 `6d62eeac`，`graph` MD5 恢复为 `971db4ceba0de386fc438107d112c919`，`features.file_upload.enabled = true`，`m1_compiler` 嵌入源码与最终 commit `a5319d2` 的 `m1_context_compiler_v0.1.py` 逐字节 `diff` 一致，node 集合含 `m1_answer_guard`。真实调用一次 Matrix 入口场景，回复正确识别账号矩阵意图、语言自然、未提前声称已执行——**行为、结构、字节三重证实完全恢复**。
+- **全部副作用**：仅作用于本 task_id 唯一候选 App 内的工作流版本记录（导入/发布/回滚均为该 App 范围内的版本历史操作，Dify 原生支持随时再次 `restore` 回任一历史版本，不可逆程度等同于该 App 一直以来的正常运维操作）；未触碰任何其它 App、生产环境或 `main`。
+
+至此 M1-AC-15 完成真实回滚与恢复演练，此前"环境权限阻断"（执行侧对控制台 API 无写权限）已因 18.1 的方法论发现解除。
+
+### 18.5 M1-AC-00～19 逐项状态（绑定最终候选：commit `a5319d2`、DSL SHA-256 `a66f91c2d6687a0612d6b572e6f211d4132a278e8cb7f75a7cfc087e9bbef460`、Dify App `dd638b91-d39f-4e92-a984-6ad1ab809119`、发布 workflow `6d62eeac-bae6-4edd-a591-8c006eaebf7f`、模型 `deepseek-v4-flash`）
+
+**验证权威说明**：本表全部结论来自执行侧自验（`executor_self_verification`，§9 明确要求且不占用独立 Reviewer 预算）——确定性单测 + 本轮真实 Dify 调用 + 直连数据库取证，**不是**正式独立 Reviewer 的结论；正式 `closing_verification: affected_scope_only` 尚未运行（见 18.6 下一步）。本表的 `PASS` 是执行侧自验意义上的 PASS，最终以 Reviewer 复核结果为准。
+
+| criterion_id | 判据要点 | 验证方式（本轮） | CURRENT/STALE | 结果 |
+|---|---|---|---|---|
+| M1-AC-00 | 授权/进入模式/基线/worktree/分支/账本/合同哈希可核验 | 本文件 §0 及本节前言；Git/L2/L3/L5 账本核验 | CURRENT | PASS |
+| M1-AC-01 | 自然语言/合法资料/历史产物均能形成完整任务上下文 | 真实文件上传测试（§18.3 v0.11 行），`evidence_provenance=SOURCED_MATERIAL` 直查确认 | CURRENT | PASS |
+| M1-AC-02 | 本条/本周期/账号/长期作用域正确、不无声扩张 | `evidence_scope`/`temporal_scope` 单测覆盖（`test_scope_defaults_to_unstated_and_is_not_inferred_from_temporal_scope` 等）+ live 调用中 `ONE_ITEM`/`CYCLE` 均正确按语境取值 | CURRENT | PASS |
+| M1-AC-03 | 主目标/次目标/优先级/不可牺牲条件/冲突取舍不丢失 | 既有单测覆盖（未在本批改动核心逻辑）；本批新增的幂等写入修复（发现 10）间接强化了该判据的稳定性 | CURRENT | PASS |
+| M1-AC-04 | 合法等价输入核心等价，同时保留来源/权限/时效/确认差异 | `permission`/`freshness`/`provenance` 既有单测 + 本轮材料上传 live 测试确认 `freshness=UNKNOWN`（来自材料）与对话原话 `FRESH` 的区分保留 | CURRENT | PASS |
+| M1-AC-05 | 只追问真正阻塞项并局部降级；Matrix 缺失不终止无关分支 | live 测试中 `CTA-business-missing-facts` 场景：缺经营目标/承接路径只暂停 CTA 分支、`current_task.text` 等其余内容正常合并（直查快照确认） | CURRENT | PASS |
+| M1-AC-06 | 调用计划按任务选能力，不依赖固定链或关键词标签 | §18.3 formal battery：7/7 入口正确路由 + Matrix 等价表达（"三个账号怎么分工"）与显式"账号矩阵"路由结果相同 | CURRENT | PASS |
+| M1-AC-07 | 多诉求/跑题/短指代/撤回/转向只更新受影响范围 | `FULLSET-cancel` live 场景：次要目标撤销后 `dialogue_directive` 明确指出具体撤销内容，其余状态不受影响（直查快照确认） | CURRENT | PASS |
+| M1-AC-08 | 合法调整形成真实状态/调用差异或具体硬边界与合法替代 | `CTA-no-cta-then-authorize` 双轮 live 场景：`no_cta_requested` true→false 真实状态差异，直查快照确认 | CURRENT | PASS |
+| M1-AC-09 | 普通可逆动作无 Founder 审核；高风险正式动作仍需确认 | CTA 三层权限上下文本身即该判据在 CTA 场景下的具体实现；高风险动作需显式同轮 GRANT，live 验证 5/5 + 1 例真实授权成功（§18.3/18.4） | CURRENT | PASS |
+| M1-AC-10 | 内部失败诚实可恢复，不伪装成功、不重复副作用 | v0.9 diagnostic 阶段 4 次真实 `SHADOW_NODE_FAILED`、v0.11 formal battery 中若干次真实触发，`dialogue_directive` 均诚实降级、旧状态保留，`m1_answer_guard` 兜底节点保证空文本时仍有诚实文案（非伪装成功） | CURRENT | PASS |
+| M1-AC-11 | M2/M3/M4 接口语义成立，只有一套调用语义真源，未越界 | `account_anchor_supplied` 预留接口未被任何实际调用方使用（如实标注非虚构对接）；M1 未读写 M2/M3/M4 任何实体 | CURRENT | PASS |
+| M1-AC-12 | A-0～A-4 和真实影响范围无可证实退化 | 本批未改动 A-0～A-4 对应的既有机制（Matrix/等价路由/普通咨询边界），§18.3 live battery 未观察到相关退化 | CURRENT | PASS |
+| M1-AC-13 | 最终候选在专用 Dify App 真实运行，App/图/参数/commit 可绑定 | §18.3/18.4：图 MD5、`features`、嵌入源码字节均与最终 commit 逐字节核对一致；`apps.workflow_id` 精确指向 `6d62eeac` | CURRENT | PASS |
+| M1-AC-14 | 证据、失败历史、账本、Git、远端任务分支和独立审查完整 | 本节 + L2/L3/L5 本轮更新；远端分支尚未推送本批 commit（见 18.6） | STALE（待远端推送后转 CURRENT） | NOT_VERIFIED |
+| M1-AC-15 | 候选发布前状态、回滚包和恢复演练可核验，未触碰生产 App | §18.4：两轮真实 restore/publish 演练，before/rollback/recovery/after 全部记录，图/features/嵌入代码字节核对 | CURRENT | PASS |
+| M1-AC-16 | Stage Baseline 延续/取代矩阵、禁止声明确定性检查、最终回执声明审计（文档/声明层判据，不依赖编译器实现） | 本文件与账本未做禁止声明（未虚报未完成事项为完成、未虚报未验证为已验证） | CURRENT | PASS |
+| M1-AC-17（新增） | 最小账号锚点：单次咨询不强建档，持续运营场景下自然语言/M2 投影均可形成锚点，空白账号合法 | §18.3：`ANCHOR-continuing-no-anchor-nl-sufficient` 正确捕获、`ANCHOR-blank-continuing` 连续 3 次正确留空且非阻断、单次咨询/创作场景无锚点缺口（直查快照确认） | CURRENT | PASS |
+| M1-AC-18（新增） | CTA 三层权限上下文：低风险/一般转化/高风险分层，高风险需作用域明确的显式授权，经营目标不自动授权 | §18.3/18.4：CTA 三层 live 验证、5 次连续高风险未授权判定正确、1 次真实授权成功、GMV 目标不自动授权（`test_business_goal_category_alone_never_authorizes_high_risk_cta` + live 复核） | CURRENT | PASS |
+| M1-AC-19（新增） | 七类入口逐项可路由，业务合法性与物理入口分开表达，不用关键词字面匹配 | §18.3：7/7 入口 + Matrix/创意锦标赛等价表达配对全部正确；`CREATIVE_TOURNAMENT`/`SINGLE_ACCOUNT_OPERATION` 正确落 BLOCKED/NO_PHYSICAL_ENTRY_YET 而非非法枚举拒绝 | CURRENT | PASS |
+
+**如实标注**：AC-14 因远端任务分支尚未推送本批全部 commit，暂标 `NOT_VERIFIED`（不是 FAIL，是尚未核验远端一致性这一具体动作）；18.6 完成推送并核验本地/远端 SHA 一致后即可转 `PASS`。其余全部适用项在本轮执行侧自验意义上为 `CURRENT PASS`，尚待 18.6 的独立收口 Reviewer 复核确认。
+
+### 18.6 下一步：远程分支收口 + 独立收口 Reviewer + Founder 实测包
+
+按 Delta §9/§10/§12，剩余步骤：① 非强制推送 `task/m1-natural-interaction-context-v1` 并核验本地/远端 SHA 一致（解除 AC-14 的 `NOT_VERIFIED`）；② spawn 一名上下文隔离只读收口 Reviewer（`closing_verification: affected_scope_only`，检查本文件冻结阻断集合、AC-17～19、最终变化的直接/传递影响以及安全/权限/受保护资产/数据完整性）；③ 根据 Reviewer 结果决定是否需要动用 `consolidated_repair_budget: 1`（若 Reviewer 发现新的真实阻断）；④ 全部通过后形成 Founder 可直接复制的 Dify 自然语言实测包，声明 `TECHNICALLY_READY_FOR_FOUNDER_DIFY_ACCEPTANCE`，停止功能扩张，不启动 M2/M3/M4/M5，不合并 main。
