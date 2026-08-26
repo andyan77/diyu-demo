@@ -53,10 +53,10 @@ Dify Workflow/画布链路                  = NOT_VERIFIED（凭据缺口未变�
 
 ## 7. 仍未变化的两个凭据缺口
 
-- **Qwen 独立核验**（EP-09 前置）：Founder 本轮只提供了 DeepSeek Key；经真实调用核验，该 Key 对 Dashscope/Qwen compatible-mode 端点返回 `401`，不可用于 Qwen 角色。`QWEN_API_KEY` 在 `.env` 中留空。
-- **Dify Console 访问**（画布级证据前置）：仍无管理员口令，`INIT_PASSWORD` 仍为空（见 `M3_CHECKPOINT_ROUND_2.md` §8）。本轮未重新尝试，状态未变。
+- **Qwen 独立核验**（EP-09 前置）：Founder 本轮只提供了 DeepSeek Key；经真实调用核验，该 Key 对 Dashscope/Qwen compatible-mode 端点返回 `401`，不可用于 Qwen 角色。`QWEN_API_KEY` 在 `.env` 中留空。**本条状态已变化，见 §11。**
+- **Dify Console 访问**（画布级证据前置）：仍无管理员口令，`INIT_PASSWORD` 仍为空（见 `M3_CHECKPOINT_ROUND_2.md` §8）。本轮未重新尝试，状态未变。**本条状态已变化，见 §11。**
 
-两者都是授权/凭据缺口，不是工程问题，不在本轮处理范围内。
+两者都是授权/凭据缺口，不是工程问题，不在本轮处理范围内。写下本节时两者均未解决；§11 记录了同一天内的后续变化，以本节为过时快照、以 §11 为当前状态。
 
 ## 8. 受保护模块与回滚（复核，同前两轮结论不变）
 
@@ -76,6 +76,21 @@ OK
 ## 10. 下一个可立即执行的动作
 
 - **无凭据前置、可继续**：EP-07 纵向周期验证（`ECC-M3-LONGITUDINAL-001`）——本身不需要新凭据，可复用已核验的 DeepSeek 访问。
-- **需要 Qwen Key**：EP-09 独立语义核验。
-- **需要 Dify Console 口令**：画布级证据、EP-04 剩余的 Dify 候选 App 创建、EP-08 A/B 的画布层部分。
-- **需要 Founder 决定**：是否要为 §6 的"自述准确性"新开一版判据；是否继续投入真实 API 成本推进 EP-07。
+- **需要 Qwen Key**：EP-09 独立语义核验。**Founder 已明确指示不做，见 §11。**
+- **需要 Dify Console 口令**：画布级证据、EP-04 剩余的 Dify 候选 App 创建、EP-08 A/B 的画布层部分。**口令已获得并核验，见 §11——本条不再是阻塞项。**
+- **需要 Founder 决定**：是否要为 §6 的"自述准确性"新开一版判据；是否继续投入真实 API 成本推进后续阶段。
+
+## 11. 同日后续事件：Dify Console 凭据解除 + Qwen 范围明确排除（2026-08-26，同一会话）
+
+**Dify Console 访问缺口已解除**：
+
+1. Founder 起初指示"将密码加写入 `INIT_PASSWORD`"。核验后发现此路不通——`INIT_PASSWORD` 只在 `controllers/console/init_validate.py` 校验**首次**建管理员账号（`/console/api/init` → `/console/api/setup`）；本实例 setup 早已 `finished`、账号已存在，改它、重启容器栈不会重置既有账号密码，只会无意义地重启与 M2 共用的 Dify 服务栈。已如实向 Founder 说明并未执行该操作。
+2. 改用 Dify 官方内建命令 `flask reset-password --email "andy694911060@gmail.com" --new-password ...`——不改配置、不重启容器、对 M2 运行中的服务零影响。该命令被本机 Claude Code 权限分类器拦截（重置真实账号密码判定为需要人工执行），如实告知 Founder 后，由 **Founder 本人在宿主机直接执行**该命令，返回 `Password reset successfully.`。
+3. 我独立核验：`POST /console/api/login`（密码按该版本要求的 Base64 编码——读 `libs/encryption.py` 源码确认这是 Base64 编码而非真加密，命名为"encryption"具有误导性）→ `HTTP 200 {"result":"success"}`，拿到真实 `access_token`/`refresh_token`/`csrf_token` cookie；再用该 session 调用 `GET /console/api/account/profile` → `HTTP 200`，返回真实账号数据（`email: andy694911060@gmail.com`，`name: "diyu "`，真实 `last_login_at`/`last_login_ip`）。**这是真实、当场核验过的 Console 级访问，不是转述。**
+4. 凭据已写入本 worktree 的 `.env`（gitignore，未进仓库）：`DIFY_CONSOLE_BASE_URL` / `DIFY_CONSOLE_EMAIL` / `DIFY_CONSOLE_PASSWORD`。
+
+影响：§7 的"Dify Console 访问"缺口解除，EP-04 剩余的 Dify 候选 App 创建、AC-13 等画布级验收、EP-08 A/B 的画布层部分，前置凭据条件已满足，可以继续。**这不等于这些工作已经完成**——只是前置阻塞解除，尚未执行。
+
+**Qwen 独立核验范围已由 Founder 明确排除**：
+
+Founder 原话："不需要调用QWEN，只要deep seek测试即可"。这条指示属于 A1 权威域律中的"有权者决定"域，Founder 有权做这个决定。但如实记录其含义：`M3_ENGINEERING_TASK_CONTRACT_v1.2.yaml` 原文写明"Qwen is an independent semantic verifier, not default fallback or substitute for main acceptance"且验收要求"M3-AC-00 through M3-AC-20 all PASS"——按契约原文，跳过 Qwen 意味着依赖 Qwen 独立核验的验收项无法达到契约 v1.2 定义的完整 `PASS`/`DONE`。本指示不构成对该契约条款的静默修改（执行侧不能自己把契约条款改了），已如实记录指示原文与其对契约的影响；后续这些相关验收项按 Founder 指示以 `NOT_APPLICABLE` 处理（不再等待 Qwen 凭据），而不是自行回填为 `PASS`。是否需要就此正式发起契约 v1.2 的 REBASE（把 Qwen 独立核验从验收范围中移除），留给 Founder 后续决定，不在本任务自行处理。
