@@ -355,7 +355,16 @@ Matrix 长期定位权威与账号锚点身份；Campaign 目标、有效期、�
 | 失败 | 出现自动 fallback 到 Qwen；或 Prompt 文件存在/一次成功响应被当作通过 |
 | 反证探针 | 附件未加载条件下运行服装类请求：输出必须承认未加载而非凭记忆补行业惯例 |
 | 取证阶段 | EP-06 |
-| 本轮状态 | `NOT_VERIFIED` |
+| 本轮状态 | `PASS`（Skill → 条件引用 → 直连 DeepSeek 链路，见下）；`NOT_VERIFIED`（Dify Workflow/画布链路，见下） |
+
+**EP-06 实测记录（2026-08-26）**：
+
+- 第 1 轮（commit `874bea1`，Skill 版本 `874bea1` 前）：9 次真实 DeepSeek 调用（`deepseek-v4-flash`，`temperature=0.4`，全部 `HTTP 200`），独立 Reviewer（无先前对话记忆、未读任何 Checkpoint）判定 6/7 `成功`，组 6（附件未加载）为`不足`——模型未凭记忆编惯例（不构成`失败`），但从未点名"参考资料本身未加载"，只报告了账号事实缺口，两类缺口未分列。判据本身零改动。见 `M3_ECC_RUNTIME_FIDELITY_001_VERDICT_v1.0.md`（commit `22e1600`）。
+- 修复（commit `af61b82`）：`SKILL.md` O-6 与文末〈参考文件〉两处补一句，要求缺口条目必须明确点名是附件本身未加载，不能只用具体事实缺口代替。按 A3，Skill 内容变更使全部 9 组前序证据相对新版本 `STALE`，非仅组 6。
+- 第 2 轮（commit `a990d68`，Skill 版本 `af61b82`）：全部 9 次调用重跑，另一个独立 Reviewer（新实例，未见第 1 轮判定、未见任何 Checkpoint）判定 **7/7 `成功`**。见 `M3_ECC_RUNTIME_FIDELITY_001_VERDICT_v1.1.md`（commit `de13ec1`）。
+- **未计入判定、已记录为独立观察**：组 1 变体 A 的 system prompt 实测确实附有 `references/fashion-and-market.md` 全文（`include_fashion_ref=true`），但模型输出自称"行业/季节参考文件本轮未加载"——一次关于自身上下文使用状态的不准确自述（方向是少报而非多报，未造成事实污染或编造）。这类自述准确性不在本组冻结 Oracle 范围内（Oracle 只要求账号身份/商品事实一致），按 A2 不得看到结果后加严判据，本轮不计入 AC-16 判定；登记为独立观察，需要新开版本化判据才能纳入未来验收范围，不在本 commit 内处理。
+- **画布级证据仍未建立**：Dify Console 访问凭据缺失（见 `M3_CHECKPOINT_ROUND_2.md` §8），本轮全部证据来自直连 DeepSeek API，不经过 Dify Workflow/画布；按 §12.3，画布级 AC-16 证据保持 `NOT_VERIFIED`，不受本轮直连结果影响。
+- **成本**：两轮共 18 次真实调用，`prompt_tokens≈165,268`，`completion_tokens≈200,637`（含真实 `reasoning_tokens`，`deepseek-v4-flash` 为推理模型）。
 
 ### M3-AC-17 · 纵向多周期可复现
 
