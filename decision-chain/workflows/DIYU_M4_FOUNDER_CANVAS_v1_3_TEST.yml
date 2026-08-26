@@ -574,39 +574,43 @@ workflow:
           \   return \"UPSTREAM_MISSING:\" + up\n    if art.get(\"status\") == \"STALE\":\n        return \"UPSTREAM_STALE:\"\
           \ + up\n    if art.get(\"status\") != \"USER_ACCEPTED\":\n        return \"UPSTREAM_NOT_ACCEPTED:\" + up + \":\"\
           \ + str(art.get(\"status\"))\n    if not snap.get(\"confirmed_task\"):\n        return \"NO_CONFIRMED_TASK\"\n \
-          \   return \"\"\n\n\ndef main(user_query, old_snapshot, patch, runtime_state_json):\n    uq = user_query if isinstance(user_query,\
-          \ str) else \"\"\n    raw = old_snapshot\n    if isinstance(raw, str):\n        try:\n            raw = json.loads(raw)\
-          \ if raw.strip() else {}\n        except Exception:\n            raw = None\n    snap, snap_ok = normalise_snapshot(raw)\n\
-          \    try:\n        prev_rt = json.loads(runtime_state_json) if isinstance(runtime_state_json, str) and runtime_state_json.strip()\
-          \ else {}\n    except Exception:\n        prev_rt = {}\n    if not isinstance(prev_rt, dict):\n        prev_rt =\
-          \ {}\n    runtime_state = extract_runtime(uq, prev_rt)\n    runtime_state_out = json.dumps(runtime_state, ensure_ascii=False)\n\
-          \    before = json.dumps(snap, ensure_ascii=False, sort_keys=True)\n\n    clean, patch_ok, reject = validate_patch(patch)\n\
-          \n    notes = []\n    if not snap_ok:\n        notes.append(\"SNAPSHOT_RESET\")\n\n    # ----------------------------------------------------------------\
-          \ fail open\n    # Section 19: a broken state patch must keep the old snapshot, drop to DISCUSS\n    # and still\
-          \ answer the user. It must never reach a Skill.\n    if not patch_ok:\n        snap[\"last_error\"] = \"STATE_PATCH_REJECTED:\"\
-          \ + reject\n        return {\n            \"runtime_state_json\": runtime_state_out,\n            \"snapshot_json\"\
-          : json.dumps(snap, ensure_ascii=False),\n            \"effective_route\": \"DISCUSS\",\n            \"task_goal\"\
-          : (snap.get(\"confirmed_task\") or snap.get(\"draft_task\") or {}).get(\"goal\") or \"\",\n            \"dialogue_directive\"\
-          : (\n                \"本轮状态补丁校验未通过（\" + reject + \"）。保持旧任务状态不变，\"\n                \"正常回答用户，不要声称任何确认、授权或执行已经生效。\"\
-          ),\n            \"state_saved\": \"false\",\n            \"patch_ok\": \"false\",\n            \"reject_reason\"\
-          : reject,\n            \"skill_slot\": \"none\",\n            \"turn_report\": json.dumps({\"patch_ok\": False,\
-          \ \"reject\": reject,\n                                       \"route\": \"DISCUSS\", \"state_changed\": False,\n\
-          \                                       \"notes\": notes}, ensure_ascii=False),\n        }\n\n    ri = clean[\"\
-          route_intent\"]\n    ta = clean[\"task_action\"]\n    changes = clean[\"pending_changes\"]\n    was_cancelled =\
-          \ snap.get(\"phase\") == \"CANCELLED\"\n    state_changed = False\n    route = \"DISCUSS\"\n    directive = \"\"\
-          \n    snap[\"last_error\"] = None\n\n    # Section 25: a side question raised alongside another intent must not\
-          \ be\n    # dropped just because the turn's main thrust is something else (accept,\n    # confirm, execute...).\
-          \ Captured unconditionally, independent of route.\n    side_question_logged = \"\"\n    sq = clean.get(\"side_question\"\
-          ) or \"\"\n    if sq:\n        snap.setdefault(\"open_threads\", [])\n        tid = \"thread_%03d\" % (len(snap[\"\
-          open_threads\"]) + 1)\n        snap[\"open_threads\"].append({\"id\": tid, \"text\": sq,\n                     \
-          \                \"raised_at_revision\": snap[\"revision\"], \"status\": \"OPEN\"})\n        state_changed = True\n\
-          \        side_question_logged = sq\n        notes.append(\"SIDE_QUESTION_LOGGED:\" + tid)\n\n    # -------------------------------------------------------------------\
-          \ cancel\n    if ri == \"CANCEL\" or ta == \"CANCEL\":\n        snap[\"phase\"] = \"CANCELLED\"\n        snap[\"\
-          confirmed_task\"] = None\n        snap[\"draft_task\"] = {\"goal\": None, \"target_object\": None}\n        snap[\"\
-          task_id\"] = None\n        snap[\"pending_action\"] = None\n        snap[\"candidate_skill\"] = \"NONE\"\n     \
-          \   snap[\"blocking_gap\"] = None\n        revoke_auth(snap)\n        snap[\"revision\"] += 1\n        state_changed\
-          \ = True\n        route = \"CONFIRM_TASK\"\n        directive = (\"用户已取消当前任务。确认取消已经生效、后续不会再调用任何专业 Skill，\"\n   \
-          \                  \"不要追问新任务，也不要重新提议原任务。\")\n        notes.append(\"TASK_CANCELLED\")\n\n    # ---------------------------------------------------------------\
+          \   return \"\"\n\n\ndef main(user_query, old_snapshot, patch, runtime_state_json, patch_text=\"\"):\n    uq = user_query\
+          \ if isinstance(user_query, str) else \"\"\n    raw = old_snapshot\n    if isinstance(raw, str):\n        try:\n\
+          \            raw = json.loads(raw) if raw.strip() else {}\n        except Exception:\n            raw = None\n \
+          \   snap, snap_ok = normalise_snapshot(raw)\n    try:\n        prev_rt = json.loads(runtime_state_json) if isinstance(runtime_state_json,\
+          \ str) and runtime_state_json.strip() else {}\n    except Exception:\n        prev_rt = {}\n    if not isinstance(prev_rt,\
+          \ dict):\n        prev_rt = {}\n    runtime_state = extract_runtime(uq, prev_rt)\n    runtime_state_out = json.dumps(runtime_state,\
+          \ ensure_ascii=False)\n    before = json.dumps(snap, ensure_ascii=False, sort_keys=True)\n\n    clean, patch_ok,\
+          \ reject = validate_patch(patch)\n\n    notes = []\n    if not patch_ok:\n        # M4-FND-001：structured_output\
+          \ 提取器间歇性挑错对象；模型写进 text 的补丁是对的。\n        # 用**同一个** validate_patch 再验一次 text —— 验不过照样拒，安全性质不降。\n        _c2, _ok2,\
+          \ _rj2 = validate_patch(patch_text)\n        if _ok2:\n            notes.append(\"PATCH_RECOVERED_FROM_TEXT:\" +\
+          \ reject)\n            clean, patch_ok, reject = _c2, True, \"\"\n    if not snap_ok:\n        notes.append(\"SNAPSHOT_RESET\"\
+          )\n\n    # ---------------------------------------------------------------- fail open\n    # Section 19: a broken\
+          \ state patch must keep the old snapshot, drop to DISCUSS\n    # and still answer the user. It must never reach\
+          \ a Skill.\n    if not patch_ok:\n        snap[\"last_error\"] = \"STATE_PATCH_REJECTED:\" + reject\n        return\
+          \ {\n            \"runtime_state_json\": runtime_state_out,\n            \"snapshot_json\": json.dumps(snap, ensure_ascii=False),\n\
+          \            \"effective_route\": \"DISCUSS\",\n            \"task_goal\": (snap.get(\"confirmed_task\") or snap.get(\"\
+          draft_task\") or {}).get(\"goal\") or \"\",\n            \"dialogue_directive\": (\n                \"本轮状态补丁校验未通过（\"\
+          \ + reject + \"）。保持旧任务状态不变，\"\n                \"正常回答用户，不要声称任何确认、授权或执行已经生效。\"),\n            \"state_saved\": \"\
+          false\",\n            \"patch_ok\": \"false\",\n            \"reject_reason\": reject,\n            \"skill_slot\"\
+          : \"none\",\n            \"turn_report\": json.dumps({\"patch_ok\": False, \"reject\": reject,\n               \
+          \                        \"route\": \"DISCUSS\", \"state_changed\": False,\n                                   \
+          \    \"notes\": notes}, ensure_ascii=False),\n        }\n\n    ri = clean[\"route_intent\"]\n    ta = clean[\"task_action\"\
+          ]\n    changes = clean[\"pending_changes\"]\n    was_cancelled = snap.get(\"phase\") == \"CANCELLED\"\n    state_changed\
+          \ = False\n    route = \"DISCUSS\"\n    directive = \"\"\n    snap[\"last_error\"] = None\n\n    # Section 25: a\
+          \ side question raised alongside another intent must not be\n    # dropped just because the turn's main thrust is\
+          \ something else (accept,\n    # confirm, execute...). Captured unconditionally, independent of route.\n    side_question_logged\
+          \ = \"\"\n    sq = clean.get(\"side_question\") or \"\"\n    if sq:\n        snap.setdefault(\"open_threads\", [])\n\
+          \        tid = \"thread_%03d\" % (len(snap[\"open_threads\"]) + 1)\n        snap[\"open_threads\"].append({\"id\"\
+          : tid, \"text\": sq,\n                                     \"raised_at_revision\": snap[\"revision\"], \"status\"\
+          : \"OPEN\"})\n        state_changed = True\n        side_question_logged = sq\n        notes.append(\"SIDE_QUESTION_LOGGED:\"\
+          \ + tid)\n\n    # ------------------------------------------------------------------- cancel\n    if ri == \"CANCEL\"\
+          \ or ta == \"CANCEL\":\n        snap[\"phase\"] = \"CANCELLED\"\n        snap[\"confirmed_task\"] = None\n     \
+          \   snap[\"draft_task\"] = {\"goal\": None, \"target_object\": None}\n        snap[\"task_id\"] = None\n       \
+          \ snap[\"pending_action\"] = None\n        snap[\"candidate_skill\"] = \"NONE\"\n        snap[\"blocking_gap\"]\
+          \ = None\n        revoke_auth(snap)\n        snap[\"revision\"] += 1\n        state_changed = True\n        route\
+          \ = \"CONFIRM_TASK\"\n        directive = (\"用户已取消当前任务。确认取消已经生效、后续不会再调用任何专业 Skill，\"\n                     \"不要追问新任务，也不要重新提议原任务。\"\
+          )\n        notes.append(\"TASK_CANCELLED\")\n\n    # ---------------------------------------------------------------\
           \ side topic\n    elif ri == \"SIDE_TOPIC\":\n        route = \"SIDE_TOPIC\"\n        directive = (\"用户本轮谈的是与当前任务无关的话题。正常回答，\"\
           \n                     \"不要修改任务，不要反复提醒未完成任务，也不要把话题拉回任务。\")\n        notes.append(\"SIDE_TOPIC_NO_TASK_WRITE\")\n\
           \n    elif ri == \"OUT_OF_SCOPE\":\n        route = \"OUT_OF_SCOPE\"\n        directive = (\"用户本轮的请求超出本系统边界。说明边界与当前能做什么，不要修改任务。\"\
@@ -781,18 +785,20 @@ workflow:
           : \"已生成，你已接受\",\n                 \"STALE\": \"已过期，上游变了，必须重跑\", \"FAILED\": \"上次生成没通过校验\",\n                 \"\
           DRAFT\": \"草稿\"}\n    art_bits = []\n    for s in ARTIFACT_SLOTS:\n        a = (snap.get(\"artifacts\") or {}).get(s)\n\
           \        st = (a or {}).get(\"status\")\n        art_bits.append(SLOT_CN[s] + \"=\" + (STATUS_CN.get(st, str(st))\
-          \ if st else \"尚未生成\"))\n    parts.append(\"已有结果：\" + \"；\".join(art_bits))\n    # Section 25 cont'd: surface at\
-          \ most the oldest still-open thread, and only\n    # on turns where a human will actually see this text (EXECUTE_*\
-          \ answers are\n    # 100% code-generated from the Skill Tool output, not this context block).\n    if not route.startswith(\"\
-          EXECUTE_\"):\n        open_now = [t for t in (snap.get(\"open_threads\") or [])\n                    if isinstance(t,\
-          \ dict) and t.get(\"status\") == \"OPEN\"]\n        if open_now:\n            ot = open_now[0]\n            parts.append(\"\
-          有一件你之前提到、还没细聊的事：\" + str(ot.get(\"text\") or \"\"))\n            ot[\"status\"] = \"SURFACED\"\n            state_changed\
-          \ = True\n    if snap.get(\"blocking_gap\"):\n        parts.append(\"本轮阻塞原因：\" + str(snap[\"blocking_gap\"]))\n\
-          \    if snap.get(\"last_error\"):\n        parts.append(\"最近一次错误：\" + str(snap[\"last_error\"])[:160])\n    goal\
-          \ = chr(10).join(parts)\n\n    return {\n        \"runtime_state_json\": runtime_state_out,\n        \"snapshot_json\"\
-          : json.dumps(snap, ensure_ascii=False),\n        \"effective_route\": route,\n        \"task_goal\": goal,\n   \
-          \     \"dialogue_directive\": directive,\n        \"state_saved\": \"true\" if (state_changed or actually_changed)\
-          \ else \"false\",\n        \"patch_ok\": \"true\",\n        \"reject_reason\": \"\",\n        \"skill_slot\": SKILL_TO_SLOT.get(snap.get(\"\
+          \ if st else \"尚未生成\"))\n    parts.append(\"已有结果：\" + \"；\".join(art_bits))\n    parts.append(\"这五项之间没有固定先后，也没有哪一项是其它项的前置条件。\"\
+          \n                 \"只要某一项自己需要的业务输入已经齐了，就可以直接做那一项，\"\n                 \"不需要先补跑前面的。\"\n                 \"不要向用户描述任何固定顺序或依次生成的流程，\"\
+          \n                 \"也不要提任何按钮或界面操作——这里没有按钮。\")\n    # Section 25 cont'd: surface at most the oldest still-open thread,\
+          \ and only\n    # on turns where a human will actually see this text (EXECUTE_* answers are\n    # 100% code-generated\
+          \ from the Skill Tool output, not this context block).\n    if not route.startswith(\"EXECUTE_\"):\n        open_now\
+          \ = [t for t in (snap.get(\"open_threads\") or [])\n                    if isinstance(t, dict) and t.get(\"status\"\
+          ) == \"OPEN\"]\n        if open_now:\n            ot = open_now[0]\n            parts.append(\"有一件你之前提到、还没细聊的事：\"\
+          \ + str(ot.get(\"text\") or \"\"))\n            ot[\"status\"] = \"SURFACED\"\n            state_changed = True\n\
+          \    if snap.get(\"blocking_gap\"):\n        parts.append(\"本轮阻塞原因：\" + str(snap[\"blocking_gap\"]))\n    if snap.get(\"\
+          last_error\"):\n        parts.append(\"最近一次错误：\" + str(snap[\"last_error\"])[:160])\n    goal = chr(10).join(parts)\n\
+          \n    return {\n        \"runtime_state_json\": runtime_state_out,\n        \"snapshot_json\": json.dumps(snap,\
+          \ ensure_ascii=False),\n        \"effective_route\": route,\n        \"task_goal\": goal,\n        \"dialogue_directive\"\
+          : directive,\n        \"state_saved\": \"true\" if (state_changed or actually_changed) else \"false\",\n       \
+          \ \"patch_ok\": \"true\",\n        \"reject_reason\": \"\",\n        \"skill_slot\": SKILL_TO_SLOT.get(snap.get(\"\
           candidate_skill\"), \"none\")\n                      if route.startswith(\"EXECUTE_\") else \"none\",\n        \"\
           turn_report\": json.dumps({\n            \"patch_ok\": True, \"route_intent\": ri, \"task_action\": ta,\n      \
           \      \"effective_route\": route, \"revision\": snap[\"revision\"],\n            \"phase\": snap[\"phase\"], \"\
@@ -849,6 +855,10 @@ workflow:
           - conversation
           - production_runtime_state
           variable: runtime_state_json
+        - value_selector:
+          - v1_shadow
+          - text
+          variable: patch_text
       height: 80
       id: v1_state
       position:

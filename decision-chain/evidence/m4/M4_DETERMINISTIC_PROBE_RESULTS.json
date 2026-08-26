@@ -1,9 +1,9 @@
 {
   "evidence_grade": "DETERMINISTIC_NODE_VERIFIED",
   "runtime_verified": false,
-  "total": 95,
-  "pass": 95,
-  "fail": 0,
+  "total": 101,
+  "pass": 100,
+  "fail": 1,
   "not_verified": 0,
   "results": [
     {
@@ -554,9 +554,15 @@
     },
     {
       "probe": "N-56",
-      "name": "v1_state 相对 M1 原文的差异恰好等于 NEXT_SKILL 与 UPSTREAM_OF 两处定义",
+      "name": "[v0.1 冻结口径] 差异恰好 6 行、恰好属于 NEXT_SKILL 与 UPSTREAM_OF 两处定义",
+      "result": "FAIL",
+      "detail": "实测：行数 743->755（v0.1 要求不变），差异块 5 个（要求 2 个），涉及行 19（要求 6）。超出部分是 M4-FND-001 与 M4-FND-003 两处后续补丁 —— 授权边界确实从两处扩到了四处。权威事件见判据合同 §9；**旧口径不因新授权而追溯变绿**，故如实记 FAIL。新口径见 N-59。"
+    },
+    {
+      "probe": "N-59",
+      "name": "[新口径] 差异全部落在已登记的 5 处补丁内，无第三方改动",
       "result": "PASS",
-      "detail": "行数 743->743 变更行数=6 涉及=['NEXT_SKILL', 'UPSTREAM_OF']"
+      "detail": "行数 743->755（期望净增 12）越界项=无。**这条不能替代 N-56**：允许集由登记表派生，只能证明「没有未登记的改动」，不能证明「授权边界本身没被放宽」——后者要靠 N-56 与权威事件记录。"
     },
     {
       "probe": "N-56",
@@ -575,6 +581,36 @@
       "name": "代码节点里没有把 JSON 的 true/false/null 当成 Python 字面量",
       "result": "PASS",
       "detail": "命中：无"
+    },
+    {
+      "probe": "N-58",
+      "name": "structured_output 是schema 片段时，从 text 回收补丁并正常执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_CONTENT_BRIEF notes=['PATCH_RECOVERED_FROM_TEXT:PATCH_UNKNOWN_FIELDS:description,enum,type', 'SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:CONTENT_BRIEF', 'EXECUTION_AUTHORIZED:CONTENT_BRIEF']"
+    },
+    {
+      "probe": "N-58",
+      "name": "structured_output 是pending_action 对象时，从 text 回收补丁并正常执行",
+      "result": "PASS",
+      "detail": "route=EXECUTE_CONTENT_BRIEF notes=['PATCH_RECOVERED_FROM_TEXT:PATCH_UNKNOWN_FIELDS:confirmation_id,kind,task_revision', 'SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:CONTENT_BRIEF', 'EXECUTION_AUTHORIZED:CONTENT_BRIEF']"
+    },
+    {
+      "probe": "N-58",
+      "name": "text 也是坏补丁时仍然拒绝（兜底不放松安全性质）",
+      "result": "PASS",
+      "detail": "patch_ok=false route=DISCUSS reject=PATCH_UNKNOWN_FIELDS:description,enum,type"
+    },
+    {
+      "probe": "N-58",
+      "name": "structured_output 正常时不触发兜底，行为与打补丁前一致",
+      "result": "PASS",
+      "detail": "route=EXECUTE_CONTENT_BRIEF notes=['SKILL_AUTHORIZED_BY_EXPLICIT_REQUEST:CONTENT_BRIEF', 'EXECUTION_AUTHORIZED:CONTENT_BRIEF']"
+    },
+    {
+      "probe": "N-58",
+      "name": "不传 patch_text 时向后兼容，不抛异常",
+      "result": "PASS",
+      "detail": "route=EXECUTE_CONTENT_BRIEF"
     }
   ]
 }

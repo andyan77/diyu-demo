@@ -167,6 +167,19 @@ REAL_TRADEOFF = CT_M3 + """
 candidate_axes_note: 两条路径在 核心矛盾 / 叙事发动机 / 人物关系 / 信息释放顺序 上均不同
 """
 
+# FX-M4-NO-TRADEOFF（夹具包 §13）：事实只支持一个核心矛盾，只有一条合理路径。
+# 就是不带取舍轴标注的 CT_M3 —— 判据是「直接给推荐、候选数=1」，凑候选才是缺陷。
+NO_TRADEOFF = CT_M3
+
+# FX-M4-MIXED-GOALS（夹具包 §9）：周期层混合目标进单条 Brief。
+MIXED_GOALS = CT_M3.replace(
+    "objective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n"
+    "  goal_family: LONG_TERM_VALUE",
+    "objective:\n  primary_goal: 让目标顾客形成分层判断\n"
+    "  goal_family: MIXED\n"
+    "  cycle_goals: [\"长期价值\", \"起号\", \"到店转化\"]\n"
+    "  secondary_goals: [\"为到店留自然入口\"]")
+
 GOAL_A = CT_M3
 GOAL_B = CT_M3.replace("goal_family: LONG_TERM_VALUE", "goal_family: LEADS").replace(
     "primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断",
@@ -679,16 +692,62 @@ def probe_canvas_linear_lock_removed():
     cn = {n["id"]: n for n in cv["workflow"]["graph"]["nodes"]}
     a = mn["v1_state"]["data"]["code"].splitlines()
     b = cn["v1_state"]["data"]["code"].splitlines()
-    changed = [i for i, (x, y) in enumerate(zip(a, b)) if x != y]
-    ok_len = len(a) == len(b)
-    touched = set()
-    for i in changed:
-        touched.add("NEXT_SKILL" if a[i].startswith(("NEXT_SKILL", '              "')) else
-                    "UPSTREAM_OF" if a[i].startswith(("UPSTREAM_OF", '               "')) else
-                    "OTHER:" + a[i][:40])
-    check("N-56", "v1_state 相对 M1 原文的差异恰好等于 NEXT_SKILL 与 UPSTREAM_OF 两处定义",
-          ok_len and touched == {"NEXT_SKILL", "UPSTREAM_OF"} and len(changed) == 6,
-          "行数 %d->%d 变更行数=%d 涉及=%s" % (len(a), len(b), len(changed), sorted(touched)))
+    # ---- N-56：保持 v0.1 冻结口径不动 ----
+    # 冻结原文（判据合同 §8.2）：「差异恰好 6 行、恰好属于 NEXT_SKILL 与 UPSTREAM_OF
+    # 两处定义」，oracle =「本次授权范围本身」。
+    #
+    # 独立 Reviewer（FND-R-03）指出：把这条判据的允许集改成「由生成器自己的补丁
+    # 登记表派生」，等于让被测物定义自己的通过条件，且当时已就地覆盖证据文件为 PASS。
+    # **这条意见成立。** 已回退：N-56 恢复 v0.1 原文口径，当前产物在这个口径下
+    # 就是 FAIL —— 因为授权边界确实从「两处」扩到了「四处」。
+    # 那次扩边界有权威事件（见判据合同 §9），但**权威事件不能追溯地把旧口径变成 PASS**。
+    # 新口径另起编号 N-59，两条并列上报：旧边界被突破是事实，新边界成立也是事实。
+    import difflib as _dl
+    sm = _dl.SequenceMatcher(None, a, b, autojunk=False)
+    blocks = [op for op in sm.get_opcodes() if op[0] != "equal"]
+    v01_lines = 0
+    v01_only_two_defs = True
+    for tag, i1, i2, j1, j2 in blocks:
+        v01_lines += max(i2 - i1, j2 - j1)
+        for ln in a[i1:i2]:
+            if not (ln.startswith(("NEXT_SKILL", "UPSTREAM_OF"))
+                    or ln.startswith(('              "', '               "'))):
+                v01_only_two_defs = False
+    v01_ok = (len(a) == len(b) and len(blocks) == 2
+              and v01_lines == 6 and v01_only_two_defs)
+    check("N-56", "[v0.1 冻结口径] 差异恰好 6 行、恰好属于 NEXT_SKILL 与 UPSTREAM_OF 两处定义",
+          v01_ok,
+          "实测：行数 %d->%d（v0.1 要求不变），差异块 %d 个（要求 2 个），涉及行 %d（要求 6）。"
+          "超出部分是 M4-FND-001 与 M4-FND-003 两处后续补丁 —— 授权边界确实从两处扩到了四处。"
+          "权威事件见判据合同 §9；**旧口径不因新授权而追溯变绿**，故如实记 FAIL。新口径见 N-59。"
+          % (len(a), len(b), len(blocks), v01_lines))
+
+    # ---- N-59：新口径（登记表派生），另起编号，不覆盖 N-56 ----
+    import importlib.util as _iu
+    _sp = _iu.spec_from_file_location("m4b", os.path.join(DC_WF, "DIYU_M4_DSL_BUILD_v0.1.py"))
+    _bm = _iu.module_from_spec(_sp)
+    _sp.loader.exec_module(_bm)
+    allowed_minus, allowed_plus = set(), set()
+    for old, new in _bm.V1_STATE_PATCHES:
+        allowed_minus |= set(old.splitlines())
+        allowed_plus |= set(new.splitlines())
+    expected_added = sum(len(new.splitlines()) - len(old.splitlines())
+                         for old, new in _bm.V1_STATE_PATCHES)
+    stray = []
+    for line in difflib.unified_diff(a, b, lineterm="", n=0):
+        if line.startswith(("---", "+++", "@@")):
+            continue
+        if line.startswith("-") and line[1:] not in allowed_minus:
+            stray.append("越界删除：" + line[1:][:60])
+        elif line.startswith("+") and line[1:] not in allowed_plus:
+            stray.append("越界新增：" + line[1:][:60])
+    check("N-59", "[新口径] 差异全部落在已登记的 %d 处补丁内，无第三方改动"
+          % len(_bm.V1_STATE_PATCHES),
+          (len(b) - len(a)) == expected_added and not stray,
+          "行数 %d->%d（期望净增 %d）越界项=%s。"
+          "**这条不能替代 N-56**：允许集由登记表派生，只能证明「没有未登记的改动」，"
+          "不能证明「授权边界本身没被放宽」——后者要靠 N-56 与权威事件记录。"
+          % (len(a), len(b), expected_added, stray or "无"))
 
     same = json.dumps(mn["v1_shadow"]["data"], ensure_ascii=False, sort_keys=True) == \
            json.dumps(cn["v1_shadow"]["data"], ensure_ascii=False, sort_keys=True)
@@ -746,6 +805,69 @@ def probe_all_code_nodes_importable():
           not leaks, "命中：" + ("；".join(leaks[:10]) if leaks else "无"))
 
 
+# ---------------------------------------------------------------------------
+# N-58：M4-FND-001 的 text 兜底
+#
+# 夹具不是编的 —— 下面两个坏载荷是 2026-08-26 从画布**线上运行**里实际抓到的
+# structured_output 值（一个是 schema 里 continue_signal 自己的属性定义，
+# 一个是被注入快照里的 pending_action 对象）。
+# ---------------------------------------------------------------------------
+
+BAD_SO_SCHEMA_FRAGMENT = {
+    "description": "用户是否表达了「接受后继续下一步」。只有用户真的表达了继续才填 YES。",
+    "enum": ["YES", "NO"], "type": "string",
+}
+BAD_SO_PENDING_ACTION = {
+    "kind": "CONFIRM_TASK", "task_revision": 1, "confirmation_id": "confirm_001",
+}
+GOOD_PATCH = {
+    "route_intent": "EXECUTE_REQUEST", "task_action": "NONE", "change_goal": "",
+    "change_target_object": "", "confirmation_signal": "AFFIRM",
+    "requested_skill": "CONTENT_BRIEF", "acceptance_signal": "NONE",
+    "continue_signal": "YES", "user_message_summary": "用户确认任务，要求直接给出内容制作依据。",
+    "side_question": "",
+}
+
+
+def probe_patch_text_fallback():
+    main = load_node_code(CANVAS, "v1_state", preload={"json": json})
+    snap = _canvas_snap()
+
+    for label, bad in [("schema 片段", BAD_SO_SCHEMA_FRAGMENT),
+                       ("pending_action 对象", BAD_SO_PENDING_ACTION)]:
+        r = main("确认这个任务。直接给我这条内容的制作依据。", json.dumps(snap),
+                 bad, "", json.dumps(GOOD_PATCH))
+        tr = json.loads(r["turn_report"]) if r.get("patch_ok") == "true" else {}
+        notes = tr.get("notes") or []
+        check("N-58", "structured_output 是%s时，从 text 回收补丁并正常执行" % label,
+              r["effective_route"] == "EXECUTE_CONTENT_BRIEF"
+              and any(n.startswith("PATCH_RECOVERED_FROM_TEXT:") for n in notes),
+              "route=%s notes=%s" % (r["effective_route"], notes))
+
+    # 安全性质：两边都坏，必须照样拒 —— 兜底不得变成放行
+    r2 = main("确认这个任务。", json.dumps(snap), BAD_SO_SCHEMA_FRAGMENT, "",
+              json.dumps(BAD_SO_PENDING_ACTION))
+    check("N-58", "text 也是坏补丁时仍然拒绝（兜底不放松安全性质）",
+          r2.get("patch_ok") == "false" and r2["effective_route"] == "DISCUSS"
+          and r2.get("reject_reason", "").startswith("PATCH_UNKNOWN_FIELDS"),
+          "patch_ok=%s route=%s reject=%s"
+          % (r2.get("patch_ok"), r2["effective_route"], r2.get("reject_reason")))
+
+    # 正常路径不受影响：structured_output 好的时候不得留下回收痕迹
+    r3 = main("确认这个任务。直接给我这条内容的制作依据。", json.dumps(snap),
+              GOOD_PATCH, "", json.dumps(GOOD_PATCH))
+    notes3 = json.loads(r3["turn_report"]).get("notes") or []
+    check("N-58", "structured_output 正常时不触发兜底，行为与打补丁前一致",
+          r3["effective_route"] == "EXECUTE_CONTENT_BRIEF"
+          and not any(n.startswith("PATCH_RECOVERED_FROM_TEXT") for n in notes3),
+          "route=%s notes=%s" % (r3["effective_route"], notes3))
+
+    # 兜底缺省时（老调用方不传 patch_text）不得炸
+    r4 = main("确认这个任务。直接给我这条内容的制作依据。", json.dumps(snap), GOOD_PATCH, "")
+    check("N-58", "不传 patch_text 时向后兼容，不抛异常",
+          r4["effective_route"] == "EXECUTE_CONTENT_BRIEF", "route=%s" % r4["effective_route"])
+
+
 def main():
     probe_sufficiency()
     probe_goal_fidelity_readonly()
@@ -761,6 +883,7 @@ def main():
     probe_provider_binding_honesty()
     probe_canvas_linear_lock_removed()
     probe_all_code_nodes_importable()
+    probe_patch_text_fallback()
 
     n_pass = sum(1 for r in RESULTS if r["result"] == "PASS")
     n_fail = sum(1 for r in RESULTS if r["result"] == "FAIL")

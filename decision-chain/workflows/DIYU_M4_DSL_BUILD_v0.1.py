@@ -1542,6 +1542,68 @@ V1_STATE_PATCHES = [
         '               "production_stage1": None,\n'
         '               "publishing_stage2": None}',
     ),
+    # ---- 第三处：M4-FND-001（Founder 2026-08-26 定性为施工范畴内）----
+    #
+    # 现象：Founder 画布上说「确认这个任务」，约两成概率系统回「你的确认没有成功记录」。
+    # 根因（实测，非推断）：v1_state.patch 接在 v1_shadow.structured_output 上，
+    # 而 Dify 1.16.1 的 structured output 提取器会**间歇性挑错 JSON 对象** ——
+    # 实测抓到两种：一次挑中 schema 里 continue_signal 自己的属性定义
+    # {description, enum, type}，一次挑中被注入快照里的 pending_action
+    # {kind, task_revision, confirmation_id}。
+    # 同一次执行里，模型写进 `text` 的补丁**是完整正确的**。
+    # 画布全部 10 次影子执行：text 合法 10/10，structured_output 合法 8/10，两者同时坏 0 次。
+    #
+    # 修法：不动校验器，改接线 —— structured_output 验不过时，用**同一个**
+    # validate_patch 再验一次 text。验不过照样拒，安全性质一分不降；
+    # 每次回收都记进 notes 备审。
+    #
+    # 明确**没有**采用的修法：让 validate_patch 丢掉未知字段继续。
+    # 那个修法在失败样本 A 上根本无效（合法字段数为 0，丢完是空对象），
+    # 而且会放行部分补丁，削弱「坏补丁不得到达 Skill」这条安全性质。
+    (
+        'def main(user_query, old_snapshot, patch, runtime_state_json):',
+        'def main(user_query, old_snapshot, patch, runtime_state_json, patch_text=""):',
+    ),
+    (
+        '    clean, patch_ok, reject = validate_patch(patch)\n'
+        '\n'
+        '    notes = []\n',
+
+        '    clean, patch_ok, reject = validate_patch(patch)\n'
+        '\n'
+        '    notes = []\n'
+        '    if not patch_ok:\n'
+        '        # M4-FND-001：structured_output 提取器间歇性挑错对象；模型写进 text 的补丁是对的。\n'
+        '        # 用**同一个** validate_patch 再验一次 text —— 验不过照样拒，安全性质不降。\n'
+        '        _c2, _ok2, _rj2 = validate_patch(patch_text)\n'
+        '        if _ok2:\n'
+        '            notes.append("PATCH_RECOVERED_FROM_TEXT:" + reject)\n'
+        '            clean, patch_ok, reject = _c2, True, ""\n',
+    ),
+    # ---- 第四处：M4-FND-003（固定顺序叙述残留）----
+    #
+    # 现象（实测抓到）：画布没走到 M4 的那些轮次里，对话节点对用户说
+    # 「会依次产出账号矩阵、决策包和内容 Brief」「在系统里点开始生成」——
+    # 前半句是上位合同已废止的固定顺序，后半句是编出来的、不存在的界面操作。
+    #
+    # 根因：v1_state 拼给对话节点的上下文里，五项产物按 ARTIFACT_SLOTS 的
+    # 流水线顺序列出，且**没有任何一句**说明它们之间没有先后。
+    # 对话节点只能照着这个排列去推，于是推出了流水线。
+    #
+    # 修法：在同一处再追加一句，把「无固定先后」写成显式事实。纯追加，
+    # 不改既有任何一行，不动 art_bits 的取值逻辑。
+    # 这一处明确属于 M4 施工范围：统一能力合同 §2 FIXED_ORDER: false /
+    # REQUIRED_ALWAYS: []，以及 CLAUDE.md §3「Campaign 既不默认调用，也不默认绕过」。
+    (
+        '    parts.append("已有结果：" + "；".join(art_bits))\n',
+
+        '    parts.append("已有结果：" + "；".join(art_bits))\n'
+        '    parts.append("这五项之间没有固定先后，也没有哪一项是其它项的前置条件。"\n'
+        '                 "只要某一项自己需要的业务输入已经齐了，就可以直接做那一项，"\n'
+        '                 "不需要先补跑前面的。"\n'
+        '                 "不要向用户描述任何固定顺序或依次生成的流程，"\n'
+        '                 "也不要提任何按钮或界面操作——这里没有按钮。")\n',
+    ),
 ]
 
 
@@ -1564,11 +1626,14 @@ def verify_v1_state_patch(src_code, patched_code):
     for old, new in V1_STATE_PATCHES:
         allowed_minus |= set(old.splitlines())
         allowed_plus |= set(new.splitlines())
+    expected_added = sum(len(new.splitlines()) - len(old.splitlines())
+                         for old, new in V1_STATE_PATCHES)
     bad = []
     a = src_code.splitlines()
     b = patched_code.splitlines()
-    if len(a) != len(b):
-        bad.append("行数变化 %d -> %d（补丁必须逐行等量替换）" % (len(a), len(b)))
+    if len(b) - len(a) != expected_added:
+        bad.append("行数变化 %d -> %d，期望净增 %d（多出的行不属于任何已登记补丁）"
+                   % (len(a), len(b), expected_added))
     for line in difflib.unified_diff(a, b, lineterm="", n=0):
         if line.startswith(("---", "+++", "@@")):
             continue
@@ -1742,6 +1807,11 @@ def build_founder_canvas():
             if _bad:
                 raise SystemExit("v1_state 外科补丁越界：\n  " + "\n  ".join(_bad))
             n["data"]["code"] = _new
+            # M4-FND-001：把影子的 text 也接进来做兜底输入。
+            _vars = n["data"].setdefault("variables", [])
+            if not any(v.get("variable") == "patch_text" for v in _vars):
+                _vars.append({"value_selector": ["v1_shadow", "text"],
+                              "variable": "patch_text"})
             patched += 1
         nodes.append(n)
     if patched != 1:
@@ -2006,6 +2076,11 @@ def cmd_verify():
                 # M4-BLK-002：只有这个节点被授权改动，且差异必须恰好等于两处外科补丁。
                 _src = expect["code"]
                 expect["code"] = apply_v1_state_patch(_src)
+                # M4-FND-001 的第三处补丁同时改了节点输入变量，期望基线要一并算上
+                _ev = expect.setdefault("variables", [])
+                if not any(v.get("variable") == "patch_text" for v in _ev):
+                    _ev.append({"value_selector": ["v1_shadow", "text"],
+                                "variable": "patch_text"})
                 _bad = verify_v1_state_patch(_src, expect["code"])
                 if _bad:
                     fails.append("CANVAS: v1_state 外科补丁越界 -> " + "；".join(_bad))
@@ -2022,11 +2097,16 @@ def cmd_verify():
                         fails.append("CANVAS: v1_state 仍残留线性锁片段 %s" % _lock)
                 if "DOWNSTREAM_OF_SLOT" not in _live:
                     fails.append("CANVAS: v1_state 的 DOWNSTREAM_OF_SLOT 被误删（A3 保守失效必须保留）")
+                if "PATCH_RECOVERED_FROM_TEXT" not in _live:
+                    fails.append("CANVAS: v1_state 缺少 M4-FND-001 的 text 兜底（补丁未生效）")
+                if not any(v.get("variable") == "patch_text"
+                           for v in (cn[nid]["data"].get("variables") or [])):
+                    fails.append("CANVAS: v1_state 未接入 patch_text 输入变量（兜底拿不到 text）")
             a = json.dumps(cn[nid]["data"], ensure_ascii=False, sort_keys=True)
             b2 = json.dumps(expect, ensure_ascii=False, sort_keys=True)
             if a != b2:
                 fails.append("CANVAS: M1 节点 %s 的 data 与授权基线不一致"
-                             "（除 M4-BLK-002 两处外科补丁外必须逐字节复用）" % nid)
+                             "（除已登记的三处外科补丁外必须逐字节复用）" % nid)
         # 画布内不得出现第二个自然语言意图识别节点
         llms = [n for n in cn.values() if n["data"].get("type") == "llm"]
         extra = [n["id"] for n in llms if n["id"] not in ("v1_shadow", "v1_chat_llm")]
