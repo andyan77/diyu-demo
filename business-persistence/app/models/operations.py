@@ -88,3 +88,47 @@ class CampaignOverride(Base, UUIDPKMixin, CreatedAtMixin, OptimisticVersionMixin
     # free text: "active" | "ended" | "cancelled" -- not a physical enum
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="active")
     ended_at = tz_datetime_column(nullable=True)
+
+
+class CycleDecision(Base, UUIDPKMixin, CreatedAtMixin):
+    """M3's recorded verdict after evaluating a cycle's evidence: either it
+    proposed and applied an N+1 adjustment (a new Cycle was created via
+    create_cycle; resulting_cycle_id points at it), or it looked at the same
+    evidence and explicitly decided to keep the current cycle unchanged.
+    Without this row, M2 could only ever show cycles changing -- there was
+    no way to observe "evaluated and deliberately held" versus "never
+    looked at". M2 only records which branch happened and the source/
+    rationale a caller supplied; it never computes or validates whether the
+    decision itself was the right call -- that judgment stays M3's.
+    """
+
+    __tablename__ = "cycle_decisions"
+    __table_args__ = (
+        Index("ix_cycle_decisions_workspace_id", "workspace_id"),
+        Index("ix_cycle_decisions_account_id", "account_id"),
+        UniqueConstraint(
+            "workspace_id", "idempotency_key", name="uq_cycle_decision_workspace_idempotency"
+        ),
+    )
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("workspaces.id"), nullable=False
+    )
+    account_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("accounts.id"), nullable=False
+    )
+    cycle_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("cycles.id"), nullable=False
+    )
+    # structural outcome only -- "adjusted" | "kept_unchanged" -- not a
+    # judgment of whether the decision was good
+    decision: Mapped[str] = mapped_column(String(32), nullable=False)
+    source: Mapped[Optional[str]] = mapped_column(String(255))
+    rationale: Mapped[Optional[str]] = mapped_column(String(4096))
+    based_on: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    # required and must supersede cycle_id when decision="adjusted"; must be
+    # null when decision="kept_unchanged" -- enforced in the API layer
+    resulting_cycle_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("cycles.id")
+    )
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(255))

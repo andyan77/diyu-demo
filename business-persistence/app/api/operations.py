@@ -11,7 +11,7 @@ from app.api.deps import MembershipContext, require_membership
 from app.api.serialize import row_to_dict
 from app.db import get_db
 from app.models.identity import Account
-from app.models.operations import CampaignOverride, Cycle
+from app.models.operations import CampaignOverride, Cycle, CycleDecision
 
 router = APIRouter(tags=["operations"])
 
@@ -148,6 +148,122 @@ def list_cycles(
         .order_by(Cycle.created_at.desc())
     ).scalars().all()
     return [row_to_dict(c) for c in rows]
+
+
+class RecordCycleDecisionRequest(BaseModel):
+    idempotency_key: str
+    cycle_id: uuid.UUID
+    decision: str  # "adjusted" | "kept_unchanged"
+    source: str | None = None
+    rationale: str | None = None
+    based_on: dict = {}
+    resulting_cycle_id: uuid.UUID | None = None
+
+
+@router.post("/workspaces/{workspace_id}/accounts/{account_id}/cycles/decisions")
+def record_cycle_decision(
+    workspace_id: uuid.UUID,
+    account_id: uuid.UUID,
+    body: RecordCycleDecisionRequest,
+    db: Session = Depends(get_db),
+    ctx: MembershipContext = Depends(require_membership),
+):
+    """Records M3's verdict after evaluating a cycle -- M2 never makes this
+    call itself, it only persists what the caller (M3, or a contract-test
+    stand-in for it) asserts. decision="adjusted" must be paired with a
+    cycle that was actually created via POST .../cycles and supersedes the
+    evaluated cycle; decision="kept_unchanged" must not reference a
+    resulting cycle at all -- the current cycle stays exactly what it was,
+    this call only makes the evaluate-and-hold decision observable instead
+    of leaving it invisible.
+    """
+
+    _require_account_in_workspace(db, workspace_id, account_id)
+
+    existing = db.execute(
+        select(CycleDecision).where(
+            CycleDecision.workspace_id == workspace_id,
+            CycleDecision.idempotency_key == body.idempotency_key,
+        )
+    ).scalar_one_or_none()
+    if existing:
+        return row_to_dict(existing)
+
+    cycle = db.get(Cycle, body.cycle_id)
+    if cycle is None or cycle.workspace_id != workspace_id or cycle.account_id != account_id:
+        raise HTTPException(status_code=404, detail="cycle not found for this account")
+
+    if body.decision not in ("adjusted", "kept_unchanged"):
+        raise HTTPException(
+            status_code=422, detail="decision must be 'adjusted' or 'kept_unchanged'"
+        )
+
+    if body.decision == "adjusted":
+        if body.resulting_cycle_id is None:
+            raise HTTPException(
+                status_code=422, detail="decision='adjusted' requires resulting_cycle_id"
+            )
+        resulting = db.get(Cycle, body.resulting_cycle_id)
+        if (
+            resulting is None
+            or resulting.workspace_id != workspace_id
+            or resulting.account_id != account_id
+            or resulting.supersedes_cycle_id != body.cycle_id
+        ):
+            raise HTTPException(
+                status_code=422,
+                detail="resulting_cycle_id must be a cycle for this account that supersedes cycle_id",
+            )
+    elif body.resulting_cycle_id is not None:
+        raise HTTPException(
+            status_code=422, detail="decision='kept_unchanged' must not set resulting_cycle_id"
+        )
+
+    record = CycleDecision(
+        workspace_id=workspace_id,
+        account_id=account_id,
+        cycle_id=body.cycle_id,
+        decision=body.decision,
+        source=body.source,
+        rationale=body.rationale,
+        based_on=body.based_on,
+        resulting_cycle_id=body.resulting_cycle_id,
+        idempotency_key=body.idempotency_key,
+    )
+    db.add(record)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        existing = db.execute(
+            select(CycleDecision).where(
+                CycleDecision.workspace_id == workspace_id,
+                CycleDecision.idempotency_key == body.idempotency_key,
+            )
+        ).scalar_one_or_none()
+        if existing:
+            return row_to_dict(existing)
+        raise
+    db.refresh(record)
+    return row_to_dict(record)
+
+
+@router.get("/workspaces/{workspace_id}/accounts/{account_id}/cycles/decisions/latest")
+def get_latest_cycle_decision(
+    workspace_id: uuid.UUID,
+    account_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    ctx: MembershipContext = Depends(require_membership),
+):
+    record = db.execute(
+        select(CycleDecision)
+        .where(CycleDecision.workspace_id == workspace_id, CycleDecision.account_id == account_id)
+        .order_by(CycleDecision.created_at.desc())
+        .limit(1)
+    ).scalar_one_or_none()
+    if record is None:
+        return {"decision": "none_recorded"}
+    return row_to_dict(record)
 
 
 class CreateCampaignOverrideRequest(BaseModel):

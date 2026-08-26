@@ -48,6 +48,165 @@ def test_cycle_transition_chains_history_and_flips_current(client, bootstrapped,
     assert by_id[cycle_1["id"]]["is_current"] is False
 
 
+def test_cycle_decision_kept_unchanged_is_recorded_without_touching_the_cycle(client, bootstrapped, unique):
+    """M2-AC-07's second branch: M3 evaluates a cycle's evidence and decides
+    nothing should change. That decision must be observable -- not just
+    absence of a new cycle -- and the current cycle must stay exactly as it
+    was (no row touched, no version bump).
+    """
+
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+
+    cycle = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-keep-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-keep-{unique}",
+            "start_at": "2026-08-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+
+    r = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
+        json={
+            "idempotency_key": f"decision-keep-{unique}",
+            "cycle_id": cycle["id"],
+            "decision": "kept_unchanged",
+            "source": "M3",
+            "rationale": "反馈显示当前节奏有效，无需调整",
+            "based_on": {"feedback_ids": ["fb-1", "fb-2"]},
+        },
+        headers=headers,
+    )
+    assert r.status_code == 200, r.text
+    decision = r.json()
+    assert decision["decision"] == "kept_unchanged"
+    assert decision["resulting_cycle_id"] is None
+    assert decision["source"] == "M3"
+
+    latest = client.get(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions/latest", headers=headers
+    ).json()
+    assert latest["id"] == decision["id"]
+
+    still_current = client.get(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/current", headers=headers
+    ).json()
+    assert still_current["id"] == cycle["id"]
+    assert still_current["row_version"] == cycle["row_version"], (
+        "recording a kept_unchanged decision must not touch the cycle row at all"
+    )
+
+
+def test_cycle_decision_adjusted_must_reference_a_real_superseding_cycle(client, bootstrapped, unique):
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+
+    cycle_1 = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-adj-1-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-adj-1-{unique}",
+            "start_at": "2026-08-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+    cycle_2 = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-adj-2-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-adj-2-{unique}",
+            "start_at": "2026-09-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+
+    r = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
+        json={
+            "idempotency_key": f"decision-adj-{unique}",
+            "cycle_id": cycle_1["id"],
+            "decision": "adjusted",
+            "source": "M3",
+            "rationale": "完播率下降，建议提高节奏",
+            "resulting_cycle_id": cycle_2["id"],
+        },
+        headers=headers,
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["resulting_cycle_id"] == cycle_2["id"]
+
+    retry = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
+        json={
+            "idempotency_key": f"decision-adj-{unique}",
+            "cycle_id": cycle_1["id"],
+            "decision": "adjusted",
+            "resulting_cycle_id": cycle_2["id"],
+        },
+        headers=headers,
+    )
+    assert retry.status_code == 200
+    assert retry.json()["id"] == r.json()["id"], "same idempotency_key must not create a second decision row"
+
+
+def test_cycle_decision_rejects_mismatched_decision_and_resulting_cycle(client, bootstrapped, unique):
+    ws_id = bootstrapped["workspace"]["id"]
+    account_id = bootstrapped["account"]["id"]
+    headers = bootstrapped["headers"]
+
+    cycle_1 = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-neg-1-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-neg-1-{unique}",
+            "start_at": "2026-08-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+    cycle_2 = client.post(
+        f"/workspaces/{ws_id}/cycles",
+        json={
+            "idempotency_key": f"cycle-neg-2-{unique}",
+            "account_id": account_id,
+            "label": f"cycle-neg-2-{unique}",
+            "start_at": "2026-09-01T00:00:00Z",
+        },
+        headers=headers,
+    ).json()
+
+    adjusted_without_target = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
+        json={
+            "idempotency_key": f"decision-neg-1-{unique}",
+            "cycle_id": cycle_1["id"],
+            "decision": "adjusted",
+        },
+        headers=headers,
+    )
+    assert adjusted_without_target.status_code == 422
+
+    kept_with_target = client.post(
+        f"/workspaces/{ws_id}/accounts/{account_id}/cycles/decisions",
+        json={
+            "idempotency_key": f"decision-neg-2-{unique}",
+            "cycle_id": cycle_1["id"],
+            "decision": "kept_unchanged",
+            "resulting_cycle_id": cycle_2["id"],
+        },
+        headers=headers,
+    )
+    assert kept_with_target.status_code == 422
+
+
 def test_cycle_idempotency_key_is_scoped_per_workspace(client, unique):
     """Regression for the confirmed cross-workspace write-corruption finding:
     create_cycle's "prior current cycle" lookup, and its idempotency check,
