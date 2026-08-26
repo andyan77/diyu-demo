@@ -1874,4 +1874,16 @@ Founder 在本会话中通过 Dify Studio 实际运行候选画布，产出真�
 | `M2-AC-17` | 转 `PASS`——Founder 已通过 Dify 画布完成产品/业务验收并明确接受 |
 | 合并执行 | 任务分支（最终 head `74bc9e32627b290c93827a4ff83b2bc79aa9befd`）以 `git merge --no-ff` 合并进 `main`，合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`；唯一冲突为 `collab-ledger/L1_TASK_MANIFESTS.md` 顶部索引表一处插入位置重叠（非逻辑冲突，两个不同 task_id 的索引行插入到同一位置），已保留双方内容并为本任务的起点登记行追加指向 §T-011～§T-011.6 的说明 |
 | 合并后核验（六项，逐条对应 Founder 提出的收口检查清单） | (1) 远程 main 真实包含本次交付——`git push` 后 `git fetch` 复核本地/远程一致于 `17f5e57`，`git ls-tree` 确认 `business-persistence/` 56 个文件在远端真实存在；(2) 合并内容与已验收候选一致——`git diff task/m2-... main -- business-persistence/` 输出为空，字节级一致；(3) 受保护合同/共享资产/既有能力无退化——`git diff --stat` 排除 `business-persistence/`、`collab-ledger/` 后输出为空；(4) 必要回归通过——合并后现场重跑 `pytest tests/ -q` → 69 passed；(5) 目标 Dify 候选仍与最终代码相符——验收运行所用容器代码已确认与合并后 `main` 字节一致，容器未重建；(6) Git/账本/证据绑定更新完成——即本条与 `M2_ACCEPTANCE_EVIDENCE.md`/`M2_REBASE_ERRATA_001_RECORD.md`/L1/L2 的同步更新 |
-| **任务终态（最终，取代 ATT-005 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论；合并 main 本身是本次单独明确授权的动作，非 `DONE` 状态自动带来的权限 |
+| **任务终态（ATT-006 时点，历史记录，见 ATT-007）** | `execution_disposition = CONTINUE`；`task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论；合并 main 本身是本次单独明确授权的动作，非 `DONE` 状态自动带来的权限 |
+
+### ATT-007（治理收口纠偏，`RECOVERY_TASK`，取代 ATT-006 的任务终态判定与审查预算表述，ATT-006 其余内容——Founder 亲自验收、合并 main 的既成事实——保留为历史，不回滚）
+
+Founder 指出 ATT-006 登记的终态与相关账本存在治理矛盾：(1) `execution_disposition = CONTINUE` 与 `task_final_status = DONE` 同时出现是无效字段组合；(2) `REVIEW_BUDGET_CONFORMANCE = DEVIATION` 已如实登记，但仅凭"已登记并保留"推导"没有未确认偏差"是逻辑跳步，Founder 本人的确认此前未被单独记录；(3) `L5_SIDE_EFFECTS.md` 底部"三类均无写入"的结论与该文件自身记录的 SE-015/SE-017/SE-018/SE-020 相矛盾；(4) 部分 L5 条目使用了固定六值枚举之外的状态值（`ATTEMPTED`/`BLOCKED`/`EXECUTED`）。Founder 明确指示"输出执行 prompt，让执行侧完善，把屁股擦干净"，授权以 `RECOVERY_TASK` 模式修正——不新建 task_id、不改代码/数据库/Dify，只修正治理记录本身。
+
+| 项 | 值 |
+|---|---|
+| 审查预算偏差确认（本次新增） | 偏差存在 = `true`；Founder 知悉并明确确认 = `true`（本次"把屁股擦干净"指示）；阻塞 M2 最终收口 = `false`；追认为"符合预算" = `false`。`actual_formal_review_units = 3` 与 `formal_review_budget = 1` 的差异如实保留，未被重新分类或删除 |
+| 终态字段纠偏 | 最终状态改为：`task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`；`checkpoint = null`；`active_work_package = null`；**不再登记 `execution_disposition`**（该字段专用于非终态 Checkpoint，与 `DONE` 终态组合无效） |
+| `M2-AC-13`（重申） | 继续 `FOUNDER_WAIVED`：技术未完全达标（`NOT_FULLY_MET`）、Founder 已裁决豁免（`WAIVED`）、不阻塞收口（`blocking_effect = false`），未被改写为 `PASS` |
+| L5 纠偏 | 见 `collab-ledger/L5_SIDE_EFFECTS.md` 本次新增的状态映射与 §四 更正块；本文件不重复副作用细节 |
+| 本次 Recovery 范围 | 只修改治理/证据/账本文件；`m2_engineering_code_changed = false`；`database_write_performed = false`；`dify_write_performed = false`；完整记录见 `business-persistence/M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md` |

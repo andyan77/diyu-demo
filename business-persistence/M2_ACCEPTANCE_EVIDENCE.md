@@ -79,17 +79,20 @@
 
 按 Rebase Prompt §8.3（DONE 条件）逐项核验：
 
-- 没有仍未确认的正式审查预算偏差——`REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT` 已如实登记并保留，未被隐藏或追认为"符合"；
+- 审查预算偏差（2026-08-26 治理收口纠偏，更正推论）：**仅凭"偏差已如实登记并保留"不能推导出"没有未确认偏差"**——登记与 Founder 本人的确认是两件事，此前混同。准确表述：偏差存在 = `true`（`actual_formal_review_units = 3` 超出冻结 `formal_review_budget = 1`）；Founder 知悉并明确确认该偏差 = `true`（Founder 2026-08-26 指示"输出执行 prompt，让执行侧完善，把屁股擦干净"，构成对该偏差的明确确认）；该确认阻塞 M2 最终收口 = `false`；该确认追认历史偏差为"符合预算" = `false`——`REVIEW_BUDGET_CONFORMANCE` 仍如实登记为 `DEVIATION`，不因确认而改写为"符合"，已发生的审查单元未被重新分类或删除。完整记录见 `M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`；
 - 所有最终证据绑定远端最终 commit——见下方"合并与最终证据绑定"；
 - `M2-AC-00～17` 与 `M2-RB-01～14` 全部通过（`M2-AC-13`/`M2-RB-10` 为 `FOUNDER_WAIVED`，技术事实保留，不冒充 `PASS`）；
 - 没有用模拟/测试数据声称真实运营闭环——本文件与 `FOUNDER_TEST_PACKAGE.md` 全程标明测试身份、测试数据、非真实发布；
 - 没有声称经营结果提升、生产可用、M5 完成或完整纵向链完成——本文件与合并 commit message 均明确声明这些事项**未**随本次交付授权。
 
+> **终态字段治理纠偏（2026-08-26）**：本节此前同时给出 `execution_disposition = CONTINUE` 与 `task_final_status = DONE`，这是无效组合——`CONTINUE` 只应用于非终态 Checkpoint，且要求 `task_final_status = null`。M2 已进入正式终态，`execution_disposition` 字段在最终状态块中不再适用，已移除；不改变本任务已经是 `DONE` 这一事实本身。完整纠偏记录见 `M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`。
+
 ```text
-execution_disposition = CONTINUE
 task_final_status = DONE
 module_delivery_state = DONE
 next_stage_allowed = false
+checkpoint = null
+active_work_package = null
 ```
 
 **M2 DONE 不授权**（原样继承 Rebase Prompt §8.3 边界，未被本次收尾扩大）：合并 main 之外的任何进一步动作——不授权 M5 集成、不授权真实社交平台发布、不授权生产采用、不授权任何真实经营结果结论。

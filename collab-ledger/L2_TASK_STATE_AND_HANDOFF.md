@@ -198,8 +198,10 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | `M2-AC-13` | 维持 `FOUNDER_WAIVED`（技术事实不变：迁移降级遇跨账号冲突不能自动恢复，需人工介入；该子项已由 Founder 于本会话早前明确裁决豁免，不重复登记） |
 | 合并执行 | 任务分支 `task/m2-business-persistence-version-feedback-v1`（最终 head `74bc9e32627b290c93827a4ff83b2bc79aa9befd`）以 `git merge --no-ff` 合并进 `main`，合并 commit `17f5e5724a09470c78c757a88c4ec6469fb0dcfd`；唯一冲突为 `collab-ledger/L1_TASK_MANIFESTS.md` 顶部索引表一处插入位置重叠（非逻辑冲突），已保留双方内容并补充指向说明；`git push origin main` 后核验本地/远程一致于 `17f5e57` |
 | 合并后核验（对应 Founder 提出的收口检查清单，逐项见 `M2_ACCEPTANCE_EVIDENCE.md`"合并与最终证据绑定"） | (1) 远程 main 真实包含本次交付——已核验；(2) 合并内容与已验收候选一致——`git diff` 字节级为空；(3) 受保护合同/共享资产/既有能力无退化——排除 `business-persistence/`、`collab-ledger/` 后 `git diff --stat` 为空；(4) 必要回归通过——合并后现场重跑 69/69；(5) 目标 Dify 候选仍与最终代码相符——同一容器、代码字节一致；(6) Git/账本/证据绑定更新完成——即本条与关联文档 |
-| 任务终态 | `execution_disposition = CONTINUE`；`task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论；合并 main 本身是本次单独明确授权的动作，不是 `DONE` 状态自动带来的权限 |
-| Checkpoint | **无**。任务已终结，从此移出 §二"当前可执行动作"表 |
+| 任务终态（2026-08-26 治理收口纠偏：移除无效字段组合，见下方说明） | `task_final_status = DONE`；`module_delivery_state = DONE`；`next_stage_allowed = false`；`checkpoint = null`；`active_work_package = null`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论；合并 main 本身是本次单独明确授权的动作，不是 `DONE` 状态自动带来的权限 |
+| Checkpoint | **无**（`null`）。任务已终结，从此移出 §二"当前可执行动作"表 |
+
+> **终态字段纠偏说明**：本节此前同时登记 `execution_disposition = CONTINUE` 与 `task_final_status = DONE`，这是无效组合——`CONTINUE` 只用于非终态 Checkpoint，且要求 `task_final_status = null`。M2 已进入正式终态 `DONE`，`execution_disposition` 字段已在上表移除，不改变本任务此前已经是 `DONE` 这一事实本身。同一纠偏已同步至 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`、`M2_REBASE_ERRATA_001_RECORD.md`、`collab-ledger/L1_TASK_MANIFESTS.md`（§T-011.7）、`collab-ledger/L3_ATTEMPTS_AND_EVIDENCE.md`（§ATT-007）。完整记录见 `business-persistence/M2_FINAL_GOVERNANCE_CLOSEOUT_RECOVERY_RECORD_v1.0.md`。
 
 ---
 
