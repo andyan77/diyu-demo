@@ -1829,3 +1829,16 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 - R-10 如实登记 `REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT`——本 task_id 实际发生 3 个正式审查单元 + 1 收口验证单元，超出冻结预算 1；本轮未另开新的正式 Reviewer，全部由执行负责人本人在真实容器/数据库上直接自验。
 - 全量测试 69 项通过（现场重跑）。
 - **任务终态（当前有效，取代上表 ATT-001 的判定）**：`execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`；`next_stage_allowed = false`——`M2-AC-13`（数据库 CONNECT 权限）与 `M2-AC-16`（Dify 画布现场运行）未 CURRENT PASS，未满足进入 `AWAITING_FOUNDER_DIFY_ACCEPTANCE` 的全部前提。
+
+### ATT-003（Founder 授权 R-09b 后现场执行，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+Founder 在本会话中被完整告知 R-09b 的发现、被拦截的修复动作、需要何种授权后，明确答复"我授权，你是否可以执行？"。执行侧据此现场执行，未新增独立审查（该操作是单条 DDL 语句 + 现场负向/正向连接验证，不属于需要新开正式 Reviewer 的范畴）。
+
+| 项 | 值 |
+|---|---|
+| 授权依据 | Founder 本会话内对该具体、已明确说明内容的操作明确答复"我授权，你是否可以执行？" |
+| 修复前基线 | `docker exec docker-db_postgres-1 psql -U diyu_app -d dify -c "SELECT current_database();"` 与对 `dify_plugin` 同语句均**成功返回**，现场确认漏洞真实存在 |
+| 执行 | `docker exec docker-db_postgres-1 psql -U postgres -c "REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;"` 与对 `dify_plugin` 的同语句 |
+| 修复后验证 | `diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；`diyu_app` 连接自身 `diyu_business` 仍正常；`docker-api-1`（Dify 自身应用容器，`DB_USERNAME=postgres`）以 `postgres` 超级用户连接 `dify` 仍正常（超级用户天然绕过 CONNECT ACL，未受此次 REVOKE 影响） |
+| 验收标准更正 | `M2-AC-13` 由 `NOT_VERIFIED` 转 `PASS`；顺带发现并更正 `M2_ACCEPTANCE_EVIDENCE.md` 中 `M2-RB-08` 的一处遗留过期表述（该行仍写"R-07 尚未执行"，与同一文件内其他位置已确认 R-07 完成的事实矛盾，系文档撰写时序问题，非新缺陷），已更正为 `PASS`；`M2-AC-16`/`M2-RB-09` 维持 `NOT_VERIFIED`——凭据缺口，本次授权不覆盖（Founder 未提供、执行侧未索要 Dify 会话或 API Key） |
+| **任务终态（当前有效，取代 ATT-002 的判定）** | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`）；`next_stage_allowed = false:Dify 画布重跑`——唯一剩余缺口是 `M2-AC-16` |

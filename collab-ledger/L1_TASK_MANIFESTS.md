@@ -1486,4 +1486,14 @@ Founder 投递 `M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`，`ta
 | 验收标准（纠正） | `M2-AC-12` 由"已知限制"提升为真 `PASS`；`M2-AC-13`、`M2-AC-16` 由 `PASS`/`PASS 但有限制` 下修为 `NOT_VERIFIED`（真实发现，非放宽标准）；`M2-RB-01`~`14` 新增记录。逐条见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`（本轮重写，取代不是追加） |
 | 审查预算符合性 | `REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT`——冻结预算 1 正式审查+1 修复，实际发生 3 个正式审查单元+1 收口验证单元，本轮如实披露，未追认为"符合预算"，本轮未另开新的正式 Reviewer |
 | Git 收口 | 本轮新增 5 个 commit（`3d23674`/`fabffd8`/`6955d66`/`1f8e6c0` 及本次账本登记提交），累计 13 个 commit；见 [L5](L5_SIDE_EFFECTS.md) 新增条目 |
-| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-13`/`M2-AC-16` 未 CURRENT PASS）；`next_stage_allowed = false` |
+| 任务终态（T-011.3 时点，历史记录，见 T-011.4） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-13`/`M2-AC-16` 未 CURRENT PASS）；`next_stage_allowed = false` |
+
+### T-011.4 Founder 就 R-09b 明确授权后现场执行修复（取代 T-011.3 的数据库隔离门判定，T-011.3 其余内容保留为历史）
+
+Founder 在本会话中被告知 R-09b 的具体内容（发现、被拦截的修复动作、需要何种授权）后，明确答复"我授权，你是否可以执行？"，构成对该单一 `REVOKE CONNECT` 操作的授权。这不构成对 R-08（Dify 会话凭据缺失）的授权——两者性质不同，前者是权限缺口，后者是凭据缺口，授权无法替代凭据。
+
+| 项 | 值 |
+|---|---|
+| 数据库隔离门（再纠正） | **PASS**——修复前现场负向复现确认 `diyu_app` 确实可 `CONNECT` 到 `dify`/`dify_plugin`；Founder 授权后以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify, dify_plugin FROM PUBLIC, diyu_app`；修复后现场重测确认两库 `CONNECT` 均被拒绝；回归确认 `diyu_app` 自身库 `diyu_business` 与 Dify 自身容器（`postgres` 超级用户连接）均不受影响 |
+| 验收标准（再纠正） | `M2-AC-13` 由 `NOT_VERIFIED` 转 `PASS`；`M2-RB-08`（此前遗留的"R-07 尚未执行"表述与同一文件内 PASS 判定自相矛盾，已一并更正为 PASS——R-07 实际已在 `1f8e6c0` 完成）、`M2-RB-10` 转 `PASS`。`M2-AC-16`/`M2-RB-09` 维持 `NOT_VERIFIED`（凭据缺口，非本次授权范围）。见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`（本次为行内更正，非整体重写） |
+| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（仍不是 `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——唯一剩余缺口是 `M2-AC-16`）；`next_stage_allowed = false:Dify 画布重跑` |

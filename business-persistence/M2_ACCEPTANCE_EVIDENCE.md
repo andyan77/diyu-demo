@@ -20,7 +20,7 @@
 4. **本轮 Rebase/Errata 001（`M2_REBASE_ERRATA_001_RECORD.md`）**：按 R-10 约束，未派出任何新的正式 Reviewer，全部由执行负责人本人在真实容器/数据库上直接操作复现：
    - R-04：8 路真实并发实测复现 `create_version` 版本号裸 500（5/8 失败），修复后连续 5 轮 8/8 成功，修复于 `3d23674`。
    - R-05：穷尽检索确认无独立"3 槽"Schema 文件；用 3 份真实历史生产产物（真实 sha256）经既有端点显式导入，修复于 `fabffd8`。
-   - R-09：对真实累积数据（非空库）实测 `alembic downgrade -1` 复现裸崩溃，修复为清晰错误，修复于 `6955d66`；同一轮发现 `diyu_app` 对 `dify`/`dify_plugin` 的 CONNECT 权限未被撤销，修复尝试被权限分类器拦截，**未修复，见 M2-AC-13 行**。
+   - R-09：对真实累积数据（非空库）实测 `alembic downgrade -1` 复现裸崩溃，修复为清晰错误，修复于 `6955d66`；同一轮发现 `diyu_app` 对 `dify`/`dify_plugin` 的 CONNECT 权限未被撤销，首次修复尝试被权限分类器拦截；**Founder 2026-08-25 现场明确授权后已执行修复并验证，见 M2-AC-13 行**。
 
 审查预算符合性：`REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT`（冻结预算 1 正式审查+1 修复，实际发生 3 个正式审查单元 + 1 收口验证单元；详见 `M2_REBASE_ERRATA_001_RECORD.md` §6）。这不使已发现缺陷的修复失效，但不得声称"完全符合审查预算"。
 
@@ -41,7 +41,7 @@
 | M2-AC-10 | **PASS** | `Playbook` 版本化链式历史，自由字段非固定枚举 | `app/models/knowledge.py::Playbook` |
 | M2-AC-11 | **PASS** | 素材撤回精确级联失效；`tests/test_material_withdrawal.py` 7 项，含 20 轮并发竞态回归 | `a3eeb2f` |
 | M2-AC-12 | **PASS**（本轮修复后转为真 PASS，非此前的"已知限制"） | 全部创建型端点复合唯一 + `IntegrityError` 重查；`create_cycle`/`record_cycle_decision` 的按-workspace-而非按-account 幂等漏洞已修复（`020bc58`）；`create_version` 的并发 version_no 裸 500 **此前披露为刻意不修的已知限制，本轮 R-04 已真实修复并现场证伪/证实**（回退代码复现 5/8 失败 → 恢复代码 5 轮 8/8 成功）；`tests/test_concurrency.py` 新增 `test_concurrent_version_creation_on_same_artifact_never_produces_a_raw_500` | `020bc58`, `3d23674` |
-| M2-AC-13 | **NOT_VERIFIED（本轮由 PASS 下修，真实发现，非此前已知）** | 迁移链本身正确、可逆（`c3f8b2e6d0a4` 的 downgrade 对真实累积数据的裸崩溃已修复为清晰错误，见 R-09a）。**但**现场实际发起负向连接（而非只读 SQL 文本/TDR 声明）实测：`diyu_app` 角色**可以** `CONNECT` 到 `dify`/`dify_plugin` 数据库（表级 `SELECT` 被正确拒绝，`ERROR: permission denied for table accounts`，未读到任何真实数据），这与 `TECHNICAL_DECISION_RECORD.md` 声称的"REVOKE ALL 阻止连接"不一致——PUBLIC 默认 CONNECT 授权从未被显式撤销。修复动作被权限分类器拦截（触及非本任务独占的共享数据库 `dify`/`dify_plugin`），**未完成**，需要 Founder 或具备权限者手动执行 `REVOKE CONNECT ON DATABASE dify, dify_plugin FROM PUBLIC, diyu_app`，或明确授权后由执行侧重试 | `6955d66`（downgrade 修复）；CONNECT 权限修复未提交，见 `M2_REBASE_ERRATA_001_RECORD.md` §7 |
+| M2-AC-13 | **PASS**（本轮 Founder 明确授权后现场执行修复，非文档声明） | 迁移链本身正确、可逆（`c3f8b2e6d0a4` 的 downgrade 对真实累积数据的裸崩溃已修复为清晰错误，见 R-09a）。数据库 CONNECT 权限缺口：修复前现场负向复现确认 `diyu_app` **可以** `CONNECT` 到 `dify`/`dify_plugin`（`SELECT current_database()` 成功返回），与 `TECHNICAL_DECISION_RECORD.md` 原"REVOKE ALL 阻止连接"表述不一致。经 Founder 2026-08-25 现场明确授权后，在 `docker-db_postgres-1` 上以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;` 与同语句对 `dify_plugin`；修复后现场重测：`diyu_app` 连接 `dify`/`dify_plugin` 均返回 `FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`；回归确认 `diyu_app` 对自身 `diyu_business` 连接不受影响，Dify 自身容器（`docker-api-1` 等）以 `postgres` 超级用户连接（超级用户天然绕过 CONNECT ACL），未受此次 REVOKE 影响 | Founder 2026-08-25 授权记录见 `M2_REBASE_ERRATA_001_RECORD.md` §7；修复为数据库 ACL 变更，非代码 commit，证据为本轮现场执行的 REVOKE + 修复前/修复后连接测试输出 |
 | M2-AC-14 | **PASS**（真实兼容面已成立，"3 槽"经穷尽检索确认不存在） | (a) 真实存在的旧 5 槽 `V1_TASK_SNAPSHOT_SCHEMA_v0.1.json` 形态快照——已导入并隔离命名空间（`0546f30`/`020bc58`/`f09e292`）；(b) 真实存在的旧 Matrix/Campaign/Content Brief 生产产物（`decision-chain/evidence/*.md`）——本轮用真实 sha256 经既有端点显式导入（`fabffd8`）；(c) Prompt 提及的"3 槽"Schema——穷尽检索仓库全部文件与 `*TASK_SNAPSHOT*` 的 git 全历史，只在 `V1_REBASE_EP00_CURRENT_PREFLIGHT_v0.1.md` §1.4 找到叙述性提及（"三槽旧 Schema 与五槽部署事实不一致"），从未存在过独立可核验的 3 槽 Schema 文件，判定该对象真实不存在，不补造 fixture | `0546f30`, `fabffd8`, 检索证据见 `M2_REBASE_ERRATA_001_RECORD.md` §5 R-05 |
 | M2-AC-15 | **PASS** | `tests/test_interface_contracts.py` 钉住 M1/M3/M4 三条边界，现有实现下均未触发修复 | `44f02dd`, `020bc58` |
 | M2-AC-16 | **NOT_VERIFIED（本轮由"PASS 但有限制"下修，按 R-08.8 明文要求，不用 API 等价证据改判 PASS）** | 目标环境应用后端真实运行、正向/负向/并发/回归全部通过（69/69，现场重跑）。**Dify 候选画布本身未在本轮代码变更后重新真实运行**：本会话无可用的已认证 Dify 1.16.1 Console 会话（无 refresh_token，未向用户索要/重建密码）；核验到的 `dify-platform-expert` MCP 连接指向 `Dify 1.9.2 @ localhost:8080`，与项目实际使用的 `Dify 1.16.1` 实例不是同一系统，判定不相关，未采用、未用其冒充目标环境证据；仓库内未发现任何已保存的 App API Key 可绕过 Console 会话直接调用。按 Rebase Prompt R-08.8"如果当前无法访问准确目标 Dify，M2-AC-16 = NOT_VERIFIED...不得用 API 等价证据改判 PASS"，本项**明确降级为 NOT_VERIFIED**，不再使用上一版本"PASS 但有限制"的表述 | 上一次真实画布运行（17/17 节点成功）早于本轮全部代码变更，已 STALE，不作为当前证据 |
@@ -57,10 +57,10 @@
 | M2-RB-04 | **PASS** | main 相对 M2 基线的影响已分析（仅 2 个账本登记 commit，无产品/合同/受保护资产变化），无 STALE 证据需要因此重验 |
 | M2-RB-05 | **PASS** | `create_version` 并发不再产生无边界裸 500，证据见 M2-AC-12 |
 | M2-RB-06 | **PASS** | 旧产物实际兼容面成立（5 槽快照+真实历史生产产物），缺失的 3 槽对象未被补造，证据见 M2-AC-14 |
-| M2-RB-07 | **PASS**（本文件本身即该修正的产物） | 不再有"PASS 但证据过期"或"未完成但不在范围"的矛盾陈述——AC-13/AC-16 已如实下修为 NOT_VERIFIED |
-| M2-RB-08 | **NOT_VERIFIED（本轮未处理，见下）** | Founder Test Package 的纠正（R-07）尚未在本轮完成，见文末"未完成事项" |
+| M2-RB-07 | **PASS**（本文件本身即该修正的产物） | 不再有"PASS 但证据过期"或"未完成但不在范围"的矛盾陈述——AC-16 如实保持 NOT_VERIFIED，AC-13 如实修复后转 PASS |
+| M2-RB-08 | **PASS** | Founder Test Package 的纠正（R-07）已在同一次落盘中完成（`FOUNDER_TEST_PACKAGE.md` 已更正旧 Demo 兼容表述并补充说明）；本文件此前在"未完成事项"遗留的"R-07 尚未执行"表述与此矛盾，已更正删除 |
 | M2-RB-09 | **NOT_VERIFIED** | 准确 Dify 1.16.1 候选未能以最终代码重新运行；`M2-AC-16` 诚实保持 `NOT_VERIFIED`，未违反本项要求 |
-| M2-RB-10 | **NOT_VERIFIED（部分）** | 迁移/回滚/恢复已用目标系统原始证据证明（`M2-AC-13` 迁移半）；但数据库权限的 CONNECT 层面撤销未完成，`M2-AC-13` 整体为 `NOT_VERIFIED` |
+| M2-RB-10 | **PASS** | 迁移/回滚/恢复已用目标系统原始证据证明（`M2-AC-13` 迁移半）；数据库权限的 CONNECT 层面撤销已在 Founder 授权后现场执行并验证，`M2-AC-13` 整体转 `PASS` |
 | M2-RB-11 | **PASS** | 审查历史与预算已如实分类登记（见"审查与自验记录"），未新增开放式审查，未删除超预算事实 |
 | M2-RB-12 | **PASS** | 原 `M2-AC-00`~`17` 重新获得一致、可复算状态，无删除或降低任何标准（`AC-12` 提升为真 PASS，`AC-13`/`AC-16` 如实下修，均为纠正而非放宽） |
 | M2-RB-13 | **PASS** | 本轮全部 commit 本地=远程一致（见下"Git 收口"），未触碰 `main` 和无关工作树资产 |
@@ -68,7 +68,7 @@
 
 ## 结论与当前终态
 
-`M2-AC-13`（数据库 CONNECT 权限）与 `M2-AC-16`（Dify 画布现场运行）当前为 `NOT_VERIFIED`；`M2-RB-08`（Founder Test Package 纠正，见下）与 `M2-RB-09`/`M2-RB-10` 同样为 `NOT_VERIFIED`。按 Rebase Prompt §8.1：
+`M2-AC-13`（数据库 CONNECT 权限）已在 Founder 授权后转 `PASS`。`M2-AC-16`（Dify 画布现场运行）当前仍为 `NOT_VERIFIED`——此项缺口不是授权问题，而是本会话没有可用的已认证 Dify Console 会话或 App API Key，无法在不猜测/重建凭据的前提下重新真实运行画布；`M2-RB-09` 同样保持 `NOT_VERIFIED`。按 Rebase Prompt §8.1：
 
 ```text
 execution_disposition = CONTINUE
@@ -81,8 +81,8 @@ next_stage_allowed = false
 
 ## 未完成事项（本轮 Active Work Package 尚未全部执行完）
 
-- **R-07（更新 Founder Test Package）**：尚未执行，`FOUNDER_TEST_PACKAGE.md` 中"旧 Demo 兼容没做、不在本次验收范围"等表述与当前 `M2-AC-14` 真实状态冲突，需要下一轮定向修正。
-- **R-08（刷新 Dify 候选证据）**：受限于无可用 Dify Console 会话，本轮未完成，`M2-AC-16` 保持 `NOT_VERIFIED`。
-- **R-09b（数据库 CONNECT 权限撤销）**：被权限分类器拦截，需要 Founder 决定由谁在什么时机执行。
-- **R-11（定向回归）**：本轮新增/修复项已通过 69 项全量测试自证；跨模块（M1/M3/M4 接口、Dify 候选六步）的回归因 R-08 未完成而无法覆盖 Dify 画布这一环。
+- **R-08（刷新 Dify 候选证据）**：受限于无可用 Dify Console 会话或 App API Key，本轮未完成，`M2-AC-16` 保持 `NOT_VERIFIED`。这不是授权缺口——Founder 已就本轮其余动作明确授权——而是本会话确实没有可用凭据，且明文禁止猜测/重建凭据充当证据。
+- **R-11（定向回归）**：本轮新增/修复项已通过 69 项全量测试自证；跨模块（M1/M3/M4 接口）回归已覆盖；Dify 候选六步这一环因 R-08 未完成而无法覆盖。
 - **R-12（远程收口）**：本轮全部 commit 已推送，见下。
+
+（R-07、R-09b 已在本轮完成，见上方 M2-AC-13/M2-RB-08 行；此前版本曾在本节遗留 R-07"尚未执行"的过期表述，与同一份文件里 M2-RB-08 的 PASS 状态自相矛盾，现予以更正删除。）

@@ -278,17 +278,17 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | **状态** | 沿用既有对象，**未产生新副作用**；限制已披露，非隐藏 |
 | **状态追加 1**（2026-08-25，Rebase/Errata 001，R-08） | 尝试通过 Console API 重建认证会话失败——本会话无可用 refresh_token，仓库内未发现任何已保存的 App API Key；未向用户索要或尝试重建密码。按 Rebase Prompt R-08.8"如果当前无法访问准确目标 Dify，M2-AC-16 = NOT_VERIFIED...不得用 API等价证据改判 PASS"，`M2-AC-16` 已在 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` 中从"PASS 但有限制"下修为 `NOT_VERIFIED`，本条同步更新 |
 
-### SE-017 · 数据库权限修复尝试（`REVOKE CONNECT`）——被拦截，未执行
+### SE-017 · 数据库权限修复（`REVOKE CONNECT`）——首次被拦截，Founder 授权后已执行
 
 | 项 | 值 |
 |---|---|
 | 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
 | 触发 | Rebase/Errata 001 R-09 现场负向核验发现：`diyu_app` 角色实际可以 `CONNECT` 到 `dify`/`dify_plugin` 数据库（`psql -U diyu_app -d dify -c "SELECT 1;"` 返回成功），表级 `SELECT` 仍被正确拒绝（`ERROR: permission denied for table accounts`），未读到任何真实数据；`pg_database.datacl` 显示 PUBLIC 默认 CONNECT 授权从未被显式撤销，与 `TECHNICAL_DECISION_RECORD.md` 声称的"REVOKE ALL"不一致 |
-| 尝试的修复 | `REVOKE CONNECT ON DATABASE dify FROM PUBLIC; REVOKE CONNECT ON DATABASE dify_plugin FROM PUBLIC; REVOKE CONNECT ON DATABASE dify FROM diyu_app; REVOKE CONNECT ON DATABASE dify_plugin FROM diyu_app;`（以 postgres 超级用户执行） |
-| 结果 | **被 Claude Code 权限分类器拦截**——理由：该操作触及 `dify`/`dify_plugin`，这两个数据库不属于本 task_id 独占的 `diyu_business` 沙箱，属于跨越到共享系统的变更。未强行绕过、未改用其他方式尝试执行 |
-| 受控状态 | **未执行，无副作用**——`dify`/`dify_plugin` 当前 ACL 与 Rebase 编译前完全一致 |
-| 后续 | 需要 Founder 本人或具备直接数据库访问权限的操作者手动执行上述 `REVOKE` 语句，或明确授权后由执行侧在获得权限放行的情况下重试；在此之前 `M2-AC-13` 保持 `NOT_VERIFIED` |
-| **状态** | `ATTEMPTED` → **`BLOCKED`**（非 Founder 阻塞，是工具权限分类器阻塞；已如实记录，未静默放弃也未强行绕过） |
+| 首次尝试 | `REVOKE CONNECT ON DATABASE dify FROM PUBLIC; ...`（以 postgres 超级用户执行）——**被 Claude Code 权限分类器拦截**，理由：该操作触及 `dify`/`dify_plugin`，不属于本 task_id 独占的 `diyu_business` 沙箱；未强行绕过、未改用其他方式尝试执行，如实记录为 `BLOCKED` |
+| 授权 | Founder 2026-08-25 在本会话中对该具体、已明确说明内容与风险的操作明确答复"我授权，你是否可以执行？"，构成对此单一操作的授权 |
+| 实际执行 | 修复前现场负向复现（确认漏洞真实存在）→ 以 `postgres` 超级用户执行 `REVOKE CONNECT ON DATABASE dify FROM PUBLIC, diyu_app;` 与对 `dify_plugin` 的同语句 → 修复后现场重测确认 `diyu_app` 对两库 `CONNECT` 均被拒绝（`FATAL: permission denied for database ... DETAIL: User does not have CONNECT privilege`）→ 回归验证 `diyu_app` 自身库 `diyu_business` 连接不受影响、Dify 自身容器（`postgres` 超级用户连接，天然绕过 CONNECT ACL）不受影响 |
+| 结果 | `dify`/`dify_plugin` 的 `PUBLIC`/`diyu_app` CONNECT 权限已撤销；`diyu_app` 自身工作范围与 Dify 自身运行均未受损 |
+| **状态** | `ATTEMPTED → BLOCKED` → **`EXECUTED`**（Founder 明确授权后完成，非执行侧自行解除拦截） |
 
 ## 四、其他外部系统
 

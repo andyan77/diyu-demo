@@ -9,6 +9,15 @@
 owner 为专用低权限角色 `diyu_app`（`NOSUPERUSER NOCREATEDB NOCREATEROLE`），与 Dify 的
 `dify` / `dify_plugin` 数据库物理隔离，并显式 `REVOKE ALL` 防止 `diyu_app` 连接到那两个库。
 
+> **更正（2026-08-25，Rebase/Errata 001 + Founder 授权修复，追加说明，不改写上文原意）**：
+> 上文"REVOKE ALL 防止连接"在 CONNECT 层面此前并不准确——Rebase 现场负向复测发现
+> `diyu_app` 实际可以 `CONNECT` 到 `dify`/`dify_plugin`（表级 `SELECT` 一直被正确拒绝，
+> 未读到任何真实数据），因为新建数据库默认的 `PUBLIC` CONNECT 授权从未被显式撤销。
+> Founder 就该具体操作明确授权后，执行侧已现场执行 `REVOKE CONNECT ON DATABASE dify,
+> dify_plugin FROM PUBLIC, diyu_app` 并验证生效（修复前后连接测试见
+> `M2_REBASE_ERRATA_001_RECORD.md` §7）。上文"物理隔离"的意图现已在 CONNECT 层面
+> 也真实成立，但历史表述本身曾一度不准确，如实登记不回避。
+
 选独立数据库而非同库独立 Schema：Postgres 里"能否 CONNECT"是数据库级权限，独立数据库让
 "M2 应用连不上 Dify 的表"这件事从物理层面成立，不依赖每次迁移都记得设置 Schema 级 grant；
 备份/恢复、连接池、未来独立伸缩也天然按数据库边界走。代价是跨库无法做外键/事务级联，但
