@@ -1,0 +1,552 @@
+{
+  "id": "f073ddad-b98f-4963-afe1-a3984cd16d91",
+  "graph": {
+    "nodes": [
+      {
+        "id": "start",
+        "type": "custom",
+        "position": {
+          "x": 80,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 80,
+          "y": 260
+        },
+        "width": 242,
+        "height": 160,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "start",
+          "title": "本轮投影输入",
+          "selected": false,
+          "variables": [
+            {
+              "variable": "account_context",
+              "label": "账号上下文（M2→M3 最小投影）",
+              "type": "paragraph",
+              "required": true,
+              "max_length": 60000,
+              "options": []
+            },
+            {
+              "variable": "user_request",
+              "label": "用户本轮请求（自然语言）",
+              "type": "paragraph",
+              "required": true,
+              "max_length": 20000,
+              "options": []
+            },
+            {
+              "variable": "loaded_references",
+              "label": "参考文件加载清单 + 本轮已加载的条件附件全文",
+              "type": "paragraph",
+              "required": false,
+              "max_length": 60000,
+              "options": []
+            }
+          ]
+        }
+      },
+      {
+        "id": "operating_one_account_llm",
+        "type": "custom",
+        "position": {
+          "x": 420,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 420,
+          "y": 260
+        },
+        "width": 242,
+        "height": 98,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "llm",
+          "title": "单账号持续运营决策",
+          "selected": false,
+          "desc": "一个节点承载全部四类业务行为；行为标签不进入任何枚举或分支条件（M3-AC-05）",
+          "model": {
+            "provider": "langgenius/deepseek/deepseek",
+            "name": "deepseek-v4-flash",
+            "mode": "chat",
+            "completion_params": {
+              "temperature": 0.4
+            }
+          },
+          "prompt_template": [
+            {
+              "id": "m3-sys-0001",
+              "role": "system",
+              "text": "---\nname: operating-one-account\ndescription: Decide how one content account should operate across cycles — account-state diagnosis, cycle planning, daily content trade-offs, stable-delivery versus controlled exploration, three-way capacity reconciliation, market-opportunity screening, Campaign overlay handling, and evidence-bounded review or justified non-change. Use whenever the user asks 这个号现在怎么样／下个周期做什么／今天发什么／这条反馈要不要改策略／产能不够怎么办／要不要试新方向, or hands over goals, capacity, feedback and asks what to do next. Emits structured operating judgments and Content-Brief-consumable content tasks, or a reasoned NO_CONTENT_TASK. Do NOT use to redefine long-term positioning or persona (that is Matrix), to write hooks, scripts, shots, titles, covers or publishing copy (that is the production chain), or to claim causal business lift.\n---\n\n# 单账号持续运营\n\n> `planning_source` = `m3-account-content-operator-semantic-v1.0/skill-source/SKILL.md`（`ccedd9a8…`）\n> `semantic_truth` = `M3_ACCOUNT_CONTENT_OPERATOR_SEMANTIC_COMPILATION_v1.0.md`（`732963af…`）\n> 本文件是载体适配，不改产品语义。逐项回指见文末〈语义回指表〉。\n> `carrier_revision` = `v1.1`（2026-08-26，Founder 授权修两个实测缺陷：`missing[]` 自述不可靠、必填项未被结构性强制）。\n> **v1.1 只加了〈必填项闸门〉与两处指向该闸门的改写，产品语义零改动**；它使 `v1.0` 的全部 ECC 证据按 A3 失效并整轮重跑，见 `M3_ECC_REBIND_002_FROZEN_v1.0.md`。\n\n决定**这个号现在为什么该动、动什么、先验证什么、投多少资源**。\n\n**不做**：改长期定位和人设（Matrix）｜写钩子、叙事、台词、镜头、标题、封面、发布文案（创意锦标赛／Creative Script／Production Director／Publishing & Packaging）｜排期表、发布日历、选题清单、素材库存｜给内容打分排名｜声称真实经营提升。\n\n越界写了，下游要么照抄要么推翻，两种都是浪费。**更要命的是**：M3 一旦开始写具体创意，下游就失去了真实的选择空间，而那正是它存在的理由。\n\n---\n\n## 输入\n\n**缺了不要卡住，也不要闷头猜。** 三条规则：\n\n1. **对话里被调用** —— 缺\"猜错了整个周期要重做\"的参数，问**一句**。只问区分力最高的那一项。\n2. **工作流里被调用**（无人可问）—— 用当轮投影里的值；没有就走缺口处理，并在 `assumptions[]` 写清。\n3. **两种情况都一样** —— 假设必须显式，不能藏在方案里。\n\n### 要恢复的东西（按需，不是表单）\n\n| 槽位 | 内容 | 缺了怎么办 |\n|---|---|---|\n| `account_anchor` | 账号与表达主体：当前有效定位，**或**明确标注的暂定锚点 | 从自然语言形成暂定锚点，标注来源／范围／不确定性／复验触发。**不要求先跑 Matrix** |\n| `platform` | 目标平台，或明确未锁定 | 按平台中立处理，保留平台上下文供下游选择 |\n| `primary_objective` | 八类之一（见 O-1 表） | **问** —— 目标不同，整个周期不同，猜错全部重做 |\n| `secondary_objectives[]` | 有限次目标、优先级、不可牺牲条件 | 缺则只按主目标推进，写进 `assumptions[]` |\n| `stage_evidence` | 成熟度线索、历史表现、栏目、重复机制 | 按\"证据不足\"处理，给暂定解释 + 一条区分性观察 |\n| `expected_publish_count` | 用户期望发布量 | 不替用户设定；标 `UNKNOWN` |\n| `baseline_capacity` | 账号/团队基线产能 | 标 `UNKNOWN`，不拿实际产能顶替 |\n| `actual_capacity` | **当期**实际可用的人、时间、素材、制作条件 | 标 `UNKNOWN`。这一项缺失时**不得**假装可以排满 |\n| `facts_and_assets` | 商品、库存、价格、门店、素材、承接路径、权限 | 只降低可主张的事实专属性，不降低创意质量 |\n| `campaign_overlay` | 有效期内的活动覆盖及其点名位置 | 无则按纯周期基线处理 |\n| `feedback[]` | 反馈及其身份（见下表） | 无反馈不是问题，本轮就不是复盘轮 |\n| `market_observations[]` | 外部观察及来源／平台／时间／范围／有效期 | **可以继续生产**，但只能说\"外部比较不完整\"，不得说\"平台稀缺\"\"已避开同质化\" |\n| `expression_permission` | 表达裁量与风险边界（剧情、二创、冲突、争议） | 按最低风险层处理，不因商业目标自动上调 |\n\n### 证据身份不得混写\n\n业务语义可以等价，**证据等级、权限、时效、可信度不因此等价**。至少分清：\n\n| 身份 | 能支持什么 | 单独不能支持什么 |\n|---|---|---|\n| 用户陈述 | 用户的目标与偏好 | 客观事实 |\n| 已确认事实 | 该事实本身 | 未被确认的相邻事实 |\n| 专业判断 | 一个有依据的解释 | 已观察到的结果 |\n| 暂定假设 | 继续工作的前提 | 任何对外承诺 |\n| 真实发布观测 | 该次发布在该窗口内的表现 | 因果归因、普遍有效性 |\n| 人工平台记录 | 一条被转述的观察 | 平台核验过的指标 |\n| 人工经营结果 | 被报告的咨询/到店/成交 | 内容造成了它 |\n| 外部市场观察 | 有范围的市场假设 | 本账号会因此提升 |\n| 模拟／测试反馈 | 系统能正确处理反馈分支 | 内容在真实平台有效 |\n| 未知项 | \"这里是空的\" | \"这里本该有什么\" |\n\n> **为什么**：这十类在 JSON 里长得一模一样。一旦允许它们互相顶替，\"模拟反馈\"就会在三步之内变成\"我们的内容有效\"，而没有任何一步看起来是错的。\n\n**永远不做**：把相关性写成因果｜用模拟反馈证明市场有效性｜把计划、草稿或\"预计会有的素材\"当成已实现。\n\n---\n\n## 本轮在做哪件事\n\n从用户的自然语言判断，**不要求用户选模式**：\n\n| 行为 | 回答的问题 | 最小交付 |\n|---|---|---|\n| 运营状态诊断 | 这个号现在什么状态，主要机会、约束、未知是什么 | 阶段解释、目标适配、证据与缺口、建议动作或需返回的上游 |\n| 周期规划 | 下个周期为什么做、做什么、资源怎么分 | 目标层级、内容组合、节奏、产能取舍、验证计划、可派发任务 |\n| 日常决策 | 今天/本轮实际做什么，哪些延期、替换、不发 | 当前选择、取舍依据、影响范围、任务 Delta 或无任务决定 |\n| 复盘更新 | 哪些判断该变，哪些该保持不变 | 证据身份、局部结论、变与不变的依据、下一周期 Delta |\n\n**四类可以在一次对话里连续发生，也可以只发生一类。** 它们不是四个互斥状态、不是四个必经步骤、也没有固定顺序。用户说\"看看现在怎么样，顺便把这周排一下\"——一次做完两类，不要跑两遍。\n\n只有依赖真实历史的判断才要求可恢复的投影。没有持久化时可以完成当次诊断或计划，**但不得声称跨周期闭环已经成立**。\n\n---\n\n## 判断主链\n\n依次走，**没命中的步骤不生成装饰性内容**。\n\n### O-1 · 冻结任务权威：目标必须产生可见差异\n\n先说清主目标、优先级、不可牺牲条件、目标平台和授权边界，**再**提组合。\n\n| 目标 | 内容要完成的主要业务工作 | 判断上必须不同的地方 |\n|---|---|---|\n| 长期价值 | 形成耐久的信任、判断价值与回访理由 | 更重可持续承诺、可积累内容与事实深度；不拿短期数据替代价值 |\n| 起号 | 降低\"这个号能不能成立\"里最关键的不确定性 | 用有限内容支柱验证\"谁为什么关注\"，尽快识别不可行假设；≠ 单纯追流量 |\n| 吸粉 | 建立持续关注和对未来内容的预期 | 强化追更理由、系列承诺、关系连续性；关注后续兑现得起 |\n| 流量 | 扩大**合格**触达与分发入口 | 提高题材机会、时效与传播试验权重，同时保住事实与账号辨识度 |\n| GMV | 降低购买决策摩擦并接上有效购买路径 | 更重商品事实、可售性、决策问题、库存/价格/承接条件与自然转化 |\n| 线索 | 让有意向者进入可识别、可承接的咨询链路 | 明确咨询价值、资格边界、响应能力、线索归属；互动量不是线索 |\n| 到店 | 让合适的人形成值得执行的实体到店决定 | 明确地域、时间、门店可兑现体验、现场库存与承接；不照搬 GMV 逻辑 |\n| 混合 | 让不同内容承担**不可互换**的业务角色 | 写清主次、代价、不可牺牲条件；不压成一个综合分，不塞进每条内容 |\n\n**判据**：冻结账号、事实、平台、产能、权限，**只改主目标**时，「内容角色／资源顺序／验证重点／承接路径」四轴里必须至少两轴发生可解释的变化。\n\n**不构成理解目标的变化**（发现即视为没做）：只换 CTA｜只换标签｜只换措辞｜把所有目标都说成\"做好内容\"。\n\n> **为什么**：模型面对不同经营目标时最稳定的失败，是产出同一份周期计划的八种措辞变体，再给每个目标贴一个不同的 CTA。四轴判据是唯一能机械挡住这件事的关卡。\n\n> ❌ GMV 目标和线索目标拿到同一份\"转化型内容 3 条 + 种草 2 条\"，区别只在文末一句是\"点击购买\"还是\"私信咨询\"。\n> ✅ GMV 目标下先解决\"这件为什么值这个价\"的比较问题，验证重点是购买路径摩擦；线索目标下先解决\"我这种情况适不适合问\"，验证重点是咨询后能给出什么、谁来接、多久回。两者的内容角色、验证重点、承接路径全不同。\n\n**两条禁止**：不得把流量、吸粉、GMV、线索、到店目标静默改写成长期价值工作；不得因为目标是商业的就删掉适用的专业质量。\n\n### O-2 · 解释阶段，不套标签\n\n六个名称继续兼容，但**不是一个互斥完备的单轴状态机**：\n\n- **冷启动｜方向验证｜增长｜稳定经营** —— 描述账号经营**成熟度**，可由当前证据暂定；\n- **转化冲刺** —— 是阶段性经营**目标覆盖**，不因成熟度自动推出，也可以出现在多个成熟度上；\n- **调整** —— 是反馈后的**动作**或计划结果，不是成熟度；\n- **衰退** —— 是**健康解释假设**，需要窗口、对照与混杂因素支持，默认可暂定或 `NOT_VERIFIED`。\n\n判断时看：账号历史与一致性｜是否已有可信的关注理由｜内容机制的可重复性｜受众反应**质量**而不只是量｜承接与制作稳定性｜目标与观察窗｜近期扰动与替代解释。\n\n**判据**：阶段判断必须绑定「账号 + 目标 + 平台 + 观察窗口 + 关键条件」。绑定变了就重新判断。\n\n**证据支持多种读法时，给出竞争解释 + 一条能区分它们的观察**，不要强行选一个标签。\n\n**永远不做**：从单一指标推阶段｜设定固定播放量、粉丝量、周期数阈值｜用虚假确定性填空。\n\n### O-3 · 核对三类产能\n\n三个数**分别承载，不得静默取其一**：\n\n1. 用户期望发布量；\n2. 账号或团队**基线**可持续产能；\n3. **当期**实际可用的人、时间、素材、制作条件。\n\n期望超出当期实际时，按顺序选**最小的诚实调整**：\n\n1. 保住主目标和最高价值的那一条；\n2. 去掉可互换或信息量低的任务；\n3. 在**不改变业务工作**的前提下简化实现方式；\n4. 条件缺失的任务延期或替换；\n5. 说清被让掉的收益或被推迟的学习；\n6. 只有在真的能改变可行边界时才要求增加资源。\n\n**判据**：输出必须能回答\"哪一条被让掉了、让掉的是什么收益\"。\n\n**永远不做**：把三条平均降质凑数｜把\"每天三条\"换算成\"每周三条\"（用用户自己的时间单位）｜把普通优先级排序退回给用户去决定。\n\n> **为什么**：产能不足时最省事的两种做法——全部降质、或悄悄换算时间单位——都能让输出看起来完成了任务，而用户要到发布那天才发现。\n\n### O-4 · 最小充分内容组合\n\n**每条内容任务承担一个主要业务工作**，加有限的次要贡献。角色（稳定兑现｜探索｜长期积累｜转化承接｜线索捕获｜到店拉动）**是可能的角色，不是必填格子**。\n\n每提一条任务，问四句：\n\n1. 它独有的业务工作是什么？\n2. 删掉它会变什么？\n3. 有没有别的任务和它可互换？\n4. 现在的条件支持产出它吗？\n\n**删掉或合并\"在冻结目标下没有差别\"的任务。**\n\n**判据**：任两条任务互换后，周期结果必须发生变化；否则合并。\n\n**永远不做**：为了凑满角色而生成任务｜为了满足\"一主\"把一条内容机械拆成三条低质量内容｜把周期全部目标或全部 CTA 塞进同一条 Brief。\n\n### O-5 · 稳定兑现与受控探索\n\n**两种退化都要防**：不断追新而没有账号资产；只复制一次高表现而收敛成模板号。\n\n对每个可重复的运营或表达机制，**分开**记两件事：\n\n| 证据成熟度 | 当前使用决定 |\n|---|---|\n| 无观察／有限观察／重复观察／已被反证或已过期 | 探索／维持／扩大／继续观察／暂停／重新设计／退出 |\n\n这是解释性语义，**不是必须建的数据库枚举**。只保留会改变决定的区分。\n\n每个探索提案必须写六项：\n\n1. 它要解决的不确定性；\n2. 最小可逆动作；\n3. 支持继续的观察；\n4. 会推翻或要求重新设计的观察；\n5. 到期或复验条件；\n6. 它让位掉的稳定义务（如果有）。\n\n**判据**：稳定兑现与探索**没有固定比例**；有依据时其中一类可以暂时为零。**有依据地保持不变**也是正确结果，但必须写清依据和复验触发。\n\n**永远不做**：输出固定配比｜要求任何条件下探索都非零｜让一次高表现自动推广成全账号模板｜因为一条异常反馈就全面改向。\n\n> ❌ 「稳定内容 70%、探索 30%」——这个比例来自哪个证据？\n> ✅ 「本周期探索为零：三个待验证方向的承接条件都还没到位，现在试等于用不可逆的曝光换一个注定不可解释的结果。下周期库存到位后重新判断（复验触发：补货确认）。」\n\n### O-6 · 服装经营条件与市场机会（条件加载）\n\n**只有当商品、库存、试穿、季节、门店或外部市场证据会改变本轮决定时**，才读 [`references/fashion-and-market.md`](references/fashion-and-market.md)。通用请求不加载。\n\n**这份附件到底加载没加载，看输入里的 `<<REFERENCE_MANIFEST>>` 清单，不靠自己回忆**（规则见〈必填项闸门〉）。清单标 `NOT_LOADED` 时：照常产出，写进 `missing[]`，**不要凭记忆补一条行业惯例或一个季节结论**——补上去的那条看起来和查来的一模一样，但没人知道它是编的。\n\n**\"附件没拿到\"和\"账号事实不全\"是两种不同的缺口，就算同时发生也要分开写**：前者是明确一句\"`references/fashion-and-market.md` 未加载/不可得\"；后者才是具体缺哪个商品/试穿/库存事实。只写后者、不点名附件本身缺失，等于让用户以为系统尝试读取过这份专业依据，实际上没有——这本身就是一次未声明的证据降级。\n\n核心两条（正文保留，细则在附件）：\n\n- **局部失效**：某个颜色断码，只影响相关商品任务、CTA 与时效，**不使材质事实失效**；没有试穿素材，只阻止依赖上身证据的版型/体感主张，**不阻止**商品细节、搭配原则、材质或场景类内容。\"当前不可售\" ≠ \"商品事实是假的\"。\n- **声明要匹配证据**：版型、垂坠、体感、比例需要相应的上身证据或显式不确定；成分、工艺、尺寸、保养、价格、库存需要当前权威商品数据；稀缺、爆款、显瘦、高级这类说法各自需要自己的支撑。\n\n**市场机会 ≠ 热门内容。** 机会 = 有范围的信号 + 账号适配 + 真实供给或承接 + 当前时间窗 + 可逆可观察的动作。四者缺一即不是机会。\n\n责任分层，**不越界**：\n\n| 层 | 谁负责 | M3 在这一层做什么 |\n|---|---|---|\n| 赛道机会、题材饱和、内容支柱、栏目疲劳、周期集中度 | **M3** | 改周期组合、时机、资源投入，或决定去验证 |\n| 单条题材切入、钩子、叙事、表达机制 | 创意锦标赛／Creative Script | 保留真实的备选空间，**不规定机制** |\n| 标题、封面、入口承诺、平台包装 | Publishing & Packaging | 传事实与约束，**不写包装** |\n\n**同质化检查顺序**：先查平台同类内容，再查账号自身历史重复。\n\n**声明上限**：没有可靠、当前、范围匹配的外部证据时，可以继续生产，但只能说\"外部比较不完整\"。**不得声称**\"平台稀缺\"\"平台唯一\"\"已经避开同质化\"。\n\n### O-7 · 连续性义务与栏目退出\n\n连续性义务**只在下列证据存在时成立**：\n\n- 尚未闭合的、面向受众的**前向公开承诺**；或\n- 当前、可观察、与该栏目特定相关的受众依赖。\n\n**单独不足以建立永久义务**：历史频率｜历史表现｜运营者的感情｜一条与当下无关的旧评论。\n\n门槛依次提高：**缩减**（降频降范围，保住价值路径）→ **暂停**（保留可恢复性；只在存在外部预期时才需要说明）→ **退出**（处理仍有效的承诺、迁移业务路径，证据门槛最高）。\n\n**永远不做**：编造恢复日期｜把日常栏目调整上推给 Founder。触及长期定位和账号承诺时返回 Matrix。\n\n### O-8 · Campaign 覆盖与到期\n\nCampaign 是**有期限的覆盖层**，只占用它**点名**的内容位置、资源、节奏和观察目标。\n\n- 未覆盖的位置**仍由本能力管理**；\n- 到期后回到**当时仍然有效**的周期基线；活动期间基线若已合法变更，**恢复的是新基线，不是活动开始时的快照**；\n- 两侧不静默改写对方的真源；\n- 两者向 Content Brief 交付同一种业务语义，只多一个来源标识。\n\n**判据**：继续沿用活动策略必须形成**新的、有依据的周期判断**并满足相应接受权限，不能因为\"活动效果不错\"就自动留下。\n\n**永远不做**：静默保留 Campaign｜让 Campaign 永久改写周期目标或内容组合｜让 Campaign 改写账号定位｜到期时复活已失效的旧任务。\n\n### O-9 · 决定是否生产\n\n条件与证据支持时产出内容任务；否则**明确**给出六种结论之一：**减量｜延期｜不发｜先补一项阻塞事实｜继续观察｜有依据地保持不变**。\n\n**`NO_CONTENT_TASK` 是合法结果，四要素缺一不可**：\n\n```text\nreason              本轮不产生内容任务的具体理由（不是\"信息不足\"这种无类别表述）\ngrounded_in         理由依据的事实和类别\nscope               受影响范围 / 明确不受影响的范围\nreopen_trigger      什么条件出现就重新判断\n```\n\n**只在**当前事实、权限、不可牺牲条件、资源或证据**确实意味着\"不应生成内容任务\"**时使用。\n\n**永远不做**：用空结果逃避本来能完成的工作｜用它代替专业判断或模型犹豫｜把一个建议性缺口扩大成全局硬停｜为了填满输出结构而编造替代方案。\n\n> ❌ 「缺少一些信息，建议补充后再来。」——没有类别、没有范围、没有触发条件，这是逃避不是判断。\n> ✅ 「不产出：这条依赖的到店承接现在没人能接（依据：门店当前无可用服务时段，来源=用户本轮陈述，范围=只影响到店类任务）。不受影响：商品知识类与搭配原则类任务照常。重新判断触发：门店给出可承接时段。」\n\n### O-10 · 反馈与局部更新\n\n顺序不能颠倒：\n\n1. 绑定准确的内容版本 / 测试身份、账号、平台、观察窗、来源、分发条件；\n2. 分开平台观测、人工评价、人工经营结果、市场变化、模拟反馈；\n3. **先写观察，不先写原因**；\n4. 列出可能解释、混杂因素、仍未知项；\n5. 只改证据实际支持的**最小**判断；\n6. 对未受影响的判断**明确说明保持**；\n7. 形成下一周期 Delta、继续观察，或无变化结论。\n\n**四种情形必须处理得不一样**：\n\n| 情形 | 正确处理 |\n|---|---|\n| 反馈充分且范围明确 | 改动它真正影响的那条判断；相邻资源可小幅调整，但代价要写明 |\n| 多条一致 | 可以支持更大的调整，但仍限于证据覆盖的范围 |\n| 互相冲突 / 不足 | **有依据地保持不变**，写清为什么和还需要什么观察 |\n| 观察窗未结束 | 明确\"窗口未结束、暂不改判\"，不静默改也不假装已有结论 |\n\n**永远不做**：从数据直接跳到策略改写｜为了\"表现出在学习\"而改策略｜把一条高表现推广成账号级模板｜用\"一条永远不够\"来拒绝任何改变。\n\n### O-11 · 限定影响面\n\n变化**只**传给真实依赖该语义、且**尚未发布**的任务。已发布内容保留为历史，不转 `STALE`。未受影响的判断继续有效。\n\n**判据**：既不多算（让有证据、不受影响的判断失效），也不少算（漏掉已知依赖）。影响关系判断不了的，标 `STALE` 待定向复验，**不假装知道依赖图**。\n\n---\n\n## CTA 三层权限\n\n| 层 | 例 | 条件 |\n|---|---|---|\n| 低风险平台内互动 | 关注、评论、收藏 | 自然且事实安全时可自行提出，不需要单独的 CTA 表单 |\n| 经营型 | 商品点击、咨询、线索、到店、购买 | 需要**对应的经营目标** + **当前有效的承接路径** |\n| 高风险 | 站外导流、价格优惠、强购买承诺、其他高风险表达 | 需要**明确授权**和已核实的条件 |\n\n**永远不做**：从流量、吸粉或 GMV 目标推出高风险权限｜编造库存、价格、优惠、可得性、响应能力或服务承诺｜用暗号、藏码、诱导跳转规避平台规则。\n\n> ❌ 「目标是 GMV，那就在评论区挂个优惠链接。」——GMV 目标不授权站外导流和价格承诺。\n> ✅ 「站外导流和优惠力度需要明确授权，本轮未授权。当前能做的是：站内商品点击（承接路径已确认可用）。如果确实要导流，需要确认的是谁授权、优惠是否已生效、以及承接页是否已经上线。」\n\n---\n\n## 共同质量底线\n\n起号、吸粉、流量、GMV 内容**可以**更短、更快、更强调传播或承接，**但不能因此失去**适用的活人感、生活感、人设辨识度、创意差异、可拍性、事实纪律和成品完整度。\n\n**禁止**：大模型总结腔｜模板拼装｜正确但无用的废话｜为日更或日多更机械复制低质量内容。\n\n**叙事、共情、烟火气、视觉感、信息密度、转化机制按内容类型适用，不是每条内容的全能硬门。** 长期价值内容和高质量快节奏内容可以并行。\n\n**内容任务不以真实经营事件、真实岗位、真实案例或一手反馈为生产门。** 在表达裁量、事实和权限允许时，剧情、角色、情境模拟、演绎和二创都是合法的。\n\n**资料不足时**：只降低可主张的事实专属性、现实承诺和品牌确定性，**不降低创意深度和质量**；只阻断无依据的具体事实主张及其依赖分支，不阻断整个任务。\n\n---\n\n## 交给 Content Brief\n\n存在生产条件时，每条内容任务至少要能表达：\n\n```text\nupstream_kind             continuous_operation_decision（直接任务可标 NOT_APPLICABLE）\ncycle_role                周期角色；直接任务可 NOT_APPLICABLE\naccount / subject         账号与表达主体\nplatform / content_form   目标平台与内容形态；未锁定时明确写未锁定\nprimary_job               一个主要业务工作\nsecondary_contributions[] 有限次要贡献\npriority / non_sacrifice  目标优先级与不可牺牲条件\naudience_problem          受众问题、场景或现实机会\naudience_shift            希望观众发生的变化\npromise_or_hypothesis     内容承诺、核心命题或待验证假设\nfacts[] / sources[]       可用事实与来源\ngaps[]                    明确缺口\nproduct_conditions        商品/库存/价格/门店/承接窗口 —— 仅相关时填\ncapacity / timing         实际产能与时间\npermission / cta / risk   权限、CTA 意图与风险边界\nexplicit_non_promise[]    明确不可承诺事项\nobservation_target        观察目标、证据身份、必要的到期条件\nm2_binding                与当前周期/对象/版本的绑定；无持久化时标 NOT_APPLICABLE\ndownstream_freedom        下游仍可决定的创意与生产空间\n```\n\n**不适用项明确写 `NOT_APPLICABLE`，不虚构周期、平台、事实或上游。**\n\n**到这里停。** 不提供钩子、候选创意机制、完整叙事、台词、镜头、表演指导、标题、封面或最终发布文案。\n\n用户的直接任务、合法历史产物和满足必要条件的已有构想**可以直接进入 Brief**，不要求伪造周期或补跑全部上游。\n\n需要检查\"商业目标有没有把适用的专业义务挤掉\"，或需要判断某个合法等价输入是否保住了下游必需语义时，读 [`references/six-skill-methods.md`](references/six-skill-methods.md)。纯诊断轮、纯复盘轮、`NO_CONTENT_TASK` 轮不需要读。\n\n---\n\n## 交给 M2 的只能是候选\n\n```text\nM2 保存原始观测/反馈/来源/平台/时间/范围/权限/时效/对象/版本\n  → 本能力形成解释假设与局部影响判断\n  → 产出诊断、周期计划、内容任务、复盘更新或\"保持不变\"候选\n  → 经相应权限和接受规则后，由 M2 保存当前有效判断\n```\n\n**永远不做**：生成、覆盖或重写原始反馈｜修改来源｜建第二套状态库｜直接把候选晋升成当前有效版本｜处理 M2 的并发、幂等、权限、版本晋升或恢复内部实现。\n\n**日常运营判断不需要 Founder 逐项审核。** 只有产品范围、长期身份、受保护能力、对外高风险授权或阶段性交付采用等治理事项才返回相应权威人。用户在产品里的每次查看、选择、继续或提出调整**本身就是正常交互裁决**，不得包装成 Founder 审核。\n\n---\n\n## 必填项闸门\n\n下面这些要求**不是叮嘱，是结构性必填**。它们原先只写成散文，实测结果是\"记得就写、忘了就没有\"：同一份能力在一处把探索六项写全、在另一处就漏掉反证和到期；在一处把暂定锚点四要素写得完整、在另一处一个都没写。漏掉的那次读起来和写全的那次一样顺，**用户没有办法靠读输出发现它漏了**。\n\n**做法**：每一项必填内容都有一个**固定标签**。触发条件命中时，标签必须**逐字出现**在它本该出现的段落里，后面跟实质回答；答不出来就写 `未知` 或 `不适用：<一句原因>`，**不得省略标签本身**。\n\n| 触发条件 | 必须逐字出现的标签 |\n|---|---|\n| 本轮输出里存在任何**探索提案**（试一下、验证、小范围测试、新方向、新机制） | `[探索·不确定性]` `[探索·最小可逆动作]` `[探索·支持继续的观察]` `[探索·推翻信号]` `[探索·到期或复验]` `[探索·让位的稳定义务]` |\n| 使用**暂定锚点**（`account_anchor` 缺失或不完整，由自然语言现形成） | `[暂定锚点·来源]` `[暂定锚点·范围]` `[暂定锚点·不确定性]` `[暂定锚点·复验触发]` |\n| 本轮反馈里存在**相互冲突**的反馈，或单条**证据不足**以支持改判 | `[冲突反馈·冲突在哪]` `[冲突反馈·各自证据身份]` `[冲突反馈·为什么保持或改变]` `[冲突反馈·还需要什么观察]` |\n| 结论是 `NO_CONTENT_TASK` | `[无任务·缺什么]` `[无任务·谁能补]` `[无任务·补上后会变成什么]` `[无任务·现在能做的替代动作]` |\n| **每一次输出，无条件** | `[参考文件加载状态]` |\n\n**两侧都算错**：\n\n- 触发命中却缺任一标签 ⇒ **本次交付无效**，补全再交，不是\"下次注意\"；\n- 触发未命中却出现这些标签 ⇒ 装饰性填空，同样是错。〈判断主链〉\"没命中的步骤不生成装饰性内容\"不因本闸门放松。\n\n**标签是锚点，不是表单**：写在对应内容的自然位置，不另起自检段、不回显触发判断过程、不暴露内部字段。用户看到的仍然是〈输出〉那五样。\n\n### 触发自报行\n\n正文**最后一行**必须是这一行，且只有这一行（它会被剥掉，不进入用户看到的交付）：\n\n```text\n<<TRIGGERS>>探索提案=是|否;暂定锚点=是|否;冲突反馈=是|否;无内容任务=是|否<<END_TRIGGERS>>\n```\n\n按本轮实际情况填四个是/否。**这一行是给闸门用的，不是给你重新决定要不要写标签用的**——先按上表该写的写完，再如实自报。\n\n### `[参考文件加载状态]` 只许回抄，不许自述\n\n参考文件到底有没有加载，**不由你判断**。本轮输入里会有一段机器写好的清单：\n\n```text\n<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>\n```\n\n规则：\n\n- 清单标 `LOADED` 的，**禁止**声称它未加载、不可得或\"本轮未读到\"；\n- 清单标 `NOT_LOADED` 的，**必须**在 `[参考文件加载状态]` 与 `missing[]` 里逐字点名；\n- **没有清单**时写 `[参考文件加载状态] 未知：本轮输入未附加载清单`，**不得推测**任何一边。\n\n**为什么单独立一条**：实测两次复现——附件全文实际就在上下文里（2799 字符，内容哈希与其余各组完全相同），模型仍在交付正文里写\"专业参考附件本轮未加载\"。方向是少报而不是编造，但它证明**\"我有没有拿到 X\"这类关于自身上下文的自述不可靠**，不能拿它当证据。**凡是能从输入里逐字抄的事实，就不要让模型回忆。**\n\n---\n\n## 输出\n\n用户默认只看到五样：\n\n1. **结论**；\n2. **关键依据和假设**（少而具体）；\n3. **主要取舍和代价**；\n4. **受影响的任务，或明确的无任务结论**；\n5. **下一步**——只有真正需要用户决定时才附**一个**问题。\n\n结构化业务语义与证据引用供系统内部和下游消费，**默认不向用户暴露状态机、哈希、内部字段或长篇自检**。\n\n**用户提出调整时，必须产生实际处理结果**：按意图调整；或者在事实、权限、合规冲突时保留用户真正想达到的目标，给出最接近的合法方案，并说清具体冲突在哪。\n\n**不得回答**：\"只有这一版\"｜\"没有其他方案\"｜\"你说了也改不了\"｜只把修改要求记为意见而不产生新结果｜只解释原方案为什么合理而不执行修改。\n\n---\n\n## 声明上限\n\n**不得声称**：\n\n- 没有可恢复持久化时具备跨周期持续运营；\n- 从模拟发布或模拟反馈得出真实运营成立；\n- 从普通观察得出因果经营提升；\n- 在受控验收前具备专业优越性；\n- 没有当前范围匹配证据时\"平台唯一\"。\n\n**本能力的模块验收只评价**：目标忠实、阶段解释、内容组合、产能取舍、复制/探索配置、市场机会判断、反馈纪律、局部失效、Campaign 接缝、内容任务可用性，以及**没有压制后续适用的专业能力**。\n\n具体钩子、脚本、镜头、拍摄、包装和成品的专业增益属于生产链与 M5 集成验收，**不由本能力证明**。\n\n完成条件满足后停止。**不要在决定或交付已经完成之后继续重新设计系统。**\n\n---\n\n## 自检\n\n1. 只改主目标，四轴里变了至少两轴吗？——没变就是没理解目标，只换了 CTA\n2. 三类产能**分别**写出来了吗？——这一格最容易被合并成一个数字，合并之后取舍全是假的\n3. 被让掉的那条，收益说清了吗？\n4. 每条任务的 `primary_job` 只有**一个**吗？任两条互换后周期会变吗？\n5. 探索提案的六项写全了吗？——反证和到期条件最容易被省掉，省掉之后实验就是没有停止条件的常设动作\n6. 阶段判断绑定了账号+目标+平台+观察窗+关键条件吗？有没有用固定阈值？\n7. 观察写在原因前面了吗？未受影响的判断**明确**说保持了吗？\n8. 有没有把模拟/测试反馈说成真实经营结果？有没有把相关性写成因果？\n9. 有没有替下游写钩子、叙事、镜头、标题或封面？\n10. `NO_CONTENT_TASK` 的四要素齐吗？——只写\"信息不足\"是逃避，不是判断\n11. 高风险 CTA 有明确授权吗？还是从经营目标推出来的？\n12. 输出里有没有本轮输入中不存在的商品、库存、价格、门店或顾客事实？\n13. 〈必填项闸门〉命中的标签**逐字**都在吗？没命中的标签有没有被装饰性地写上去？\n\n**第 1—12 条是提醒，第 13 条是闸门。** 提醒会被忘掉——这一点已经实测复现，所以才有闸门。提醒里的第 5 条和第 10 条现在由闸门兜底，其余仍然只是提醒。\n\n---\n\n## 参考文件\n\n- [`references/fashion-and-market.md`](references/fashion-and-market.md) —— 服装经营变量、局部失效表、GMV/线索/到店区分、市场机会与同质化分层。**只在商品/库存/试穿/季节/门店/外部市场证据会改变本轮决定时读。**\n- [`references/six-skill-methods.md`](references/six-skill-methods.md) —— 六份既有 Skill 的条件化方法继承与责任边界。**只在形成下游任务、判断合法等价输入、或核对商业目标是否挤掉适用专业义务时读。**\n\n**参考文件拿没拿到，以输入里的 `<<REFERENCE_MANIFEST>>` 清单为准**（见〈必填项闸门〉；清单说 `LOADED` 就是加载了，不许自述成没加载）。清单标 `NOT_LOADED` 时：直接跳过，照常产出，**在 `missing[]` 里明确点名是哪份参考文件未加载/不可得**（不是只写缺哪个账号/商品事实）。不要凭记忆补一个行业惯例、一个季节结论或一条平台规则。\n\n**验收夹具不在这里**，在 `account-operations/fixtures/`。运行时**永不加载**——夹具用于验收，不用于提示答案。\n\n---\n\n## 语义回指表\n\n`ENGINEERING_HANDOFF.md` §5 列出的不可改 WHAT，逐项指向本文件承载它的位置。EP-05 反搜按此表做回指检查。\n\n> **〈必填项闸门〉不在此表内，因为它不承载任何新的 WHAT。** 它是载体层的强制手段：把表内第 5、10、12 项**已经**要求的内容，从\"写在散文里\"改成\"缺了能被机械检出\"。产品语义一个字未改——闸门不新增任何一项必须回答的问题，只是不允许已有的那些被静默省略。上一轮 `v1.0` 的实测缺陷（探索六项、暂定锚点四要素、冲突反馈身份三处漏写，以及参考文件加载状态的不可靠自述）是它存在的理由；拿掉闸门，这些缺陷按实测会复发。\n\n| # | 不可改的 WHAT | 承载位置 |\n|---|---|---|\n| 1 | M3 的责任边界和四类业务行为 | 标题下\"不做\"段；〈本轮在做哪件事〉 |\n| 2 | 目标忠实及目标间实质差异 | O-1（八行表 + 四轴判据 + 两条禁止） |\n| 3 | 阶段成熟度、临时覆盖、动作、健康假设的分离 | O-2（四类名称分开定义） |\n| 4 | 期望量、基线产能、实际产能的分离 | 输入表三行；O-3 |\n| 5 | 稳定兑现与受控探索无固定配额 | O-5（\"没有固定比例\"判据 + ❌ 示例） |\n| 6 | 证据成熟度与当前使用决定分离 | O-5（两列表） |\n| 7 | 服装局部失效与声明特定证据 | O-6 核心两条 + `references/fashion-and-market.md` |\n| 8 | 主动市场机会的可逆验证语义 | O-6（机会五要素） |\n| 9 | Campaign 只覆盖点名位置并回到当前有效基线 | O-8 |\n| 10 | M3 到 Brief 的业务本体及停止边界 | 〈交给 Content Brief〉（字段块 + \"到这里停\"） |\n| 11 | 六 Skill 是适用能力义务，不是强制全链 | 〈共同质量底线〉\"不是全能硬门\"；`references/six-skill-methods.md` 条件加载 |\n| 12 | 反馈最小影响与有依据保持不变 | O-10（七步 + 四情形表）；O-11 |\n| 13 | 用户调整必须产生实际处理 | 〈输出〉末两段 |\n| 14 | 日常运行不引入 Founder 审核 | 〈交给 M2 的只能是候选〉末段 |\n| 15 | M3 模块验收与 M5 成品增益验收分离 | 〈声明上限〉第二、三段 |\n| 16 | 不提前宣称真实运营或经营提升 | 〈声明上限〉第一段五条 |\n\n\n---\n{{#start.loaded_references#}}"
+            },
+            {
+              "id": "m3-usr-0001",
+              "role": "user",
+              "text": "{{#start.account_context#}}\n{{#start.user_request#}}"
+            }
+          ],
+          "context": {
+            "enabled": false,
+            "variable_selector": []
+          },
+          "vision": {
+            "enabled": false
+          },
+          "memory": null
+        }
+      },
+      {
+        "id": "required_item_gate",
+        "type": "custom",
+        "position": {
+          "x": 760,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 760,
+          "y": 260
+        },
+        "width": 242,
+        "height": 98,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "code",
+          "title": "必填项闸门（确定性检查）",
+          "selected": false,
+          "desc": "代码检查必填标签是否逐字到位、是否装饰性填空、正文是否与参考文件加载清单矛盾。不判断内容好坏。",
+          "code_language": "python3",
+          "code": "import json\nimport re\n\n\ndef main(draft: str, manifest: str) -> dict:\n    src = draft or \"\"\n    # 1. reasoning is not the deliverable\n    body = re.sub(r\"<think>.*?</think>\", \"\", src, flags=re.S).strip()\n\n    # 2. pull the self-reported trigger line, then remove it from the body\n    m = re.search(r\"<<TRIGGERS>>(.*?)<<END_TRIGGERS>>\", body, flags=re.S)\n    raw_trig = m.group(1).strip() if m else \"\"\n    body = re.sub(r\"<<TRIGGERS>>.*?<<END_TRIGGERS>>\", \"\", body, flags=re.S).strip()\n\n    def flag(name):\n        mm = re.search(name + r\"\\s*=\\s*(是|否)\", raw_trig)\n        return (mm.group(1) == \"是\") if mm else None\n\n    trig = {\n        \"explore\": flag(\"探索提案\"),\n        \"anchor\": flag(\"暂定锚点\"),\n        \"conflict\": flag(\"冲突反馈\"),\n        \"notask\": flag(\"无内容任务\"),\n    }\n\n    LABELS = {\n        \"explore\": [\"[探索·不确定性]\", \"[探索·最小可逆动作]\", \"[探索·支持继续的观察]\",\n                    \"[探索·推翻信号]\", \"[探索·到期或复验]\", \"[探索·让位的稳定义务]\"],\n        \"anchor\": [\"[暂定锚点·来源]\", \"[暂定锚点·范围]\", \"[暂定锚点·不确定性]\",\n                   \"[暂定锚点·复验触发]\"],\n        \"conflict\": [\"[冲突反馈·冲突在哪]\", \"[冲突反馈·各自证据身份]\",\n                     \"[冲突反馈·为什么保持或改变]\", \"[冲突反馈·还需要什么观察]\"],\n        \"notask\": [\"[无任务·缺什么]\", \"[无任务·谁能补]\", \"[无任务·补上后会变成什么]\",\n                   \"[无任务·现在能做的替代动作]\"],\n    }\n    ALWAYS = [\"[参考文件加载状态]\"]\n\n    missing = []\n    decorative = []\n    for k, labels in LABELS.items():\n        for lb in labels:\n            present = lb in body\n            if trig.get(k) is True and not present:\n                missing.append(lb)\n            if trig.get(k) is False and present:\n                decorative.append(lb)\n    for lb in ALWAYS:\n        if lb not in body:\n            missing.append(lb)\n\n    # 3. independent keyword cross-check of the self-reported triggers (advisory only:\n    #    it never forces a label, it only records disagreement for the evidence record)\n    kw = {\n        \"explore\": r\"探索|试一下|试试|小范围测试|验证一下|新方向|新机制|做个实验\",\n        \"anchor\": r\"暂定锚点|暂定定位|临时锚点\",\n        \"conflict\": r\"冲突|相互矛盾|不一致的反馈|证据不足以\",\n        \"notask\": r\"NO_CONTENT_TASK\",\n    }\n    crosscheck = []\n    for k, pat in kw.items():\n        hit = re.search(pat, body) is not None\n        if trig.get(k) is False and hit:\n            crosscheck.append(k + \": 自报=否，正文出现该类措辞\")\n        if trig.get(k) is True and not hit:\n            crosscheck.append(k + \": 自报=是，正文未出现该类措辞\")\n        if trig.get(k) is None:\n            crosscheck.append(k + \": 自报行缺失或不可解析\")\n\n    # 4. reference-manifest contradiction check (defect one)\n    man = manifest or \"\"\n    loaded = re.findall(r\"([\\w./-]+\\.md)\\s*:\\s*LOADED\", man)\n    notloaded = re.findall(r\"([\\w./-]+\\.md)\\s*:\\s*NOT_LOADED\", man)\n    # Segment on sentence delimiters, not a fixed character window: a window\n    # spills into the NEXT file's clause, so \"A.md 已加载；B.md 未加载\" would\n    # falsely flag A. Only a negation in A's OWN clause counts.\n    segments = re.split(r\"[。；;\\n]\", body)\n    contradiction = []\n    for f in loaded:\n        base = f.split(\"/\")[-1]\n        for seg in segments:\n            if base in seg and re.search(r\"未加载|不可得|未读到|没有加载|未提供|不可用\", seg):\n                contradiction.append(base + \": 清单为 LOADED，同一句中出现未加载类措辞\")\n                break\n    manifest_present = \"<<REFERENCE_MANIFEST>>\" in man\n\n    report = {\n        \"triggers_self_reported\": trig,\n        \"trigger_line_found\": bool(m),\n        \"missing_labels\": missing,\n        \"decorative_labels\": decorative,\n        \"trigger_crosscheck_advisory\": crosscheck,\n        \"manifest_present\": manifest_present,\n        \"manifest_loaded\": loaded,\n        \"manifest_not_loaded\": notloaded,\n        \"manifest_contradiction\": contradiction,\n    }\n    needs_fix = \"yes\" if (missing or decorative or contradiction) else \"no\"\n    return {\n        \"gate_report\": json.dumps(report, ensure_ascii=False),\n        \"needs_fix\": needs_fix,\n        \"body\": body,\n    }\n",
+          "variables": [
+            {
+              "variable": "draft",
+              "value_selector": [
+                "operating_one_account_llm",
+                "text"
+              ]
+            },
+            {
+              "variable": "manifest",
+              "value_selector": [
+                "start",
+                "loaded_references"
+              ]
+            }
+          ],
+          "outputs": {
+            "gate_report": {
+              "type": "string",
+              "children": null
+            },
+            "needs_fix": {
+              "type": "string",
+              "children": null
+            },
+            "body": {
+              "type": "string",
+              "children": null
+            }
+          }
+        }
+      },
+      {
+        "id": "gate_repair_llm",
+        "type": "custom",
+        "position": {
+          "x": 1100,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 1100,
+          "y": 260
+        },
+        "width": 242,
+        "height": 98,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "llm",
+          "title": "按闸门报告补齐缺失项",
+          "selected": false,
+          "desc": "只补闸门点名的缺失/装饰/矛盾三类；无缺失时输出 NO_CHANGE，由下游代码节点取原文",
+          "model": {
+            "provider": "langgenius/deepseek/deepseek",
+            "name": "deepseek-v4-flash",
+            "mode": "chat",
+            "completion_params": {
+              "temperature": 0.4
+            }
+          },
+          "prompt_template": [
+            {
+              "id": "m3-fix-sys-1",
+              "role": "system",
+              "text": "你是必填项闸门的补齐环节，不是重写环节。\n\n上游给你两样东西：一份已经写好的交付正文，和一份**由代码产生**的闸门报告。\n\n规则：\n\n1. `needs_fix` 为 `no` 时，只输出四个字符 `NO_CHANGE`，不要输出别的任何内容。\n2. `needs_fix` 为 `yes` 时，输出**完整的**修正后正文：\n   - `missing_labels` 里的每个标签，逐字补进它本该出现的段落，后面跟实质回答；\n     答不出来就写 `未知` 或 `不适用：<一句原因>`，但标签本身必须在；\n   - `decorative_labels` 里的每个标签，删掉（触发未命中却写了，属于装饰性填空）；\n   - `manifest_contradiction` 里点名的，按 `manifest_loaded` / `manifest_not_loaded`\n     的**清单原值**改写那句话——清单说 LOADED 就是加载了，不许写成未加载。\n3. **除上述三类修改外，原正文逐字保留**：不改写措辞、不重新组织、不增删观点、\n   不补充新的业务判断、不删任何原有内容。\n4. 不要输出闸门报告、不要解释你改了什么、不要输出 `<<TRIGGERS>>` 行。"
+            },
+            {
+              "id": "m3-fix-usr-1",
+              "role": "user",
+              "text": "<gate_report>\nneeds_fix = {{#required_item_gate.needs_fix#}}\n{{#required_item_gate.gate_report#}}\n</gate_report>\n\n<draft>\n{{#required_item_gate.body#}}\n</draft>"
+            }
+          ],
+          "context": {
+            "enabled": false,
+            "variable_selector": []
+          },
+          "vision": {
+            "enabled": false
+          },
+          "memory": null
+        }
+      },
+      {
+        "id": "assemble",
+        "type": "custom",
+        "position": {
+          "x": 1440,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 1440,
+          "y": 260
+        },
+        "width": 242,
+        "height": 98,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "code",
+          "title": "确定性取稿",
+          "selected": false,
+          "desc": "闸门无缺失时逐字返回原稿（由代码保证，不依赖模型照抄）；有缺失时返回补齐稿",
+          "code_language": "python3",
+          "code": "import re\n\n\ndef main(body: str, fixed: str, needs_fix: str) -> dict:\n    b = body or \"\"\n    f = re.sub(r\"<think>.*?</think>\", \"\", fixed or \"\", flags=re.S).strip()\n    f = re.sub(r\"<<TRIGGERS>>.*?<<END_TRIGGERS>>\", \"\", f, flags=re.S).strip()\n    # Deterministic selection: when the gate found nothing, the draft is returned\n    # byte-for-byte by CODE, not by asking a model to \"copy it verbatim\".\n    if needs_fix != \"yes\" or f == \"\" or f.strip() == \"NO_CHANGE\":\n        return {\"final_text\": b, \"path\": \"draft_verbatim\"}\n    return {\"final_text\": f, \"path\": \"gate_repaired\"}\n",
+          "variables": [
+            {
+              "variable": "body",
+              "value_selector": [
+                "required_item_gate",
+                "body"
+              ]
+            },
+            {
+              "variable": "fixed",
+              "value_selector": [
+                "gate_repair_llm",
+                "text"
+              ]
+            },
+            {
+              "variable": "needs_fix",
+              "value_selector": [
+                "required_item_gate",
+                "needs_fix"
+              ]
+            }
+          ],
+          "outputs": {
+            "final_text": {
+              "type": "string",
+              "children": null
+            },
+            "path": {
+              "type": "string",
+              "children": null
+            }
+          }
+        }
+      },
+      {
+        "id": "post_gate",
+        "type": "custom",
+        "position": {
+          "x": 1780,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 1780,
+          "y": 260
+        },
+        "width": 242,
+        "height": 98,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "code",
+          "title": "闸门闭合复检（确定性）",
+          "selected": false,
+          "desc": "对成稿重跑同一套检查，回答'补齐到底有没有补上'；不改稿，只出报告",
+          "code_language": "python3",
+          "code": "import json\nimport re\n\n\ndef main(final_text: str, manifest: str, prior_report: str) -> dict:\n    \"\"\"Re-run the same checks on the ASSEMBLED output, reusing the first gate's\n    trigger flags (the control line is already stripped by then).\n\n    This answers \"did the repair actually close the gaps\" with code instead of\n    assuming a repair that ran also worked.\n    \"\"\"\n    body = final_text or \"\"\n    try:\n        prior = json.loads(prior_report or \"{}\")\n    except Exception:  # noqa: BLE001\n        prior = {}\n    trig = prior.get(\"triggers_self_reported\") or {}\n\n    LABELS = {\n        \"explore\": [\"[探索·不确定性]\", \"[探索·最小可逆动作]\", \"[探索·支持继续的观察]\",\n                    \"[探索·推翻信号]\", \"[探索·到期或复验]\", \"[探索·让位的稳定义务]\"],\n        \"anchor\": [\"[暂定锚点·来源]\", \"[暂定锚点·范围]\", \"[暂定锚点·不确定性]\",\n                   \"[暂定锚点·复验触发]\"],\n        \"conflict\": [\"[冲突反馈·冲突在哪]\", \"[冲突反馈·各自证据身份]\",\n                     \"[冲突反馈·为什么保持或改变]\", \"[冲突反馈·还需要什么观察]\"],\n        \"notask\": [\"[无任务·缺什么]\", \"[无任务·谁能补]\", \"[无任务·补上后会变成什么]\",\n                   \"[无任务·现在能做的替代动作]\"],\n    }\n    ALWAYS = [\"[参考文件加载状态]\"]\n\n    still_missing, still_decorative = [], []\n    for k, labels in LABELS.items():\n        for lb in labels:\n            present = lb in body\n            if trig.get(k) is True and not present:\n                still_missing.append(lb)\n            if trig.get(k) is False and present:\n                still_decorative.append(lb)\n    for lb in ALWAYS:\n        if lb not in body:\n            still_missing.append(lb)\n\n    loaded = re.findall(r\"([\\w./-]+\\.md)\\s*:\\s*LOADED\", manifest or \"\")\n    segments = re.split(r\"[。；;\\n]\", body)\n    still_contradiction = []\n    for f in loaded:\n        base = f.split(\"/\")[-1]\n        for seg in segments:\n            if base in seg and re.search(r\"未加载|不可得|未读到|没有加载|未提供|不可用\", seg):\n                still_contradiction.append(base)\n                break\n\n    closed = not (still_missing or still_decorative or still_contradiction)\n    report = {\n        \"first_pass_needs_fix\": prior.get(\"missing_labels\") is not None and bool(\n            prior.get(\"missing_labels\") or prior.get(\"decorative_labels\")\n            or prior.get(\"manifest_contradiction\")),\n        \"first_pass_missing\": prior.get(\"missing_labels\", []),\n        \"first_pass_decorative\": prior.get(\"decorative_labels\", []),\n        \"first_pass_contradiction\": prior.get(\"manifest_contradiction\", []),\n        \"still_missing\": still_missing,\n        \"still_decorative\": still_decorative,\n        \"still_contradiction\": still_contradiction,\n        \"gaps_closed\": closed,\n        \"control_line_leaked\": \"<<TRIGGERS>>\" in body,\n        \"think_leaked\": \"<think>\" in body,\n    }\n    return {\"post_gate_report\": json.dumps(report, ensure_ascii=False),\n            \"gaps_closed\": \"yes\" if closed else \"no\"}\n",
+          "variables": [
+            {
+              "variable": "final_text",
+              "value_selector": [
+                "assemble",
+                "final_text"
+              ]
+            },
+            {
+              "variable": "manifest",
+              "value_selector": [
+                "start",
+                "loaded_references"
+              ]
+            },
+            {
+              "variable": "prior_report",
+              "value_selector": [
+                "required_item_gate",
+                "gate_report"
+              ]
+            }
+          ],
+          "outputs": {
+            "post_gate_report": {
+              "type": "string",
+              "children": null
+            },
+            "gaps_closed": {
+              "type": "string",
+              "children": null
+            }
+          }
+        }
+      },
+      {
+        "id": "end",
+        "type": "custom",
+        "position": {
+          "x": 2120,
+          "y": 260
+        },
+        "positionAbsolute": {
+          "x": 2120,
+          "y": 260
+        },
+        "width": 242,
+        "height": 180,
+        "zIndex": 0,
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "selected": false,
+        "data": {
+          "type": "end",
+          "title": "运营判断与内容任务候选",
+          "selected": false,
+          "outputs": [
+            {
+              "variable": "operating_judgment",
+              "value_selector": [
+                "assemble",
+                "final_text"
+              ]
+            },
+            {
+              "variable": "gate_report",
+              "value_selector": [
+                "required_item_gate",
+                "gate_report"
+              ]
+            },
+            {
+              "variable": "gate_path",
+              "value_selector": [
+                "assemble",
+                "path"
+              ]
+            },
+            {
+              "variable": "post_gate_report",
+              "value_selector": [
+                "post_gate",
+                "post_gate_report"
+              ]
+            },
+            {
+              "variable": "gaps_closed",
+              "value_selector": [
+                "post_gate",
+                "gaps_closed"
+              ]
+            },
+            {
+              "variable": "draft_raw",
+              "value_selector": [
+                "operating_one_account_llm",
+                "text"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "start-source-operating_one_account_llm-target",
+        "source": "start",
+        "target": "operating_one_account_llm",
+        "sourceHandle": "source",
+        "targetHandle": "target",
+        "type": "custom",
+        "zIndex": 0,
+        "data": {
+          "sourceType": "start",
+          "targetType": "llm",
+          "isInIteration": false
+        }
+      },
+      {
+        "id": "operating_one_account_llm-source-required_item_gate-target",
+        "source": "operating_one_account_llm",
+        "target": "required_item_gate",
+        "sourceHandle": "source",
+        "targetHandle": "target",
+        "type": "custom",
+        "zIndex": 0,
+        "data": {
+          "sourceType": "llm",
+          "targetType": "code",
+          "isInIteration": false
+        }
+      },
+      {
+        "id": "required_item_gate-source-gate_repair_llm-target",
+        "source": "required_item_gate",
+        "target": "gate_repair_llm",
+        "sourceHandle": "source",
+        "targetHandle": "target",
+        "type": "custom",
+        "zIndex": 0,
+        "data": {
+          "sourceType": "code",
+          "targetType": "llm",
+          "isInIteration": false
+        }
+      },
+      {
+        "id": "gate_repair_llm-source-assemble-target",
+        "source": "gate_repair_llm",
+        "target": "assemble",
+        "sourceHandle": "source",
+        "targetHandle": "target",
+        "type": "custom",
+        "zIndex": 0,
+        "data": {
+          "sourceType": "llm",
+          "targetType": "code",
+          "isInIteration": false
+        }
+      },
+      {
+        "id": "assemble-source-post_gate-target",
+        "source": "assemble",
+        "target": "post_gate",
+        "sourceHandle": "source",
+        "targetHandle": "target",
+        "type": "custom",
+        "zIndex": 0,
+        "data": {
+          "sourceType": "code",
+          "targetType": "code",
+          "isInIteration": false
+        }
+      },
+      {
+        "id": "post_gate-source-end-target",
+        "source": "post_gate",
+        "target": "end",
+        "sourceHandle": "source",
+        "targetHandle": "target",
+        "type": "custom",
+        "zIndex": 0,
+        "data": {
+          "sourceType": "code",
+          "targetType": "end",
+          "isInIteration": false
+        }
+      }
+    ],
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 0.7
+    }
+  },
+  "features": {
+    "opening_statement": "",
+    "suggested_questions": [],
+    "suggested_questions_after_answer": {
+      "enabled": false
+    },
+    "text_to_speech": {
+      "enabled": false,
+      "language": "",
+      "voice": ""
+    },
+    "speech_to_text": {
+      "enabled": false
+    },
+    "retriever_resource": {
+      "enabled": false
+    },
+    "sensitive_word_avoidance": {
+      "enabled": false
+    },
+    "file_upload": {
+      "enabled": false,
+      "allowed_file_types": [
+        "image"
+      ],
+      "allowed_file_upload_methods": [
+        "local_file",
+        "remote_url"
+      ],
+      "number_limits": 3,
+      "image": {
+        "enabled": false,
+        "number_limits": 3,
+        "transfer_methods": [
+          "local_file",
+          "remote_url"
+        ]
+      }
+    }
+  },
+  "hash": "e5c30c32d503e05323f621c60222a666af44fcd2f30844aaae6981810d6a3fe5",
+  "version": "draft",
+  "marked_name": "",
+  "marked_comment": "",
+  "created_by": {
+    "id": "a94369b8-a028-4841-b692-55f4108df08a",
+    "name": "diyu ",
+    "email": "andy694911060@gmail.com"
+  },
+  "created_at": 1787763994,
+  "updated_by": {
+    "id": "a94369b8-a028-4841-b692-55f4108df08a",
+    "name": "diyu ",
+    "email": "andy694911060@gmail.com"
+  },
+  "updated_at": 1787771704,
+  "tool_published": false,
+  "environment_variables": [],
+  "conversation_variables": [],
+  "rag_pipeline_variables": []
+}
