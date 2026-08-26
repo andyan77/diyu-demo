@@ -1,0 +1,28 @@
+pass POS-01-conflict-full                   status=CLEAN                        cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-A1-zero-output                     status=HARD_FAIL_MIN_OUTPUT         cont=NO_BASELINE    carry=REJECTED_KEEP_PREVIOUS
+pass NEG-A2-think-only                      status=HARD_FAIL_MIN_OUTPUT         cont=NO_BASELINE    carry=REJECTED_KEEP_PREVIOUS
+pass NEG-A3-reference-only                  status=HARD_FAIL_MIN_OUTPUT         cont=NO_BASELINE    carry=REJECTED_KEEP_PREVIOUS
+pass NEG-B1-no-audit-block                  status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-B2-selfreport-false-but-input-true status=NEEDS_FIX                    cont=BLANKET_CARRY  carry=REJECTED_KEEP_PREVIOUS
+pass POS-B3-input-says-no-conflict          status=CLEAN                        cont=NO_BASELINE    carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-B4-anchor-tentative-computed       status=NEEDS_FIX                    cont=NO_BASELINE    carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-B5-explore-selfreport-no-but-body-yes status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-D1-label-in-body                   status=NEEDS_FIX                    cont=OK             carry=REJECTED_KEEP_PREVIOUS
+pass NEG-D2-rule-id-leak                    status=NEEDS_FIX                    cont=OK             carry=REJECTED_KEEP_PREVIOUS
+pass NEG-P6-shell-family-as-evidence        status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-E1-bare-labels                     status=CLEAN                        cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-E2-hollow-anchor                   status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-E3-unanchored                      status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-E4-overlap                         status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-E5-decorative                      status=NEEDS_FIX                    cont=NO_BASELINE    carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-F1-dropped                         status=NEEDS_FIX                    cont=MERGED         carry=ACCEPTABLE_AS_NEW_BASELINE
+pass POS-F2-blanket                         status=CLEAN                        cont=BLANKET_CARRY  carry=ACCEPTABLE_AS_NEW_BASELINE
+pass POS-F3-no-baseline                     status=CLEAN                        cont=NO_BASELINE    carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-G1-manifest-contradiction          status=NEEDS_FIX                    cont=OK             carry=REJECTED_KEEP_PREVIOUS
+pass POS-P1-explore-negated                 status=CLEAN                        cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass POS-P2-explore-conditional             status=CLEAN                        cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass NEG-P3-explore-real-proposal           status=NEEDS_FIX                    cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass POS-P4-slot-value-is-absence           status=CLEAN                        cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+pass POS-P5-inapplicable-exempt             status=CLEAN                        cont=OK             carry=ACCEPTABLE_AS_NEW_BASELINE
+
+26 passed, 0 failed, 26 total

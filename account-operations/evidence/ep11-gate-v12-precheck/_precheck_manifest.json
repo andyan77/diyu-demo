@@ -1,0 +1,39 @@
+{
+  "ecc": "EP-11 冻结前定向复验（探索阶段，不构成任何 AC 的证据）",
+  "authority": "Founder 2026-08-26 CONTINUE_TASK 第 5 条",
+  "generated_utc": "2026-08-26T23:28:20Z",
+  "gate_source_sha256": {
+    "README.md": "9d7f933c2b64b60ee6b5911dccedeff5b6447a855752fa2fe8b4eded8d5aa6c0",
+    "assemble_main.py": "2d1a5fd4e1ba91e50889e7b997618479a196827959032a1577bd843147448a76",
+    "gate_main.py": "ad99abf35ed8f0850642b0f1251212a0eec279c91659d2c11e346c7fd5b8622c",
+    "post_gate_main.py": "02a842c84eb8589a7d2859b967792f30dabfae74f6c6a79d99a4fa7e17284f9c",
+    "projection_v12.py": "60d05b69549c2916e01a0facf3244198a8319b179037a432ac788927b062f4c7",
+    "shared_checks.py": "99d8e1813b3b38ace3ccd8ea3378a6d33b5b1ba7bb3ce9567138c26cab9a33fc"
+  },
+  "skill_sha256": "343758f3c2da5694f669ad811a9b9a050f88bb6438146d197d00b15a4de981b7",
+  "fixture_file_sha256": "72766ee30da9c29b487590c82044c67dcc02e992a4832a58bb6a9ca5dd346ab4",
+  "results": {
+    "fixtures": "PASS",
+    "projection": "PASS",
+    "replay": "PASS",
+    "measure": "PASS",
+    "targeted_reverification": "PASS",
+    "repair_node": "PASS"
+  },
+  "what_this_proves": [
+    "26 条确定性正负夹具全绿——每条绑定一个 v1.1 实测缺陷或一条必须不误伤的合法形态",
+    "E07→E08 连续性回归通过：v1.1 规则下 P1/P2 必然丢失，v1.2 规则下三个任务位全部保住",
+    "70 例历史重放：最低产出硬门只命中 G6，输入槽位矛盾只命中 E07，误伤 0",
+    "触发措辞 crosscheck：无极性版本命中 67/70 全为误报，带极性+动作性+条件式剔除后误报 0/70"
+  ],
+  "what_this_does_NOT_prove": [
+    "不构成任何 AC 的通过或不通过依据——阈值用第 4 轮已有数据标定，属探索阶段",
+    "不证明闸门挡得住蓄意的高质量造假；它挡得住的是漏写与敷衍",
+    "不证明产品语义正确——那由正式重跑与独立判定者判"
+  ],
+  "targeted_reverification": {
+    "G6/E07/B08-P": "两轮各 3 例，6/6 succeeded；gaps_closed 全 yes；internal_leaks 全空；cycle_state_carry 全 ACCEPTABLE",
+    "补齐节点": "三轮共 12/12 缺口闭合，审计块重发率 12/12",
+    "结论": "Founder CONTINUE_TASK 第 5 条的前置条件成立，可冻结最终候选并进入完整正式重跑"
+  }
+}

@@ -1,0 +1,50 @@
+### 补齐节点定向复验（4 例）
+PASS NEG-B2-selfreport-false-but-input-true     105s  audit_reemitted=True  gaps_closed=yes
+     first-pass: missing=['冲突反馈·冲突在哪', '冲突反馈·各自证据身份', '冲突反馈·为什么保持或改变', '冲突反馈·还需要什么观察'] hollow=0 leaks=0 cont=BLANKET_CARRY
+PASS NEG-E2-hollow-anchor                       15s  audit_reemitted=True  gaps_closed=yes
+     first-pass: missing=[] hollow=1 leaks=0 cont=OK
+PASS NEG-F1-dropped                             40s  audit_reemitted=True  gaps_closed=yes
+     first-pass: missing=[] hollow=1 leaks=0 cont=MERGED
+PASS NEG-D1-label-in-body                       53s  audit_reemitted=True  gaps_closed=yes
+     first-pass: missing=[] hollow=0 leaks=1 cont=OK
+
+4/4 补齐后缺口闭合
+
+### G6 / E07 / B08-P 定向复验
+
+===== S1-E07-conflict  succeeded  75.6s  tok=23519
+  gate_status = HARD_FAIL_AUDIT_BLOCK_MISSING | path = hard_fail_no_repair | gaps_closed = no | carry = REJECTED_KEEP_PREVIOUS
+  triggers computed = {'explore': None, 'anchor': False, 'conflict': True, 'notask': None}
+  triggers self     = {'explore': None, 'anchor': None, 'conflict': None, 'notask': None}
+  triggers effective= {'explore': True, 'anchor': False, 'conflict': True, 'notask': True}
+  hard_fail_reasons = ["审计块缺失或未闭合"]
+  missing_items = ["参考文件加载状态", "探索·不确定性", "探索·最小可逆动作", "探索·支持继续的观察", "探索·推翻信号", "探索·到期或复验", "探索·让位的稳定义务", "冲突反馈·冲突在哪", "冲突反馈·各自证据身份", "冲突反馈·为什么保持或改变", "冲突反馈·还需要什么观察", "无任务·缺什么", "无任务·谁能补", "无任务·补上后会变成什么", "无任务·现在能做的替代动作"]
+  continuity = {"status": "BLANKET_CARRY", "carried": [], "disposed": [], "blanket_carry_statement": true, "not_restated": ["P1", "P2", "P3"], "dropped_without_notice": [], "dropped_covered_by_blanket": ["P1", "P2",
+  POST still_leaks = []
+  POST reasons = ["本轮没有产出可用的运营判断（上一道闸门已判硬失败）", "必填项仍未落实：缺 15 项、指不回正文 0 项、空洞 0 项、装饰 0 项、引用重叠 0 项"]
+  final chars = 828
+  final head: **结论** ⏎  ⏎ 新反馈是“西装选品逻辑”视频下的评论，有人提到“价格有点贵”。这条反馈的观察期还没结束（目前只有一天数据），按纪律我暂不改判。我会继续观察，如果之后“价格贵”的反馈持续或变多，再考虑在内容里补上价格合理性说明。这条反馈还提醒我们，受众可能对价格敏感，后续做商品内容时要在价值解释上更用心。 ⏎  ⏎ 同时，上一轮根据“想看上身效果”做的调整建议不变：“上身效果展示”仍然是当前最值得补的内容环
+
+===== S2-G6-no-attachment  succeeded  100.7s  tok=22143
+  gate_status = CLEAN | path = draft_verbatim | gaps_closed = yes | carry = ACCEPTABLE_AS_NEW_BASELINE
+  triggers computed = {'explore': None, 'anchor': False, 'conflict': None, 'notask': None}
+  triggers self     = {'explore': False, 'anchor': False, 'conflict': False, 'notask': False}
+  triggers effective= {'explore': False, 'anchor': False, 'conflict': False, 'notask': False}
+  continuity = {"status": "NO_BASELINE", "carried": [], "disposed": [], "dropped_without_notice": [], "advisory_named_dropped": []}
+  POST still_leaks = []
+  POST reasons = []
+  final chars = 1102
+  final head: 结论 ⏎  ⏎ 可以发。但今天这条别做“这件马甲适合哪种身材、不适合哪种身材”的断定，而是做成：**一件针织马甲适不适合你，应该怎么判断；初秋通勤里可以怎么搭**。 ⏎  ⏎ 原因是目前手里只有价格、颜色、面料成分和现货状态，没有上身/试穿证据。没有这份证据还下身材适配结论，等于给观众一个兑现不了的专业承诺，反而会损耗你“商品负责人第一手讲述”的长期信任。 ⏎  ⏎ 关键依据和假设 ⏎  ⏎ 你这个账号已经确认的定位是：商品选品
+
+===== S3-B08P-anomaly  succeeded  224.6s  tok=38974
+  gate_status = CLEAN | path = draft_verbatim | gaps_closed = yes | carry = ACCEPTABLE_AS_NEW_BASELINE
+  triggers computed = {'explore': None, 'anchor': False, 'conflict': None, 'notask': None}
+  triggers self     = {'explore': False, 'anchor': False, 'conflict': False, 'notask': False}
+  triggers effective= {'explore': False, 'anchor': False, 'conflict': False, 'notask': False}
+  continuity = {"status": "NO_BASELINE", "carried": [], "disposed": [], "dropped_without_notice": [], "advisory_named_dropped": []}
+  POST still_leaks = []
+  POST reasons = []
+  final chars = 1630
+  final head: **结论** ⏎  ⏎ 不全面换方向。"讲放弃某款"保留，本轮起按"继续观察"对待：每周3条里的位置不变，但观察口径加严。 ⏎  ⏎ **依据（为什么现在不是换方向的时候）** ⏎  ⏎ - **证据量不对等**。过去6周这个机制出现4次，全部进入互动前列；本周只有1条低于以往水平。一条带混杂因素的观测，推翻不了四条重复观测。 ⏎ - **有已知混杂因素**。平台分发规则本周改版，受影响面可能是整个账号，而不是这一个机制。在
+
+[exited with code 0]
