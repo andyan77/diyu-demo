@@ -61,7 +61,51 @@ def upgrade() -> None:
     )
 
 
+def _refuse_if_cross_account_duplicates(bind, table: str) -> None:
+    """This downgrade widens (workspace_id, account_id, idempotency_key)
+    back down to (workspace_id, idempotency_key). Confirmed live against
+    the real diyu_business database (not a throwaway/empty copy): once the
+    upgraded constraint is in place, it is legitimate and expected for two
+    different accounts in the same workspace to share an idempotency_key
+    (that's the entire point of the upgrade) -- but exactly that data makes
+    the narrower downgrade constraint un-creatable, and Alembic surfaces
+    that as a raw IntegrityError stack trace with no guidance. Failing
+    fast here with the actual conflicting rows is strictly better than
+    letting the ALTER TABLE throw. There is no safe *automatic* resolution
+    -- collapsing two different accounts' rows onto one key is a data
+    decision, not a schema decision -- so this is a genuine, disclosed
+    forward-only point once real cross-account key reuse has occurred, not
+    something this migration can silently paper over.
+    """
+
+    rows = bind.execute(
+        sa.text(
+            f"""
+            SELECT workspace_id, idempotency_key, count(*) AS n
+            FROM {table}
+            WHERE idempotency_key IS NOT NULL
+            GROUP BY workspace_id, idempotency_key
+            HAVING count(*) > 1
+            """
+        )
+    ).fetchall()
+    if rows:
+        raise RuntimeError(
+            f"cannot downgrade {table}: {len(rows)} (workspace_id, idempotency_key) group(s) are "
+            "shared by more than one account, which is legitimate under the current "
+            "(workspace_id, account_id, idempotency_key) constraint but cannot satisfy the older "
+            "(workspace_id, idempotency_key)-only constraint this downgrade would restore. "
+            "Resolve which row per group should keep the key (e.g. by moving one to a new key) "
+            "before downgrading -- this migration will not guess for you. "
+            f"Conflicting groups: {[(str(r.workspace_id), r.idempotency_key, r.n) for r in rows]}"
+        )
+
+
 def downgrade() -> None:
+    bind = op.get_bind()
+    _refuse_if_cross_account_duplicates(bind, "cycles")
+    _refuse_if_cross_account_duplicates(bind, "cycle_decisions")
+
     op.drop_table('legacy_import_records')
 
     op.drop_constraint(
