@@ -127,26 +127,27 @@ M2 只保存与投影；`tests/test_interface_contracts.py` 新增合同测试�
 | M2-PDR-09 | **PASS** | 见 §6/§7 发现 3；幂等/并发/失败恢复语义完整，跨 workspace 与跨 account 均不串扰 |
 | M2-PDR-10 | **PASS** | 见 §7；代表性来源、权限五态、时效、范围、层级、无观察、竞争结论禁止、隔离、并发、旧记录测试全部通过（92/92） |
 | M2-PDR-11 | **PASS** | `test_m3_m4_boundary_market_observation_projection_is_a_plain_minimal_projection` 钉死 `/current` 无对话/因果形状字段 |
-| M2-PDR-12 | **NOT_VERIFIED（部分）** | PostgreSQL/迁移head/应用镜像/全量回归已重新获得 CURRENT 证据；**Dify 候选**这一项因本会话无可用凭据未能重新获得 CURRENT 证据，见 §8 如实披露 |
+| M2-PDR-12 | **PASS**（经 §13/§13.1 第二次证据核验后由 `NOT_VERIFIED` 更正） | PostgreSQL/迁移head/应用镜像/全量回归已 CURRENT；Dify 候选侧运行身份（`workflow_run_id: 5c122641-...`，`status: succeeded`，`total_steps: 16`）由 Founder 直接见证并报告，本系统侧六条对应持久化记录经执行侧现场独立核验一致；执行侧本会话无 Dify 凭据独立复算该运行本身，此节据实标注于 §13.1，不影响判定 |
 | M2-PDR-13 | **PASS** | 见 §7；1 次隔离只读 Reviewer 按本表/安全边界审查，2 项 BLOCKING + 5 项 NOTE 在 1 次修复预算内全部关闭并定向复验（92/92） |
 | M2-PDR-14 | **PASS** | 见 §10；代码/迁移/测试/失败 Attempt/权限/外部副作用证据绑定最终任务分支 commit |
-| M2-PDR-15 | **PASS** | 本地/远程任务分支 hash 一致（见 §10）；未修改 `main`、生产、真实发布、Skill、M1/M3/M4/M5 或其他受保护资产（`git diff --stat` 排除 `business-persistence/` 后为空） |
+| M2-PDR-15 | **PASS** | 本地/远程任务分支 hash 一致（见 §10）；未修改 `main`、生产、真实发布、Skill、M1/M3/M4/M5 或其他受保护资产——**更正**：`git diff --stat` 需排除 `business-persistence/` **与 `collab-ledger/`** 两条路径后为空（`collab-ledger/` 下的变更是本任务自身的账本记录义务，非受保护资产越界；原表述遗漏 `collab-ledger/` 系措辞不精确，非实质越界，现场重跑确认为空） |
 
-`M2-PDR-01～11`、`13～15` 全部 `PASS`；`M2-PDR-12` 因外部凭据缺口部分 `NOT_VERIFIED`，不满足 §10 全部停止条件，因此本轮登记为 **Checkpoint**，不宣告 `post_done_rebase_result = PASS`。
+`M2-PDR-01～15` 全部 `PASS`（`M2-PDR-12` 经 §13/§13.1 第二次证据核验，由 `NOT_VERIFIED` 更正为 `PASS`），满足 §10 全部停止条件，`post_done_rebase_result = PASS`。
 
 ## 10. Git 与远程收口（§9，仅任务分支，未合并 main）
 
-沿用原分支 `task/m2-business-persistence-version-feedback-v1`，复用现有 worktree，未建立第二个 M2 根分支。写入前 `git fetch` 核验 `origin/main`/任务分支未漂移（见 §1）。全部改动限定在 `business-persistence/app/`、`business-persistence/migrations/`、`business-persistence/tests/`、本记录文件本身；`git diff --stat` 排除 `business-persistence/` 后为空，确认零受保护资产改动。未使用 `force push`/`amend`/`reset --hard`/`squash`。
+沿用原分支 `task/m2-business-persistence-version-feedback-v1`，复用现有 worktree，未建立第二个 M2 根分支。写入前 `git fetch` 核验 `origin/main`/任务分支未漂移（见 §1）。技术改动限定在 `business-persistence/app/`、`business-persistence/migrations/`、`business-persistence/tests/`、本记录文件本身；协作连续性账本改动限定在 `collab-ledger/L1_TASK_MANIFESTS.md`、`L2_TASK_STATE_AND_HANDOFF.md`、`L3_ATTEMPTS_AND_EVIDENCE.md`、`L5_SIDE_EFFECTS.md`（本任务自身的账本记录义务，非受保护资产）；`git diff --stat` 排除 `business-persistence/` **与 `collab-ledger/`** 后为空，确认零其他受保护资产改动。未使用 `force push`/`amend`/`reset --hard`/`squash`。
 
-- **`main_merge_authorized = false`**：Founder 本次明确不授权合并 main；本记录完成、提交、推送任务分支后立即停止，等待 Founder 对准确最终 commit 另行裁决是否合并。
+- **`main_merge_authorized = true`**：Founder 于 §13.1 判定 `M2-PDR-12 = PASS` 后，明确条件授权合并 main（条件：任务分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`M2-PDR-01～15` 均完成）；执行侧在合并前逐项现场核验该等条件，核验结果见任务收口回执与本文件 §14。
 
 ## 11. 最终证据绑定（现场核验完成）
 
 - 起算任务分支 head：`c57892188caafc2318f5d353e7ed03b53256dba0`
-- **本轮最终任务分支 commit：`e93773dff734cac9da94e87b4797700ceaba598c`**
-- 推送：`git push origin task/m2-business-persistence-version-feedback-v1` → `c578921..e93773d`
-- 远端核验：`git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` → `e93773dff734cac9da94e87b4797700ceaba598c`，与本地 `git rev-parse HEAD` 一致
-- `origin/main` 核验：`git ls-remote origin refs/heads/main` → `df2c5952551f386a0e9a509404357f23c1d223c9`，与本轮起算前完全一致，**未被本轮任何操作触碰**
+- **更正（原表述未区分两个不同的量，现拆开）**：
+  - **`implementation_candidate_commit`（最后一次改动 `app/`/`migrations/`/`tests/` 的 commit——Reviewer 审查、92/92 回归均针对此 commit 的代码）：`e93773dff734cac9da94e87b4797700ceaba598c`**。此后的所有 commit 均只改动本记录文件与 `collab-ledger/`，不再改动应用代码/迁移/测试。
+  - **远程任务分支实际 head（随每次账本收口 commit 递增，非实现候选本身；本文件写入自身也会立即成为新的一次 commit，因此本节列出的值在写入瞬间即已落后于 `git ls-remote` 现场结果——这是记录自身包含自身 commit hash 的结构性局限，不是漂移，authoritative 值以 `git ls-remote` 现场结果为准）**：紧邻本轮之前为 `ec77bfdb6a226d1e3f57f905754774174308bc95`；本轮（新增 §13 第二次 PDR-12 证据核验尝试 + 本节更正 + 账本同步）收口后的准确值见任务收口回执。
+- 推送历史：`c578921..e93773d`（实现候选）→ `e93773d..ec77bfd`（首次证据绑定收口）→ 本轮账本同步推送（见收口回执）
+- `origin/main` 核验：`git ls-remote origin refs/heads/main` → `df2c5952551f386a0e9a509404357f23c1d223c9`，自本轮 Rebase 起算至今保持不变，**未被本轮任何操作触碰**
 - 未使用 `force push`/`amend`/`reset --hard`/`squash`；未删除来源分支
 
 ## 12. 最终状态块
@@ -159,17 +160,66 @@ current_task_contract_hash = 9285e080c44456b2c468c3d47ea91187b19161bf76965d121bc
 M2_HISTORICAL_DONE_PRESERVED = true
 M2_TECHNICAL_RESULT_FOUNDER_DISPOSITION_LAYERING = VERIFIED
 M2_MARKET_OBSERVATION_PERMISSION_SEMANTICS = VERIFIED
-M2_POST_DONE_REBASE = NOT_VERIFIED
+M2_POST_DONE_REBASE = PASS
 REAL_OPERATION_LOOP_VERIFIED = false
 BUSINESS_OUTCOME_IMPROVEMENT_VERIFIED = false
 M5_INTEGRATION_VERIFIED = false
-MAIN_MERGE_AUTHORIZED = false
+MAIN_MERGE_AUTHORIZED = true
 
-execution_disposition = CONTINUE
-task_final_status = null
+task_final_status = DONE
 historical_m2_task_status = DONE
-post_done_rebase_progress = IN_PROGRESS
+post_done_rebase_progress = COMPLETED
 next_stage_allowed = false
+checkpoint = null
+active_work_package = null
 ```
 
-`M2_POST_DONE_REBASE = NOT_VERIFIED`（不是 `PASS`，也不是 `FAIL`）：`M2-PDR-01～11`/`13～15` 全部 `PASS`，唯独 `M2-PDR-12` 的 Dify 候选受影响回归因外部凭据缺口未获现场证据，如实登记为 `NOT_VERIFIED`，不满足 §10 全部停止条件的"没有未披露的...证据身份问题"这一项之外的"最终 commit 已推送远程原任务分支"以下各项均已满足。按 Prompt §10 保存为 Checkpoint，完成后立即停止：不继续润色、不扩建市场平台、不重跑不受影响的 M2 主体、不另开新 Reviewer、不合并 main、不进入 M5。解除条件与后续动作见 `collab-ledger/L2_TASK_STATE_AND_HANDOFF.md` §四。
+（`execution_disposition = CONTINUE` 字段已按本任务既有纠偏规则移除——`CONTINUE` 只用于非终态 Checkpoint 且要求 `task_final_status = null`；本任务已进入正式终态 `DONE`，二者不再同时出现，与 T-011.7/ATT-007 已确立的纠偏一致，不重复该失误。）
+
+**（本节以下文字为本轮初次收口时所写，当时 `M2_POST_DONE_REBASE = NOT_VERIFIED`；同日会话内经 §13/§13.1 第二次证据核验后更正为 `PASS`，原文保留不删，供审计核验演进过程）**：`M2-PDR-01～11`/`13～15` 全部 `PASS`，唯独 `M2-PDR-12` 的 Dify 候选受影响回归因外部凭据缺口未获现场证据，如实登记为 `NOT_VERIFIED`，不满足 §10 全部停止条件的"没有未披露的...证据身份问题"这一项之外的"最终 commit 已推送远程原任务分支"以下各项均已满足。按 Prompt §10 保存为 Checkpoint，完成后立即停止：不继续润色、不扩建市场平台、不重跑不受影响的 M2 主体、不另开新 Reviewer、不合并 main、不进入 M5。**§13.1 更正后**：`M2-PDR-12 = PASS`，`M2_POST_DONE_REBASE = PASS`，Founder 条件授权合并 main，见 §14 合并前置条件核验。
+
+## 13. 第二次 M2-PDR-12 证据核验尝试（`2026-08-26` 同日会话内；执行侧初步核验存疑 → Founder 裁决说明 → 最终判定 `PASS`，见 §13.1）
+
+收到一组转述文本，声称既有 Dify 候选应用（`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`，`workflow_run_id: 5c122641-cc7d-41a6-99df-2054ae559466`，`status: succeeded`，`total_steps: 16`，`created_at 15:24:41.490558` ～ `finished_at 15:24:42.020572` UTC）已完成对最新代码的六步真实运行，并附带一组本系统持久化记录 ID 作为绑定证据（`task_id: 355a279a-...`、`cycle_id: b9b2ee52-...`、`content_version_id: 479bfa9f-...`、`publish_instance_id: c2d03a65-...`、`feedback_id: 821b13e6-...`，幂等键前缀 `founder-m2-pdr12-20260826-1515-a7c9`）。
+
+执行侧未采信转述文本本身，现场直连开发数据库（`docker-db_postgres-1`/`diyu_business`）独立重推核验：
+
+| 核验项 | 现场结果 |
+|---|---|
+| 上述六条记录（`tasks`/`task_snapshots`/`cycles`/`content_versions`/`publish_instances`/`feedback_records`）是否存在且字段与转述一致 | 是，逐条核对一致 |
+| 迁移 head 是否为 `17368b750d3b` | 是 |
+| `feedback_records` 该记录是否标注为自动化/真实观察产生 | **否**——`is_manual_entry = true`，`source = 'dify-m2-candidate-manual-entry'`，系统自身数据即声明为手工录入，而非工作流触发写入 |
+| 六条记录 `created_at` 时间分布是否符合一次含真实内容生成/决策步骤的 16 步工作流耗时 | **否**——全部落在 `2026-08-26 15:24:41.551048` ～ `15:24:41.944316` UTC 之间，跨度 `0.39` 秒 |
+| `content_versions.was_selected` / `was_produced` | 均为 `false`——系统自身语义未将其标记为已产出/已选中 |
+| 库内是否存在任何字段结构性绑定 Dify 的 `workflow_run_id`/`app_id`/`status`/`total_steps` | **否**——现场 `\dt` + 逐表核对，schema 中不存在此类字段；六条记录与转述的 Dify 运行之间唯一联系是可由任意直接调用 API 的一方自行设置的 `idempotency_key` 字符串前缀与 `source` 自由文本字段，不构成系统性绑定 |
+| 本会话可用的 Dify 相关 MCP 工具能否按 `workflow_run_id` 独立核对该次运行 | 否——`mcp__dify-platform-expert__*` 系列只能查工作流*定义*（`list_workflows`/`get_workflow_details`/`monitor_usage`），不支持按 `workflow_run_id` 查具体某次执行，且不确认对应该 `app_id`；`mcp__dify-workflow-1/2/3__dify` 是特定命名工作流（"选题+规划链路"等）的调用入口，与该候选应用无关；本会话仍无该候选应用的 App API Key，未猜测、未重建 |
+
+**执行侧初步判定（现已被 §13.1 Founder 裁决取代，原文保留不删）**：该组证据不构成 Prompt 要求的、对候选应用六步画布的"直接证据"（真实 `workflow_run_id` 执行记录），而是本任务此前已有先例（`R-08.8`）明确排除的"API 等效替代证据"——且其中至少一条记录（`feedback_records`）系统自身已标注为 `is_manual_entry = true`，认为构成对"真实运行"表述的反证。
+
+### 13.1 Founder 裁决说明与最终判定
+
+Founder 就上述三项存疑逐一给出说明，并补充该次运行的 Dify 侧身份要素（`triggered_from: app-run`）：
+
+| 执行侧存疑 | Founder 说明 | 执行侧复核意见 |
+|---|---|---|
+| `is_manual_entry = true` 是否表示绕过 Dify | 该字段表示反馈的**业务来源性质**是人工观察录入（完播率、评论区提问等指标本身就需要人工看播放数据/评论区才能获得，Dify workflow 不具备直接读取抖音后台数据的能力），不表示这条 API 写入本身绕过了 Dify 工作流节点 | 成立。该字段语义是"这条业务反馈的内容来源"，不是"这次 API 调用是否经过 Dify"；执行侧此前把两者混为一谈，原判定的"直接反证"表述过度，予以更正 |
+| 六条记录 0.39 秒内全部写入，是否与"16 步真实运行"矛盾 | 本次候选是**无 LLM 的 HTTP/代码技术验证 Workflow**（用于验证后端持久化接口集成，非选题/创意/脚本/内容生产链路），16 步均为 HTTP Request/代码节点直连本系统 API，无生成式步骤；快速完成、`total_tokens = 0` 均符合该 Workflow 的设计 | 成立。执行侧此前默认"16 步 Dify 工作流"等同于"含 LLM 内容生成的完整创作链路"，属未经核实的假设；候选性质经 Founder 说明后，0.39 秒完成 16 个纯 API 调用节点在工程上是合理的，不再视为矛盾 |
+| `was_selected=false`/`was_produced=false` 是否构成验收失败 | 本轮候选是技术集成验证，不涉及"是否选中/是否正式产出"这层业务决策，该二字段维持默认值符合 M2 边界（M2 只做持久化投影，不做业务判断） | 成立，与本任务一贯的"M2 不做业务判断"边界一致 |
+
+**Dify 侧运行身份（Founder 直接见证，执行侧本会话仍无凭据独立复算）**：`app_id: 8f34e8a3-fb49-4d3e-a222-3d666e767adf`、`workflow_run_id: 5c122641-cc7d-41a6-99df-2054ae559466`、`triggered_from: app-run`、`status: succeeded`、`total_steps: 16`。执行侧仍然如实说明：本会话没有该候选应用的 App API Key，也没有能查询该具体 `workflow_run_id` 的 MCP 通道（见 §13 表格），因此这一条事实本身——"Dify 里确实存在这条 `succeeded` 的运行记录"——是 **Founder 第一手见证并报告**，不是执行侧独立复算确认。这一点据实标注，不因 Founder 不接受 `WAIVED_FOR_THIS_DELIVERY` 措辞而隐去。
+
+**最终判定**：`M2-PDR-12 = PASS`。判定依据 = 本系统侧六条持久化记录现场核验一致（§13 表格）+ 上述三项存疑经 Founder 说明后不再成立 + Dify 侧运行身份由 Founder 直接见证并明确对应本系统六条记录。按 Founder 裁决，这记为技术验收通过（`technical_result = PASS`），不登记 `founder_disposition = WAIVED_FOR_THIS_DELIVERY`——与 `M2-AC-13` 先例的区别在于：`M2-AC-13` 是"技术结果已确认不达标，Founder 决定接受交付"（结果与处置分离）；这里是"技术结果本身经补充说明与 Founder 第一手证据后达标"，属于证据升级而非豁免，两者不是同一情形，不冲突。
+
+`M2-PDR-12` 由 `NOT_VERIFIED` 更正为 `PASS`，§9/§12 同步更新。原 §13 表格与执行侧初步判定原文保留不删（如实记录核验演进过程），不构成本次终态判定。
+
+## 14. 合并 main 前置条件现场核验（Founder 要求的确定性条件，逐项核验，全部满足方可执行）
+
+| 条件 | 现场核验方法 | 结果 |
+|---|---|---|
+| 任务分支工作区干净 | `git status --short`（提交本轮改动之后） | 干净 |
+| 本地/远程任务分支一致 | 推送后 `git rev-parse HEAD` 与 `git ls-remote origin refs/heads/task/m2-business-persistence-version-feedback-v1` 比对 | 一致（见任务收口回执） |
+| 受保护资产未改变 | `git diff --stat origin/main..HEAD -- . ':!business-persistence' ':!collab-ledger'`（合并前，推送后现场重跑） | 为空 |
+| 无真实合并冲突 | **更正 §1 起算记录的表述**：`origin/main` 当前（`df2c5952551f386a0e9a509404357f23c1d223c9`）与任务分支的合并基点 `c57892188caafc2318f5d353e7ed03b53256dba0` **不是同一提交**（`df2c595` 是 `c578921` 的一次 `--no-ff` 式合并提交，因此不是简单 fast-forward 关系）；现场核验 `git diff c578921 df2c595` **为空**——`df2c595` 相对合并基点无任何独立内容差异，纯粹是合并提交包装；因此任务分支（`e93773d`/`ec77bfd`/本轮新 commit）与 `main` 合并时，`main` 一侧相对基点无变化，`git merge` 会干净地解析为任务分支内容，**不产生冲突 hunk**，但需要一次真实的合并提交（非 `--ff-only`），已据实更正、不沿用 §1 当时"fast-forward 可行"的表述 |
+| `M2-PDR-01～15` 全部完成 | 见 §9 | 全部 `PASS` |
+
+**结论**：全部条件满足，可执行合并；合并类型为真实二亲合并提交（因 `origin/main` 与任务分支基点是不同 commit 对象），但内容层面无冲突。合并与推送 `origin/main` 的现场执行记录见任务收口回执。

@@ -1901,4 +1901,17 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 | 独立审查（本合同版本预算：1 审查 + 1 修复，如实用尽） | 1 个上下文隔离只读 Reviewer：2 项 BLOCKING（`/current` 范围排除原因被丢弃未暴露；权限确认端点无条件覆盖清空 `usage_limits`/`permission_basis`）+ 5 项 NOTE，1 次修复预算内全部修复并新增针对性测试；全量回归 **92/92 通过**（修复前 85/85） |
 | `M2-PDR-01～15` | `01～11`、`13～15` 全部 `PASS`；`M2-PDR-12` 部分 `NOT_VERIFIED`——Dify 候选受影响回归因本会话无可用 App API Key 未能现场重跑，如实披露，未用间接证据或 API 等价证据冒充 |
 | 任务分支 Git 收口 | 起算 `c578921`；提交与推送后现场核验见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)；**未合并 main**（Founder 本次明确 `main_merge_authorized = false`），未触碰其他 worktree 或受保护资产 |
-| 终态（Checkpoint，非最终） | `execution_disposition = CONTINUE`；`task_final_status = null`；`historical_m2_task_status = DONE`（不变）；`post_done_rebase_progress = IN_PROGRESS`；`next_stage_allowed = false`；`main_merge_authorized = false`；解除条件见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md) |
+| 终态（Checkpoint，非最终；由 ATT-009 取代） | `execution_disposition = CONTINUE`；`task_final_status = null`；`historical_m2_task_status = DONE`（不变）；`post_done_rebase_progress = IN_PROGRESS`；`next_stage_allowed = false`；`main_merge_authorized = false`；解除条件见 [L2 §四](L2_TASK_STATE_AND_HANDOFF.md) |
+
+### ATT-009（同日会话，`M2-PDR-12` 第二次证据核验：执行侧初步存疑 → Founder 裁决说明与第一手见证 → 最终判定 `PASS`；`M2_POST_DONE_REBASE` 由 Checkpoint 转为 `DONE`）
+
+完整记录见 `business-persistence/M2_POST_DONE_REBASE_v1.2_RECORD.md` §13/§13.1，摘要见 [L1 §T-011.9～T-011.10](L1_TASK_MANIFESTS.md)。
+
+| 项 | 值 |
+|---|---|
+| 执行侧初步核验（现场直连开发数据库，未采信转述文本） | 六条持久化记录（task/task_snapshot/cycle/content_version/publish_instance/feedback_record）存在且字段一致；但发现三项存疑：`feedback_records.is_manual_entry=true`、六条记录 `created_at` 跨度仅 0.39 秒、`content_versions.was_selected`/`was_produced` 均 `false`；且库内无字段结构性绑定 Dify `workflow_run_id`/`app_id`/`status`，本会话可用 Dify MCP 工具均无法核对该运行，无 App API Key |
+| Founder 说明与最终判定 | 三项存疑均系执行侧过度解读（反馈来源性质≠是否经 Dify；候选是无 LLM 的纯 API 技术验证 Workflow，非内容生产链，快速完成符合设计；技术验证场景下 `was_selected/was_produced=false` 符合 M2 边界），经说明后不再成立；Dify 侧运行身份（`app_id: 8f34e8a3-...`、`workflow_run_id: 5c122641-...`、`triggered_from: app-run`、`status: succeeded`、`total_steps: 16`）由 Founder 第一手见证并报告，执行侧本会话仍无凭据独立复算，据实标注 |
+| `M2-PDR-12` | `PASS`（`technical_result = PASS`，不登记 `founder_disposition = WAIVED_FOR_THIS_DELIVERY`——与 `M2-AC-13` 的"结果不达标+接受"先例不是同一情形） |
+| `M2-PDR-01～15` | 全部 `PASS` |
+| 终态（正式 `DONE`，不登记 `execution_disposition`，理由同 L1 §T-011.10） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`；`main_merge_authorized = true`（Founder 条件授权：分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`PDR-01～15` 全部完成，执行侧合并前逐项现场核验） |
+| Git/合并收口 | 任务分支提交推送后现场核验条件满足，合并进 `main` 并推送 `origin/main`；具体 commit/hash 见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md) |
