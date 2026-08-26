@@ -1816,3 +1816,16 @@ Prompt §2 要求：计算随 Prompt 提供的规划附件 SHA-256，缺失或�
 | 已知限制 | `create_version` 的 `version_no` 高并发分配裸 500（已披露，非本轮任一 AC 阻断项）；AC-14 只覆盖 5 槽 task_snapshot_json 一种旧兼容形态；AC-16 的 Dify 画布证据未在本轮变更后重新触发 |
 | 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、Dify 现有生产/共享应用与内部表——全程零改动，`diyu_app` 角色对 `dify`/`dify_plugin` 无连接权限 |
 | 任务终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE`；`next_stage_allowed = false`——技术侧已收口，等待 Founder 通过 Dify 画布完成产品/业务验收；退回时沿用同一 task_id 执行 `CONTINUE_TASK` |
+
+**状态更正**（2026-08-25，Rebase/Errata 001，追加于本表之后，不改写本表历史）：上表"受保护资产核验"一行"`diyu_app` 角色对 `dify`/`dify_plugin` 无连接权限"**不准确**——Rebase 现场实际发起负向连接实测，`diyu_app` 可以 `CONNECT` 到这两个数据库（表级 `SELECT` 仍被正确拒绝，未读到真实数据）。"任务终态"一行的 `AWAITING_FOUNDER_DIFY_ACCEPTANCE` 同样已被 Rebase 下修为 `IN_PROGRESS`。详见下方 ATT-002。
+
+### ATT-002（Rebase/Errata 001，同一 task_id，未重建分支/worktree/数据库/Dify 对象）
+
+见 `business-persistence/M2_REBASE_ERRATA_001_RECORD.md` 与 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`（本轮重写）完整记录，不在本节重复全文。要点：
+
+- R-04 关闭 `create_version` 并发裸 500（先证伪：8 路并发实测 5/8 失败；后证实：修复后 5 轮 8/8 成功），commit `3d23674`。
+- R-05 穷尽检索确认独立"3 槽"Schema 真实不存在，不补造；用 3 份真实历史生产产物（真实 sha256）经既有端点显式导入，commit `fabffd8`。
+- R-09 对真实累积数据（非空库）实测复现 `c3f8b2e6d0a4` downgrade 裸崩溃并修复为清晰错误，commit `6955d66`；同时发现 `diyu_app` 对 `dify`/`dify_plugin` 的 CONNECT 权限未被撤销，修复尝试被权限分类器拦截，**未完成**（见 [L5](L5_SIDE_EFFECTS.md) SE-017）。
+- R-10 如实登记 `REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT`——本 task_id 实际发生 3 个正式审查单元 + 1 收口验证单元，超出冻结预算 1；本轮未另开新的正式 Reviewer，全部由执行负责人本人在真实容器/数据库上直接自验。
+- 全量测试 69 项通过（现场重跑）。
+- **任务终态（当前有效，取代上表 ATT-001 的判定）**：`execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`；`next_stage_allowed = false`——`M2-AC-13`（数据库 CONNECT 权限）与 `M2-AC-16`（Dify 画布现场运行）未 CURRENT PASS，未满足进入 `AWAITING_FOUNDER_DIFY_ACCEPTANCE` 的全部前提。

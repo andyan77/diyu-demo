@@ -1459,7 +1459,7 @@ task_contract_hash_authoritative_for_this_task: 4d14eb35c065b650b0380b0c309e0e08
 hash_discrepancy_disclosure: 见 [L1 §T-010.2](#t-1022-当前-manifest) DA-02——Founder 已裁决按独立复算值登记，本任务及其全部引用一律使用该值
 ```
 
-### T-011.2 当前 Manifest
+### T-011.2 当前 Manifest（Rebase/Errata 001 前，历史记录，不覆盖）
 
 | 项 | 值 |
 |---|---|
@@ -1472,4 +1472,18 @@ hash_discrepancy_disclosure: 见 [L1 §T-010.2](#t-1022-当前-manifest) DA-02�
 | Git 收口 | 9 个 commit，本地/远程 head 一致于 `f09e2923a7b57efbcb94cd83ed54c5b6cd94b3c4`；见 [L5](L5_SIDE_EFFECTS.md) SE-014 起 |
 | 受保护资产核验 | 四份共享合同、上位/下位合同、两份 EP-00、Phase0 前言、Dify 生产/共享应用与内部表——全程零改动 |
 | 独立复核 | 已触发三次（见上「独立审查」行），均为上下文隔离、无写权限的对抗性审查，非本任务自证 |
-| 任务终态 | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE`；`next_stage_allowed = false` |
+| 任务终态（本节，已被 T-011.3 取代） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = AWAITING_FOUNDER_DIFY_ACCEPTANCE`；`next_stage_allowed = false` |
+
+### T-011.3 Rebase/Errata 001 后当前 Manifest（取代 T-011.2 的终态判定，T-011.2 保留为历史）
+
+Founder 投递 `M2_ENGINEERING_EXECUTION_PROMPT_v1.1_REBASE_ERRATA_001.md`，`task_entry_mode` 分层为 `REBASE_TASK`（不写入 T-011.1 稳定合同）。完整记录见 `business-persistence/M2_REBASE_ERRATA_001_RECORD.md`。
+
+| 项 | 值 |
+|---|---|
+| continuity overlay | `task_entry_mode = REBASE_TASK`（本轮）；后续正常续作用 `CONTINUE_TASK`；不改变 T-011.1 的 `task_contract_hash` |
+| 数据库隔离门（纠正） | **部分 PASS**——表级读取隔离有效（`diyu_app` 对 `dify`/`dify_plugin` 实际发起 `SELECT` 被拒绝，现场实测）；但 `CONNECT` 层面未被撤销（`diyu_app` 可实际连接两库，只是读不到数据），此前"REVOKE ALL"表述不准确。修复尝试被权限分类器拦截，未完成，见 [L5](L5_SIDE_EFFECTS.md) 新增条目 |
+| P0 修复 | R-04 关闭 `create_version` 并发裸 500（此前刻意披露为不修，本轮真实修复并现场证伪/证实）；R-05 用真实历史产物关闭"旧产物"半，穷尽检索确认"3 槽"Schema 真实不存在；R-09 修复迁移 `downgrade` 对真实数据的裸崩溃 |
+| 验收标准（纠正） | `M2-AC-12` 由"已知限制"提升为真 `PASS`；`M2-AC-13`、`M2-AC-16` 由 `PASS`/`PASS 但有限制` 下修为 `NOT_VERIFIED`（真实发现，非放宽标准）；`M2-RB-01`~`14` 新增记录。逐条见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md`（本轮重写，取代不是追加） |
+| 审查预算符合性 | `REVIEW_BUDGET_CONFORMANCE = DEVIATION_REQUIRES_FOUNDER_ACKNOWLEDGEMENT`——冻结预算 1 正式审查+1 修复，实际发生 3 个正式审查单元+1 收口验证单元，本轮如实披露，未追认为"符合预算"，本轮未另开新的正式 Reviewer |
+| Git 收口 | 本轮新增 5 个 commit（`3d23674`/`fabffd8`/`6955d66`/`1f8e6c0` 及本次账本登记提交），累计 13 个 commit；见 [L5](L5_SIDE_EFFECTS.md) 新增条目 |
+| 任务终态（当前有效） | `execution_disposition = CONTINUE`；`task_final_status = null`；`module_delivery_state = IN_PROGRESS`（**不是** `AWAITING_FOUNDER_DIFY_ACCEPTANCE`——`M2-AC-13`/`M2-AC-16` 未 CURRENT PASS）；`next_stage_allowed = false` |

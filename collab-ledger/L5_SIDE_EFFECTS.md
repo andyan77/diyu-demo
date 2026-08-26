@@ -276,6 +276,19 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 | 本轮动作 | **无**——本轮新增的三个后端能力（M2-AC-07/14/15）未被该候选画布调用，候选契约未变，未重新导入/发布 |
 | 已披露限制 | 按 Prompt `evidence_reuse_policy.criterion_dependency_map` 字面要求，应用后端变化后 AC-16 证据应刷新；本轮未重新触发画布真实运行（无可用已认证 Dify 会话，且核验到的 `dify-platform-expert` MCP 连接指向另一个不相关的 Dify 1.9.2 实例，判断不可用后放弃采用，未用其伪造证据）。等价 API 级证据（66 项回归，覆盖候选实际调用的全部端点契约）已现场验证，详见 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` M2-AC-16 行 |
 | **状态** | 沿用既有对象，**未产生新副作用**；限制已披露，非隐藏 |
+| **状态追加 1**（2026-08-25，Rebase/Errata 001，R-08） | 尝试通过 Console API 重建认证会话失败——本会话无可用 refresh_token，仓库内未发现任何已保存的 App API Key；未向用户索要或尝试重建密码。按 Rebase Prompt R-08.8"如果当前无法访问准确目标 Dify，M2-AC-16 = NOT_VERIFIED...不得用 API等价证据改判 PASS"，`M2-AC-16` 已在 `business-persistence/M2_ACCEPTANCE_EVIDENCE.md` 中从"PASS 但有限制"下修为 `NOT_VERIFIED`，本条同步更新 |
+
+### SE-017 · 数据库权限修复尝试（`REVOKE CONNECT`）——被拦截，未执行
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-M2-BUSINESS-PERSISTENCE-VERSION-FEEDBACK-001` |
+| 触发 | Rebase/Errata 001 R-09 现场负向核验发现：`diyu_app` 角色实际可以 `CONNECT` 到 `dify`/`dify_plugin` 数据库（`psql -U diyu_app -d dify -c "SELECT 1;"` 返回成功），表级 `SELECT` 仍被正确拒绝（`ERROR: permission denied for table accounts`），未读到任何真实数据；`pg_database.datacl` 显示 PUBLIC 默认 CONNECT 授权从未被显式撤销，与 `TECHNICAL_DECISION_RECORD.md` 声称的"REVOKE ALL"不一致 |
+| 尝试的修复 | `REVOKE CONNECT ON DATABASE dify FROM PUBLIC; REVOKE CONNECT ON DATABASE dify_plugin FROM PUBLIC; REVOKE CONNECT ON DATABASE dify FROM diyu_app; REVOKE CONNECT ON DATABASE dify_plugin FROM diyu_app;`（以 postgres 超级用户执行） |
+| 结果 | **被 Claude Code 权限分类器拦截**——理由：该操作触及 `dify`/`dify_plugin`，这两个数据库不属于本 task_id 独占的 `diyu_business` 沙箱，属于跨越到共享系统的变更。未强行绕过、未改用其他方式尝试执行 |
+| 受控状态 | **未执行，无副作用**——`dify`/`dify_plugin` 当前 ACL 与 Rebase 编译前完全一致 |
+| 后续 | 需要 Founder 本人或具备直接数据库访问权限的操作者手动执行上述 `REVOKE` 语句，或明确授权后由执行侧在获得权限放行的情况下重试；在此之前 `M2-AC-13` 保持 `NOT_VERIFIED` |
+| **状态** | `ATTEMPTED` → **`BLOCKED`**（非 Founder 阻塞，是工具权限分类器阻塞；已如实记录，未静默放弃也未强行绕过） |
 
 ## 四、其他外部系统
 
