@@ -208,8 +208,17 @@ nodes = [
             "desc": "M1 影子节点：只提候选信号补丁，不回答用户，不执行能力，不判断授权",
             "error_strategy": "default-value",
             "memory": {"query_prompt_template": "{{#sys.query#}}", "window": {"enabled": True, "size": 6}},
+            # **v1.4.1 Rebase 修复 M1-B-28/M1-B-29，live 实测直接定位到根因**：直连数据库
+            # 核对失败运行的 usage/finish_reason，四次真实 SHADOW_NODE_FAILED 里有两次
+            # `finish_reason: "length"`、`completion_tokens` 精确等于旧值 4000——模型在
+            # reasoning_format=separated 下把大段思维链也计入 completion 预算，遇到模糊的
+            # 分类判断（尤其新增的 cta_authorization_signal 这类需要斟酌的字段）思考链本身
+            # 就可能超过 4000 token，还没写到 JSON 正文就被截断，产出空 structured_output。
+            # 三十三个字段本身没有变得更难，是"要斟酌的判断点变多"让思维链变长，跟着更容易
+            # 撞到旧的 token 上限——不是提示词或 schema 设计的问题，是预算给得不够。提高
+            # 上限给推理过程真实的呼吸空间，JSON 正文本身只有几百 token，不是这里的瓶颈。
             "model": {
-                "completion_params": {"max_tokens": 4000, "top_p": 0.8},
+                "completion_params": {"max_tokens": 10000, "top_p": 0.8},
                 "mode": "chat",
                 "name": "deepseek-v4-flash",
                 "provider": "langgenius/deepseek/deepseek",
