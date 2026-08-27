@@ -18,8 +18,9 @@ baseline_before:
 baseline_after:
   repository: "/home/faye/diyu-demo"
   branch: "codex/v1-m4-capability-seams-runtime-integration-001"
-  local_commit: "82d7a9dba988a69dc8f9539efd8def66f884ed85"
-  remote_commit: "82d7a9dba988a69dc8f9539efd8def66f884ed85"
+  engineering_content_commit: "82d7a9dba988a69dc8f9539efd8def66f884ed85"
+  receipt_commit: "ca73a6151b050f32aa835147f7bbcc7cb5641e71"
+  note: "工程内容基线为前者；本回执自身落在后者，回执不能自引用自己的提交哈希"
   worktree_clean: true
   dify_versions:
     - "Matrix        d7c2cc11 / wf d52435ac / graph 09de87ed"
@@ -113,7 +114,8 @@ m5_engineering_execution_authorized: false
 
 git:
   branch: "codex/v1-m4-capability-seams-runtime-integration-001"
-  commit: "82d7a9dba988a69dc8f9539efd8def66f884ed85"
+  engineering_content_commit: "82d7a9dba988a69dc8f9539efd8def66f884ed85"
+  receipt_commit: "ca73a6151b050f32aa835147f7bbcc7cb5641e71"
   remote_url: "https://github.com/andyan77/diyu-demo.git"
   remote_commit_matches_local: true
   main_unchanged: true
