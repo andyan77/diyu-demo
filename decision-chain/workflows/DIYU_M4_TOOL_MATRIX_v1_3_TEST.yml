@@ -976,24 +976,28 @@ workflow:
         code: "\nimport json\n\n# AC-31 交付收口：无论走哪条路径，用户都必须拿到非空正文。\n# 技术运行 succeeded != 业务交付成功；两者在此显式分离。\n\nLEAK = [\"PARSE_FAIL\"\
           , \"SEAM_COMPLETENESS_GUARD\", \"NOT_APPLICABLE\", \"STALE\",\n        \"NOT_VERIFIED\", \"returns_json\", \"artifact_status\"\
           , \"user_delivery_status\",\n        \"system prompt\", \"goal_family\", \"capability_call\", \"professional_payload\"\
-          ]\n\n\ndef main(adapter_user_delivery, adapter_status, needs_projection,\n         recovered_text, returns_json,\
-          \ capability):\n    ud = (adapter_user_delivery or \"\").strip()\n    rec = (recovered_text or \"\").strip()\n \
-          \   need = str(needs_projection or \"\").strip().lower() == \"true\"\n\n    try:\n        rets = json.loads(returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    if not need and ud:\n        return {\"user_delivery\"\
-          : ud, \"delivery_outcome\": \"DELIVERED\",\n                \"user_delivery_status\": adapter_status or \"OK\",\n\
-          \                \"returns_json\": returns_json or \"[]\",\n                \"recovery_used\": \"false\"}\n\n  \
-          \  # ── 有界局部恢复：最多一次，已在上游完成 ──\n    if rec and len(rec) >= 80:\n        leaked = [w for w in LEAK if w in rec]\n\
-          \        if not leaked:\n            return {\"user_delivery\": rec, \"delivery_outcome\": \"DELIVERED_AFTER_RECOVERY\"\
-          ,\n                    \"user_delivery_status\": \"RECOVERED\",\n                    \"returns_json\": json.dumps(rets\
-          \ + [{\n                        \"return_id\": \"M4-RET-PROJECTION-RECOVERED\",\n                        \"source\"\
-          : \"DELIVERY_FINALIZE\",\n                        \"highest_damaged_layer\": \"OUTPUT_CONTRACT_BLOCK_MARKERS\",\n\
-          \                        \"precise_gap\": \"模型未输出用户交付块标记；已由一次有界用户投影补齐\",\n                        \"affected_objects\"\
-          : [\"本次 %s 调用的用户交付块\" % capability],\n                        \"proposed_disposition\": \"ACCEPT_AND_PATCH\",\n\
-          \                        \"needs_user_decision\": False,\n                        \"downstream_stale\": [],\n  \
-          \                      \"parse_status\": \"RECOVERED_ONCE\",\n                    }], ensure_ascii=False),\n   \
-          \                 \"recovery_used\": \"true\"}\n\n    # ── 恢复失败：仍然必须给用户非空自然语言说明，且业务状态不是成功 ──\n    msg = (\n    \
-          \    \"这一次没有成功给出可用的结果。\\n\\n\"\n        \"系统在内部已经把专业判断做出来了，但在整理成给你看的那一份时出了问题，\"\n        \"没能形成一份可以直接用的正文。\\n\\\
-          n\"\n        \"**这次不算交付成功**——请不要把上面的空白当成「没有结论」，\"\n        \"结论是有的，是整理环节断了。\\n\\n\"\n        \"你可以把同样的需求再提一次；如果第二次仍然这样，说明这条路径上有需要修的问题，\"\
+          ,\n        # M4-FND-029：恢复正文里绝不允许出现模型的内部推理段\n        \"<think>\", \"</think>\", \"dify-deepseek-reasoning\"]\n\n\
+          \ndef _strip_thinking(text):\n    \"\"\"剥离模型 thinking 段，取最终正文。\n\n    缺陷 M4-FND-029：专业链的 final_extract 会做这一步，但 v1.4\
+          \ 新增的恢复路径没有做，\n    于是 recovery_llm 的整段内部推理被原样当成用户正文交付出去。\n    该缺陷此前无法被发现——recovery_llm 在 v1.4 的 13 次 Runtime 运行中触发\
+          \ 0 次。\n    剥离规则与 final_extract 模板逐条等价，不另立第二套。\n    \"\"\"\n    raw = (text or \"\").strip()\n    if \"</think>\"\
+          \ in raw:\n        return raw.split(\"</think>\")[-1].strip()\n    return raw\n\n\ndef main(adapter_user_delivery,\
+          \ adapter_status, needs_projection,\n         recovered_text, returns_json, capability):\n    ud = (adapter_user_delivery\
+          \ or \"\").strip()\n    rec = _strip_thinking(recovered_text)\n    need = str(needs_projection or \"\").strip().lower()\
+          \ == \"true\"\n\n    try:\n        rets = json.loads(returns_json or \"[]\")\n    except Exception:\n        rets\
+          \ = []\n\n    if not need and ud:\n        return {\"user_delivery\": ud, \"delivery_outcome\": \"DELIVERED\",\n\
+          \                \"user_delivery_status\": adapter_status or \"OK\",\n                \"returns_json\": returns_json\
+          \ or \"[]\",\n                \"recovery_used\": \"false\"}\n\n    # ── 有界局部恢复：最多一次，已在上游完成 ──\n    if rec and len(rec)\
+          \ >= 80:\n        leaked = [w for w in LEAK if w in rec]\n        if not leaked:\n            return {\"user_delivery\"\
+          : rec, \"delivery_outcome\": \"DELIVERED_AFTER_RECOVERY\",\n                    \"user_delivery_status\": \"RECOVERED\"\
+          ,\n                    \"returns_json\": json.dumps(rets + [{\n                        \"return_id\": \"M4-RET-PROJECTION-RECOVERED\"\
+          ,\n                        \"source\": \"DELIVERY_FINALIZE\",\n                        \"highest_damaged_layer\"\
+          : \"OUTPUT_CONTRACT_BLOCK_MARKERS\",\n                        \"precise_gap\": \"模型未输出用户交付块标记；已由一次有界用户投影补齐\",\n\
+          \                        \"affected_objects\": [\"本次 %s 调用的用户交付块\" % capability],\n                        \"proposed_disposition\"\
+          : \"ACCEPT_AND_PATCH\",\n                        \"needs_user_decision\": False,\n                        \"downstream_stale\"\
+          : [],\n                        \"parse_status\": \"RECOVERED_ONCE\",\n                    }], ensure_ascii=False),\n\
+          \                    \"recovery_used\": \"true\"}\n\n    # ── 恢复失败：仍然必须给用户非空自然语言说明，且业务状态不是成功 ──\n    msg = (\n \
+          \       \"这一次没有成功给出可用的结果。\\n\\n\"\n        \"系统在内部已经把专业判断做出来了，但在整理成给你看的那一份时出了问题，\"\n        \"没能形成一份可以直接用的正文。\\\
+          n\\n\"\n        \"**这次不算交付成功**——请不要把上面的空白当成「没有结论」，\"\n        \"结论是有的，是整理环节断了。\\n\\n\"\n        \"你可以把同样的需求再提一次；如果第二次仍然这样，说明这条路径上有需要修的问题，\"\
           \n        \"请把这次的情况反馈出来。\"\n    )\n    return {\"user_delivery\": msg, \"delivery_outcome\": \"NOT_DELIVERED\",\n\
           \            \"user_delivery_status\": \"PROJECTION_FAILED\",\n            \"returns_json\": json.dumps(rets + [{\n\
           \                \"return_id\": \"M4-RET-PROJECTION-FAILED\",\n                \"source\": \"DELIVERY_FINALIZE\"\

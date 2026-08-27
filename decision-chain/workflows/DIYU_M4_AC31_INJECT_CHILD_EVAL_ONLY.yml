@@ -1,11 +1,10 @@
 app:
-  description: M4 统一能力接缝后继测试应用（CONTENT_BRIEF）。task_id=V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001。system prompt 由后继 SKILL
-    字节派生；reference 按统一合同 §12 加载矩阵确定性投影；不足只出组件级 Return，不全局硬停；不调用任何其他能力应用。
+  description: EVALUATION ONLY · 故障注入对象。不得接入 Founder Canvas、主路由、生产入口或任何真实业务调用。取证完成后删除或隔离。
   icon: 🧩
   icon_background: '#E4FBCC'
   icon_type: emoji
   mode: workflow
-  name: DIYU M4 v1.3 TEST · Content Brief Architect
+  name: DIYU M4 AC31 FAULT INJECTION EVAL ONLY · Content Brief child
   use_icon_as_answer_icon: false
 dependencies:
 - current_identifier: null
@@ -284,61 +283,7 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "\nimport hashlib\nimport json\nimport re\n\n# M4 统一能力接缝 · 确定性外壳校验\n# 只做**结构性**充分性（在场 / 非空 / 可解析）与绑定计算。\n# 语义单薄（N-34「极薄字段齐全」）的最终裁决属于业务判断，\n\
-          # 由本能力的后继 Skill 正文负责；本节点只置 vacuity_flags 供其判断，\n# 不代替 Skill 作专业裁决（统一能力合同 §1.2.4）。\n\nREQUIRED = [\"objective\",\
-          \ \"audience_problem\", \"expected_change\", \"content_promise\", \"facts_registered\", \"expression_subject_and_boundary\"\
-          ]\nCAPABILITY = \"CONTENT_BRIEF\"\nALLOWED_ENTRIES = [\"ENTRY-03\"]\nALLOWED_RUN_MODES = [\"COMPILE_SINGLE_CONTENT_CONTRACT\"\
-          ]\nDEFAULT_RUN_MODE = \"COMPILE_SINGLE_CONTENT_CONTRACT\"\n\nVACUOUS = [\n    \"做一条好内容\", \"提升影响力\", \"让大家更了解我们\"\
-          , \"顾客不了解我们\",\n    \"提升曝光\", \"增加粉丝\", \"宣传新品\", \"促进转化\", \"打造心智\", \"多账号种草\",\n    \"更好\", \"更专业\", \"待定\", \"\
-          无\", \"n/a\", \"none\", \"tbd\",\n]\n\nGOAL_FAMILIES = [\"LONG_TERM_VALUE\", \"ACCOUNT_STARTUP\", \"FOLLOWER_GROWTH\"\
-          , \"TRAFFIC\",\n                 \"GMV\", \"LEADS\", \"STORE_VISIT\", \"MIXED\"]\nCTA_LEVELS = [\"NO_CTA\", \"LOW_RISK_INTERACTION\"\
-          , \"BUSINESS_HANDOFF\",\n              \"HIGH_RISK\", \"KNOWN_BUT_NOT_AUTHORIZED\"]\n\n\ndef _sha(s):\n    return\
-          \ hashlib.sha256((s or \"\").encode(\"utf-8\")).hexdigest()\n\n\ndef _norm(s):\n    return re.sub(r\"\\s+\", \"\
-          \ \", (s or \"\")).strip()\n\n\ndef _find_scalar(text, key):\n    \"\"\"从外壳文本里取一个标量语义值。容忍 YAML / JSON / Markdown\
-          \ 三种写法，\n    因为统一外壳**不强制物理字段名**（统一能力合同 §1.1）。\"\"\"\n    if not text:\n        return \"\"\n    pats = [\n     \
-          \   r'\"%s\"\\s*:\\s*\"([^\"]*)\"' % re.escape(key),\n        r\"^\\s*%s\\s*:\\s*[\\\"']?([^\\\"'\\n]+)[\\\"']?\\\
-          s*$\" % re.escape(key),\n        r\"`%s`\\s*[:：]\\s*([^\\n]+)\" % re.escape(key),\n    ]\n    for p in pats:\n \
-          \       m = re.search(p, text, re.MULTILINE)\n        if m:\n            return _norm(m.group(1))\n    return \"\
-          \"\n\n\ndef _present(text, key):\n    \"\"\"语义在场判据：能取到标量值，或存在以该 key 起头的非空块。\"\"\"\n    v = _find_scalar(text, key)\n\
-          \    if v and v.lower() not in (\"\", \"null\", \"none\"):\n        return True, v\n    m = re.search(r\"^\\s*%s\\\
-          s*:\\s*$\" % re.escape(key), text or \"\", re.MULTILINE)\n    if m:\n        tail = (text or \"\")[m.end():]\n \
-          \       block = []\n        for line in tail.split(\"\\n\"):\n            if line.strip() == \"\":\n           \
-          \     if block:\n                    break\n                continue\n            if not line.startswith((\" \"\
-          , \"\\t\", \"-\")):\n                break\n            block.append(line.strip())\n        if block:\n        \
-          \    return True, \" \".join(block)[:400]\n    return False, \"\"\n\n\ndef _vacuous(v):\n    n = _norm(v).lower()\n\
-          \    if not n:\n        return True\n    if len(n) < 4:\n        return True\n    for w in VACUOUS:\n        if\
-          \ n == w.lower():\n            return True\n    return False\n\n\ndef main(capability_call, professional_input,\
-          \ entry, run_mode, example_reference_requested):\n    env = capability_call or \"\"\n    prof = professional_input\
-          \ or \"\"\n    blob = env + \"\\n\" + prof\n\n    missing = []\n    vacuity_flags = []\n    for key in REQUIRED:\n\
-          \        ok, val = _present(blob, key)\n        if not ok:\n            missing.append(key)\n        elif _vacuous(val):\n\
-          \            vacuity_flags.append(key)\n\n    # entry 解析：只接受结构化能力调用意图，不做自然语言意图识别\n    entry_in = _norm(entry).upper()\n\
-          \    if entry_in in ALLOWED_ENTRIES:\n        entry_resolved = entry_in\n    elif entry_in in (\"\", \"AUTO\", \"\
-          NONE\"):\n        entry_resolved = ALLOWED_ENTRIES[0]\n    else:\n        entry_resolved = \"ENTRY_NOT_APPLICABLE_FOR_THIS_CAPABILITY\"\
-          \n\n    # run_mode 解析\n    rm_in = _norm(run_mode).upper()\n    if rm_in in ALLOWED_RUN_MODES:\n        run_mode_resolved\
-          \ = rm_in\n    else:\n        run_mode_resolved = DEFAULT_RUN_MODE\n\n    goal_family = (_find_scalar(blob, \"goal_family\"\
-          ) or \"\").upper()\n    if goal_family not in GOAL_FAMILIES:\n        goal_family = \"UNDECLARED\"\n\n    cta_level\
-          \ = (_find_scalar(blob, \"cta_level\") or _find_scalar(blob, \"cta_contract\") or \"\").upper()\n    if cta_level\
-          \ not in CTA_LEVELS:\n        cta_level = \"NO_CTA\"\n\n    subject_domain = _find_scalar(blob, \"subject_domain\"\
-          )\n    platform = _find_scalar(blob, \"platform\") or \"NOT_LOCKED\"\n    duration_band = (_find_scalar(blob, \"\
-          duration_band\") or \"SHORT\").upper()\n    equivalence_basis = _find_scalar(blob, \"equivalence_basis\") or \"\
-          NOT_STATED\"\n    source_kind = (_find_scalar(blob, \"source_kind\") or \"UNDECLARED\").upper()\n\n    if entry_resolved\
-          \ == \"ENTRY_NOT_APPLICABLE_FOR_THIS_CAPABILITY\":\n        status = \"INSUFFICIENT\"\n        note = \"entry 与本能力不匹配：%s\
-          \ 不属于 %s\" % (entry_in, ALLOWED_ENTRIES)\n    elif missing:\n        status = \"INSUFFICIENT\"\n        note = \"\
-          缺少完成本次判断所必需的业务语义：%s\" % \", \".join(missing)\n    elif vacuity_flags:\n        # 结构在场但可能语义单薄：不在此处判定不足，交由 Skill 正文作专业裁决\n\
-          \        status = \"SUFFICIENT_WITH_CONDITIONS\"\n        note = \"结构在场；以下项疑似语义单薄，交由本能力 Skill 正文裁决：%s\" % \", \"\
-          .join(vacuity_flags)\n    else:\n        status = \"SUFFICIENT\"\n        note = \"结构性充分\"\n\n    can_run = \"false\"\
-          \ if status == \"INSUFFICIENT\" else \"true\"\n\n    conditionalized = []\n    if platform.upper() in (\"NOT_LOCKED\"\
-          , \"UNKNOWN\", \"未确认\"):\n        conditionalized.append(\"platform 未锁定：只产出平台中立母版，锁定平台列为条件\")\n    if goal_family\
-          \ == \"UNDECLARED\":\n        conditionalized.append(\"objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注\")\n    if\
-          \ vacuity_flags:\n        conditionalized.append(\"疑似语义单薄项：%s\" % \", \".join(vacuity_flags))\n\n    return {\n\
-          \        \"status\": status,\n        \"can_run\": can_run,\n        \"note\": note,\n        \"missing\": missing,\n\
-          \        \"missing_text\": \", \".join(missing) if missing else \"无\",\n        \"vacuity_flags\": vacuity_flags,\n\
-          \        \"conditionalized_text\": \"；\".join(conditionalized) if conditionalized else \"无\",\n        \"entry_resolved\"\
-          : entry_resolved,\n        \"run_mode_resolved\": run_mode_resolved,\n        \"goal_family\": goal_family,\n  \
-          \      \"cta_level\": cta_level,\n        \"source_kind\": source_kind,\n        \"subject_domain\": subject_domain,\n\
-          \        \"platform\": platform,\n        \"duration_band\": duration_band,\n        \"equivalence_basis\": equivalence_basis,\n\
-          \        \"envelope_hash\": _sha(env),\n        \"professional_input_hash\": _sha(prof),\n        \"capability\"\
-          : CAPABILITY,\n        \"example_reference_requested\": _norm(example_reference_requested).upper(),\n    }\n"
+        code: "\nimport hashlib\nimport json\nimport re\n\n# M4 统一能力接缝 · 确定性外壳校验\n# 只做**结构性**充分性（在场 / 非空 / 可解析）与绑定计算。\n# 语义单薄（N-34「极薄字段齐全」）的最终裁决属于业务判断，\n# 由本能力的后继 Skill 正文负责；本节点只置 vacuity_flags 供其判断，\n# 不代替 Skill 作专业裁决（统一能力合同 §1.2.4）。\n\nREQUIRED = [\"objective\", \"audience_problem\", \"expected_change\", \"content_promise\", \"facts_registered\", \"expression_subject_and_boundary\"]\nCAPABILITY = \"CONTENT_BRIEF\"\nALLOWED_ENTRIES = [\"ENTRY-03\"]\nALLOWED_RUN_MODES = [\"COMPILE_SINGLE_CONTENT_CONTRACT\"]\nDEFAULT_RUN_MODE = \"COMPILE_SINGLE_CONTENT_CONTRACT\"\n\nVACUOUS = [\n    \"做一条好内容\", \"提升影响力\", \"让大家更了解我们\", \"顾客不了解我们\",\n    \"提升曝光\", \"增加粉丝\", \"宣传新品\", \"促进转化\", \"打造心智\", \"多账号种草\",\n    \"更好\", \"更专业\", \"待定\", \"无\", \"n/a\", \"none\", \"tbd\",\n]\n\nGOAL_FAMILIES = [\"LONG_TERM_VALUE\", \"ACCOUNT_STARTUP\", \"FOLLOWER_GROWTH\", \"TRAFFIC\",\n                 \"GMV\", \"LEADS\", \"STORE_VISIT\", \"MIXED\"]\nCTA_LEVELS = [\"NO_CTA\", \"LOW_RISK_INTERACTION\", \"BUSINESS_HANDOFF\",\n              \"HIGH_RISK\", \"KNOWN_BUT_NOT_AUTHORIZED\"]\n\n\ndef _sha(s):\n    return hashlib.sha256((s or \"\").encode(\"utf-8\")).hexdigest()\n\n\ndef _norm(s):\n    return re.sub(r\"\\s+\", \" \", (s or \"\")).strip()\n\n\ndef _find_scalar(text, key):\n    \"\"\"从外壳文本里取一个标量语义值。容忍 YAML / JSON / Markdown 三种写法，\n    因为统一外壳**不强制物理字段名**（统一能力合同 §1.1）。\"\"\"\n    if not text:\n        return \"\"\n    pats = [\n        r'\"%s\"\\s*:\\s*\"([^\"]*)\"' % re.escape(key),\n        r\"^\\s*%s\\s*:\\s*[\\\"']?([^\\\"'\\n]+)[\\\"']?\\s*$\" % re.escape(key),\n        r\"`%s`\\s*[:：]\\s*([^\\n]+)\" % re.escape(key),\n    ]\n    for p in pats:\n        m = re.search(p, text, re.MULTILINE)\n        if m:\n            return _norm(m.group(1))\n    return \"\"\n\n\ndef _present(text, key):\n    \"\"\"语义在场判据：能取到标量值，或存在以该 key 起头的非空块。\"\"\"\n    v = _find_scalar(text, key)\n    if v and v.lower() not in (\"\", \"null\", \"none\"):\n        return True, v\n    m = re.search(r\"^\\s*%s\\s*:\\s*$\" % re.escape(key), text or \"\", re.MULTILINE)\n    if m:\n        tail = (text or \"\")[m.end():]\n        block = []\n        for line in tail.split(\"\\n\"):\n            if line.strip() == \"\":\n                if block:\n                    break\n                continue\n            if not line.startswith((\" \", \"\\t\", \"-\")):\n                break\n            block.append(line.strip())\n        if block:\n            return True, \" \".join(block)[:400]\n    return False, \"\"\n\n\ndef _vacuous(v):\n    n = _norm(v).lower()\n    if not n:\n        return True\n    if len(n) < 4:\n        return True\n    for w in VACUOUS:\n        if n == w.lower():\n            return True\n    return False\n\n\ndef main(capability_call, professional_input, entry, run_mode, example_reference_requested):\n    env = capability_call or \"\"\n    prof = professional_input or \"\"\n    blob = env + \"\\n\" + prof\n\n    missing = []\n    vacuity_flags = []\n    for key in REQUIRED:\n        ok, val = _present(blob, key)\n        if not ok:\n            missing.append(key)\n        elif _vacuous(val):\n            vacuity_flags.append(key)\n\n    # entry 解析：只接受结构化能力调用意图，不做自然语言意图识别\n    entry_in = _norm(entry).upper()\n    if entry_in in ALLOWED_ENTRIES:\n        entry_resolved = entry_in\n    elif entry_in in (\"\", \"AUTO\", \"NONE\"):\n        entry_resolved = ALLOWED_ENTRIES[0]\n    else:\n        entry_resolved = \"ENTRY_NOT_APPLICABLE_FOR_THIS_CAPABILITY\"\n\n    # run_mode 解析\n    rm_in = _norm(run_mode).upper()\n    if rm_in in ALLOWED_RUN_MODES:\n        run_mode_resolved = rm_in\n    else:\n        run_mode_resolved = DEFAULT_RUN_MODE\n\n    goal_family = (_find_scalar(blob, \"goal_family\") or \"\").upper()\n    if goal_family not in GOAL_FAMILIES:\n        goal_family = \"UNDECLARED\"\n\n    cta_level = (_find_scalar(blob, \"cta_level\") or _find_scalar(blob, \"cta_contract\") or \"\").upper()\n    if cta_level not in CTA_LEVELS:\n        cta_level = \"NO_CTA\"\n\n    subject_domain = _find_scalar(blob, \"subject_domain\")\n    platform = _find_scalar(blob, \"platform\") or \"NOT_LOCKED\"\n    duration_band = (_find_scalar(blob, \"duration_band\") or \"SHORT\").upper()\n    equivalence_basis = _find_scalar(blob, \"equivalence_basis\") or \"NOT_STATED\"\n    source_kind = (_find_scalar(blob, \"source_kind\") or \"UNDECLARED\").upper()\n\n    if entry_resolved == \"ENTRY_NOT_APPLICABLE_FOR_THIS_CAPABILITY\":\n        status = \"INSUFFICIENT\"\n        note = \"entry 与本能力不匹配：%s 不属于 %s\" % (entry_in, ALLOWED_ENTRIES)\n    elif missing:\n        status = \"INSUFFICIENT\"\n        note = \"缺少完成本次判断所必需的业务语义：%s\" % \", \".join(missing)\n    elif vacuity_flags:\n        # 结构在场但可能语义单薄：不在此处判定不足，交由 Skill 正文作专业裁决\n        status = \"SUFFICIENT_WITH_CONDITIONS\"\n        note = \"结构在场；以下项疑似语义单薄，交由本能力 Skill 正文裁决：%s\" % \", \".join(vacuity_flags)\n    else:\n        status = \"SUFFICIENT\"\n        note = \"结构性充分\"\n\n    can_run = \"false\" if status == \"INSUFFICIENT\" else \"true\"\n\n    conditionalized = []\n    if platform.upper() in (\"NOT_LOCKED\", \"UNKNOWN\", \"未确认\"):\n        conditionalized.append(\"platform 未锁定：只产出平台中立母版，锁定平台列为条件\")\n    if goal_family == \"UNDECLARED\":\n        conditionalized.append(\"objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注\")\n    if vacuity_flags:\n        conditionalized.append(\"疑似语义单薄项：%s\" % \", \".join(vacuity_flags))\n\n    return {\n        \"status\": status,\n        \"can_run\": can_run,\n        \"note\": note,\n        \"missing\": missing,\n        \"missing_text\": \", \".join(missing) if missing else \"无\",\n        \"vacuity_flags\": vacuity_flags,\n        \"conditionalized_text\": \"；\".join(conditionalized) if conditionalized else \"无\",\n        \"entry_resolved\": entry_resolved,\n        \"run_mode_resolved\": run_mode_resolved,\n        \"goal_family\": goal_family,\n        \"cta_level\": cta_level,\n        \"source_kind\": source_kind,\n        \"subject_domain\": subject_domain,\n        \"platform\": platform,\n        \"duration_band\": duration_band,\n        \"equivalence_basis\": equivalence_basis,\n        \"envelope_hash\": _sha(env),\n        \"professional_input_hash\": _sha(prof),\n        \"capability\": CAPABILITY,\n        \"example_reference_requested\": _norm(example_reference_requested).upper(),\n    }\n"
         code_language: python3
         desc: 确定性外壳校验：结构性充分性 + 绑定计算。语义单薄的裁决交给 Skill 正文。
         outputs:
@@ -513,9 +458,7 @@ workflow:
     - data:
         desc: 登记本次实际加载了哪些参考片段，供 AC-11 机器核验。
         selected: false
-        template: "{\n  \"capability\": \"CONTENT_BRIEF\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\
-          \n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\"\
-          : false,\n  \"rag_first_layer_built\": false\n}"
+        template: "{\n  \"capability\": \"CONTENT_BRIEF\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}"
         title: Projection Record
         type: template-transform
         variables:
@@ -587,41 +530,31 @@ workflow:
 
             |---|---|---|---|---|
 
-            | 1 | 唯一任务由「把一个已经被接受的 Campaign 决策包编译成 Content Brief」改为「把一份已被接受的单条内容业务核心编译成 Content Brief」，并明列五类合法上游 | §0 | Phase
-            0 共享前言 §四 CAP-04「合法等价输入」；统一合同 §4.3、§6.3 来源开放 | 否 |
+            | 1 | 唯一任务由「把一个已经被接受的 Campaign 决策包编译成 Content Brief」改为「把一份已被接受的单条内容业务核心编译成 Content Brief」，并明列五类合法上游 | §0 | Phase 0 共享前言 §四 CAP-04「合法等价输入」；统一合同 §4.3、§6.3 来源开放 | 否 |
 
-            | 2 | 去掉「你处在三段链条的末端」这一唯一线性链条定位，改为可从五类来源任一类直接进入 | §0 第 4 段 | 统一合同 §3：`REQUIRED_ALWAYS` 为空集、`FIXED_ORDER: false`；上位合同「不存在唯一线性路径」
-            | 否 |
+            | 2 | 去掉「你处在三段链条的末端」这一唯一线性链条定位，改为可从五类来源任一类直接进入 | §0 第 4 段 | 统一合同 §3：`REQUIRED_ALWAYS` 为空集、`FIXED_ORDER: false`；上位合同「不存在唯一线性路径」 | 否 |
 
-            | 3 | 新增硬禁：本 Skill 不调用、不请求、不假设任何上游组件被运行过；不得为进入 Brief 暗中补跑 Matrix 或 Campaign | §0、§2（源文件无此明文） | 统一合同 §2.4、§6.3；前言
-            §三.4；CLAUDE.md §3「不得为进入某组件暗中补跑前置组件」 | 否 |
+            | 3 | 新增硬禁：本 Skill 不调用、不请求、不假设任何上游组件被运行过；不得为进入 Brief 暗中补跑 Matrix 或 Campaign | §0、§2（源文件无此明文） | 统一合同 §2.4、§6.3；前言 §三.4；CLAUDE.md §3「不得为进入某组件暗中补跑前置组件」 | 否 |
 
-            | 4 | §1 全文逐字保留，仅在其后追加「本版读法增补」：其中的 Campaign 项读作五类来源之一，业务核心按统一合同 §5 的 12 项 | §1（追加，不改原文） | 前言 §六.3「来源不同只增加来源标识，不改变
-            Brief 所需的业务核心」 | 否 |
+            | 4 | §1 全文逐字保留，仅在其后追加「本版读法增补」：其中的 Campaign 项读作五类来源之一，业务核心按统一合同 §5 的 12 项 | §1（追加，不改原文） | 前言 §六.3「来源不同只增加来源标识，不改变 Brief 所需的业务核心」 | 否 |
 
             | 5 | §2 标题由「上游锁定：不得重新决定的事项」改为「已接受项：不得重新决定的事项」，语义改为只对当前来源实际提供的项继承与执行 | §2 标题与首段 | 统一合同 §6.3 明文指派本项改造 | 否 |
 
-            | 6 | §2「读不出的项按第 3 节处理」改为「读不出且属于本次真正必要语义的，才阻断对应分支」；未提供项按 `NOT_APPLICABLE` 或条件化处理，不得因缺失而拒绝整任务 | §2 末两段 | 前言 §三.3
-            局部阻断；统一合同 §4.3、§6.1 | 否 |
+            | 6 | §2「读不出的项按第 3 节处理」改为「读不出且属于本次真正必要语义的，才阻断对应分支」；未提供项按 `NOT_APPLICABLE` 或条件化处理，不得因缺失而拒绝整任务 | §2 末两段 | 前言 §三.3 局部阻断；统一合同 §4.3、§6.1 | 否 |
 
-            | 7 | §3.2 必需项清单替换为统一合同 §4.3 `CONTENT_BRIEF` 的 required 清单，其中不再含「已被接受的上游 Campaign 决策」 | §3.2 | 统一合同 §4.3「**不 required**：Matrix
-            产物、Campaign 决策包、M3 周期」 | 否（移除的是上游来源入口条件，不是内容专业判据；账号责任边界、内容数量与顺序、可用可确认可公开可制作的事实链、事实确认人与最低制作条件全部保留并按统一合同细化） |
+            | 7 | §3.2 必需项清单替换为统一合同 §4.3 `CONTENT_BRIEF` 的 required 清单，其中不再含「已被接受的上游 Campaign 决策」 | §3.2 | 统一合同 §4.3「**不 required**：Matrix 产物、Campaign 决策包、M3 周期」 | 否（移除的是上游来源入口条件，不是内容专业判据；账号责任边界、内容数量与顺序、可用可确认可公开可制作的事实链、事实确认人与最低制作条件全部保留并按统一合同细化） |
 
             | 8 | `INPUT_INSUFFICIENT` 明确为**本分支结果**，不是整任务终态；同轮内不依赖该缺口的内容单元继续执行 | §3.2 | 前言 §三.3；统一合同 §4.3、§6.1 | 否 |
 
             | 9 | §3.2 新增「极薄字段齐全不构成充分输入」 | 源文件无 | 统一合同 §4.4（N-34） | 否 |
 
-            | 10 | §4 六个生成步骤**全文逐字保留，未作任何字面改动**；其中「上游锁定项」「上游已确认」的读法由 §2 的全局术语对齐规则承载 | §4 | 专业责任不可中性化；本次改造只允许改来源，不允许改制作层判据
-            | 否 |
+            | 10 | §4 六个生成步骤**全文逐字保留，未作任何字面改动**；其中「上游锁定项」「上游已确认」的读法由 §2 的全局术语对齐规则承载 | §4 | 专业责任不可中性化；本次改造只允许改来源，不允许改制作层判据 | 否 |
 
-            | 11 | 新增 §9「周期多目标与单条内容主目标」：单条内容只承担一个主要工作 + 有限次要贡献；目标冲突给取舍、代价与推荐交用户裁决；`objective.goal_family` 只读继承 | 源文件无 | 统一合同
-            §6.3 单条主目标收敛、§7.2 目标忠实、§8.5（N-32／N-33）；前言 §三.10 | 否 |
+            | 11 | 新增 §9「周期多目标与单条内容主目标」：单条内容只承担一个主要工作 + 有限次要贡献；目标冲突给取舍、代价与推荐交用户裁决；`objective.goal_family` 只读继承 | 源文件无 | 统一合同 §6.3 单条主目标收敛、§7.2 目标忠实、§8.5（N-32／N-33）；前言 §三.10 | 否 |
 
-            | 12 | 新增 §10「与统一能力接缝的对接」：独有输入／独有输出／独有停止边界、平台中立条件、CTA 三级接缝 | 源文件无（部分重申 §3.3、§4 步骤六、§5，不替代） | 统一合同 §1.3 表格 Content
-            Brief 行、§8.4 | 否 |
+            | 12 | 新增 §10「与统一能力接缝的对接」：独有输入／独有输出／独有停止边界、平台中立条件、CTA 三级接缝 | 源文件无（部分重申 §3.3、§4 步骤六、§5，不替代） | 统一合同 §1.3 表格 Content Brief 行、§8.4 | 否 |
 
-            | 13 | 新增 §11「下游失效」：只使依赖该变化的创意、脚本、PD 与 PP 产物失效 | 源文件无 | 前言 §四 CAP-04「实质修改后的下游失效」、§三.6、§三.7；统一合同 §10.3、§10.5 |
-            否 |
+            | 13 | 新增 §11「下游失效」：只使依赖该变化的创意、脚本、PD 与 PP 产物失效 | 源文件无 | 前言 §四 CAP-04「实质修改后的下游失效」、§三.6、§三.7；统一合同 §10.3、§10.5 | 否 |
 
             | 14 | §7 输出前内部检查十二条**全文逐字保留**，在其后追加第 13–19 条，覆盖本版新增判据 | §7（追加，不改原文） | 新增判据必须有对应自检，且不得挤掉原有十二条 | 否 |
 
@@ -659,12 +592,10 @@ workflow:
             5. 满足最小输入的已有脚本构想。
 
 
-            **来源不同只增加来源标识，不改变 Brief 所需的业务核心。** 业务核心是同一套 12 项：受众问题／场景／机会；期望发生的变化；适用的内容承诺／核心命题／待验证假设；一个主目标 + 有限次目标；优先级与不可牺牲条件；周期角色；表达裁量；风险边界；事实／素材／缺口及其权限；平台／内容形态；来源；发布后观察项。**不适用项写
-            `NOT_APPLICABLE`，不得虚构周期、Campaign 或上游。**
+            **来源不同只增加来源标识，不改变 Brief 所需的业务核心。** 业务核心是同一套 12 项：受众问题／场景／机会；期望发生的变化；适用的内容承诺／核心命题／待验证假设；一个主目标 + 有限次目标；优先级与不可牺牲条件；周期角色；表达裁量；风险边界；事实／素材／缺口及其权限；平台／内容形态；来源；发布后观察项。**不适用项写 `NOT_APPLICABLE`，不得虚构周期、Campaign 或上游。**
 
 
-            你不处在唯一线性链条的末端。五类来源中的任何一类都可以直接进入本组件，不存在「必须先跑矩阵、再跑 Campaign」的前置门。**硬禁：本 Skill 不调用、不请求、不假设任何上游组件被运行过；不得为了进入 Brief
-            而暗中补跑 Matrix 或 Campaign。** 缺少 Matrix 产物或 Campaign 决策包本身不构成阻断理由。
+            你不处在唯一线性链条的末端。五类来源中的任何一类都可以直接进入本组件，不存在「必须先跑矩阵、再跑 Campaign」的前置门。**硬禁：本 Skill 不调用、不请求、不假设任何上游组件被运行过；不得为了进入 Brief 而暗中补跑 Matrix 或 Campaign。** 缺少 Matrix 产物或 Campaign 决策包本身不构成阻断理由。
 
 
             你必须做出制作层决策，而不是把已接受的业务核心换一种格式复述。每一条 Brief 都要新增来源没有给出的判断：具体到哪一条证据链、哪一个顾客问题、哪一个必须形成的新判断、内容在哪里产生真实摩擦、必须保留什么、必须删除什么、什么条件下不发。
@@ -747,8 +678,7 @@ workflow:
             ## 2. 已接受项：不得重新决定的事项
 
 
-            **术语对齐（全局，适用于本文件全部章节）**：本版把源文件的「上游锁定项」统一改称「**已接受项**」。本文件第 4、7、8 节为逐字保留的原文，其中出现的「上游锁定项」一律读作「已接受项」，「上游已确认」一律读作「**当前来源已确认**」，「上游决策」一律读作「**当前来源已接受的业务核心**」，「适用
-            Campaign」在无 Campaign 来源时填 `NOT_APPLICABLE`。除此读法外，那三节的判据不作任何改动。
+            **术语对齐（全局，适用于本文件全部章节）**：本版把源文件的「上游锁定项」统一改称「**已接受项**」。本文件第 4、7、8 节为逐字保留的原文，其中出现的「上游锁定项」一律读作「已接受项」，「上游已确认」一律读作「**当前来源已确认**」，「上游决策」一律读作「**当前来源已接受的业务核心**」，「适用 Campaign」在无 Campaign 来源时填 `NOT_APPLICABLE`。除此读法外，那三节的判据不作任何改动。
 
 
             **当前来源实际提供**的以下事项，你只能继承、引用和执行，不得重新选择、扩大或缩减：
@@ -858,8 +788,7 @@ workflow:
             **本次涉及多条内容单元时**，内容数量与顺序结论仍是必需的（否则无法判断接力关系、无法避免重复拍摄）；**本次只有一条内容时**该项标 `NOT_APPLICABLE`，不得为此索要一份周期或战役计划。
 
 
-            **明确不是必需的**：Matrix 产物、Campaign 决策包、持续运营周期这三样**物理产物本身**。周期角色不适用时标 `NOT_APPLICABLE`，**不得虚构周期**，也不得因为没有这三样而拒绝生成。平台未确认不阻塞，按
-            §3.3 输出平台中立 Brief。
+            **明确不是必需的**：Matrix 产物、Campaign 决策包、持续运营周期这三样**物理产物本身**。周期角色不适用时标 `NOT_APPLICABLE`，**不得虚构周期**，也不得因为没有这三样而拒绝生成。平台未确认不阻塞，按 §3.3 输出平台中立 Brief。
 
 
             **极薄字段齐全不构成充分输入**：字段名齐全但业务语义空洞——内容承诺写成「做一条好内容」、事实为空、期望变化写成「让大家更了解我们」——一律判为输入不足，不得冒充合法等价输入。
@@ -1355,8 +1284,7 @@ workflow:
             | **独有停止边界** | 不写完整口播、逐镜头、最终标题／封面／发布文案 |
 
 
-            这三项是本组件不可被别的能力替代、也不可替代别的能力的部分。**上游侧**：五类来源等价，只增加来源标识（§0、§2）。**下游侧**：交给创意决策、Creative Script、Production Director
-            与 Publishing & Packaging 的是**制作依据**，不是成品（判据见第 5 节，本版逐字保留）。
+            这三项是本组件不可被别的能力替代、也不可替代别的能力的部分。**上游侧**：五类来源等价，只增加来源标识（§0、§2）。**下游侧**：交给创意决策、Creative Script、Production Director 与 Publishing & Packaging 的是**制作依据**，不是成品（判据见第 5 节，本版逐字保留）。
 
 
             不重做运营判断，不提前代做脚本、镜头与包装；同样地，**不因为跳过了 Matrix 或 Campaign 就降低事实纪律、权限约束、风险约束或本次任务真正需要的专业质量**。
@@ -1532,31 +1460,7 @@ workflow:
 
             '
         - role: user
-          text: "# 本次运行输入\n\n## 统一能力调用外壳（capability_call）\n\n{{#1788000000001.capability_call#}}\n\n## 本能力的专业输入（professional_input）\n\
-            \n{{#1788000000001.professional_input#}}\n\n## 接缝控制（由确定性节点给出，不由你判断）\n\n- `capability`：CONTENT_BRIEF\n- `entry`：{{#envelope_check.entry_resolved#}}\n\
-            - `run_mode`：{{#envelope_check.run_mode_resolved#}}\n- 结构性充分性：{{#envelope_check.status#}}\n- 结构性缺项：{{#envelope_check.missing_text#}}\n\
-            - 等价输入依据：{{#envelope_check.equivalence_basis#}}\n- 来源（provenance.source_kind）：{{#envelope_check.source_kind#}}\n\
-            - 必须条件化的项：{{#envelope_check.conditionalized_text#}}\n- `objective.goal_family`（**只读继承，你无权改写**）：{{#envelope_check.goal_family#}}\n\
-            - CTA 授权级别：{{#envelope_check.cta_level#}}\n- `subject_domain`：{{#envelope_check.subject_domain#}}\n- `platform`：{{#envelope_check.platform#}}\n\
-            - `duration_band`：{{#envelope_check.duration_band#}}\n\n---\n\n## 本次运行的接缝硬约束\n\n1. **不得暗跑上游。** 你**没有**调用任何其他能力的手段，也不得假设任何上游组件已经被运行过。\n\
-            \   合法等价输入已由上面的外壳给出；缺什么就说缺什么，**不要替不存在的上游产物编内容**。\n2. **`objective.goal_family` 只读继承。** 不得把起号、吸粉、流量、GMV、线索、到店或混合目标\n\
-            \   静默改写成长期价值任务。你无权改目标；确有冲突时只发一条**局部 Return**。\n3. **`explicit_non_promise` 只读继承。** 任何一段都不得往回加内容。\n4. **跳过组件不降低标准。**\
-            \ 短入口不等于降低事实纪律、权限约束、风险约束或当前任务\n   真正适用的专业质量。\n5. **不适用维度写 `NOT_APPLICABLE` 并说明**，不得留空，也不得把不适用维度变成硬门。\n6. **候选数量不得硬编码。**\
-            \ 只有存在真实取舍时才给多个方向；不存在时直接给推荐。\n7. **本次没有加载的参考内容一律不得引用**，不得凭记忆补平台数字、行业惯例或案例。\n8. 本能力**产出**：单条内容生产合同：一个顾客问题 + 一个新判断\
-            \ + 证据地图 + 叙事节拍 + 发布/降级/取消条件\n   本能力**不得产出**：完整逐字稿、逐镜分镜、最终标题、封面、发布文案\n\n---\n\n## 产出结构（三块，标记行原样照抄，各只出现一次、必须成对闭合）\n\
-            \n**不要把本节说明抄进产出。**\n\n---M4_ARTIFACT---\n（内部 Artifact：完整专业产出。按你正文规定的输出格式写全。\n 可以保留来源、版本、状态、未选候选、淘汰原因与调试信息。\n 这一块**不直接给用户看**。）\n\
-            ---END_M4_ARTIFACT---\n\n---M4_USER_DELIVERY---\nstatus: READY | NEEDS_DECISION | BLOCKED_LOCAL\n（自然、完整、可直接使用的结果；必要候选；推荐；真实阻断；最小决定。\n\
-            \ **禁止出现**：内部术语与状态码、Prompt 正文、凭据、数据库、内部推理、参考文件全文、\n 「已删除／已剔除／审查发现／修正后／原方案／未核实不得使用」这类便条，\n 以及任何被淘汰内容的全文。\n **同样禁止**把用户必要的选择和成立条件投影掉——「不泄露」不是「少给」。）\n\
-            ---END_M4_USER_DELIVERY---\n\n---M4_RETURNS---\n（没有回改就只写一个词：NONE。**空块不等于 NONE**，会被判为解析失败。\n 有回改时，每条写满下面八行；多条之间空一行。\n\
-            \ `affected_objects` 与 `downstream_stale` 用 | 分隔多个值。\n `downstream_stale` **只列真实依赖本次结论的项**，不得列全链。）\nreturn_id:\
-            \ <稳定 id>\nsource: CONTENT_BRIEF\nhighest_damaged_layer: <被实际破坏的最上游判断层>\nprecise_gap: <具体缺什么。禁写「信息不足」>\naffected_objects:\
-            \ <对象1 | 对象2>\nproposed_disposition: ACCEPT_AND_PATCH | REJECT_WITH_AUTHORITY | ESCALATE\nneeds_user_decision:\
-            \ true | false\ndownstream_stale: <项1 | 项2>\n---END_M4_RETURNS---\n\n---\n\n## 写完之后，交出去之前，自己核这三条\n\n1. 上面三对标记行有没有**原样出现、各一次、成对闭合**。少一行、改一个字、写成别的样子，\n\
-            \   下游都读不出来，等于这一块没交。\n2. `---M4_ARTIFACT---` 里是不是**专业产出本身**。不得写成「即上方」「即以上」「同上」\n   「上方即」「见上文」「内容同上」「本区块与…一致」这类指向另一块的话——\n\
-            \   那样写，这一块实际就是空的，下游拿到的是一句指路，不是产出。\n3. `---M4_USER_DELIVERY---` 是不是**非空**、且同样没有写成指向 ARTIFACT 的一句话。\n   用户只看得到这一块。\n\
-            4. `---M4_ARTIFACT---` 块内是否有**单独一行**写出本次的 CTA 内部合同取值：\n   `cta_contract: <取值>`\n   取值只能取自 NO_CTA / LOW_RISK_INTERACTION\
-            \ / BUSINESS_HANDOFF /\n   HIGH_RISK / KNOWN_BUT_NOT_AUTHORIZED。\n   权限已知但未获授权时取 `KNOWN_BUT_NOT_AUTHORIZED`（权限不全，不是信息不全）。\n\
-            \   这一行只写在 ARTIFACT 块，**绝不出现在 USER_DELIVERY**。\n\n两块内容有重复不是问题，**回指和留空才是问题**。\n"
+          text: "# 本次运行输入\n\n## 统一能力调用外壳（capability_call）\n\n{{#1788000000001.capability_call#}}\n\n## 本能力的专业输入（professional_input）\n\n{{#1788000000001.professional_input#}}\n\n## 接缝控制（由确定性节点给出，不由你判断）\n\n- `capability`：CONTENT_BRIEF\n- `entry`：{{#envelope_check.entry_resolved#}}\n- `run_mode`：{{#envelope_check.run_mode_resolved#}}\n- 结构性充分性：{{#envelope_check.status#}}\n- 结构性缺项：{{#envelope_check.missing_text#}}\n- 等价输入依据：{{#envelope_check.equivalence_basis#}}\n- 来源（provenance.source_kind）：{{#envelope_check.source_kind#}}\n- 必须条件化的项：{{#envelope_check.conditionalized_text#}}\n- `objective.goal_family`（**只读继承，你无权改写**）：{{#envelope_check.goal_family#}}\n- CTA 授权级别：{{#envelope_check.cta_level#}}\n- `subject_domain`：{{#envelope_check.subject_domain#}}\n- `platform`：{{#envelope_check.platform#}}\n- `duration_band`：{{#envelope_check.duration_band#}}\n\n---\n\n## 本次运行的接缝硬约束\n\n1. **不得暗跑上游。** 你**没有**调用任何其他能力的手段，也不得假设任何上游组件已经被运行过。\n   合法等价输入已由上面的外壳给出；缺什么就说缺什么，**不要替不存在的上游产物编内容**。\n2. **`objective.goal_family` 只读继承。** 不得把起号、吸粉、流量、GMV、线索、到店或混合目标\n   静默改写成长期价值任务。你无权改目标；确有冲突时只发一条**局部 Return**。\n3. **`explicit_non_promise` 只读继承。** 任何一段都不得往回加内容。\n4. **跳过组件不降低标准。** 短入口不等于降低事实纪律、权限约束、风险约束或当前任务\n   真正适用的专业质量。\n5. **不适用维度写 `NOT_APPLICABLE` 并说明**，不得留空，也不得把不适用维度变成硬门。\n6. **候选数量不得硬编码。** 只有存在真实取舍时才给多个方向；不存在时直接给推荐。\n7. **本次没有加载的参考内容一律不得引用**，不得凭记忆补平台数字、行业惯例或案例。\n8. 本能力**产出**：单条内容生产合同：一个顾客问题 + 一个新判断 + 证据地图 + 叙事节拍 + 发布/降级/取消条件\n   本能力**不得产出**：完整逐字稿、逐镜分镜、最终标题、封面、发布文案\n\n---\n\n## 产出结构（三块，标记行原样照抄，各只出现一次、必须成对闭合）\n\n**不要把本节说明抄进产出。**\n\n---M4_ARTIFACT---\n（内部 Artifact：完整专业产出。按你正文规定的输出格式写全。\n 可以保留来源、版本、状态、未选候选、淘汰原因与调试信息。\n 这一块**不直接给用户看**。）\n---END_M4_ARTIFACT---\n\n---M4_USER_DELIVERY---\nstatus: READY | NEEDS_DECISION | BLOCKED_LOCAL\n（自然、完整、可直接使用的结果；必要候选；推荐；真实阻断；最小决定。\n **禁止出现**：内部术语与状态码、Prompt 正文、凭据、数据库、内部推理、参考文件全文、\n 「已删除／已剔除／审查发现／修正后／原方案／未核实不得使用」这类便条，\n 以及任何被淘汰内容的全文。\n **同样禁止**把用户必要的选择和成立条件投影掉——「不泄露」不是「少给」。）\n---END_M4_USER_DELIVERY---\n\n---M4_RETURNS---\n（没有回改就只写一个词：NONE。**空块不等于 NONE**，会被判为解析失败。\n 有回改时，每条写满下面八行；多条之间空一行。\n `affected_objects` 与 `downstream_stale` 用 | 分隔多个值。\n `downstream_stale` **只列真实依赖本次结论的项**，不得列全链。）\nreturn_id: <稳定 id>\nsource: CONTENT_BRIEF\nhighest_damaged_layer: <被实际破坏的最上游判断层>\nprecise_gap: <具体缺什么。禁写「信息不足」>\naffected_objects: <对象1 | 对象2>\nproposed_disposition: ACCEPT_AND_PATCH | REJECT_WITH_AUTHORITY | ESCALATE\nneeds_user_decision: true | false\ndownstream_stale: <项1 | 项2>\n---END_M4_RETURNS---\n\n---\n\n## 写完之后，交出去之前，自己核这三条\n\n1. 上面三对标记行有没有**原样出现、各一次、成对闭合**。少一行、改一个字、写成别的样子，\n   下游都读不出来，等于这一块没交。\n2. `---M4_ARTIFACT---` 里是不是**专业产出本身**。不得写成「即上方」「即以上」「同上」\n   「上方即」「见上文」「内容同上」「本区块与…一致」这类指向另一块的话——\n   那样写，这一块实际就是空的，下游拿到的是一句指路，不是产出。\n3. `---M4_USER_DELIVERY---` 是不是**非空**、且同样没有写成指向 ARTIFACT 的一句话。\n   用户只看得到这一块。\n4. `---M4_ARTIFACT---` 块内是否有**单独一行**写出本次的 CTA 内部合同取值：\n   `cta_contract: <取值>`\n   取值只能取自 NO_CTA / LOW_RISK_INTERACTION / BUSINESS_HANDOFF /\n   HIGH_RISK / KNOWN_BUT_NOT_AUTHORIZED。\n   权限已知但未获授权时取 `KNOWN_BUT_NOT_AUTHORIZED`（权限不全，不是信息不全）。\n   这一行只写在 ARTIFACT 块，**绝不出现在 USER_DELIVERY**。\n\n两块内容有重复不是问题，**回指和留空才是问题**。\n"
         selected: false
         title: DIYU M4 v1.3 TEST · Content Brief Architect
         type: llm
@@ -1577,22 +1481,25 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        desc: 剥离 thinking 段，取最终正文。空输出显式标记，不静默当成空结果。
+        code: "\n# ============================================================================\n# 故障注入源（EVALUATION ONLY，绝不进入正式 M4 应用）\n# 取代正式 final_extract；节点 id 与输出键 output 保持不变，\n# 因此下游恢复子图（returns_adapter … end_ok）逐字节不变。\n# 注入指令由 capability_call 中的哨兵串给出，运行前已在取证合同 v0.5 §2.2 冻结。\n# ============================================================================\n\nA_OPEN, A_CLOSE = \"---M4_ARTIFACT---\", \"---END_M4_ARTIFACT---\"\nU_OPEN, U_CLOSE = \"---M4_USER_DELIVERY---\", \"---END_M4_USER_DELIVERY---\"\nR_OPEN, R_CLOSE = \"---M4_RETURNS---\", \"---END_M4_RETURNS---\"\n\nFROZEN_ARTIFACT = \"\"\"# 内容任务判断｜序里集 · 初秋通勤衣橱第一阶段\n\n## 一、这条要解决的判断\n\n这次的卡点不是衣服数量不够，而是层数与场合没有分开。目标顾客已经有几件通勤外套，\n早上仍然要花十几分钟才决定穿什么——她缺的是一套可以自己复用的分层判断，不是再多一件。\n\n## 二、面向谁\n\n已经有几件通勤外套、每天早上仍在衣橱前反复取舍的通勤顾客。\n\n## 三、这条内容对她的承诺\n\n给出一个可以在她自己衣橱里直接照做的分层判断。看完之后，她能说出自己卡住的\n不是衣服不够，而是层数与场合没分开。\n\n## 四、可用的事实\n\n苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档。除此之外没有登记的事实，不补。\n\n## 五、边界与不能说的\n\n- 不得制造身材或年龄焦虑。\n- 讲述人是苏禾，允许显式标注的演示场景，不允许冒充真实顾客。\n- 平台尚未锁定，本次只产出平台中立母版，锁定平台之后再做适配。\n- 本条不承诺哪一件更好，也不承诺适用于所有身材。\n\n## 六、下一步\n\n把这份判断交给创意脚本环节，按苏禾三组试穿排出节拍，每一节拍逐条对齐事实与素材。\"\"\"\n\n\ndef _strip_thinking(llm_text):\n    \"\"\"与正式 final_extract 模板逐条等价的 thinking 剥离。\"\"\"\n    raw = llm_text or \"\"\n    if \"</think>\" in raw:\n        tail = raw.split(\"</think>\")[-1]\n        return \"MODEL_OUTPUT_NO_FINAL\" if tail.strip() == \"\" else tail\n    if raw.strip() == \"\":\n        return \"MODEL_OUTPUT_NO_FINAL\"\n    return raw\n\n\ndef _drop_user_block(text):\n    \"\"\"只删用户交付块（标记连同其内容），artifact 与 returns 块原样保留。\"\"\"\n    i = text.find(U_OPEN)\n    if i < 0:\n        return text\n    j = text.find(U_CLOSE, i)\n    if j < 0:\n        return text[:i]\n    return text[:i] + text[j + len(U_CLOSE):]\n\n\ndef main(llm_text, capability_call):\n    cc = capability_call or \"\"\n    out = _strip_thinking(llm_text)\n\n    if \"M4_FAULT_DIRECTIVE=TOOL_FAIL\" in cc:\n        raise RuntimeError(\"M4 AC31 FAULT INJECTION: forced capability app failure\")\n\n    if \"M4_FAULT_DIRECTIVE=FROZEN_MARKERLESS\" in cc:\n        return {\"output\": (A_OPEN + \"\\n\" + FROZEN_ARTIFACT + \"\\n\" + A_CLOSE\n                           + \"\\n\\n\" + R_OPEN + \"\\nNONE\\n\" + R_CLOSE)}\n\n    if \"M4_FAULT_DIRECTIVE=LIVE_MARKERLESS\" in cc:\n        return {\"output\": _drop_user_block(out)}\n\n    return {\"output\": out}\n"
+        code_language: python3
+        desc: EVALUATION ONLY 故障注入源；取代正式 Final Extract。
+        outputs:
+          output:
+            children: null
+            type: string
         selected: false
-        template: '{%- if ''</think>'' in llm_text -%}
-
-          {%- set tail = llm_text.split(''</think>'')|last -%}
-
-          {%- if tail.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ tail }}{%- endif -%}
-
-          {%- elif llm_text.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ llm_text }}{%- endif -%}'
-        title: Final Extract
-        type: template-transform
+        title: Final Extract（故障注入）
+        type: code
         variables:
         - value_selector:
           - skill_llm
           - text
           variable: llm_text
+        - value_selector:
+          - '1788000000001'
+          - capability_call
+          variable: capability_call
       height: 100
       id: final_extract
       position:
@@ -1608,64 +1515,7 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "\nimport json\nimport re\n\n# 确定性 Returns / 交付分离适配器\n# N-12 铁律：解析失败 != NONE。结构损坏时置 PARSE_FAILED、保留原文、局部阻断，\n\
-          #           绝不伪装成空数组或 NONE。\n\nCAPABILITY = \"CONTENT_BRIEF\"\n\nA_OPEN, A_CLOSE = \"---M4_ARTIFACT---\", \"---END_M4_ARTIFACT---\"\
-          \nU_OPEN, U_CLOSE = \"---M4_USER_DELIVERY---\", \"---END_M4_USER_DELIVERY---\"\nR_OPEN, R_CLOSE = \"---M4_RETURNS---\"\
-          , \"---END_M4_RETURNS---\"\n\nRET_FIELDS = [\"return_id\", \"source\", \"highest_damaged_layer\", \"precise_gap\"\
-          ,\n              \"affected_objects\", \"proposed_disposition\", \"needs_user_decision\",\n              \"downstream_stale\"\
-          ]\nDISPOSITIONS = [\"ACCEPT_AND_PATCH\", \"REJECT_WITH_AUTHORITY\", \"ESCALATE\"]\n\n# 用户交付块禁项（统一能力合同 §11.3 / 源\
-          \ PP Skill「用户交付块的事实纪律」）\nLEAK_PATTERNS = [\n    \"已删除\", \"已剔除\", \"已移除\", \"审查发现\", \"审查时发现\", \"修正后\", \"修正为\"\
-          ,\n    \"原方案\", \"上一版\", \"之前的版本\", \"未核实，不得使用\", \"这句话不能使用\",\n    \"LOW_RISK_INTERACTION\", \"BUSINESS_HANDOFF\"\
-          , \"KNOWN_BUT_NOT_AUTHORIZED\",\n    \"goal_family\", \"capability_call\", \"professional_payload\", \"system prompt\"\
-          ,\n    \"INPUT_INSUFFICIENT\", \"STALE\", \"NOT_VERIFIED\", \"fact_refs[]\", \"used_fact_refs\",\n]\n\n\n# AC-31\
-          \ 产出完整性冻结阈值（V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.2 §1.1）\n# 阈值在任何新运行之前冻结，不因结果调整。\nBACKREF_MARKERS = [\"即上方\", \"\
-          即以上\", \"同上\", \"同上文\", \"上方即\", \"上文即\",\n                   \"见上文\", \"如上所述\", \"内容同上\", \"本区块与\",\n         \
-          \          \"与上方\", \"与上文\", \"与以上\"]\nMIN_ARTIFACT_CHARS = 400\nCHECK_WINDOW = 200\n\n\ndef _has_backref(text):\n\
-          \    head = (text or \"\")[:CHECK_WINDOW]\n    for m in BACKREF_MARKERS:\n        if m in head:\n            return\
-          \ True\n    return False\n\n\ndef _legit_block(rets):\n    # 合法组件级 Return：同时含非空 highest_damaged_layer 与非空 precise_gap\n\
-          \    for r in rets:\n        if not isinstance(r, dict):\n            continue\n        if (r.get(\"highest_damaged_layer\"\
-          ) or \"\").strip() and (r.get(\"precise_gap\") or \"\").strip():\n            return True\n    return False\n\n\n\
-          def _artifact_status(artifact, rets):\n    a = (artifact or \"\").strip()\n    if _has_backref(a):\n        return\
-          \ \"BACKREF_COLLAPSED\"\n    if not a:\n        return \"OK\" if _legit_block(rets) else \"EMPTY\"\n    if len(a)\
-          \ < MIN_ARTIFACT_CHARS and not _legit_block(rets):\n        return \"BELOW_MIN\"\n    return \"OK\"\n\n\ndef _user_status_of(user_delivery):\n\
-          \    # 空交付无条件违规：legit_block 时用户仍必须被告知阻断\n    u = (user_delivery or \"\").strip()\n    if not u:\n        return\
-          \ \"EMPTY\"\n    if _has_backref(u):\n        return \"BACKREF_COLLAPSED\"\n    return \"OK\"\n\n\ndef _between(text,\
-          \ a, b):\n    i = text.find(a)\n    if i < 0:\n        return None\n    j = text.find(b, i + len(a))\n    if j <\
-          \ 0:\n        return None\n    return text[i + len(a):j].strip()\n\n\ndef _parse_returns(block):\n    \"\"\"返回 (list,\
-          \ status, note)。status ∈ OK | NONE | PARSE_FAILED\"\"\"\n    if block is None:\n        return [], \"PARSE_FAILED\"\
-          , \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\"\n    s = block.strip()\n    if s == \"\":\n        return [], \"PARSE_FAILED\"\
-          , \"RETURNS 块为空。空 != NONE：无回改必须显式写 NONE\"\n    if s.upper() == \"NONE\":\n        return [], \"NONE\", \"显式声明无回改\"\
-          \n\n    groups = [g for g in re.split(r\"\\n\\s*\\n\", s) if g.strip()]\n    out = []\n    bad = []\n    for g in\
-          \ groups:\n        item = {}\n        for line in g.split(\"\\n\"):\n            m = re.match(r\"^\\s*([a-z_]+)\\\
-          s*:\\s*(.*)$\", line)\n            if m:\n                item[m.group(1)] = m.group(2).strip()\n        miss =\
-          \ [f for f in RET_FIELDS if f not in item or item[f] == \"\"]\n        if miss:\n            bad.append(\"一条 Return\
-          \ 缺字段：%s\" % \",\".join(miss))\n            continue\n        if item[\"proposed_disposition\"] not in DISPOSITIONS:\n\
-          \            bad.append(\"proposed_disposition 非法：%s\" % item[\"proposed_disposition\"])\n            continue\n\
-          \        item[\"affected_objects\"] = [x.strip() for x in item[\"affected_objects\"].split(\"|\") if x.strip()]\n\
-          \        item[\"downstream_stale\"] = [x.strip() for x in item[\"downstream_stale\"].split(\"|\") if x.strip()]\n\
-          \        item[\"needs_user_decision\"] = item[\"needs_user_decision\"].strip().lower() in (\"true\", \"是\", \"yes\"\
-          )\n        item[\"parse_status\"] = \"OK\"\n        out.append(item)\n\n    if bad:\n        return out, \"PARSE_FAILED\"\
-          , \"；\".join(bad)\n    if not out:\n        return [], \"PARSE_FAILED\", \"RETURNS 块存在内容但无法解析出任何合法条目\"\n    return\
-          \ out, \"OK\", \"解析出 %d 条\" % len(out)\n\n\ndef main(final_text):\n    raw = final_text or \"\"\n\n    artifact\
-          \ = _between(raw, A_OPEN, A_CLOSE)\n    user_delivery = _between(raw, U_OPEN, U_CLOSE)\n    returns_block = _between(raw,\
-          \ R_OPEN, R_CLOSE)\n\n    structure_notes = []\n    if artifact is None:\n        structure_notes.append(\"缺少 ARTIFACT\
-          \ 块\")\n    if user_delivery is None:\n        structure_notes.append(\"缺少 USER_DELIVERY 块\")\n\n    rets, ret_status,\
-          \ ret_note = _parse_returns(returns_block)\n\n    leaks = [p for p in LEAK_PATTERNS if user_delivery and p in user_delivery]\n\
-          \n    if artifact is None:\n        artifact_out = raw if raw.strip() else \"MODEL_OUTPUT_NO_FINAL\"\n        artifact_status\
-          \ = \"STRUCTURE_MISSING_RAW_PRESERVED\"\n    else:\n        artifact_out = artifact\n        artifact_status = _artifact_status(artifact,\
-          \ rets)\n\n    if user_delivery is None:\n        user_out = \"\"\n        user_status = \"MISSING\"\n    elif leaks:\n\
-          \        user_out = user_delivery\n        user_status = \"LEAK_DETECTED\"\n    else:\n        user_out = user_delivery\n\
-          \        user_status = _user_status_of(user_delivery)\n\n    blocked = (\n        ret_status == \"PARSE_FAILED\"\
-          \n        or artifact_status != \"OK\"\n        or user_status != \"OK\"\n    )\n\n    # AC-31 修复：专业内容已生成但用户交付块缺失/为空/回指\
-          \ ⇒ 需要一次有界用户投影。\n    # 判据来自取证判据合同 v0.2 §1.1 的冻结阈值，不新增业务事实。\n    _sub = (artifact_out or \"\").strip()\n    _needs\
-          \ = (user_status != \"OK\" or not (user_out or \"\").strip()) and len(_sub) >= MIN_ARTIFACT_CHARS\n\n    return\
-          \ {\n        \"artifact\": artifact_out,\n        \"artifact_status\": artifact_status,\n        \"needs_projection\"\
-          : \"true\" if _needs else \"false\",\n        \"projection_source\": _sub if _needs else \"\",\n        \"user_delivery\"\
-          : user_out,\n        \"user_delivery_status\": user_status,\n        \"user_delivery_leaks\": leaks,\n        \"\
-          returns_json\": json.dumps(rets, ensure_ascii=False),\n        \"returns_status\": ret_status,\n        \"returns_parse_note\"\
-          : ret_note,\n        \"returns_raw\": returns_block if returns_block is not None else \"ABSENT\",\n        \"raw_preserved\"\
-          : raw,\n        \"local_block\": \"true\" if blocked else \"false\",\n        \"structure_notes\": structure_notes,\n\
-          \        \"capability\": CAPABILITY,\n    }\n"
+        code: "\nimport json\nimport re\n\n# 确定性 Returns / 交付分离适配器\n# N-12 铁律：解析失败 != NONE。结构损坏时置 PARSE_FAILED、保留原文、局部阻断，\n#           绝不伪装成空数组或 NONE。\n\nCAPABILITY = \"CONTENT_BRIEF\"\n\nA_OPEN, A_CLOSE = \"---M4_ARTIFACT---\", \"---END_M4_ARTIFACT---\"\nU_OPEN, U_CLOSE = \"---M4_USER_DELIVERY---\", \"---END_M4_USER_DELIVERY---\"\nR_OPEN, R_CLOSE = \"---M4_RETURNS---\", \"---END_M4_RETURNS---\"\n\nRET_FIELDS = [\"return_id\", \"source\", \"highest_damaged_layer\", \"precise_gap\",\n              \"affected_objects\", \"proposed_disposition\", \"needs_user_decision\",\n              \"downstream_stale\"]\nDISPOSITIONS = [\"ACCEPT_AND_PATCH\", \"REJECT_WITH_AUTHORITY\", \"ESCALATE\"]\n\n# 用户交付块禁项（统一能力合同 §11.3 / 源 PP Skill「用户交付块的事实纪律」）\nLEAK_PATTERNS = [\n    \"已删除\", \"已剔除\", \"已移除\", \"审查发现\", \"审查时发现\", \"修正后\", \"修正为\",\n    \"原方案\", \"上一版\", \"之前的版本\", \"未核实，不得使用\", \"这句话不能使用\",\n    \"LOW_RISK_INTERACTION\", \"BUSINESS_HANDOFF\", \"KNOWN_BUT_NOT_AUTHORIZED\",\n    \"goal_family\", \"capability_call\", \"professional_payload\", \"system prompt\",\n    \"INPUT_INSUFFICIENT\", \"STALE\", \"NOT_VERIFIED\", \"fact_refs[]\", \"used_fact_refs\",\n]\n\n\n# AC-31 产出完整性冻结阈值（V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.2 §1.1）\n# 阈值在任何新运行之前冻结，不因结果调整。\nBACKREF_MARKERS = [\"即上方\", \"即以上\", \"同上\", \"同上文\", \"上方即\", \"上文即\",\n                   \"见上文\", \"如上所述\", \"内容同上\", \"本区块与\",\n                   \"与上方\", \"与上文\", \"与以上\"]\nMIN_ARTIFACT_CHARS = 400\nCHECK_WINDOW = 200\n\n\ndef _has_backref(text):\n    head = (text or \"\")[:CHECK_WINDOW]\n    for m in BACKREF_MARKERS:\n        if m in head:\n            return True\n    return False\n\n\ndef _legit_block(rets):\n    # 合法组件级 Return：同时含非空 highest_damaged_layer 与非空 precise_gap\n    for r in rets:\n        if not isinstance(r, dict):\n            continue\n        if (r.get(\"highest_damaged_layer\") or \"\").strip() and (r.get(\"precise_gap\") or \"\").strip():\n            return True\n    return False\n\n\ndef _artifact_status(artifact, rets):\n    a = (artifact or \"\").strip()\n    if _has_backref(a):\n        return \"BACKREF_COLLAPSED\"\n    if not a:\n        return \"OK\" if _legit_block(rets) else \"EMPTY\"\n    if len(a) < MIN_ARTIFACT_CHARS and not _legit_block(rets):\n        return \"BELOW_MIN\"\n    return \"OK\"\n\n\ndef _user_status_of(user_delivery):\n    # 空交付无条件违规：legit_block 时用户仍必须被告知阻断\n    u = (user_delivery or \"\").strip()\n    if not u:\n        return \"EMPTY\"\n    if _has_backref(u):\n        return \"BACKREF_COLLAPSED\"\n    return \"OK\"\n\n\ndef _between(text, a, b):\n    i = text.find(a)\n    if i < 0:\n        return None\n    j = text.find(b, i + len(a))\n    if j < 0:\n        return None\n    return text[i + len(a):j].strip()\n\n\ndef _parse_returns(block):\n    \"\"\"返回 (list, status, note)。status ∈ OK | NONE | PARSE_FAILED\"\"\"\n    if block is None:\n        return [], \"PARSE_FAILED\", \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\"\n    s = block.strip()\n    if s == \"\":\n        return [], \"PARSE_FAILED\", \"RETURNS 块为空。空 != NONE：无回改必须显式写 NONE\"\n    if s.upper() == \"NONE\":\n        return [], \"NONE\", \"显式声明无回改\"\n\n    groups = [g for g in re.split(r\"\\n\\s*\\n\", s) if g.strip()]\n    out = []\n    bad = []\n    for g in groups:\n        item = {}\n        for line in g.split(\"\\n\"):\n            m = re.match(r\"^\\s*([a-z_]+)\\s*:\\s*(.*)$\", line)\n            if m:\n                item[m.group(1)] = m.group(2).strip()\n        miss = [f for f in RET_FIELDS if f not in item or item[f] == \"\"]\n        if miss:\n            bad.append(\"一条 Return 缺字段：%s\" % \",\".join(miss))\n            continue\n        if item[\"proposed_disposition\"] not in DISPOSITIONS:\n            bad.append(\"proposed_disposition 非法：%s\" % item[\"proposed_disposition\"])\n            continue\n        item[\"affected_objects\"] = [x.strip() for x in item[\"affected_objects\"].split(\"|\") if x.strip()]\n        item[\"downstream_stale\"] = [x.strip() for x in item[\"downstream_stale\"].split(\"|\") if x.strip()]\n        item[\"needs_user_decision\"] = item[\"needs_user_decision\"].strip().lower() in (\"true\", \"是\", \"yes\")\n        item[\"parse_status\"] = \"OK\"\n        out.append(item)\n\n    if bad:\n        return out, \"PARSE_FAILED\", \"；\".join(bad)\n    if not out:\n        return [], \"PARSE_FAILED\", \"RETURNS 块存在内容但无法解析出任何合法条目\"\n    return out, \"OK\", \"解析出 %d 条\" % len(out)\n\n\ndef main(final_text):\n    raw = final_text or \"\"\n\n    artifact = _between(raw, A_OPEN, A_CLOSE)\n    user_delivery = _between(raw, U_OPEN, U_CLOSE)\n    returns_block = _between(raw, R_OPEN, R_CLOSE)\n\n    structure_notes = []\n    if artifact is None:\n        structure_notes.append(\"缺少 ARTIFACT 块\")\n    if user_delivery is None:\n        structure_notes.append(\"缺少 USER_DELIVERY 块\")\n\n    rets, ret_status, ret_note = _parse_returns(returns_block)\n\n    leaks = [p for p in LEAK_PATTERNS if user_delivery and p in user_delivery]\n\n    if artifact is None:\n        artifact_out = raw if raw.strip() else \"MODEL_OUTPUT_NO_FINAL\"\n        artifact_status = \"STRUCTURE_MISSING_RAW_PRESERVED\"\n    else:\n        artifact_out = artifact\n        artifact_status = _artifact_status(artifact, rets)\n\n    if user_delivery is None:\n        user_out = \"\"\n        user_status = \"MISSING\"\n    elif leaks:\n        user_out = user_delivery\n        user_status = \"LEAK_DETECTED\"\n    else:\n        user_out = user_delivery\n        user_status = _user_status_of(user_delivery)\n\n    blocked = (\n        ret_status == \"PARSE_FAILED\"\n        or artifact_status != \"OK\"\n        or user_status != \"OK\"\n    )\n\n    # AC-31 修复：专业内容已生成但用户交付块缺失/为空/回指 ⇒ 需要一次有界用户投影。\n    # 判据来自取证判据合同 v0.2 §1.1 的冻结阈值，不新增业务事实。\n    _sub = (artifact_out or \"\").strip()\n    _needs = (user_status != \"OK\" or not (user_out or \"\").strip()) and len(_sub) >= MIN_ARTIFACT_CHARS\n\n    return {\n        \"artifact\": artifact_out,\n        \"artifact_status\": artifact_status,\n        \"needs_projection\": \"true\" if _needs else \"false\",\n        \"projection_source\": _sub if _needs else \"\",\n        \"user_delivery\": user_out,\n        \"user_delivery_status\": user_status,\n        \"user_delivery_leaks\": leaks,\n        \"returns_json\": json.dumps(rets, ensure_ascii=False),\n        \"returns_status\": ret_status,\n        \"returns_parse_note\": ret_note,\n        \"returns_raw\": returns_block if returns_block is not None else \"ABSENT\",\n        \"raw_preserved\": raw,\n        \"local_block\": \"true\" if blocked else \"false\",\n        \"structure_notes\": structure_notes,\n        \"capability\": CAPABILITY,\n    }\n"
         code_language: python3
         desc: 确定性 Returns / 交付分离。解析失败置 PARSE_FAILED 并保留原文，绝不伪装成 NONE。
         outputs:
@@ -1831,39 +1681,7 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "\nimport json\n\n# AC-31 交付收口：无论走哪条路径，用户都必须拿到非空正文。\n# 技术运行 succeeded != 业务交付成功；两者在此显式分离。\n\nLEAK = [\"PARSE_FAIL\"\
-          , \"SEAM_COMPLETENESS_GUARD\", \"NOT_APPLICABLE\", \"STALE\",\n        \"NOT_VERIFIED\", \"returns_json\", \"artifact_status\"\
-          , \"user_delivery_status\",\n        \"system prompt\", \"goal_family\", \"capability_call\", \"professional_payload\"\
-          ,\n        # M4-FND-029：恢复正文里绝不允许出现模型的内部推理段\n        \"<think>\", \"</think>\", \"dify-deepseek-reasoning\"]\n\n\
-          \ndef _strip_thinking(text):\n    \"\"\"剥离模型 thinking 段，取最终正文。\n\n    缺陷 M4-FND-029：专业链的 final_extract 会做这一步，但 v1.4\
-          \ 新增的恢复路径没有做，\n    于是 recovery_llm 的整段内部推理被原样当成用户正文交付出去。\n    该缺陷此前无法被发现——recovery_llm 在 v1.4 的 13 次 Runtime 运行中触发\
-          \ 0 次。\n    剥离规则与 final_extract 模板逐条等价，不另立第二套。\n    \"\"\"\n    raw = (text or \"\").strip()\n    if \"</think>\"\
-          \ in raw:\n        return raw.split(\"</think>\")[-1].strip()\n    return raw\n\n\ndef main(adapter_user_delivery,\
-          \ adapter_status, needs_projection,\n         recovered_text, returns_json, capability):\n    ud = (adapter_user_delivery\
-          \ or \"\").strip()\n    rec = _strip_thinking(recovered_text)\n    need = str(needs_projection or \"\").strip().lower()\
-          \ == \"true\"\n\n    try:\n        rets = json.loads(returns_json or \"[]\")\n    except Exception:\n        rets\
-          \ = []\n\n    if not need and ud:\n        return {\"user_delivery\": ud, \"delivery_outcome\": \"DELIVERED\",\n\
-          \                \"user_delivery_status\": adapter_status or \"OK\",\n                \"returns_json\": returns_json\
-          \ or \"[]\",\n                \"recovery_used\": \"false\"}\n\n    # ── 有界局部恢复：最多一次，已在上游完成 ──\n    if rec and len(rec)\
-          \ >= 80:\n        leaked = [w for w in LEAK if w in rec]\n        if not leaked:\n            return {\"user_delivery\"\
-          : rec, \"delivery_outcome\": \"DELIVERED_AFTER_RECOVERY\",\n                    \"user_delivery_status\": \"RECOVERED\"\
-          ,\n                    \"returns_json\": json.dumps(rets + [{\n                        \"return_id\": \"M4-RET-PROJECTION-RECOVERED\"\
-          ,\n                        \"source\": \"DELIVERY_FINALIZE\",\n                        \"highest_damaged_layer\"\
-          : \"OUTPUT_CONTRACT_BLOCK_MARKERS\",\n                        \"precise_gap\": \"模型未输出用户交付块标记；已由一次有界用户投影补齐\",\n\
-          \                        \"affected_objects\": [\"本次 %s 调用的用户交付块\" % capability],\n                        \"proposed_disposition\"\
-          : \"ACCEPT_AND_PATCH\",\n                        \"needs_user_decision\": False,\n                        \"downstream_stale\"\
-          : [],\n                        \"parse_status\": \"RECOVERED_ONCE\",\n                    }], ensure_ascii=False),\n\
-          \                    \"recovery_used\": \"true\"}\n\n    # ── 恢复失败：仍然必须给用户非空自然语言说明，且业务状态不是成功 ──\n    msg = (\n \
-          \       \"这一次没有成功给出可用的结果。\\n\\n\"\n        \"系统在内部已经把专业判断做出来了，但在整理成给你看的那一份时出了问题，\"\n        \"没能形成一份可以直接用的正文。\\\
-          n\\n\"\n        \"**这次不算交付成功**——请不要把上面的空白当成「没有结论」，\"\n        \"结论是有的，是整理环节断了。\\n\\n\"\n        \"你可以把同样的需求再提一次；如果第二次仍然这样，说明这条路径上有需要修的问题，\"\
-          \n        \"请把这次的情况反馈出来。\"\n    )\n    return {\"user_delivery\": msg, \"delivery_outcome\": \"NOT_DELIVERED\",\n\
-          \            \"user_delivery_status\": \"PROJECTION_FAILED\",\n            \"returns_json\": json.dumps(rets + [{\n\
-          \                \"return_id\": \"M4-RET-PROJECTION-FAILED\",\n                \"source\": \"DELIVERY_FINALIZE\"\
-          ,\n                \"highest_damaged_layer\": \"OUTPUT_CONTRACT_BLOCK_MARKERS\",\n                \"precise_gap\"\
-          : \"用户交付块缺失，且一次有界投影未产出可用正文\",\n                \"affected_objects\": [\"本次 %s 调用的用户交付块\" % capability],\n      \
-          \          \"proposed_disposition\": \"ESCALATE\",\n                \"needs_user_decision\": True,\n           \
-          \     \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability],\n                \"parse_status\": \"PROJECTION_FAILED\"\
-          ,\n            }], ensure_ascii=False),\n            \"recovery_used\": \"attempted\"}\n"
+        code: "\nimport json\n\n# AC-31 交付收口：无论走哪条路径，用户都必须拿到非空正文。\n# 技术运行 succeeded != 业务交付成功；两者在此显式分离。\n\nLEAK = [\"PARSE_FAIL\", \"SEAM_COMPLETENESS_GUARD\", \"NOT_APPLICABLE\", \"STALE\",\n        \"NOT_VERIFIED\", \"returns_json\", \"artifact_status\", \"user_delivery_status\",\n        \"system prompt\", \"goal_family\", \"capability_call\", \"professional_payload\",\n        # M4-FND-029：恢复正文里绝不允许出现模型的内部推理段\n        \"<think>\", \"</think>\", \"dify-deepseek-reasoning\"]\n\n\ndef _strip_thinking(text):\n    \"\"\"剥离模型 thinking 段，取最终正文。\n\n    缺陷 M4-FND-029：专业链的 final_extract 会做这一步，但 v1.4 新增的恢复路径没有做，\n    于是 recovery_llm 的整段内部推理被原样当成用户正文交付出去。\n    该缺陷此前无法被发现——recovery_llm 在 v1.4 的 13 次 Runtime 运行中触发 0 次。\n    剥离规则与 final_extract 模板逐条等价，不另立第二套。\n    \"\"\"\n    raw = (text or \"\").strip()\n    if \"</think>\" in raw:\n        return raw.split(\"</think>\")[-1].strip()\n    return raw\n\n\ndef main(adapter_user_delivery, adapter_status, needs_projection,\n         recovered_text, returns_json, capability):\n    ud = (adapter_user_delivery or \"\").strip()\n    rec = _strip_thinking(recovered_text)\n    need = str(needs_projection or \"\").strip().lower() == \"true\"\n\n    try:\n        rets = json.loads(returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    if not need and ud:\n        return {\"user_delivery\": ud, \"delivery_outcome\": \"DELIVERED\",\n                \"user_delivery_status\": adapter_status or \"OK\",\n                \"returns_json\": returns_json or \"[]\",\n                \"recovery_used\": \"false\"}\n\n    # ── 有界局部恢复：最多一次，已在上游完成 ──\n    if rec and len(rec) >= 80:\n        leaked = [w for w in LEAK if w in rec]\n        if not leaked:\n            return {\"user_delivery\": rec, \"delivery_outcome\": \"DELIVERED_AFTER_RECOVERY\",\n                    \"user_delivery_status\": \"RECOVERED\",\n                    \"returns_json\": json.dumps(rets + [{\n                        \"return_id\": \"M4-RET-PROJECTION-RECOVERED\",\n                        \"source\": \"DELIVERY_FINALIZE\",\n                        \"highest_damaged_layer\": \"OUTPUT_CONTRACT_BLOCK_MARKERS\",\n                        \"precise_gap\": \"模型未输出用户交付块标记；已由一次有界用户投影补齐\",\n                        \"affected_objects\": [\"本次 %s 调用的用户交付块\" % capability],\n                        \"proposed_disposition\": \"ACCEPT_AND_PATCH\",\n                        \"needs_user_decision\": False,\n                        \"downstream_stale\": [],\n                        \"parse_status\": \"RECOVERED_ONCE\",\n                    }], ensure_ascii=False),\n                    \"recovery_used\": \"true\"}\n\n    # ── 恢复失败：仍然必须给用户非空自然语言说明，且业务状态不是成功 ──\n    msg = (\n        \"这一次没有成功给出可用的结果。\\n\\n\"\n        \"系统在内部已经把专业判断做出来了，但在整理成给你看的那一份时出了问题，\"\n        \"没能形成一份可以直接用的正文。\\n\\n\"\n        \"**这次不算交付成功**——请不要把上面的空白当成「没有结论」，\"\n        \"结论是有的，是整理环节断了。\\n\\n\"\n        \"你可以把同样的需求再提一次；如果第二次仍然这样，说明这条路径上有需要修的问题，\"\n        \"请把这次的情况反馈出来。\"\n    )\n    return {\"user_delivery\": msg, \"delivery_outcome\": \"NOT_DELIVERED\",\n            \"user_delivery_status\": \"PROJECTION_FAILED\",\n            \"returns_json\": json.dumps(rets + [{\n                \"return_id\": \"M4-RET-PROJECTION-FAILED\",\n                \"source\": \"DELIVERY_FINALIZE\",\n                \"highest_damaged_layer\": \"OUTPUT_CONTRACT_BLOCK_MARKERS\",\n                \"precise_gap\": \"用户交付块缺失，且一次有界投影未产出可用正文\",\n                \"affected_objects\": [\"本次 %s 调用的用户交付块\" % capability],\n                \"proposed_disposition\": \"ESCALATE\",\n                \"needs_user_decision\": True,\n                \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability],\n                \"parse_status\": \"PROJECTION_FAILED\",\n            }], ensure_ascii=False),\n            \"recovery_used\": \"attempted\"}\n"
         code_language: python3
         desc: 交付收口：保证用户正文非空；技术运行完成 != 业务交付成功。
         outputs:
@@ -1925,25 +1743,7 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "\nimport hashlib\nimport json\n\n# AC-12 保真绑定记录（源 Skill → Workflow → Runtime → 模型 → provider → Attempt）\n#\
-          \ 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\n# 注意：这里必须走 json.loads，不能把 json.dumps 的结果直接当 Python 字面量贴进来。\n# 现场教训（2026-08-26）：直接贴会把\
-          \ Python 的 True 写成 JSON 的 true，\n# 代码节点一进沙箱就 NameError: name 'true' is not defined，整个能力应用调不起来。\nRECORD = json.loads('{\"\
-          capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\",\
-          \ \"thinking\": true, \"top_p\": 0.8}, \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\"\
-          , \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\"\
-          : \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\"\
-          , \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\"\
-          : \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\"\
-          , \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
-          , \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"\
-          }')\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
-          \ run_mode_resolved, goal_family):\n    art = artifact or \"\"\n    rec = dict(RECORD)\n    rec[\"input_envelope_sha256\"\
-          ] = envelope_hash\n    rec[\"input_professional_sha256\"] = professional_input_hash\n    rec[\"artifact_sha256\"\
-          ] = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rec[\"reference_projection_declared\"] = reference_projection\n\
-          \    rec[\"entry\"] = entry_resolved\n    rec[\"run_mode\"] = run_mode_resolved\n    rec[\"goal_family_readonly_inherited\"\
-          ] = goal_family\n    rec[\"self_reported_only\"] = True\n    rec[\"note\"] = (\n        \"自报 hash 不构成保真证明。AC-12\
-          \ 以从已发布 Runtime 实际读出的 \"\n        \"system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\"\n    )\n    return\
-          \ {\"binding_json\": json.dumps(rec, ensure_ascii=False, sort_keys=True)}\n"
+        code: "\nimport hashlib\nimport json\n\n# AC-12 保真绑定记录（源 Skill → Workflow → Runtime → 模型 → provider → Attempt）\n# 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\n# 注意：这里必须走 json.loads，不能把 json.dumps 的结果直接当 Python 字面量贴进来。\n# 现场教训（2026-08-26）：直接贴会把 Python 的 True 写成 JSON 的 true，\n# 代码节点一进沙箱就 NameError: name 'true' is not defined，整个能力应用调不起来。\nRECORD = json.loads('{\"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}')\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved, run_mode_resolved, goal_family):\n    art = artifact or \"\"\n    rec = dict(RECORD)\n    rec[\"input_envelope_sha256\"] = envelope_hash\n    rec[\"input_professional_sha256\"] = professional_input_hash\n    rec[\"artifact_sha256\"] = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rec[\"reference_projection_declared\"] = reference_projection\n    rec[\"entry\"] = entry_resolved\n    rec[\"run_mode\"] = run_mode_resolved\n    rec[\"goal_family_readonly_inherited\"] = goal_family\n    rec[\"self_reported_only\"] = True\n    rec[\"note\"] = (\n        \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 \"\n        \"system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\"\n    )\n    return {\"binding_json\": json.dumps(rec, ensure_ascii=False, sort_keys=True)}\n"
         code_language: python3
         desc: AC-12 保真绑定记录。自报值只作声明，正式判定以已发布 Runtime 实际字节为准。
         outputs:
@@ -1997,34 +1797,7 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "\nimport json\n\n# 组件级 Return（统一能力合同 §10.1 七项）\n# 关键语义：这是**本分支结果**，不是整任务终态；本身不触发下游失效。\n# 硬禁：全局硬停、生成假产物、要求用户重填整套输入。\n\
-          \nCAPABILITY = \"CONTENT_BRIEF\"\nLAYER = \"CONTENT_BRIEF_INPUT_SUFFICIENCY\"\n\n# 用户交付里**不得出现内部字段名**（AC-13 / N-23）。\n\
-          # 缺项到自然语言追问的映射是确定性的，不含业务判断。\nQUESTION_MAP = {\n    \"applicability_reason\": \"这次是要新建或实质改动账号的长期定位、人设或职责分工吗？还是只想解决眼下这一条内容？\"\
-          ,\n    \"subject_and_account_scope\": \"这次要处理的是哪个品牌／哪几个账号？\",\n    \"objective\": \"这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\"\
-          ,\n    \"audience_problem\": \"你想说给谁听？她现在具体卡在哪一步？\",\n    \"expected_change\": \"看完之后，你希望她多知道什么、或者能做什么决定？\",\n \
-          \   \"content_promise\": \"这条内容对观众的承诺是什么？（一句话说清她能拿到什么）\",\n    \"expression_boundary\": \"有哪些话是这个品牌明确不能说的？\",\n\
-          \    \"expression_subject_and_boundary\": \"这条由谁来讲？她能讲的和不能讲的边界是什么？\",\n    \"expression_subject\": \"这条由谁来讲？（真人／角色／品牌口吻／只拍物件／无主体）\"\
-          ,\n    \"facts_registered\": \"有哪些已经记下来的真实事实或亲历观察可以用？（没有登记的事实我不能替你补）\",\n    \"deadline_or_stage_boundary\": \"\
-          这件事有明确的时间或阶段边界吗？到什么时候为止？\",\n    \"capacity_or_owner\": \"这一轮谁能出镜、谁能确认事实、大概能投入多少时间？\",\n    \"content_origin_mode\"\
-          : \"这条的素材是现拍、用已有素材剪、访谈、还是生成的？（这项猜错整条会作废，我不替你默认）\",\n    \"script_or_equivalent_beats\": \"把脚本或等价的内容方案给我：每一段讲什么、事实有没有、素材到位没有。\"\
-          ,\n    \"production_profile\": \"这次是单人手机、一两个人、小团队，还是商业制作？\",\n    \"time_window\": \"这次有多少时间可用？（半天／两天／几个天光窗口）\"\
-          ,\n    \"content_body_or_beats\": \"把成片内容或逐段说明给我：每一段实际拍到了什么。\",\n    \"explicit_non_promise\": \"这条明确**不**承诺什么？（这一项下游最容易悄悄加回来）\"\
-          ,\n    \"cta_contract\": \"这条要不要引导观众做什么？如果要，做什么、谁在哪里接？\",\n    \"asset_publish_permission\": \"这些素材可以公开发布吗？有没有第三方入镜或授权限制？\"\
-          ,\n}\n\n\ndef main(status, note, missing, entry_resolved, envelope_hash, capability_call):\n    miss = missing or\
-          \ []\n    # 只追问当前最具区分力的一项，并翻译成自然语言（不向用户暴露内部字段名）\n    ask_key = miss[0] if miss else \"\"\n    ask_one = QUESTION_MAP.get(ask_key,\
-          \ \"\") if ask_key else \"\"\n    if not ask_one:\n        ask_one = \"还差一项才能做判断，你能补一句说明吗？\"\n\n    ret = {\n  \
-          \      \"return_id\": \"M4-RET-%s-%s\" % (CAPABILITY, (envelope_hash or \"0\" * 8)[:8]),\n        \"source\": CAPABILITY,\n\
-          \        \"highest_damaged_layer\": LAYER,\n        \"precise_gap\": \"；\".join(miss) if miss else (note or \"未指明\"\
-          ),\n        \"affected_objects\": [\"仅本次 %s 调用及其真实依赖分支\" % CAPABILITY],\n        \"proposed_disposition\": \"ESCALATE\"\
-          ,\n        \"needs_user_decision\": True,\n        \"downstream_stale\": [\"仅真实依赖本次 %s 结论的下游项\" % CAPABILITY],\n\
-          \        \"parse_status\": \"OK\",\n    }\n\n    user_text = (\n        \"这一步我还差一样东西才能往下判断：\\n\\n%s\\n\\n\"\n  \
-          \      \"只补这一项就够了，其他已经给过的内容不用再说一遍。\\n\"\n        \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\" % ask_one\n    )\n\n    # 机械自检：用户交付里不得出现任何内部字段名（AC-13\
-          \ / N-23）\n    leaked = [k for k in QUESTION_MAP if k in user_text]\n\n    return {\n        \"returns_json\": json.dumps([ret],\
-          \ ensure_ascii=False),\n        \"user_delivery_leaks\": leaked,\n        \"return_status\": \"COMPONENT_RETURN\"\
-          ,\n        \"branch_result\": \"INPUT_INSUFFICIENT\",\n        \"is_task_terminal_state\": \"false\",\n        \"\
-          triggers_downstream_invalidation\": \"false\",\n        \"single_most_discriminating_question\": ask_one,\n    \
-          \    \"user_delivery\": user_text,\n        \"fabricated_artifact_produced\": \"false\",\n        \"downstream_invoked\"\
-          : \"false\",\n    }\n"
+        code: "\nimport json\n\n# 组件级 Return（统一能力合同 §10.1 七项）\n# 关键语义：这是**本分支结果**，不是整任务终态；本身不触发下游失效。\n# 硬禁：全局硬停、生成假产物、要求用户重填整套输入。\n\nCAPABILITY = \"CONTENT_BRIEF\"\nLAYER = \"CONTENT_BRIEF_INPUT_SUFFICIENCY\"\n\n# 用户交付里**不得出现内部字段名**（AC-13 / N-23）。\n# 缺项到自然语言追问的映射是确定性的，不含业务判断。\nQUESTION_MAP = {\n    \"applicability_reason\": \"这次是要新建或实质改动账号的长期定位、人设或职责分工吗？还是只想解决眼下这一条内容？\",\n    \"subject_and_account_scope\": \"这次要处理的是哪个品牌／哪几个账号？\",\n    \"objective\": \"这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\",\n    \"audience_problem\": \"你想说给谁听？她现在具体卡在哪一步？\",\n    \"expected_change\": \"看完之后，你希望她多知道什么、或者能做什么决定？\",\n    \"content_promise\": \"这条内容对观众的承诺是什么？（一句话说清她能拿到什么）\",\n    \"expression_boundary\": \"有哪些话是这个品牌明确不能说的？\",\n    \"expression_subject_and_boundary\": \"这条由谁来讲？她能讲的和不能讲的边界是什么？\",\n    \"expression_subject\": \"这条由谁来讲？（真人／角色／品牌口吻／只拍物件／无主体）\",\n    \"facts_registered\": \"有哪些已经记下来的真实事实或亲历观察可以用？（没有登记的事实我不能替你补）\",\n    \"deadline_or_stage_boundary\": \"这件事有明确的时间或阶段边界吗？到什么时候为止？\",\n    \"capacity_or_owner\": \"这一轮谁能出镜、谁能确认事实、大概能投入多少时间？\",\n    \"content_origin_mode\": \"这条的素材是现拍、用已有素材剪、访谈、还是生成的？（这项猜错整条会作废，我不替你默认）\",\n    \"script_or_equivalent_beats\": \"把脚本或等价的内容方案给我：每一段讲什么、事实有没有、素材到位没有。\",\n    \"production_profile\": \"这次是单人手机、一两个人、小团队，还是商业制作？\",\n    \"time_window\": \"这次有多少时间可用？（半天／两天／几个天光窗口）\",\n    \"content_body_or_beats\": \"把成片内容或逐段说明给我：每一段实际拍到了什么。\",\n    \"explicit_non_promise\": \"这条明确**不**承诺什么？（这一项下游最容易悄悄加回来）\",\n    \"cta_contract\": \"这条要不要引导观众做什么？如果要，做什么、谁在哪里接？\",\n    \"asset_publish_permission\": \"这些素材可以公开发布吗？有没有第三方入镜或授权限制？\",\n}\n\n\ndef main(status, note, missing, entry_resolved, envelope_hash, capability_call):\n    miss = missing or []\n    # 只追问当前最具区分力的一项，并翻译成自然语言（不向用户暴露内部字段名）\n    ask_key = miss[0] if miss else \"\"\n    ask_one = QUESTION_MAP.get(ask_key, \"\") if ask_key else \"\"\n    if not ask_one:\n        ask_one = \"还差一项才能做判断，你能补一句说明吗？\"\n\n    ret = {\n        \"return_id\": \"M4-RET-%s-%s\" % (CAPABILITY, (envelope_hash or \"0\" * 8)[:8]),\n        \"source\": CAPABILITY,\n        \"highest_damaged_layer\": LAYER,\n        \"precise_gap\": \"；\".join(miss) if miss else (note or \"未指明\"),\n        \"affected_objects\": [\"仅本次 %s 调用及其真实依赖分支\" % CAPABILITY],\n        \"proposed_disposition\": \"ESCALATE\",\n        \"needs_user_decision\": True,\n        \"downstream_stale\": [\"仅真实依赖本次 %s 结论的下游项\" % CAPABILITY],\n        \"parse_status\": \"OK\",\n    }\n\n    user_text = (\n        \"这一步我还差一样东西才能往下判断：\\n\\n%s\\n\\n\"\n        \"只补这一项就够了，其他已经给过的内容不用再说一遍。\\n\"\n        \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\" % ask_one\n    )\n\n    # 机械自检：用户交付里不得出现任何内部字段名（AC-13 / N-23）\n    leaked = [k for k in QUESTION_MAP if k in user_text]\n\n    return {\n        \"returns_json\": json.dumps([ret], ensure_ascii=False),\n        \"user_delivery_leaks\": leaked,\n        \"return_status\": \"COMPONENT_RETURN\",\n        \"branch_result\": \"INPUT_INSUFFICIENT\",\n        \"is_task_terminal_state\": \"false\",\n        \"triggers_downstream_invalidation\": \"false\",\n        \"single_most_discriminating_question\": ask_one,\n        \"user_delivery\": user_text,\n        \"fabricated_artifact_produced\": \"false\",\n        \"downstream_invoked\": \"false\",\n    }\n"
         code_language: python3
         desc: 组件级 Return：本分支结果，不是整任务终态，本身不触发下游失效。
         outputs:

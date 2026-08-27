@@ -674,13 +674,29 @@ import json
 
 LEAK = ["PARSE_FAIL", "SEAM_COMPLETENESS_GUARD", "NOT_APPLICABLE", "STALE",
         "NOT_VERIFIED", "returns_json", "artifact_status", "user_delivery_status",
-        "system prompt", "goal_family", "capability_call", "professional_payload"]
+        "system prompt", "goal_family", "capability_call", "professional_payload",
+        # M4-FND-029：恢复正文里绝不允许出现模型的内部推理段
+        "<think>", "</think>", "dify-deepseek-reasoning"]
+
+
+def _strip_thinking(text):
+    """剥离模型 thinking 段，取最终正文。
+
+    缺陷 M4-FND-029：专业链的 final_extract 会做这一步，但 v1.4 新增的恢复路径没有做，
+    于是 recovery_llm 的整段内部推理被原样当成用户正文交付出去。
+    该缺陷此前无法被发现——recovery_llm 在 v1.4 的 13 次 Runtime 运行中触发 0 次。
+    剥离规则与 final_extract 模板逐条等价，不另立第二套。
+    """
+    raw = (text or "").strip()
+    if "</think>" in raw:
+        return raw.split("</think>")[-1].strip()
+    return raw
 
 
 def main(adapter_user_delivery, adapter_status, needs_projection,
          recovered_text, returns_json, capability):
     ud = (adapter_user_delivery or "").strip()
-    rec = (recovered_text or "").strip()
+    rec = _strip_thinking(recovered_text)
     need = str(needs_projection or "").strip().lower() == "true"
 
     try:
@@ -962,14 +978,141 @@ def main(capability_resolved, entry_resolved, run_mode, derivation,
         "completeness_guard": guard,
     }
 
+    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────
+    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，
+    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。
+    ud = (tool_user_delivery or "").strip()
+    outcome = str(tool_delivery_outcome or "").strip().upper() or "UNKNOWN"
+    if not ud:
+        ud = (
+            "这一次没有拿到可以给你看的结果。\n\n"
+            "内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，"
+            "也不会替它补一份看起来像结果的东西。\n\n"
+            "**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，"
+            "而是这一轮的结果没有正常传回来。\n\n"
+            "你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\n\n"
+            "这一轮里不依赖这一步的其他事情不受影响，可以照常继续。"
+        )
+        outcome = "NOT_DELIVERED"
+        rets = list(rets) + [{
+            "return_id": "M4-RET-SEAM-EMPTY-DELIVERY-" + str(call_hash or "")[:8],
+            "source": "SEAM_EMPTY_USER_DELIVERY",
+            "highest_damaged_layer": "USER_DELIVERY_TRANSPORT",
+            "precise_gap": "子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功",
+            "affected_objects": ["本次 %s 调用的用户交付" % capability_resolved],
+            "proposed_disposition": "ESCALATE",
+            "needs_user_decision": True,
+            "downstream_stale": ["仅真实依赖本次 %s 用户交付的下游项" % capability_resolved],
+            "parse_status": "NOT_DELIVERED",
+        }]
+        returns_out = json.dumps(rets, ensure_ascii=False)
+        trace["completeness_guard"]["business_delivery_outcome"] = "NOT_DELIVERED"
+        trace["completeness_guard"]["seam_empty_delivery_fallback_used"] = True
+
     return {
         "seam_trace_json": json.dumps(trace, ensure_ascii=False, sort_keys=True),
         "capability_invoked": capability_resolved,
         "capabilities_skipped": skipped,
         "artifact": tool_artifact or "",
-        "user_delivery": tool_user_delivery or "",
+        "user_delivery": ud,
+        "business_delivery_outcome": outcome,
         "returns_json": returns_out,
         "binding_json": tool_binding_json or "{}",
+    }
+'''
+
+
+# --------------------------------------------------------------------------
+# 接缝失败终止分支（CL31-01 / CL31-02）
+# 纪律：失败也必须给用户非空、可读、不含内部词的正文；
+#       平台技术状态与业务交付状态显式分离，不以 succeeded 冒充业务成功。
+# --------------------------------------------------------------------------
+
+SEAM_TOOL_FAIL_CODE = r'''
+import json
+
+# 能力中文名映射是确定性的、不含业务判断；用于避免把内部能力标识写给用户。
+CAP_LABEL = {
+    "MATRIX": "账号架构与诊断",
+    "CAMPAIGN": "单次经营任务策划",
+    "CONTENT_BRIEF": "内容任务判断",
+    "CREATIVE_SCRIPT": "创意与脚本",
+    "PRODUCTION_DIRECTOR": "拍摄执行方案",
+    "PUBLISHING_PACKAGING": "发布包装",
+}
+
+
+def main(route, derivation):
+    key = (route or "").strip().upper()
+    label = CAP_LABEL.get(key, "这一步")
+    user_text = (
+        "这一次没有把结果做出来。\n\n"
+        "「%s」这一步在运行中没有跑通，所以这一轮没有产出可用的结论。"
+        "**这不算一次成功交付**——我也没有替它编一份看起来像结果的东西给你。\n\n"
+        "这不是你给的信息不够，你不需要重新整理一遍需求。\n\n"
+        "你现在可以做的是：把同样的需求原样再提一次。"
+        "如果第二次还是这样，说明这条路上有需要修的问题，请把这次的情况反馈出来。\n\n"
+        "这一轮里不依赖这一步的其他事情不受影响，可以照常继续。" % label
+    )
+    ret = {
+        "return_id": "M4-RET-TOOL-CALL-FAILED-" + (key or "UNKNOWN"),
+        "source": "SEAM_TOOL_FAIL",
+        "highest_damaged_layer": "CAPABILITY_APP_EXECUTION",
+        "precise_gap": "能力应用调用失败；这是执行失败，不是业务输入不足，也不是空结果",
+        "affected_objects": ["仅本次 %s 调用及其真实依赖分支" % (key or "UNKNOWN")],
+        "proposed_disposition": "ESCALATE",
+        "needs_user_decision": True,
+        "downstream_stale": ["仅真实依赖本次 %s 结论的下游项" % (key or "UNKNOWN")],
+        "parse_status": "NOT_DELIVERED",
+    }
+    return {
+        "failure_kind": "TOOL_CALL_FAILED",
+        "note": ("能力应用调用失败。这是执行失败，不是业务不足："
+                 "不得伪装成 INPUT_INSUFFICIENT，也不得伪装成空结果。"),
+        "capability": route,
+        "derivation": derivation,
+        "fabricated_artifact_produced": "false",
+        "user_delivery": user_text,
+        "business_delivery_outcome": "NOT_DELIVERED",
+        "returns_json": json.dumps([ret], ensure_ascii=False),
+    }
+'''
+
+
+SEAM_UNSUPPORTED_CODE = r'''
+import json
+
+
+def main(route, derivation):
+    key = (route or "").strip().upper()
+    user_text = (
+        "这一次我没有往下做。\n\n"
+        "你要的这件事不在我这一层能处理的范围里。我能做的是这六件："
+        "账号架构与诊断、单次经营任务策划、内容任务判断、创意与脚本、拍摄执行方案、发布包装。\n\n"
+        "**这不算一次成功交付**——我没有硬凑一个看起来相关的结果给你，"
+        "也不替你决定该做上面哪一件，那不是我该替你拿的主意。\n\n"
+        "你可以直接说明这次想解决的是上面哪一件；"
+        "如果都不是，把你想拿到的结果说清楚，我再看接不接得住。"
+    )
+    ret = {
+        "return_id": "M4-RET-UNSUPPORTED-" + (key or "UNKNOWN"),
+        "source": "SEAM_UNSUPPORTED",
+        "highest_damaged_layer": "CAPABILITY_SELECTION",
+        "precise_gap": "能力调用意图不在本接缝支持的六项能力内；本接缝不代做能力选择",
+        "affected_objects": ["仅本次调用意图"],
+        "proposed_disposition": "ESCALATE",
+        "needs_user_decision": True,
+        "downstream_stale": [],
+        "parse_status": "NOT_DELIVERED",
+    }
+    return {
+        "note": ("capability 不在 M4 接缝支持的六项能力内。"
+                 "M4 不代做能力选择——那是 M1 的职责；本接缝也不建第二套路由。"),
+        "capability": route,
+        "derivation": derivation,
+        "user_delivery": user_text,
+        "business_delivery_outcome": "NOT_DELIVERED",
+        "returns_json": json.dumps([ret], ensure_ascii=False),
     }
 '''
 
@@ -1642,7 +1785,9 @@ def build_seam_app():
             "desc": "接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。",
             "outputs": {"seam_trace_json": out_str(), "capability_invoked": out_str(),
                         "capabilities_skipped": out_arr(), "artifact": out_str(),
-                        "user_delivery": out_str(), "returns_json": out_str(),
+                        "user_delivery": out_str(),
+                        "business_delivery_outcome": out_str(),
+                        "returns_json": out_str(),
                         "binding_json": out_str()},
             "selected": False, "title": "接缝收口｜" + c["capability"], "type": "code",
             "variables": [
@@ -1666,6 +1811,8 @@ def build_seam_app():
         nodes.append(node(end_id, {
             "desc": "%s 结束" % c["capability"], "outputs": [
                 {"value_selector": [fin_id, "user_delivery"], "variable": "user_delivery"},
+                {"value_selector": [fin_id, "business_delivery_outcome"],
+                 "variable": "business_delivery_outcome"},
                 {"value_selector": [fin_id, "artifact"], "variable": "artifact"},
                 {"value_selector": [fin_id, "returns_json"], "variable": "returns_json"},
                 {"value_selector": [fin_id, "binding_json"], "variable": "binding_json"},
@@ -1681,20 +1828,14 @@ def build_seam_app():
         y += 200
 
     nodes.append(node("seam_tool_fail", {
-        "code": (
-            "def main(route, derivation):\n"
-            "    return {\n"
-            "        'failure_kind': 'TOOL_CALL_FAILED',\n"
-            "        'note': ('能力应用调用失败。这是执行失败，不是业务不足：'\n"
-            "                 '不得伪装成 INPUT_INSUFFICIENT，也不得伪装成空结果。'),\n"
-            "        'capability': route,\n"
-            "        'derivation': derivation,\n"
-            "        'fabricated_artifact_produced': 'false',\n"
-            "    }\n"),
+        "code": SEAM_TOOL_FAIL_CODE,
         "code_language": "python3",
-        "desc": "Tool 调用失败：如实标记为执行失败，不伪装成业务不足或空结果。",
+        "desc": ("Tool 调用失败：如实标记为执行失败，不伪装成业务不足或空结果；"
+                 "并向用户返回非空自然语言说明（CL31-01/02）。"),
         "outputs": {"failure_kind": out_str(), "note": out_str(), "capability": out_str(),
-                    "derivation": out_str(), "fabricated_artifact_produced": out_str()},
+                    "derivation": out_str(), "fabricated_artifact_produced": out_str(),
+                    "user_delivery": out_str(), "business_delivery_outcome": out_str(),
+                    "returns_json": out_str()},
         "selected": False, "title": "执行失败", "type": "code",
         "variables": [{"value_selector": ["entry_resolver", "route"], "variable": "route"},
                       {"value_selector": ["entry_resolver", "derivation"], "variable": "derivation"}],
@@ -1702,6 +1843,10 @@ def build_seam_app():
 
     nodes.append(node("end_tool_fail", {
         "desc": "执行失败结束", "outputs": [
+            {"value_selector": ["seam_tool_fail", "user_delivery"], "variable": "user_delivery"},
+            {"value_selector": ["seam_tool_fail", "business_delivery_outcome"],
+             "variable": "business_delivery_outcome"},
+            {"value_selector": ["seam_tool_fail", "returns_json"], "variable": "returns_json"},
             {"value_selector": ["seam_tool_fail", "failure_kind"], "variable": "failure_kind"},
             {"value_selector": ["seam_tool_fail", "note"], "variable": "note"},
             {"value_selector": ["seam_tool_fail", "capability"], "variable": "capability"},
@@ -1711,17 +1856,13 @@ def build_seam_app():
     }, 1620, y + 40))
 
     nodes.append(node("unsupported", {
-        "code": (
-            "def main(route, derivation):\n"
-            "    return {\n"
-            "        'note': ('capability 不在 M4 接缝支持的六项能力内。'\n"
-            "                 'M4 不代做能力选择——那是 M1 的职责；本接缝也不建第二套路由。'),\n"
-            "        'capability': route,\n"
-            "        'derivation': derivation,\n"
-            "    }\n"),
+        "code": SEAM_UNSUPPORTED_CODE,
         "code_language": "python3",
-        "desc": "不支持的能力调用意图：如实拒绝，不代做 M1 的能力选择。",
-        "outputs": {"note": out_str(), "capability": out_str(), "derivation": out_str()},
+        "desc": ("不支持的能力调用意图：如实拒绝，不代做 M1 的能力选择；"
+                 "并向用户返回非空自然语言说明（CL31-01）。"),
+        "outputs": {"note": out_str(), "capability": out_str(), "derivation": out_str(),
+                    "user_delivery": out_str(), "business_delivery_outcome": out_str(),
+                    "returns_json": out_str()},
         "selected": False, "title": "不支持的能力", "type": "code",
         "variables": [{"value_selector": ["entry_resolver", "route"], "variable": "route"},
                       {"value_selector": ["entry_resolver", "derivation"], "variable": "derivation"}],
@@ -1729,6 +1870,10 @@ def build_seam_app():
 
     nodes.append(node("end_unsupported", {
         "desc": "不支持结束", "outputs": [
+            {"value_selector": ["unsupported", "user_delivery"], "variable": "user_delivery"},
+            {"value_selector": ["unsupported", "business_delivery_outcome"],
+             "variable": "business_delivery_outcome"},
+            {"value_selector": ["unsupported", "returns_json"], "variable": "returns_json"},
             {"value_selector": ["unsupported", "note"], "variable": "note"},
             {"value_selector": ["unsupported", "capability"], "variable": "capability"},
         ], "selected": False, "title": "结束｜不支持", "type": "end",
@@ -2310,6 +2455,32 @@ def cmd_verify():
         elif nodes["recovery_llm"]["data"]["model"] != MODEL:
             fails.append("%s: recovery_llm 模型/参数与冻结绑定不一致" % cap["capability"])
 
+        # V5e 恢复路径必须剥离 thinking（M4-FND-029）
+        _df = nodes.get("delivery_finalize", {}).get("data", {}).get("code", "")
+        if "_strip_thinking(recovered_text)" not in _df:
+            fails.append("%s: delivery_finalize 未对 recovered_text 做 thinking 剥离（M4-FND-029）"
+                         % cap["capability"])
+        for _t in ("<think>", "</think>"):
+            if _t not in _df:
+                fails.append("%s: delivery_finalize 的泄漏词表缺少 %s（M4-FND-029）"
+                             % (cap["capability"], _t))
+
+        # V5c 终止分支非空交付（取证合同 v0.5 §3 CL31-01①）
+        for nid, n in nodes.items():
+            if n["data"].get("type") != "end":
+                continue
+            vs = [o["variable"] for o in n["data"].get("outputs", [])]
+            if "user_delivery" not in vs:
+                fails.append("%s: 终止节点 %s 的输出缺少 user_delivery（CL31-01①）"
+                             % (cap["capability"], nid))
+
+        # V5d 正式应用不得残留故障注入开关（取证合同 v0.5 §5 F-13）
+        blob = json.dumps(d, ensure_ascii=False)
+        for sentinel in ("M4_FAULT_DIRECTIVE", "FAULT INJECTION", "fault_injector"):
+            if sentinel in blob:
+                fails.append("%s: 正式 DSL 残留故障注入标记 %s（F-13）"
+                             % (cap["capability"], sentinel))
+
         # V6 图连通性
         ids = set(nodes)
         for e in d["workflow"]["graph"]["edges"]:
@@ -2329,6 +2500,40 @@ def cmd_verify():
         for e in ["ENTRY-01", "ENTRY-02", "ENTRY-03", "ENTRY-04", "ENTRY-05", "ENTRY-06", "ENTRY-07"]:
             if e not in resolver:
                 fails.append("SEAM: 入口解析器未覆盖 %s" % e)
+
+        # V6c 接缝所有终止分支必须有非空用户交付（取证合同 v0.5 §3 CL31-01①④）
+        for nid, n in snodes.items():
+            if n["data"].get("type") != "end":
+                continue
+            vs = [o["variable"] for o in n["data"].get("outputs", [])]
+            if "user_delivery" not in vs:
+                fails.append("SEAM: 终止节点 %s 的输出缺少 user_delivery（CL31-01①）" % nid)
+            if "business_delivery_outcome" not in vs:
+                fails.append("SEAM: 终止节点 %s 的输出缺少 business_delivery_outcome（CL31-01④）" % nid)
+        # 失败类终止分支的用户正文不得含内部词（CL31-01③）
+        LEAKS = ["PARSE_FAIL", "NOT_APPLICABLE", "STALE", "NOT_VERIFIED", "returns_json",
+                 "artifact_status", "user_delivery_status", "capability_call",
+                 "professional_payload", "goal_family", "skill_llm", "recovery_llm",
+                 "returns_adapter", "delivery_finalize", "final_extract", "binding_record",
+                 "seam_tool_fail", "end_tool_fail", "system prompt", "sha256", "Judge",
+                 "M4_ARTIFACT", "M4_USER_DELIVERY", "M4_RETURNS"]
+        for nid in ("seam_tool_fail", "unsupported"):
+            if nid not in snodes:
+                fails.append("SEAM: 缺少失败终止分支节点 %s" % nid); continue
+            code = snodes[nid]["data"].get("code", "")
+            i = code.find("user_text = (")
+            j = code.find("    ret = {", i) if i >= 0 else -1
+            if i < 0 or j < 0:
+                fails.append("SEAM: %s 未按约定构造 user_text，无法做泄漏扫描" % nid); continue
+            seg = code[i:j]
+            for w in LEAKS:
+                if w in seg:
+                    fails.append("SEAM: %s 的用户正文含内部词 %s（CL31-01③）" % (nid, w))
+        # V6d 正式接缝不得残留故障注入开关（F-13）
+        sblob = json.dumps(s, ensure_ascii=False)
+        for sentinel in ("M4_FAULT_DIRECTIVE", "FAULT INJECTION", "fault_injector"):
+            if sentinel in sblob:
+                fails.append("SEAM: 正式 DSL 残留故障注入标记 %s（F-13）" % sentinel)
         # V8 provider 绑定状态
         pend = [n["id"] for n in snodes.values()
                 if n["data"].get("type") == "tool"

@@ -668,10 +668,23 @@ workflow:
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
           stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n  \
-          \  return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\"\
-          : capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\"\
-          ,\n        \"user_delivery\": tool_user_delivery or \"\",\n        \"returns_json\": returns_out,\n        \"binding_json\"\
-          : tool_binding_json or \"{}\",\n    }\n"
+          \  # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n  \
+          \  # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome\
+          \ or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\
+          \n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\
+          \n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n       \
+          \     \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets)\
+          \ + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"\
+          source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n \
+          \           \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"\
+          ][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"\
+          ] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n\
+          \        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\"\
+          : tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n    \
+          \    \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
         code_language: python3
         desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
         outputs:
@@ -679,6 +692,9 @@ workflow:
             children: null
             type: string
           binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
             children: null
             type: string
           capabilities_skipped:
@@ -777,6 +793,10 @@ workflow:
           - fin_matrix
           - user_delivery
           variable: user_delivery
+        - value_selector:
+          - fin_matrix
+          - business_delivery_outcome
+          variable: business_delivery_outcome
         - value_selector:
           - fin_matrix
           - artifact
@@ -895,10 +915,23 @@ workflow:
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
           stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n  \
-          \  return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\"\
-          : capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\"\
-          ,\n        \"user_delivery\": tool_user_delivery or \"\",\n        \"returns_json\": returns_out,\n        \"binding_json\"\
-          : tool_binding_json or \"{}\",\n    }\n"
+          \  # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n  \
+          \  # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome\
+          \ or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\
+          \n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\
+          \n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n       \
+          \     \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets)\
+          \ + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"\
+          source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n \
+          \           \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"\
+          ][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"\
+          ] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n\
+          \        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\"\
+          : tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n    \
+          \    \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
         code_language: python3
         desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
         outputs:
@@ -906,6 +939,9 @@ workflow:
             children: null
             type: string
           binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
             children: null
             type: string
           capabilities_skipped:
@@ -1004,6 +1040,10 @@ workflow:
           - fin_campaign
           - user_delivery
           variable: user_delivery
+        - value_selector:
+          - fin_campaign
+          - business_delivery_outcome
+          variable: business_delivery_outcome
         - value_selector:
           - fin_campaign
           - artifact
@@ -1122,10 +1162,23 @@ workflow:
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
           stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n  \
-          \  return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\"\
-          : capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\"\
-          ,\n        \"user_delivery\": tool_user_delivery or \"\",\n        \"returns_json\": returns_out,\n        \"binding_json\"\
-          : tool_binding_json or \"{}\",\n    }\n"
+          \  # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n  \
+          \  # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome\
+          \ or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\
+          \n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\
+          \n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n       \
+          \     \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets)\
+          \ + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"\
+          source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n \
+          \           \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"\
+          ][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"\
+          ] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n\
+          \        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\"\
+          : tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n    \
+          \    \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
         code_language: python3
         desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
         outputs:
@@ -1133,6 +1186,9 @@ workflow:
             children: null
             type: string
           binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
             children: null
             type: string
           capabilities_skipped:
@@ -1231,6 +1287,10 @@ workflow:
           - fin_content_brief
           - user_delivery
           variable: user_delivery
+        - value_selector:
+          - fin_content_brief
+          - business_delivery_outcome
+          variable: business_delivery_outcome
         - value_selector:
           - fin_content_brief
           - artifact
@@ -1349,10 +1409,23 @@ workflow:
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
           stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n  \
-          \  return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\"\
-          : capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\"\
-          ,\n        \"user_delivery\": tool_user_delivery or \"\",\n        \"returns_json\": returns_out,\n        \"binding_json\"\
-          : tool_binding_json or \"{}\",\n    }\n"
+          \  # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n  \
+          \  # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome\
+          \ or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\
+          \n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\
+          \n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n       \
+          \     \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets)\
+          \ + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"\
+          source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n \
+          \           \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"\
+          ][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"\
+          ] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n\
+          \        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\"\
+          : tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n    \
+          \    \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
         code_language: python3
         desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
         outputs:
@@ -1360,6 +1433,9 @@ workflow:
             children: null
             type: string
           binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
             children: null
             type: string
           capabilities_skipped:
@@ -1458,6 +1534,10 @@ workflow:
           - fin_creative_script
           - user_delivery
           variable: user_delivery
+        - value_selector:
+          - fin_creative_script
+          - business_delivery_outcome
+          variable: business_delivery_outcome
         - value_selector:
           - fin_creative_script
           - artifact
@@ -1576,10 +1656,23 @@ workflow:
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
           stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n  \
-          \  return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\"\
-          : capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\"\
-          ,\n        \"user_delivery\": tool_user_delivery or \"\",\n        \"returns_json\": returns_out,\n        \"binding_json\"\
-          : tool_binding_json or \"{}\",\n    }\n"
+          \  # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n  \
+          \  # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome\
+          \ or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\
+          \n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\
+          \n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n       \
+          \     \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets)\
+          \ + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"\
+          source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n \
+          \           \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"\
+          ][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"\
+          ] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n\
+          \        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\"\
+          : tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n    \
+          \    \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
         code_language: python3
         desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
         outputs:
@@ -1587,6 +1680,9 @@ workflow:
             children: null
             type: string
           binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
             children: null
             type: string
           capabilities_skipped:
@@ -1685,6 +1781,10 @@ workflow:
           - fin_production_director
           - user_delivery
           variable: user_delivery
+        - value_selector:
+          - fin_production_director
+          - business_delivery_outcome
+          variable: business_delivery_outcome
         - value_selector:
           - fin_production_director
           - artifact
@@ -1803,10 +1903,23 @@ workflow:
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
           stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n  \
-          \  return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\"\
-          : capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\"\
-          ,\n        \"user_delivery\": tool_user_delivery or \"\",\n        \"returns_json\": returns_out,\n        \"binding_json\"\
-          : tool_binding_json or \"{}\",\n    }\n"
+          \  # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n  \
+          \  # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome\
+          \ or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\
+          \n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\
+          \n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n       \
+          \     \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets)\
+          \ + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"\
+          source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n \
+          \           \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"\
+          ][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"\
+          ] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n\
+          \        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\"\
+          : tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n    \
+          \    \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
         code_language: python3
         desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
         outputs:
@@ -1814,6 +1927,9 @@ workflow:
             children: null
             type: string
           binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
             children: null
             type: string
           capabilities_skipped:
@@ -1914,6 +2030,10 @@ workflow:
           variable: user_delivery
         - value_selector:
           - fin_publishing_packaging
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_publishing_packaging
           - artifact
           variable: artifact
         - value_selector:
@@ -1950,12 +2070,28 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "def main(route, derivation):\n    return {\n        'failure_kind': 'TOOL_CALL_FAILED',\n        'note': ('能力应用调用失败。这是执行失败，不是业务不足：'\n\
-          \                 '不得伪装成 INPUT_INSUFFICIENT，也不得伪装成空结果。'),\n        'capability': route,\n        'derivation': derivation,\n\
-          \        'fabricated_artifact_produced': 'false',\n    }\n"
+        code: "\nimport json\n\n# 能力中文名映射是确定性的、不含业务判断；用于避免把内部能力标识写给用户。\nCAP_LABEL = {\n    \"MATRIX\": \"账号架构与诊断\",\n    \"\
+          CAMPAIGN\": \"单次经营任务策划\",\n    \"CONTENT_BRIEF\": \"内容任务判断\",\n    \"CREATIVE_SCRIPT\": \"创意与脚本\",\n    \"PRODUCTION_DIRECTOR\"\
+          : \"拍摄执行方案\",\n    \"PUBLISHING_PACKAGING\": \"发布包装\",\n}\n\n\ndef main(route, derivation):\n    key = (route or\
+          \ \"\").strip().upper()\n    label = CAP_LABEL.get(key, \"这一步\")\n    user_text = (\n        \"这一次没有把结果做出来。\\n\\\
+          n\"\n        \"「%s」这一步在运行中没有跑通，所以这一轮没有产出可用的结论。\"\n        \"**这不算一次成功交付**——我也没有替它编一份看起来像结果的东西给你。\\n\\n\"\n     \
+          \   \"这不是你给的信息不够，你不需要重新整理一遍需求。\\n\\n\"\n        \"你现在可以做的是：把同样的需求原样再提一次。\"\n        \"如果第二次还是这样，说明这条路上有需要修的问题，请把这次的情况反馈出来。\\\
+          n\\n\"\n        \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\" % label\n    )\n    ret = {\n        \"return_id\": \"M4-RET-TOOL-CALL-FAILED-\"\
+          \ + (key or \"UNKNOWN\"),\n        \"source\": \"SEAM_TOOL_FAIL\",\n        \"highest_damaged_layer\": \"CAPABILITY_APP_EXECUTION\"\
+          ,\n        \"precise_gap\": \"能力应用调用失败；这是执行失败，不是业务输入不足，也不是空结果\",\n        \"affected_objects\": [\"仅本次 %s 调用及其真实依赖分支\"\
+          \ % (key or \"UNKNOWN\")],\n        \"proposed_disposition\": \"ESCALATE\",\n        \"needs_user_decision\": True,\n\
+          \        \"downstream_stale\": [\"仅真实依赖本次 %s 结论的下游项\" % (key or \"UNKNOWN\")],\n        \"parse_status\": \"NOT_DELIVERED\"\
+          ,\n    }\n    return {\n        \"failure_kind\": \"TOOL_CALL_FAILED\",\n        \"note\": (\"能力应用调用失败。这是执行失败，不是业务不足：\"\
+          \n                 \"不得伪装成 INPUT_INSUFFICIENT，也不得伪装成空结果。\"),\n        \"capability\": route,\n        \"derivation\"\
+          : derivation,\n        \"fabricated_artifact_produced\": \"false\",\n        \"user_delivery\": user_text,\n   \
+          \     \"business_delivery_outcome\": \"NOT_DELIVERED\",\n        \"returns_json\": json.dumps([ret], ensure_ascii=False),\n\
+          \    }\n"
         code_language: python3
-        desc: Tool 调用失败：如实标记为执行失败，不伪装成业务不足或空结果。
+        desc: Tool 调用失败：如实标记为执行失败，不伪装成业务不足或空结果；并向用户返回非空自然语言说明（CL31-01/02）。
         outputs:
+          business_delivery_outcome:
+            children: null
+            type: string
           capability:
             children: null
             type: string
@@ -1969,6 +2105,12 @@ workflow:
             children: null
             type: string
           note:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          user_delivery:
             children: null
             type: string
         selected: false
@@ -2000,6 +2142,18 @@ workflow:
     - data:
         desc: 执行失败结束
         outputs:
+        - value_selector:
+          - seam_tool_fail
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - seam_tool_fail
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - seam_tool_fail
+          - returns_json
+          variable: returns_json
         - value_selector:
           - seam_tool_fail
           - failure_kind
@@ -2034,12 +2188,23 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "def main(route, derivation):\n    return {\n        'note': ('capability 不在 M4 接缝支持的六项能力内。'\n             \
-          \    'M4 不代做能力选择——那是 M1 的职责；本接缝也不建第二套路由。'),\n        'capability': route,\n        'derivation': derivation,\n \
-          \   }\n"
+        code: "\nimport json\n\n\ndef main(route, derivation):\n    key = (route or \"\").strip().upper()\n    user_text =\
+          \ (\n        \"这一次我没有往下做。\\n\\n\"\n        \"你要的这件事不在我这一层能处理的范围里。我能做的是这六件：\"\n        \"账号架构与诊断、单次经营任务策划、内容任务判断、创意与脚本、拍摄执行方案、发布包装。\\\
+          n\\n\"\n        \"**这不算一次成功交付**——我没有硬凑一个看起来相关的结果给你，\"\n        \"也不替你决定该做上面哪一件，那不是我该替你拿的主意。\\n\\n\"\n        \"\
+          你可以直接说明这次想解决的是上面哪一件；\"\n        \"如果都不是，把你想拿到的结果说清楚，我再看接不接得住。\"\n    )\n    ret = {\n        \"return_id\": \"M4-RET-UNSUPPORTED-\"\
+          \ + (key or \"UNKNOWN\"),\n        \"source\": \"SEAM_UNSUPPORTED\",\n        \"highest_damaged_layer\": \"CAPABILITY_SELECTION\"\
+          ,\n        \"precise_gap\": \"能力调用意图不在本接缝支持的六项能力内；本接缝不代做能力选择\",\n        \"affected_objects\": [\"仅本次调用意图\"],\n\
+          \        \"proposed_disposition\": \"ESCALATE\",\n        \"needs_user_decision\": True,\n        \"downstream_stale\"\
+          : [],\n        \"parse_status\": \"NOT_DELIVERED\",\n    }\n    return {\n        \"note\": (\"capability 不在 M4\
+          \ 接缝支持的六项能力内。\"\n                 \"M4 不代做能力选择——那是 M1 的职责；本接缝也不建第二套路由。\"),\n        \"capability\": route,\n   \
+          \     \"derivation\": derivation,\n        \"user_delivery\": user_text,\n        \"business_delivery_outcome\"\
+          : \"NOT_DELIVERED\",\n        \"returns_json\": json.dumps([ret], ensure_ascii=False),\n    }\n"
         code_language: python3
-        desc: 不支持的能力调用意图：如实拒绝，不代做 M1 的能力选择。
+        desc: 不支持的能力调用意图：如实拒绝，不代做 M1 的能力选择；并向用户返回非空自然语言说明（CL31-01）。
         outputs:
+          business_delivery_outcome:
+            children: null
+            type: string
           capability:
             children: null
             type: string
@@ -2047,6 +2212,12 @@ workflow:
             children: null
             type: string
           note:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          user_delivery:
             children: null
             type: string
         selected: false
@@ -2078,6 +2249,18 @@ workflow:
     - data:
         desc: 不支持结束
         outputs:
+        - value_selector:
+          - unsupported
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - unsupported
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - unsupported
+          - returns_json
+          variable: returns_json
         - value_selector:
           - unsupported
           - note

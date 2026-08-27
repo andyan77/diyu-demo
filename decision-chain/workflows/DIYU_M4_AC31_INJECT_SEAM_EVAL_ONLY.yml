@@ -1,0 +1,1943 @@
+app:
+  description: EVALUATION ONLY · 故障注入对象。CONTENT_BRIEF 分支指向注入子应用；不得接入 Founder Canvas、主路由或生产入口。取证完成后删除或隔离。
+  icon: 🧵
+  icon_background: '#D5F5F6'
+  icon_type: emoji
+  mode: workflow
+  name: DIYU M4 AC31 FAULT INJECTION EVAL ONLY · Capability Seam
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: seam_dispatch-matrix-tool_matrix-target
+      source: seam_dispatch
+      sourceHandle: matrix
+      target: tool_matrix
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_matrix-source-fin_matrix-target
+      source: tool_matrix
+      sourceHandle: source
+      target: fin_matrix
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: fin_matrix-source-end_matrix-target
+      source: fin_matrix
+      sourceHandle: source
+      target: end_matrix
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_matrix-fail-branch-seam_tool_fail-target
+      source: tool_matrix
+      sourceHandle: fail-branch
+      target: seam_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: seam_dispatch-campaign-tool_campaign-target
+      source: seam_dispatch
+      sourceHandle: campaign
+      target: tool_campaign
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_campaign-source-fin_campaign-target
+      source: tool_campaign
+      sourceHandle: source
+      target: fin_campaign
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: fin_campaign-source-end_campaign-target
+      source: fin_campaign
+      sourceHandle: source
+      target: end_campaign
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_campaign-fail-branch-seam_tool_fail-target
+      source: tool_campaign
+      sourceHandle: fail-branch
+      target: seam_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: seam_dispatch-content_brief-tool_content_brief-target
+      source: seam_dispatch
+      sourceHandle: content_brief
+      target: tool_content_brief
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_content_brief-source-fin_content_brief-target
+      source: tool_content_brief
+      sourceHandle: source
+      target: fin_content_brief
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: fin_content_brief-source-end_content_brief-target
+      source: fin_content_brief
+      sourceHandle: source
+      target: end_content_brief
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_content_brief-fail-branch-seam_tool_fail-target
+      source: tool_content_brief
+      sourceHandle: fail-branch
+      target: seam_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: seam_dispatch-creative_script-tool_creative_script-target
+      source: seam_dispatch
+      sourceHandle: creative_script
+      target: tool_creative_script
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_creative_script-source-fin_creative_script-target
+      source: tool_creative_script
+      sourceHandle: source
+      target: fin_creative_script
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: fin_creative_script-source-end_creative_script-target
+      source: fin_creative_script
+      sourceHandle: source
+      target: end_creative_script
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_creative_script-fail-branch-seam_tool_fail-target
+      source: tool_creative_script
+      sourceHandle: fail-branch
+      target: seam_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: seam_dispatch-production_director-tool_production_director-target
+      source: seam_dispatch
+      sourceHandle: production_director
+      target: tool_production_director
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_production_director-source-fin_production_director-target
+      source: tool_production_director
+      sourceHandle: source
+      target: fin_production_director
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: fin_production_director-source-end_production_director-target
+      source: fin_production_director
+      sourceHandle: source
+      target: end_production_director
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_production_director-fail-branch-seam_tool_fail-target
+      source: tool_production_director
+      sourceHandle: fail-branch
+      target: seam_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: tool
+      id: seam_dispatch-publishing_packaging-tool_publishing_packaging-target
+      source: seam_dispatch
+      sourceHandle: publishing_packaging
+      target: tool_publishing_packaging
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_publishing_packaging-source-fin_publishing_packaging-target
+      source: tool_publishing_packaging
+      sourceHandle: source
+      target: fin_publishing_packaging
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: fin_publishing_packaging-source-end_publishing_packaging-target
+      source: fin_publishing_packaging
+      sourceHandle: source
+      target: end_publishing_packaging
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: tool_publishing_packaging-fail-branch-seam_tool_fail-target
+      source: tool_publishing_packaging
+      sourceHandle: fail-branch
+      target: seam_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: code
+      id: 1788000000001-source-entry_resolver-target
+      source: '1788000000001'
+      sourceHandle: source
+      target: entry_resolver
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: if-else
+      id: entry_resolver-source-seam_dispatch-target
+      source: entry_resolver
+      sourceHandle: source
+      target: seam_dispatch
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: code
+      id: seam_dispatch-false-unsupported-target
+      source: seam_dispatch
+      sourceHandle: 'false'
+      target: unsupported
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: unsupported-source-end_unsupported-target
+      source: unsupported
+      sourceHandle: source
+      target: end_unsupported
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: seam_tool_fail-source-end_tool_fail-target
+      source: seam_tool_fail
+      sourceHandle: source
+      target: end_tool_fail
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 接收 M1 给出的唯一能力调用意图 + 统一外壳。本应用不做自然语言意图识别。
+        selected: false
+        title: 能力调用意图
+        type: start
+        variables:
+        - label: capability（由 M1 给出的唯一能力调用意图）
+          max_length: 64
+          options: []
+          required: true
+          type: text-input
+          variable: capability
+        - label: entry（可留空，由确定性充分性规则推导）
+          max_length: 64
+          options: []
+          required: false
+          type: text-input
+          variable: entry
+        - label: capability_call（统一业务能力外壳）
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: capability_call
+        - label: professional_input（本能力专业输入）
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: professional_input
+        - label: example_reference_requested（YES/NO）
+          max_length: 8
+          options: []
+          required: false
+          type: text-input
+          variable: example_reference_requested
+      height: 100
+      id: '1788000000001'
+      position:
+        x: 40
+        y: 400
+      positionAbsolute:
+        x: 40
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport hashlib\nimport json\nimport re\n\n# M4 统一能力接缝 · 入口解析器\n#\n# 这里**不是路由**。M1 负责自然语言理解与跨诉求路由，并给出唯一能力调用意图。\n# 本节点只做两件事：\n#   1. 接收已结构化的能力调用意图（capability + 可选 entry）；\n#   2. entry 缺省时，按统一能力合同 §2.3 的**确定性充分性规则**推导同一能力内部的运行模式。\n# 它不读自然语言、不做意图判断、不选择能力。\n\nCAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n        \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\nCAP_TO_ENTRY = {\n    \"MATRIX\": \"ENTRY-01\",\n    \"CAMPAIGN\": \"ENTRY-02\",\n    \"CONTENT_BRIEF\": \"ENTRY-03\",\n    \"PRODUCTION_DIRECTOR\": \"ENTRY-06\",\n    \"PUBLISHING_PACKAGING\": \"ENTRY-07\",\n}\n\nFIVE_AXES = [\"核心矛盾\", \"叙事发动机\", \"人物关系\", \"信息释放顺序\", \"视觉前提\"]\n\n\ndef _norm(s):\n    return re.sub(r\"\\s+\", \" \", (s or \"\")).strip()\n\n\ndef _find(text, key):\n    for p in [r'\"%s\"\\s*:\\s*\"([^\"]*)\"' % re.escape(key),\n              r\"^\\s*%s\\s*:\\s*[\\\"']?([^\\\"'\\n]+)[\\\"']?\\s*$\" % re.escape(key),\n              r\"`%s`\\s*[:：]\\s*([^\\n]+)\" % re.escape(key)]:\n        m = re.search(p, text or \"\", re.MULTILINE)\n        if m:\n            return _norm(m.group(1))\n    return \"\"\n\n\ndef _axis_diff_count(text):\n    \"\"\"确定性统计：候选描述里出现了几个结构轴的显式差异标注。\n    只用于判断『是否存在真实取舍』的**结构前提**；\n    差异是否实质由 CS-1 在 Skill 正文里裁决（业务判断不入外壳）。\"\"\"\n    return sum(1 for a in FIVE_AXES if a in (text or \"\"))\n\n\ndef main(capability, entry, capability_call, professional_input):\n    cap = _norm(capability).upper()\n    blob = (capability_call or \"\") + \"\\n\" + (professional_input or \"\")\n\n    if cap not in CAPS:\n        return {\n            \"route\": \"UNSUPPORTED\",\n            \"capability_resolved\": cap or \"MISSING\",\n            \"entry_resolved\": \"NONE\",\n            \"run_mode\": \"NONE\",\n            \"derivation\": \"capability 不在 M4 接缝支持的六项能力内。M4 不代做能力选择（那是 M1 的职责）。\",\n            \"call_hash\": hashlib.sha256(blob.encode(\"utf-8\")).hexdigest(),\n        }\n\n    e = _norm(entry).upper()\n    if e.startswith(\"ENTRY\"):\n        entry_resolved = e\n        derivation = \"entry 由上游能力调用意图显式给出，未做任何推导\"\n    elif cap == \"CREATIVE_SCRIPT\":\n        accepted = _find(blob, \"accepted_direction\")\n        if accepted and accepted.upper() not in (\"\", \"NONE\", \"NULL\"):\n            entry_resolved = \"ENTRY-05\"\n            derivation = \"已存在 accepted_direction ⇒ 直达脚本（不重开锦标赛）\"\n        elif _axis_diff_count(blob) >= 3:\n            entry_resolved = \"ENTRY-04\"\n            derivation = \"输入结构上显示至少三个结构轴的候选差异标注 ⇒ 进入 CS-1；差异是否实质由 CS-1 正文裁决\"\n        else:\n            entry_resolved = \"ENTRY-05\"\n            derivation = \"未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选\"\n    else:\n        entry_resolved = CAP_TO_ENTRY[cap]\n        derivation = \"该能力只有一个直接入口，按能力确定性映射\"\n\n    if cap == \"CREATIVE_SCRIPT\":\n        run_mode = \"TOURNAMENT_ONLY\" if entry_resolved == \"ENTRY-04\" else \"SELECTED_DIRECTION_TO_SCRIPT\"\n    elif cap == \"CAMPAIGN\":\n        confirmed = _find(blob, \"campaign_run_mode\").upper()\n        run_mode = \"COMPILE_CONFIRMED_DECISIONS\" if confirmed == \"COMPILE_CONFIRMED_DECISIONS\" else \"PLANNING\"\n    elif cap == \"PRODUCTION_DIRECTOR\":\n        run_mode = \"MANIFEST\" if \"realization_manifest\" in blob else \"PLAN\"\n    else:\n        run_mode = \"DEFAULT\"\n\n    return {\n        \"route\": cap,\n        \"capability_resolved\": cap,\n        \"entry_resolved\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"derivation\": derivation,\n        \"call_hash\": hashlib.sha256(blob.encode(\"utf-8\")).hexdigest(),\n    }\n"
+        code_language: python3
+        desc: 确定性入口解析。不是路由：不读自然语言、不做意图判断、不选择能力。
+        outputs:
+          call_hash:
+            children: null
+            type: string
+          capability_resolved:
+            children: null
+            type: string
+          derivation:
+            children: null
+            type: string
+          entry_resolved:
+            children: null
+            type: string
+          route:
+            children: null
+            type: string
+          run_mode:
+            children: null
+            type: string
+        selected: false
+        title: 入口解析（确定性）
+        type: code
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - capability
+          variable: capability
+        - value_selector:
+          - '1788000000001'
+          - entry
+          variable: entry
+        - value_selector:
+          - '1788000000001'
+          - capability_call
+          variable: capability_call
+        - value_selector:
+          - '1788000000001'
+          - professional_input
+          variable: professional_input
+      height: 100
+      id: entry_resolver
+      position:
+        x: 340
+        y: 400
+      positionAbsolute:
+        x: 340
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: matrix
+          conditions:
+          - comparison_operator: is
+            value: MATRIX
+            variable_selector:
+            - entry_resolver
+            - route
+          logical_operator: and
+        - case_id: campaign
+          conditions:
+          - comparison_operator: is
+            value: CAMPAIGN
+            variable_selector:
+            - entry_resolver
+            - route
+          logical_operator: and
+        - case_id: content_brief
+          conditions:
+          - comparison_operator: is
+            value: CONTENT_BRIEF
+            variable_selector:
+            - entry_resolver
+            - route
+          logical_operator: and
+        - case_id: creative_script
+          conditions:
+          - comparison_operator: is
+            value: CREATIVE_SCRIPT
+            variable_selector:
+            - entry_resolver
+            - route
+          logical_operator: and
+        - case_id: production_director
+          conditions:
+          - comparison_operator: is
+            value: PRODUCTION_DIRECTOR
+            variable_selector:
+            - entry_resolver
+            - route
+          logical_operator: and
+        - case_id: publishing_packaging
+          conditions:
+          - comparison_operator: is
+            value: PUBLISHING_PACKAGING
+            variable_selector:
+            - entry_resolver
+            - route
+          logical_operator: and
+        desc: 按已解析的能力调用意图分派。六个能力应用之间零调用边，组合只由本节点显式编排。
+        logical_operator: and
+        selected: false
+        title: 能力分派
+        type: if-else
+      height: 300
+      id: seam_dispatch
+      position:
+        x: 640
+        y: 400
+      positionAbsolute:
+        x: 640
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 调用 MATRIX 后继测试应用；失败进 fail-branch；一次基础设施重试。
+        error_strategy: fail-branch
+        provider_id: 36905561-5728-4581-93b0-09ea5baec97b
+        provider_name: 36905561-5728-4581-93b0-09ea5baec97b
+        provider_type: workflow
+        retry_config:
+          max_retries: 1
+          retry_enabled: true
+          retry_interval: 2000
+        selected: false
+        title: 调用 DIYU M4 v1.3 TEST · Matrix Architect
+        tool_configurations: {}
+        tool_label: diyu_m4_matrix
+        tool_name: diyu_m4_matrix
+        tool_node_version: '2'
+        tool_parameters:
+          capability_call:
+            type: mixed
+            value: '{{#1788000000001.capability_call#}}'
+          entry:
+            type: mixed
+            value: '{{#entry_resolver.entry_resolved#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          professional_input:
+            type: mixed
+            value: '{{#1788000000001.professional_input#}}'
+          run_mode:
+            type: mixed
+            value: '{{#entry_resolver.run_mode#}}'
+        type: tool
+      height: 120
+      id: tool_matrix
+      position:
+        x: 960
+        y: 80
+      positionAbsolute:
+        x: 960
+        y: 80
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 接缝收口：记录实际调用了哪一个能力、跳过了哪些、失效集怎么算。\n# A3：INVALIDATED = changed_bindings ∪ transitive_dependents ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved, run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\",\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n            \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n            \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n        \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
+        code_language: python3
+        desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
+            children: null
+            type: string
+          capabilities_skipped:
+            children: null
+            type: array[string]
+          capability_invoked:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          seam_trace_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 接缝收口｜MATRIX
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - capability_resolved
+          variable: capability_resolved
+        - value_selector:
+          - entry_resolver
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - entry_resolver
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+        - value_selector:
+          - tool_matrix
+          - artifact
+          variable: tool_artifact
+        - value_selector:
+          - tool_matrix
+          - user_delivery
+          variable: tool_user_delivery
+        - value_selector:
+          - tool_matrix
+          - returns_json
+          variable: tool_returns_json
+        - value_selector:
+          - tool_matrix
+          - binding_json
+          variable: tool_binding_json
+        - value_selector:
+          - entry_resolver
+          - call_hash
+          variable: call_hash
+        - value_selector:
+          - tool_matrix
+          - local_block
+          variable: tool_local_block
+        - value_selector:
+          - tool_matrix
+          - artifact_status
+          variable: tool_artifact_status
+        - value_selector:
+          - tool_matrix
+          - user_delivery_status
+          variable: tool_user_delivery_status
+        - value_selector:
+          - tool_matrix
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_matrix
+          - recovery_used
+          variable: tool_recovery_used
+      height: 100
+      id: fin_matrix
+      position:
+        x: 1300
+        y: 80
+      positionAbsolute:
+        x: 1300
+        y: 80
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: MATRIX 结束
+        outputs:
+        - value_selector:
+          - fin_matrix
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - fin_matrix
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_matrix
+          - artifact
+          variable: artifact
+        - value_selector:
+          - fin_matrix
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - fin_matrix
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - fin_matrix
+          - seam_trace_json
+          variable: seam_trace_json
+        - value_selector:
+          - fin_matrix
+          - capabilities_skipped
+          variable: capabilities_skipped
+        selected: false
+        title: 结束｜MATRIX
+        type: end
+      height: 100
+      id: end_matrix
+      position:
+        x: 1620
+        y: 80
+      positionAbsolute:
+        x: 1620
+        y: 80
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 调用 CAMPAIGN 后继测试应用；失败进 fail-branch；一次基础设施重试。
+        error_strategy: fail-branch
+        provider_id: 0737d719-10c8-4799-8310-6579d20c86f1
+        provider_name: 0737d719-10c8-4799-8310-6579d20c86f1
+        provider_type: workflow
+        retry_config:
+          max_retries: 1
+          retry_enabled: true
+          retry_interval: 2000
+        selected: false
+        title: 调用 DIYU M4 v1.3 TEST · Campaign Orchestrator
+        tool_configurations: {}
+        tool_label: diyu_m4_campaign
+        tool_name: diyu_m4_campaign
+        tool_node_version: '2'
+        tool_parameters:
+          capability_call:
+            type: mixed
+            value: '{{#1788000000001.capability_call#}}'
+          entry:
+            type: mixed
+            value: '{{#entry_resolver.entry_resolved#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          professional_input:
+            type: mixed
+            value: '{{#1788000000001.professional_input#}}'
+          run_mode:
+            type: mixed
+            value: '{{#entry_resolver.run_mode#}}'
+        type: tool
+      height: 120
+      id: tool_campaign
+      position:
+        x: 960
+        y: 280
+      positionAbsolute:
+        x: 960
+        y: 280
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 接缝收口：记录实际调用了哪一个能力、跳过了哪些、失效集怎么算。\n# A3：INVALIDATED = changed_bindings ∪ transitive_dependents ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved, run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\",\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n            \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n            \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n        \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
+        code_language: python3
+        desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
+            children: null
+            type: string
+          capabilities_skipped:
+            children: null
+            type: array[string]
+          capability_invoked:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          seam_trace_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 接缝收口｜CAMPAIGN
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - capability_resolved
+          variable: capability_resolved
+        - value_selector:
+          - entry_resolver
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - entry_resolver
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+        - value_selector:
+          - tool_campaign
+          - artifact
+          variable: tool_artifact
+        - value_selector:
+          - tool_campaign
+          - user_delivery
+          variable: tool_user_delivery
+        - value_selector:
+          - tool_campaign
+          - returns_json
+          variable: tool_returns_json
+        - value_selector:
+          - tool_campaign
+          - binding_json
+          variable: tool_binding_json
+        - value_selector:
+          - entry_resolver
+          - call_hash
+          variable: call_hash
+        - value_selector:
+          - tool_campaign
+          - local_block
+          variable: tool_local_block
+        - value_selector:
+          - tool_campaign
+          - artifact_status
+          variable: tool_artifact_status
+        - value_selector:
+          - tool_campaign
+          - user_delivery_status
+          variable: tool_user_delivery_status
+        - value_selector:
+          - tool_campaign
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_campaign
+          - recovery_used
+          variable: tool_recovery_used
+      height: 100
+      id: fin_campaign
+      position:
+        x: 1300
+        y: 280
+      positionAbsolute:
+        x: 1300
+        y: 280
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: CAMPAIGN 结束
+        outputs:
+        - value_selector:
+          - fin_campaign
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - fin_campaign
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_campaign
+          - artifact
+          variable: artifact
+        - value_selector:
+          - fin_campaign
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - fin_campaign
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - fin_campaign
+          - seam_trace_json
+          variable: seam_trace_json
+        - value_selector:
+          - fin_campaign
+          - capabilities_skipped
+          variable: capabilities_skipped
+        selected: false
+        title: 结束｜CAMPAIGN
+        type: end
+      height: 100
+      id: end_campaign
+      position:
+        x: 1620
+        y: 280
+      positionAbsolute:
+        x: 1620
+        y: 280
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 调用 CONTENT_BRIEF 后继测试应用；失败进 fail-branch；一次基础设施重试。
+        error_strategy: fail-branch
+        provider_id: 62c18c60-bdd8-4998-8227-09bf9915ba7d
+        provider_name: 62c18c60-bdd8-4998-8227-09bf9915ba7d
+        provider_type: workflow
+        retry_config:
+          max_retries: 1
+          retry_enabled: true
+          retry_interval: 2000
+        selected: false
+        title: 调用 DIYU M4 AC31 FAULT INJECTION EVAL ONLY · Content Brief child
+        tool_configurations: {}
+        tool_label: diyu_m4_ac31_inject_child
+        tool_name: diyu_m4_ac31_inject_child
+        tool_node_version: '2'
+        tool_parameters:
+          capability_call:
+            type: mixed
+            value: '{{#1788000000001.capability_call#}}'
+          entry:
+            type: mixed
+            value: '{{#entry_resolver.entry_resolved#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          professional_input:
+            type: mixed
+            value: '{{#1788000000001.professional_input#}}'
+          run_mode:
+            type: mixed
+            value: '{{#entry_resolver.run_mode#}}'
+        type: tool
+      height: 120
+      id: tool_content_brief
+      position:
+        x: 960
+        y: 480
+      positionAbsolute:
+        x: 960
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 接缝收口：记录实际调用了哪一个能力、跳过了哪些、失效集怎么算。\n# A3：INVALIDATED = changed_bindings ∪ transitive_dependents ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved, run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\",\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n            \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n            \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n        \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
+        code_language: python3
+        desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
+            children: null
+            type: string
+          capabilities_skipped:
+            children: null
+            type: array[string]
+          capability_invoked:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          seam_trace_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 接缝收口｜CONTENT_BRIEF
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - capability_resolved
+          variable: capability_resolved
+        - value_selector:
+          - entry_resolver
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - entry_resolver
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+        - value_selector:
+          - tool_content_brief
+          - artifact
+          variable: tool_artifact
+        - value_selector:
+          - tool_content_brief
+          - user_delivery
+          variable: tool_user_delivery
+        - value_selector:
+          - tool_content_brief
+          - returns_json
+          variable: tool_returns_json
+        - value_selector:
+          - tool_content_brief
+          - binding_json
+          variable: tool_binding_json
+        - value_selector:
+          - entry_resolver
+          - call_hash
+          variable: call_hash
+        - value_selector:
+          - tool_content_brief
+          - local_block
+          variable: tool_local_block
+        - value_selector:
+          - tool_content_brief
+          - artifact_status
+          variable: tool_artifact_status
+        - value_selector:
+          - tool_content_brief
+          - user_delivery_status
+          variable: tool_user_delivery_status
+        - value_selector:
+          - tool_content_brief
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_content_brief
+          - recovery_used
+          variable: tool_recovery_used
+      height: 100
+      id: fin_content_brief
+      position:
+        x: 1300
+        y: 480
+      positionAbsolute:
+        x: 1300
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: CONTENT_BRIEF 结束
+        outputs:
+        - value_selector:
+          - fin_content_brief
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - fin_content_brief
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_content_brief
+          - artifact
+          variable: artifact
+        - value_selector:
+          - fin_content_brief
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - fin_content_brief
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - fin_content_brief
+          - seam_trace_json
+          variable: seam_trace_json
+        - value_selector:
+          - fin_content_brief
+          - capabilities_skipped
+          variable: capabilities_skipped
+        selected: false
+        title: 结束｜CONTENT_BRIEF
+        type: end
+      height: 100
+      id: end_content_brief
+      position:
+        x: 1620
+        y: 480
+      positionAbsolute:
+        x: 1620
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 调用 CREATIVE_SCRIPT 后继测试应用；失败进 fail-branch；一次基础设施重试。
+        error_strategy: fail-branch
+        provider_id: 08a225b4-268f-4eb8-80c1-66f8792da71f
+        provider_name: 08a225b4-268f-4eb8-80c1-66f8792da71f
+        provider_type: workflow
+        retry_config:
+          max_retries: 1
+          retry_enabled: true
+          retry_interval: 2000
+        selected: false
+        title: 调用 DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)
+        tool_configurations: {}
+        tool_label: diyu_m4_creative_script
+        tool_name: diyu_m4_creative_script
+        tool_node_version: '2'
+        tool_parameters:
+          capability_call:
+            type: mixed
+            value: '{{#1788000000001.capability_call#}}'
+          entry:
+            type: mixed
+            value: '{{#entry_resolver.entry_resolved#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          professional_input:
+            type: mixed
+            value: '{{#1788000000001.professional_input#}}'
+          run_mode:
+            type: mixed
+            value: '{{#entry_resolver.run_mode#}}'
+        type: tool
+      height: 120
+      id: tool_creative_script
+      position:
+        x: 960
+        y: 680
+      positionAbsolute:
+        x: 960
+        y: 680
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 接缝收口：记录实际调用了哪一个能力、跳过了哪些、失效集怎么算。\n# A3：INVALIDATED = changed_bindings ∪ transitive_dependents ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved, run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\",\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n            \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n            \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n        \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
+        code_language: python3
+        desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
+            children: null
+            type: string
+          capabilities_skipped:
+            children: null
+            type: array[string]
+          capability_invoked:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          seam_trace_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 接缝收口｜CREATIVE_SCRIPT
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - capability_resolved
+          variable: capability_resolved
+        - value_selector:
+          - entry_resolver
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - entry_resolver
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+        - value_selector:
+          - tool_creative_script
+          - artifact
+          variable: tool_artifact
+        - value_selector:
+          - tool_creative_script
+          - user_delivery
+          variable: tool_user_delivery
+        - value_selector:
+          - tool_creative_script
+          - returns_json
+          variable: tool_returns_json
+        - value_selector:
+          - tool_creative_script
+          - binding_json
+          variable: tool_binding_json
+        - value_selector:
+          - entry_resolver
+          - call_hash
+          variable: call_hash
+        - value_selector:
+          - tool_creative_script
+          - local_block
+          variable: tool_local_block
+        - value_selector:
+          - tool_creative_script
+          - artifact_status
+          variable: tool_artifact_status
+        - value_selector:
+          - tool_creative_script
+          - user_delivery_status
+          variable: tool_user_delivery_status
+        - value_selector:
+          - tool_creative_script
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_creative_script
+          - recovery_used
+          variable: tool_recovery_used
+      height: 100
+      id: fin_creative_script
+      position:
+        x: 1300
+        y: 680
+      positionAbsolute:
+        x: 1300
+        y: 680
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: CREATIVE_SCRIPT 结束
+        outputs:
+        - value_selector:
+          - fin_creative_script
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - fin_creative_script
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_creative_script
+          - artifact
+          variable: artifact
+        - value_selector:
+          - fin_creative_script
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - fin_creative_script
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - fin_creative_script
+          - seam_trace_json
+          variable: seam_trace_json
+        - value_selector:
+          - fin_creative_script
+          - capabilities_skipped
+          variable: capabilities_skipped
+        selected: false
+        title: 结束｜CREATIVE_SCRIPT
+        type: end
+      height: 100
+      id: end_creative_script
+      position:
+        x: 1620
+        y: 680
+      positionAbsolute:
+        x: 1620
+        y: 680
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 调用 PRODUCTION_DIRECTOR 后继测试应用；失败进 fail-branch；一次基础设施重试。
+        error_strategy: fail-branch
+        provider_id: e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0
+        provider_name: e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0
+        provider_type: workflow
+        retry_config:
+          max_retries: 1
+          retry_enabled: true
+          retry_interval: 2000
+        selected: false
+        title: 调用 DIYU M4 v1.3 TEST · Production Director
+        tool_configurations: {}
+        tool_label: diyu_m4_production_director
+        tool_name: diyu_m4_production_director
+        tool_node_version: '2'
+        tool_parameters:
+          capability_call:
+            type: mixed
+            value: '{{#1788000000001.capability_call#}}'
+          entry:
+            type: mixed
+            value: '{{#entry_resolver.entry_resolved#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          professional_input:
+            type: mixed
+            value: '{{#1788000000001.professional_input#}}'
+          run_mode:
+            type: mixed
+            value: '{{#entry_resolver.run_mode#}}'
+        type: tool
+      height: 120
+      id: tool_production_director
+      position:
+        x: 960
+        y: 880
+      positionAbsolute:
+        x: 960
+        y: 880
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 接缝收口：记录实际调用了哪一个能力、跳过了哪些、失效集怎么算。\n# A3：INVALIDATED = changed_bindings ∪ transitive_dependents ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved, run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\",\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n            \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n            \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n        \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
+        code_language: python3
+        desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
+            children: null
+            type: string
+          capabilities_skipped:
+            children: null
+            type: array[string]
+          capability_invoked:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          seam_trace_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 接缝收口｜PRODUCTION_DIRECTOR
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - capability_resolved
+          variable: capability_resolved
+        - value_selector:
+          - entry_resolver
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - entry_resolver
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+        - value_selector:
+          - tool_production_director
+          - artifact
+          variable: tool_artifact
+        - value_selector:
+          - tool_production_director
+          - user_delivery
+          variable: tool_user_delivery
+        - value_selector:
+          - tool_production_director
+          - returns_json
+          variable: tool_returns_json
+        - value_selector:
+          - tool_production_director
+          - binding_json
+          variable: tool_binding_json
+        - value_selector:
+          - entry_resolver
+          - call_hash
+          variable: call_hash
+        - value_selector:
+          - tool_production_director
+          - local_block
+          variable: tool_local_block
+        - value_selector:
+          - tool_production_director
+          - artifact_status
+          variable: tool_artifact_status
+        - value_selector:
+          - tool_production_director
+          - user_delivery_status
+          variable: tool_user_delivery_status
+        - value_selector:
+          - tool_production_director
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_production_director
+          - recovery_used
+          variable: tool_recovery_used
+      height: 100
+      id: fin_production_director
+      position:
+        x: 1300
+        y: 880
+      positionAbsolute:
+        x: 1300
+        y: 880
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: PRODUCTION_DIRECTOR 结束
+        outputs:
+        - value_selector:
+          - fin_production_director
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - fin_production_director
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_production_director
+          - artifact
+          variable: artifact
+        - value_selector:
+          - fin_production_director
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - fin_production_director
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - fin_production_director
+          - seam_trace_json
+          variable: seam_trace_json
+        - value_selector:
+          - fin_production_director
+          - capabilities_skipped
+          variable: capabilities_skipped
+        selected: false
+        title: 结束｜PRODUCTION_DIRECTOR
+        type: end
+      height: 100
+      id: end_production_director
+      position:
+        x: 1620
+        y: 880
+      positionAbsolute:
+        x: 1620
+        y: 880
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 调用 PUBLISHING_PACKAGING 后继测试应用；失败进 fail-branch；一次基础设施重试。
+        error_strategy: fail-branch
+        provider_id: e34c2aaa-c8b1-4026-af07-a031e3b3d759
+        provider_name: e34c2aaa-c8b1-4026-af07-a031e3b3d759
+        provider_type: workflow
+        retry_config:
+          max_retries: 1
+          retry_enabled: true
+          retry_interval: 2000
+        selected: false
+        title: 调用 DIYU M4 v1.3 TEST · Publishing & Packaging
+        tool_configurations: {}
+        tool_label: diyu_m4_publishing_packaging
+        tool_name: diyu_m4_publishing_packaging
+        tool_node_version: '2'
+        tool_parameters:
+          capability_call:
+            type: mixed
+            value: '{{#1788000000001.capability_call#}}'
+          entry:
+            type: mixed
+            value: '{{#entry_resolver.entry_resolved#}}'
+          example_reference_requested:
+            type: mixed
+            value: '{{#1788000000001.example_reference_requested#}}'
+          professional_input:
+            type: mixed
+            value: '{{#1788000000001.professional_input#}}'
+          run_mode:
+            type: mixed
+            value: '{{#entry_resolver.run_mode#}}'
+        type: tool
+      height: 120
+      id: tool_publishing_packaging
+      position:
+        x: 960
+        y: 1080
+      positionAbsolute:
+        x: 960
+        y: 1080
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 接缝收口：记录实际调用了哪一个能力、跳过了哪些、失效集怎么算。\n# A3：INVALIDATED = changed_bindings ∪ transitive_dependents ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved, run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\",\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\",\n        \"completeness_guard\": guard,\n    }\n\n    # ── CL31-01②：本终止分支的用户正文不得为空 ──────────────────────────\n    # 子应用的 delivery_finalize 已保证非空；但接缝不得依赖上游承诺，\n    # 一旦读回空值必须自己兜底，并且**不得**把技术执行完成冒充业务交付成功。\n    ud = (tool_user_delivery or \"\").strip()\n    outcome = str(tool_delivery_outcome or \"\").strip().upper() or \"UNKNOWN\"\n    if not ud:\n        ud = (\n            \"这一次没有拿到可以给你看的结果。\\n\\n\"\n            \"内部这一步跑完了，但回到我这里时正文是空的，我没有可以转述的内容，\"\n            \"也不会替它补一份看起来像结果的东西。\\n\\n\"\n            \"**这不算一次成功交付**——请不要把这段空白理解成「没有结论」，\"\n            \"而是这一轮的结果没有正常传回来。\\n\\n\"\n            \"你可以把同样的需求原样再提一次；如果第二次仍然这样，请把这次的情况反馈出来。\\n\\n\"\n            \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\n        )\n        outcome = \"NOT_DELIVERED\"\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-EMPTY-DELIVERY-\" + str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_EMPTY_USER_DELIVERY\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_TRANSPORT\",\n            \"precise_gap\": \"子能力返回的用户正文为空；接缝已兜底为非空失败说明，不冒充成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\": \"NOT_DELIVERED\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n        trace[\"completeness_guard\"][\"business_delivery_outcome\"] = \"NOT_DELIVERED\"\n        trace[\"completeness_guard\"][\"seam_empty_delivery_fallback_used\"] = True\n\n    return {\n        \"seam_trace_json\": json.dumps(trace, ensure_ascii=False, sort_keys=True),\n        \"capability_invoked\": capability_resolved,\n        \"capabilities_skipped\": skipped,\n        \"artifact\": tool_artifact or \"\",\n        \"user_delivery\": ud,\n        \"business_delivery_outcome\": outcome,\n        \"returns_json\": returns_out,\n        \"binding_json\": tool_binding_json or \"{}\",\n    }\n"
+        code_language: python3
+        desc: 接缝收口：登记实际调用/跳过、失效集，证明未暗跑上游。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          binding_json:
+            children: null
+            type: string
+          business_delivery_outcome:
+            children: null
+            type: string
+          capabilities_skipped:
+            children: null
+            type: array[string]
+          capability_invoked:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          seam_trace_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 接缝收口｜PUBLISHING_PACKAGING
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - capability_resolved
+          variable: capability_resolved
+        - value_selector:
+          - entry_resolver
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - entry_resolver
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+        - value_selector:
+          - tool_publishing_packaging
+          - artifact
+          variable: tool_artifact
+        - value_selector:
+          - tool_publishing_packaging
+          - user_delivery
+          variable: tool_user_delivery
+        - value_selector:
+          - tool_publishing_packaging
+          - returns_json
+          variable: tool_returns_json
+        - value_selector:
+          - tool_publishing_packaging
+          - binding_json
+          variable: tool_binding_json
+        - value_selector:
+          - entry_resolver
+          - call_hash
+          variable: call_hash
+        - value_selector:
+          - tool_publishing_packaging
+          - local_block
+          variable: tool_local_block
+        - value_selector:
+          - tool_publishing_packaging
+          - artifact_status
+          variable: tool_artifact_status
+        - value_selector:
+          - tool_publishing_packaging
+          - user_delivery_status
+          variable: tool_user_delivery_status
+        - value_selector:
+          - tool_publishing_packaging
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_publishing_packaging
+          - recovery_used
+          variable: tool_recovery_used
+      height: 100
+      id: fin_publishing_packaging
+      position:
+        x: 1300
+        y: 1080
+      positionAbsolute:
+        x: 1300
+        y: 1080
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: PUBLISHING_PACKAGING 结束
+        outputs:
+        - value_selector:
+          - fin_publishing_packaging
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - fin_publishing_packaging
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - fin_publishing_packaging
+          - artifact
+          variable: artifact
+        - value_selector:
+          - fin_publishing_packaging
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - fin_publishing_packaging
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - fin_publishing_packaging
+          - seam_trace_json
+          variable: seam_trace_json
+        - value_selector:
+          - fin_publishing_packaging
+          - capabilities_skipped
+          variable: capabilities_skipped
+        selected: false
+        title: 结束｜PUBLISHING_PACKAGING
+        type: end
+      height: 100
+      id: end_publishing_packaging
+      position:
+        x: 1620
+        y: 1080
+      positionAbsolute:
+        x: 1620
+        y: 1080
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 能力中文名映射是确定性的、不含业务判断；用于避免把内部能力标识写给用户。\nCAP_LABEL = {\n    \"MATRIX\": \"账号架构与诊断\",\n    \"CAMPAIGN\": \"单次经营任务策划\",\n    \"CONTENT_BRIEF\": \"内容任务判断\",\n    \"CREATIVE_SCRIPT\": \"创意与脚本\",\n    \"PRODUCTION_DIRECTOR\": \"拍摄执行方案\",\n    \"PUBLISHING_PACKAGING\": \"发布包装\",\n}\n\n\ndef main(route, derivation):\n    key = (route or \"\").strip().upper()\n    label = CAP_LABEL.get(key, \"这一步\")\n    user_text = (\n        \"这一次没有把结果做出来。\\n\\n\"\n        \"「%s」这一步在运行中没有跑通，所以这一轮没有产出可用的结论。\"\n        \"**这不算一次成功交付**——我也没有替它编一份看起来像结果的东西给你。\\n\\n\"\n        \"这不是你给的信息不够，你不需要重新整理一遍需求。\\n\\n\"\n        \"你现在可以做的是：把同样的需求原样再提一次。\"\n        \"如果第二次还是这样，说明这条路上有需要修的问题，请把这次的情况反馈出来。\\n\\n\"\n        \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\" % label\n    )\n    ret = {\n        \"return_id\": \"M4-RET-TOOL-CALL-FAILED-\" + (key or \"UNKNOWN\"),\n        \"source\": \"SEAM_TOOL_FAIL\",\n        \"highest_damaged_layer\": \"CAPABILITY_APP_EXECUTION\",\n        \"precise_gap\": \"能力应用调用失败；这是执行失败，不是业务输入不足，也不是空结果\",\n        \"affected_objects\": [\"仅本次 %s 调用及其真实依赖分支\" % (key or \"UNKNOWN\")],\n        \"proposed_disposition\": \"ESCALATE\",\n        \"needs_user_decision\": True,\n        \"downstream_stale\": [\"仅真实依赖本次 %s 结论的下游项\" % (key or \"UNKNOWN\")],\n        \"parse_status\": \"NOT_DELIVERED\",\n    }\n    return {\n        \"failure_kind\": \"TOOL_CALL_FAILED\",\n        \"note\": (\"能力应用调用失败。这是执行失败，不是业务不足：\"\n                 \"不得伪装成 INPUT_INSUFFICIENT，也不得伪装成空结果。\"),\n        \"capability\": route,\n        \"derivation\": derivation,\n        \"fabricated_artifact_produced\": \"false\",\n        \"user_delivery\": user_text,\n        \"business_delivery_outcome\": \"NOT_DELIVERED\",\n        \"returns_json\": json.dumps([ret], ensure_ascii=False),\n    }\n"
+        code_language: python3
+        desc: Tool 调用失败：如实标记为执行失败，不伪装成业务不足或空结果；并向用户返回非空自然语言说明（CL31-01/02）。
+        outputs:
+          business_delivery_outcome:
+            children: null
+            type: string
+          capability:
+            children: null
+            type: string
+          derivation:
+            children: null
+            type: string
+          fabricated_artifact_produced:
+            children: null
+            type: string
+          failure_kind:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 执行失败
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - route
+          variable: route
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+      height: 100
+      id: seam_tool_fail
+      position:
+        x: 1300
+        y: 1320
+      positionAbsolute:
+        x: 1300
+        y: 1320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 执行失败结束
+        outputs:
+        - value_selector:
+          - seam_tool_fail
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - seam_tool_fail
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - seam_tool_fail
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - seam_tool_fail
+          - failure_kind
+          variable: failure_kind
+        - value_selector:
+          - seam_tool_fail
+          - note
+          variable: note
+        - value_selector:
+          - seam_tool_fail
+          - capability
+          variable: capability
+        - value_selector:
+          - seam_tool_fail
+          - fabricated_artifact_produced
+          variable: fabricated_artifact_produced
+        selected: false
+        title: 结束｜执行失败
+        type: end
+      height: 100
+      id: end_tool_fail
+      position:
+        x: 1620
+        y: 1320
+      positionAbsolute:
+        x: 1620
+        y: 1320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n\ndef main(route, derivation):\n    key = (route or \"\").strip().upper()\n    user_text = (\n        \"这一次我没有往下做。\\n\\n\"\n        \"你要的这件事不在我这一层能处理的范围里。我能做的是这六件：\"\n        \"账号架构与诊断、单次经营任务策划、内容任务判断、创意与脚本、拍摄执行方案、发布包装。\\n\\n\"\n        \"**这不算一次成功交付**——我没有硬凑一个看起来相关的结果给你，\"\n        \"也不替你决定该做上面哪一件，那不是我该替你拿的主意。\\n\\n\"\n        \"你可以直接说明这次想解决的是上面哪一件；\"\n        \"如果都不是，把你想拿到的结果说清楚，我再看接不接得住。\"\n    )\n    ret = {\n        \"return_id\": \"M4-RET-UNSUPPORTED-\" + (key or \"UNKNOWN\"),\n        \"source\": \"SEAM_UNSUPPORTED\",\n        \"highest_damaged_layer\": \"CAPABILITY_SELECTION\",\n        \"precise_gap\": \"能力调用意图不在本接缝支持的六项能力内；本接缝不代做能力选择\",\n        \"affected_objects\": [\"仅本次调用意图\"],\n        \"proposed_disposition\": \"ESCALATE\",\n        \"needs_user_decision\": True,\n        \"downstream_stale\": [],\n        \"parse_status\": \"NOT_DELIVERED\",\n    }\n    return {\n        \"note\": (\"capability 不在 M4 接缝支持的六项能力内。\"\n                 \"M4 不代做能力选择——那是 M1 的职责；本接缝也不建第二套路由。\"),\n        \"capability\": route,\n        \"derivation\": derivation,\n        \"user_delivery\": user_text,\n        \"business_delivery_outcome\": \"NOT_DELIVERED\",\n        \"returns_json\": json.dumps([ret], ensure_ascii=False),\n    }\n"
+        code_language: python3
+        desc: 不支持的能力调用意图：如实拒绝，不代做 M1 的能力选择；并向用户返回非空自然语言说明（CL31-01）。
+        outputs:
+          business_delivery_outcome:
+            children: null
+            type: string
+          capability:
+            children: null
+            type: string
+          derivation:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+        selected: false
+        title: 不支持的能力
+        type: code
+        variables:
+        - value_selector:
+          - entry_resolver
+          - route
+          variable: route
+        - value_selector:
+          - entry_resolver
+          - derivation
+          variable: derivation
+      height: 100
+      id: unsupported
+      position:
+        x: 960
+        y: 1320
+      positionAbsolute:
+        x: 960
+        y: 1320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 不支持结束
+        outputs:
+        - value_selector:
+          - unsupported
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - unsupported
+          - business_delivery_outcome
+          variable: business_delivery_outcome
+        - value_selector:
+          - unsupported
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - unsupported
+          - note
+          variable: note
+        - value_selector:
+          - unsupported
+          - capability
+          variable: capability
+        selected: false
+        title: 结束｜不支持
+        type: end
+      height: 100
+      id: end_unsupported
+      position:
+        x: 1300
+        y: 1440
+      positionAbsolute:
+        x: 1300
+        y: 1440
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.4
