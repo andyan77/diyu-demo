@@ -371,11 +371,35 @@
       "own_unit": "unit_07",
       "forbidden_hits": [],
       "isolation_verdict": "CLEAN"
+    },
+    "closeout-reviewer-v12": {
+      "role": "独立收口 Reviewer（EP-09 / AC-19）",
+      "transcript": "a9b181bf8201bbc4d.output",
+      "tool_use_count": 69,
+      "isolation_applicability": "NOT_APPLICABLE",
+      "applicability_basis": "M3_INDEPENDENT_REVIEWER_RUBRIC_FROZEN_v1.0.md 在它开跑之前即授权其通读全部材料（含 Checkpoint、验收判据、REBIND 件、判定件、证据目录、git 历史）。本角色的判据就是找声明与证据的落差，因此不存在'被禁读且确实未读'的文件清单。适用性在运行前由权威依据定，不是失败后追溯填写。",
+      "what_is_still_mechanically_checked": "它有没有写过 M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md 之外的任何仓库文件。",
+      "repo_writes_outside_own_file": [],
+      "mutating_bash_commands": [],
+      "write_scope_verdict": "CLEAN",
+      "corroboration": "Reviewer 交付后 `git status --short` 只有一条 `?? M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md`，与本项一致。",
+      "checker_false_positive_families_fixed": [
+        "把裸 `cat X`（读）当成写 —— 31 条全假阳性",
+        "`git merge-base` / `git branch --show-current` 被 `git merge` / `git branch` 词干误命中",
+        "heredoc 与 `python3 -c` 正文里的 `>` `>=` 是比较号，不是重定向 —— 与判定者扫描器第 3、4 轮修过的两次同类",
+        "`echo \"a -> b\"` 里的 `->` 被当成重定向"
+      ],
+      "checker_note": "本核验器与判定者扫描器一样，是逐次被假阳性打磨出来的；上面四类已写死为判据。它**只能**证明'没有写过自己那份文件之外的仓库文件'，不能证明判定内容正确——内容正确与否由 Reviewer 自己的复算和任何人的重跑决定。"
     }
   },
   "summary": {
-    "total": 40,
+    "total": 41,
     "violations": [],
-    "transcript_missing": []
+    "transcript_missing": [],
+    "isolation_verified": 40,
+    "isolation_not_applicable": [
+      "closeout-reviewer-v12"
+    ],
+    "note": "41 = 40 名受隔离约束的判定者（全部 CLEAN）+ 1 名按 Rubric 授权通读全部材料的独立收口 Reviewer（隔离性 NOT_APPLICABLE，另核写入范围）。"
   }
 }
