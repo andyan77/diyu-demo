@@ -125,20 +125,20 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 
 ```text
 进度        IN_PROGRESS（本合同不授权终态；本轮不输出任何终态词）
-HEAD        见 git；本地领先远端，收口报告提交后推送
+HEAD        e95ed04（已推送，本地 == 远端）
 状态真源     account-operations/evidence/ep27-ac-recompute-v14/AC_STATE_v14.json
 Checkpoint  M3_CHECKPOINT_ROUND_8.md
 候选        M3 载体 v1.4.2 · Dify m3-cand-v1.4.2 · 图 3bc0950b…
 实测包       v1.0 / v1.1 均 STALE；v1.2 本轮不生成（PAUSE 第 8 条）
 ```
 
-**AC 汇总**（按绑定计，共 27 个绑定）：成立 8 · 部分成立 1 · `NOT_VERIFIED` 18。
+**AC 汇总**（按绑定计，共 27 个绑定）：成立 9 · `NOT_VERIFIED` 18。
 
 **关键区分**：18 个 `NOT_VERIFIED` 里绝大多数**不是证据缺失，是证据齐备但独立判定被中止**。
 行为 49 例、纵向 12 步、保真 9 次、A/B 12 份 + 36 份冻结提示词全部已落盘，
 **判定不需要任何新的 DeepSeek 调用**。
 
-**成立的 8 个绑定全部确定性可复算**，没有一个依赖模型判断，也没有一个由
+**成立的 9 个绑定全部确定性可复算**，没有一个依赖模型判断，也没有一个由
 `workflow succeeded` 推出。
 
 **本轮查实、根因在执行侧的四条缺陷**：`DD-1` 补齐骨架不含新增位那一行（8 例纯误拒）；

@@ -2,6 +2,7 @@
 
 - `task_id`：`DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001`（不变，非 NEW_TASK）
 - 进度：**`IN_PROGRESS`**。本合同不授权终态，本文件不输出任何终态词
+- 远端：`task/m3-account-content-operator-v1` 已推送，本地 `HEAD` == 远端 `HEAD`
 - 授权事件：Founder `CONTINUE_TASK`（2026-08-27，八条）→ Founder `PAUSE_NEW_MODEL_CALLS`（同日，九条）
 - 候选：`M3 载体 v1.4.2`，Dify App `b7fb5b1a-9278-426c-bb8a-f9f288639548`，已发布版本 `m3-cand-v1.4.2`，图哈希 `3bc0950b500af9b5dc984106edbe64eb0e733dbd733f29c96666db896a8a73a9`
 - 本文件按 `PAUSE_NEW_MODEL_CALLS` 九条逐条作答，**全程零模型调用**
@@ -99,11 +100,10 @@ account-operations/tools/rebind005/impact_surface_v14.py                   A3 �
 
 | 状态 | 数量 |
 |---|---|
-| 成立 | 8 |
-| 部分成立 | 1 |
+| 成立 | 9 |
 | `NOT_VERIFIED` | 18 |
 
-**成立的 8 个绑定，全部是确定性可复算的，没有一个依赖模型判断**：
+**成立的 9 个绑定，全部是确定性可复算的，没有一个依赖模型判断**：
 
 | 绑定 | 依据 |
 |---|---|
@@ -114,13 +114,13 @@ account-operations/tools/rebind005/impact_surface_v14.py                   A3 �
 | `AC-16` 系统提示词全文 | 从 **publish 端点**（非草稿）读回全文 23317 字符落盘，与 `SKILL.md` + 图里那行占位符**逐字节相等**；`SKILL.md` 工作区哈希 == `git HEAD` 哈希 |
 | `AC-16` 浏览器画布 | chromium + 自写 CDP over WebSocket，真实登录态打开画布，从**渲染出来的 DOM** 数出 7 节点 6 边、七个标题齐、无 `http_request`／`tool` 节点；点开 LLM 节点确认面板上挂着本轮新加的判据原文；两张截图带 sha256 |
 
-**`AC-00` 部分成立**：绑定半全部实测落盘；远端半未闭合（本地领先远端 7 个提交）。
+**`AC-00` 成立**：绑定半全部实测落盘；远端半在本次收口提交后闭合——已推送，本地 `HEAD` == 远端 `HEAD`，可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验。
 
 ### 逐条（由真源渲染，`--check` 机械核对两处呈现一致）
 
 | AC | 当前状态 | 依据 | 还差什么 |
 |---|---|---|---|
-| M3-AC-00 | 部分成立 | 绑定半成立且为实测非自述：候选 v1.4.2 的 SKILL/四份闸门源码/参考文件哈希由 CANDIDATE_FREEZE_v1.4 记录；系统提示词从 **publish 端点**读回全文并与 SKILL.md 逐字节相等（sha256 76d51208…）；Dify App、已发布版本名 m3-cand-v1.4.2、图哈希 3bc0950b… 落盘。任务身份、合同哈希、分支/worktree 全程未变，非 NEW_TASK | 远端半未闭合：本地领先远端 7 个提交，本轮尚未推送（收口报告完成后推） |
+| M3-AC-00 | 成立 | 绑定半成立且为实测非自述：候选 v1.4.2 的 SKILL/四份闸门源码/参考文件哈希由 CANDIDATE_FREEZE_v1.4 记录；系统提示词从 **publish 端点**读回全文并与 SKILL.md 逐字节相等（sha256 76d51208…）；Dify App、已发布版本名 m3-cand-v1.4.2、图哈希 3bc0950b… 落盘。任务身份、合同哈希、分支/worktree 全程未变，非 NEW_TASK。远端半本次收口后闭合：已推送，本地 HEAD == 远端 HEAD（`e95ed04`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验 | — |
 | M3-AC-01 | ①②责任边界（结构 + 反搜）：`成立`<br>③消融门 B vs B′：`NOT_VERIFIED` | ①② 责任反搜 12 条确定性测试通过；结构反搜对 **v1.4.2 已发布图**重跑，四类行为标签命中 0、落在结构位 0（ep25）。③ 需要盲评揭盲才能推导，本轮 36 名盲评者被中止、0 份判定，`unblind_v5.py` 未运行 | ③ 需要一次完整盲评 + 揭盲；判定者与揭盲脚本均已冻结待跑 |
 | M3-AC-02 | `NOT_VERIFIED` | 行为 ECC 本轮 49 例运行齐备（B02-1/2/2P/3/4 等在列），但**冻结件要求由未参与实现者判定**，本轮判定者被中止、无判定书。运行成功不等于验收通过 | 行为 ECC 独立判定 |
 | M3-AC-03 | `NOT_VERIFIED` | 同上：B03-1…8 + N2 + N3 十例运行齐备，无独立判定 | 行为 ECC 独立判定（含八变体两两至少两轴实质差异的逐对核对） |
@@ -140,7 +140,7 @@ account-operations/tools/rebind005/impact_surface_v14.py                   A3 �
 | M3-AC-17 | `NOT_VERIFIED` | 纵向 12/12 步运行齐备且投影链完整（本轮持续位链真正建立起来：E02 起 3 位、E03 起 1 位延续到 E10）。但整体判定需要独立判定者，本轮未产出。**已知会进入判定输入的机械事实**：E07/E08 两步被系统拒收，两例均为 D-3 真检测（补齐节点代写 POS 行），在 v1.3 下会被放行并承载为新基线 | 纵向 ECC 独立判定 |
 | M3-AC-18 | `NOT_VERIFIED` | A/B 四臂 12 份输出齐备、零泄漏、盲评包已生成（12 个不透明单元、36 份提示词由单一模板生成并当场核验唯一 1 种形态、归一后 sha256 3e928d39…、落盘冻结）。36 名盲评者被中止、0 份判定，`unblind_v5.py`（含四道预冻结闸）未运行。**没有揭盲就没有 AC-18 的任何结论**——不得由执行侧读封存映射代替 | 36 份盲评 + 揭盲推导 |
 | M3-AC-19 | `NOT_VERIFIED` | Qwen 半 NOT_APPLICABLE（Founder 指示，运行前判定，未变）。本轮判定者隔离核验未跑（无判定者执行记录可核）；独立收口审查未做 | 判定者隔离核验 + 独立收口审查（冻结 Rubric R-1…R-7 未改，可直接用） |
-| M3-AC-20 | `NOT_VERIFIED` | 本轮**按 Founder PAUSE_NEW_MODEL_CALLS 第 8 条不生成新的 Founder 实测包、不请求产品接受**。远端未推送（本地领先 7 个提交）。回滚演练与证据索引沿用第 7 轮记录，未因本轮变化重做 | 远端推送；其余各项待技术验收闭合后再谈 |
+| M3-AC-20 | `NOT_VERIFIED` | 本轮**按 Founder PAUSE_NEW_MODEL_CALLS 第 8 条不生成新的 Founder 实测包、不请求产品接受**。远端已推送，本地 HEAD == 远端 HEAD（`e95ed04`）。回滚演练与证据索引沿用第 7 轮记录，未因本轮变化重做 | Founder 产品接受（本轮按 PAUSE 第 8 条不请求）；其余各项待技术验收闭合 |
 
 **18 个 `NOT_VERIFIED`，绝大多数不是证据缺失，是证据齐备但判定被中止。** 这两件事必须分开记，
 否则下一轮会误以为需要重跑取证。不需要任何新的 DeepSeek 调用就能判的，见 §8。

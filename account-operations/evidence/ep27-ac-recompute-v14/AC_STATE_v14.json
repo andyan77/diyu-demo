@@ -20,9 +20,9 @@
   "acs": [
     {
       "id": "M3-AC-00",
-      "state": "部分成立",
-      "basis": "绑定半成立且为实测非自述：候选 v1.4.2 的 SKILL/四份闸门源码/参考文件哈希由 CANDIDATE_FREEZE_v1.4 记录；系统提示词从 **publish 端点**读回全文并与 SKILL.md 逐字节相等（sha256 76d51208…）；Dify App、已发布版本名 m3-cand-v1.4.2、图哈希 3bc0950b… 落盘。任务身份、合同哈希、分支/worktree 全程未变，非 NEW_TASK",
-      "gap": "远端半未闭合：本地领先远端 7 个提交，本轮尚未推送（收口报告完成后推）"
+      "state": "成立",
+      "basis": "绑定半成立且为实测非自述：候选 v1.4.2 的 SKILL/四份闸门源码/参考文件哈希由 CANDIDATE_FREEZE_v1.4 记录；系统提示词从 **publish 端点**读回全文并与 SKILL.md 逐字节相等（sha256 76d51208…）；Dify App、已发布版本名 m3-cand-v1.4.2、图哈希 3bc0950b… 落盘。任务身份、合同哈希、分支/worktree 全程未变，非 NEW_TASK。远端半本次收口后闭合：已推送，本地 HEAD == 远端 HEAD（`e95ed04`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验",
+      "gap": "—"
     },
     {
       "id": "M3-AC-01",
@@ -190,11 +190,11 @@
     {
       "id": "M3-AC-20",
       "state": "NOT_VERIFIED",
-      "basis": "本轮**按 Founder PAUSE_NEW_MODEL_CALLS 第 8 条不生成新的 Founder 实测包、不请求产品接受**。远端未推送（本地领先 7 个提交）。回滚演练与证据索引沿用第 7 轮记录，未因本轮变化重做",
-      "gap": "远端推送；其余各项待技术验收闭合后再谈"
+      "basis": "本轮**按 Founder PAUSE_NEW_MODEL_CALLS 第 8 条不生成新的 Founder 实测包、不请求产品接受**。远端已推送，本地 HEAD == 远端 HEAD（`e95ed04`）。回滚演练与证据索引沿用第 7 轮记录，未因本轮变化重做",
+      "gap": "Founder 产品接受（本轮按 PAUSE 第 8 条不请求）；其余各项待技术验收闭合"
     }
   ],
-  "tally_note": "按绑定计：成立 8、部分成立 1、NOT_VERIFIED 18（共 27 个绑定，因为 AC-01／AC-05／AC-12／AC-13／AC-16 五条按绑定分列）。NOT_VERIFIED 的绝大多数**不是证据缺失，而是证据齐备但独立判定被中止**——这两件事必须分开记，否则下一轮会误以为需要重跑取证。",
+  "tally_note": "按绑定计：成立 9、NOT_VERIFIED 18（共 27 个绑定，AC-01／AC-05／AC-12／AC-13／AC-16 五条按绑定分列）。NOT_VERIFIED 的绝大多数**不是证据缺失，而是证据齐备但独立判定被中止**——这两件事必须分开记，否则下一轮会误以为需要重跑取证。",
   "what_is_ready_to_judge_without_new_runs": [
     "行为 ECC：49 例运行记录 + Oracle v2.0（哈希未变）齐备，判定者 allow-list 与摘录已生成",
     "纵向 ECC：12 步运行 + 逐步投影齐备",
@@ -204,8 +204,7 @@
   ],
   "tally": {
     "按绑定计（分列的每个绑定各算一条）": {
-      "部分成立": 1,
-      "成立": 8,
+      "成立": 9,
       "NOT_VERIFIED": 18
     },
     "按卡计": {
