@@ -1,0 +1,524 @@
+handoff: M4 → M5 接入映射
+task_id: V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001
+scope: M5_INTEGRATION_HANDOFF
+m5_engineering_execution_started: false
+founder_natural_entry:
+  application_name: DIYU M4 v1.3 TEST · Founder Canvas
+  app_id: f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8
+  workflow_id: 61c4ce01-8924-4330-90ef-d9d1dd78b5ff
+  mode: advanced-chat
+  published_status: true
+  how_to_call: 服务 API POST /v1/chat-messages（advanced-chat），字段 query 传自然语言
+  downstream_binding: DIYU M4 v1.3 TEST · Capability Seam
+  smoke_run_id: 547081e8-af5d-4e83-b9e5-f58519d59219
+  smoke_test_input: 就这一条内容，帮我出内容任务判断（Content Brief）。素材是苏禾的三组试穿记录：三处偏挤，去掉马甲正式感掉一档。现拍，单人手机，半天，发在序里集品牌号。
+  smoke_test_output: '这一步我还差一样东西才能往下判断：
+
+
+    这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）
+
+
+    只补这一项就够了，其他已经给过的内容不用再说一遍。
+
+    这一轮里不依赖这一步的其他事情不受影响，可以照常继续。'
+  e2e_reached_capability_seam: true
+  conversation_id: eed9675f-ecd3-46e2-8ba4-ce2c3309048e
+  note: Canvas 是 advanced-chat；能力分支需 M1 意图层攒够业务状态后才触发，首轮通常先走自然对话，属设计行为。
+capability_seam:
+  application_name: DIYU M4 v1.3 TEST · Capability Seam
+  app_id: de0cb1e9-2af8-415a-9762-31b6cf348c22
+  workflow_id: 4c5e2bab-9a4b-47f0-8ab0-1b844df4bb9d
+  published_status: true
+  tool_name: diyu_m4_capability_seam
+  tool_provider_id: 2daa2d27-4305-4d24-95ec-3cb424eaeb2f
+  upstream_binding: DIYU M4 v1.3 TEST · Founder Canvas (tool_seam)
+  downstream_binding: 六个专业能力应用，按 capability 分派，一次只调一个
+  how_to_call: 服务 API POST /v1/workflows/run
+  inputs:
+  - variable: capability
+    required: true
+    type: text-input
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_matrix:
+    - user_delivery
+    - business_delivery_outcome
+    - artifact
+    - returns_json
+    - binding_json
+    - seam_trace_json
+    - capabilities_skipped
+    end_campaign:
+    - user_delivery
+    - business_delivery_outcome
+    - artifact
+    - returns_json
+    - binding_json
+    - seam_trace_json
+    - capabilities_skipped
+    end_content_brief:
+    - user_delivery
+    - business_delivery_outcome
+    - artifact
+    - returns_json
+    - binding_json
+    - seam_trace_json
+    - capabilities_skipped
+    end_creative_script:
+    - user_delivery
+    - business_delivery_outcome
+    - artifact
+    - returns_json
+    - binding_json
+    - seam_trace_json
+    - capabilities_skipped
+    end_production_director:
+    - user_delivery
+    - business_delivery_outcome
+    - artifact
+    - returns_json
+    - binding_json
+    - seam_trace_json
+    - capabilities_skipped
+    end_publishing_packaging:
+    - user_delivery
+    - business_delivery_outcome
+    - artifact
+    - returns_json
+    - binding_json
+    - seam_trace_json
+    - capabilities_skipped
+    end_tool_fail:
+    - user_delivery
+    - business_delivery_outcome
+    - returns_json
+    - failure_kind
+    - note
+    - capability
+    - fabricated_artifact_produced
+    end_unsupported:
+    - user_delivery
+    - business_delivery_outcome
+    - returns_json
+    - note
+    - capability
+  smoke_run_id: 29296b15-d63a-4364-a1a0-2649bd74b273
+applications:
+- capability: MATRIX
+  application_name: DIYU M4 v1.3 TEST · Matrix Architect
+  new_app_id: d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3
+  new_workflow_id: 3a9e0d8b-8151-4922-acd7-0926a6af49fd
+  published_status: true
+  tool_name: diyu_m4_matrix
+  tool_provider_id: 36905561-5728-4581-93b0-09ea5baec97b
+  upstream_binding: DIYU M4 v1.3 TEST · Capability Seam (tool_matrix)
+  downstream_binding: 无（六个能力应用之间零调用边）
+  model_provider: langgenius/deepseek/deepseek
+  model_name: deepseek-v4-flash
+  smoke_run_id: b042ad51-686f-4ed5-8cad-170db50b80f8
+  inputs:
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: run_mode
+    required: false
+    type: text-input
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_ok:
+    - artifact
+    - user_delivery
+    - delivery_outcome
+    - recovery_used
+    - artifact_status
+    - user_delivery_status
+    - user_delivery_leaks
+    - returns_json
+    - returns_status
+    - returns_parse_note
+    - returns_raw
+    - local_block
+    - raw_preserved
+    - binding_json
+    - reference_projection
+    - reference_projection_text
+    - entry
+    - run_mode
+    - sufficiency_status
+    - goal_family
+    - conditionalized
+    end_component_return:
+    - user_delivery
+    - returns_json
+    - returns_status
+    - branch_result
+    - is_task_terminal_state
+    - triggers_downstream_invalidation
+    - single_question
+    - user_delivery_leaks
+    - fabricated_artifact_produced
+    - downstream_invoked
+    - missing
+- capability: CAMPAIGN
+  application_name: DIYU M4 v1.3 TEST · Campaign Orchestrator
+  new_app_id: cfd48281-d2e6-4f77-b4a6-32f0fca98f2b
+  new_workflow_id: 2da44fc7-09f0-4ed3-a000-addc641e077a
+  published_status: true
+  tool_name: diyu_m4_campaign
+  tool_provider_id: 0737d719-10c8-4799-8310-6579d20c86f1
+  upstream_binding: DIYU M4 v1.3 TEST · Capability Seam (tool_campaign)
+  downstream_binding: 无（六个能力应用之间零调用边）
+  model_provider: langgenius/deepseek/deepseek
+  model_name: deepseek-v4-flash
+  smoke_run_id: f99add34-0d25-4e8e-8927-4719d59c1c6f
+  inputs:
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: run_mode
+    required: false
+    type: text-input
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_ok:
+    - artifact
+    - user_delivery
+    - delivery_outcome
+    - recovery_used
+    - artifact_status
+    - user_delivery_status
+    - user_delivery_leaks
+    - returns_json
+    - returns_status
+    - returns_parse_note
+    - returns_raw
+    - local_block
+    - raw_preserved
+    - binding_json
+    - reference_projection
+    - reference_projection_text
+    - entry
+    - run_mode
+    - sufficiency_status
+    - goal_family
+    - conditionalized
+    end_component_return:
+    - user_delivery
+    - returns_json
+    - returns_status
+    - branch_result
+    - is_task_terminal_state
+    - triggers_downstream_invalidation
+    - single_question
+    - user_delivery_leaks
+    - fabricated_artifact_produced
+    - downstream_invoked
+    - missing
+- capability: CONTENT_BRIEF
+  application_name: DIYU M4 v1.3 TEST · Content Brief Architect
+  new_app_id: a3264c95-9b30-4ac8-833a-dc96ea8b7ee1
+  new_workflow_id: 7f7fe5d1-3217-43e6-a3ed-7450b64b070b
+  published_status: true
+  tool_name: diyu_m4_content_brief
+  tool_provider_id: ced38bed-a7d4-4058-8080-5aa2fd117ff8
+  upstream_binding: DIYU M4 v1.3 TEST · Capability Seam (tool_content_brief)
+  downstream_binding: 无（六个能力应用之间零调用边）
+  model_provider: langgenius/deepseek/deepseek
+  model_name: deepseek-v4-flash
+  smoke_run_id: 40f73dac-05bf-44ed-a733-f0024b3c3f7e
+  inputs:
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: run_mode
+    required: false
+    type: text-input
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_ok:
+    - artifact
+    - user_delivery
+    - delivery_outcome
+    - recovery_used
+    - artifact_status
+    - user_delivery_status
+    - user_delivery_leaks
+    - returns_json
+    - returns_status
+    - returns_parse_note
+    - returns_raw
+    - local_block
+    - raw_preserved
+    - binding_json
+    - reference_projection
+    - reference_projection_text
+    - entry
+    - run_mode
+    - sufficiency_status
+    - goal_family
+    - conditionalized
+    end_component_return:
+    - user_delivery
+    - returns_json
+    - returns_status
+    - branch_result
+    - is_task_terminal_state
+    - triggers_downstream_invalidation
+    - single_question
+    - user_delivery_leaks
+    - fabricated_artifact_produced
+    - downstream_invoked
+    - missing
+- capability: CREATIVE_SCRIPT
+  application_name: DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)
+  new_app_id: 8d518554-bfbc-4be0-8a57-3b1f04983edf
+  new_workflow_id: 3341b4de-e658-42a8-bc49-26fcf7e30bf7
+  published_status: true
+  tool_name: diyu_m4_creative_script
+  tool_provider_id: 08a225b4-268f-4eb8-80c1-66f8792da71f
+  upstream_binding: DIYU M4 v1.3 TEST · Capability Seam (tool_creative_script)
+  downstream_binding: 无（六个能力应用之间零调用边）
+  model_provider: langgenius/deepseek/deepseek
+  model_name: deepseek-v4-flash
+  smoke_run_id: 9ece7eda-39eb-4a27-b0bc-a2b8312bff97
+  inputs:
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: run_mode
+    required: false
+    type: text-input
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_ok:
+    - artifact
+    - user_delivery
+    - delivery_outcome
+    - recovery_used
+    - artifact_status
+    - user_delivery_status
+    - user_delivery_leaks
+    - returns_json
+    - returns_status
+    - returns_parse_note
+    - returns_raw
+    - local_block
+    - raw_preserved
+    - binding_json
+    - reference_projection
+    - reference_projection_text
+    - entry
+    - run_mode
+    - sufficiency_status
+    - goal_family
+    - conditionalized
+    end_component_return:
+    - user_delivery
+    - returns_json
+    - returns_status
+    - branch_result
+    - is_task_terminal_state
+    - triggers_downstream_invalidation
+    - single_question
+    - user_delivery_leaks
+    - fabricated_artifact_produced
+    - downstream_invoked
+    - missing
+- capability: PRODUCTION_DIRECTOR
+  application_name: DIYU M4 v1.3 TEST · Production Director
+  new_app_id: 57ebc138-ed9e-4202-bce2-38e44da0ec1d
+  new_workflow_id: 9a81b5c9-3773-44a6-af19-6255f8f30dce
+  published_status: true
+  tool_name: diyu_m4_production_director
+  tool_provider_id: e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0
+  upstream_binding: DIYU M4 v1.3 TEST · Capability Seam (tool_production_director)
+  downstream_binding: 无（六个能力应用之间零调用边）
+  model_provider: langgenius/deepseek/deepseek
+  model_name: deepseek-v4-flash
+  smoke_run_id: 056e6eb2-5485-465b-b7e8-5d13291b9316
+  inputs:
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: run_mode
+    required: false
+    type: text-input
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_ok:
+    - artifact
+    - user_delivery
+    - delivery_outcome
+    - recovery_used
+    - artifact_status
+    - user_delivery_status
+    - user_delivery_leaks
+    - returns_json
+    - returns_status
+    - returns_parse_note
+    - returns_raw
+    - local_block
+    - raw_preserved
+    - binding_json
+    - reference_projection
+    - reference_projection_text
+    - entry
+    - run_mode
+    - sufficiency_status
+    - goal_family
+    - conditionalized
+    end_component_return:
+    - user_delivery
+    - returns_json
+    - returns_status
+    - branch_result
+    - is_task_terminal_state
+    - triggers_downstream_invalidation
+    - single_question
+    - user_delivery_leaks
+    - fabricated_artifact_produced
+    - downstream_invoked
+    - missing
+- capability: PUBLISHING_PACKAGING
+  application_name: DIYU M4 v1.3 TEST · Publishing & Packaging
+  new_app_id: 10056fcf-9237-4889-a3e3-81e3a695cae0
+  new_workflow_id: d838536b-6779-4d1e-951f-4cdabffa50d7
+  published_status: true
+  tool_name: diyu_m4_publishing_packaging
+  tool_provider_id: e34c2aaa-c8b1-4026-af07-a031e3b3d759
+  upstream_binding: DIYU M4 v1.3 TEST · Capability Seam (tool_publishing_packaging)
+  downstream_binding: 无（六个能力应用之间零调用边）
+  model_provider: langgenius/deepseek/deepseek
+  model_name: deepseek-v4-flash
+  smoke_run_id: afcbc484-0a80-4669-b635-6321dc11b674
+  inputs:
+  - variable: capability_call
+    required: true
+    type: paragraph
+  - variable: professional_input
+    required: true
+    type: paragraph
+  - variable: entry
+    required: false
+    type: text-input
+  - variable: run_mode
+    required: false
+    type: text-input
+  - variable: example_reference_requested
+    required: false
+    type: text-input
+  end_branches:
+    end_ok:
+    - artifact
+    - user_delivery
+    - delivery_outcome
+    - recovery_used
+    - artifact_status
+    - user_delivery_status
+    - user_delivery_leaks
+    - returns_json
+    - returns_status
+    - returns_parse_note
+    - returns_raw
+    - local_block
+    - raw_preserved
+    - binding_json
+    - reference_projection
+    - reference_projection_text
+    - entry
+    - run_mode
+    - sufficiency_status
+    - goal_family
+    - conditionalized
+    end_component_return:
+    - user_delivery
+    - returns_json
+    - returns_status
+    - branch_result
+    - is_task_terminal_state
+    - triggers_downstream_invalidation
+    - single_question
+    - user_delivery_leaks
+    - fabricated_artifact_produced
+    - downstream_invoked
+    - missing
+field_contract_for_m5:
+  入口字段:
+    capability: 六项能力之一：MATRIX / CAMPAIGN / CONTENT_BRIEF / CREATIVE_SCRIPT / PRODUCTION_DIRECTOR / PUBLISHING_PACKAGING
+    capability_call: 统一业务能力外壳（不强制物理字段名）
+    professional_input: 本能力专业输入
+    entry: 可留空，由确定性规则推导
+    example_reference_requested: YES / NO
+  出口字段:
+    user_delivery: 给用户看的自然语言正文。**所有终止分支都保证非空**，不含内部字段名、状态码或模型 thinking
+    artifact: 内部专业产出，与 user_delivery 分离，不直接交付用户
+    business_delivery_outcome: DELIVERED / DELIVERED_AFTER_RECOVERY / NOT_DELIVERED。**平台技术状态 succeeded 不代表业务交付成功，以此字段为准**
+    returns_json: 组件级 Return 数组，七项字段：return_id / source / highest_damaged_layer / precise_gap / affected_objects / proposed_disposition / needs_user_decision
+    seam_trace_json: 本次实际调用与跳过的能力、失效集
+    binding_json: 保真绑定记录
+  M5 必须遵守的语义:
+  - 一次调用只进入一个专业能力；六个能力应用之间零调用边，不得由 M5 拼成固定全链
+  - 读业务结果看 business_delivery_outcome，不要拿平台 status 当交付成功
+  - user_delivery 是唯一可以直接呈现给用户的字段；artifact 不得整份透出
+  - 组件级 Return 是本分支结果，不是整任务终态，不触发全局硬停
+restore_confirmation:
+  empty_user_delivery_count: 0
+  think_leak_count: 0
+  capability_smoke_all_ok: true
+  seam_smoke_ok: true
+  canvas_e2e_ok: true
+  model_provider_live:
+  - langgenius/deepseek/deepseek
+  - langgenius/tongyi/tongyi
+  fault_injection_objects: EVALUATION_ONLY_NOT_ROUTABLE（tool provider 已删除，官方链路不指向）
