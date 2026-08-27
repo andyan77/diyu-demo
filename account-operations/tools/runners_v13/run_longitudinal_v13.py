@@ -26,6 +26,10 @@ SKILL_DIR = os.path.join(WORKTREE, "account-operations/skills/operating-one-acco
 SERVICE_URL = "http://localhost/v1/workflows/run"
 APP_ID = "b7fb5b1a-9278-426c-bb8a-f9f288639548"
 
+# 闸门与投影的唯一真源是仓库里的 gate_v13/，不是 scratch 副本——
+# 上一轮出过一次「跑的和仓库里的不是同一份」，源头钉在仓库侧就不会再有。
+GATE_SRC = os.path.join(WORKTREE, "account-operations/tools/gate_v13")
+sys.path.insert(0, GATE_SRC)
 sys.path.insert(0, SCRATCH)
 sys.path.insert(0, V12)
 from manifest import build_refs  # noqa: E402
