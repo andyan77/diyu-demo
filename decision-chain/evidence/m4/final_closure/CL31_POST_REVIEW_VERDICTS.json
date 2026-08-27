@@ -1,0 +1,182 @@
+{
+  "record": "M4-CL31 独立 Reviewer 后的收口判定（唯一一次修复轮）",
+  "contract": "V1-M4-EVIDENCE-COLLECTION-v0.5",
+  "current_task_contract_hash": "8d73b4f157883eb422e6ae17ececcf87a64d98c6a51f35537b8446155fa85070",
+  "candidate_commit": "3bf324ec616a80f669e9764bf5dfc4f77f22c5b5",
+  "reviewer": {
+    "count": 1,
+    "context_isolated": true,
+    "read_only": true,
+    "write_permission": false,
+    "first_attempt_interrupted": true,
+    "first_attempt_note": "第一个 Reviewer 进程随会话中断，未产出任何审查结论，评审预算未被消耗；本记录对应的是那唯一一次正式评审。",
+    "blockers_raised": 4
+  },
+
+  "environment_incident": {
+    "id": "M4-ENV-001",
+    "severity": "CRITICAL",
+    "what": "承载全部 Runtime 证据、九个保护应用与已发布 M4 候选的 Dify 目标系统被整库重新初始化。",
+    "when_utc": "2026-08-27T21:38:31Z 数据目录被清空并 initdb；21:39:54Z 全新空集群就绪",
+    "relative_to_freeze": "冻结候选提交 3bf324ec 时间 2026-08-27T21:11:25Z，事故发生在其约 27 分钟后",
+    "independently_verified_by_executor": true,
+    "evidence": [
+      "docker logs docker-db_postgres-1：`database system is shut down` → `The files belonging to this database system will be owned by user \"postgres\"` → initdb → 21:39:54 ready",
+      "GET /console/api/setup → {\"step\":\"not_started\",\"setup_at\":null}",
+      "SELECT count(*)：apps=0 workflows=0 workflow_runs=0 accounts=0 tenants=0（schema 136 张表存在，是全新集群）",
+      "/home/faye/dify/docker/volumes/db/data/pgdata mtime = 2026-08-27 14:38 本地（=21:38 UTC）",
+      "docker ps：全部 Dify 容器同时显示 Up ~27 分钟，整栈重建",
+      "该卷目录下无任何备份、dump 或 sql 文件"
+    ],
+    "attribution": "不作归属判断。本执行会话对 Dify 只发出过 SELECT、Console 登录、import_dsl、publish 与 workflow tool 注册，未执行任何 down -v / rm / dropdb / initdb；但执行侧无法证明成因，只登记事实与后果。",
+    "consequences": [
+      "九个受保护应用不复存在——无法核验其零变化，也无权重建",
+      "本轮全部 Runtime 证据无法再向目标系统复核",
+      "两个隔离故障注入对象随整库消失，属于被销毁，**不是**按合同删除或隔离",
+      "CL31-08②『从目标系统读回并与冻结候选一致』结构上已不可能满足"
+    ],
+    "decision_required_from_founder": "重建 Dify 环境并重取 CL31-02/03/04/05⑧⑨/07/08，还是按 BLOCKED 收口。执行侧不替 Founder 定。"
+  },
+
+  "verdicts": {
+    "M4-CL31-01": {
+      "verdict": "PASS",
+      "flag": "CURRENT",
+      "basis": "静态图枚举 + 离线全分支驱动，不依赖目标系统",
+      "conjuncts": {"①": "PASS", "②": "PASS", "③": "PASS", "④": "PASS_WITH_QUALIFICATION", "⑤": "PASS"},
+      "④_qualification": "20 个 end 节点中 12 个（六子应用的 end_ok / end_component_return）没有字面名为 business_delivery_outcome 的输出变量，它们输出 delivery_outcome，由 fin_* 映射并在读回空正文时压成 NOT_DELIVERED。实质成立、字面不成立。原自评未带此限定，属夸大，已按 Reviewer 意见更正。Reviewer 判定此为命名实现偏好，未阻断。"
+    },
+    "M4-CL31-02": {
+      "verdict": "NOT_VERIFIED",
+      "reason": "INCONCLUSIVE",
+      "flag": "STALE",
+      "changed_from_self_assessment": "PASS → NOT_VERIFIED",
+      "why_changed": "接受 Reviewer 裁决。我原以『v0.5 只是判据载体，冲突时以 Prompt 合同为准』把⑤判 PASS，但我自己在 9122fbb 冻结的任务合同 V1_M4_FINAL_CLOSURE_TASK_CONTRACT_v1.0.yaml 里明写 ACCEPTANCE.oracle_ref 指向 v0.5——v0.5 就是被合同指定的冻结 Oracle，不是它的下位载体。我的免责论证被我自己冻结的合同推翻。且我既升级给规划侧、又替规划侧把结论填成 PASS——两者只能选一个。",
+      "conjuncts": {"①": "PASS", "②": "PASS", "③": "PASS", "④": "PASS",
+                    "⑤": "NOT_VERIFIED", "⑥": "PASS", "⑦": "PASS"},
+      "⑤_state": "冻结 Oracle 内部自相矛盾，待规划侧裁决",
+      "⑤_facts": {"skill_llm_per_child_run": [1, 1], "skill_llm_total": 2,
+                  "other_capability_tool_nodes_executed": [],
+                  "literal_v05_reading": "FAIL", "substantive_question": "没有重跑其他专业能力——事实层成立"},
+      "⑥_note": "Reviewer 指出我的判定器对⑥只断言 child_run_count<=2 并把 retry_config 写成硬编码字符串，未验证第二次运行确实是平台重试；结论由 Reviewer 另行核实成立，但我的取证方式不合格（器械短路）。",
+      "stale_reason": "①②③④⑥⑦ 依赖已销毁的目标系统运行记录，无法复核"
+    },
+    "M4-CL31-03": {
+      "verdict": "FAIL",
+      "flag": "STALE",
+      "conjuncts": {"①": "PASS", "②": "PASS", "③": "PASS", "④": "PASS", "⑤": "PASS",
+                    "⑥": "FAIL", "⑦": "NOT_VERIFIED", "⑧": "FAIL", "⑨": "PASS", "⑩": "PASS"},
+      "⑥_numbers": {"artifact_len": 468, "user_delivery_len": 444, "lcs": 23,
+                    "lcs_ratio": 0.0491, "len_ratio": 0.9487,
+                    "note": "LCS 半边通过（远非整份复制），长度半边不通过"},
+      "⑦_changed_from_self_assessment": "PASS → NOT_VERIFIED",
+      "⑦_why_changed": "接受 Reviewer 反驳。我的事实提取器只有数字正则、一张写死的时间词表与 17 个硬编码实体词；Reviewer 用只含虚构专名不含数字的构造文本实测得 extracted=[]，对『专有名词/商品名/地点』三类召回接近零。unsupported_fact_count==0 不足以支撑 PASS。NEG-C08 通过是因为反例里带了数字。",
+      "INJ-03_supplementary": {"len_ratio": 0.194, "lcs_ratio": 0.0041, "leaks": 0, "verdict": "八项 PASS"},
+      "not_self_relaxed": true
+    },
+    "M4-CL31-04": {
+      "verdict": "FAIL",
+      "flag": "STALE",
+      "conjuncts": {"①": "FAIL", "②": "PASS", "③": "PASS", "④": "NOT_VERIFIED", "⑤": "PASS"},
+      "①_fact": "CORE-1 四个冻结候选全部字面未命中。Reviewer 独立复核：语义完整在场，正文写的是『不是“衣服不够”的问题，而是“层数和场合没有分开”的问题』，被插入的引号与『和/与』一字之差卡掉。",
+      "④_changed_from_self_assessment": "PASS → NOT_VERIFIED（同 CL31-03⑦ 理由）",
+      "not_self_relaxed": true
+    },
+    "M4-CL31-05": {
+      "verdict": "NOT_VERIFIED",
+      "flag": "STALE",
+      "changed_from_self_assessment": "静态 PASS → 整条 NOT_VERIFIED",
+      "conjuncts": {"①": "PASS", "②": "PASS", "③": "PASS", "④": "PASS", "⑤": "PASS",
+                    "⑥": "PASS", "⑦": "PASS", "⑧": "NOT_VERIFIED", "⑨": "NOT_VERIFIED", "⑩": "PASS"},
+      "static_independently_recomputed_by_reviewer": true,
+      "static_facts": {"source_skills_identical": "6/6",
+                       "professional_prompt_identical": "6/6",
+                       "model_params_identical": "6/6",
+                       "only_changed_node_per_capability": "delivery_finalize",
+                       "seam_tool_to_tool_edges": 0,
+                       "skill_llm_inbound_edges": ["projection_record"],
+                       "recovery_llm_edges": {"in": ["projection_gate"], "out": ["delivery_finalize"]}},
+      "⑧⑨_reason": "代表性证据的复核依赖已销毁的目标系统运行记录",
+      "length_is_not_evidence": true
+    },
+    "M4-CL31-06": {
+      "verdict": "PASS",
+      "flag": "CURRENT",
+      "basis": "纯仓库内比对，不依赖目标系统；Reviewer 独立逐份哈希核实 6/6 未变",
+      "historical_preserved": {"AC31_④": "NOT_VERIFIED", "historical_AC31_⑤": "NOT_VERIFIED",
+                               "RB31_03_under_v0.4": "NOT_VERIFIED", "RB31_05_under_v0.4": "FAIL"},
+      "rewritten": false
+    },
+    "M4-CL31-07": {
+      "verdict": "FAIL",
+      "flag": "STALE",
+      "changed_from_self_assessment": "PASS → FAIL",
+      "conjuncts": {"①": "PASS", "②": "PASS", "③": "PASS", "④": "FAIL", "⑤": "PASS",
+                    "⑥": "NOT_VERIFIED", "⑦": "NOT_VERIFIED", "⑧": "NOT_VERIFIED",
+                    "⑨": "NOT_VERIFIED", "⑩": "NOT_VERIFIED", "⑪": "PASS"},
+      "④_reason": "九个受保护应用在目标系统中已不存在（M4-ENV-001）。取证当时为零变化，但当前状态无法成立，也无法复核。",
+      "⑥⑦⑧⑨⑩_reason": "10 次回归实跑记录随整库销毁，无法复核"
+    },
+    "M4-CL31-08": {
+      "verdict": "FAIL",
+      "flag": "CURRENT",
+      "conjuncts": {"①": "FAIL", "②": "FAIL", "③": "FAIL", "④": "PASS", "⑤": "PASS_AFTER_REPAIR",
+                    "⑥": "PASS", "⑦": "PASS", "⑧": "PASS", "⑨": "PASS_AFTER_REPAIR"},
+      "①②③_reason": "目标系统中已无任何应用可读回；两个注入对象随整库销毁，属被销毁而非按合同删除或隔离",
+      "⑤_repair": "Reviewer 阻断时本地领先远端 2 个提交；本修复轮已推送并核验本地与远端哈希相等",
+      "⑨_repair": "Reviewer 阻断时账本未记本轮任何内容；本修复轮已补记两次 Attempt、M4-FND-029、两个 EVAL 外部副作用与 M4-ENV-001",
+      "⑥_main": "origin/main = a7b810109f43a4bf500acc285baab477d96796e3，与开工现场观察值相同，未被改动",
+      "⑦_pr": "无 PR",
+      "⑧_no_fault_injection_residue": "正式 M4 的 8 份 DSL 中 M4_FAULT_DIRECTIVE / fault_injector / FAULT INJECTION 命中 0 次；生成器有哨兵硬断言（V5d/V6d）"
+    }
+  },
+
+  "reviewer_blockers": [
+    {"id": "BLK-1", "criterion_id": "M4-CL31-03（⑥⑧）", "accepted": true,
+     "disposition": "如实保留 FAIL，未自行放宽；判据缺陷 M4-FND-030 / M4-FND-031 交规划侧"},
+    {"id": "BLK-2", "criterion_id": "M4-CL31-04①", "accepted": true,
+     "disposition": "同上"},
+    {"id": "BLK-3", "criterion_id": "数据完整性 / 受保护资产（M4-ENV-001）", "accepted": true,
+     "disposition": "登记为环境事故，构成合格外部障碍；重建与否由 Founder 决定，执行侧不自行重建"},
+    {"id": "BLK-4", "criterion_id": "M4-CL31-08 ⑤⑨", "accepted": true,
+     "disposition": "本修复轮已修复：已推送远端并核验一致；账本已补记"}
+  ],
+
+  "repair_round": {
+    "budget": 1,
+    "used": 1,
+    "scope": "只处理有效阻断及其直接影响面",
+    "actions": [
+      "接受 Reviewer 三处降级：CL31-02 PASS→NOT_VERIFIED、CL31-03⑦ PASS→NOT_VERIFIED、CL31-04④ PASS→NOT_VERIFIED",
+      "接受 CL31-01④ 的限定说明",
+      "接受 CL31-05 整条降为 NOT_VERIFIED、CL31-07 降为 FAIL",
+      "按 A3 对全部依赖目标系统的判定加 STALE 旗标",
+      "补记账本（CL31-08⑨）",
+      "推送远端并核验一致（CL31-08⑤）"
+    ],
+    "not_done_and_why": {
+      "重取 Runtime 证据": "目标系统已销毁，重建九个保护应用与 48 个应用不在本 Prompt 授权范围（§5.2 只授权更新既有 8 个 M4 TEST 对象）",
+      "放宽任何冻结判据": "A1 跨域不覆盖 + A2 判据先于结果；验收判据域属规划侧",
+      "调短恢复正文以通过 ⑥ 的长度半边": "会牺牲必保内容且属于为凑数字牺牲交付质量，v1.5 §12 与 CL31-05 的 length_is_not_evidence 均禁止"
+    }
+  },
+
+  "escalate_to_planning_side": [
+    {"id": "M4-FND-027", "what": "CL31-02⑤ 与⑥在发生基础设施重试时互斥，冻结 Oracle 内部自相矛盾",
+     "suggested_options": ["改为『其他能力的 skill_llm 执行数 == 0』", "限定为『单次子应用运行内 skill_llm <= 1』"],
+     "executor_must_not_decide": true},
+    {"id": "M4-FND-030", "what": "CL31-03⑥ 的 80% 长度半边与本轮受命替换的 RB31-05④ 同型无判别力；对短 artifact 结构上不可满足"},
+    {"id": "M4-FND-031", "what": "CL31-04 必保内容用精确子串匹配中文自由文本，同义改写与标点插入即假阴性"},
+    {"id": "M4-FND-033", "what": "事实回查提取器对专有名词/商品名/地点召回接近零，需要可验证的判别力设计"},
+    {"id": "M4-ENV-001", "what": "Dify 目标系统被整库重建，重取证与否需要授权"}
+  ],
+
+  "task_final_status": "BLOCKED",
+  "partial_used": false,
+  "technical_all_pass": false,
+  "founder_risk_acceptance_written_as_technical_pass": false,
+  "historical_technical_results_preserved": true,
+  "next_stage_allowed": false,
+  "next_stage_scope": "NONE",
+  "m5_engineering_execution_authorized": false
+}
