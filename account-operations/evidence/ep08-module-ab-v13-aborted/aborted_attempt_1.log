@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/m3/ab/run_ab_v4.py", line 204, in <module>
+    main()
+  File "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/m3/ab/run_ab_v4.py", line 136, in main
+    recs = list(ex.map(one, jobs))
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 621, in result_iterator
+    yield _result_or_cancel(fs.pop())
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 319, in _result_or_cancel
+    return fut.result(timeout)
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 458, in result
+    return self.__get_result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/m3/ab/run_ab_v4.py", line 129, in one
+    with open(os.path.join(EVID, f"{cid}__{arm}.json"), "w", encoding="utf-8") as f:
+OSError: [Errno 30] Read-only file system: '/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/account-operations/evidence/ep08-module-ab-v13/FX-M3-HOLD-01__A.json'

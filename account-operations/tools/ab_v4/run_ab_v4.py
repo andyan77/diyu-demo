@@ -98,6 +98,19 @@ def main():
     arms, holdouts = spec["arms"], spec["holdouts"]
     os.makedirs(EVID, exist_ok=True)
 
+    # ---- 开跑前的写盘契约：先证明每一个落盘目标都写得进去，再花一次 API ----
+    # 第一次尝试跑完 12 次调用才在写盘那一行崩掉（沙箱下 worktree 只读），
+    # 12 份模型产出未落盘即丢失。这类失败必须发生在花钱之前，不是花完之后。
+    for probe_dir in (EVID, OUT_OF_REPO):
+        os.makedirs(probe_dir, exist_ok=True)
+        probe = os.path.join(probe_dir, ".write_probe")
+        try:
+            with open(probe, "w") as f:
+                f.write("ok")
+            os.remove(probe)
+        except OSError as e:
+            raise SystemExit(f"落盘目标不可写，未发起任何调用：{probe_dir}\n  {e}")
+
     jobs = [(h["fixture_id"], a) for h in holdouts for a in ("A", "Aplus", "B", "Bprime")]
 
     def one(job):
