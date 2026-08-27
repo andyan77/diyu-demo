@@ -108,11 +108,13 @@ def main():
           "需要真实外部副作用中断，v1.4 §8 明令本轮不制造。本轮新增的用户投影恢复路径"
           "在节点代码级已取证（DETERMINISTIC_NODE_VERIFIED，按既有等级不产生 criterion PASS），"
           "Runtime 级未观察到触发——11 次新运行模型均正常输出交付块标记。"),
-        C("⑤ 判据措辞冲突（M4-FND-013）",
-          "PASS" if not empties else "NOT_VERIFIED",
-          "原冲突为：合取项③接受组件级 Return，而失败条件写「status=succeeded 同时交付块为空」，"
-          "两者在『守卫已发 Return 且交付块为空』的运行上同时成立。新候选上此类运行为 0 次，"
-          "两种读法不再分歧，冲突在本候选上不成立。这不是挑读法，是前提消失。"),
+        C("⑤ 判据措辞冲突（M4-FND-013）", "NOT_VERIFIED",
+          "**维持前序冻结结果。执行侧一度把本项改判为 PASS，理由是『新候选上交付块为空的运行"
+          "为 0 次，冲突前提消失』；独立 Reviewer 以接缝 end_tool_fail 的图结构证伪该理由："
+          "该失败分支的 outputs 中没有 user_delivery，本轮修复位于六个能力子应用内部，"
+          "不覆盖接缝的 tool 失败分支，因此『status=succeeded 而交付块为空』在新候选上"
+          "依旧结构可达，11 次运行只是没有采样到。改判已撤回。**"
+          "本项由前序 Reviewer 明文指定交规划侧裁定，执行侧不得自行改判。"),
     ], sorted(wf), "D+S")
 
     # ---------------- AC-12
@@ -144,7 +146,7 @@ def main():
           % (len(wf), min(len((outs(recs[a]).get("artifact") or "").strip()) for a in wf),
              max(len((outs(recs[a]).get("artifact") or "").strip()) for a in wf))),
         C("用户正文不是内部 Artifact 的整体复制",
-          "PASS" if r3["result"] == "PASS" else "FAIL",
+          "PASS" if r3["result"] == "PASS" else "NOT_VERIFIED",
           "按取证合同 §3 冻结判据（最长公共子串 < artifact 的 60%% 且正文长度 < 80%%）"
           "逐条核验 %d 次运行，无一命中" % len(r3["rows"])),
         C("必要选择与成立条件未被投影掉（『不泄露』不是『少给』）", "NOT_VERIFIED",

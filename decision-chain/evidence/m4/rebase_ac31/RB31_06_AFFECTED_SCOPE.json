@@ -77,8 +77,8 @@
         },
         {
           "conjunct": "⑤ 判据措辞冲突（M4-FND-013）",
-          "result": "PASS",
-          "detail": "原冲突为：合取项③接受组件级 Return，而失败条件写「status=succeeded 同时交付块为空」，两者在『守卫已发 Return 且交付块为空』的运行上同时成立。新候选上此类运行为 0 次，两种读法不再分歧，冲突在本候选上不成立。这不是挑读法，是前提消失。"
+          "result": "NOT_VERIFIED",
+          "detail": "**维持前序冻结结果。执行侧一度把本项改判为 PASS，理由是『新候选上交付块为空的运行为 0 次，冲突前提消失』；独立 Reviewer 以接缝 end_tool_fail 的图结构证伪该理由：该失败分支的 outputs 中没有 user_delivery，本轮修复位于六个能力子应用内部，不覆盖接缝的 tool 失败分支，因此『status=succeeded 而交付块为空』在新候选上依旧结构可达，11 次运行只是没有采样到。改判已撤回。**本项由前序 Reviewer 明文指定交规划侧裁定，执行侧不得自行改判。"
         }
       ],
       "attempts": [
@@ -236,7 +236,7 @@
         {
           "conjunct": "远端分支 commit 与本地一致",
           "result": "NOT_VERIFIED",
-          "detail": "本项在 Git 远端收口步骤完成后由收口核验现场复算；当前本地 HEAD=60eccfdf937d"
+          "detail": "本项在 Git 远端收口步骤完成后由收口核验现场复算；当前本地 HEAD=b80ee4e787c8"
         }
       ],
       "attempts": [

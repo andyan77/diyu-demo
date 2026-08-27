@@ -1148,3 +1148,116 @@ M4-RB31-08: "见最终收口回执"
     看到结果之后再加取样条款就是在改冻结合同迁就结果，不做。
   disposition: "如实登记，交独立 Reviewer"
 ```
+
+## 独立 Reviewer（本轮唯一一次，上下文隔离、只读）
+
+冻结候选 `a8ba712c849bde4833c9e6c09606841e4b74eeeb`（冻结记录 `b80ee4e7`）。
+Reviewer 提出 **4 个阻断**，全部成立，且有一条是纠执行侧自己的论据。
+
+```yaml
+- id: "M4-RB31-R-01"
+  criterion: "M4-RB31-03 ③④⑤"
+  finding: "取证合同 §3.1 的两条有界语义判据（必要要素五取四、新增事实回查 artifact）
+            全仓零实现、零执行；⑤ 只扫用户块且门槛 len(ud)<80 在本轮 254–1345 字区间内
+            永不触发，artifact 侧从未扫描。本轮实际证明的命题退化成『字符串长度 > 0』。"
+  status: "已修复并重判"
+
+- id: "M4-RB31-R-02"
+  criterion: "M4-RB31-02 NEG-07"
+  finding: "NEG-07 的夹具在模块加载时求值，早于 bind_markers()，区块标记是字面量 None，
+            退化成 NEG-01『标记全缺』。十种情况只覆盖九种。
+            执行侧 M4-FND-021 标 status=FIXED 不实——修法没清干净。"
+  status: "已修复并重跑；NEG-07 现在实测 needs_projection=false / DELIVERED / 170 字，
+           与 Reviewer 独立重算一致"
+
+- id: "M4-RB31-R-03"
+  criterion: "M4-RB31-04 ②③"
+  finding: "观测器用**接缝**的 node_trace 数 recovery_llm / skill_llm，
+            而这两个节点位于**能力子应用**内部，结构上不可能出现在接缝 trace 中。
+            13 份运行无一例外。重放脚本的 c8 断言同理恒为 0<=1，是空转。
+            即『兜底不会演化成第二条生产链』这条安全边界一次也没被真正测过。"
+  status: "已修复：改为只读查询子应用自身的 workflow_node_executions，
+           并读 tool 节点回传的子应用 END 输出"
+
+- id: "M4-RB31-R-04"
+  criterion: "数据完整性边界 + M4-RB31-07②"
+  finding: "AC-31 合取项⑤ 被执行侧从前序冻结的 NOT_VERIFIED 改判为 PASS，
+            理由『冲突前提消失』被接缝 end_tool_fail 的图结构证伪：
+            该失败分支 outputs 中没有 user_delivery，本轮修复位于能力子应用内部，
+            不覆盖接缝 tool 失败分支，『status=succeeded 而交付块为空』依旧结构可达，
+            11 次运行只是没采样到。该合取项由前序 Reviewer 明文指定交规划侧裁定。"
+  status: "改判已撤回，恢复 NOT_VERIFIED"
+```
+
+## 唯一一次修复后的定向收口复验
+
+```yaml
+M4-RB31-01: "PASS（Reviewer 独立复算一致）"
+M4-RB31-02: "PASS（十种情况现在各测各的；NEG-07 已真正构造）"
+M4-RB31-03: "NOT_VERIFIED
+             ① PASS ② PASS ④ PASS ⑤ PASS
+             ③ 五条 CONTENT_BRIEF 运行 PASS；其余能力 NOT_VERIFIED(ABSENT)——
+               取证合同 §3.1③ 只冻结了 CONTENT_BRIEF 的必要要素清单，
+               其余能力的清单未冻结，不在看到结果之后补写"
+M4-RB31-04: "PASS —— 换成真实观测器后：11 次运行 raw_preserved 1708–10301 字全部保留、
+             recovery_used 可读、子应用 skill_llm 每次运行恰好 1 次（充分性闸阻断的那次为 0 次）、
+             同输入重复提交产生独立 run_id 且均正常交付"
+M4-RB31-05: "FAIL（维持）"
+M4-RB31-06: "PASS"
+M4-RB31-07: "PASS —— 改判撤回后 technical_results_rewritten=false 与事实相符"
+```
+
+## 执行侧自我更正
+
+```yaml
+- id: "M4-FND-024-CORRECTION"
+  what: "M4-FND-024 里『FA-38 与 FA-07 同夹具同系统即为 48%』这条论据无效"
+  detail: "Reviewer 核出 FA-38 的 input_sha256=710e983b68b3…、FA-07 的 =e9ac419f1874…，
+           两者不是同一输入，只是 fixture_id 标签相同。按取证合同 §1.1 自己的规则，
+           该对照不成立。**论据撤下。**"
+  unchanged: "RB31-05 仍判 FAIL；『修复未削弱专业产出』的四条因果证据
+              （六份源 Skill sha256 零差异、六份注入正文逐字不变、MODEL 不变、
+              改动全在 skill_llm 之后、投影零触发）经 Reviewer 独立复算全部成立。"
+
+- id: "M4-FND-021-STATUS-CORRECTION"
+  what: "M4-FND-021 原标 FIXED 不实"
+  detail: "修法只改了标记来源，没改夹具求值时机，NEG-07 仍在测『标记缺失』。现已真正修复。"
+
+- id: "M4-FND-026"
+  what: "RB31-03④ 的新增事实抽取器超出冻结判据范围"
+  detail: "初版把「」『』内的引用**句子**也当成待回查事实。冻结判据 §3.1④ 只列举
+           『具体数字、专有名词、商品名、地点、时间』五类，引用句子不属其中，
+           且模型常用引号放反例与口语示范，逐字回查必然大量假阳性。
+           抽取器收回到冻结的五类（数字 + 时间 + 冻结夹具实体表）。
+           **改的是器械，判据一个字没动。**"
+  status: "FIXED"
+```
+
+## 本轮终态判定（如实）
+
+```yaml
+task_final_status: "BLOCKED"
+reason: |
+  v1.4 §12 要求 DONE 的九个条件里，以下两条不成立：
+    条件1「M4-RB31-01…08 全部通过」—— RB31-03 = NOT_VERIFIED、RB31-05 = FAIL
+    条件2「AC-31 对最终冻结候选为 PASS + CURRENT」—— AC-31 = NOT_VERIFIED
+       （①②③ PASS；④ 继承的既有 NOT_VERIFIED；⑤ 交规划侧裁定，执行侧不得自判）
+  §12 禁用 PARTIAL，故按 BLOCKED 登记，不是 FAILED——修复本身有效且已落地。
+
+p0_result: |
+  M4-FND-020 / AC-31 合取项① **已修复且经独立 Reviewer 复算成立**：
+  三次冻结输入精确重放，用户正文 603 / 594 / 519 字，非空、无泄漏、无回指、
+  内部 Artifact 保留、原失败记录未改、未重跑生产链。
+
+p0_residual: |
+  但「用户可见交付非空修复已验证」这个更强的命题不成立，卡在三处（Reviewer 与执行侧一致）：
+    1. 新增的 recovery_llm 投影路径 Runtime 级零触发（M4-FND-025），
+       只有节点代码级取证；11 次新运行模型都正常输出了交付块标记。
+    2. RB31-03③ 只有 CONTENT_BRIEF 的要素清单被冻结，其余五个能力无判据。
+    3. RB31-05④ 的长度阈值不具判别力（M4-FND-024），需规划侧处置。
+
+pending_planning_side:
+  - "AC-31 合取项⑤（M4-FND-013 判据措辞冲突）—— 前序 Reviewer 已指定交规划侧"
+  - "M4-FND-024 —— RB31-05④ 判据判别力"
+  - "M4-FND-025 —— 投影路径 Runtime 取证需要什么授权（当前取证合同禁止取样）"
+  - "RB31-03③ —— 其余五个能力的必要要素清单未冻结"

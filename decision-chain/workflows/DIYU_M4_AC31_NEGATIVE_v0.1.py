@@ -117,20 +117,24 @@ PROJ_LEAK = "这次的结果是 PARSE_FAIL，artifact_status 异常，请查看 
 PROJ_EMPTY = ""
 
 # 合同 §1.2 十种情况。proj 为 recovery_llm 节点的注入返回。
-CASES = [
-    ("NEG-01", "完整专业内容存在，三类 marker 全部缺失", dict(raw_only=PRO), PROJ_OK),
-    ("NEG-02", "Artifact 存在，用户正文 marker 缺失", dict(art=PRO, rets=""), PROJ_OK),
-    ("NEG-03", "用户正文存在，Artifact 缺失", dict(user=USER_OK, rets=""), PROJ_OK),
-    ("NEG-04", "用户正文只有空白", dict(art=PRO, user="   \n\n  \t ", rets=""), PROJ_OK),
-    ("NEG-05", "用户正文只有回指", dict(art=PRO, user="内容同上，见上文。", rets=""), PROJ_OK),
-    ("NEG-06", "Returns 块格式损坏", dict(art=PRO, user=USER_OK, rets="return_id: X\n乱码 %%%"), PROJ_OK),
-    ("NEG-07", "模型输出被整体包裹在代码块中",
+def build_cases():
+    return [
+        ("NEG-01", "完整专业内容存在，三类 marker 全部缺失", dict(raw_only=PRO), PROJ_OK),
+        ("NEG-02", "Artifact 存在，用户正文 marker 缺失", dict(art=PRO, rets=""), PROJ_OK),
+        ("NEG-03", "用户正文存在，Artifact 缺失", dict(user=USER_OK, rets=""), PROJ_OK),
+        ("NEG-04", "用户正文只有空白", dict(art=PRO, user="   \n\n  \t ", rets=""), PROJ_OK),
+        ("NEG-05", "用户正文只有回指", dict(art=PRO, user="内容同上，见上文。", rets=""), PROJ_OK),
+        ("NEG-06", "Returns 块格式损坏", dict(art=PRO, user=USER_OK, rets="return_id: X\n乱码 %%%"), PROJ_OK),
+        ("NEG-07", "模型输出被整体包裹在代码块中",
      dict(raw_only="```markdown\n" + wrap(art=PRO, user=USER_OK, rets="") + "\n```"), PROJ_OK),
-    ("NEG-08", "模型服务瞬时失败后重试成功", "RUNTIME", None),
-    ("NEG-09", "有专业内容但无法安全投影", dict(art=PRO, rets=""), PROJ_LEAK),
-    ("NEG-09b", "有专业内容但投影为空", dict(art=PRO, rets=""), PROJ_EMPTY),
-    ("NEG-10", "合法资料不足 Return", dict(art="", user="", rets=RET_OK), PROJ_OK),
-]
+        ("NEG-08", "模型服务瞬时失败后重试成功", "RUNTIME", None),
+        ("NEG-09", "有专业内容但无法安全投影", dict(art=PRO, rets=""), PROJ_LEAK),
+        ("NEG-09b", "有专业内容但投影为空", dict(art=PRO, rets=""), PROJ_EMPTY),
+        ("NEG-10", "合法资料不足 Return", dict(art="", user="", rets=RET_OK), PROJ_OK),
+    ]
+
+
+CASES = None   # 必须在 bind_markers() 之后由 build_cases() 构造
 
 
 def lcs_len(a, b):
@@ -190,6 +194,8 @@ def main():
     bind_markers(ad_ns)
     finalize = load_main(df_code, "delivery_finalize")
     print("区块标记（取自节点代码）：%s / %s / %s" % (A, U, R))
+    global CASES
+    CASES = build_cases()   # M4-FND-021 残留修复：夹具必须在标记绑定之后构造
     print("被测节点（逐字取自 DSL）：%s / %s" % (ad_title, df_title))
     print("=" * 78)
 
