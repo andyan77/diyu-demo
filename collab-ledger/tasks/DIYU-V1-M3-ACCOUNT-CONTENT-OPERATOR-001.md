@@ -388,6 +388,54 @@ App 混为一谈。宿主 `pgdata` 为 root 所有、无免密 sudo，执行侧�
 
 ---
 
+### A-14 · 第 14 轮：宿主挂载恢复 + 活体候选收口 + 终态 DONE（`REBASE_TASK`，2026-08-27）
+
+**授权**：Execution Prompt `M3_DIFY_RECOVERY_AND_FINAL_CLOSEOUT_EXECUTION_PROMPT_v1.0.md`
+（`258d16b7…`）+ 合同 `M3_ENGINEERING_TASK_CONTRACT_v1.4_DIFY_RECOVERY_CLOSEOUT_REBASE.yaml`
+（`787243cf…`），两份现场核验逐字节相符。**执行侧模型调用 0，执行侧触发的工作流运行 0。**
+
+**采用路径 A：原数据库与原 App 一并返回**
+
+阶段 A 冻结现场时发现宿主挂载已自行恢复：宿主与容器目录的 size / owner / mode /
+**纳秒级 mtime 完全相同**（`03:49:57.292667948 -0700` == `10:49:57.292667948 +0000`），
+与上一轮「4096 对 60、mtime 差 8 天」直接对照。`apps=50`、`setup=finished`、
+租户 `09758721…` 与宿主 storage 目录一致、原 App `b7fb5b1a…` 在、
+**该 App 历史运行正好 641 条**、八条 Founder 运行 id/状态/时间戳逐条一致。
+按 §8.1 **未导入 ep37**、未生成新 UUID，不存在双重身份。
+
+**未重启 Docker Desktop**：§6 授权的是「最多一次」。挂载已正确，重启差异效果为零，
+按 A5 不执行 —— 也就没有停掉用户正在跑的其他容器。
+
+**活体候选恢复（§8.4）**：当前已发布的仍是那条 `marked_name` 为空、带几何漂移的重发版；
+把草稿还原成 ep35 冻结图并以 `m3-cand-v1.5.2-live` 发布（**刻意不复用历史具名发布名**，
+历史 `m3-cand-v1.5.2` / `706fdce0…` 原样保留）。结果：已发布图与冻结图**逐字节相同**、
+草稿 == 已发布、7 节点 6 边、提示词 `3a3c657d…`、`SKILL.md` 工作区 == git HEAD == `90596da5…`、
+模型/provider/温度一致、无 `http_request`/`tool` 节点。
+浏览器渲染画布实证：7 节点 6 连线、七个标题齐全、无越权节点、LLM 面板挂着 SKILL 正文。
+**恢复后从活体导出的 DSL 与 ep37 冻结件逐字节相同（`bd676f29…`）** —— 回滚入口当前有效。
+
+**持久性复核（§8.8）**：`docker compose stop` → `start`（未用 `down` / `-v` / `prune`，
+未第二次重启 Docker Desktop）。重启后 App 仍在、图仍逐字节等于冻结图、提示词一致、
+该 App 641 条运行仍在、库租户与宿主 storage 租户一致。
+
+**必须披露的一件事**：停机窗口内这台实例上有**其他 App** 的工作流在跑。核查结果：
+`22:40`–`23:00` 全部 15 条运行状态均 `succeeded`，`22:00` 后零条 `failed` 或卡 `running`，
+本任务 App 运行数始终 641。停机没有打断任何在途运行。但阶段 A 的「无不可中断写入」
+判断只看了容器层、没查在途 workflow run —— **是我那一步的疏漏**，结果无害，如实记下。
+
+**AC 收口**：`M3-AC-00` `PASS`、`M3-AC-20` `PASS`，`M3-AC-01`–`M3-AC-17` 保持 `PASS`，
+`M3-AC-18` / `M3-AC-19` `NOT_APPLICABLE_BY_FOUNDER_REBASE`。**终态 `DONE`。**
+
+三项证据身份裁定继续有效、未被恢复改写：S2–S7 仍绑等价载体不写成标签相同；
+`0a0f406d` 仍是 `UNAUTHORIZED_EXTRA_SUBMISSION`；`user_request` 原始字节不等继续披露。
+
+**产出**：`M3_DIFY_RECOVERY_FINAL_CLOSEOUT_v1.0.md`、
+`evidence/ep42-dify-host-mount-recovery/`、`evidence/ep43-dify-live-candidate-binding/`、
+`evidence/ep44-m3-final-closeout/`、
+`tools/founder_extract/{freeze_prerestart_scene,restore_live_candidate_v152,structural_and_canvas_recovered,final_closeout_v154}.py`。
+
+---
+
 ## L4 · 已排除路线（历史留痕，只加不改）
 
 | 路线 | 根因假设 | 干预 | 关键前提 | 证据 |
@@ -404,6 +452,8 @@ App 混为一谈。宿主 `pgdata` 为 root 所有、无免密 sudo，执行侧�
 | **重建被清空的 Dify 实例以补做动态绑定复验** | 想让 `dynamic_dify_binding_requires_refresh` 重新可满足 | **未执行** | 本轮授权只含只读提取与收口，不含重建；重建会产生新的 App 与新的运行记录，制造第二个绑定对象 | `ep37` 的完整 DSL 导出件在盘上可随时重建，等授权 |
 | **在挂载错位的 Dify 实例上硬做 DSL 导入** | 想把 `DIFY_TASK_APP = RECOVERED_AND_CURRENT` 凑出来 | **未执行** | 写入会落到 Docker VM 内的临时位置，下次容器重建即消失；把它记成已恢复是假闭合。授权 §4.5 要求恢复不覆盖其他项目，§4 有明确停止条款 | `ep40/RECOVERY_PRECHECK_AND_BLOCKER.json` 三条独立证据 |
 | **重启 Docker Desktop 以修复 bind mount** | 修挂载就能继续恢复 | **未执行** | 会停掉用户全部容器，不可逆地中断其他工作；不在本任务授权内，是 Founder 自己的决定 | 已把动作与只读验证命令交回 Founder，见 `M3_DIFY_RECOVERY_BLOCKER_v1.0.md` §3 |
+| **为「完成恢复动作」而重启 Docker Desktop** | 授权里写了允许一次，就该用掉 | **未执行** | 冻结现场时挂载已正确解析（元数据纳秒级相同、`apps=50`），重启的差异效果为零；A5：没有差别的动作不该做。且会停掉用户正在跑的其他容器 | `ep42/PRE_RESTART_SCENE.json` 挂载身份比对；`ep44` 记 `docker_desktop_restarts_performed = 0` |
+| **用 `m3-cand-v1.5.2` 作为本次恢复发布名** | 想让当前发布名与冻结候选完全同名 | **未执行** | 会与历史那条具名发布记录（`706fdce0…`，19:46:47）同名难辨，等于冒充历史发布事件 | 改用 `m3-cand-v1.5.2-live`，历史那条原样保留在版本谱系 |
 
 ---
 
@@ -430,6 +480,10 @@ App 混为一谈。宿主 `pgdata` 为 root 所有、无免密 sudo，执行侧�
 | 2026-08-27 | Dify 本机实例 | 只读诊断：容器与宿主 bind mount 元数据比对、PG 各表计数、storage 目录枚举 | — | 只读 | 无需回滚 |
 | 2026-08-27 | Dify 任务专用 App | **DSL 重建：未执行**（阻断于 bind mount 未解析到宿主卷） | — | `NOT_RECOVERED` | 无需回滚 |
 | 2026-08-27 | DeepSeek / Qwen / 其他模型 | **本轮（第 13 轮）执行侧模型调用：0 次** | — | 未发生 | 无需回滚 |
+| 2026-08-27 | Dify 任务专用 App `b7fb5b1a…` | 草稿还原为 ep35 冻结图并发布 `m3-cand-v1.5.2-live` | 已发布图与冻结图逐字节相同；导出 DSL 与 ep37 逐字节相同 | 已发布 | 上一版草稿/已发布/导出全部存于 `ep43/before_*`；回滚 = 重发上一版或导入 ep37 DSL |
+| 2026-08-27 | Dify compose（项目 `docker`） | 普通 `stop` → `start` 持久性复核（**未**用 `down` / `-v` / `prune`，**未**重启 Docker Desktop） | 15 容器 | 已恢复运行；App、版本、图、641 条运行全部仍在 | 无需回滚 |
+| 2026-08-27 | 同一 Dify 实例上的**其他 App** | 停机窗口内有他人工作流在跑；核查 `22:40`–`23:00` 全部 15 条 `succeeded`、`22:00` 后零条失败或卡住 | 非本任务 App | 未受损 | 无需回滚 |
+| 2026-08-27 | DeepSeek / Qwen / 其他模型 | **本轮（第 14 轮）执行侧模型调用：0 次；执行侧触发的工作流运行：0 次** | — | 未发生 | 无需回滚 |
 
 **明确未发生的副作用**：未创建第二个 Dify App｜未修改任何非任务 App、凭据、知识库或运行记录｜未切换任何生产流量｜未 merge/直推 `main`｜未 force/amend/reset/squash｜未改写历史｜未发布到任何真实社交平台｜未在 M2 中新建 workspace（本轮复用第 2 轮已存在的取证 workspace，未新增）。
 
@@ -438,43 +492,45 @@ App 混为一谈。宿主 `pgdata` 为 root 所有、无免密 sudo，执行侧�
 ## L2 · 当前状态与下一动作（当前投影，变化时直接替换）
 
 ```text
-进度        BLOCKED —— 授权范围内的工作全部完成，剩下一步需执行侧无权做的外部访问修复
-进入模式     RECOVERY_TASK —— 同一 task_id，合同不变（49021e60…）
-Founder 裁决 M3_FOUNDER_ACCEPTANCE = PASS；三项证据绑定裁定已登记并复算成立
-七次运行     7 条正式 + 1 条披露的额外提交，全部提取、绑定、保留
-Dify        任务专用 App 未恢复；阻断 = 容器 bind mount 未解析到 WSL 宿主路径
-执行侧模型调用 本轮 0；Dify 上无成功写操作
+进度        DONE —— 全部适用验收项成立
+进入模式     REBASE_TASK —— 同一 task_id，合同 M3_..._v1.4（787243cf…）
+恢复路径     ORIGINAL_DATABASE_AND_APP —— 原库与原 App 随宿主挂载一并返回，未导入 ep37
+活体候选     App b7fb5b1a… · 已发布 m3-cand-v1.5.2-live · 图与冻结图逐字节相同
+             提示词 3a3c657d… · SKILL.md 90596da5…（工作区 == git HEAD） · 7 节点 6 边
+Founder     M3_FOUNDER_ACCEPTANCE = PASS；7 条正式运行 + 1 条披露的额外提交
+执行侧模型调用 本轮 0；执行侧触发的工作流运行 0
 ```
 
 **回执**：
 
 ```text
-M3_ENGINEERING_TASK               = BLOCKED
+M3_ENGINEERING_TASK               = DONE
 M3_FOUNDER_PRODUCT_ACCEPTANCE     = PASS
+M3-AC-00                          = PASS
+M3-AC-20                          = PASS
+DIFY_RECOVERY_PATH                = ORIGINAL_DATABASE_AND_APP
+DIFY_TASK_APP                     = RECOVERED_PERSISTENT_AND_CURRENT
 FOUNDER_OFFICIAL_TEST_RUNS        = 7/7_BOUND_AND_PRESERVED
 DISCLOSED_EXTRA_SUBMISSIONS       = 1
 EXECUTOR_MODEL_CALLS_AFTER_REBASE = 0
 BLIND_REVIEW                      = NOT_APPLICABLE_BY_FOUNDER_REBASE
 MODULE_AB_GAIN_VS_GOOD_PROMPT     = NOT_CLAIMED
-DIFY_TASK_APP                     = NOT_RECOVERED_BLOCKED_ON_HOST_MOUNT
 MAIN_MERGE                        = NOT_AUTHORIZED_NOT_PERFORMED
 M5                                = NOT_STARTED_NOT_AUTHORIZED
 REAL_BUSINESS_LIFT                = NOT_VERIFIED
 ```
 
-**AC 汇总**：`M3-AC-01`–`M3-AC-17` `PASS`；`M3-AC-00` 与 `M3-AC-20` `NOT_VERIFIED (ABSENT)`
-（内容等价裁定已成立，但活体 App 绑定与恢复证据缺失，授权 §6 要求三者共同重算）；
+**AC 汇总**：`M3-AC-00` `PASS`、`M3-AC-01`–`M3-AC-17` `PASS`、`M3-AC-20` `PASS`；
 `M3-AC-18` / `M3-AC-19` `NOT_APPLICABLE_BY_FOUNDER_REBASE`，历史 `NOT_VERIFIED` 原样保留。
 
-**解除阻断（归 Founder，执行侧无权代做）**：
+**三项证据身份裁定继续有效**：S2–S7 绑执行内容等价的未命名重发版，不写成标签相同；
+`0a0f406d` 仍是 `UNAUTHORIZED_EXTRA_SUBMISSION`；`user_request` 原始字节不等继续披露。
 
-1. Docker Desktop 重启或重设 WSL 集成（确认 `Ubuntu-22.04` 已勾选）；会停掉全部容器。
-2. 重启后只读测一句
-   `docker exec docker-db_postgres-1 psql -U postgres -d dify -tAc "select count(*) from apps;"`
-   —— 回到非 0 说明原库连同 641 条运行记录一并回来，**不需要 DSL 重建**。
-3. 仍为 0 且挂载已正确解析到宿主卷，再授权用 `ep37` 的 DSL 导入重建
-   （届时 App UUID 会变，须按披露处理）。
+**下一动作**：本任务终态 `DONE`，无下一动作。M5 未启动、未授权；`main` 合并未授权、未执行。
+任何后续工作需要新的 Founder 授权事件。
 
-**声明上限**：本轮只能说三项证据绑定裁定已登记且依据经执行侧独立复算成立；
-Dify 任务专用 App 未恢复，阻断已定位到根因并给出解除动作。
-不得声称优于一份好提示词、M5 成品增益、已生产上线、真实经营提升或因果增益。
+**声明上限**：`DONE` 只证明存在一个持久的、当前可运行的 v1.5.2 M3 候选，适用确定性技术门
+全部成立，且 Founder 已接受被完整保留的七份历史输出。不证明那七次运行发生在新重建的 UUID 上
+（它们就发生在同一个 App 上，未重建）、不证明优于一份好提示词、不证明 M5 成品增益、
+不证明已生产上线、不证明真实经营提升或因果增益；也不得把「两句新 Skill 规则修好了 B09-5」
+从**推断**上推。
