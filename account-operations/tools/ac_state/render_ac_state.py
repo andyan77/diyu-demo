@@ -5,7 +5,7 @@ B-2 是：`M3_ACCEPTANCE_CRITERIA_FROZEN_v1.0.md §7.2` 与 `M3_CHECKPOINT_*.md 
 是同一份状态的两处呈现，第 4 轮它们不一致 —— 一处停在旧状态，另一处已推进。
 当时的修法是"今后任一方更新，另一方必须同轮更新"，那是一条**靠自觉**的规则。
 
-靠自觉的规则会再犯。本文件把它换成机制：状态只写在 AC_STATE_v13.json 里一份，
+靠自觉的规则会再犯。本文件把它换成机制：状态只写在 AC_STATE_v14.json 里一份，
 两处 Markdown 都由本脚本从它渲染。两处不可能不一致，因为它们不是两份数据。
 
 用法：
@@ -17,7 +17,7 @@ B-2 是：`M3_ACCEPTANCE_CRITERIA_FROZEN_v1.0.md §7.2` 与 `M3_CHECKPOINT_*.md 
 import argparse, json, os, re, sys
 
 WT = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1"
-SRC = os.path.join(WT, "account-operations/evidence/ep18-ac-recompute-v13/AC_STATE_v13.json")
+SRC = os.path.join(WT, "account-operations/evidence/ep27-ac-recompute-v14/AC_STATE_v14.json")
 
 # 状态词只能取自通用内核 §4 的统一状态词，或本任务已在用的复合记法。
 # 不允许再造同义词 —— 这是 A2 的"同一维度不得再造同义词"。
@@ -90,7 +90,7 @@ def check(d):
     """
     targets = [
         ("M3_ACCEPTANCE_CRITERIA_FROZEN_v1.0.md", "criteria"),
-        (d.get("checkpoint_file", "M3_CHECKPOINT_ROUND_7.md"), "checkpoint"),
+        (d.get("checkpoint_file", "M3_CHECKPOINT_ROUND_8.md"), "checkpoint"),
     ]
     problems = []
     for fname, _style in targets:
