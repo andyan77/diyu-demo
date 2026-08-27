@@ -213,7 +213,7 @@ M3-AC-01③ 推导输出 PASS —— 删掉 M3 之后 5/7 维明显变差
 | `AC-17` | **`FAIL(INSUFFICIENT)`** | 修 G-1 后整条重跑，12 步全 `succeeded`、无 `NOT_VERIFIED`、第 4 轮那类「零产出整体覆盖基线」事故**未复现**；但逐步 `E04` `不足`，序列级「局部性」只部分成立（交付正文成立，投影/状态层在 `E10` 处不成立）。判定者独立追踪 8 个对象，投影真正保住 **1 个**，其余 7 个无声消失而 `dropped_without_notice` 全程为 `[]` |
 | `AC-18` | **`FAIL(INSUFFICIENT)`** | 硬门零退化但无整体增益；`M3_PROFESSIONAL_GAIN = NOT_VERIFIED`，`M3_MODULE_AB = NOT_PASSED` |
 | `AC-19` | 部分成立 | Qwen `NOT_APPLICABLE`（Founder 指示，运行前判定）；**41 名判定者：40 名受隔离约束者机械核验全部 `CLEAN`、零违规；第 41 名是按 Rubric 授权通读全部材料的独立收口 Reviewer，隔离性 `NOT_APPLICABLE`，另核其写入范围为 `CLEAN`（0 条仓库内写入、0 条变更类 git 命令）**；留出强度上限如实记录；**独立收口审查已完成，见 §9** |
-| `AC-20` | 部分成立 | 回滚演练实测通过（破坏→恢复逐位相同，已发布版本未被触碰）；远端 `cf09788` 与本地逐字符一致；独立收口审查与 Founder 接受待做 |
+| `AC-20` | 部分成立 | 回滚演练实测通过（破坏→恢复逐位相同，已发布版本未被触碰）；**远端完整哈希 `83a11cf439f7680bea1014d2074dc53581b8dc6b` 与本地 HEAD 逐字符一致**（`evidence/ep10-closeout-v12/remote_hash_ac20.json`，一条命令可重验：`verify_remote_hash.sh`）；**独立收口审查已完成**（§9）；**Founder 产品接受未发生**——实测包已交付，裁决未请求 |
 
 **进度：`IN_PROGRESS`。终态：未落。**
 

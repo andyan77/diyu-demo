@@ -1,0 +1,22 @@
+{
+  "ac": "M3-AC-20",
+  "what_this_records": "任务分支远端完整哈希与本地 HEAD 的一致性。",
+  "branch": "task/m3-account-content-operator-v1",
+  "remote": "origin (https://github.com/andyan77/diyu-demo.git)",
+  "verified": [
+    {
+      "commit": "83a11cf439f7680bea1014d2074dc53581b8dc6b",
+      "subject": "M3 独立收口审查（R-1～R-7）：两条阻断项已闭合，AC-01③ 从 PASS 降为探索级",
+      "local_head": "83a11cf439f7680bea1014d2074dc53581b8dc6b",
+      "remote_ref_hash": "83a11cf439f7680bea1014d2074dc53581b8dc6b",
+      "equal": true,
+      "method": "git ls-remote origin refs/heads/task/m3-account-content-operator-v1 对 git rev-parse HEAD"
+    }
+  ],
+  "self_reference_note": "本文件自身落在其后的提交里，因此它不能声明自己那次提交的远端一致性——那是循环。它记录的是**一个可重跑的判据**，任何人执行 verify_remote_hash.sh 即可对当前 HEAD 重新验证。",
+  "how_to_reverify": "bash account-operations/evidence/ep10-closeout-v12/verify_remote_hash.sh",
+  "not_claimed": [
+    "未声明 main 已合并——本分支未并入 main（git merge-base --is-ancestor HEAD main 为否）",
+    "未声明 Founder 已接受——产品接受裁决未请求，实测包已交付"
+  ]
+}
