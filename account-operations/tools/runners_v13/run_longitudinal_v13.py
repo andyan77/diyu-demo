@@ -104,7 +104,37 @@ def run_workflow_with_retry(key, inputs, user):
     return res
 
 
+# runner 会从投影记录里**读**的每一个键，由本文件自己的源码解析得出，不手工维护。
+# 手工维护的名单正是第 5、6 两轮各栽一次的原因：字段改名后漏改一处，
+# 序列跑到一半才崩，钱和时间都已经花掉。现在字段再改一次，会在**开跑前**就被挡住。
+def _projection_keys_read_by_this_runner():
+    import ast as _ast
+    tree = _ast.parse(open(os.path.abspath(__file__), encoding="utf-8").read())
+    keys = set()
+    for n in _ast.walk(tree):
+        if (isinstance(n, _ast.Subscript) and isinstance(n.value, _ast.Name)
+                and n.value.id == "prec" and isinstance(n.ctx, _ast.Load)
+                and isinstance(n.slice, _ast.Constant) and isinstance(n.slice.value, str)):
+            keys.add(n.slice.value)
+    return sorted(keys)
+
+
+def _assert_projection_contract():
+    _, _, rec = project("prev", [{"id": "X", "kind": "regular"}], "out",
+                        "ACCEPTABLE_AS_NEW_BASELINE",
+                        json.dumps({"continued": ["X"], "disposed": [], "new_positions": [],
+                                    "positions_unaccounted": [], "positions_fabricated": []}),
+                        "CONTRACT_CHECK")
+    need = _projection_keys_read_by_this_runner()
+    missing = [k for k in need if k not in rec]
+    if missing:
+        raise SystemExit(f"REFUSE: 投影记录缺键 {missing}（runner 会读它们）"
+                         f" —— 在花任何 API 成本之前就挡住")
+    print("projection record contract ok:", ", ".join(need), file=sys.stderr)
+
+
 def main():
+    _assert_projection_contract()
     key = read(os.path.join(SCRATCH, "m3_app_key.txt")).strip()
     # 输出目录必须存在且为空：非空说明有上一次残留，混进来会造成产地不明
     os.makedirs(EVID, exist_ok=True)
@@ -182,10 +212,10 @@ def main():
             json.dump(rec, f, ensure_ascii=False, indent=2)
         index[-1]["projection_mode"] = prec["mode"]
         index[-1]["cycle_state_carry"] = carry_reported
-        index[-1]["objects_before"] = prec["objects_before"]
-        index[-1]["objects_not_restated"] = prec["objects_not_restated"]
+        index[-1]["positions_before"] = prec["positions_before"]
+        index[-1]["positions_unaccounted"] = prec["positions_unaccounted"]
         print(f"    projection: {prec['mode']} carry={carry_reported} "
-              f"before={prec['objects_before']} not_restated={prec['objects_not_restated']}",
+              f"before={prec['positions_before']} unaccounted={prec['positions_unaccounted']}",
               file=sys.stderr, flush=True)
 
         # 只有传输/上游层面的失败才中断序列；内容层面的失败按新投影规则继续，
