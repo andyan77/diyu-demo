@@ -1,0 +1,193 @@
+{
+  "round": "v1.3 / 第 7 轮",
+  "checkpoint_file": "M3_CHECKPOINT_ROUND_7.md",
+  "how_derived": "由冻结判据（M3_ACCEPTANCE_CRITERIA_FROZEN_v1.0.md §3 各卡的成功/不足/无结果/失败四栏）与本轮证据推导，不请 Founder 裁决技术结论",
+  "evidence_base": {
+    "保真": "M3_ECC_RUNTIME_FIDELITY_001_VERDICT_V13_v1.0.md（七组全成功）",
+    "行为": "M3_ECC_RUNTIME_BEHAVIOR_002_VERDICT_V13_v1.0.md（47 成功 / 1 不足 / 0 失败 / 1 无结果）",
+    "纵向": "M3_ECC_LONGITUDINAL_001_VERDICT_V13_v1.0.md（FAIL(INSUFFICIENT)，E06 触发）",
+    "A/B": "evidence/ep08-module-ab-v13/_unblinded_results_v4.json（四道预冻结闸全过）",
+    "M2 兼容": "evidence/ep16-ac12-13-reverify/AC12_AC13_REVERIFY.json（9/9）",
+    "结构反搜": "evidence/ep21-structural-v13/dify_graph_structural_check.json（对已发布图）",
+    "隔离核验": "evidence/ep20-judge-isolation-v13/judge_isolation_verification_v13.json（40/40 CLEAN）",
+    "闸门缺陷": "evidence/ep19-gate-v13-defects/（三条机械复核 + G-4 全量普查）"
+  },
+  "acs": [
+    {
+      "id": "M3-AC-00",
+      "state": "成立",
+      "basis": "授权事件、合同哈希、进入模式、分支/worktree/Dify 对象逐条可回指；绑定为实测非自述——M2 容器内两文件哈希 == `git show a7b8101`、SKILL sha256 == 冻结记录、Dify App 与已发布版本名落盘；远端已推送且本地 HEAD == 远端 HEAD",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-01",
+      "state": "成立",
+      "basis": "①② 责任反搜 12 条测试通过 + 结构反搜对 v1.3 **已发布图**重跑，四类行为标签命中 0；③ 消融门 B vs B′ 在 ADDENDUM_003 预冻结判据下 `PASS`（七维六维 B 优、零实质退化、零硬门退化）；行为 ECC `B01-P` 反证探针成功",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-02",
+      "state": "成立",
+      "basis": "行为 ECC `B02-1/2/2P/3/4` 五例全成功，无一例把暂定锚点写成已确认定位，无一例要求先完成 Matrix",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-03",
+      "state": "成立",
+      "basis": "行为 ECC `B03-1…8` + `N2` + `N3` 十例全成功；判定者逐对核过八变体两两**至少两轴**实质差异。第 6 轮那处「一对只有一轴不同」在 v1.3 运行上未复现",
+      "gap": "第 6 轮与本轮是两次不同运行、两名不同判定者；本条成立于 v1.3 这一次观察，不是跨轮稳定结论"
+    },
+    {
+      "id": "M3-AC-04",
+      "state": "成立",
+      "basis": "行为 ECC `B04-1/1P/N1/N7` 四例全成功",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-05",
+      "state": "成立",
+      "basis": "结构半：对 v1.3 已发布图反搜，四类行为标签命中 0、落在结构位（enum／分支条件／必填字段）0；运行时半：行为 ECC `B05-1/2` 两例成功",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-06",
+      "state": "成立（带限定）",
+      "basis": "行为 ECC `B06-1/P` 两例成功，按**冻结在先**的 Oracle v2.0 口径（Oracle mtime 19:53 早于全部运行记录 20:49–21:41，判定者独立核过时序）",
+      "gap": "限定项：`B02-4` 因 G-4 误报触发补齐，补齐把三值分离原句压成一句「输入给的期望发布数是每周三条」——为保护 AC-06 而建的检查反而删掉了 AC-06 要保护的东西。该例判定仍为成功，但这一处降质如实登记"
+    },
+    {
+      "id": "M3-AC-07",
+      "state": "成立",
+      "basis": "行为 ECC `B07-1/2/3/P` 四例全成功；资料不足时未降级为「建议补充」而仍产出合法创意方向",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-08",
+      "state": "成立",
+      "basis": "行为 ECC `B08-1/P` 两例成功；单次高表现未被推广为全账号模板，未输出固定比例",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-09",
+      "state": "不得 PASS",
+      "basis": "行为 ECC `B09-5-no-market-data` = `无结果`：模型零正文（`draft_raw` 301 字符，`</think>` 之后只有空围栏与审计块），非传输故障（200 / succeeded / 单次尝试 / 7 步 / 14636 tokens），并编造了输入中不存在的持续位 id。闸门 `HARD_FAIL_MIN_OUTPUT` 拒绝补齐——这一处闸门做对了。用户可见的是一句系统说明，**资料稀薄导致整任务停摆**，正是该例设计要防的方向",
+      "gap": "另半（适用范围可机械排除）已在 `ep16` 闭合：M2 的范围排除结论逐字带回，三种「空」仍可区分"
+    },
+    {
+      "id": "M3-AC-10",
+      "state": "成立",
+      "basis": "行为 ECC `B10-1/2/3/4/P` 五例全成功，①单条异常与②多条一致的处理实质不同；纵向序列 `E05/E06/E07/E12` 四情形均出现且处理正确（后者随纵向整体不给 PASS，只作追加证据）",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-11",
+      "state": "未独立成立",
+      "basis": "纵向 `E09`→`E10`→`E11` 的 Campaign 覆盖—期内合法变更—到期恢复链完整且正确，判定者确认恢复的是**含 E10 变更的当前基线**而非活动开始快照。但冻结件 §7 不给部分通过留出口，纵向 ECC 整体 `FAIL(INSUFFICIENT)`，本条因此不取得正式 `PASS`",
+      "gap": "要正式成立，需纵向 ECC 整体不再 `FAIL`"
+    },
+    {
+      "id": "M3-AC-12",
+      "state": [
+        {
+          "binding": "对钉死绑定 `main@df2c595`",
+          "value": "成立"
+        },
+        {
+          "binding": "对当前 `main@a7b8101`",
+          "value": "成立"
+        }
+      ],
+      "basis": "第 6 轮对当前 main 为 `STALE`。本轮定向复验 9/9：来源四分不坍缩且四值互异、可用性与可发布性两道闸互不推导（3 条当前可用者对外发布权限全为 `UNKNOWN`）、权限未知时 fail-closed、适用范围四键齐备、证据身份进入投影。全部从运行中的 M2 真实响应推导，容器绑定当场哈希实证",
+      "gap": "复验项 V-6 的命题是在看到 FAIL 之后改的，按 A2 该项记探索级，不充当「判据先于结果」的正式取证（见 `AC12_AC13_REVERIFY.json` 的 `criteria_provenance`）"
+    },
+    {
+      "id": "M3-AC-13",
+      "state": [
+        {
+          "binding": "对钉死绑定 `main@df2c595`",
+          "value": "成立"
+        },
+        {
+          "binding": "对当前 `main@a7b8101`",
+          "value": "成立"
+        }
+      ],
+      "basis": "M2 在 `a7b8101` 零删除路由、新增两条读/权限路由；M3 写回候选校验不含 permission（设权限不是 M3 的域）。结构半对 v1.3 已发布图重跑：无 http_request 节点、无 tool 节点、无环境变量与会话变量，提示词散文外写入标记命中 0",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-14",
+      "state": "不得 PASS",
+      "basis": "行为 ECC `B14-1-brief-consumable` = `不足`：事实链无确认人且未显式写出该缺口，逐字落进该例 Oracle 的「不足」条款。同轮同载体的 `B15-DIR-02` 把这一栏写全了，因此不是判定者从严",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-15",
+      "state": "成立",
+      "basis": "行为 ECC `B15-DIR-01/02/03` + `CTA` + `N6` 五例全成功。第 6 轮的两处（`B15-DIR-01` 不足、`B15-CTA` 模型侧零产出）本轮均未复现",
+      "gap": null
+    },
+    {
+      "id": "M3-AC-16",
+      "state": [
+        {
+          "binding": "Workflow 图链路",
+          "value": "成立"
+        },
+        {
+          "binding": "系统提示词全文入证据",
+          "value": "NOT_VERIFIED"
+        },
+        {
+          "binding": "浏览器渲染画布",
+          "value": "NOT_VERIFIED"
+        }
+      ],
+      "basis": "保真 ECC 七组全「成功」；判定者不采信自述，自算 `SKILL.md` sha256、九件绑定四项、注入参考文件逐字节；对 `G6` 用三条独立证据判本轮无「补齐替模型写正文」事故（最硬一条：SKILL 正文范例断言参考已加载，G6 清单是 `NOT_LOADED`，模型没照抄而写成「本轮没有附上」）",
+      "gap": "两处证据缺口，都是执行侧未采集而非判定失败：①冻结件 §4 要求 transcript 含系统提示词全文，Dify 把提示词留在画布里，九件证据均无——判定者只有旁证，标 `NOT_VERIFIED`；②本机无浏览器自动化，画布渲染半仍未做，按 Prompt §12.3 不用运行历史顶替"
+    },
+    {
+      "id": "M3-AC-17",
+      "state": "FAIL(INSUFFICIENT)",
+      "basis": "纵向 ECC 整体 `FAIL(INSUFFICIENT)`，触发步 `E06`：交付合格（1652 字符，闸门 hard_fail/missing/hollow 全空）却被 `check_stale_value_override` 整份拒收，被指控的句子无任何发布量主张。判定者独立追踪 12 步正文得出：**21 个跨步对象，进结构化通道 1 个，13 项无处置永久消失**",
+      "gap": "根因在判据与闸门实现，不在模型交付——判定者逐条查过 12 份交付，无一处产品语义错误、证据身份混写、越界写创意或静默改写定位。三条缺陷已机械复核：G-3 的两扇后门（`E04` 新增位被补齐删除且计数器定义上看不见、`E12` 补齐节点代写 POS 行）与 G-4 的误报（全量普查 12 命中 11 误报，6 次真的拒收交付）"
+    },
+    {
+      "id": "M3-AC-18",
+      "state": "FAIL(INSUFFICIENT)",
+      "basis": "A/B B vs A：七维六维「相当」、仅「产能取舍」B 优，五项硬门零实质退化，但不构成整体增益 ⇒ `M3_PROFESSIONAL_GAIN = NOT_VERIFIED`、`M3_MODULE_AB = NOT_PASSED`。四道预冻结闸全过（自身未被事后修改／判定写定早于映射读取／提示词唯一 1 种形态且逐份哈希一致／36 份齐备）",
+      "gap": "本轮换协议、换载体、重新招募 36 名判定者后结论与第 6 轮一致——这条现在是被独立复现过的，不是一次运气"
+    },
+    {
+      "id": "M3-AC-19",
+      "state": "部分成立",
+      "basis": "Qwen `NOT_APPLICABLE`（Founder 指示，运行前判定）；本轮 40 名判定者（4 份 ECC 执行记录含行为的中断那次 + 36 名盲评者）机械核验**全部 CLEAN、零违规、零缺记录**；盲评有效性另由 `_leak_scan_v3.json` 扫描（0/12 命中）与 36 份自检（全部写「不知道」，无一份指认某一臂）双向支撑；留出集身份与探索/正式分轨成立",
+      "gap": "本轮尚未做独立收口审查（EP-09）。第 6 轮的收口 Reviewer 已完成并闭合两条阻断项，但那是对 v1.2 的审查，不覆盖 v1.3"
+    },
+    {
+      "id": "M3-AC-20",
+      "state": "部分成立",
+      "basis": "远端已推送，本地 HEAD == 远端 HEAD（`65a9de0`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验；专用 Dify App/已发布版本/图哈希/模型参数/证据索引齐备；回滚演练第 6 轮实测通过",
+      "gap": "**Founder 产品接受未发生**，且本轮实测包尚未按最终候选重新生成。按冻结件本条应输出 `AWAITING_FOUNDER`，不得写 `DONE`"
+    }
+  ],
+  "tally_note": "汇总按**状态值**计数，不按 AC 条数：AC-12 / AC-13 / AC-16 各带多个绑定，各自的状态分列。AC 总数恒为 21。",
+  "terminal_state": {
+    "value": "PARTIAL",
+    "derived_how": "按通用内核 §4 的终态顺序 INVALID → DONE → PARTIAL → BLOCKED → FAILED 逐条判：",
+    "steps": [
+      "INVALID？否 —— 任务合同、授权链、身份全程可回指，无越域。",
+      "DONE？**否**。四条挡着：AC-17 与 AC-18 为 FAIL(INSUFFICIENT)；AC-09 与 AC-14 本轮不得 PASS；AC-20 的 Founder 产品接受未发生。冻结件对 AC-20 明写「技术候选完成但 Founder 未验收 → 输出 AWAITING_FOUNDER，不得写 DONE」。",
+      "PARTIAL？**是**。21 条里 15 条成立、1 条成立（带限定），结构、行为、保真三条链路与 M2 接口兼容均已闭合；未闭合的四条各有明确的证据缺口或缺陷，不是笼统未验。",
+      "BLOCKED？否 —— 没有一条是「无法推进」；每条未闭合项都有可执行的下一步。",
+      "FAILED？否 —— 没有任一冻结判据被判定为 `失败` 态。"
+    ],
+    "ac20_output": "AWAITING_FOUNDER",
+    "not_claimed": [
+      "生产就绪",
+      "真实经营提升",
+      "单账号纵向切片完成",
+      "M5 相关任何结论"
+    ]
+  }
+}
