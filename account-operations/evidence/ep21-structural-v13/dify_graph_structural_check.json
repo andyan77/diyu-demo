@@ -1,0 +1,106 @@
+{
+  "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+  "draft_hash": "4760428dbd760ac1ef980b5ec9f61e190eba1f097ad35f7a8c9db89c41ec623f",
+  "published_version": "2026-08-27 03:45:02.426573",
+  "node_count": 7,
+  "edge_count": 6,
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "title": "本轮投影输入"
+    },
+    {
+      "id": "operating_one_account_llm",
+      "type": "llm",
+      "title": "单账号持续运营决策"
+    },
+    {
+      "id": "required_item_gate",
+      "type": "code",
+      "title": "必填项闸门（确定性检查）"
+    },
+    {
+      "id": "gate_repair_llm",
+      "type": "llm",
+      "title": "按闸门报告补齐缺失项"
+    },
+    {
+      "id": "assemble",
+      "type": "code",
+      "title": "确定性取稿"
+    },
+    {
+      "id": "post_gate",
+      "type": "code",
+      "title": "闸门闭合复检与周期状态承载决定"
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "title": "运营判断与内容任务候选"
+    }
+  ],
+  "edges": [
+    "start->operating_one_account_llm",
+    "operating_one_account_llm->required_item_gate",
+    "required_item_gate->gate_repair_llm",
+    "gate_repair_llm->assemble",
+    "assemble->post_gate",
+    "post_gate->end"
+  ],
+  "ac05_behaviour_label_hits": [],
+  "ac05_structural_hits": [],
+  "ac05_verdict_inputs": {
+    "hits_total": 0,
+    "hits_in_structural_sites": 0,
+    "start_node_variables": [
+      {
+        "variable": "account_context",
+        "label": "账号上下文（M2→M3 最小投影）",
+        "type": "paragraph",
+        "required": true,
+        "max_length": 60000,
+        "options": []
+      },
+      {
+        "variable": "user_request",
+        "label": "用户本轮请求（自然语言）",
+        "type": "paragraph",
+        "required": true,
+        "max_length": 20000,
+        "options": []
+      },
+      {
+        "variable": "loaded_references",
+        "label": "参考文件加载清单 + 本轮已加载的条件附件全文",
+        "type": "paragraph",
+        "required": false,
+        "max_length": 60000,
+        "options": []
+      }
+    ],
+    "node_types": [
+      "code",
+      "end",
+      "llm",
+      "start"
+    ],
+    "branch_node_types_present": [
+      "code"
+    ]
+  },
+  "ac13_write_marker_hits": [],
+  "ac13_verdict_inputs": {
+    "http_request_nodes": [],
+    "tool_nodes": [],
+    "code_nodes": [
+      "required_item_gate",
+      "assemble",
+      "post_gate"
+    ],
+    "environment_variables": [],
+    "conversation_variables": [],
+    "hits_outside_prompt_prose": []
+  }
+}
