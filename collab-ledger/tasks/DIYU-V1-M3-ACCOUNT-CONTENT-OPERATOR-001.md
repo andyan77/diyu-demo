@@ -270,6 +270,72 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 不冒充 v1.5.2 的产品运行证据。
 
 
+### A-12 · 第 12 轮：Founder 七场景实测的只读提取与绑定（`CONTINUE_TASK`，2026-08-27）
+
+**授权事件**：Founder 给出 `M3_FOUNDER_ACCEPTANCE = PASS`（`accepted_candidate = v1.5.2`、
+`accepted_test_set = S1-S7`、`founder_observed_all_outputs = true`、
+`founder_test_runs_completed = 7/7`），并授权执行侧从任务专用 Dify App 后台
+**只读提取**七次运行，完成剩余收口。**本轮执行侧模型调用：0 次。**
+
+**做了什么**
+
+- 枚举该 App 全部 **641 条** workflow 日志，按 `created_from` 分离：
+  `web-app` **8 条**（Founder 本人）、`service-api` **633 条**（执行侧历史运行，全部排除）。
+  **没有按「最近七次」选记录。**
+- 绑定用逐字输入哈希交叉定位：App ID + 已发布版本 + 三段输入的逐字内容与 SHA-256 +
+  运行时间 + `FREEZE_MANIFEST` 场景绑定 + workflow run / node execution 记录。
+  七个场景各自唯一命中。
+- 八条运行的完整记录与全部 7 个节点执行记录落盘
+  （`evidence/ep39-founder-seven-run-extraction/raw/<run_id>/`），零截断。
+- 逐场景结果目录落盘（`founder-pack-v152/results/S1..S7/`，98 个文件），
+  含输入三段、终稿、原始草稿、闸门与复检报告、持续位、审计块、节点记录、`run_meta.json`。
+
+**核验结果（九项）**：`V1` `V6` `V7` `V8` `V9` PASS；`V2` `V3` `V4` `V5` FAIL。
+
+**两项实测新证据**
+
+- `ep34` 的 `Z7` 当时显式声明零模型覆盖不到补齐路。本轮 Founder 的七次运行里有 **3 条真走了
+  补齐路**（S1/S3/S5），补齐节点原始输出已落盘，这一层现在有实物可验：
+  **8/8 无代写**（判据：终稿每个字符必须来自模型产物或 `render_body` 那张封闭替换表，
+  子序列判定、只许删不许插）。
+- 用**仓库里的 v1.5.2 代码**对同一份草稿重算 `gate` / `assemble` / `post_gate`，
+  与线上记录比对：**8/8 三个节点逐字节相同**。线上确定性代码与仓库代码行为等同，
+  这是实测不是声明。
+- `S4`（历史退化那一格）本次**未退化**：闸门 `CLEAN`、直发路、终稿 2680 字、
+  `finish_reason = stop`。**n=1**，只证明这一次没失效，不上推成「已修好」。
+
+**四个真实缺口（全部据实记录，不做闭合）**
+
+1. **7/8 条运行跑在一个未命名的重新发布版本上。** Founder 运行期间 App 被重新发布：
+   冻结候选 `706fdce0…`（`m3-cand-v1.5.2`）→ 实际承载 S2–S7 的
+   `ff801653…`（`marked_name` 为空）。差异逐项算过，**全部落在画布外观层**：
+   节点 `position`/`height`、边多了前端标记 `isInLoop`、`viewport` 平移缩放。
+   **七个节点的 `data`、六条边的拓扑、系统提示词 SHA-256（八条全部 `3a3c657d…` = 冻结值）、
+   模型/provider/温度，全部逐字节相同。**
+   结论分两半、不合并：可执行内容绑定**成立**，已发布版本标签绑定**不成立**。
+2. **S6 提交了两次**（`55eb0a6b…` 与 `0a0f406d…`），输入逐字节相同、都成功、都产出正文，
+   因此第二次不属合同允许的重跑。两条全部保留。Founder 声明 `7/7` 而实际提交 8 次，
+   **Founder 判的是哪一份 S6 输出，后台证据不能唯一确定** —— 场景级证据歧义，不择优。
+3. **`user_request` 八条一律多一个结尾换行**（`account_context` 与 `loaded_references`
+   八条全部逐字节相同）。形态统一、只在结尾、无内容差异，是从代码块复制的机械痕迹，
+   但逐字不等于冻结包，据实记为差异。
+4. **提取完成后 Dify 实例数据库被清空**：容器栈重启、PostgreSQL 走 initdb 全新初始化、
+   `apps` 表 0 行、`setup` 回到 `not_started`。**本轮对 Dify 只发过 GET。**
+   七场景全部原始证据已在此事件之前落盘，不受影响；受影响的是往后的动态绑定复验
+   与活体回滚演练。重建路径仍在盘上（`ep37` 的完整 DSL 导出件）。
+
+**产出**：`M3_FOUNDER_SEVEN_RUN_CLOSEOUT_v1.0.md`、
+`evidence/ep39-founder-seven-run-extraction/`（含 `FOUNDER_RUN_VERIFICATION.json`）、
+`founder-pack-v152/results/S1..S7/`、
+`tools/founder_extract/`（`extract_founder_runs.py` / `verify_founder_runs.py` /
+`make_closeout_v153.py`）。
+
+**本轮不判 `DONE`**：授权 §4 要求「Founder 实际看到的不是冻结 v1.5.2 …… 必须将受影响项
+标记为 `NOT_VERIFIED` 并报告精确差异，不得伪造闭合」。`M3-AC-00` 与 `M3-AC-20`
+现为 `NOT_VERIFIED`，DONE 不可推导，按授权保持 `IN_PROGRESS`。
+
+---
+
 ## L4 · 已排除路线（历史留痕，只加不改）
 
 | 路线 | 根因假设 | 干预 | 关键前提 | 证据 |
@@ -281,6 +347,9 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 | **在闸门或补齐节点里给零正文兜底** | 以为可以让确定性节点替模型补一段正文，保住交付 | **未执行** | SKILL.md〈最低实质产出〉已记过代价：曾有一次模型零正文、补齐环节写了一句话、复检据此宣布"缺口已闭合"，23 个字符的空交付拿到合规章。防护装置制造虚假信心比没有防护更危险。Founder 第八节第 14 条同样列为不得 PASS | 本轮 `B09-5` 记录：`final_text` 长度 0、`hard_fail_no_repair` |
 | **取消盲评后把旧 `AC-18` 追溯判成 PASS** | 想用"路径已取消"换一个通过 | **未执行** | Founder 第二节第 5、6 条逐字禁止追溯改写与追溯上推；A2 棘轮律同向 | 历史 `AC-18` 保持 `NOT_VERIFIED`，后继合同记 `NOT_APPLICABLE` |
 | **`SELECTIVE_PREFIX`（`最…的` 紧贴数字不计速率）** | 以为「本周最重要的一条」这族需要专门守卫 | **写出来后按 A5 删除** | 在 133 次运行 × 2 份正文上改变零个阻断结论：`B15-DIR-02` 已被 DD-5 清掉，`FX-M3-HOLD-02__B` 已被 DD-3b 清掉。没有差别的单元不该存在 | 退回成披露 R-5，见 `M3_REBIND_007_FROZEN_v1.0.md` §5 |
+| **把「可执行内容逐字节相同」当成「版本标签绑定成立」** | 想用已证明的内容一致换掉标签不符这个缺口 | **未执行** | A2 棘轮律：等级不能因为改写、并置或自述往上走；授权 §4 明确要求把受影响项标 `NOT_VERIFIED`。版本标签属有权者裁定，不是执行侧能给的 | `ep39` 把 V4 拆成两半分别记数：可执行内容绑定成立、标签绑定不成立 |
+| **在 S6 两条运行里择优选一条当作 Founder 判过的那份** | 想把 `7/7` 凑齐 | **未执行** | 授权 §2 逐字禁止择优选择输出；两条输入逐字节相同、都成功，无法用证据区分 Founder 读的是哪一份 | 两条全部原样保留，第二次存 `results/S6/extra_second_submission_0a0f406d/`，歧义据实上报 |
+| **重建被清空的 Dify 实例以补做动态绑定复验** | 想让 `dynamic_dify_binding_requires_refresh` 重新可满足 | **未执行** | 本轮授权只含只读提取与收口，不含重建；重建会产生新的 App 与新的运行记录，制造第二个绑定对象 | `ep37` 的完整 DSL 导出件在盘上可随时重建，等授权 |
 
 ---
 
@@ -300,6 +369,9 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 | 2026-08-27 | Dify 任务专用 App `b7fb5b1a…` | 部署最终候选 **v1.5.2** 并发布 | 图哈希 `aeb2bb86…` → `91980f1a…`，已发布版本名 `m3-cand-v1.5.2`，发布时间 `2026-08-27 19:46:47.281053`，形状仍 7 节点 6 边 | 已发布 | DSL 全量导出件 + 草稿快照见 `evidence/ep37-rollback-drill-v152/`；演练已证明可逐字节还原 |
 | 2026-08-27 | 同上 | 导出与恢复演练：故意损坏草稿后用快照恢复 | 恢复后草稿图 sha256 与快照**逐字节相同**；已发布版本全程未变 | 已恢复 | 已完成 |
 | 2026-08-27 | DeepSeek / Qwen / 其他模型 | **本轮执行侧模型调用：0 次** | — | 未发生 | 无需回滚 |
+| 2026-08-27 | Dify Console API（App `b7fb5b1a…`） | **只读**提取 Founder 七场景实测：`workflow-app-logs` 全量枚举、8 条 `workflow-runs`、8×7 条 `node-executions`、已发布版本谱系 | 641 条日志普查；8 个 run_id 见 `ep39` | 只读，无写入、无修改、无删除、无重放 | 无需回滚 |
+| 2026-08-27 | Dify 本机实例（外部事件，**非本任务操作**） | 容器栈重启后 PostgreSQL 走 initdb 全新初始化，`apps` 表 0 行、`setup` = `not_started`，该 App 与 641 条运行记录已不在该实例上 | PGDATA 内每个文件均为 `2026-08-27 21:39` UTC 新建 | 已发生；起因不在本任务范围内 | 重建路径：`evidence/ep37-rollback-drill-v152/m3_candidate_app_v152.dsl.yaml`（sha256 `bd676f29…`，含 v1.5.2 全部改动），**本轮未执行重建，未获授权** |
+| 2026-08-27 | DeepSeek / Qwen / 其他模型 | **本轮（第 12 轮）执行侧模型调用：0 次** | — | 未发生 | 无需回滚 |
 
 **明确未发生的副作用**：未创建第二个 Dify App｜未修改任何非任务 App、凭据、知识库或运行记录｜未切换任何生产流量｜未 merge/直推 `main`｜未 force/amend/reset/squash｜未改写历史｜未发布到任何真实社交平台｜未在 M2 中新建 workspace（本轮复用第 2 轮已存在的取证 workspace，未新增）。
 
@@ -308,36 +380,49 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 ## L2 · 当前状态与下一动作（当前投影，变化时直接替换）
 
 ```text
-进度        IN_PROGRESS（本合同不授权终态；本轮不输出任何终态词）
-进入模式     REBASE_TASK —— 同一 task_id，不建 NEW_TASK
-当前合同     M3_ENGINEERING_TASK_CONTRACT_v1.3_FOUNDER_SINGLE_SET_REBASE.yaml（49021e60…，已现场核验）
-Execution   M3_ENGINEERING_EXECUTION_PROMPT_v1.2_FOUNDER_SINGLE_SET_REBASE.md（4b456c70…，已现场核验）
-最终候选     v1.5.2 —— 已部署并发布到任务专用 App
-Dify        App b7fb5b1a… · 版本名 m3-cand-v1.5.2 · 图 91980f1a… · 提示词 3a3c657d…
-SKILL.md    90596da5…（v1.5.1 时是 245ee2ab…）
-实测包       account-operations/founder-pack-v152/ —— 七场景已冻结，独立复算七项全过
-执行侧模型调用 0
+进度        IN_PROGRESS（存在真实证据缺口，DONE 不可推导；按授权保持 IN_PROGRESS）
+进入模式     CONTINUE_TASK —— 同一 task_id，不建 NEW_TASK，不修改合同
+当前合同     M3_ENGINEERING_TASK_CONTRACT_v1.3_FOUNDER_SINGLE_SET_REBASE.yaml（49021e60…）
+最终候选     v1.5.2 · SKILL.md 90596da5… · 系统提示词 3a3c657d…
+Founder 裁决 M3_FOUNDER_ACCEPTANCE = PASS（accepted_candidate = v1.5.2，S1-S7，7/7）
+七次运行     8 条 web-app 运行全部提取并唯一绑定；证据见 ep39 与 results/S1..S7
+执行侧模型调用 本轮 0
+Dify 实例    数据库已被清空（外部事件，非本任务操作）；证据已在此之前落盘
 ```
 
 **回执**：
 
 ```text
-M3_FOUNDER_DIFY_SINGLE_SET = READY_TO_RUN
-executor_model_calls_after_rebase = 0
-founder_test_runs_completed = 0/7
-task_progress = IN_PROGRESS
+M3_ENGINEERING_TASK              = IN_PROGRESS
+M3_FOUNDER_PRODUCT_ACCEPTANCE    = PASS
+FOUNDER_TEST_RUNS                = 7/7_BOUND_AND_PRESERVED（另有 1 次 S6 重复提交，一并保留并披露）
+EXECUTOR_MODEL_CALLS_AFTER_REBASE = 0
+BLIND_REVIEW                     = NOT_APPLICABLE_BY_FOUNDER_REBASE
+MODULE_AB_GAIN_VS_GOOD_PROMPT    = NOT_CLAIMED
+MAIN_MERGE                       = NOT_AUTHORIZED_NOT_PERFORMED
+M5                               = NOT_STARTED_NOT_AUTHORIZED
+REAL_BUSINESS_LIFT               = NOT_VERIFIED
 ```
 
-**AC 汇总**：成立 9 · `NOT_VERIFIED` 18（共 27 个绑定）。**本轮一条也没有往上推。**
-零模型闭合只动确定性组件，不产生 A2 意义上的运行时上行事件；产品接受出口是 Founder 亲测。
-`AC-18`／`AC-19` 的盲评与模型判定者路径在本合同中 `NOT_APPLICABLE`，历史记录仍为 `NOT_VERIFIED`。
+**AC 汇总**：`M3-AC-01`–`M3-AC-17` 判 `PASS`（确定性证据 + Founder 七场景整体 PASS）；
+`M3-AC-00` `NOT_VERIFIED (INSUFFICIENT)`（已发布候选版本标签对 7/8 条不成立、
+`user_request` 逐字不等于冻结包）；`M3-AC-20` `NOT_VERIFIED (ABSENT)`（Dify 实例已清空，
+动态绑定复验与活体回滚入口不可复演）；`M3-AC-18` / `M3-AC-19`
+`NOT_APPLICABLE_BY_FOUNDER_REBASE`，历史 `NOT_VERIFIED` 记录原样保留。
 
-**下一动作**：等 Founder 本人在 Dify 中逐条运行七个输入（每个一次），
-回交七份原始输出、运行 ID／时间／模型／token／截图，以及唯一整体 `PASS` 或 `FAIL`。
-收到后执行侧只做零模型证据绑定与记录，不再调用模型：
-`PASS` ⇒ 按合同判 `DONE` 并做远端与回滚闭合；`FAIL` ⇒ 记 `FAILED`，
-不自动修复、不自动重跑、不建下一候选、不请求第二轮，输出持久化 Checkpoint 后停止。
+**失效面（A3，不多算不少算）**：缺口 1 只影响版本标签，不影响 Founder 所观察内容由哪套逻辑
+产出 —— 系统提示词、七个节点 `data`、边拓扑、确定性代码行为八条全部证明与冻结候选相同，
+故 `AC-01`–`AC-17` 不随之失效。缺口 2 只使 S6 的**产物身份**存疑，两份都在、都非退化。
 
-**声明上限**：即使 Founder 判 `PASS`，只能说「绑定 v1.5.2 的 M3 候选通过了适用确定性技术门，
-并在一组事前冻结的七个 Dify 输入上获得 Founder 产品接受」。
-不得声称优于一份好提示词、M5 成品增益、已生产上线、真实经营提升或因果增益。
+**下一动作（需 Founder 裁定，执行侧不得自裁）**：
+
+1. 那次未命名的重新发布（只含画布几何与一个前端标记的差异）算不算同一个冻结候选？
+   算 ⇒ `M3-AC-00` 可闭合，`DONE` 可推导；不算 ⇒ 本次实测的绑定对象不是冻结候选。
+2. S6 的两份输出中，Founder 当时读的是哪一份？（两份都已保留，执行侧不择优。）
+3. Dify 实例已清空，是否授权用 `ep37` 的 DSL 导出件重建以恢复动态绑定复验能力？
+
+**声明上限**：本轮只能说「绑定 v1.5.2 可执行内容的 M3 候选，在一组事前冻结的七个 Dify 输入上
+真实运行并获得 Founder 产品接受；七次运行原始证据完整保留可逐条回指；确定性组件在这八次
+真实运行中没有代写过任何交付内容」。不得声称优于一份好提示词、M5 成品增益、已生产上线、
+真实经营提升或因果增益；也不得把「两句新 Skill 规则修好了 B09-5」从**推断**上推 —— 本轮只
+多了 1 次未退化的观察。
