@@ -607,7 +607,7 @@ WHY（合同 `why`）= *给一个账号一项以证据为界的持续运营能�
 | M3-AC-17 | `FAIL(INSUFFICIENT)` | 纵向 ECC 整体 `FAIL(INSUFFICIENT)`，触发步 `E06`：交付合格（1652 字符，闸门 hard_fail/missing/hollow 全空）却被 `check_stale_value_override` 整份拒收，被指控的句子无任何发布量主张。判定者独立追踪 12 步正文得出：**21 个跨步对象，进结构化通道 1 个，13 项无处置永久消失** |
 | M3-AC-18 | `FAIL(INSUFFICIENT)` | A/B B vs A：七维六维「相当」、仅「产能取舍」B 优，五项硬门零实质退化，但不构成整体增益 ⇒ `M3_PROFESSIONAL_GAIN = NOT_VERIFIED`、`M3_MODULE_AB = NOT_PASSED`。四道预冻结闸全过（自身未被事后修改／判定写定早于映射读取／提示词唯一 1 种形态且逐份哈希一致／36 份齐备） |
 | M3-AC-19 | 部分成立 | Qwen `NOT_APPLICABLE`（Founder 指示，运行前判定）；本轮 40 名判定者（4 份 ECC 执行记录含行为的中断那次 + 36 名盲评者）机械核验**全部 CLEAN、零违规、零缺记录**；盲评有效性另由 `_leak_scan_v3.json` 扫描（0/12 命中）与 36 份自检（全部写「不知道」，无一份指认某一臂）双向支撑；留出集身份与探索/正式分轨成立 |
-| M3-AC-20 | 部分成立 | 远端已推送，本地 HEAD == 远端 HEAD（`65a9de0`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验；专用 Dify App/已发布版本/图哈希/模型参数/证据索引齐备；回滚演练第 6 轮实测通过 |
+| M3-AC-20 | 部分成立 | 远端已推送，本地 HEAD == 远端 HEAD（`cbb8d36`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验（本次实跑 EQUAL）；专用 Dify App／已发布版本／图哈希／模型参数／证据索引齐备；回滚演练第 6 轮实测通过；**实测包已按最终候选重新生成**（`M3_FOUNDER_DIFY_TEST_PACK_v1.1.md`，三格输入与输出逐字取自运行记录，已机械核对） |
 
 **汇总**（按状态值计数，`AC-12`／`AC-13`／`AC-16` 各带多个绑定分列，AC 总数恒为 21）：
 成立 15 · 成立（带限定）1 · 不得 `PASS` 2 · 未独立成立 1 · `NOT_VERIFIED` 2 ·

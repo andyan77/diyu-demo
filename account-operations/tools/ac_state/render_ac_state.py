@@ -82,7 +82,12 @@ def summary(d):
 
 
 def check(d):
-    """核对仓库两处表格里的每个 AC 行，状态字段是否与真源一致。"""
+    """核对仓库两处表格里的每个 AC 行，**整行**是否与真源渲染逐字一致。
+
+    第一版只比状态词，结果 `AC-20` 的「依据」改了之后 --check 照样通过 ——
+    状态词没变，依据文字却已经漂了。只比一部分字段，等于给漂移留了一条缝。
+    现在整行比对：状态、依据、缺口任一处不一致都报。
+    """
     targets = [
         ("M3_ACCEPTANCE_CRITERIA_FROZEN_v1.0.md", "criteria"),
         (d.get("checkpoint_file", "M3_CHECKPOINT_ROUND_7.md"), "checkpoint"),
@@ -103,9 +108,15 @@ def check(d):
                 problems.append(f"{fname}: 找不到 {ac['id']} 的表格行")
                 continue
             line = m.group(0)
-            missing = [v for v in vals if v not in line]
-            if missing:
-                problems.append(f"{fname}: {ac['id']} 行缺状态词 {missing}")
+            expect = ("| " + " | ".join(
+                c.replace("\n", " ") for c in
+                ([ac["id"], _states(ac), ac["basis"]] +
+                 ([ac.get("gap") or "—"] if _style == "checkpoint" else []))) + " |")
+            if line.strip() != expect.strip():
+                missing = [v for v in vals if v not in line]
+                problems.append(
+                    f"{fname}: {ac['id']} 行与真源渲染不一致"
+                    + (f"（缺状态词 {missing}）" if missing else "（状态词一致，依据或缺口文字有漂移）"))
     return problems
 
 
