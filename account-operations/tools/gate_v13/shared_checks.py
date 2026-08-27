@@ -14,7 +14,7 @@ v1.1 的设计根基错误：整个闸门跑在"模型自报四个触发标志"�
 import json
 import re
 
-__all__ = ['ABSENCE_NEAR', 'ACTION_MARKER', 'ADVISORY_SLOT_SUBJECTS', 'ALWAYS_ITEMS', 'BLANKET_CARRY', 'BODY_KEYWORDS', 'CONDITIONAL_VOID', 'EMPTY_SLOT_VALUES', 'HOLLOW_EXACT', 'LABEL_SHELL', 'LEAK_PATTERNS', 'MIN_ANCHOR_CHARS', 'MIN_BODY_CHARS', 'MIN_NON_REFERENCE_CHARS', 'MIN_SENTENCES', 'NEGATION_BEFORE', 'NOW_MARKER', 'PAST_MARKER', 'POS_NEW_KINDS', 'POS_STATUS', 'PROPOSAL_MEASURE', 'PROPOSAL_SUBJECT', 'QTY_SUBJECTS', 'REF_ALIASES', 'REF_DISPLAY', 'REF_NEGATION', 'REF_NOUN', 'REF_SENTENCE', 'SHELL_FAMILY', 'SLOT_ABSENCE_VALUE', 'SLOT_NAMES', 'SLOT_SUBJECTS', 'TRIGGER_ITEMS', '_CN_NUM', '_PUNCT', '_SLOT_HEAD', '_norm', '_nows', '_parse_slots', '_per_week', '_qty', '_segments', '_slot_filled', 'check_input_contradiction', 'check_items', 'check_leaks', 'check_manifest', 'check_min_output', 'check_positions', 'check_stale_value_override', 'compute_triggers_from_input', 'has_blanket_carry', 'parse_audit', 'parse_positions_declaration', 'parse_standing_positions', 'positive_hit', 'proposal_shape_hit', 'render_body', 'resolve_triggers', 'split_audit']
+__all__ = ['ABSENCE_NEAR', 'ACTION_MARKER', 'ADVISORY_SLOT_SUBJECTS', 'ALWAYS_ITEMS', 'BLANKET_CARRY', 'BODY_KEYWORDS', 'CONDITIONAL_VOID', 'EMPTY_SLOT_VALUES', 'HOLLOW_EXACT', 'LABEL_SHELL', 'LEAK_PATTERNS', 'MIN_ANCHOR_CHARS', 'MIN_BODY_CHARS', 'MIN_NON_REFERENCE_CHARS', 'MIN_SENTENCES', 'NEGATION_BEFORE', 'NOW_MARKER', 'PAST_MARKER', 'POS_NEW_KINDS', 'POS_STATUS', 'PROPOSAL_THESIS', 'PROPOSAL_WINDOW', 'QTY_SUBJECTS', 'REF_ALIASES', 'REF_DISPLAY', 'REF_NEGATION', 'REF_NOUN', 'REF_SENTENCE', 'SHELL_FAMILY', 'SLOT_ABSENCE_VALUE', 'SLOT_NAMES', 'SLOT_SUBJECTS', 'TRIGGER_ITEMS', '_CN_NUM', '_PUNCT', '_SLOT_HEAD', '_norm', '_nows', '_parse_slots', '_per_week', '_qty', '_segments', '_slot_filled', 'check_input_contradiction', 'check_items', 'check_leaks', 'check_manifest', 'check_min_output', 'check_positions', 'check_stale_value_override', 'compute_triggers_from_input', 'has_blanket_carry', 'parse_audit', 'parse_positions_declaration', 'parse_standing_positions', 'positive_hit', 'proposal_shape_hit', 'render_body', 'resolve_triggers', 'split_audit']
 
 # ---------------------------------------------------------------- 常量（冻结）
 
@@ -71,24 +71,33 @@ CONDITIONAL_VOID = (r"是否|要不要|再评估|重新评估|复验触发|下�
 #
 # 改判据：一次探索提案在结构上总要说清两件事——**要验证什么**，以及**验证多久/多少**。
 # 两件事出现在同一句段里，才算命中；只有其中一件不算。
-PROPOSAL_SUBJECT = (r"假设|核心命题|想验证|要验证|待验证|验证一下|试点|小范围|"
-                    r"新方向|新机制|做个实验|做一个实验|观察窗|观察窗口")
-PROPOSAL_MEASURE = (r"至少\s*\d+|不少于\s*\d+|\d+\s*(?:天|周|条|次|期)|"
-                    r"[一二两三四五六七八九十]\s*(?:天|周|条|次|期)|"
-                    r"截止|到期|期满|窗口(?:期|长度)?[为是]|观察(?:期|窗)")
+# 判据不是我想出来的，是从**逃逸现场原文**反推的。第 5 轮 G-2 的两行逐字是：
+#
+#   L10  核心命题是：在数据回来之前，用不承诺换取可信，用试穿实拍让观众看到真实上身效果。
+#   L13  这条内容发布后要盯的：门店和企业微信预约是否增加、私信里面料疑问是否被接住；观察窗口至少一周。
+#
+# 关键在于：**产品自己的词汇不是「试一次」，是「核心命题是……；观察窗口……」**，
+# 而且这两半落在**不同的行**上。上一版按"同一句段内动作词"去认，认不出来；
+# 第一次改判据时按"同一句段内主语 + 度量"去认，同样认不出来——它们本来就不在同一段。
+#
+# 因此判据是**篇章级共现**：命题标记（在一个未被否定的句段里）+ 观察窗标记。
+# 泛化的「假设」「验证」「N 条」不进判据——实测它们在六份完全正常的正向夹具里都出现，
+# 拿它们当判据就是造一台误报机（第一版实测：6/6 正向夹具全部误报）。
+PROPOSAL_THESIS = (r"核心命题(?:是|为|：|:)|主要假设(?:是|为|：|:)|要验证的是|"
+                   r"想验证的是|待验证的命题|本轮的假设是")
+PROPOSAL_WINDOW = r"观察窗口|观察窗|观察期(?:为|是|至少)|窗口(?:期|长度)?(?:为|是|至少)"
 
 
 def proposal_shape_hit(body):
-    """同一句段内同时出现「验证什么」与「验证多久/多少」⇒ 探索提案。
-    否定极性与条件式否决继续有效（G-1 的修法不回退）。"""
-    for seg in _segments(body or ""):
-        ms = re.search(PROPOSAL_SUBJECT, seg)
-        if not ms:
+    """篇章级共现：命题 + 观察窗 ⇒ 探索提案。否定极性与条件式否决继续有效（G-1 不回退）。"""
+    t = body or ""
+    if not re.search(PROPOSAL_WINDOW, t):
+        return None
+    for seg in _segments(t):
+        m = re.search(PROPOSAL_THESIS, seg)
+        if not m:
             continue
-        if not re.search(PROPOSAL_MEASURE, seg):
-            continue
-        pre = seg[:ms.start()]
-        if re.search(NEGATION_BEFORE + r"[^，。；\n]{0,10}$", pre):
+        if re.search(NEGATION_BEFORE, seg[:m.start()]):
             continue
         if re.search(CONDITIONAL_VOID, seg):
             continue
