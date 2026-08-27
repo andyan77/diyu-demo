@@ -135,8 +135,8 @@ baseline_before:
 
 baseline_after:
   engineering_commit: "3bf324ec616a80f669e9764bf5dfc4f77f22c5b5"
-  receipt_commit: "EXECUTOR_FILLS_AFTER_COMMIT"
-  remote_commit: "EXECUTOR_FILLS_AFTER_PUSH"
+  receipt_commit: "7b21093297054f41b57859e0dbff8f1c819a10c7"
+  remote_commit: "7b21093297054f41b57859e0dbff8f1c819a10c7"
   remote_main: "a7b810109f43a4bf500acc285baab477d96796e3"
   worktree_clean: true
   dify_bindings: []
@@ -256,9 +256,9 @@ partial_used: false
 
 git:
   branch: "codex/v1-m4-capability-seams-runtime-integration-001"
-  local_commit: "EXECUTOR_FILLS_AFTER_COMMIT"
-  remote_commit: "EXECUTOR_FILLS_AFTER_PUSH"
-  remote_matches_local: "EXECUTOR_FILLS_AFTER_PUSH"
+  local_commit: "7b21093297054f41b57859e0dbff8f1c819a10c7"
+  remote_commit: "7b21093297054f41b57859e0dbff8f1c819a10c7"
+  remote_matches_local: true
   main_unchanged: true
   pr_created: false
 
