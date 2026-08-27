@@ -2,6 +2,48 @@
 
 本文件约束当前仓库中的执行代理。任何旧线程、旧文档或历史方案与本文件及《笛语项目基线》冲突时，以当前仓库真相源为准。
 
+## 0. 上位治理与角色（2026-08-27 接入）
+
+本节**只给指针，不复制任何正文**。与所引真源冲突时以真源为准，并把本节标 `STALE` 后定向修正。
+
+| 层 | 真源位置 | 加载条件 |
+|---|---|---|
+| 通用宪法内核 | 用户级 `~/.claude/CLAUDE.md` 内核段 | 常驻，无条件 |
+| 通用宪法运行层 / 推导表 | `/home/faye/governance/universal-ai-collaboration-governance/constitution/` | 按内核 §6 条件加载 |
+| **项目 Profile（真源）** | `/mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/projects/APP-DIYU-DEMO/PROJECT_PROFILE.md` | 开工前、进入模式判断、边界确认时读 |
+| 执行侧协议 v1.3 | `/home/faye/governance/universal-ai-collaboration-governance/project-protocols/diyu/受边界约束的执行总负责人协议_v1.3.md` | 当前角色为 `EXECUTION` 且 Profile 采用该协议时 |
+| 规划侧协议 v1.2 | `/home/faye/governance/universal-ai-collaboration-governance/project-protocols/diyu/执行Prompt生成总则_规划侧约束框架_v1.2.md` | 当前角色为 `PLANNING` 且 Profile 采用该协议时 |
+| Review Contract 指定的项目协议 | 由当前 Review Contract 指明 | 当前角色为 `REVIEW` 时 |
+
+**加载由角色触发，不由仓库或工具触发。** 未命中当前角色的协议不加载全文——承担 `PLANNING` 的执行单元不读 v1.3 全文，承担 `EXECUTION` 的不读 v1.2 全文。
+
+- Constitution 分发身份：`tag=v0.3.1-revision-2` / `commit=34d10a052767fe5cbc2ceebc236e2ad17e2d1885`；激活事件 `RULESIDE-2026-08-25-005`
+- 规则侧采用证据：`Diyu-V1-Planning` commit `45344f2`（activate constitution v0.3.1 revision 2）；该 Profile 已把 v1.2 / v1.3 列为本项目现行协议
+- 若上述 `/mnt/c/...` 路径不可达，本节相关判断一律置 `STALE`，不得凭记忆复述 Profile 内容
+
+### 0.1 角色装配（不由工具品牌决定）
+
+> **ROLE IS SELECTED BY TASK AUTHORITY, NOT BY TOOL BRAND.**
+
+- `/home/faye/diyu-demo` 是**执行事实仓库**：工程实现、Git、运行状态与原始证据的所在地。
+- **执行事实仓库 ≠ 某个工具永久拥有 `EXECUTION` 角色。** 仓库身份是载体，不是角色分配。
+- 最终角色只由三者决定：**Project Profile + 当前 Task Contract + 当前授权**。
+- Claude Code、Codex 及未来兼容 Agent **都可以**承担 `PLANNING` / `EXECUTION` / `REVIEW`。
+- 当前常用拓扑（**仅为当前任务装配，不是永久工具映射**）：Codex 当前规划窗口承担 `PLANNING`；Claude Code 当前项目窗口在拿到准确 Task Contract 与授权时承担 `EXECUTION`。下一个任务可以完全相反。
+- 更换工具、窗口、模型或终端**本身**不产生新 `task_id`，不重置 Attempt，不清空失败历史，也不构成 `REBASE`。
+- 承担 `EXECUTION` 的执行单元不得改 `WHAT / WHY / BOUNDARY / ACCEPTANCE`、产品语义、授权或冻结 Oracle——这些只能由规划侧编译、Founder 接受。本文件 §6「不得由执行侧宣布合同已接受」是同一条的项目表述。
+- 角色未声明时按 [`AGENTS.md`](AGENTS.md) §4 的顺序判断，**不得凭工具品牌推断**。
+
+### 0.2 与本仓库真相源的关系
+
+通用宪法裁决**原则**（权威域、证据等级、状态词、失效传播、可消融性）；本仓库真相源裁决**产品事实与当前状态**。两者分属不同权威域，不互相覆盖（A1 跨域不覆盖）。本文件开头「以当前仓库真相源为准」继续有效，指的是产品与状态命题。
+
+五本账（`collab-ledger/`）即宪法第 5 节「账本」在本项目的载体，字段与程序按项目协议，不改名、不另造第三套。
+
+### 0.3 不在本仓库建第二份 Profile
+
+`PROJECT_PROFILE.md` 的真源在规则侧且已存在。本仓库只指路、不复制——复制会制造第二套真源并触发 A3 的全量载体同步义务。
+
 ## 1. 当前项目阶段
 
 阶段为 **V1 决策链重对齐（Rebase）**。Dify Demo A/B 对照阶段已结束并按 `PARTIAL` 冻结。
@@ -15,7 +57,7 @@
 - **上位合同被接受 ≠ 子合同被接受**，也 ≠ 授权施工。改 Skill、DSL、持久化、工作流一律需要新授权。
 - 模型按能力选用（当前主模型 DeepSeek，语义事实核验 qwen3.8-max），**不再有 Qwen-only 约束**。
 - 当前不做完整软件工程化。
-- M0（`V1-REBASE-EP00-CURRENT` 通用预检 → `SINGLE-ACCOUNT-SLICE-EP00` 专项预检 → 四份共享合同）已全部完成并采用进 `main`；下一步是 M1–M4 各自的施工 Execution Prompt 编译与授权，不在本文件预先展开。
+- **当前任务状态与下一动作不写死在本文件**，按顺序读取：① [`collab-ledger/L2_TASK_STATE_AND_HANDOFF.md`](collab-ledger/L2_TASK_STATE_AND_HANDOFF.md) → ② [`collab-ledger/L1_TASK_MANIFESTS.md`](collab-ledger/L1_TASK_MANIFESTS.md) → ③ 当前 Task Contract / Execution Prompt → ④ 当前 Git、Dify、数据库与真实运行证据 → ⑤ 规则侧规划基线（**只作规划索引，不代替实时工程状态**）。本文件只保留长期稳定的项目边界与产品规则。
 
 ## 2. 真相源优先级
 
@@ -42,7 +84,7 @@ Creative Script｜Production Director｜Publishing & Packaging
 - 组件必须拥有所需业务输入，或存在合同允许的**等价替代输入**；**不得为进入某组件暗中补跑前置组件**。
 - 不得并行扩建外围系统。
 
-**当前下一步**：M0 全部阶段（通用预检、专项预检、四份共享合同）已完成并被 Founder 接受；下一步是由规划侧基于四份共享合同分别编译 M1—M4 施工 Execution Prompt，**编译已获授权，工程实现本身尚未获授权**，须等各自的 Execution Prompt 与授权。
+**当前下一步不写在本文件。** 按 §1 的顺序读取：L2 → L1 → 当前 Task Contract / Execution Prompt → 实时运行证据。
 
 ## 4. 防跑偏硬约束
 
