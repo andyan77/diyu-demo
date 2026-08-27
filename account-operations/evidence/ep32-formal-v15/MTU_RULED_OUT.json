@@ -1,0 +1,14 @@
+{
+  "what": "G1-A 传输故障的成因排查：diyu-infra 记录的 WSL2/Docker MTU 不匹配已被排除",
+  "when": "2026-08-27，第 9 轮第 2 段 EP-06 保真组跑完后立即查",
+  "symptom": "[models] Server Unavailable Error … SSLEOFError(UNEXPECTED_EOF_WHILE_READING) … Max retries exceeded，api.deepseek.com",
+  "skill_criterion": "diyu-infra：宿主直连成功、容器直连失败 = MTU；两边都失败 = 真网络问题。修法是让容器 MTU 与宿主一致。",
+  "measured": {
+    "host_eth0_mtu": 1420,
+    "container_mtu": {"docker-api-1": 1420, "docker-worker-1": 1420, "docker-plugin_daemon-1": 1420},
+    "path_mtu_probe": {"total_1420": "通", "total_1500": "不通"}
+  },
+  "conclusion": "宿主与容器 MTU 相等（1420），且 1420 总包实测可达 —— 文档里那条成因**不成立**，修法早已生效。剩下的解释是 api.deepseek.com 的偶发上游中断。",
+  "rate": {"本轮保真组": "1/9", "第 8 轮全批": "3/85", "判读": "量级一致，属偶发，不是系统性故障"},
+  "disposition": "按冻结协议只对传输故障签名重试，失败件原样保留为证据；不对模型产出的坏结果重跑（那是择优）。"
+}
