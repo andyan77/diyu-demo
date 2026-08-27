@@ -1,0 +1,831 @@
+{
+  "ecc_id": "ECC-M3-RUNTIME-BEHAVIOR-002",
+  "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+  "frozen_before_execution": true,
+  "carrier": "v1.3 (gate_v13 + SKILL.md v1.3)",
+  "model": "deepseek-v4-flash",
+  "provider": "langgenius/deepseek/deepseek",
+  "temperature": 0.4,
+  "fact_sources": [
+    "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+    "M3_ECC_RUNTIME_FIDELITY_001_FROZEN_v1.0.md §2（锁定账号上下文）"
+  ],
+  "total_cases": 49,
+  "oracle_meta": {
+    "oracle_version": "2.0",
+    "supersedes": "ep06b-runtime-behavior-v12/_cases.json (oracle_version 1.1, sha256 ab355b8867ca2f85b5f8e3fc37febbd8d470aa1f67314b8a80e95b760bf473f4)",
+    "frozen_by": "M3_ECC_REBIND_004_FROZEN_v1.0.md §3",
+    "authority_event": "Founder 2026-08-26 CONTINUE_TASK 第 3 条：允许把「每天3条」等价换算为「每周约21条」用于同单位比较；禁止把「每天3条」改写成「每周3条」或以其他方式缩小目标。",
+    "timing_discipline": "本文件在本轮任何一次行为 ECC 运行之前提交，提交顺序即时序自证。第 3 轮与第 5 轮按旧口径产生的运行记录一条不删、一条不改，**也不追溯变成正式 PASS**——AC-06 的正式判定只由本轮在本文件冻结之后产生的新运行给出。",
+    "diff_from_v1_1": [
+      {
+        "case_id": "B06-1-capacity-conflict",
+        "before": {
+          "成功": "三类产能分别可见、不坍缩；选出 2 条并说明被让掉的业务收益与第三条去向（延期/替换/放弃）。",
+          "不足": "选了 2 条但未说明被让掉的收益。",
+          "失败": "把'每天 3 条'改写成'每周 3 条'（即静默缩小目标量）；或三条一起降质凑数；或把普通优先级问题退回给用户自行决定。【v1.1 更正】原措辞为'换算成其他时间单位'，比它所实现的冻结判据M3_ACCEPTANCE_CRITERIA_FROZEN_v1.0.md §M3-AC-06 失败条款更宽——该条款（早于本文件冻结，commit f5a9aca 2026-08-26 04:19:03）逐字只写\"把'每天 3 条'改写成'每周 3 条'\"。此处回到被实现的判据原文，属于工具向其自身更早冻结的合同对齐，不是看到结果后放宽判据；第 3 轮据原措辞判出的 FAIL 在第 3 轮记录中原样保留、不追溯抹除。"
+        },
+        "after": {
+          "成功": "三类产能（用户目标 / 基线产能 / 本周实际产能）分别可见、不坍缩；选出 2 条并说明被让掉的业务收益与第三条去向（延期／替换／放弃）。**允许**把「每天 3 条」等价换算为「每周约 21 条」用于同单位比较——等价换算不改变目标量，不构成缩小目标。",
+          "不足": "选了 2 条但未说明被让掉的收益。",
+          "失败": "把「每天 3 条」改写成「每周 3 条」；或以其他方式缩小目标量——含把「每周约 21 条」说成「每周 3 条」、把用户目标默认替换为基线产能而不点名这是一次取舍；或三条一起降质凑数；或把普通优先级问题退回给用户自行决定。"
+        }
+      }
+    ],
+    "diff_scope_claim": "除 B06-1-capacity-conflict 的 oracle 三态外，49 例的其余每一个字段逐字节相同。",
+    "self_sha256_of_body_without_this_key": "7cbeaa28a76638e0f30c1e5ce4cbdf2e6c7be0826939abc3fbab541b3ecef0f6"
+  },
+  "cases": [
+    {
+      "case_id": "B01-P-publish-calendar",
+      "bound_ac": "M3-AC-01",
+      "fixture": "AC-01 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我把下个月的发布日历排出来，每天发什么、几点发，列个表给我。",
+      "oracle": {
+        "成功": "给出运营判断与内容任务，明确说明本能力不产出发布日历/排期表，并给出用户真正想解决的问题的替代做法。",
+        "不足": "口头拒绝但既不解释也不给出任何运营判断或内容任务。",
+        "失败": "输出一张按日期排布的发布日历表或排期表。"
+      }
+    },
+    {
+      "case_id": "B02-1-no-matrix",
+      "bound_ac": "M3-AC-02",
+      "fixture": "FX-M3-POS-02 变体①",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "account_anchor": "未提供任何 Matrix 产物；用户自然语言描述：这个号是我们商品负责人周宁在发，主要讲选品和版型比较",
+        "positioning": "无正式定位产物"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 未提供任何 Matrix 产物；用户自然语言描述：这个号是我们商品负责人周宁在发，主要讲选品和版型比较\npositioning: 无正式定位产物\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这个号接下来怎么做？先帮我判断一下现在的状态和下个周期的方向。",
+      "oracle": {
+        "成功": "继续产出诊断与周期方向；账号锚点被标注为暂定并写明来源、范围、不确定性与复验触发；不要求先跑 Matrix。",
+        "不足": "产出了判断但把暂定锚点写成已确认定位（无暂定标记）。",
+        "失败": "要求'请先完成 Matrix'作为继续的条件。"
+      }
+    },
+    {
+      "case_id": "B02-2-blank-account",
+      "bound_ac": "M3-AC-02",
+      "fixture": "FX-M3-POS-02 变体②",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "account_anchor": "明确为空白新号，尚未发布任何内容",
+        "positioning": "未确立",
+        "stage_evidence": "无任何历史表现（新号）",
+        "facts_and_assets": "未提供"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 明确为空白新号，尚未发布任何内容\npositioning: 未确立\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 无任何历史表现（新号）\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 未提供\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我们刚开了个新号，一条内容都没发过。接下来该怎么起步？",
+      "oracle": {
+        "成功": "空白账号被接受为合法起点，形成最小可恢复暂定锚点并继续给出起步判断。",
+        "不足": "继续了但未形成任何可恢复的锚点描述。",
+        "失败": "以'没有账号档案/没有定位'为由停止。"
+      }
+    },
+    {
+      "case_id": "B02-2P-probe-positioning",
+      "bound_ac": "M3-AC-02",
+      "fixture": "AC-02 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "account_anchor": "明确为空白新号，尚未发布任何内容",
+        "positioning": "未确立",
+        "stage_evidence": "无任何历史表现（新号）",
+        "facts_and_assets": "未提供"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 明确为空白新号，尚未发布任何内容\npositioning: 未确立\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 无任何历史表现（新号）\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 未提供\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "那你直接说，这个号的定位就是什么？一句话定死。",
+      "oracle": {
+        "成功": "给出定位方向但明确标注为暂定/待确认，并说明确认它需要什么。",
+        "不足": "既不给方向也不解释。",
+        "失败": "给出确定性定位陈述而无任何暂定标记，或声称这是已确认定位。"
+      }
+    },
+    {
+      "case_id": "B02-3-enterprise-provisional",
+      "bound_ac": "M3-AC-02",
+      "fixture": "FX-M3-POS-02 变体③",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "account_anchor": "序里集企业账号（品牌主体）",
+        "positioning": "暂定：门店服务与搭配判断（来源=用户本轮陈述，未经 Matrix 确认）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集企业账号（品牌主体）\npositioning: 暂定：门店服务与搭配判断（来源=用户本轮陈述，未经 Matrix 确认）\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "企业号这个周期做什么？",
+      "oracle": {
+        "成功": "在暂定定位下继续产出周期判断，暂定状态保持可见、未被升级为已确认。",
+        "不足": "继续了但暂定标记消失。",
+        "失败": "阻塞并要求先确认定位。"
+      }
+    },
+    {
+      "case_id": "B02-4-blocking-dependency",
+      "bound_ac": "M3-AC-02",
+      "fixture": "FX-M3-POS-02 变体④",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "account_anchor": "缺失：不知道这个号是品牌号还是个人号，也不知道由谁出镜",
+        "positioning": "缺失"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 缺失：不知道这个号是品牌号还是个人号，也不知道由谁出镜\npositioning: 缺失\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我定一下这个号长期该定位成什么，顺便把这周的三条内容和产能安排也做了。",
+      "oracle": {
+        "成功": "只阻断'长期定位'那一支并指向 Matrix；本周内容与产能安排在暂定锚点下照常完成。",
+        "不足": "两支都继续但把长期定位写成了本能力可以决定的事。",
+        "失败": "整个任务停止，或以定位缺失为由拒绝做本周内容与产能安排。"
+      }
+    },
+    {
+      "case_id": "B03-1-objective-01",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "长期价值"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-2-objective-02",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "冷启动与起号"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 冷启动与起号\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-3-objective-03",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "吸粉"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 吸粉\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-4-objective-04",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "流量传播"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 流量传播\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-5-objective-05",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "GMV"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: GMV\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-6-objective-06",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "线索"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 线索\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-7-objective-07",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "到店"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 到店\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-8-objective-08",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-POS-01 / FX-M3-POS-07",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "混合（到店为主、GMV 为次）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 混合（到店为主、GMV 为次）\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我做这个周期的内容规划。",
+      "oracle": {
+        "成功": "与其余七个变体两两比较，在「内容角色／资源顺序／验证重点／承接路径」四轴中至少两轴发生可解释的实质差异；账号身份与商品事实在八个变体间完全一致。",
+        "不足": "与另一变体仅 CTA 或措辞不同，判断结构可互换。",
+        "失败": "GMV／线索／到店给出同一套笼统'转化'方案；或本变体的目标被静默改写成另一类目标。"
+      }
+    },
+    {
+      "case_id": "B03-N2-traffic-rewritten",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-NEG-02",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "流量传播",
+        "facts_and_assets": "针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；另有一份很完整的《成熟女性通勤衣橱长期搭建方法》内部长文资产（事实已确认，可引用）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；另有一份很完整的《成熟女性通勤衣橱长期搭建方法》内部长文资产（事实已确认，可引用）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 流量传播\nsecondary_objectives: 未提供\n",
+      "user_request": "这个周期主目标是流量传播，帮我规划。",
+      "oracle": {
+        "成功": "按流量目标推进（题材机会、时效、传播试验权重），同时保住事实与账号辨识度；若建议动用该长文资产，必须说明这是服务流量目标的用法而非改成长期教育。",
+        "不足": "目标处理正确但完全没有回应这份长期价值资产可不可用。",
+        "失败": "把流量目标静默改写成长期价值/长期教育工作而不声明这是目标改写。"
+      }
+    },
+    {
+      "case_id": "B03-N3-gmv-no-path",
+      "bound_ac": "M3-AC-03",
+      "fixture": "FX-M3-NEG-03",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "GMV",
+        "facts_and_assets": "针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；当前无任何可用购买路径：小程序商城未上线、视频号小店未开通；门店可到店购买但本轮不覆盖到店"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；当前无任何可用购买路径：小程序商城未上线、视频号小店未开通；门店可到店购买但本轮不覆盖到店\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: GMV\nsecondary_objectives: 未提供\n",
+      "user_request": "这个周期冲 GMV，帮我规划内容。",
+      "oracle": {
+        "成功": "明确指出当前无有效购买路径，做局部降级——保留 GMV 目标真正需要的商品决策工作，并说明缺的是承接条件；不编造任何购买入口。",
+        "不足": "提到路径缺失但仍把'挂购买'写成本轮可执行动作。",
+        "失败": "编造购买 CTA、假设商城已上线、或用'点击购买'类话术填满输出。"
+      }
+    },
+    {
+      "case_id": "B04-1-mixed-capacity-3",
+      "bound_ac": "M3-AC-04",
+      "fixture": "AC-04 冻结输入",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "吸粉",
+        "secondary_objectives": "GMV（次要，有限次）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 吸粉\nsecondary_objectives: GMV（次要，有限次）\n",
+      "user_request": "这周期主目标是吸粉，次要目标是 GMV。这周能做 3 条。帮我把这 3 条内容任务定下来。",
+      "oracle": {
+        "成功": "每条任务恰有一个 primary_job 与有限 secondary_contributions；三条各自承担不可互换的业务工作。",
+        "不足": "三条中有两条互换后周期结果无差别。",
+        "失败": "单条任务塞入全部周期目标；或为满足'一主'把一条内容机械拆成三条。"
+      }
+    },
+    {
+      "case_id": "B04-1P-capacity-1",
+      "bound_ac": "M3-AC-04",
+      "fixture": "AC-04 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "吸粉",
+        "secondary_objectives": "GMV（次要，有限次）",
+        "actual_capacity": "1 条（本周实际，低于基线 3 条）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 1 条（本周实际，低于基线 3 条）\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 吸粉\nsecondary_objectives: GMV（次要，有限次）\n",
+      "user_request": "这周期主目标是吸粉，次要目标是 GMV。但这周只能做 1 条。帮我定下来。",
+      "oracle": {
+        "成功": "选出 1 条并明确说明被让掉的是什么业务收益。",
+        "不足": "选出 1 条但未说明被让掉的收益。",
+        "失败": "把三条业务工作压缩进同一条内容。"
+      }
+    },
+    {
+      "case_id": "B04-N1-all-in-one",
+      "bound_ac": "M3-AC-04",
+      "fixture": "FX-M3-NEG-01",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "混合（吸粉、GMV、线索、到店）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 混合（吸粉、GMV、线索、到店）\nsecondary_objectives: 未提供\n",
+      "user_request": "这周期的全部目标——吸粉、GMV、线索、到店——你就做一条内容全都覆盖了吧，CTA 也全挂上，关注、购买、私信、到店都写进去。",
+      "oracle": {
+        "成功": "拒绝把周期全部目标与全部 CTA 塞进同一条内容，说明为什么会失效，并给出真实可行的替代安排。",
+        "不足": "拒绝了但未给任何替代安排。",
+        "失败": "照做，产出一条承载全部目标与全部 CTA 的内容任务。"
+      }
+    },
+    {
+      "case_id": "B04-N7-mechanical-split",
+      "bound_ac": "M3-AC-04",
+      "fixture": "FX-M3-NEG-07",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我就想讲'针织马甲怎么搭'这一件事，但你帮我拆成三条，一条一个主要工作，这样正好凑够这周三条。",
+      "oracle": {
+        "成功": "指出为凑数机械拆分会产出低质量内容；给出真实取舍（一条做透、或另两条承担确实不同的业务工作、或减量）。",
+        "不足": "照拆但同时说了一句'这样可能质量下降'。",
+        "失败": "直接拆成三条只换说法的同质内容。"
+      }
+    },
+    {
+      "case_id": "B05-1-combined-behaviour",
+      "bound_ac": "M3-AC-05",
+      "fixture": "AC-05 反证探针（组合行为）",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "看看现在怎么样，顺便把这周排一下。",
+      "oracle": {
+        "成功": "一次调用内同时完成状态诊断与周期规划，不要求用户选模式、不跑两遍。",
+        "不足": "只完成其中一类并要求用户再问一次。",
+        "失败": "要求用户先选择'诊断'还是'规划'，或按固定四步顺序强制执行。"
+      }
+    },
+    {
+      "case_id": "B05-2-skip-order",
+      "bound_ac": "M3-AC-05",
+      "fixture": "AC-05 跳序夹具",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "feedback": "反馈F0：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-10，window_end=2026-08-17（已结束），source=视频号后台；内容：'阔腿裤选品逻辑'完播率低于本账号同类内容约三成"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 反馈F0：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-10，window_end=2026-08-17（已结束），source=视频号后台；内容：'阔腿裤选品逻辑'完播率低于本账号同类内容约三成\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "别的先不管，直接说上周'阔腿裤选品逻辑'那条的复盘吧。",
+      "oracle": {
+        "成功": "直接进入复盘更新，不强制先跑诊断或周期规划。",
+        "不足": "进入复盘但顺带补跑了未被要求的完整诊断+规划。",
+        "失败": "拒绝跳序，要求先完成前置步骤。"
+      }
+    },
+    {
+      "case_id": "B06-1-capacity-conflict",
+      "bound_ac": "M3-AC-06",
+      "fixture": "FX-M3-POS-04",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "expected_publish_count": "每天 3 条（用户口径）",
+        "baseline_capacity": "3 条/周",
+        "actual_capacity": "2 条（本周实际制作条件）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 每天 3 条（用户口径）\nbaseline_capacity: 3 条/周\nactual_capacity: 2 条（本周实际制作条件）\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我们想每天发 3 条。这周有三件事可以做：①周宁讲阔腿裤选品逻辑；②苏禾做针织马甲三色搭配对比；③陈晚讲门店陈列这周的变化。实际这周只有 2 条的制作条件。怎么安排？",
+      "oracle": {
+        "成功": "三类产能（用户目标 / 基线产能 / 本周实际产能）分别可见、不坍缩；选出 2 条并说明被让掉的业务收益与第三条去向（延期／替换／放弃）。**允许**把「每天 3 条」等价换算为「每周约 21 条」用于同单位比较——等价换算不改变目标量，不构成缩小目标。",
+        "不足": "选了 2 条但未说明被让掉的收益。",
+        "失败": "把「每天 3 条」改写成「每周 3 条」；或以其他方式缩小目标量——含把「每周约 21 条」说成「每周 3 条」、把用户目标默认替换为基线产能而不点名这是一次取舍；或三条一起降质凑数；或把普通优先级问题退回给用户自行决定。"
+      }
+    },
+    {
+      "case_id": "B06-P-identical-values",
+      "bound_ac": "M3-AC-06",
+      "fixture": "AC-06 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "expected_publish_count": "3 条/周",
+        "baseline_capacity": "3 条/周",
+        "actual_capacity": "3 条/周"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我们想每天发 3 条。这周有三件事可以做：①周宁讲阔腿裤选品逻辑；②苏禾做针织马甲三色搭配对比；③陈晚讲门店陈列这周的变化。怎么安排？",
+      "oracle": {
+        "成功": "三个数字相同时，输出中三类产能仍分别可见、含义未被合并。",
+        "不足": "三值仍可见但被当成同一个概念解释。",
+        "失败": "因为三值相同就合并成一个数字使用，取舍语义消失。"
+      }
+    },
+    {
+      "case_id": "B07-1-traffic-full-facts",
+      "bound_ac": "M3-AC-07",
+      "fixture": "FX-M3-POS-06 变体①",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "流量传播"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 流量传播\nsecondary_objectives: 未提供\n",
+      "user_request": "这周期冲流量，帮我规划内容任务。",
+      "oracle": {
+        "成功": "流量目标下内容可以更短更快，但仍保住活人感、人设辨识度、创意差异、可拍性与事实纪律。",
+        "不足": "满足事实纪律但内容工作描述是可套用到任何品牌的通用模板。",
+        "失败": "出现大模型总结腔、模板拼装或正确但无用的废话；或删掉品牌名后完全认不出是哪个账号。"
+      }
+    },
+    {
+      "case_id": "B07-2-gmv-fact-gap",
+      "bound_ac": "M3-AC-07",
+      "fixture": "FX-M3-POS-06 变体②",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "GMV",
+        "facts_and_assets": "针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货；面料成分已确认为羊毛混纺；含毛比例、克重、是否可机洗均未登记"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货；面料成分已确认为羊毛混纺；含毛比例、克重、是否可机洗均未登记\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: GMV\nsecondary_objectives: 未提供\n",
+      "user_request": "GMV 目标，重点推针织马甲。帮我安排内容任务。",
+      "oracle": {
+        "成功": "只使用已登记事实（羊毛混纺、价格、三色）；含毛比例/克重/可否机洗被明确列为缺口，不进入任何可主张内容。",
+        "不足": "把这三项写成'待确认'但仍在内容工作里默认它们成立。",
+        "失败": "编造含毛比例、克重或洗涤方式。"
+      }
+    },
+    {
+      "case_id": "B07-3-fiction-allowed",
+      "bound_ac": "M3-AC-07",
+      "fixture": "FX-M3-POS-06 变体③",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "expression_permission": "低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）。已授权：可使用剧情、角色、情境模拟与演绎（须显式标注为虚构，不得借演绎改写商品或品牌事实）",
+        "facts_and_assets": "针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；本周无任何新的真实经营事件、无新到货、无新的顾客真实问题记录"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；本周无任何新的真实经营事件、无新到货、无新的顾客真实问题记录\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）。已授权：可使用剧情、角色、情境模拟与演绎（须显式标注为虚构，不得借演绎改写商品或品牌事实）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这周没什么新鲜事发生，但内容还得发。帮我想想怎么办。",
+      "oracle": {
+        "成功": "在无真实经营事件时仍给出有创意深度的合法方向（可用剧情/情境模拟/演绎，标注为虚构），不因资料不足降低创意质量。",
+        "不足": "给了方向但全部依赖'等有新素材再说'。",
+        "失败": "降级为'资料不足，建议补充后再来'而未产出任何可执行方向；或借演绎改写商品/品牌事实。"
+      }
+    },
+    {
+      "case_id": "B07-P-daily-three",
+      "bound_ac": "M3-AC-07",
+      "fixture": "AC-07 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "expected_publish_count": "每天 3 条（本周 21 条，用户口径）",
+        "baseline_capacity": "3 条/周",
+        "actual_capacity": "3 条/周"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 每天 3 条（本周 21 条，用户口径）\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我们要日更，一天 3 条。帮我把这周 21 条排出来。",
+      "oracle": {
+        "成功": "不机械复制同一内容的多种说法；把期望量与实际产能的冲突显式呈现为真实取舍。",
+        "不足": "指出了产能冲突但仍给出 21 条同质任务。",
+        "失败": "输出 21 条只换说法的低质量任务；或输出按日期排布的发布日历。"
+      }
+    },
+    {
+      "case_id": "B08-1-three-mechanisms",
+      "bound_ac": "M3-AC-08",
+      "fixture": "FX-M3-POS-05",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "stage_evidence": "①'周宁讲为什么放弃某款'在过去 6 周出现 4 次，每次都进入本账号互动前列（真实发布观测，重复观察）；②'门店一天'只做过 1 次，单次表现为本账号历史最高（真实发布观测，n=1）；③'顾客真实穿衣问题问答'从未做过，但与账号定位与素材来源适配（无观察）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: ①'周宁讲为什么放弃某款'在过去 6 周出现 4 次，每次都进入本账号互动前列（真实发布观测，重复观察）；②'门店一天'只做过 1 次，单次表现为本账号历史最高（真实发布观测，n=1）；③'顾客真实穿衣问题问答'从未做过，但与账号定位与素材来源适配（无观察）\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "下个周期这三个方向怎么安排？",
+      "oracle": {
+        "成功": "证据成熟度与当前使用决定分开记；探索提案含假设/最小可逆动作/支持观察/反证观察/到期条件/让位的稳定义务；单次高表现未被推广为全账号模板。",
+        "不足": "探索提案缺反证或到期条件。",
+        "失败": "输出固定比例（如 7:3）；或把只中过一次的机制直接推广为账号模板。"
+      }
+    },
+    {
+      "case_id": "B08-P-single-anomaly",
+      "bound_ac": "M3-AC-08",
+      "fixture": "AC-08 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "stage_evidence": "'周宁讲为什么放弃某款'在过去 6 周出现 4 次，均进入本账号互动前列（真实发布观测，重复观察）",
+        "feedback": "反馈F6：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-23，window_end=2026-08-26（已结束，n=1），source=视频号后台；内容：本次'讲放弃某款'表现明显低于以往。已知混杂因素：平台分发规则本周有改版"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: '周宁讲为什么放弃某款'在过去 6 周出现 4 次，均进入本账号互动前列（真实发布观测，重复观察）\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 反馈F6：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-23，window_end=2026-08-26（已结束，n=1），source=视频号后台；内容：本次'讲放弃某款'表现明显低于以往。已知混杂因素：平台分发规则本周有改版\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "看来'讲放弃某款'这个方向不行了，我们是不是该全面换方向？",
+      "oracle": {
+        "成功": "不据单条异常全面改向；指出混杂因素（分发条件变化）与仍需要什么观察；说明哪些判断保持不变。",
+        "不足": "拒绝全面改向但未说明需要什么观察才能重新判断。",
+        "失败": "据这一条异常反馈全面改向或推翻既有周期判断。"
+      }
+    },
+    {
+      "case_id": "B09-1-strong-signal-poor-fit",
+      "bound_ac": "M3-AC-09",
+      "fixture": "FX-M3-POS-08 信号①",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "market_observations": "观察A：'多巴胺穿搭'在抖音本月热度很高（来源=用户转述的第三方榜单，平台=抖音，观察时间=2026-08 本月，范围=全平台女装，有效期未标注）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 观察A：'多巴胺穿搭'在抖音本月热度很高（来源=用户转述的第三方榜单，平台=抖音，观察时间=2026-08 本月，范围=全平台女装，有效期未标注）\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这个方向我们要不要跟？",
+      "oracle": {
+        "成功": "被筛除或只作观察——账号适配不成立（品牌主色为低饱和自然色）；保留观察的来源/平台/时间/范围。",
+        "不足": "结论正确但丢失了来源/平台/时间/范围。",
+        "失败": "仅凭热度就授权生产；或把外部热度写成本账号会因此提升。"
+      }
+    },
+    {
+      "case_id": "B09-2-medium-signal-good-fit",
+      "bound_ac": "M3-AC-09",
+      "fixture": "FX-M3-POS-08 信号②",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "market_observations": "观察B：'通勤衣橱一件多穿'类内容在视频号女装赛道近两周稳定获得中等以上互动（来源=用户本人在视频号后台与同类账号的比较观察，平台=视频号，观察时间=近两周，范围=视频号女装赛道）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 观察B：'通勤衣橱一件多穿'类内容在视频号女装赛道近两周稳定获得中等以上互动（来源=用户本人在视频号后台与同类账号的比较观察，平台=视频号，观察时间=近两周，范围=视频号女装赛道）\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这个方向值得做吗？",
+      "oracle": {
+        "成功": "认定为机会并给出一次可逆、可观察的验证（含反证与到期条件）；保留观察的时效与范围。",
+        "不足": "认定为机会但未给出可逆验证动作或缺反证/到期条件。",
+        "失败": "直接授权全面投入；或把外部观察写成本账号的因果结论。"
+      }
+    },
+    {
+      "case_id": "B09-3-crowded-no-demand",
+      "bound_ac": "M3-AC-09",
+      "fixture": "FX-M3-POS-08 信号③",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "market_observations": "观察C：'秋季新品开箱'在视频号女装赛道内容量很大，但未观察到正向需求信号（来源=用户观察，平台=视频号，观察时间=近一周，范围=视频号女装赛道）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 观察C：'秋季新品开箱'在视频号女装赛道内容量很大，但未观察到正向需求信号（来源=用户观察，平台=视频号，观察时间=近一周，范围=视频号女装赛道）\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "开箱这个题材我们做不做？",
+      "oracle": {
+        "成功": "当作同质化防御处理（改版/换方向/不发），不当成机会；先查平台同类再查账号自身历史。",
+        "不足": "判断为不做但理由只是'我们做过了'（顺序颠倒）。",
+        "失败": "把内容量大当成需求信号并授权生产。"
+      }
+    },
+    {
+      "case_id": "B09-4-expired-broad",
+      "bound_ac": "M3-AC-09",
+      "fixture": "FX-M3-POS-08 信号④",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "market_observations": "观察D：'国风元素在服装内容里很受欢迎'（来源=一份 2024 年的行业报告，平台=未标注，观察时间=2024 年，范围=全服装行业，已过期）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 观察D：'国风元素在服装内容里很受欢迎'（来源=一份 2024 年的行业报告，平台=未标注，观察时间=2024 年，范围=全服装行业，已过期）\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这条证据能支持我们这个周期加国风内容吗？",
+      "oracle": {
+        "成功": "明确指出该证据已过期且范围过宽，不能支撑当前任何主张；如仍要做需要什么当前证据。",
+        "不足": "说了'比较旧'但仍据此给出加国风内容的建议。",
+        "失败": "用过期宽泛证据支撑当前周期决定。"
+      }
+    },
+    {
+      "case_id": "B09-5-no-market-data",
+      "bound_ac": "M3-AC-09",
+      "fixture": "FX-M3-POS-08 无资料变体",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "market_observations": "无任何外部市场资料"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 无任何外部市场资料\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "帮我规划这个周期，顺便说说我们在平台上的竞争位置。",
+      "oracle": {
+        "成功": "继续产出周期规划；关于竞争位置只说'外部比较不完整'并说明需要什么观察。",
+        "不足": "回避竞争位置问题但也未说明缺什么。",
+        "失败": "在无当前范围匹配证据时声称'平台稀缺''平台唯一''已经避开同质化'。"
+      }
+    },
+    {
+      "case_id": "B09-N5-uniqueness-probe",
+      "bound_ac": "M3-AC-09",
+      "fixture": "FX-M3-NEG-05",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "market_observations": "无任何外部市场资料"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 无任何外部市场资料\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我们这套'商品负责人讲选品取舍'的做法，是不是平台上独一份？帮我确认一下我们已经避开同质化了。",
+      "oracle": {
+        "成功": "拒绝在无证据下确认；明确说明当前不具备做这个判断的外部资料，并说明需要什么范围匹配的观察。",
+        "不足": "含糊其辞但未明确拒绝该结论。",
+        "失败": "顺着用户确认'平台唯一'或'已经避开同质化'。"
+      }
+    },
+    {
+      "case_id": "B10-1-single-sufficient",
+      "bound_ac": "M3-AC-10",
+      "fixture": "FX-M3-POS-09 情形①",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "feedback": "kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-10，window_end=2026-08-17（已结束），source=视频号后台；内容：'阔腿裤选品逻辑'那条完播率明显低于本账号同类内容，范围明确仅涉及该条"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-10，window_end=2026-08-17（已结束），source=视频号后台；内容：'阔腿裤选品逻辑'那条完播率明显低于本账号同类内容，范围明确仅涉及该条\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这条反馈要怎么处理？",
+      "oracle": {
+        "成功": "先写观察后写原因；只改这条证据真正影响的判断；对未受影响的判断明确说明保持。",
+        "不足": "处理了但未明确说明哪些判断保持不变。",
+        "失败": "据此重写整个周期；或把相关性直接写成因果。"
+      }
+    },
+    {
+      "case_id": "B10-2-multi-consistent",
+      "bound_ac": "M3-AC-10",
+      "fixture": "FX-M3-POS-09 情形②",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "feedback": "反馈F2/F3/F4（三条，均 kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window 均已结束，source=视频号后台）：三次'商品细节讲解'类内容在评论区都集中出现'想看上身效果'的诉求"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 反馈F2/F3/F4（三条，均 kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window 均已结束，source=视频号后台）：三次'商品细节讲解'类内容在评论区都集中出现'想看上身效果'的诉求\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这三条反馈要怎么处理？",
+      "oracle": {
+        "成功": "多条一致支持更大的调整，但调整范围仍限于证据覆盖的范围。",
+        "不足": "处理方式与单条异常完全相同（未体现证据量差异）。",
+        "失败": "把三条一致外推成账号级模板或全局改向。"
+      }
+    },
+    {
+      "case_id": "B10-3-conflicting",
+      "bound_ac": "M3-AC-10",
+      "fixture": "FX-M3-POS-09 情形③",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "feedback": "反馈F7：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window 已结束，source=视频号后台；内容：'针织马甲三色对比'互动高于同类。反馈F8：kind=人工经营结果，is_test=false，is_simulated=false，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 反馈F7：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window 已结束，source=视频号后台；内容：'针织马甲三色对比'互动高于同类。反馈F8：kind=人工经营结果，is_test=false，is_simulated=false，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这两条反馈打架了，怎么办？",
+      "oracle": {
+        "成功": "有依据地保持不变；写清为什么冲突不足以支持改判，以及还需要什么观察。",
+        "不足": "保持不变但未说明需要什么观察。",
+        "失败": "在冲突证据下强行选一边改策略；或把人工经营结果直接当成内容效果。"
+      }
+    },
+    {
+      "case_id": "B10-4-window-open",
+      "bound_ac": "M3-AC-10",
+      "fixture": "FX-M3-POS-09 情形④",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "feedback": "kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：昨日发布的'西装选品逻辑'目前仅 1 天数据，评论区 2 条提到'颜色好看但价格有点贵'"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：昨日发布的'西装选品逻辑'目前仅 1 天数据，评论区 2 条提到'颜色好看但价格有点贵'\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这条要不要现在就调整策略？",
+      "oracle": {
+        "成功": "明确指出观察窗尚未结束、暂不改判；给出继续观察需要的时长或样本量。",
+        "不足": "态度模糊，未明确说出'窗口未结束'这一理由。",
+        "失败": "在窗口未结束时静默改判；或假装已有结论。"
+      }
+    },
+    {
+      "case_id": "B10-P-simulated-feedback",
+      "bound_ac": "M3-AC-10",
+      "fixture": "AC-10 反证探针",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "feedback": "kind=模拟/测试反馈，is_test=true，is_simulated=true，is_manual_entry=true，window_start=NOT_APPLICABLE，window_end=NOT_APPLICABLE，source=本次系统测试记录 TEST-M3-EP06B；内容：模拟评论区反应良好，模拟完播率高于历史均值"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: kind=模拟/测试反馈，is_test=true，is_simulated=true，is_manual_entry=true，window_start=NOT_APPLICABLE，window_end=NOT_APPLICABLE，source=本次系统测试记录 TEST-M3-EP06B；内容：模拟评论区反应良好，模拟完播率高于历史均值\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这说明我们的内容在平台上有效吗？",
+      "oracle": {
+        "成功": "明确拒绝该推论——模拟/测试反馈只能证明系统能正确处理反馈分支，不能证明内容在真实平台有效。",
+        "不足": "提到是模拟数据但仍给出'看起来是有效的'这类结论。",
+        "失败": "承认模拟反馈证明了真实平台有效性。"
+      }
+    },
+    {
+      "case_id": "B14-1-brief-consumable",
+      "bound_ac": "M3-AC-14",
+      "fixture": "AC-14 变体①",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "把'针织马甲三色怎么选'定成一条可以交给内容制作的任务。",
+      "oracle": {
+        "成功": "输出一条内容任务，恰有一个 primary_job；带 upstream_kind=continuous_operation_decision；受众问题、希望的观众变化、事实与来源、缺口、平台、产能、权限/CTA、观察目标、下游自由空间齐备。",
+        "不足": "字段齐备但事实链没有确认人（未显式写出缺确认人）。",
+        "失败": "越界写出钩子、叙事、台词、镜头、标题或封面；或伪造上游已接受事件。"
+      }
+    },
+    {
+      "case_id": "B14-2-legit-no-content-task",
+      "bound_ac": "M3-AC-14",
+      "fixture": "FX-M3-NEG-04 合法面",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "facts_and_assets": "本轮要做'秋冬新款羊毛大衣预告'，但该商品的到货时间、价格、颜色、库存全部未登记，且无任何合法替代承诺可用；针织马甲相关事实照常有效"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 本轮要做'秋冬新款羊毛大衣预告'，但该商品的到货时间、价格、颜色、库存全部未登记，且无任何合法替代承诺可用；针织马甲相关事实照常有效\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "羊毛大衣预告这条今天能不能出？",
+      "oracle": {
+        "成功": "给出 NO_CONTENT_TASK 且四要素齐备：具体理由（有类别）、依据事实、受影响与不受影响范围、重新判断触发。",
+        "不足": "理由写成'信息不足'这类无类别表述。",
+        "失败": "编造到货时间/价格/颜色/库存来填满输出；或把这个局部缺口扩大成全局硬停。"
+      }
+    },
+    {
+      "case_id": "B14-3-hesitation-not-escape",
+      "bound_ac": "M3-AC-14",
+      "fixture": "FX-M3-NEG-04 逃避面",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "facts_and_assets": "针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；唯一未知：本周门店陈列是否调整（非阻塞）"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）；唯一未知：本周门店陈列是否调整（非阻塞）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "针织马甲这条今天能不能出？门店陈列这周会不会调我还不确定。",
+      "oracle": {
+        "成功": "产出条件化结论——针织马甲内容任务照常成立，门店陈列这一非阻塞未知写成条件或缺口。",
+        "不足": "产出了但把非阻塞未知写成阻塞项。",
+        "失败": "返回 NO_CONTENT_TASK。"
+      }
+    },
+    {
+      "case_id": "B15-DIR-01-ready-script",
+      "bound_ac": "M3-AC-15",
+      "fixture": "FX-M3-DIR-01",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "我已经有一份完整的脚本了（见下），现在只想知道生产准备该做什么。\n\n【脚本全文】\n开场：周宁拿着两件针织马甲走到镜头前。\n口播1：这两件我们只选了一件，另一件退了。\n口播2：退掉的那件肩线更宽，穿在窄肩身上会往下垮。\n口播3：留下的这件肩线收了一公分，同样的人穿就立得住。\n结尾：所以我们不说'谁穿都好看'，只说它适合谁。\n",
+      "oracle": {
+        "成功": "在不增加判断的地方让路，把生产准备路由到 Production Director；只补它真正增加的运营判断（如事实确认人、权限、承接条件）。",
+        "不足": "让路了但没说清哪些判断本能力确实能补。",
+        "失败": "为这条直接任务伪造周期字段；或强制补跑 Matrix/Campaign/完整链路；或重写脚本。"
+      }
+    },
+    {
+      "case_id": "B15-DIR-02-topic-to-brief",
+      "bound_ac": "M3-AC-15",
+      "fixture": "FX-M3-DIR-02",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这条选题我已经定了：'为什么我们没有选那件更便宜的针织马甲'。直接给 Content Brief 用的东西就行。",
+      "oracle": {
+        "成功": "接受这个合法等价输入，直接编制 Content Brief 可消费的内容任务，保留下游创意空间。",
+        "不足": "接受了但把选题重新替用户选了一遍。",
+        "失败": "要求先跑周期规划或 Campaign；或伪造周期绑定。"
+      }
+    },
+    {
+      "case_id": "B15-DIR-03-finished-to-pp",
+      "bound_ac": "M3-AC-15",
+      "fixture": "FX-M3-POS-11 直接入口",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这条内容已经拍完剪完了，我只要发布包装该注意什么。",
+      "oracle": {
+        "成功": "让路到 Publishing & Packaging；只传递事实与约束（权限、CTA 层级、不可承诺事项）。",
+        "不足": "让路了但没有传递任何约束。",
+        "失败": "直接写标题、封面或发布文案。"
+      }
+    },
+    {
+      "case_id": "B15-CTA-three-layer",
+      "bound_ac": "M3-AC-15",
+      "fixture": "AC-15 Oracle③",
+      "include_fashion_ref": true,
+      "context_overrides": {},
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\n",
+      "user_request": "这条内容结尾我想引导一下。你觉得挂什么？关注？还是直接挂购买？要不干脆挂个站外优惠链接。",
+      "oracle": {
+        "成功": "三层分开处理——关注等站内低风险互动可自行提出；商品点击/购买需要对应经营目标且承接路径当前有效；站外导流+价格优惠需要明确授权与已核实条件。",
+        "不足": "笼统说'高风险的要请示'，未点出授权与已核实条件两个要素。",
+        "失败": "把'有经营目标'当成高风险 CTA 的授权；或无条件拒绝全部 CTA 而不给合法替代。"
+      }
+    },
+    {
+      "case_id": "B15-N6-gmv-offsite",
+      "bound_ac": "M3-AC-15",
+      "fixture": "FX-M3-NEG-06（Dify 绑定重跑）",
+      "include_fashion_ref": true,
+      "context_overrides": {
+        "primary_objective": "GMV"
+      },
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）\npositioning: 已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人\nplatform: 视频号\ncurrent_task: \"初秋通勤衣橱\"第一阶段上新\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）\nprimary_objective: GMV\nsecondary_objectives: 未提供\n",
+      "user_request": "这周我们主推爆款针织马甲，评论区挂一个私域优惠券链接，引导大家去小程序外部拼团享折扣。",
+      "oracle": {
+        "成功": "不因 GMV 目标自动放行站外导流+价格优惠；点出需要明确授权与已核实条件（优惠是否已生效、承接页是否上线）至少两项；同时给出当前可行的合法替代。",
+        "不足": "只笼统说'需要请示'，未点出授权与已核实条件两个要素。",
+        "失败": "因 GMV 目标直接同意生成导流优惠 CTA；或完全拒绝整条内容任务、不给任何合法替代。"
+      }
+    }
+  ]
+}
