@@ -336,6 +336,58 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 
 ---
 
+### A-13 · 第 13 轮：Founder 证据绑定裁定登记 + Dify 恢复阻断（`RECOVERY_TASK`，2026-08-27）
+
+**授权事件**：`FOUNDER_EVIDENCE_BINDING_AND_RECOVERY_DECISION = ACCEPTED`。
+合同不变（`49021e60…`），不建 NEW_TASK，不启动模型评测。**执行侧模型调用：0 次。**
+
+**三项裁定已登记，依据由执行侧独立复算**（`evidence/ep41-founder-binding-decisions/`）
+
+1. 未命名重新发布版本 = `EXECUTION_CONTENT_EQUIVALENT_TO_M3_V1.5.2`。
+   六项等价依据逐项复算成立：七节点 `data` 逐字节相同、六边执行拓扑相同、
+   系统提示词 SHA-256 全部 `3a3c657d…`、Skill 绑定相同、模型/provider/温度相同、
+   `gate`/`assemble`/`post_gate` 离线重算 8/8 逐字节相同。
+   **不宣称版本标签相同**；`marked_name` 为空的历史记录原样保留。
+   S1 绑具名 `m3-cand-v1.5.2`（`706fdce0…`），S2–S7 绑等价载体（`ff801653…`）。
+2. S6：正式 = `55eb0a6b`，额外 = `0a0f406d` 标 `UNAUTHORIZED_EXTRA_SUBMISSION`，
+   两份都 PASS、都保留、不择优、不替换，**不把第二次改写成合法重试**。
+   `FOUNDER_OFFICIAL_TEST_RUNS = 7`，`DISCLOSED_EXTRA_SUBMISSIONS = 1`。
+3. 结尾 LF = `DIFY_UI_CARRIER_NORMALIZATION_ACCEPTED`。机械复算：
+   八条 `user_request` 每条最多去掉 **1 个** 结尾 LF、去掉后与冻结输入**逐字节相同**、
+   除该 LF 外无任何其他字符差异；`account_context` 与 `loaded_references` 八条逐字节相同。
+   原始与归一化两套 SHA-256 都保留。**不得写成输入逐字节完全相同**，不得外推。
+
+**Dify 恢复：未完成，阻断**（`evidence/ep40-dify-recovery-v152/`）
+
+恢复前六项只读核验：4.1 / 4.2 / 4.4 / 4.6 成立；4.3 活库成立但宿主卷仍有原租户资产；
+**4.5 不成立 —— 阻断点**。
+
+阻断 `DIFY-BIND-MOUNT-NOT-RESOLVING-TO-WSL-HOST`：容器的 bind mount 没有解析到
+WSL 宿主路径。三条独立证据 ——
+① 同一 bind source，宿主目录 `4096 / Aug 19 03:49` 对容器 `60 / Aug 27 21:39`，
+不是同一个目录；② 宿主 storage 完好且仍是原租户 `09758721…`（34 MB），
+容器侧 `/app/api/storage` 为空且 root 所有；③ setup 失败信息显示容器要新建租户
+`9f32db4d…`，与原租户不同。
+
+停在这里的理由：当前写入会落到 Docker VM 内的临时位置，下次容器重建即消失，
+记成 `RECOVERED_AND_CURRENT` 是假闭合；宿主上仍有需保护的原租户资产；
+修挂载要重启 Docker Desktop，会停掉用户全部容器，不在本任务授权内。
+
+**那次 `POST /console/api/setup` 返回 500，零残留**：`accounts` / `tenants` / `apps`
+仍全 0，容器侧 storage 未被写入。**Dify 上没有成功的写操作。**
+
+**必须先说清楚的一条**：即使挂载修复后用 DSL 重建，Dify 导入会生成**新的 App UUID**，
+原 `b7fb5b1a…` 不可由 DSL 还原；七次运行的历史绑定仍指向原 App ID，不得与重建后的活体
+App 混为一谈。宿主 `pgdata` 为 root 所有、无免密 sudo，执行侧读不到，
+**不能断言**原数据库文件完好。
+
+**产出**：`M3_DIFY_RECOVERY_BLOCKER_v1.0.md`、
+`evidence/ep40-dify-recovery-v152/RECOVERY_PRECHECK_AND_BLOCKER.json`、
+`evidence/ep41-founder-binding-decisions/FOUNDER_BINDING_DECISIONS.json`、
+`tools/founder_extract/{recover_m3_app_v152.py,record_founder_decisions.py}`。
+
+---
+
 ## L4 · 已排除路线（历史留痕，只加不改）
 
 | 路线 | 根因假设 | 干预 | 关键前提 | 证据 |
@@ -350,6 +402,8 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 | **把「可执行内容逐字节相同」当成「版本标签绑定成立」** | 想用已证明的内容一致换掉标签不符这个缺口 | **未执行** | A2 棘轮律：等级不能因为改写、并置或自述往上走；授权 §4 明确要求把受影响项标 `NOT_VERIFIED`。版本标签属有权者裁定，不是执行侧能给的 | `ep39` 把 V4 拆成两半分别记数：可执行内容绑定成立、标签绑定不成立 |
 | **在 S6 两条运行里择优选一条当作 Founder 判过的那份** | 想把 `7/7` 凑齐 | **未执行** | 授权 §2 逐字禁止择优选择输出；两条输入逐字节相同、都成功，无法用证据区分 Founder 读的是哪一份 | 两条全部原样保留，第二次存 `results/S6/extra_second_submission_0a0f406d/`，歧义据实上报 |
 | **重建被清空的 Dify 实例以补做动态绑定复验** | 想让 `dynamic_dify_binding_requires_refresh` 重新可满足 | **未执行** | 本轮授权只含只读提取与收口，不含重建；重建会产生新的 App 与新的运行记录，制造第二个绑定对象 | `ep37` 的完整 DSL 导出件在盘上可随时重建，等授权 |
+| **在挂载错位的 Dify 实例上硬做 DSL 导入** | 想把 `DIFY_TASK_APP = RECOVERED_AND_CURRENT` 凑出来 | **未执行** | 写入会落到 Docker VM 内的临时位置，下次容器重建即消失；把它记成已恢复是假闭合。授权 §4.5 要求恢复不覆盖其他项目，§4 有明确停止条款 | `ep40/RECOVERY_PRECHECK_AND_BLOCKER.json` 三条独立证据 |
+| **重启 Docker Desktop 以修复 bind mount** | 修挂载就能继续恢复 | **未执行** | 会停掉用户全部容器，不可逆地中断其他工作；不在本任务授权内，是 Founder 自己的决定 | 已把动作与只读验证命令交回 Founder，见 `M3_DIFY_RECOVERY_BLOCKER_v1.0.md` §3 |
 
 ---
 
@@ -372,6 +426,10 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 | 2026-08-27 | Dify Console API（App `b7fb5b1a…`） | **只读**提取 Founder 七场景实测：`workflow-app-logs` 全量枚举、8 条 `workflow-runs`、8×7 条 `node-executions`、已发布版本谱系 | 641 条日志普查；8 个 run_id 见 `ep39` | 只读，无写入、无修改、无删除、无重放 | 无需回滚 |
 | 2026-08-27 | Dify 本机实例（外部事件，**非本任务操作**） | 容器栈重启后 PostgreSQL 走 initdb 全新初始化，`apps` 表 0 行、`setup` = `not_started`，该 App 与 641 条运行记录已不在该实例上 | PGDATA 内每个文件均为 `2026-08-27 21:39` UTC 新建 | 已发生；起因不在本任务范围内 | 重建路径：`evidence/ep37-rollback-drill-v152/m3_candidate_app_v152.dsl.yaml`（sha256 `bd676f29…`，含 v1.5.2 全部改动），**本轮未执行重建，未获授权** |
 | 2026-08-27 | DeepSeek / Qwen / 其他模型 | **本轮（第 12 轮）执行侧模型调用：0 次** | — | 未发生 | 无需回滚 |
+| 2026-08-27 | Dify 本机实例 | `POST /console/api/setup` 尝试建管理员账号（恢复前置） | 返回 **500 PermissionDenied**（容器写不了 storage） | **失败，零残留**：`accounts`/`tenants`/`apps` 仍全 0，容器侧 storage 未被写入 | 无需回滚（无成功写操作） |
+| 2026-08-27 | Dify 本机实例 | 只读诊断：容器与宿主 bind mount 元数据比对、PG 各表计数、storage 目录枚举 | — | 只读 | 无需回滚 |
+| 2026-08-27 | Dify 任务专用 App | **DSL 重建：未执行**（阻断于 bind mount 未解析到宿主卷） | — | `NOT_RECOVERED` | 无需回滚 |
+| 2026-08-27 | DeepSeek / Qwen / 其他模型 | **本轮（第 13 轮）执行侧模型调用：0 次** | — | 未发生 | 无需回滚 |
 
 **明确未发生的副作用**：未创建第二个 Dify App｜未修改任何非任务 App、凭据、知识库或运行记录｜未切换任何生产流量｜未 merge/直推 `main`｜未 force/amend/reset/squash｜未改写历史｜未发布到任何真实社交平台｜未在 M2 中新建 workspace（本轮复用第 2 轮已存在的取证 workspace，未新增）。
 
@@ -380,49 +438,43 @@ A/B 另外 11 份逐字节沿用。85 次调用、3,126,151 tokens。
 ## L2 · 当前状态与下一动作（当前投影，变化时直接替换）
 
 ```text
-进度        IN_PROGRESS（存在真实证据缺口，DONE 不可推导；按授权保持 IN_PROGRESS）
-进入模式     CONTINUE_TASK —— 同一 task_id，不建 NEW_TASK，不修改合同
-当前合同     M3_ENGINEERING_TASK_CONTRACT_v1.3_FOUNDER_SINGLE_SET_REBASE.yaml（49021e60…）
-最终候选     v1.5.2 · SKILL.md 90596da5… · 系统提示词 3a3c657d…
-Founder 裁决 M3_FOUNDER_ACCEPTANCE = PASS（accepted_candidate = v1.5.2，S1-S7，7/7）
-七次运行     8 条 web-app 运行全部提取并唯一绑定；证据见 ep39 与 results/S1..S7
-执行侧模型调用 本轮 0
-Dify 实例    数据库已被清空（外部事件，非本任务操作）；证据已在此之前落盘
+进度        BLOCKED —— 授权范围内的工作全部完成，剩下一步需执行侧无权做的外部访问修复
+进入模式     RECOVERY_TASK —— 同一 task_id，合同不变（49021e60…）
+Founder 裁决 M3_FOUNDER_ACCEPTANCE = PASS；三项证据绑定裁定已登记并复算成立
+七次运行     7 条正式 + 1 条披露的额外提交，全部提取、绑定、保留
+Dify        任务专用 App 未恢复；阻断 = 容器 bind mount 未解析到 WSL 宿主路径
+执行侧模型调用 本轮 0；Dify 上无成功写操作
 ```
 
 **回执**：
 
 ```text
-M3_ENGINEERING_TASK              = IN_PROGRESS
-M3_FOUNDER_PRODUCT_ACCEPTANCE    = PASS
-FOUNDER_TEST_RUNS                = 7/7_BOUND_AND_PRESERVED（另有 1 次 S6 重复提交，一并保留并披露）
+M3_ENGINEERING_TASK               = BLOCKED
+M3_FOUNDER_PRODUCT_ACCEPTANCE     = PASS
+FOUNDER_OFFICIAL_TEST_RUNS        = 7/7_BOUND_AND_PRESERVED
+DISCLOSED_EXTRA_SUBMISSIONS       = 1
 EXECUTOR_MODEL_CALLS_AFTER_REBASE = 0
-BLIND_REVIEW                     = NOT_APPLICABLE_BY_FOUNDER_REBASE
-MODULE_AB_GAIN_VS_GOOD_PROMPT    = NOT_CLAIMED
-MAIN_MERGE                       = NOT_AUTHORIZED_NOT_PERFORMED
-M5                               = NOT_STARTED_NOT_AUTHORIZED
-REAL_BUSINESS_LIFT               = NOT_VERIFIED
+BLIND_REVIEW                      = NOT_APPLICABLE_BY_FOUNDER_REBASE
+MODULE_AB_GAIN_VS_GOOD_PROMPT     = NOT_CLAIMED
+DIFY_TASK_APP                     = NOT_RECOVERED_BLOCKED_ON_HOST_MOUNT
+MAIN_MERGE                        = NOT_AUTHORIZED_NOT_PERFORMED
+M5                                = NOT_STARTED_NOT_AUTHORIZED
+REAL_BUSINESS_LIFT                = NOT_VERIFIED
 ```
 
-**AC 汇总**：`M3-AC-01`–`M3-AC-17` 判 `PASS`（确定性证据 + Founder 七场景整体 PASS）；
-`M3-AC-00` `NOT_VERIFIED (INSUFFICIENT)`（已发布候选版本标签对 7/8 条不成立、
-`user_request` 逐字不等于冻结包）；`M3-AC-20` `NOT_VERIFIED (ABSENT)`（Dify 实例已清空，
-动态绑定复验与活体回滚入口不可复演）；`M3-AC-18` / `M3-AC-19`
-`NOT_APPLICABLE_BY_FOUNDER_REBASE`，历史 `NOT_VERIFIED` 记录原样保留。
+**AC 汇总**：`M3-AC-01`–`M3-AC-17` `PASS`；`M3-AC-00` 与 `M3-AC-20` `NOT_VERIFIED (ABSENT)`
+（内容等价裁定已成立，但活体 App 绑定与恢复证据缺失，授权 §6 要求三者共同重算）；
+`M3-AC-18` / `M3-AC-19` `NOT_APPLICABLE_BY_FOUNDER_REBASE`，历史 `NOT_VERIFIED` 原样保留。
 
-**失效面（A3，不多算不少算）**：缺口 1 只影响版本标签，不影响 Founder 所观察内容由哪套逻辑
-产出 —— 系统提示词、七个节点 `data`、边拓扑、确定性代码行为八条全部证明与冻结候选相同，
-故 `AC-01`–`AC-17` 不随之失效。缺口 2 只使 S6 的**产物身份**存疑，两份都在、都非退化。
+**解除阻断（归 Founder，执行侧无权代做）**：
 
-**下一动作（需 Founder 裁定，执行侧不得自裁）**：
+1. Docker Desktop 重启或重设 WSL 集成（确认 `Ubuntu-22.04` 已勾选）；会停掉全部容器。
+2. 重启后只读测一句
+   `docker exec docker-db_postgres-1 psql -U postgres -d dify -tAc "select count(*) from apps;"`
+   —— 回到非 0 说明原库连同 641 条运行记录一并回来，**不需要 DSL 重建**。
+3. 仍为 0 且挂载已正确解析到宿主卷，再授权用 `ep37` 的 DSL 导入重建
+   （届时 App UUID 会变，须按披露处理）。
 
-1. 那次未命名的重新发布（只含画布几何与一个前端标记的差异）算不算同一个冻结候选？
-   算 ⇒ `M3-AC-00` 可闭合，`DONE` 可推导；不算 ⇒ 本次实测的绑定对象不是冻结候选。
-2. S6 的两份输出中，Founder 当时读的是哪一份？（两份都已保留，执行侧不择优。）
-3. Dify 实例已清空，是否授权用 `ep37` 的 DSL 导出件重建以恢复动态绑定复验能力？
-
-**声明上限**：本轮只能说「绑定 v1.5.2 可执行内容的 M3 候选，在一组事前冻结的七个 Dify 输入上
-真实运行并获得 Founder 产品接受；七次运行原始证据完整保留可逐条回指；确定性组件在这八次
-真实运行中没有代写过任何交付内容」。不得声称优于一份好提示词、M5 成品增益、已生产上线、
-真实经营提升或因果增益；也不得把「两句新 Skill 规则修好了 B09-5」从**推断**上推 —— 本轮只
-多了 1 次未退化的观察。
+**声明上限**：本轮只能说三项证据绑定裁定已登记且依据经执行侧独立复算成立；
+Dify 任务专用 App 未恢复，阻断已定位到根因并给出解除动作。
+不得声称优于一份好提示词、M5 成品增益、已生产上线、真实经营提升或因果增益。

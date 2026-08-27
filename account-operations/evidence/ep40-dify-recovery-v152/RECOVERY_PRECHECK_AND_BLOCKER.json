@@ -1,0 +1,107 @@
+{
+  "authority": "FOUNDER_EVIDENCE_BINDING_AND_RECOVERY_DECISION §4 · Dify 恢复授权",
+  "entry_mode": "RECOVERY_TASK",
+  "checked_at": "2026-08-27T15:23:34-0700",
+  "executor_model_calls": 0,
+  "dify_writes_attempted": [
+    "POST /console/api/setup（失败，500，零残留）"
+  ],
+  "dify_writes_succeeded": [],
+  "precheck_4_1_postgres_freshly_initialized": {
+    "initdb_ran": true,
+    "evidence": "容器日志 'PostgreSQL init process complete; ready for start up.'；PGDATA 内每个文件 mtime 均为容器启动时刻",
+    "verdict": "确认为全新初始化"
+  },
+  "precheck_4_2_apps_table_empty": {
+    "apps": "0",
+    "verdict": "0 行"
+  },
+  "precheck_4_3_no_other_assets_in_live_db": {
+    "tenants": "0",
+    "accounts": "0",
+    "datasets": "0",
+    "workflows": "0",
+    "workflow_runs": "0",
+    "messages": "0",
+    "upload_files": "0",
+    "verdict": "活库内无任何资产",
+    "IMPORTANT_HOST_VOLUME_STILL_HOLDS_ASSETS": true
+  },
+  "precheck_4_4_dsl_intact": {
+    "path": "account-operations/evidence/ep37-rollback-drill-v152/m3_candidate_app_v152.dsl.yaml",
+    "sha256": "bd676f291b8e108c906b606549da357f0dfc5153e3ccccb3ca15d97670811620",
+    "expected_sha256": "bd676f291b8e108c906b606549da357f0dfc5153e3ccccb3ca15d97670811620",
+    "match": true,
+    "nodes": 7,
+    "edges": 6,
+    "system_prompt_sha256": "3a3c657d82d45e96dfbf9abdcb88adf66c58bb74f69f1e1e0412591242898028",
+    "http_request_or_tool_nodes": [],
+    "verdict": "完整、哈希正确"
+  },
+  "precheck_4_5_no_overwrite_of_other_projects": {
+    "verdict": "FAIL — 见 blocker",
+    "reason": "容器的 bind mount 未解析到 WSL 宿主卷；写入会落到 Docker VM 内的临时位置，既不是真实恢复，也可能在挂载修复后与宿主上仍存在的原租户资产冲突"
+  },
+  "precheck_4_6_credentials_not_written": {
+    "verdict": "PASS",
+    "note": "凭据只从 gitignore 的 .env 读取，未落盘、未打印、未进日志"
+  },
+  "blocker": {
+    "id": "DIFY-BIND-MOUNT-NOT-RESOLVING-TO-WSL-HOST",
+    "summary": "Docker Desktop 的容器 bind mount 没有解析到 WSL 宿主路径；容器看到的是 Docker VM 内的空目录，宿主上的原始卷完好但未被挂载。",
+    "proof": [
+      {
+        "item": "同一 bind source，宿主与容器的目录元数据不同",
+        "bind_source": "/home/faye/dify/docker/volumes/db/data",
+        "host_dir_stat": "drwxr-xr-x 3 root root 4096  Aug 19 03:49",
+        "container_dir_stat": "drwxr-xr-x 3 root root   60  Aug 27 21:39",
+        "conclusion": "size 与 mtime 均不同 ⇒ 不是同一个目录"
+      },
+      {
+        "item": "app storage 同理",
+        "bind_source": "/home/faye/dify/docker/volumes/app/storage",
+        "host": "含 .dify_secret_key、privkeys/09758721-a8d3-4f01-b0f2-c69c82a11568/private.pem、upload_files/09758721-…（共 34 MB）",
+        "container": "/app/api/storage 为空且 root 所有（容器以 uid 1001 运行）",
+        "conclusion": "宿主原租户资产完好；容器看不到"
+      },
+      {
+        "item": "setup 失败信息暴露了新租户 id",
+        "error": "PermissionDenied at write => privkeys/9f32db4d-472f-432c-b401-5f87431a1c7a/private.pem",
+        "conclusion": "容器侧要新建租户 9f32db4d…，与宿主上的原租户 09758721… 不同"
+      }
+    ],
+    "why_stop": [
+      "授权 §4.5 要求恢复动作不会覆盖其他项目或生产 Dify。当前写入落在 Docker VM 内的临时位置，下次容器重建即消失 —— 那不是恢复，把它记成 RECOVERED_AND_CURRENT 是假闭合。",
+      "授权 §4 的停止条款：宿主卷上仍存在原租户 09758721… 的 privkeys 与 34 MB 上传文件，属于「需要保护的资产」；在挂载错位状态下建第二个租户可能在挂载修复后与其冲突。",
+      "修复挂载需要重启 Docker Desktop / 重设 WSL 集成 —— 会停掉用户全部容器，不在本任务授权范围内，是用户自己的决定。"
+    ],
+    "residue_from_failed_attempt": {
+      "accounts": "0",
+      "tenants": "0",
+      "apps": "0",
+      "container_storage_written": false,
+      "verdict": "零残留 —— 那次 setup 500 之后什么也没留下"
+    },
+    "unblock_action_owned_by_founder": [
+      "在 Docker Desktop 里重启 / 重设 WSL 集成（Settings → Resources → WSL Integration，确认 Ubuntu-22.04 已勾选），或直接重启 Docker Desktop；会停掉全部容器",
+      "重启后先只读核验：docker exec docker-db_postgres-1 psql -U postgres -d dify -tAc 'select count(*) from apps;' —— 若回到非 0，说明原库连同 641 条运行记录一并回来，根本不需要用 DSL 重建",
+      "若仍为 0 且挂载已正确解析到宿主卷，再授权执行侧用 ep37 的 DSL 导入重建"
+    ],
+    "note_on_original_data": "宿主 pgdata 为 root 所有、本机无免密 sudo，执行侧读不到，因此**不能断言**原数据库文件完好 —— 只能说宿主 storage 卷完好且仍是原租户。原库是否幸存，等挂载修复后一测便知。"
+  },
+  "targets_not_reached": [
+    "App 用途标记 CANDIDATE TEST ONLY",
+    "已发布版本名 m3-cand-v1.5.2",
+    "Skill 哈希 90596da5…",
+    "系统提示词哈希 3a3c657d…",
+    "图执行内容 = ep37 冻结导出",
+    "7 节点 6 边执行拓扑"
+  ],
+  "targets_explicitly_not_attempted": [
+    "不恢复历史运行记录到数据库",
+    "不运行任何测试输入",
+    "不触发 DeepSeek / Qwen / 其他模型",
+    "不修改生产、不修改 main、不启动 M5"
+  ],
+  "disclosure_app_id_would_change": "即使挂载修复后用 DSL 重建，Dify 的导入会生成**新的 App UUID**，原 b7fb5b1a-9278-426c-bb8a-f9f288639548 不可由 DSL 还原。七次 Founder 运行的历史绑定仍指向原 App ID，不得与重建后的活体 App 混为一谈。"
+}
