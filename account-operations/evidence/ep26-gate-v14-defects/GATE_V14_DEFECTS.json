@@ -1,0 +1,308 @@
+{
+  "what": "第 8 轮：本轮修法自身在真实运行上的缺陷与效果，两侧都量",
+  "corpus": {
+    "samples": 61,
+    "source": [
+      "account-operations/evidence/ep06b-runtime-behavior-v14/B*.json",
+      "account-operations/evidence/ep07-longitudinal-v14/E*.json"
+    ]
+  },
+  "positive": {
+    "新增持续位命中例数": "26/61（第 7 轮 12/61）",
+    "结构性探索位例数": "18/61（第 7 轮 11/61）",
+    "G-4 阻断命中": "2/61（第 7 轮 12/61，其中 11 例为误报）",
+    "D-3 真检测": "E07（模型零 POS 行、补齐代写）、E08（模型写错 id、补齐改成正确 id）；两例在 v1.3 下都会被放行并承载为新基线"
+  },
+  "DD-1": {
+    "claim": "补齐骨架不含任何 `POS ::` 行 ⇒ 补齐节点按「一行不多、一行不少」删掉模型本轮声明的新增位 ⇒ D-1 开火，整份交付被拒收",
+    "root_cause": "gate_main 的 required_audit_lines 只按**输入侧**持续位生成，模型本轮新声明的位从不进骨架",
+    "count": 11,
+    "skeleton_has_no_pos_line_at_all": 10,
+    "skeleton_has_pos_line_but_not_the_new_one": 1,
+    "split_note": "输入侧没有持续位时骨架里一行 POS 都没有；有输入位时骨架只有输入那一行，模型自己新声明的那一位同样不在骨架里。两种形态的后果一样。",
+    "rows": [
+      {
+        "case": "B02-3-enterprise-provisional",
+        "dropped": [
+          "NEW:搭配判断互动探索"
+        ],
+        "dropped_were_new": [
+          "NEW:搭配判断互动探索"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B02-4-blocking-dependency",
+        "dropped": [
+          "NEW:初秋通勤衣橱系列",
+          "NEW:衣橱系列回访验证"
+        ],
+        "dropped_were_new": [
+          "NEW:初秋通勤衣橱系列",
+          "NEW:衣橱系列回访验证"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B03-1-objective-01",
+        "dropped": [
+          "NEW:价差证明内容位",
+          "NEW:供应商取舍讲述位"
+        ],
+        "dropped_were_new": [
+          "NEW:价差证明内容位",
+          "NEW:供应商取舍讲述位"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B03-2-objective-02",
+        "dropped": [
+          "NEW:起号方向验证"
+        ],
+        "dropped_were_new": [
+          "NEW:起号方向验证"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "dropped": [
+          "NEW:初秋通勤衣橱选品系列"
+        ],
+        "dropped_were_new": [
+          "NEW:初秋通勤衣橱选品系列"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B06-P-identical-values",
+        "dropped": [
+          "NEW:选品逻辑内容支柱验证"
+        ],
+        "dropped_were_new": [
+          "NEW:选品逻辑内容支柱验证"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B07-1-traffic-full-facts",
+        "dropped": [
+          "NEW:初秋通勤衣橱系列栏目"
+        ],
+        "dropped_were_new": [
+          "NEW:初秋通勤衣橱系列栏目"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B07-P-daily-three",
+        "dropped": [
+          "NEW:周宁选品判断固定位"
+        ],
+        "dropped_were_new": [
+          "NEW:周宁选品判断固定位"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B09-N5-uniqueness-probe",
+        "dropped": [
+          "NEW:验证“观众是不是因为第一手选品判断而留下来”"
+        ],
+        "dropped_were_new": [
+          "NEW:验证“观众是不是因为第一手选品判断而留下来”"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "B10-3-conflicting",
+        "dropped": [
+          "NEW:线上兴趣到门店询问链路验证"
+        ],
+        "dropped_were_new": [
+          "NEW:线上兴趣到门店询问链路验证"
+        ],
+        "skeleton_pos_lines": [],
+        "skeleton_has_no_pos_line": true,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      },
+      {
+        "case": "E08",
+        "dropped": [
+          "选品逻辑固定位"
+        ],
+        "dropped_were_new": [],
+        "skeleton_pos_lines": [
+          "POS :: NEW:选品逻辑固定位 :: 继续|处置|替换 :: <正文里承载这一处置的那句原话>"
+        ],
+        "skeleton_has_no_pos_line": false,
+        "carry": "REJECTED_KEEP_PREVIOUS"
+      }
+    ],
+    "founder_directive_1_status": "未满足。第 1 条要的是「新增持续位不得在补齐链路中静默丢失」；现在是不再静默，但仍然丢失，而且赔上整份交付。"
+  },
+  "DD-2": {
+    "claim": "G-4 v2 读槽位时把解释性从句里的数字当成权威值",
+    "count": 1,
+    "rows": [
+      {
+        "slot": "actual_capacity",
+        "slot_text": "1 条（本周实际，低于基线 3 条）",
+        "expected_authority": 1,
+        "parsed_as": [
+          {
+            "n": 3,
+            "unit": "周",
+            "period_source": "word"
+          }
+        ],
+        "authority_taken": 3,
+        "correct": false,
+        "note": "权威值是 1 条；括号里的 3 条是解释性对照，不是权威值"
+      },
+      {
+        "slot": "actual_capacity",
+        "slot_text": "3 条/周",
+        "expected_authority": 3,
+        "parsed_as": [
+          {
+            "n": 3,
+            "unit": "周",
+            "period_source": "suffix"
+          }
+        ],
+        "authority_taken": 3,
+        "correct": true,
+        "note": "对照：干净写法解析正确"
+      },
+      {
+        "slot": "expected_publish_count",
+        "slot_text": "每天 3 条（用户口径）",
+        "expected_authority": 3,
+        "parsed_as": [
+          {
+            "n": 3,
+            "unit": "天",
+            "period_source": "prefix"
+          }
+        ],
+        "authority_taken": 3,
+        "correct": true,
+        "note": "对照：等价换算基数解析正确"
+      }
+    ]
+  },
+  "DD-3": {
+    "claim": "G-4 v2 正文侧仍有把非速率句读成速率主张的情形",
+    "hits": [
+      {
+        "case": "B04-1P-capacity-1",
+        "hit": "actual_capacity: 输入权威值 3条/周，正文却断言当前是 1条/周 —— 「本周实际产能只有 1 条，所以按 1 条来排，不假装能做 3 条」"
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "hit": "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 2条/周 —— 「按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条」"
+      }
+    ]
+  },
+  "DD-4": {
+    "claim": "清单矛盾检查（v1.2 起就有，非本轮改动）把「参考资料用了、但缺某个账号事实」读成「声称参考未加载」",
+    "case": "B07-1-traffic-full-facts",
+    "sentence": "面料/成分已登记（来源=商品负责人周宁），但没有试穿事实或试穿素材，必须限制上身类主张",
+    "why_false": "缺的是试穿素材（账号事实缺口），不是参考文件；SKILL.md O-6 恰好**要求**把这两类缺口分开写，这句话正是照做的"
+  },
+  "rejection_ledger": {
+    "total_rejected": 12,
+    "rejected_only_by_DD1": 8,
+    "rows": [
+      {
+        "case": "B02-3-enterprise-provisional",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B02-4-blocking-dependency",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B03-1-objective-01",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B03-2-objective-02",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "reasons_other_than_DD1": [
+          "stale_override_G4"
+        ],
+        "rejected_only_by_DD1": false
+      },
+      {
+        "case": "B06-P-identical-values",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B07-1-traffic-full-facts",
+        "reasons_other_than_DD1": [
+          "manifest_contradiction"
+        ],
+        "rejected_only_by_DD1": false
+      },
+      {
+        "case": "B07-P-daily-three",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B09-N5-uniqueness-probe",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "B10-3-conflicting",
+        "reasons_other_than_DD1": [],
+        "rejected_only_by_DD1": true
+      },
+      {
+        "case": "E07",
+        "reasons_other_than_DD1": [
+          "unaccounted"
+        ],
+        "rejected_only_by_DD1": false
+      },
+      {
+        "case": "E08",
+        "reasons_other_than_DD1": [
+          "unaccounted"
+        ],
+        "rejected_only_by_DD1": false
+      }
+    ],
+    "verdict": "12 例拒收里 10 例是误拒（8 例纯 DD-1、1 例 DD-2/DD-3 的 G-4 误报、1 例 DD-4 的清单误报），真正该拒的只有 E07 与 E08 两例 D-3 真检测。第 7 轮是 7 例拒收里 6 例误拒。**误拒数从 6 涨到 10。**"
+  }
+}
