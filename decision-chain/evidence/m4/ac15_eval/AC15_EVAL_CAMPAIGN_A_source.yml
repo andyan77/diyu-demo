@@ -1,0 +1,1742 @@
+app:
+  description: M4 统一能力接缝后继测试应用（CAMPAIGN）。task_id=V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001。system prompt 由后继 SKILL 字节派生；reference
+    按统一合同 §12 加载矩阵确定性投影；不足只出组件级 Return，不全局硬停；不调用任何其他能力应用。
+  icon: 🧩
+  icon_background: '#E4FBCC'
+  icon_type: emoji
+  mode: workflow
+  name: DIYU M4 v1.3 TEST · AC15 EVAL · CAMPAIGN · A_source
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.20@850efe73fb62bbe7ab2229116086596596297a77174fb86f73e1363b99a24116
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: code
+      id: 1788000000001-source-envelope_check-target
+      source: '1788000000001'
+      sourceHandle: source
+      target: envelope_check
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: if-else
+      id: envelope_check-source-gate_sufficiency-target
+      source: envelope_check
+      sourceHandle: source
+      target: gate_sufficiency
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: template-transform
+      id: gate_sufficiency-run-ref_projection-target
+      source: gate_sufficiency
+      sourceHandle: run
+      target: ref_projection
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: code
+      id: gate_sufficiency-false-component_return-target
+      source: gate_sufficiency
+      sourceHandle: 'false'
+      target: component_return
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: template-transform
+        targetType: template-transform
+      id: ref_projection-source-projection_record-target
+      source: ref_projection
+      sourceHandle: source
+      target: projection_record
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: template-transform
+        targetType: llm
+      id: projection_record-source-skill_llm-target
+      source: projection_record
+      sourceHandle: source
+      target: skill_llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: template-transform
+      id: skill_llm-source-final_extract-target
+      source: skill_llm
+      sourceHandle: source
+      target: final_extract
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: template-transform
+        targetType: code
+      id: final_extract-source-returns_adapter-target
+      source: final_extract
+      sourceHandle: source
+      target: returns_adapter
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: code
+      id: returns_adapter-source-binding_record-target
+      source: returns_adapter
+      sourceHandle: source
+      target: binding_record
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: binding_record-source-end_ok-target
+      source: binding_record
+      sourceHandle: source
+      target: end_ok
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: end
+      id: component_return-source-end_component_return-target
+      source: component_return
+      sourceHandle: source
+      target: end_component_return
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: 统一能力调用外壳 + 本能力专业输入。外壳不强制物理字段名。
+        selected: false
+        title: 输入
+        type: start
+        variables:
+        - label: capability_call（统一业务能力外壳）
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: capability_call
+        - label: professional_input（本能力专业输入）
+          max_length: 200000
+          options: []
+          required: true
+          type: paragraph
+          variable: professional_input
+        - label: entry（能力调用意图给出，可留空由确定性规则推导）
+          max_length: 64
+          options: []
+          required: false
+          type: text-input
+          variable: entry
+        - label: run_mode（可留空）
+          max_length: 64
+          options: []
+          required: false
+          type: text-input
+          variable: run_mode
+        - label: example_reference_requested（YES/NO）
+          max_length: 8
+          options: []
+          required: false
+          type: text-input
+          variable: example_reference_requested
+      height: 100
+      id: '1788000000001'
+      position:
+        x: 40
+        y: 300
+      positionAbsolute:
+        x: 40
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport hashlib\nimport json\nimport re\n\n# M4 统一能力接缝 · 确定性外壳校验\n# 只做**结构性**充分性（在场 / 非空 / 可解析）与绑定计算。\n# 语义单薄（N-34「极薄字段齐全」）的最终裁决属于业务判断，\n\
+          # 由本能力的后继 Skill 正文负责；本节点只置 vacuity_flags 供其判断，\n# 不代替 Skill 作专业裁决（统一能力合同 §1.2.4）。\n\nREQUIRED = [\"objective\",\
+          \ \"deadline_or_stage_boundary\", \"audience_problem\", \"facts_registered\", \"capacity_or_owner\"]\nCAPABILITY\
+          \ = \"CAMPAIGN\"\nALLOWED_ENTRIES = [\"ENTRY-02\"]\nALLOWED_RUN_MODES = [\"PLANNING\", \"COMPILE_CONFIRMED_DECISIONS\"\
+          ]\nDEFAULT_RUN_MODE = \"PLANNING\"\n\nVACUOUS = [\n    \"做一条好内容\", \"提升影响力\", \"让大家更了解我们\", \"顾客不了解我们\",\n    \"\
+          提升曝光\", \"增加粉丝\", \"宣传新品\", \"促进转化\", \"打造心智\", \"多账号种草\",\n    \"更好\", \"更专业\", \"待定\", \"无\", \"n/a\", \"none\"\
+          , \"tbd\",\n]\n\nGOAL_FAMILIES = [\"LONG_TERM_VALUE\", \"ACCOUNT_STARTUP\", \"FOLLOWER_GROWTH\", \"TRAFFIC\",\n\
+          \                 \"GMV\", \"LEADS\", \"STORE_VISIT\", \"MIXED\"]\nCTA_LEVELS = [\"NO_CTA\", \"LOW_RISK_INTERACTION\"\
+          , \"BUSINESS_HANDOFF\",\n              \"HIGH_RISK\", \"KNOWN_BUT_NOT_AUTHORIZED\"]\n\n\ndef _sha(s):\n    return\
+          \ hashlib.sha256((s or \"\").encode(\"utf-8\")).hexdigest()\n\n\ndef _norm(s):\n    return re.sub(r\"\\s+\", \"\
+          \ \", (s or \"\")).strip()\n\n\ndef _find_scalar(text, key):\n    \"\"\"从外壳文本里取一个标量语义值。容忍 YAML / JSON / Markdown\
+          \ 三种写法，\n    因为统一外壳**不强制物理字段名**（统一能力合同 §1.1）。\"\"\"\n    if not text:\n        return \"\"\n    pats = [\n     \
+          \   r'\"%s\"\\s*:\\s*\"([^\"]*)\"' % re.escape(key),\n        r\"^\\s*%s\\s*:\\s*[\\\"']?([^\\\"'\\n]+)[\\\"']?\\\
+          s*$\" % re.escape(key),\n        r\"`%s`\\s*[:：]\\s*([^\\n]+)\" % re.escape(key),\n    ]\n    for p in pats:\n \
+          \       m = re.search(p, text, re.MULTILINE)\n        if m:\n            return _norm(m.group(1))\n    return \"\
+          \"\n\n\ndef _present(text, key):\n    \"\"\"语义在场判据：能取到标量值，或存在以该 key 起头的非空块。\"\"\"\n    v = _find_scalar(text, key)\n\
+          \    if v and v.lower() not in (\"\", \"null\", \"none\"):\n        return True, v\n    m = re.search(r\"^\\s*%s\\\
+          s*:\\s*$\" % re.escape(key), text or \"\", re.MULTILINE)\n    if m:\n        tail = (text or \"\")[m.end():]\n \
+          \       block = []\n        for line in tail.split(\"\\n\"):\n            if line.strip() == \"\":\n           \
+          \     if block:\n                    break\n                continue\n            if not line.startswith((\" \"\
+          , \"\\t\", \"-\")):\n                break\n            block.append(line.strip())\n        if block:\n        \
+          \    return True, \" \".join(block)[:400]\n    return False, \"\"\n\n\ndef _vacuous(v):\n    n = _norm(v).lower()\n\
+          \    if not n:\n        return True\n    if len(n) < 4:\n        return True\n    for w in VACUOUS:\n        if\
+          \ n == w.lower():\n            return True\n    return False\n\n\ndef main(capability_call, professional_input,\
+          \ entry, run_mode, example_reference_requested):\n    env = capability_call or \"\"\n    prof = professional_input\
+          \ or \"\"\n    blob = env + \"\\n\" + prof\n\n    missing = []\n    vacuity_flags = []\n    for key in REQUIRED:\n\
+          \        ok, val = _present(blob, key)\n        if not ok:\n            missing.append(key)\n        elif _vacuous(val):\n\
+          \            vacuity_flags.append(key)\n\n    # entry 解析：只接受结构化能力调用意图，不做自然语言意图识别\n    entry_in = _norm(entry).upper()\n\
+          \    if entry_in in ALLOWED_ENTRIES:\n        entry_resolved = entry_in\n    elif entry_in in (\"\", \"AUTO\", \"\
+          NONE\"):\n        entry_resolved = ALLOWED_ENTRIES[0]\n    else:\n        entry_resolved = \"ENTRY_NOT_APPLICABLE_FOR_THIS_CAPABILITY\"\
+          \n\n    # run_mode 解析\n    rm_in = _norm(run_mode).upper()\n    if rm_in in ALLOWED_RUN_MODES:\n        run_mode_resolved\
+          \ = rm_in\n    else:\n        run_mode_resolved = DEFAULT_RUN_MODE\n\n    goal_family = (_find_scalar(blob, \"goal_family\"\
+          ) or \"\").upper()\n    if goal_family not in GOAL_FAMILIES:\n        goal_family = \"UNDECLARED\"\n\n    cta_level\
+          \ = (_find_scalar(blob, \"cta_level\") or _find_scalar(blob, \"cta_contract\") or \"\").upper()\n    if cta_level\
+          \ not in CTA_LEVELS:\n        cta_level = \"NO_CTA\"\n\n    subject_domain = _find_scalar(blob, \"subject_domain\"\
+          )\n    platform = _find_scalar(blob, \"platform\") or \"NOT_LOCKED\"\n    duration_band = (_find_scalar(blob, \"\
+          duration_band\") or \"SHORT\").upper()\n    equivalence_basis = _find_scalar(blob, \"equivalence_basis\") or \"\
+          NOT_STATED\"\n    source_kind = (_find_scalar(blob, \"source_kind\") or \"UNDECLARED\").upper()\n\n    if entry_resolved\
+          \ == \"ENTRY_NOT_APPLICABLE_FOR_THIS_CAPABILITY\":\n        status = \"INSUFFICIENT\"\n        note = \"entry 与本能力不匹配：%s\
+          \ 不属于 %s\" % (entry_in, ALLOWED_ENTRIES)\n    elif missing:\n        status = \"INSUFFICIENT\"\n        note = \"\
+          缺少完成本次判断所必需的业务语义：%s\" % \", \".join(missing)\n    elif vacuity_flags:\n        # 结构在场但可能语义单薄：不在此处判定不足，交由 Skill 正文作专业裁决\n\
+          \        status = \"SUFFICIENT_WITH_CONDITIONS\"\n        note = \"结构在场；以下项疑似语义单薄，交由本能力 Skill 正文裁决：%s\" % \", \"\
+          .join(vacuity_flags)\n    else:\n        status = \"SUFFICIENT\"\n        note = \"结构性充分\"\n\n    can_run = \"false\"\
+          \ if status == \"INSUFFICIENT\" else \"true\"\n\n    conditionalized = []\n    if platform.upper() in (\"NOT_LOCKED\"\
+          , \"UNKNOWN\", \"未确认\"):\n        conditionalized.append(\"platform 未锁定：只产出平台中立母版，锁定平台列为条件\")\n    if goal_family\
+          \ == \"UNDECLARED\":\n        conditionalized.append(\"objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注\")\n    if\
+          \ vacuity_flags:\n        conditionalized.append(\"疑似语义单薄项：%s\" % \", \".join(vacuity_flags))\n\n    return {\n\
+          \        \"status\": status,\n        \"can_run\": can_run,\n        \"note\": note,\n        \"missing\": missing,\n\
+          \        \"missing_text\": \", \".join(missing) if missing else \"无\",\n        \"vacuity_flags\": vacuity_flags,\n\
+          \        \"conditionalized_text\": \"；\".join(conditionalized) if conditionalized else \"无\",\n        \"entry_resolved\"\
+          : entry_resolved,\n        \"run_mode_resolved\": run_mode_resolved,\n        \"goal_family\": goal_family,\n  \
+          \      \"cta_level\": cta_level,\n        \"source_kind\": source_kind,\n        \"subject_domain\": subject_domain,\n\
+          \        \"platform\": platform,\n        \"duration_band\": duration_band,\n        \"equivalence_basis\": equivalence_basis,\n\
+          \        \"envelope_hash\": _sha(env),\n        \"professional_input_hash\": _sha(prof),\n        \"capability\"\
+          : CAPABILITY,\n        \"example_reference_requested\": _norm(example_reference_requested).upper(),\n    }\n"
+        code_language: python3
+        desc: 确定性外壳校验：结构性充分性 + 绑定计算。语义单薄的裁决交给 Skill 正文。
+        outputs:
+          can_run:
+            children: null
+            type: string
+          capability:
+            children: null
+            type: string
+          conditionalized_text:
+            children: null
+            type: string
+          cta_level:
+            children: null
+            type: string
+          duration_band:
+            children: null
+            type: string
+          entry_resolved:
+            children: null
+            type: string
+          envelope_hash:
+            children: null
+            type: string
+          equivalence_basis:
+            children: null
+            type: string
+          example_reference_requested:
+            children: null
+            type: string
+          goal_family:
+            children: null
+            type: string
+          missing:
+            children: null
+            type: array[string]
+          missing_text:
+            children: null
+            type: string
+          note:
+            children: null
+            type: string
+          platform:
+            children: null
+            type: string
+          professional_input_hash:
+            children: null
+            type: string
+          run_mode_resolved:
+            children: null
+            type: string
+          source_kind:
+            children: null
+            type: string
+          status:
+            children: null
+            type: string
+          subject_domain:
+            children: null
+            type: string
+          vacuity_flags:
+            children: null
+            type: array[string]
+        selected: false
+        title: 外壳校验
+        type: code
+        variables:
+        - value_selector:
+          - '1788000000001'
+          - capability_call
+          variable: capability_call
+        - value_selector:
+          - '1788000000001'
+          - professional_input
+          variable: professional_input
+        - value_selector:
+          - '1788000000001'
+          - entry
+          variable: entry
+        - value_selector:
+          - '1788000000001'
+          - run_mode
+          variable: run_mode
+        - value_selector:
+          - '1788000000001'
+          - example_reference_requested
+          variable: example_reference_requested
+      height: 100
+      id: envelope_check
+      position:
+        x: 340
+        y: 300
+      positionAbsolute:
+        x: 340
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        cases:
+        - case_id: run
+          conditions:
+          - comparison_operator: is
+            value: 'true'
+            variable_selector:
+            - envelope_check
+            - can_run
+          logical_operator: and
+        desc: 结构性不足只走组件级 Return，不全局硬停、不生成假产物、不启动任何下游。
+        logical_operator: and
+        selected: false
+        title: 充分性闸
+        type: if-else
+      height: 100
+      id: gate_sufficiency
+      position:
+        x: 640
+        y: 300
+      positionAbsolute:
+        x: 640
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 按统一能力合同 §12 加载矩阵确定性投影；不由 LLM 决定加载范围；不建第二套附件库。
+        selected: false
+        template: '## 参考投影 · 本次未加载任何参考文件
+
+
+          按 M4 统一能力合同 §12 加载矩阵，本能力（CAMPAIGN）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。
+
+
+          **未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**
+
+          '
+        title: Reference Projection
+        type: template-transform
+        variables:
+        - value_selector:
+          - envelope_check
+          - subject_domain
+          variable: subject_domain
+        - value_selector:
+          - envelope_check
+          - platform
+          variable: platform
+        - value_selector:
+          - envelope_check
+          - example_reference_requested
+          variable: example_reference_requested
+      height: 100
+      id: ref_projection
+      position:
+        x: 940
+        y: 220
+      positionAbsolute:
+        x: 940
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 登记本次实际加载了哪些参考片段，供 AC-11 机器核验。
+        selected: false
+        template: "{\n  \"capability\": \"CAMPAIGN\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\
+          \n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\"\
+          : false,\n  \"rag_first_layer_built\": false\n}"
+        title: Projection Record
+        type: template-transform
+        variables:
+        - value_selector:
+          - envelope_check
+          - subject_domain
+          variable: subject_domain
+        - value_selector:
+          - envelope_check
+          - example_reference_requested
+          variable: example_reference_requested
+      height: 100
+      id: projection_record
+      position:
+        x: 1240
+        y: 220
+      positionAbsolute:
+        x: 1240
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: system prompt 由后继 SKILL 文件字节派生（生成器保证），不手工同步。
+        memory: null
+        model:
+          completion_params:
+            max_tokens: 384000
+            reasoning_effort: low
+            thinking: true
+            top_p: 0.8
+          mode: chat
+          name: deepseek-v4-flash
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - role: system
+          text: '# Campaign Orchestrator v0.1
+
+
+            ## 0. 角色与唯一任务
+
+
+            你是企业人格 IP 的 Campaign Orchestrator。
+
+
+            你的唯一任务是：
+
+
+            > 根据一次真实经营任务、已确认的品牌与顾客事实、账号责任卡、当前可用素材与人员产能，以及已经确认的承接条件，生成一份能够交给内容制作环节继续执行的 Campaign 决策包。
+
+
+            你负责完成：
+
+
+            1. 把经营任务收敛为一个主要顾客变化；
+
+            2. 判断哪些账号参战、谁承担主叙事、谁只提供事实支持；
+
+            3. 为参战账号分配不可互换的顾客问题、证据和新判断；
+
+            4. 按真实素材和产能组织内容顺序与接力；
+
+            5. 判断用户下一步行动及企业是否接得住；
+
+            6. 说明事实、资源或目标变化时怎样调整和交人。
+
+
+            你不是文案写手、脚本生成器、排期填表员或自动审批系统。本轮不输出完整脚本、逐镜分镜、成片文案、复杂预约流程、评分器、Schema、Contract、Gate、状态机、数据库或 RAG 方案。
+
+
+            ## 1. 输入与事实优先级
+
+
+            输入可以是一份合并文本，不要求固定字段名，但必须能够识别以下信息：
+
+
+            - 当前经营任务、任务周期及已经确认的经营压力；
+
+            - 品牌定位、核心顾客、顾客真实处境和表达边界；
+
+            - 已确认账号责任卡，包括使命、顾客问题、一手来源、权限和人格关系姿态；
+
+            - 当前实际存在且可以确认、公开和制作的事实与素材；
+
+            - 当前可投入的负责人、出镜、拍摄、剪辑、审核时间和发布能力；
+
+            - 已知渠道；
+
+            - 如希望引导咨询、预约或成交，已经确认的入口、承接人、替补、容量和确认方式；
+
+            - 尚未确认、不得补写的事项。
+
+
+            事实使用优先级：
+
+
+            1. Founder 或企业最新明确确认的经营任务、品牌立场和权责决定；
+
+            2. 已确认品牌事实与账号责任卡；
+
+            3. 当前资源、产能和承接快照；
+
+            4. 已登记的一手事实、亲历观察和专业判断；
+
+            5. 明确标注的设计情境或创意表达；
+
+            6. 模型推演。
+
+
+            低优先级内容不得覆盖高优先级事实。模型推演只能用于组织方案，不能生成企业事实、人物能力、顾客经历、商品性能、经营结果或服务承诺。
+
+
+            必须区分：
+
+
+            - 可持续产生某类素材，不等于本轮已经拥有该素材；
+
+            - 账号负责人具备某职位，不等于已经确认其能力、方法或本次材料；
+
+            - 图片、品类名称和行业经验，不等于具体商品事实；
+
+            - 事实、专业判断和设计情境是三类不同内容；
+
+            - 发布账号、出镜人、素材提供者、事实确认人和服务承接人是不同身份；
+
+            - 内容平台不自动等于正式承接入口；
+
+            - 表达兴趣、提交申请、企业确认和实际履约不是同一状态。
+
+
+            如输入对同一企业事实或正式权责给出相互冲突的确认结论，不得自行选择一个覆盖另一个。输出：
+
+
+            ```text
+
+            INPUT_CONFLICT_REQUIRES_FOUNDER
+
+            冲突事项：
+
+            受影响的 Campaign 判断：
+
+            为什么不能继续：
+
+            需要 Founder 确认的唯一问题：
+
+            ```
+
+
+            ## 2. 输入不足时怎样停止或降级
+
+
+            以下任一信息缺失且无法从输入原文确定时，不能输出 Campaign 候选：
+
+
+            - 当前经营任务或任务周期；
+
+            - 目标顾客及其需要解决的真实问题；
+
+            - 已确认账号责任与边界；
+
+            - 至少一条本轮实际可用、可确认的内容事实链；
+
+            - 至少一条事实链有实际负责人可以确认，并存在完成最低内容单元的基本条件。
+
+
+            此时只输出：
+
+
+            ```text
+
+            INPUT_INSUFFICIENT
+
+            阻塞缺口：
+
+            它会改变哪项核心判断：
+
+            当前仍可安全完成什么：
+
+            需要企业回答的唯一问题：
+
+            ```
+
+
+            最多提出一个对后续路线区分力最高的问题，不连续追问，不用行业惯例代填。
+
+
+            以下缺失通常不阻塞内容判断，但必须条件化处理：
+
+
+            - 最终发布平台未确认：不自行选择平台；
+
+            - 具体商品或案例不足：缩小到现有事实支持的范围；
+
+            - 承接入口、人员、容量或确认方式未确认：核心判断型内容可以继续，但不得启用预约、报名或服务承诺；
+
+            - 可选内容素材不足：取消可选内容，不用重复内容补量。
+
+
+            只要核心目标、至少一条事实链和最低制作条件成立，可以输出 `READY_WITH_CONDITIONS`，并明确条件影响哪一部分。精确产能、平台或承接条件可以后补；不得把这类局部缺口写成整个 Campaign 无法启动。
+
+
+            ## 3. 生成顺序
+
+
+            必须按以下顺序判断。后一步只能使用前一步已经形成的结论，不得提前用账号、形式或 CTA 反推内容目标。
+
+
+            ### 步骤一｜把经营任务转成一个主要顾客变化
+
+
+            先把输入中的任务拆为四层：
+
+
+            1. **顾客变化：** 内容要让哪类顾客从什么状态进展到什么状态；
+
+            2. **内容支撑：** 顾客形成新判断所需的事实、场景和证据；
+
+            3. **经营结果：** 咨询、预约、到店、成交、复购等由内容与承接共同作用的结果；
+
+            4. **组织验证：** 多账号能否分工、生产和协同。
+
+
+            只能选择一个主要顾客变化。其他合理诉求降为支撑目标、最终行动或组织验证，不得并列为多个主目标。
+
+
+            主要目标必须写清：
+
+
+            - 哪类顾客；
+
+            - 她处于什么具体情境；
+
+            - 当前卡在哪个判断或行动；
+
+            - 内容后新增什么理解、判断或信任；
+
+            - 她可以形成什么下一步方向。
+
+
+            不得用“提升曝光、增加粉丝、宣传新品、促进转化、打造心智、多账号种草”等抽象经营语言代替完整内容目标。
+
+
+            必须说明哪些结果不能直接归因给内容。没有基线和统一口径时，不虚构人数、比例、转化率或因果关系。
+
+
+            内容目标必须同时具备判断价值和关系价值：顾客不仅能听懂，还应感到自己的真实处境被理解，并愿意继续听这个账号如何判断。不得把 Campaign 设计成培训课程、知识清单、品牌演讲或只有情绪没有观点的陪伴内容。
+
+
+            ### 步骤二｜选择参战账号与主讲关系
+
+
+            参战不是长期账号的轮流露出，而是本轮内容和证据责任。
+
+
+            对每个候选账号检查：
+
+
+            - 是否直接推动主要顾客变化；
+
+            - 是否拥有本轮实际存在、可以确认、公开和制作的事实或观察；
+
+            - 是否能增加其他账号无法低成本替代的新问题、新证据或新判断；
+
+            - 实际负责人是否能参与事实确认和账号表达；
+
+            - 加入后是否造成重复、越权或叙事分散；
+
+            - 是否能够依据自身使命和关系姿态自然形成内容，而不是只换人、换口吻或换场景。
+
+
+            将角色分为：
+
+
+            - **主讲账号：** 承担本轮主要顾客变化的主判断链；
+
+            - **独立参战账号：** 以自身账号发布，并增加主讲无法替代的判断价值；
+
+            - **有限参战账号：** 只在已确认事实和明确触发条件成立时发布；
+
+            - **事实支持与确认人：** 提供或确认事实，但本轮不必发布；
+
+            - **本轮不参战账号：** 没有足够独立贡献或资源条件。
+
+
+            主讲账号从当前最完整、最持续、最直接推动顾客变化的事实链中产生，不由职位、账号等级、发布数量、出镜频率或最终承接责任决定。主讲不拥有其他账号事实的最终解释权，也不必第一个发布。
+
+
+            采用最小充分组合。每增加一个发布账号，都必须单独证明其必要性；允许单账号 Campaign，也允许长期账号本轮不发。
+
+
+            如某账号资格依赖尚未确认的素材、人员或公开条件，必须写成成立条件和替代方案，不得假装已经具备。
+
+
+            ### 步骤三｜形成不可互换的表达角度
+
+
+            每个参战账号的角度必须由三项共同决定：
+
+
+            > 顾客问题 × 一手证据 × 本账号新增判断
+
+
+            每个参战账号必须明确：
+
+
+            - 主要帮助顾客解决什么具体问题；
+
+            - 使用哪些本轮已登记的一手事实或亲历观察；
+
+            - 提供什么只有本账号能够增加的新判断；
+
+            - 与主讲及其他账号的实质区别；
+
+            - 可以引用谁的已确认事实；
+
+            - 引用后必须增加什么本职判断；
+
+            - 用户与该账号相处时形成什么独特关系体验；
+
+            - 什么情况下没有必要参与该议题。
+
+
+            关系姿态和人格只能增强已经成立的内容角度，不能单独成为参战或重复发布理由。
+
+
+            跨账号引用必须保留原始来源和确认责任，不得改写成本人亲历。引用后至少增加新问题、新证据或新判断之一；只增加态度、情绪、语气、场景、镜头或行动号召，不构成新价值。
+
+
+            同一事实可以跨账号出现，但不能形成部门墙，也不能把同一卖点改写成多个账号版本。单个议题默认只有一个主要判断责任账号。
+
+
+            内容叙事可以来自真实问题、真实备选方案与取舍过程、实际尝试和调整、现场服务过程或尚未解决的疑问。没有真实过程时平实表达，不虚构冲突、反转、顾客故事或圆满结局。
+
+
+            ### 步骤四｜按认知推进、证据和产能组织顺序
+
+
+            排序不是把内容放进日历，而是让前一内容为后一内容创造新的理解、信任、判断或行动条件。
+
+
+            先判断哪一条真实事实最适合成为顾客进入问题的入口，再决定谁先发布。主讲账号不必第一个发布，职位最高者也不必开场。
+
+
+            每个核心内容单元必须说明：
+
+
+            - 它先解决什么顾客问题；
+
+            - 使用什么真实事实或素材；
+
+            - 由哪个账号承担主要判断；
+
+            - 新增什么判断价值；
+
+            - 内容如何从具体问题、选择、尝试、调整或取舍中自然推进；
+
+            - 留下什么尚未解决的问题；
+
+            - 下一账号为什么有资格接棒；
+
+            - 事实由谁确认；
+
+            - 什么条件不成立时应延期、换题或取消。
+
+
+            下一账号只有在至少增加新问题、新证据或新判断之一时才接棒。不能增加时停止，不做总结、重复切片、全员回应或 Founder 收尾来制造矩阵完整感。
+
+
+            计划周期不等于发布数量。产能上限不是发布配额，不强制每日发布，不平均分配账号、商品和时长，也不要求覆盖全部商品或议题。
+
+
+            必须给出：
+
+
+            - 最低可运行内容链；
+
+            - 可选内容及其触发条件；
+
+            - 素材或产能不足时的缩减顺序；
+
+            - 哪些内容可以延期、取消或不发。
+
+
+            已由事实和素材成立的核心内容，不以获得评论或互动作为继续执行的前提。真实反馈只用于调整后续重点、决定条件性内容或发现事实误解。
+
+
+            有效反馈应包含具体场景、问题、比较或排除理由、待验证变量、事实误解或明确的品牌与服务疑问。播放、点赞、泛化称赞、单纯商品喜好和沉默不能单独证明顾客变化，也不能自动决定账号接力。
+
+
+            ### 步骤五｜确定用户行动与承接
+
+
+            先确定顾客在形成新判断后最自然的下一步，再判断企业是否具备承接条件。不得先选择一个渠道，再倒推所有内容都为该渠道导流。
+
+
+            如本轮希望引导咨询、预约、到店或其他服务行动，必须核对：
+
+
+            - 唯一正式入口；
+
+            - 明确的主承接人；
+
+            - 明确的替补；
+
+            - 实际容量或受理边界；
+
+            - 最小必要信息；
+
+            - 什么明确动作代表申请被确认；
+
+            - 哪些时效、人员、服务内容和结果没有被承诺。
+
+
+            只有输入明确提供的条件才能写入 Campaign。不得因为企业已经拥有评论、私信、客服、企业协作工具、小程序、门店或导购，就自动指定其为正式入口或承接人。
+
+
+            必须区分：
+
+
+            > 表达兴趣 → 提交申请 → 企业确认 → 实际履约
+
+
+            不得把收集意向、收到消息、已登记、已转交或待回复描述为预约或服务成功。
+
+
+            承接条件不足时：
+
+
+            - 核心判断型内容可以继续；
+
+            - 预约、报名、到店和服务型 CTA 暂停；
+
+            - 只列出发布前最少需要企业确认的条件；
+
+            - 可提出一个条件化候选，但必须标记“待企业确认”；
+
+            - 不让发布账号、出镜人或事实确认人临时接单补洞。
+
+
+            不要求每条内容都设置强 CTA。统一入口已经确认时，所有账号只能引用同一入口，不分别接单或留下不同联系人。
+
+
+            ### 步骤六｜处理事实、产能、承接与目标变化
+
+
+            事实不足时按以下顺序处理：
+
+
+            > 删除无依据内容 → 降低结论强度 → 改到现有事实能够完整回答的问题 → 延期或不发
+
+
+            改题后仍须推动主要顾客变化、保持本账号角度、遵守事实边界，并继续具有共情、观点、烟火气、真实感和自然叙事。不得把事实缺口改成通用知识、空泛价值观或“建议咨询”来维持排期。
+
+
+            产能不足时，优先削减：
+
+
+            - 可选内容；
+
+            - 非必要账号露出；
+
+            - 覆盖面；
+
+            - 重复切片；
+
+            - 制作复杂度。
+
+
+            必须优先保护事实确认、顾客判断价值和最小完整内容链。已经投入拍摄、剪辑或排期，不构成必须发布的理由。
+
+
+            承接不足时，暂停会扩大服务需求的表达，不自动停止仍有独立判断价值的内容；不得制造名额、排队、库存或“已经约满”等虚假紧迫感。
+
+
+            异常发生时，返回被新事实实际破坏的最上游判断：
+
+
+            | 实际失效内容 | 返回位置 |
+
+            |---|---|
+
+            | 经营任务、目标顾客变化、唯一主目标或核心品牌判断 | 目标判断；必要时先交 Founder |
+
+            | 参战资格、主讲关系或独立判断链结构 | 参战判断 |
+
+            | 账号具体顾客问题、证据使用或新增判断 | 角度判断 |
+
+            | 顺序、数量、发布时间或普通接力变化 | 排序判断 |
+
+            | 入口、承接人、替补、容量或确认方式 | 承接判断，并暂停相关 CTA |
+
+
+            只重判实际受影响的下游结论，不自动推翻整个 Campaign。
+
+
+            日常事实、单条内容、拍摄、剪辑和普通排期问题，由对应负责人删除、降级、改题、延期或不发。普通负面评论和事实误解不交 Founder。
+
+
+            只有涉及以下事项时才交 Founder 或企业最终经营决策人：
+
+
+            - 改变经营任务、主要顾客变化或核心品牌判断；
+
+            - 长期账号使命或组织权责变化；
+
+            - 重大经营取舍；
+
+            - 正式品牌立场或品牌级公开回应；
+
+            - 重大新增资源投入；
+
+            - 新增或改变对外政策与承诺；
+
+            - 取消整个 Campaign。
+
+
+            ## 4. 贯穿全程的内容质量底线
+
+
+            Campaign 整体及关键内容必须同时守住：
+
+
+            - **共情：** 从顾客真实生活、工作和选择限制出发，不俯视、不评判、不制造身份或身体焦虑；
+
+            - **观点：** 给出明确选择、拒绝、比较、适用条件或仍待验证的判断，不说正确废话；
+
+            - **烟火气：** 进入顾客真实使用、工作、家庭、社交、服务或日常情境，不退化为会议语言；
+
+            - **真实感：** 真实事实必须有来源，设计情境必须明确标注，不用虚构案例和行业常识冒充事实；
+
+            - **内容叙事化：** 让问题、选择、尝试、调整、取舍或行动形成自然进展，不只罗列知识、卖点和结论。
+
+
+            五项底线不是五个输出栏目，不得机械逐项打卡，也不得让不同账号各承担其中一项。每个核心账号都应从自己的事实来源、判断责任和关系姿态中自然实现。
+
+
+            如果方案事实安全、结构完整，却只能生成知识课、参数表、品牌说教、静态展示或同一种机械故事模板，应改写角度或排序；无法修正时，不进入制作。
+
+
+            ## 5. 输出前内部检查
+
+
+            输出前自行检查并直接修正，不展示检查过程：
+
+
+            1. 是否只有一个主要顾客变化；
+
+            2. 是否把支撑目标、经营结果和组织验证与主目标分开；
+
+            3. 主讲是否由事实链和顾客价值产生，而不是职位或账号等级；
+
+            4. 是否允许不必要账号不参战、不发布；
+
+            5. 每个参战账号是否有不同的顾客问题、一手证据和新增判断；
+
+            6. 跨账号引用是否保留来源，并增加本职新判断；
+
+            7. 排序是否形成认知推进，而不是日历堆砌或固定账号流水线；
+
+            8. 是否符合当前素材、人员和产能，不为用满配额补量；
+
+            9. 是否区分事实、专业判断和设计情境，没有编造能力、案例、效果或承诺；
+
+            10. 是否自然具备共情、观点、烟火气、真实感和叙事化，而非培训课程或统一模板；
+
+            11. 用户行动和承接是否来自已确认条件，申请与确认是否被区分；
+
+            12. 日常事项是否由对应负责人处理，Founder 是否只承担真正的经营裁决。
+
+
+            如果任何问题因事实缺失无法修正，使用 `READY_WITH_CONDITIONS` 或 `INPUT_INSUFFICIENT`，不得补写。
+
+
+            ## 6. 最终输出格式
+
+
+            只输出实例 Campaign 决策，不复述本方法，不输出思考过程、专家讨论、自检过程或评分。
+
+
+            ```markdown
+
+            # Campaign 决策包
+
+
+            ## 0. 运行结论
+
+            - 状态：READY / READY_WITH_CONDITIONS
+
+            - 适用任务：
+
+            - 适用周期：
+
+            - 当前最重要成立条件：
+
+            - 当前不能声称已经具备的条件：
+
+
+            ## 1. 内容目标
+
+            - 优先目标顾客：
+
+            - 顾客当前情境与决策阻塞：
+
+            - 唯一主要顾客变化：
+
+            - 顾客需要形成的理解、判断或信任：
+
+            - 支撑目标：
+
+            - 最终希望采取的行动：
+
+            - 不能直接归因给内容的结果：
+
+            - 最低可观察信号：
+
+
+            ## 2. 参战账号与主讲关系
+
+            | 账号 | 本轮身份 | 参战依据 | 不可替代贡献 | 成立条件 |
+
+            |---|---|---|---|---|
+
+
+            ### 本轮不参战账号及理由
+
+
+            ### 事实支持、出镜、确认与承接角色
+
+
+            ## 3. 各账号表达角度
+
+            ### 账号名称
+
+            - 主要顾客问题：
+
+            - 本轮一手事实与来源：
+
+            - 本账号新增判断：
+
+            - 与其他账号的实质区别：
+
+            - 关系姿态怎样自然进入内容：
+
+            - 可以引用的事实及引用后必须增加的价值：
+
+            - 不必参与或应停止的条件：
+
+
+            ## 4. 内容排序与接力
+
+            - 当前产能上限：
+
+            - 最低可运行内容链：
+
+
+            | 阶段或时间 | 内容责任账号 | 要解决的顾客问题 | 使用的真实事实及确认人 | 新增判断 | 自然叙事进展 | 交给下一内容的未解决问题 | 发布或取消条件 |
+
+            |---|---|---|---|---|---|---|---|
+
+
+            ### 可选内容及触发条件
+
+
+            ### 真实反馈怎样调整后续
+
+
+            ### 产能不足时的缩减顺序
+
+
+            ## 5. 用户行动与承接
+
+            - 希望用户采取的下一步：
+
+            - 当前承接状态：已具备 / 尚未具备 / 部分具备
+
+            - 唯一正式入口：
+
+            - 主承接人及替补：
+
+            - 容量或受理边界：
+
+            - 最小必要信息：
+
+            - 申请、确认与履约的区别：
+
+            - 内容侧可以表达什么：
+
+            - 当前不得承诺什么：
+
+
+            ## 6. 异常处理与交人
+
+            - 事实不足：
+
+            - 产能不足：
+
+            - 承接不足：
+
+            - 普通执行问题由谁处理：
+
+            - 哪项变化应返回哪一步：
+
+            - 必须交 Founder 的事项：
+
+            - 可以明确不发的情况：
+
+
+            ## 7. 进入内容制作前必须确认
+
+            - 只列真正阻塞制作或对外承诺的事项；没有时写“无”。
+
+            ```
+
+
+            输出应当具体到能够继续生成 Content Brief，但不得越界编写完整脚本、镜头清单或成片文案。不得为了填满格式重复同一结论；无事项时明确写“无”。
+
+
+            ---
+
+
+            # 本次运行注入的参考文件片段
+
+
+            以下片段由确定性投影节点按 M4 统一能力合同 §12 的固定加载矩阵选出。**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**
+
+
+            {{#ref_projection.output#}}
+
+            '
+        - role: user
+          text: "# 本次运行输入\n\n## 统一能力调用外壳（capability_call）\n\n{{#1788000000001.capability_call#}}\n\n## 本能力的专业输入（professional_input）\n\
+            \n{{#1788000000001.professional_input#}}\n\n## 接缝控制（由确定性节点给出，不由你判断）\n\n- `capability`：CAMPAIGN\n- `entry`：{{#envelope_check.entry_resolved#}}\n\
+            - `run_mode`：{{#envelope_check.run_mode_resolved#}}\n- 结构性充分性：{{#envelope_check.status#}}\n- 结构性缺项：{{#envelope_check.missing_text#}}\n\
+            - 等价输入依据：{{#envelope_check.equivalence_basis#}}\n- 来源（provenance.source_kind）：{{#envelope_check.source_kind#}}\n\
+            - 必须条件化的项：{{#envelope_check.conditionalized_text#}}\n- `objective.goal_family`（**只读继承，你无权改写**）：{{#envelope_check.goal_family#}}\n\
+            - CTA 授权级别：{{#envelope_check.cta_level#}}\n- `subject_domain`：{{#envelope_check.subject_domain#}}\n- `platform`：{{#envelope_check.platform#}}\n\
+            - `duration_band`：{{#envelope_check.duration_band#}}\n\n---\n\n## 本次运行的接缝硬约束\n\n1. **不得暗跑上游。** 你**没有**调用任何其他能力的手段，也不得假设任何上游组件已经被运行过。\n\
+            \   合法等价输入已由上面的外壳给出；缺什么就说缺什么，**不要替不存在的上游产物编内容**。\n2. **`objective.goal_family` 只读继承。** 不得把起号、吸粉、流量、GMV、线索、到店或混合目标\n\
+            \   静默改写成长期价值任务。你无权改目标；确有冲突时只发一条**局部 Return**。\n3. **`explicit_non_promise` 只读继承。** 任何一段都不得往回加内容。\n4. **跳过组件不降低标准。**\
+            \ 短入口不等于降低事实纪律、权限约束、风险约束或当前任务\n   真正适用的专业质量。\n5. **不适用维度写 `NOT_APPLICABLE` 并说明**，不得留空，也不得把不适用维度变成硬门。\n6. **候选数量不得硬编码。**\
+            \ 只有存在真实取舍时才给多个方向；不存在时直接给推荐。\n7. **本次没有加载的参考内容一律不得引用**，不得凭记忆补平台数字、行业惯例或案例。\n8. 本能力**产出**：有期限的 Campaign 决策包；参战/主讲关系；不可互换表达角度；接力顺序；承接判断；统一\
+            \ Content Task 出口\n   本能力**不得产出**：完整脚本、逐镜分镜、成片文案\n\n---\n\n## 产出结构（三块，标记行原样照抄，各只出现一次、必须成对闭合）\n\n**不要把本节说明抄进产出。**\n\
+            \n---M4_ARTIFACT---\n（内部 Artifact：完整专业产出。按你正文规定的输出格式写全。\n 可以保留来源、版本、状态、未选候选、淘汰原因与调试信息。\n 这一块**不直接给用户看**。）\n---END_M4_ARTIFACT---\n\
+            \n---M4_USER_DELIVERY---\nstatus: READY | NEEDS_DECISION | BLOCKED_LOCAL\n（自然、完整、可直接使用的结果；必要候选；推荐；真实阻断；最小决定。\n\
+            \ **禁止出现**：内部术语与状态码、Prompt 正文、凭据、数据库、内部推理、参考文件全文、\n 「已删除／已剔除／审查发现／修正后／原方案／未核实不得使用」这类便条，\n 以及任何被淘汰内容的全文。\n **同样禁止**把用户必要的选择和成立条件投影掉——「不泄露」不是「少给」。）\n\
+            ---END_M4_USER_DELIVERY---\n\n---M4_RETURNS---\n（没有回改就只写一个词：NONE。**空块不等于 NONE**，会被判为解析失败。\n 有回改时，每条写满下面八行；多条之间空一行。\n\
+            \ `affected_objects` 与 `downstream_stale` 用 | 分隔多个值。\n `downstream_stale` **只列真实依赖本次结论的项**，不得列全链。）\nreturn_id:\
+            \ <稳定 id>\nsource: CAMPAIGN\nhighest_damaged_layer: <被实际破坏的最上游判断层>\nprecise_gap: <具体缺什么。禁写「信息不足」>\naffected_objects:\
+            \ <对象1 | 对象2>\nproposed_disposition: ACCEPT_AND_PATCH | REJECT_WITH_AUTHORITY | ESCALATE\nneeds_user_decision:\
+            \ true | false\ndownstream_stale: <项1 | 项2>\n---END_M4_RETURNS---\n\n---\n\n## 写完之后，交出去之前，自己核这三条\n\n1. 上面三对标记行有没有**原样出现、各一次、成对闭合**。少一行、改一个字、写成别的样子，\n\
+            \   下游都读不出来，等于这一块没交。\n2. `---M4_ARTIFACT---` 里是不是**专业产出本身**。不得写成「即上方」「即以上」「同上」\n   「上方即」「见上文」「内容同上」「本区块与…一致」这类指向另一块的话——\n\
+            \   那样写，这一块实际就是空的，下游拿到的是一句指路，不是产出。\n3. `---M4_USER_DELIVERY---` 是不是**非空**、且同样没有写成指向 ARTIFACT 的一句话。\n   用户只看得到这一块。\n\
+            \n两块内容有重复不是问题，**回指和留空才是问题**。\n"
+        selected: false
+        title: DIYU M4 v1.3 TEST · AC15 EVAL · CAMPAIGN · A_source
+        type: llm
+        vision:
+          enabled: false
+      height: 120
+      id: skill_llm
+      position:
+        x: 1540
+        y: 220
+      positionAbsolute:
+        x: 1540
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 剥离 thinking 段，取最终正文。空输出显式标记，不静默当成空结果。
+        selected: false
+        template: '{%- if ''</think>'' in llm_text -%}
+
+          {%- set tail = llm_text.split(''</think>'')|last -%}
+
+          {%- if tail.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ tail }}{%- endif -%}
+
+          {%- elif llm_text.strip() == '''' -%}MODEL_OUTPUT_NO_FINAL{%- else -%}{{ llm_text }}{%- endif -%}'
+        title: Final Extract
+        type: template-transform
+        variables:
+        - value_selector:
+          - skill_llm
+          - text
+          variable: llm_text
+      height: 100
+      id: final_extract
+      position:
+        x: 1840
+        y: 220
+      positionAbsolute:
+        x: 1840
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\nimport re\n\n# 确定性 Returns / 交付分离适配器\n# N-12 铁律：解析失败 != NONE。结构损坏时置 PARSE_FAILED、保留原文、局部阻断，\n\
+          #           绝不伪装成空数组或 NONE。\n\nCAPABILITY = \"CAMPAIGN\"\n\nA_OPEN, A_CLOSE = \"---M4_ARTIFACT---\", \"---END_M4_ARTIFACT---\"\
+          \nU_OPEN, U_CLOSE = \"---M4_USER_DELIVERY---\", \"---END_M4_USER_DELIVERY---\"\nR_OPEN, R_CLOSE = \"---M4_RETURNS---\"\
+          , \"---END_M4_RETURNS---\"\n\nRET_FIELDS = [\"return_id\", \"source\", \"highest_damaged_layer\", \"precise_gap\"\
+          ,\n              \"affected_objects\", \"proposed_disposition\", \"needs_user_decision\",\n              \"downstream_stale\"\
+          ]\nDISPOSITIONS = [\"ACCEPT_AND_PATCH\", \"REJECT_WITH_AUTHORITY\", \"ESCALATE\"]\n\n# 用户交付块禁项（统一能力合同 §11.3 / 源\
+          \ PP Skill「用户交付块的事实纪律」）\nLEAK_PATTERNS = [\n    \"已删除\", \"已剔除\", \"已移除\", \"审查发现\", \"审查时发现\", \"修正后\", \"修正为\"\
+          ,\n    \"原方案\", \"上一版\", \"之前的版本\", \"未核实，不得使用\", \"这句话不能使用\",\n    \"LOW_RISK_INTERACTION\", \"BUSINESS_HANDOFF\"\
+          , \"KNOWN_BUT_NOT_AUTHORIZED\",\n    \"goal_family\", \"capability_call\", \"professional_payload\", \"system prompt\"\
+          ,\n    \"INPUT_INSUFFICIENT\", \"STALE\", \"NOT_VERIFIED\", \"fact_refs[]\", \"used_fact_refs\",\n]\n\n\n# AC-31\
+          \ 产出完整性冻结阈值（V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.2 §1.1）\n# 阈值在任何新运行之前冻结，不因结果调整。\nBACKREF_MARKERS = [\"即上方\", \"\
+          即以上\", \"同上\", \"同上文\", \"上方即\", \"上文即\",\n                   \"见上文\", \"如上所述\", \"内容同上\", \"本区块与\",\n         \
+          \          \"与上方\", \"与上文\", \"与以上\"]\nMIN_ARTIFACT_CHARS = 400\nCHECK_WINDOW = 200\n\n\ndef _has_backref(text):\n\
+          \    head = (text or \"\")[:CHECK_WINDOW]\n    for m in BACKREF_MARKERS:\n        if m in head:\n            return\
+          \ True\n    return False\n\n\ndef _legit_block(rets):\n    # 合法组件级 Return：同时含非空 highest_damaged_layer 与非空 precise_gap\n\
+          \    for r in rets:\n        if not isinstance(r, dict):\n            continue\n        if (r.get(\"highest_damaged_layer\"\
+          ) or \"\").strip() and (r.get(\"precise_gap\") or \"\").strip():\n            return True\n    return False\n\n\n\
+          def _artifact_status(artifact, rets):\n    a = (artifact or \"\").strip()\n    if _has_backref(a):\n        return\
+          \ \"BACKREF_COLLAPSED\"\n    if not a:\n        return \"OK\" if _legit_block(rets) else \"EMPTY\"\n    if len(a)\
+          \ < MIN_ARTIFACT_CHARS and not _legit_block(rets):\n        return \"BELOW_MIN\"\n    return \"OK\"\n\n\ndef _user_status_of(user_delivery):\n\
+          \    # 空交付无条件违规：legit_block 时用户仍必须被告知阻断\n    u = (user_delivery or \"\").strip()\n    if not u:\n        return\
+          \ \"EMPTY\"\n    if _has_backref(u):\n        return \"BACKREF_COLLAPSED\"\n    return \"OK\"\n\n\ndef _between(text,\
+          \ a, b):\n    i = text.find(a)\n    if i < 0:\n        return None\n    j = text.find(b, i + len(a))\n    if j <\
+          \ 0:\n        return None\n    return text[i + len(a):j].strip()\n\n\ndef _parse_returns(block):\n    \"\"\"返回 (list,\
+          \ status, note)。status ∈ OK | NONE | PARSE_FAILED\"\"\"\n    if block is None:\n        return [], \"PARSE_FAILED\"\
+          , \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\"\n    s = block.strip()\n    if s == \"\":\n        return [], \"PARSE_FAILED\"\
+          , \"RETURNS 块为空。空 != NONE：无回改必须显式写 NONE\"\n    if s.upper() == \"NONE\":\n        return [], \"NONE\", \"显式声明无回改\"\
+          \n\n    groups = [g for g in re.split(r\"\\n\\s*\\n\", s) if g.strip()]\n    out = []\n    bad = []\n    for g in\
+          \ groups:\n        item = {}\n        for line in g.split(\"\\n\"):\n            m = re.match(r\"^\\s*([a-z_]+)\\\
+          s*:\\s*(.*)$\", line)\n            if m:\n                item[m.group(1)] = m.group(2).strip()\n        miss =\
+          \ [f for f in RET_FIELDS if f not in item or item[f] == \"\"]\n        if miss:\n            bad.append(\"一条 Return\
+          \ 缺字段：%s\" % \",\".join(miss))\n            continue\n        if item[\"proposed_disposition\"] not in DISPOSITIONS:\n\
+          \            bad.append(\"proposed_disposition 非法：%s\" % item[\"proposed_disposition\"])\n            continue\n\
+          \        item[\"affected_objects\"] = [x.strip() for x in item[\"affected_objects\"].split(\"|\") if x.strip()]\n\
+          \        item[\"downstream_stale\"] = [x.strip() for x in item[\"downstream_stale\"].split(\"|\") if x.strip()]\n\
+          \        item[\"needs_user_decision\"] = item[\"needs_user_decision\"].strip().lower() in (\"true\", \"是\", \"yes\"\
+          )\n        item[\"parse_status\"] = \"OK\"\n        out.append(item)\n\n    if bad:\n        return out, \"PARSE_FAILED\"\
+          , \"；\".join(bad)\n    if not out:\n        return [], \"PARSE_FAILED\", \"RETURNS 块存在内容但无法解析出任何合法条目\"\n    return\
+          \ out, \"OK\", \"解析出 %d 条\" % len(out)\n\n\ndef main(final_text):\n    raw = final_text or \"\"\n\n    artifact\
+          \ = _between(raw, A_OPEN, A_CLOSE)\n    user_delivery = _between(raw, U_OPEN, U_CLOSE)\n    returns_block = _between(raw,\
+          \ R_OPEN, R_CLOSE)\n\n    structure_notes = []\n    if artifact is None:\n        structure_notes.append(\"缺少 ARTIFACT\
+          \ 块\")\n    if user_delivery is None:\n        structure_notes.append(\"缺少 USER_DELIVERY 块\")\n\n    rets, ret_status,\
+          \ ret_note = _parse_returns(returns_block)\n\n    leaks = [p for p in LEAK_PATTERNS if user_delivery and p in user_delivery]\n\
+          \n    if artifact is None:\n        artifact_out = raw if raw.strip() else \"MODEL_OUTPUT_NO_FINAL\"\n        artifact_status\
+          \ = \"STRUCTURE_MISSING_RAW_PRESERVED\"\n    else:\n        artifact_out = artifact\n        artifact_status = _artifact_status(artifact,\
+          \ rets)\n\n    if user_delivery is None:\n        user_out = \"\"\n        user_status = \"MISSING\"\n    elif leaks:\n\
+          \        user_out = user_delivery\n        user_status = \"LEAK_DETECTED\"\n    else:\n        user_out = user_delivery\n\
+          \        user_status = _user_status_of(user_delivery)\n\n    blocked = (\n        ret_status == \"PARSE_FAILED\"\
+          \n        or artifact_status != \"OK\"\n        or user_status != \"OK\"\n    )\n\n    return {\n        \"artifact\"\
+          : artifact_out,\n        \"artifact_status\": artifact_status,\n        \"user_delivery\": user_out,\n        \"\
+          user_delivery_status\": user_status,\n        \"user_delivery_leaks\": leaks,\n        \"returns_json\": json.dumps(rets,\
+          \ ensure_ascii=False),\n        \"returns_status\": ret_status,\n        \"returns_parse_note\": ret_note,\n   \
+          \     \"returns_raw\": returns_block if returns_block is not None else \"ABSENT\",\n        \"raw_preserved\": raw,\n\
+          \        \"local_block\": \"true\" if blocked else \"false\",\n        \"structure_notes\": structure_notes,\n \
+          \       \"capability\": CAPABILITY,\n    }\n"
+        code_language: python3
+        desc: 确定性 Returns / 交付分离。解析失败置 PARSE_FAILED 并保留原文，绝不伪装成 NONE。
+        outputs:
+          artifact:
+            children: null
+            type: string
+          artifact_status:
+            children: null
+            type: string
+          capability:
+            children: null
+            type: string
+          local_block:
+            children: null
+            type: string
+          raw_preserved:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          returns_parse_note:
+            children: null
+            type: string
+          returns_raw:
+            children: null
+            type: string
+          returns_status:
+            children: null
+            type: string
+          structure_notes:
+            children: null
+            type: array[string]
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_leaks:
+            children: null
+            type: array[string]
+          user_delivery_status:
+            children: null
+            type: string
+        selected: false
+        title: Returns / 交付适配器
+        type: code
+        variables:
+        - value_selector:
+          - final_extract
+          - output
+          variable: final_text
+      height: 100
+      id: returns_adapter
+      position:
+        x: 2140
+        y: 220
+      positionAbsolute:
+        x: 2140
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport hashlib\nimport json\n\n# AC-12 保真绑定记录（源 Skill → Workflow → Runtime → 模型 → provider → Attempt）\n#\
+          \ 自报值只作声明；正式判定以从已发布 Runtime 实际读出的字节为准（N-19）。\n\n# 注意：这里必须走 json.loads，不能把 json.dumps 的结果直接当 Python 字面量贴进来。\n# 现场教训（2026-08-26）：直接贴会把\
+          \ Python 的 True 写成 JSON 的 true，\n# 代码节点一进沙箱就 NameError: name 'true' is not defined，整个能力应用调不起来。\nRECORD = json.loads('{\"\
+          capability\": \"CAMPAIGN\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\"\
+          : true, \"top_p\": 0.8}, \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\"\
+          , \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"source_skill_path\"\
+          : \"decision-chain/skills/Campaign_Orchestrator_v0.1.md\", \"source_skill_sha256\": \"c7ef284e40e7c4cd0d4081632fca7df17bd1a80fbd3f3b5267be4aea1040a0fb\"\
+          , \"successor_skill_path\": \"decision-chain/skills/Campaign_Orchestrator_v0.1.md\", \"successor_skill_sha256\"\
+          : \"c7ef284e40e7c4cd0d4081632fca7df17bd1a80fbd3f3b5267be4aea1040a0fb\", \"system_prompt_sha256\": \"45295f538727ee645b585dc7be744ace3299fa097aecfe8ff098ee8795106175\"\
+          , \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
+          , \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f7f732c126a21487606c5ae48fa392df73eb9cea769649ac6e13c45f805214c2\"\
+          }')\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
+          \ run_mode_resolved, goal_family):\n    art = artifact or \"\"\n    rec = dict(RECORD)\n    rec[\"input_envelope_sha256\"\
+          ] = envelope_hash\n    rec[\"input_professional_sha256\"] = professional_input_hash\n    rec[\"artifact_sha256\"\
+          ] = hashlib.sha256(art.encode(\"utf-8\")).hexdigest()\n    rec[\"reference_projection_declared\"] = reference_projection\n\
+          \    rec[\"entry\"] = entry_resolved\n    rec[\"run_mode\"] = run_mode_resolved\n    rec[\"goal_family_readonly_inherited\"\
+          ] = goal_family\n    rec[\"self_reported_only\"] = True\n    rec[\"note\"] = (\n        \"自报 hash 不构成保真证明。AC-12\
+          \ 以从已发布 Runtime 实际读出的 \"\n        \"system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\"\n    )\n    return\
+          \ {\"binding_json\": json.dumps(rec, ensure_ascii=False, sort_keys=True)}\n"
+        code_language: python3
+        desc: AC-12 保真绑定记录。自报值只作声明，正式判定以已发布 Runtime 实际字节为准。
+        outputs:
+          binding_json:
+            children: null
+            type: string
+        selected: false
+        title: 保真绑定记录
+        type: code
+        variables:
+        - value_selector:
+          - envelope_check
+          - envelope_hash
+          variable: envelope_hash
+        - value_selector:
+          - envelope_check
+          - professional_input_hash
+          variable: professional_input_hash
+        - value_selector:
+          - returns_adapter
+          - artifact
+          variable: artifact
+        - value_selector:
+          - projection_record
+          - output
+          variable: reference_projection
+        - value_selector:
+          - envelope_check
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - envelope_check
+          - run_mode_resolved
+          variable: run_mode_resolved
+        - value_selector:
+          - envelope_check
+          - goal_family
+          variable: goal_family
+      height: 100
+      id: binding_record
+      position:
+        x: 2440
+        y: 220
+      positionAbsolute:
+        x: 2440
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        code: "\nimport json\n\n# 组件级 Return（统一能力合同 §10.1 七项）\n# 关键语义：这是**本分支结果**，不是整任务终态；本身不触发下游失效。\n# 硬禁：全局硬停、生成假产物、要求用户重填整套输入。\n\
+          \nCAPABILITY = \"CAMPAIGN\"\nLAYER = \"CAMPAIGN_INPUT_SUFFICIENCY\"\n\n# 用户交付里**不得出现内部字段名**（AC-13 / N-23）。\n# 缺项到自然语言追问的映射是确定性的，不含业务判断。\n\
+          QUESTION_MAP = {\n    \"applicability_reason\": \"这次是要新建或实质改动账号的长期定位、人设或职责分工吗？还是只想解决眼下这一条内容？\",\n    \"subject_and_account_scope\"\
+          : \"这次要处理的是哪个品牌／哪几个账号？\",\n    \"objective\": \"这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\",\n    \"audience_problem\"\
+          : \"你想说给谁听？她现在具体卡在哪一步？\",\n    \"expected_change\": \"看完之后，你希望她多知道什么、或者能做什么决定？\",\n    \"content_promise\": \"这条内容对观众的承诺是什么？（一句话说清她能拿到什么）\"\
+          ,\n    \"expression_boundary\": \"有哪些话是这个品牌明确不能说的？\",\n    \"expression_subject_and_boundary\": \"这条由谁来讲？她能讲的和不能讲的边界是什么？\"\
+          ,\n    \"expression_subject\": \"这条由谁来讲？（真人／角色／品牌口吻／只拍物件／无主体）\",\n    \"facts_registered\": \"有哪些已经记下来的真实事实或亲历观察可以用？（没有登记的事实我不能替你补）\"\
+          ,\n    \"deadline_or_stage_boundary\": \"这件事有明确的时间或阶段边界吗？到什么时候为止？\",\n    \"capacity_or_owner\": \"这一轮谁能出镜、谁能确认事实、大概能投入多少时间？\"\
+          ,\n    \"content_origin_mode\": \"这条的素材是现拍、用已有素材剪、访谈、还是生成的？（这项猜错整条会作废，我不替你默认）\",\n    \"script_or_equivalent_beats\"\
+          : \"把脚本或等价的内容方案给我：每一段讲什么、事实有没有、素材到位没有。\",\n    \"production_profile\": \"这次是单人手机、一两个人、小团队，还是商业制作？\",\n    \"time_window\"\
+          : \"这次有多少时间可用？（半天／两天／几个天光窗口）\",\n    \"content_body_or_beats\": \"把成片内容或逐段说明给我：每一段实际拍到了什么。\",\n    \"explicit_non_promise\"\
+          : \"这条明确**不**承诺什么？（这一项下游最容易悄悄加回来）\",\n    \"cta_contract\": \"这条要不要引导观众做什么？如果要，做什么、谁在哪里接？\",\n    \"asset_publish_permission\"\
+          : \"这些素材可以公开发布吗？有没有第三方入镜或授权限制？\",\n}\n\n\ndef main(status, note, missing, entry_resolved, envelope_hash, capability_call):\n\
+          \    miss = missing or []\n    # 只追问当前最具区分力的一项，并翻译成自然语言（不向用户暴露内部字段名）\n    ask_key = miss[0] if miss else \"\"\n\
+          \    ask_one = QUESTION_MAP.get(ask_key, \"\") if ask_key else \"\"\n    if not ask_one:\n        ask_one = \"还差一项才能做判断，你能补一句说明吗？\"\
+          \n\n    ret = {\n        \"return_id\": \"M4-RET-%s-%s\" % (CAPABILITY, (envelope_hash or \"0\" * 8)[:8]),\n   \
+          \     \"source\": CAPABILITY,\n        \"highest_damaged_layer\": LAYER,\n        \"precise_gap\": \"；\".join(miss)\
+          \ if miss else (note or \"未指明\"),\n        \"affected_objects\": [\"仅本次 %s 调用及其真实依赖分支\" % CAPABILITY],\n       \
+          \ \"proposed_disposition\": \"ESCALATE\",\n        \"needs_user_decision\": True,\n        \"downstream_stale\"\
+          : [\"仅真实依赖本次 %s 结论的下游项\" % CAPABILITY],\n        \"parse_status\": \"OK\",\n    }\n\n    user_text = (\n       \
+          \ \"这一步我还差一样东西才能往下判断：\\n\\n%s\\n\\n\"\n        \"只补这一项就够了，其他已经给过的内容不用再说一遍。\\n\"\n        \"这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\"\
+          \ % ask_one\n    )\n\n    # 机械自检：用户交付里不得出现任何内部字段名（AC-13 / N-23）\n    leaked = [k for k in QUESTION_MAP if k in user_text]\n\
+          \n    return {\n        \"returns_json\": json.dumps([ret], ensure_ascii=False),\n        \"user_delivery_leaks\"\
+          : leaked,\n        \"return_status\": \"COMPONENT_RETURN\",\n        \"branch_result\": \"INPUT_INSUFFICIENT\",\n\
+          \        \"is_task_terminal_state\": \"false\",\n        \"triggers_downstream_invalidation\": \"false\",\n    \
+          \    \"single_most_discriminating_question\": ask_one,\n        \"user_delivery\": user_text,\n        \"fabricated_artifact_produced\"\
+          : \"false\",\n        \"downstream_invoked\": \"false\",\n    }\n"
+        code_language: python3
+        desc: 组件级 Return：本分支结果，不是整任务终态，本身不触发下游失效。
+        outputs:
+          branch_result:
+            children: null
+            type: string
+          downstream_invoked:
+            children: null
+            type: string
+          fabricated_artifact_produced:
+            children: null
+            type: string
+          is_task_terminal_state:
+            children: null
+            type: string
+          return_status:
+            children: null
+            type: string
+          returns_json:
+            children: null
+            type: string
+          single_most_discriminating_question:
+            children: null
+            type: string
+          triggers_downstream_invalidation:
+            children: null
+            type: string
+          user_delivery:
+            children: null
+            type: string
+          user_delivery_leaks:
+            children: null
+            type: array[string]
+        selected: false
+        title: 组件级 Return
+        type: code
+        variables:
+        - value_selector:
+          - envelope_check
+          - status
+          variable: status
+        - value_selector:
+          - envelope_check
+          - note
+          variable: note
+        - value_selector:
+          - envelope_check
+          - missing
+          variable: missing
+        - value_selector:
+          - envelope_check
+          - entry_resolved
+          variable: entry_resolved
+        - value_selector:
+          - envelope_check
+          - envelope_hash
+          variable: envelope_hash
+        - value_selector:
+          - '1788000000001'
+          - capability_call
+          variable: capability_call
+      height: 100
+      id: component_return
+      position:
+        x: 940
+        y: 460
+      positionAbsolute:
+        x: 940
+        y: 460
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 正常产出
+        outputs:
+        - value_selector:
+          - returns_adapter
+          - artifact
+          variable: artifact
+        - value_selector:
+          - returns_adapter
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - returns_adapter
+          - artifact_status
+          variable: artifact_status
+        - value_selector:
+          - returns_adapter
+          - user_delivery_status
+          variable: user_delivery_status
+        - value_selector:
+          - returns_adapter
+          - user_delivery_leaks
+          variable: user_delivery_leaks
+        - value_selector:
+          - returns_adapter
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - returns_adapter
+          - returns_status
+          variable: returns_status
+        - value_selector:
+          - returns_adapter
+          - returns_parse_note
+          variable: returns_parse_note
+        - value_selector:
+          - returns_adapter
+          - returns_raw
+          variable: returns_raw
+        - value_selector:
+          - returns_adapter
+          - local_block
+          variable: local_block
+        - value_selector:
+          - returns_adapter
+          - raw_preserved
+          variable: raw_preserved
+        - value_selector:
+          - binding_record
+          - binding_json
+          variable: binding_json
+        - value_selector:
+          - projection_record
+          - output
+          variable: reference_projection
+        - value_selector:
+          - ref_projection
+          - output
+          variable: reference_projection_text
+        - value_selector:
+          - envelope_check
+          - entry_resolved
+          variable: entry
+        - value_selector:
+          - envelope_check
+          - run_mode_resolved
+          variable: run_mode
+        - value_selector:
+          - envelope_check
+          - status
+          variable: sufficiency_status
+        - value_selector:
+          - envelope_check
+          - goal_family
+          variable: goal_family
+        - value_selector:
+          - envelope_check
+          - conditionalized_text
+          variable: conditionalized
+        selected: false
+        title: 结束
+        type: end
+      height: 100
+      id: end_ok
+      position:
+        x: 2740
+        y: 220
+      positionAbsolute:
+        x: 2740
+        y: 220
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
+        desc: 组件级 Return 结束：本分支不足，其他诉求不受影响
+        outputs:
+        - value_selector:
+          - component_return
+          - user_delivery
+          variable: user_delivery
+        - value_selector:
+          - component_return
+          - returns_json
+          variable: returns_json
+        - value_selector:
+          - component_return
+          - return_status
+          variable: returns_status
+        - value_selector:
+          - component_return
+          - branch_result
+          variable: branch_result
+        - value_selector:
+          - component_return
+          - is_task_terminal_state
+          variable: is_task_terminal_state
+        - value_selector:
+          - component_return
+          - triggers_downstream_invalidation
+          variable: triggers_downstream_invalidation
+        - value_selector:
+          - component_return
+          - single_most_discriminating_question
+          variable: single_question
+        - value_selector:
+          - component_return
+          - user_delivery_leaks
+          variable: user_delivery_leaks
+        - value_selector:
+          - component_return
+          - fabricated_artifact_produced
+          variable: fabricated_artifact_produced
+        - value_selector:
+          - component_return
+          - downstream_invoked
+          variable: downstream_invoked
+        - value_selector:
+          - envelope_check
+          - missing_text
+          variable: missing
+        selected: false
+        title: 组件级 Return 结束
+        type: end
+      height: 100
+      id: end_component_return
+      position:
+        x: 1240
+        y: 460
+      positionAbsolute:
+        x: 1240
+        y: 460
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.5

@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "swap_id": "SW-03",
+    "dst_capability": "MATRIX",
+    "src_capability": "CREATIVE_SCRIPT",
+    "src_fixture": "FX-M4-REAL-TRADEOFF",
+    "run_id": "439bdc0d-dbf4-4cd0-9860-7f0b26b5d97c",
+    "status": "succeeded",
+    "error": null,
+    "blocked_or_insufficient": false,
+    "returns_count": 0,
+    "artifact_sha256": "4b84742f888f4f8070dc82ae3df392777516fe40105568ef80d1eea652a75bf3",
+    "artifact_len": 203,
+    "user_delivery_len": 0
+  },
+  "raw_response": {
+    "task_id": "4fe48c4d-effe-4c6d-8b41-67bef1b2355b",
+    "workflow_run_id": "439bdc0d-dbf4-4cd0-9860-7f0b26b5d97c",
+    "data": {
+      "id": "439bdc0d-dbf4-4cd0-9860-7f0b26b5d97c",
+      "workflow_id": "488aa802-dff5-4665-a796-d9c5b651d43e",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "",
+        "artifact": "```text\nNOT_APPLICABLE\n\n理由：本次请求是「初秋通勤衣橱第一阶段」的单条内容任务，目标是让已有几件通勤外套的顾客形成分层判断。请求没有涉及建立或实质修改长期定位、人设、账号职责、表达主体关系或多账号结构。执行主体「序里集品牌号 + 零售搭配负责人苏禾」是已确认存在的账号结构，本次只是在其上做一条现拍内容，不新建账号、不重划职责、不改变表达主体关系，因此不启动 Matrix。\n```",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"4b84742f888f4f8070dc82ae3df392777516fe40105568ef80d1eea652a75bf3\", \"capability\": \"MATRIX\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-01\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"b8dcd7b311690e1cdd113468e5a57d351a80a00b062b8bce9e43ac5b686f5285\", \"input_professional_sha256\": \"b8dcd7b311690e1cdd113468e5a57d351a80a00b062b8bce9e43ac5b686f5285\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"MATRIX\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"DIAGNOSE_OR_ESTABLISH\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Matrix_Architect_v0.1.2.md\", \"source_skill_sha256\": \"7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838\", \"successor_skill_path\": \"decision-chain/skills/Matrix_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf\", \"system_prompt_sha256\": \"7ec255f0e9be871d2ce870c55eea644d0310d6e114afa37a34395531ae057460\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"f60472170cae32fb243a4fb608ab2b283c7c65ef3e673d79d4cf168eaacd28f2\"}",
+        "seam_trace_json": "{\"call_hash\": \"2c3f5e3fe464b89a09c89fa5fbaaca4ebd9c04f059f0d798d2138b589b7c003e\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"MATRIX\"], \"entry\": \"ENTRY-01\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 6.446932,
+      "total_tokens": 9721,
+      "total_steps": 6,
+      "created_at": 1787782887,
+      "finished_at": 1787782893
+    }
+  },
+  "input_sha256": "b8dcd7b311690e1cdd113468e5a57d351a80a00b062b8bce9e43ac5b686f5285",
+  "input_text": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ncandidate_axes_note: 两条路径在 核心矛盾 / 叙事发动机 / 人物关系 / 信息释放顺序 上均不同\n",
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "timestamp": "2026-08-26T15:21:33-0700"
+}

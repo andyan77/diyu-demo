@@ -117,6 +117,16 @@ CAPABILITIES = [
         "run_modes": ["COMPILE_SINGLE_CONTENT_CONTRACT"],
         "produces": "单条内容生产合同：一个顾客问题 + 一个新判断 + 证据地图 + 叙事节拍 + 发布/降级/取消条件",
         "must_not_produce": "完整逐字稿、逐镜分镜、最终标题、封面、发布文案",
+        # D-03（AC-28 / M4-FND-010）：判据指名了内部合同取值，产出必须落到取值本身，
+        # 自然语言「权限条件未成立」不能替代。用户可见交付仍只用自然语言。
+        "artifact_extra": (
+            "\n4. `---M4_ARTIFACT---` 块内是否有**单独一行**写出本次的 CTA 内部合同取值：\n"
+            "   `cta_contract: <取值>`\n"
+            "   取值只能取自 NO_CTA / LOW_RISK_INTERACTION / BUSINESS_HANDOFF /\n"
+            "   HIGH_RISK / KNOWN_BUT_NOT_AUTHORIZED。\n"
+            "   权限已知但未获授权时取 `KNOWN_BUT_NOT_AUTHORIZED`（权限不全，不是信息不全）。\n"
+            "   这一行只写在 ARTIFACT 块，**绝不出现在 USER_DELIVERY**。"
+        ),
     },
     {
         "key": "creative_script",
@@ -471,6 +481,54 @@ LEAK_PATTERNS = [
 ]
 
 
+# AC-31 产出完整性冻结阈值（V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.2 §1.1）
+# 阈值在任何新运行之前冻结，不因结果调整。
+BACKREF_MARKERS = ["即上方", "即以上", "同上", "同上文", "上方即", "上文即",
+                   "见上文", "如上所述", "内容同上", "本区块与",
+                   "与上方", "与上文", "与以上"]
+MIN_ARTIFACT_CHARS = 400
+CHECK_WINDOW = 200
+
+
+def _has_backref(text):
+    head = (text or "")[:CHECK_WINDOW]
+    for m in BACKREF_MARKERS:
+        if m in head:
+            return True
+    return False
+
+
+def _legit_block(rets):
+    # 合法组件级 Return：同时含非空 highest_damaged_layer 与非空 precise_gap
+    for r in rets:
+        if not isinstance(r, dict):
+            continue
+        if (r.get("highest_damaged_layer") or "").strip() and (r.get("precise_gap") or "").strip():
+            return True
+    return False
+
+
+def _artifact_status(artifact, rets):
+    a = (artifact or "").strip()
+    if _has_backref(a):
+        return "BACKREF_COLLAPSED"
+    if not a:
+        return "OK" if _legit_block(rets) else "EMPTY"
+    if len(a) < MIN_ARTIFACT_CHARS and not _legit_block(rets):
+        return "BELOW_MIN"
+    return "OK"
+
+
+def _user_status_of(user_delivery):
+    # 空交付无条件违规：legit_block 时用户仍必须被告知阻断
+    u = (user_delivery or "").strip()
+    if not u:
+        return "EMPTY"
+    if _has_backref(u):
+        return "BACKREF_COLLAPSED"
+    return "OK"
+
+
 def _between(text, a, b):
     i = text.find(a)
     if i < 0:
@@ -542,7 +600,7 @@ def main(final_text):
         artifact_status = "STRUCTURE_MISSING_RAW_PRESERVED"
     else:
         artifact_out = artifact
-        artifact_status = "OK"
+        artifact_status = _artifact_status(artifact, rets)
 
     if user_delivery is None:
         user_out = ""
@@ -552,7 +610,7 @@ def main(final_text):
         user_status = "LEAK_DETECTED"
     else:
         user_out = user_delivery
-        user_status = "OK"
+        user_status = _user_status_of(user_delivery)
 
     blocked = (
         ret_status == "PARSE_FAILED"
@@ -721,7 +779,8 @@ ALL_CAPS = ["MATRIX", "CAMPAIGN", "CONTENT_BRIEF", "CREATIVE_SCRIPT",
 
 
 def main(capability_resolved, entry_resolved, run_mode, derivation,
-         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash):
+         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,
+         tool_local_block, tool_artifact_status, tool_user_delivery_status):
     invoked = [capability_resolved]
     skipped = [c for c in ALL_CAPS if c != capability_resolved]
 
@@ -729,6 +788,34 @@ def main(capability_resolved, entry_resolved, run_mode, derivation,
         rets = json.loads(tool_returns_json or "[]")
     except Exception:
         rets = []
+
+    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。
+    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，
+    # 产出塌陷因此被 tool_artifact or "" 静默放行为成功。
+    guard = {
+        "checked": True,
+        "tool_local_block": tool_local_block,
+        "artifact_status": tool_artifact_status,
+        "user_delivery_status": tool_user_delivery_status,
+    }
+
+    if str(tool_local_block or "").strip().lower() == "true":
+        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)
+                if x and x != "OK"]
+        rets = list(rets) + [{
+            "return_id": "M4-RET-SEAM-COMPLETENESS-" + str(call_hash or "")[:8],
+            "source": "SEAM_COMPLETENESS_GUARD",
+            "highest_damaged_layer": "CAPABILITY_OUTPUT_COMPLETENESS",
+            "precise_gap": " | ".join(gaps) if gaps else "local_block=true 但状态未指明",
+            "affected_objects": ["本次 %s 调用的产出块" % capability_resolved],
+            "proposed_disposition": "ESCALATE",
+            "needs_user_decision": True,
+            "downstream_stale": ["仅真实依赖本次 %s 产出的下游项" % capability_resolved],
+            "parse_status": "PARSE_FAIL",
+        }]
+        returns_out = json.dumps(rets, ensure_ascii=False)
+    else:
+        returns_out = tool_returns_json or "[]"
 
     stale = []
     for r in rets:
@@ -749,6 +836,7 @@ def main(capability_resolved, entry_resolved, run_mode, derivation,
         ),
         "stale_set": stale,
         "stale_rule": "只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用",
+        "completeness_guard": guard,
     }
 
     return {
@@ -757,7 +845,7 @@ def main(capability_resolved, entry_resolved, run_mode, derivation,
         "capabilities_skipped": skipped,
         "artifact": tool_artifact or "",
         "user_delivery": tool_user_delivery or "",
-        "returns_json": tool_returns_json or "[]",
+        "returns_json": returns_out,
         "binding_json": tool_binding_json or "{}",
     }
 '''
@@ -932,6 +1020,20 @@ proposed_disposition: ACCEPT_AND_PATCH | REJECT_WITH_AUTHORITY | ESCALATE
 needs_user_decision: true | false
 downstream_stale: <项1 | 项2>
 ---END_M4_RETURNS---
+
+---
+
+## 写完之后，交出去之前，自己核这三条
+
+1. 上面三对标记行有没有**原样出现、各一次、成对闭合**。少一行、改一个字、写成别的样子，
+   下游都读不出来，等于这一块没交。
+2. `---M4_ARTIFACT---` 里是不是**专业产出本身**。不得写成「即上方」「即以上」「同上」
+   「上方即」「见上文」「内容同上」「本区块与…一致」这类指向另一块的话——
+   那样写，这一块实际就是空的，下游拿到的是一句指路，不是产出。
+3. `---M4_USER_DELIVERY---` 是不是**非空**、且同样没有写成指向 ARTIFACT 的一句话。
+   用户只看得到这一块。{artifact_extra}
+
+两块内容有重复不是问题，**回指和留空才是问题**。
 """
 
 
@@ -1053,6 +1155,7 @@ def build_capability_app(cap):
     user_prompt = USER_PROMPT_TMPL.format(
         start=START_ID, cap=cap["capability"],
         produces=cap["produces"], must_not_produce=cap["must_not_produce"],
+        artifact_extra=cap.get("artifact_extra", ""),
     )
 
     binding_record = {
@@ -1218,6 +1321,7 @@ def build_capability_app(cap):
         "desc": "正常产出", "outputs": [
             {"value_selector": ["returns_adapter", "artifact"], "variable": "artifact"},
             {"value_selector": ["returns_adapter", "user_delivery"], "variable": "user_delivery"},
+            {"value_selector": ["returns_adapter", "artifact_status"], "variable": "artifact_status"},
             {"value_selector": ["returns_adapter", "user_delivery_status"], "variable": "user_delivery_status"},
             {"value_selector": ["returns_adapter", "user_delivery_leaks"], "variable": "user_delivery_leaks"},
             {"value_selector": ["returns_adapter", "returns_json"], "variable": "returns_json"},
@@ -1385,6 +1489,9 @@ def build_seam_app():
                 {"value_selector": [tool_id, "returns_json"], "variable": "tool_returns_json"},
                 {"value_selector": [tool_id, "binding_json"], "variable": "tool_binding_json"},
                 {"value_selector": ["entry_resolver", "call_hash"], "variable": "call_hash"},
+                {"value_selector": [tool_id, "local_block"], "variable": "tool_local_block"},
+                {"value_selector": [tool_id, "artifact_status"], "variable": "tool_artifact_status"},
+                {"value_selector": [tool_id, "user_delivery_status"], "variable": "tool_user_delivery_status"},
             ],
         }, 1300, y))
 

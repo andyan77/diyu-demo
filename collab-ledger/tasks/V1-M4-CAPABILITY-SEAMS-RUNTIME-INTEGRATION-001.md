@@ -593,7 +593,8 @@ not_verified_blockers:
   unfair_comparison_FND_007: 1      # AC-15 合取项②
   criterion_cites_missing_fixture_FND_009: 1   # AC-26 负向
   no_real_recovery_event_this_round: 1         # AC-14 合取项⑤
-instrument_corrections: 5          # 换量尺不换判据，逐条登记在取证判据合同 §10.5
+  evidence_shape_collapse_FND_011: 1           # AC-17 盲评合取项（原记为「待 Founder」，已更正）
+instrument_corrections: 6          # 换量尺不换判据；第 6 次 = FND-011 塌陷检测器（语义回指），登记在 FND-011 observed.instrument_correction
 evidence: "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json"
 ```
 
@@ -610,7 +611,7 @@ evidence: "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json"
   what: "夹具 §7.2『已确认决定包』未写是否要带显式 campaign_run_mode 标记；实现只认显式标记"
   severity: "LOW"
   status: "OPEN"
-  to: "Founder"
+  to: "规划侧"          # Founder 2026-08-26 角色边界裁定后改派
   executor_opinion: |
     倾向认为实现是对的 —— 「决定已被确认」是权威事实（A1 有权者决定），
     不该从散文里推断出来。但这是判据口径问题，不由执行侧裁决。
@@ -619,7 +620,7 @@ evidence: "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json"
   what: "AC-15 的公平对照纪律不可满足：两侧 completion_params 不相等，对齐需改保护应用或改冻结交付物"
   severity: "MEDIUM"
   status: "OPEN"
-  to: "Founder"
+  to: "规划侧"          # Founder 2026-08-26 角色边界裁定后改派
   options: ["(a) 授权临时对齐参数再跑一次对照", "(b) 版本化修订 §3.1 公平对照口径"]
   asymmetry: "判『M4 明显劣于源版本』是有效 FAIL；判『不劣于』不能记 PASS"
 
@@ -627,7 +628,7 @@ evidence: "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json"
   what: "AC-26 判据引用『模板腔注入探针』，但夹具包 v0.1 里没有这个具名夹具"
   severity: "MEDIUM"
   status: "OPEN"
-  to: "Founder"
+  to: "规划侧"          # Founder 2026-08-26 角色边界裁定后改派
   options: ["补 v0.2 夹具", "修判据"]
 
 - id: "M4-FND-010"
@@ -635,6 +636,305 @@ evidence: "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json"
   severity: "LOW"
   status: "FAIL"
   note: "不因『意思到了』放行；也不因『只是个字面量』降级"
+
+- id: "M4-FND-011"
+  what: "接缝无产出完整性守卫：artifact / user_delivery 两个输出槽的内容分配逐次重掷，可塌成回指或空块"
+  severity: "HIGH"
+  status: "OPEN_RECORDED_NOT_FIXED"   # 冻结令：如实记录，不修
+  to: "规划侧"          # Founder 2026-08-26 角色边界裁定后改派
+  discovered_by: "Founder 质疑 A/B 对照是否在技术上同等条件（2026-08-26）"
+
+  observed:
+    # ⚠ 首版记 6/46≈13%，量尺换成语义回指检测后更正为下列数字（见 instrument_correction）
+    collapsed_runs: 7                  # FA-23 FA-31 FA-34 = delivery 空；FA-03 FA-27 FA-32 FA-40 = artifact 回指
+    collapsed_samples: 3               # AC-17-A-S1 / AC-05-M3-S2 / AC-05-M3-S3
+    rate: "10/57 成功运行 ≈ 18%"
+    excluded: "FA-45（FX-M4-THIN-FIELDS）故意不足输入、正确发 ESCALATE Return，是应有行为，不计入本缺陷"
+    instrument_correction: |
+      首版检测器用「artifact < 200 字」判塌陷，漏掉两类：
+      (a) FA-03 / AC-05-M3-S3 —— 正文回指后仍写了元字段，字数冲过阈值；
+      (b) 首版把 FA-C1…C5 误判为塌陷 —— 它们 status=None、根本不是 workflow 运行。
+      更正后的判据：user_delivery 空 OR artifact 空 OR artifact 前 200 字含回指标记
+      OR artifact 去空白 < 400 字。换的是量尺不是判据（A2 允许，登记在此）。
+    verdicts_overturned_after_correction: 0   # FA-03 未被任何合取项引用；其余已逐条核过
+    same_input_variance: "AC-17 A 侧同一份逐字节相同输入跑 3 次：859 / 5514 / 6073 字（7 倍差）"
+    not_b_specific: "FA-40 塌的是 B，但重采时 A 塌、B 正常 —— 与 objective 无关，是重掷"
+    all_succeeded: "7 次全部 status=succeeded、total_steps=6，无节点失败"
+    not_truncation: "塌陷运行 total_tokens 更少（14959/16140）而非撞顶，排除 max_tokens 截断"
+
+  root_cause:                          # 四环齐全，均为 CURRENT 直接观察
+    - link: "两块输出靠文本标记在一次生成内切分，非结构化输出"
+      evidence: "DIYU_M4_TOOL_*_v1_3_TEST.yml prompt『产出结构（三块，标记行原样照抄）』---M4_ARTIFACT--- / ---M4_USER_DELIVERY---"
+    - link: "prompt 未禁止两块互相回指，也未设非空下限"
+      evidence: "两块均只被要求『完整』；无一句约束互引；空 user_delivery 未被禁"
+    - link: "§7 输出前内部检查 12 条无一条查两块是否都写了"
+      evidence: "12 条全为内容纪律（继承/证据链/越界/CTA），零条覆盖产出完整性"
+    - link: "收口 code 节点把缺失静默转成空串并按成功放行"
+      evidence: |
+        DIYU_M4_CAPABILITY_SEAM_v1_3_TEST.yml 六个「接缝收口｜*」节点均为
+        "artifact": tool_artifact or "" / "user_delivery": tool_user_delivery or ""
+        无非空守卫、无长度下限、无失败分支
+    amplifier: "completion_params: top_p 0.8 / thinking true / reasoning_effort low / temperature 未固定"
+
+  ownership: "M4 自有资产（接缝 DSL + Tool prompt），非 M1 外部依赖；与 FND-002 不同类"
+
+  invalidation_scope:                  # A3 不多算不少算，逐条机器核对
+    method: "对每个引用了塌陷运行的合取项，检查其证据引文是否逐字存在于该运行存活的那一块"
+    verdicts_overturned: 0
+    detail:
+      - "AC-04 / AC-05 / AC-08 引 FA-34（丢 delivery）—— 引文出自 artifact（6511 字完整），存活"
+      - "AC-09 / AC-24 / AC-14 引 FA-23（丢 delivery）—— 引文出自 artifact，存活"
+      - "AC-28 引 FA-27（丢 artifact）—— 引文『唯一入口为门店预约…』逐字在 delivery，存活；AC-28 的 FAIL 判在未塌陷的 FA-28，与本发现无关"
+      - "AC-14 引 FA-32（丢 artifact）—— 引文『上一环节…格式损坏无法读取』逐字在 delivery，存活"
+      - "AC-13 第二合取项『内部 Artifact 含完整专业产出』判在 FX-M4-USER-VIEW→FA-29，未塌陷，PASS 站得住"
+    genuinely_blocked: 1
+    blocked_item: "AC-17 盲评合取项 —— 需 A/B 两侧完整产出做对照，FA-40 丢 artifact、重采 AC-17-A-S1 又塌一次"
+
+  preauth_sampling_result:             # §1.3 预授权采样，N=3 跑前冻结，全部保留，一并盲评
+    N: 3
+    frozen_before_run: true
+    all_retained: true                 # 塌陷样本一并保留，不删不藏（N-30）
+    evidence: "decision-chain/evidence/m4/samples/ + M4_PREAUTH_SAMPLES.json"
+    AC-17: {A: "2/3 完整（S2 S3）", B: "3/3 完整", usable: true,
+            note: "形态可比的 A/B 集合已成立，AC-17 盲评现在可以进行"}
+    AC-05: {M3: "1/3 完整（S1）", CAMPAIGN: "3/3 完整", usable: true,
+            note: "M3 侧只剩 1 份完整；单份对三份可判同义性，但样本厚度不对称，交 Founder 决定是否加采"}
+
+  criterion_coverage_gap:              # 这是发现里最重要的一句
+    statement: "冻结判据集 AC-01…30 中没有任何一条覆盖『产出完整性』"
+    consequence: "该缺陷可在全部 criterion 均不 FAIL 的情况下持续存在"
+    note: "不据此改判据 —— 看到结果后改判据违反 A2；登记为判据覆盖缺口交 Founder"
+
+  founder_decision_needed:
+    - "AC-17 是否授权继续预授权采样（§1.3：N 跑前冻结、全部保留、一并盲评）直到取得形态可比的 A/B 对"
+    - "是否把『产出完整性』立为后继版本的新判据（本任务内不改冻结判据集）"
+  proposed_fix_out_of_scope: |
+    冻结令下不实施。留给后继版本的最小改法：收口 code 节点加非空 + 长度下限守卫，
+    缺失时走 PARSE_FAIL 分支而非静默放行；prompt 显式禁止两块互相回指。
+    不改采样参数 —— 参数是放大器不是根因，改它会掩盖守卫缺失。
+```
+
+## 角色边界更正（Founder 2026-08-26 裁定，权威事件）
+
+```yaml
+- what: "Founder 只负责最后的终结测试审查；不做技术裁决"
+  routing: "技术裁决 → 执行侧出裁决申请 → Founder 转规划侧裁定"
+  effect: |
+    此前记为 to:"Founder" 的 FND-006 / 007 / 009 / 011 全部**改派规划侧**。
+    执行侧此前向 Founder 提出的两项技术处置询问（FND-011 是否解冻、盲评取证方式）
+    亦为误投，已收回并并入裁决申请。
+  deliverable: "decision-chain/docs/V1_M4_TECHNICAL_ADJUDICATION_REQUEST_v0.1.md"
+  founder_scope_remaining: "V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md 十张卡的有界判断"
+```
+
+## REBASE_TASK 进入与执行（规划侧 T-01…T-08 裁决后）
+
+```yaml
+authority_event: "规划侧 M4_TECHNICAL_ADJUDICATION_RESPONSE_v0.1，经 Founder 转交"
+task_id: "V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001"      # 不变
+contract_kind: "REBASE_TASK"
+terminal_state: "IN_PROGRESS"        # T-08：PARTIAL 禁用；不得现在判 BLOCKED
+
+binding_check:
+  method: "裁决答复声明的四项 sha256 与现场逐字符复算"
+  result: "ALL_MATCH"                # source_request / evidence_contract / fixture_pack / final_verdicts
+
+frozen_before_implementation:        # A2：判据事件早于结果事件
+  - {doc: "V1_M4_REBASE_DELTA_CONTRACT_v0.2.md",       sha256: "e3f840b73d16129073e0963540e08af441160850f8537159d9adac40e5660ef7"}
+  - {doc: "V1_M4_REBASE_DELTA_CONTRACT_v0.3.md",       sha256: "addbd684d11ba05f5543f00d40207a2b02f67cf06b27f0a26daad8e4f4d3d3af"}
+  - {doc: "V1_M4_SEAM_FIXTURE_PACK_v0.2.md",           sha256: "6506c6d650015bd7c1d31f9fc593dd93485bcaa84372c5e4dddb61d2783aa791"}
+  - {doc: "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.2.md", sha256: "544bf1dfa19229161115174a59af81b976baf2ec385554d8c043279d3d34fcbe"}
+  - {doc: "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.3.md", sha256: "8090e78e7778c67fcb8e4b53c4bc62078764d79f47111c1fbd9b348107bf927e"}
+v0_1_baselines_unchanged: true       # 夹具包 v0.1 与取证判据 v0.1 的 sha256 现场复算未变
+
+delta_implemented:
+  D-01a: "RETURNS_ADAPTER_CODE 补齐『块存在但内容无效』：BACKREF_COLLAPSED / BELOW_MIN / EMPTY"
+  D-01b: "六个接缝收口节点消费 local_block + 双状态，命中即发 SEAM_COMPLETENESS_GUARD 组件级 Return"
+  D-02:  "六份 Tool prompt 产出结构节加互引禁令 + 非空要求"
+  D-03:  "CONTENT_BRIEF artifact 块要求显式 cta_contract 取值（AC-28 / FND-010）"
+  extra: "Tool END 补导出 artifact_status（D-01b 依赖；随 provider 重绑更新 schema）"
+
+minimality_evidence:
+  fidelity_record_diff: "6 个字段，全部是 user_prompt_sha256"
+  system_prompt_sha256_changed: false   # 六份 Skill 专业正文可证明未被触碰
+  source_skill_files_changed: 0
+  shell_output_fields_added: 0          # 保护 AC-02 合取项②不被打破
+
+guard_offline_regression:               # 确定性节点核验，不构成任何 criterion PASS
+  caught: "10/10 已知塌陷"
+  missed: 0
+  false_positive: 0
+  passed_through: 47
+  legit_block_FA_45: "正确放行"
+  evidence_grade: "DETERMINISTIC_NODE_VERIFIED"
+
+dify_writes:
+  preflight:  "受保护应用完整性零变化"
+  publish:    "8 个 M4 v1.3 TEST 对象；写后保护应用零变化"
+  rebind:     "provider 版本复验 7/7 均等于当前已发布版本（N-20 避开）"
+  confirm:    "由目标系统读回确认 8 个对象；保护应用零变化"
+  protected_apps_touched: 0
+
+historical_isolation:
+  snapshot: "decision-chain/evidence/m4/candidate_0dcd66f/"
+  file_count: 111
+  manifest: "SNAPSHOT_MANIFEST.json（逐文件 sha256）"
+  why: "新候选运行必须与 0dcd66f 证据物理隔离；混在同一目录会产出跨候选假证据"
+```
+
+## 发现登记（REBASE 轮新增）
+
+```yaml
+- id: "M4-FND-013"
+  what: "AC-31 判据自身措辞冲突：合取项③接受『组件级 Return』作为合规处置，
+         但失败条件写『出现 status=succeeded 同时交付块为空/回指』——
+         两者在守卫已发 Return 的运行上同时成立，判据自相矛盾"
+  severity: "MEDIUM"
+  status: "OPEN"
+  to: "规划侧"
+  authored_by: "执行侧（本 Rebase 起草 AC-31 时留下的歧义）"
+  discovered_by: "SMOKE-01 通路冒烟：守卫正确触发 Return，但该运行仍是 succeeded + 空交付"
+
+  the_two_readings:
+    strict: "字面读失败条件 ⇒ FAIL。守卫让缺陷可见，但没让工作流失败。"
+    purposive: "合取项③要拦的是『静默放行』；已发 Return 就不是静默 ⇒ PASS。"
+
+  executor_position: |
+    **按 strict 读判，不按 purposive 读判。**
+    理由：purposive 那一读正好让执行侧自己的实现通过——
+    在自己起草的判据上，挑对自己有利的读法就是 A2 禁止的判据后移。
+    此项交规划侧裁定；在裁定前 AC-31 不记 PASS。
+
+  note_on_ruling_alignment: |
+    规划侧 T-01 原文写「缺失走 PARSE_FAIL **或组件级 Return**」——
+    实现与裁决一致；是执行侧写 AC-31 失败条件时写得比裁决更严。
+    因此这是判据措辞问题，不是实现偏离裁决。
+
+  options_for_planning_side:
+    - "(a) 维持 strict：要求守卫命中时工作流本身失败，不只是发 Return —— 需再改 Delta"
+    - "(b) 版本化修订 AC-31 失败条件，与合取项③对齐（『空交付且无显式阻断信号』才算 FAIL）"
+    - "(c) 拆成两条判据：可见性（已达成）与终止性（未达成）分开判"
+```
+
+```yaml
+- id: "M4-FND-014"
+  what: "D-02 首版写法造成标记行缺失回归：模型有时整块不输出 ---M4_ARTIFACT--- 标记"
+  severity: "HIGH"
+  status: "FIXED_IN_D-02_v2"
+  introduced_by: "执行侧本 Rebase 的 D-02 实施，不是原有缺陷"
+  caught_by: "本 Rebase 的定向复验本身"
+
+  measured:
+    old_candidate_0dcd66f: "STRUCTURE_MISSING 0/46 = 0%"
+    d02_v1:                "STRUCTURE_MISSING 6/33 = 18%；守卫命中 8/33 = 24%"
+    method: "同一把尺（守卫 artifact_status）量两个候选"
+    across_capabilities: "CONTENT_BRIEF 4/14、MATRIX 1/2、CREATIVE_SCRIPT 1/4"
+    d03_ruled_out: "MATRIX 与 CREATIVE_SCRIPT 无 cta_contract 文本仍中招 ⇒ 与 D-03 无关，是 D-02 共用改动"
+
+  mechanism: |
+    首版把 5 行互引禁令插在「不要把本节说明抄进产出」与 ---M4_ARTIFACT--- 之间，
+    正好切在模型从「读说明」转入「照抄模板」的位置，
+    把标题行的「标记行原样照抄」推远，模型有时改为把整块当散文改写。
+
+  fix_d02_v2: |
+    模板区（## 产出结构 … ---END_M4_RETURNS---）**还原为旧候选逐字原样**，现场复算一致；
+    禁令整体移到模板之后，写成「写完之后，交出去之前，自己核这三条」；
+    D-03 的 cta_contract 同样移出 ARTIFACT 块参数括号，作为该自检的第 4 条。
+
+  not_done_and_why: |
+    合同 v0.2 D-02 原写「在 §7 输出前内部检查追加新条」。**未执行这一半**：
+    §7 位于 system prompt，由后继 Skill 文件字节派生；改它会改动 system_prompt_sha256，
+    破坏「六份 Skill 专业正文未被触碰」这一最小性属性。
+    改用 user prompt 尾部自检达成同一目的，是严格更小的改动。如实登记，交规划侧复核。
+
+  discipline_note: |
+    这是**同一 Delta 实施内的一次定位性修订**，不是第二个 repair cycle——
+    候选尚未冻结，复验正是用来发现这类问题的。
+    首版 33 次运行 + 30 组互换全部留档于
+    decision-chain/evidence/m4/rebase/d02_v1_regression_baseline/，不删不藏（N-30）。
+    若规划侧认为这已构成第二轮修复，则是执行侧判断错误，听裁定。
+```
+
+```yaml
+- id: "M4-FND-015"
+  what: "夹具包 v0.2 §31.1 输入用 content_task: 嵌套写法，信封检查按平铺顶层键解析，
+         探针在 envelope_check 即被判缺 objective，从未进入能力本体"
+  severity: "MEDIUM"
+  status: "FIXED_IN_FIXTURE_v0.3"
+  authored_by: "执行侧（本 Rebase 起草 v0.2 夹具时的转写缺陷）"
+  same_class_as: "M4-FND-005"
+  note: |
+    首跑 FA-P1 因此给出「三项全拦截、AC-26 负向成立」的**假阳结论**。
+    v0.3 只改字段形状、逐项保持业务内容（三段注入材料逐字未改），
+    修订时探针本体结果尚未观察到，故不构成「看到结果后调夹具」。
+
+- id: "M4-FND-016"
+  what: "FINAL_JUDGE 的合取项判定是**对 LLM 产出的逐字字面量匹配**，跨重跑不成立"
+  severity: "HIGH"
+  status: "OPEN"
+  to: "规划侧"
+  discovered_by: "REBASE 定向复验后重算判定，FAIL 由 2 条跳到 11 条"
+
+  mechanism: |
+    判定条件形如：
+      "PASS" if ("TOURNAMENT_ONLY" in body("FA-42") and "候选数 = 1" in body("FA-43")) else "FAIL"
+      "PASS" if "不办锦标赛" in body("FA-41") else "FAIL"
+    连等号两边的空格都要对上。这些串是**照着 0dcd66f 那一批具体产出调出来的**，
+    换一批产出（哪怕行为完全相同）就判 FAIL。
+    且证据文本是当初通过时写死的散文，与实际布尔脱钩 —— 出现「证据描述正确行为、结果却是 FAIL」。
+
+  demonstrated_false_fails:
+    AC-27: |
+      判据查产出里有无「很多顾客」。新产出确实有 —— 出现在**禁令清单**内：
+      「禁止任何无来源的顾客结果暗示，包括…『很多顾客买回去都说好穿』」。
+      把拒绝标注当成搬运，与执行侧 AC-26 探针 runner 的首版错误同类。
+    AC-23: |
+      匹配串「不办锦标赛」。新产出写「按规则**不重赛**、不补发候选」+「候选数 = 1」。
+      行为一致，措辞不同。
+    AC-10: |
+      期望 PRE。新产出明写 `mode = PRE`，判定器抽取却得到 DERIV —— 抽取器抓错 token。
+
+  implication_on_history: |
+    **旧候选的 PASS=17 同样不稳。** 其中一部分是量尺贴合了那一批具体产出，
+    不是行为稳健。这一条对本任务全部历史判定成立，不只影响本轮。
+
+  executor_position: |
+    由失效判定器产出的 FAIL 不是有效 FAIL；它也不是 PASS —— 它是「没测到」。
+    **执行侧不去把匹配器调宽。** 在看到 FAIL 之后由执行侧重写匹配器，
+    就是调到绿为止，A2 明令禁止。
+    计算结果原样留档（不调参），另立本发现说明其无效，判定器如何修交规划侧。
+
+  options_for_planning_side:
+    - "(a) 判定器改为语义等价核对（正则族/同义集），并要求对**两个候选**同时复算以证明稳定"
+    - "(b) 受影响 criterion 一律降为 NOT_VERIFIED(INCONCLUSIVE)，不记 FAIL 也不记 PASS"
+    - "(c) 受影响 criterion 转为 H 类，交 Founder 有界判断"
+  blocking_question: |
+    收口（第 8–9 步）是否必须等判定器修好？
+    执行侧按「不必等、缺陷登记即可收口」推进；若规划侧判必须等，停在第 8 步前，已做的不作废。
+
+- id: "M4-FND-017"
+  what: "本轮定向复验存在覆盖漏跑：52 份运行中一度缺 17 份，且不是执行侧自查发现的"
+  severity: "HIGH"
+  status: "CLOSED_BY_BACKFILL"
+  how_exposed:
+    - "缺 FA-34…FA-46（13 份）→ 由 FINAL_JUDGE 崩在 KeyError: 'FA-34' 暴露"
+    - "缺 FA-C3/C4/C5（3 份）→ 由 canvas-fix-verify 崩在 NameError 暴露"
+    - "canvas-fix-verify 子命令指向一个不存在的函数，该三份记录在旧候选下从未落成代码"
+  honest_note: |
+    **本轮覆盖完整性不是靠执行侧的核对保证的，是靠两次脚本崩溃。**
+    若 FINAL_JUDGE 未硬引用 FA-34，会带着 17 份缺失证据走到冻结候选那一步。
+    补齐后现场复算：52/52 齐全，零缺失。
+    补写 DIYU_M4_CANVAS_FIX_VERIFY_v0.1.py 使其可复现。
+
+- id: "M4-FND-018"
+  what: "FA-C5 的 reached_execute 在两候选间不可比，首版记录写成 0/5 对 4/5，险些报成回归"
+  severity: "LOW"
+  status: "CORRECTED_IN_RECORD"
+  detail: |
+    旧记录的 seam_invoked 取自节点级轨迹；执行侧补写的脚本用文本级近似判据。
+    同口径核对：旧候选 repeat1 两轮同样 seam_invoked=False、答复 111/106 字，
+    新候选 114/110 字 —— 行为一致，无回归。
+    记录已改为 NOT_COMPARABLE；该项若需正式判定须用节点级轨迹重取证。
 ```
 
 ## 本轮不做的（Founder 已明令）

@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "swap_id": "SW-29",
+    "dst_capability": "PUBLISHING_PACKAGING",
+    "src_capability": "CREATIVE_SCRIPT",
+    "src_fixture": "FX-M4-REAL-TRADEOFF",
+    "run_id": "324ecb51-fa16-47be-80e7-369125dc1868",
+    "status": "succeeded",
+    "error": null,
+    "blocked_or_insufficient": true,
+    "returns_count": 1,
+    "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifact_len": 0,
+    "user_delivery_len": 98
+  },
+  "raw_response": {
+    "task_id": "f50fc97c-cd4c-4f0f-b88f-afe3680ad349",
+    "workflow_run_id": "324ecb51-fa16-47be-80e7-369125dc1868",
+    "data": {
+      "id": "324ecb51-fa16-47be-80e7-369125dc1868",
+      "workflow_id": "488aa802-dff5-4665-a796-d9c5b651d43e",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n把成片内容或逐段说明给我：每一段实际拍到了什么。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "artifact": "",
+        "returns_json": "[{\"return_id\": \"M4-RET-PUBLISHING_PACKAGING-b8dcd7b3\", \"source\": \"PUBLISHING_PACKAGING\", \"highest_damaged_layer\": \"PUBLISHING_PACKAGING_INPUT_SUFFICIENCY\", \"precise_gap\": \"content_body_or_beats；explicit_non_promise；cta_contract；asset_publish_permission\", \"affected_objects\": [\"仅本次 PUBLISHING_PACKAGING 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 PUBLISHING_PACKAGING 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "binding_json": "{}",
+        "seam_trace_json": "{\"call_hash\": \"2c3f5e3fe464b89a09c89fa5fbaaca4ebd9c04f059f0d798d2138b589b7c003e\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\"], \"capability_invoked\": [\"PUBLISHING_PACKAGING\"], \"entry\": \"ENTRY-07\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 PUBLISHING_PACKAGING 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 1.074349,
+      "total_tokens": 0,
+      "total_steps": 6,
+      "created_at": 1787783279,
+      "finished_at": 1787783280
+    }
+  },
+  "input_sha256": "b8dcd7b311690e1cdd113468e5a57d351a80a00b062b8bce9e43ac5b686f5285",
+  "input_text": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ncandidate_axes_note: 两条路径在 核心矛盾 / 叙事发动机 / 人物关系 / 信息释放顺序 上均不同\n",
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "timestamp": "2026-08-26T15:28:00-0700"
+}

@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "swap_id": "SW-02",
+    "dst_capability": "MATRIX",
+    "src_capability": "CONTENT_BRIEF",
+    "src_fixture": "FX-M4-CT-M3",
+    "run_id": "304babe7-b89b-4704-9e1b-52c026e6f038",
+    "status": "succeeded",
+    "error": null,
+    "blocked_or_insufficient": false,
+    "returns_count": 0,
+    "artifact_sha256": "46cee5a8d9751e6fe98b4b6c8894ddac91387e56dbcdb8c988f61e45d66a45fb",
+    "artifact_len": 703,
+    "user_delivery_len": 274
+  },
+  "raw_response": {
+    "task_id": "6aa8f7af-020f-42fb-b9fb-fa96c1ba0ff4",
+    "workflow_run_id": "304babe7-b89b-4704-9e1b-52c026e6f038",
+    "data": {
+      "id": "304babe7-b89b-4704-9e1b-52c026e6f038",
+      "workflow_id": "b9781463-f8aa-4095-8e83-2ac5c3ebdf0b",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "status: READY\n\n**NOT_APPLICABLE**\n\n**理由**：这次要做的是一条具体内容任务——帮已经有好几件通勤外套的顾客，早上出门前不用再花十几分钟纠结穿什么。这件事不涉及建立或修改长期定位、人设、账号职责、表达主体关系或多账号结构。\n\n「序里集品牌号 + 零售搭配负责人苏禾」这个账号结构已经定好，苏禾的表达边界（允许标注演示场景、不冒充真实顾客）也已经明确。本次不需要新建账号、不需要重新划分职责、也不需要改变表达主体关系。\n\n因此 Matrix（长期账号架构与账号责任设计）本次不参与。这不影响同一轮内其他内容的进行。",
+        "artifact": "**适用性裁决：NOT_APPLICABLE**\n\n**判定依据（§0.1）**\n\n本次请求为单条内容任务：围绕「初秋通勤衣橱第一阶段」的顾客分层判断问题，产出内容任务核心（目标、问题、预期变化、承诺）。请求不涉及建立或实质修改长期定位、人设、账号职责、表达主体关系或多账号结构。\n\n逐项核验：\n\n| 检查项 | 本次情况 | 是否触发 Matrix |\n|---|---|---|\n| 长期定位建立或实质修改 | 否。本次为单条内容任务，不涉及定位重写 | 否 |\n| 人设建立或实质修改 | 否。表达主体已锁定为「序里集品牌号 + 苏禾」，本次不改变表达主体的身份、关系或边界 | 否 |\n| 账号职责建立或实质修改 | 否。不涉及新建账号、合并账号、切分职责或重划权责 | 否 |\n| 表达主体关系建立或实质修改 | 否。品牌号与苏禾的从属关系已由 `subject_and_account_scope` 明确给定，本次不改变 | 否 |\n| 多账号结构建立或实质修改 | 否。不存在多个账号之间的选择、分工或重叠判断 | 否 |\n\n**结论**：本次不适用 Matrix。\n\n**后续处理**\n\n- 本次**不运行** §3 的六个判断步骤，不产出账号责任卡。\n- 本次**不暗跑** Matrix，也不为进入其他能力而暗启本组件。\n- 本次未运行 Matrix **不构成缺陷、前置门或待补项**。\n- 同一轮内其他诉求（如 Content Brief、Campaign、Creative Script 等）**不受影响，继续执行**。\n\n本组件结束。无产出物、无 Return、无下游失效传播。",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"46cee5a8d9751e6fe98b4b6c8894ddac91387e56dbcdb8c988f61e45d66a45fb\", \"capability\": \"MATRIX\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-01\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8\", \"input_professional_sha256\": \"9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"MATRIX\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"DIAGNOSE_OR_ESTABLISH\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Matrix_Architect_v0.1.2.md\", \"source_skill_sha256\": \"7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838\", \"successor_skill_path\": \"decision-chain/skills/Matrix_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf\", \"system_prompt_sha256\": \"7ec255f0e9be871d2ce870c55eea644d0310d6e114afa37a34395531ae057460\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"bfec2065665b3c8951316ff5eda2dfd415f0a60c50a6fa048fd46307140b6b44\"}",
+        "seam_trace_json": "{\"call_hash\": \"4ae5ff2e0cc9863358a07b9f65cae9c3235cd0bf0df15f8db915b78b620c0e72\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"MATRIX\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\"}, \"entry\": \"ENTRY-01\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 12.923203,
+      "total_tokens": 10497,
+      "total_steps": 6,
+      "created_at": 1787808220,
+      "finished_at": 1787808233
+    }
+  },
+  "input_sha256": "9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8",
+  "input_text": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n",
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "timestamp": "2026-08-26T22:23:53-0700"
+}

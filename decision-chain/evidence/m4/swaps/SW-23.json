@@ -4,7 +4,7 @@
     "dst_capability": "PRODUCTION_DIRECTOR",
     "src_capability": "CONTENT_BRIEF",
     "src_fixture": "FX-M4-CT-M3",
-    "run_id": "46bf859f-3dcc-4c0e-9610-d20592844c80",
+    "run_id": "02c1247d-e84d-4554-94f3-6c060efc6454",
     "status": "succeeded",
     "error": null,
     "blocked_or_insufficient": true,
@@ -14,18 +14,18 @@
     "user_delivery_len": 108
   },
   "raw_response": {
-    "task_id": "dc6a7239-a508-4fbf-9679-d2d41c20b163",
-    "workflow_run_id": "46bf859f-3dcc-4c0e-9610-d20592844c80",
+    "task_id": "3d04aadf-ff1d-4039-803c-cb2857013587",
+    "workflow_run_id": "02c1247d-e84d-4554-94f3-6c060efc6454",
     "data": {
-      "id": "46bf859f-3dcc-4c0e-9610-d20592844c80",
-      "workflow_id": "488aa802-dff5-4665-a796-d9c5b651d43e",
+      "id": "02c1247d-e84d-4554-94f3-6c060efc6454",
+      "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
       "status": "succeeded",
       "outputs": {
         "user_delivery": "这一步我还差一样东西才能往下判断：\n\n把脚本或等价的内容方案给我：每一段讲什么、事实有没有、素材到位没有。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
         "artifact": "",
         "returns_json": "[{\"return_id\": \"M4-RET-PRODUCTION_DIRECTOR-9f313e92\", \"source\": \"PRODUCTION_DIRECTOR\", \"highest_damaged_layer\": \"PRODUCTION_DIRECTOR_INPUT_SUFFICIENCY\", \"precise_gap\": \"script_or_equivalent_beats；production_profile；time_window\", \"affected_objects\": [\"仅本次 PRODUCTION_DIRECTOR 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 PRODUCTION_DIRECTOR 结论的下游项\"], \"parse_status\": \"OK\"}]",
         "binding_json": "{}",
-        "seam_trace_json": "{\"call_hash\": \"4ae5ff2e0cc9863358a07b9f65cae9c3235cd0bf0df15f8db915b78b620c0e72\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 PRODUCTION_DIRECTOR 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "seam_trace_json": "{\"call_hash\": \"4ae5ff2e0cc9863358a07b9f65cae9c3235cd0bf0df15f8db915b78b620c0e72\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 PRODUCTION_DIRECTOR 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
         "capabilities_skipped": [
           "MATRIX",
           "CAMPAIGN",
@@ -35,11 +35,11 @@
         ]
       },
       "error": null,
-      "elapsed_time": 0.594432,
+      "elapsed_time": 0.426091,
       "total_tokens": 0,
       "total_steps": 6,
-      "created_at": 1787783275,
-      "finished_at": 1787783276
+      "created_at": 1787811801,
+      "finished_at": 1787811802
     }
   },
   "input_sha256": "9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8",
@@ -47,5 +47,5 @@
   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
   "environment": "本机 Docker Dify 1.16.1",
   "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
-  "timestamp": "2026-08-26T15:27:56-0700"
+  "timestamp": "2026-08-26T23:23:22-0700"
 }

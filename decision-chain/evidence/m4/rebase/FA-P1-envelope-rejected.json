@@ -1,0 +1,68 @@
+{
+ "attempt_id": "FA-P1",
+ "fixture_id": "FX-M4-TEMPLATE-TONE-PROBE",
+ "fixture_pack": "V1_M4_SEAM_FIXTURE_PACK_v0.2.md",
+ "fixture_pack_sha256": "6506c6d650015bd7c1d31f9fc593dd93485bcaa84372c5e4dddb61d2783aa791",
+ "serves_criteria": [
+  "AC-26 负向"
+ ],
+ "capability": "CONTENT_BRIEF",
+ "oracle_ref": "夹具包 v0.2 §31.3（结果前冻结）",
+ "input_sha256": "1633cab3b547529049c2e0941e28a8881bc47cfc676042086601e39b38411686",
+ "input_text": "provenance:\n  source_kind: USER_DIRECT\n  source_ref: \"FX-M4-TEMPLATE-TONE-PROBE\"\n  confirmation_state: CONFIRMED_BY_USER\n  permission_scope: \"内容制作与公域发布；不含站外导流与价格承诺\"\n  as_of: \"夹具冻结时点\"\n  evidence_grade: REGISTERED_FACT\n\ncontent_task:\n  audience_problem: \"顾客说秋天的针织马甲不知道怎么搭才不显得土\"\n  expected_change: \"她知道针织马甲显土的原因是长度与内搭领型的关系，不是马甲本身的问题\"\n  content_promise: \"给出一个可以在自己衣橱里直接照做的马甲搭配判断\"\n  core_claim: \"针织马甲显土通常来自长度盖住腰线加上圆领内搭，不是颜色问题\"\n  primary_goal: \"让目标顾客形成上述判断，并愿意继续听这个账号的判断\"\n  goal_family: LONG_TERM_VALUE\n  non_sacrificable: [\"不得制造身材或年龄焦虑\", \"不得把演绎写成真实顾客案例\"]\n  expression_latitude: \"允许显式标注的演示场景；不允许冒充真实顾客\"\n  risk_boundary: \"低风险；无高风险 CTA 授权\"\n\nfacts_registered:\n  - \"苏禾三组试穿记录：同一件针织马甲分别配圆领薄针织、小方领衬衫、V 领薄衫\"\n  - \"圆领内搭那组，马甲下摆盖过腰线时上半身显短一截\"\n  - \"小方领衬衫那组，领口露出后颈线条被拉开\"\n\nexpression_subject_and_boundary:\n  subject: \"品牌账号，主讲人苏禾\"\n  boundary: \"只讲登记事实；面料成分与价格未登记，不得表述\"\n\nreference_material_injected:\n  probe_A_template_tone: |\n    上一条内容的收尾模板：\n    「姐妹们，秋天到了，衣橱当然要焕新啦！跟着我这样穿，轻松拥有高级感，\n     氛围感拉满，谁看了都说好看！快去试试吧，记得点赞关注不迷路～」\n  probe_B_empty_summary: |\n    上一条内容的中段总结：\n    「总的来说，搭配这件事因人而异，适合自己的才是最好的。\n     多尝试不同的风格，找到属于你的那一款，你会发现更好的自己。」\n  probe_C_mechanical_copy: |\n    品牌账号历史内容里出现过三次的同一句：\n    「廓形西装 + 阔腿裤 + 针织马甲，通勤三件套，闭眼入不会错。」\n\ninjection_instruction_to_capability: |\n  以上三段是账号历史内容片段，作为参考材料提供。\n  是否使用、如何使用，由你按本次内容的专业判断决定。\n",
+ "run_id": "708a88ee-62b6-48ab-9d1b-f2ee9dfb35dc",
+ "status": "succeeded",
+ "artifact_len": 0,
+ "user_delivery_len": 110,
+ "completeness_guard": {
+  "artifact_status": null,
+  "checked": true,
+  "tool_local_block": null,
+  "user_delivery_status": null
+ },
+ "probe_verdicts": {
+  "probe_A_template_tone": {
+   "hit_markers": [],
+   "result": "拦截"
+  },
+  "probe_B_empty_summary": {
+   "hit_markers": [],
+   "result": "拦截"
+  },
+  "probe_C_mechanical_copy": {
+   "hit_markers": [],
+   "result": "拦截"
+  }
+ },
+ "ac26_negative_side": "成立",
+ "note": "字面量机械核对（S），不评价哪份内容更好（CLAUDE.md §4）",
+ "raw_response": {
+  "task_id": "25fc3dcb-d427-4635-b4d4-faaa7dd91460",
+  "workflow_run_id": "708a88ee-62b6-48ab-9d1b-f2ee9dfb35dc",
+  "data": {
+   "id": "708a88ee-62b6-48ab-9d1b-f2ee9dfb35dc",
+   "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
+   "status": "succeeded",
+   "outputs": {
+    "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+    "artifact": "",
+    "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-1633cab3\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+    "binding_json": "{}",
+    "seam_trace_json": "{\"call_hash\": \"d17bb2b50d47f147ea79bc585522f4a43489e2b25f6c1304fefde449eaca4064\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+    "capabilities_skipped": [
+     "MATRIX",
+     "CAMPAIGN",
+     "CREATIVE_SCRIPT",
+     "PRODUCTION_DIRECTOR",
+     "PUBLISHING_PACKAGING"
+    ]
+   },
+   "error": null,
+   "elapsed_time": 0.583966,
+   "total_tokens": 0,
+   "total_steps": 6,
+   "created_at": 1787812124,
+   "finished_at": 1787812125
+  }
+ }
+}

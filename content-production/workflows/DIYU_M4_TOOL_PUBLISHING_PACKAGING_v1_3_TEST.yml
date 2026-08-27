@@ -850,7 +850,10 @@ workflow:
             \ `affected_objects` 与 `downstream_stale` 用 | 分隔多个值。\n `downstream_stale` **只列真实依赖本次结论的项**，不得列全链。）\nreturn_id:\
             \ <稳定 id>\nsource: PUBLISHING_PACKAGING\nhighest_damaged_layer: <被实际破坏的最上游判断层>\nprecise_gap: <具体缺什么。禁写「信息不足」>\n\
             affected_objects: <对象1 | 对象2>\nproposed_disposition: ACCEPT_AND_PATCH | REJECT_WITH_AUTHORITY | ESCALATE\nneeds_user_decision:\
-            \ true | false\ndownstream_stale: <项1 | 项2>\n---END_M4_RETURNS---\n"
+            \ true | false\ndownstream_stale: <项1 | 项2>\n---END_M4_RETURNS---\n\n---\n\n## 写完之后，交出去之前，自己核这三条\n\n1. 上面三对标记行有没有**原样出现、各一次、成对闭合**。少一行、改一个字、写成别的样子，\n\
+            \   下游都读不出来，等于这一块没交。\n2. `---M4_ARTIFACT---` 里是不是**专业产出本身**。不得写成「即上方」「即以上」「同上」\n   「上方即」「见上文」「内容同上」「本区块与…一致」这类指向另一块的话——\n\
+            \   那样写，这一块实际就是空的，下游拿到的是一句指路，不是产出。\n3. `---M4_USER_DELIVERY---` 是不是**非空**、且同样没有写成指向 ARTIFACT 的一句话。\n   用户只看得到这一块。\n\
+            \n两块内容有重复不是问题，**回指和留空才是问题**。\n"
         selected: false
         title: DIYU M4 v1.3 TEST · Publishing & Packaging
         type: llm
@@ -912,16 +915,28 @@ workflow:
           , \"审查时发现\", \"修正后\", \"修正为\",\n    \"原方案\", \"上一版\", \"之前的版本\", \"未核实，不得使用\", \"这句话不能使用\",\n    \"LOW_RISK_INTERACTION\"\
           , \"BUSINESS_HANDOFF\", \"KNOWN_BUT_NOT_AUTHORIZED\",\n    \"goal_family\", \"capability_call\", \"professional_payload\"\
           , \"system prompt\",\n    \"INPUT_INSUFFICIENT\", \"STALE\", \"NOT_VERIFIED\", \"fact_refs[]\", \"used_fact_refs\"\
-          ,\n]\n\n\ndef _between(text, a, b):\n    i = text.find(a)\n    if i < 0:\n        return None\n    j = text.find(b,\
-          \ i + len(a))\n    if j < 0:\n        return None\n    return text[i + len(a):j].strip()\n\n\ndef _parse_returns(block):\n\
-          \    \"\"\"返回 (list, status, note)。status ∈ OK | NONE | PARSE_FAILED\"\"\"\n    if block is None:\n        return\
-          \ [], \"PARSE_FAILED\", \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\"\n    s = block.strip()\n    if s == \"\":\n        return\
-          \ [], \"PARSE_FAILED\", \"RETURNS 块为空。空 != NONE：无回改必须显式写 NONE\"\n    if s.upper() == \"NONE\":\n        return [],\
-          \ \"NONE\", \"显式声明无回改\"\n\n    groups = [g for g in re.split(r\"\\n\\s*\\n\", s) if g.strip()]\n    out = []\n \
-          \   bad = []\n    for g in groups:\n        item = {}\n        for line in g.split(\"\\n\"):\n            m = re.match(r\"\
-          ^\\s*([a-z_]+)\\s*:\\s*(.*)$\", line)\n            if m:\n                item[m.group(1)] = m.group(2).strip()\n\
-          \        miss = [f for f in RET_FIELDS if f not in item or item[f] == \"\"]\n        if miss:\n            bad.append(\"\
-          一条 Return 缺字段：%s\" % \",\".join(miss))\n            continue\n        if item[\"proposed_disposition\"] not in DISPOSITIONS:\n\
+          ,\n]\n\n\n# AC-31 产出完整性冻结阈值（V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.2 §1.1）\n# 阈值在任何新运行之前冻结，不因结果调整。\nBACKREF_MARKERS\
+          \ = [\"即上方\", \"即以上\", \"同上\", \"同上文\", \"上方即\", \"上文即\",\n                   \"见上文\", \"如上所述\", \"内容同上\", \"本区块与\"\
+          ,\n                   \"与上方\", \"与上文\", \"与以上\"]\nMIN_ARTIFACT_CHARS = 400\nCHECK_WINDOW = 200\n\n\ndef _has_backref(text):\n\
+          \    head = (text or \"\")[:CHECK_WINDOW]\n    for m in BACKREF_MARKERS:\n        if m in head:\n            return\
+          \ True\n    return False\n\n\ndef _legit_block(rets):\n    # 合法组件级 Return：同时含非空 highest_damaged_layer 与非空 precise_gap\n\
+          \    for r in rets:\n        if not isinstance(r, dict):\n            continue\n        if (r.get(\"highest_damaged_layer\"\
+          ) or \"\").strip() and (r.get(\"precise_gap\") or \"\").strip():\n            return True\n    return False\n\n\n\
+          def _artifact_status(artifact, rets):\n    a = (artifact or \"\").strip()\n    if _has_backref(a):\n        return\
+          \ \"BACKREF_COLLAPSED\"\n    if not a:\n        return \"OK\" if _legit_block(rets) else \"EMPTY\"\n    if len(a)\
+          \ < MIN_ARTIFACT_CHARS and not _legit_block(rets):\n        return \"BELOW_MIN\"\n    return \"OK\"\n\n\ndef _user_status_of(user_delivery):\n\
+          \    # 空交付无条件违规：legit_block 时用户仍必须被告知阻断\n    u = (user_delivery or \"\").strip()\n    if not u:\n        return\
+          \ \"EMPTY\"\n    if _has_backref(u):\n        return \"BACKREF_COLLAPSED\"\n    return \"OK\"\n\n\ndef _between(text,\
+          \ a, b):\n    i = text.find(a)\n    if i < 0:\n        return None\n    j = text.find(b, i + len(a))\n    if j <\
+          \ 0:\n        return None\n    return text[i + len(a):j].strip()\n\n\ndef _parse_returns(block):\n    \"\"\"返回 (list,\
+          \ status, note)。status ∈ OK | NONE | PARSE_FAILED\"\"\"\n    if block is None:\n        return [], \"PARSE_FAILED\"\
+          , \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\"\n    s = block.strip()\n    if s == \"\":\n        return [], \"PARSE_FAILED\"\
+          , \"RETURNS 块为空。空 != NONE：无回改必须显式写 NONE\"\n    if s.upper() == \"NONE\":\n        return [], \"NONE\", \"显式声明无回改\"\
+          \n\n    groups = [g for g in re.split(r\"\\n\\s*\\n\", s) if g.strip()]\n    out = []\n    bad = []\n    for g in\
+          \ groups:\n        item = {}\n        for line in g.split(\"\\n\"):\n            m = re.match(r\"^\\s*([a-z_]+)\\\
+          s*:\\s*(.*)$\", line)\n            if m:\n                item[m.group(1)] = m.group(2).strip()\n        miss =\
+          \ [f for f in RET_FIELDS if f not in item or item[f] == \"\"]\n        if miss:\n            bad.append(\"一条 Return\
+          \ 缺字段：%s\" % \",\".join(miss))\n            continue\n        if item[\"proposed_disposition\"] not in DISPOSITIONS:\n\
           \            bad.append(\"proposed_disposition 非法：%s\" % item[\"proposed_disposition\"])\n            continue\n\
           \        item[\"affected_objects\"] = [x.strip() for x in item[\"affected_objects\"].split(\"|\") if x.strip()]\n\
           \        item[\"downstream_stale\"] = [x.strip() for x in item[\"downstream_stale\"].split(\"|\") if x.strip()]\n\
@@ -934,17 +949,17 @@ workflow:
           \ 块\")\n    if user_delivery is None:\n        structure_notes.append(\"缺少 USER_DELIVERY 块\")\n\n    rets, ret_status,\
           \ ret_note = _parse_returns(returns_block)\n\n    leaks = [p for p in LEAK_PATTERNS if user_delivery and p in user_delivery]\n\
           \n    if artifact is None:\n        artifact_out = raw if raw.strip() else \"MODEL_OUTPUT_NO_FINAL\"\n        artifact_status\
-          \ = \"STRUCTURE_MISSING_RAW_PRESERVED\"\n    else:\n        artifact_out = artifact\n        artifact_status = \"\
-          OK\"\n\n    if user_delivery is None:\n        user_out = \"\"\n        user_status = \"MISSING\"\n    elif leaks:\n\
+          \ = \"STRUCTURE_MISSING_RAW_PRESERVED\"\n    else:\n        artifact_out = artifact\n        artifact_status = _artifact_status(artifact,\
+          \ rets)\n\n    if user_delivery is None:\n        user_out = \"\"\n        user_status = \"MISSING\"\n    elif leaks:\n\
           \        user_out = user_delivery\n        user_status = \"LEAK_DETECTED\"\n    else:\n        user_out = user_delivery\n\
-          \        user_status = \"OK\"\n\n    blocked = (\n        ret_status == \"PARSE_FAILED\"\n        or artifact_status\
-          \ != \"OK\"\n        or user_status != \"OK\"\n    )\n\n    return {\n        \"artifact\": artifact_out,\n    \
-          \    \"artifact_status\": artifact_status,\n        \"user_delivery\": user_out,\n        \"user_delivery_status\"\
-          : user_status,\n        \"user_delivery_leaks\": leaks,\n        \"returns_json\": json.dumps(rets, ensure_ascii=False),\n\
-          \        \"returns_status\": ret_status,\n        \"returns_parse_note\": ret_note,\n        \"returns_raw\": returns_block\
-          \ if returns_block is not None else \"ABSENT\",\n        \"raw_preserved\": raw,\n        \"local_block\": \"true\"\
-          \ if blocked else \"false\",\n        \"structure_notes\": structure_notes,\n        \"capability\": CAPABILITY,\n\
-          \    }\n"
+          \        user_status = _user_status_of(user_delivery)\n\n    blocked = (\n        ret_status == \"PARSE_FAILED\"\
+          \n        or artifact_status != \"OK\"\n        or user_status != \"OK\"\n    )\n\n    return {\n        \"artifact\"\
+          : artifact_out,\n        \"artifact_status\": artifact_status,\n        \"user_delivery\": user_out,\n        \"\
+          user_delivery_status\": user_status,\n        \"user_delivery_leaks\": leaks,\n        \"returns_json\": json.dumps(rets,\
+          \ ensure_ascii=False),\n        \"returns_status\": ret_status,\n        \"returns_parse_note\": ret_note,\n   \
+          \     \"returns_raw\": returns_block if returns_block is not None else \"ABSENT\",\n        \"raw_preserved\": raw,\n\
+          \        \"local_block\": \"true\" if blocked else \"false\",\n        \"structure_notes\": structure_notes,\n \
+          \       \"capability\": CAPABILITY,\n    }\n"
         code_language: python3
         desc: 确定性 Returns / 交付分离。解析失败置 PARSE_FAILED 并保留原文，绝不伪装成 NONE。
         outputs:
@@ -1021,7 +1036,7 @@ workflow:
           , \"successor_skill_sha256\": \"c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574\", \"system_prompt_sha256\"\
           : \"6459286ff956e16e646adc2825f07e5bf086160642047b5d3a101ecef03007fc\", \"target_environment\": \"本机 Docker Dify\
           \ 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\"\
-          , \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d6ef203faf49f9e08994bf5007d8d970d987901aee2ee2f0653ff06a3a495b6b\"\
+          , \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"ac0a80dfd28a4e07257bb6eaa7abf9c0ef784a607107e22e92a2ea7bb5593e8b\"\
           }')\n\n\ndef main(envelope_hash, professional_input_hash, artifact, reference_projection,\n         entry_resolved,\
           \ run_mode_resolved, goal_family):\n    art = artifact or \"\"\n    rec = dict(RECORD)\n    rec[\"input_envelope_sha256\"\
           ] = envelope_hash\n    rec[\"input_professional_sha256\"] = professional_input_hash\n    rec[\"artifact_sha256\"\
@@ -1197,6 +1212,10 @@ workflow:
           - returns_adapter
           - user_delivery
           variable: user_delivery
+        - value_selector:
+          - returns_adapter
+          - artifact_status
+          variable: artifact_status
         - value_selector:
           - returns_adapter
           - user_delivery_status
