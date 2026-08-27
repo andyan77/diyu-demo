@@ -499,6 +499,8 @@ App 混为一谈。宿主 `pgdata` 为 root 所有、无免密 sudo，执行侧�
              提示词 3a3c657d… · SKILL.md 90596da5…（工作区 == git HEAD） · 7 节点 6 边
 Founder     M3_FOUNDER_ACCEPTANCE = PASS；7 条正式运行 + 1 条披露的额外提交
 执行侧模型调用 本轮 0；执行侧触发的工作流运行 0
+远端         task 分支 12d70c42365cb1b9e5caf8e88d06ce4ca87936d5（收口证据提交）
+             main a7b810109f43a4bf500acc285baab477d96796e3（未因本任务变化）
 ```
 
 **回执**：
