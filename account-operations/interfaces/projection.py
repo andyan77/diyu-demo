@@ -20,7 +20,15 @@
 """
 
 SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION_V11 = "1.1"
+
+# M2 自己的允许清单，逐字照抄自 business-persistence/app/api/knowledge.py @ main:a7b8101：
+#   CURRENTLY_USABLE_PERMISSION_STATUSES = ("allowed", "restricted")
+# 抄它而不是自己定义，是为了不出现两套口径——两套口径迟早不一致，
+# 而不一致的那一刻没人会发现，因为两边都"看起来对"。
+M2_CURRENTLY_USABLE_PERMISSION_STATUSES = ("allowed", "restricted")
 M2_INTERFACE_BASELINE = "business-persistence@main:df2c595"
+M2_INTERFACE_BASELINE_V11 = "business-persistence@main:a7b8101"
 
 # 六个取值两两不等。对应共享合同一 §三「可用性状态」维度。
 PRESENT = "PRESENT"
@@ -224,6 +232,117 @@ def _project_market_observations(rows, applicable_tracks, now_iso):
     return out
 
 
+
+
+def _derive_currently_usable(obs):
+    """第一道闸：这条观察能不能当**当前证据**用。
+
+    三条来源，优先级固定，而且**必须记下来是哪一条**——不记，
+    「M2 说可用」与「我们按清单推的」就不可区分：
+
+      m2_explicit                    M2 给了显式布尔（/market-observations 列表端点会给）
+      derived_from_status_allowlist  M2 只给了 permission_status ⇒ 按 M2 自己的允许清单推
+      no_permission_model            这个 M2 构建根本没有权限概念（如 main@df2c595）
+
+    派生是 **fail-closed 的允许清单，不是拒绝清单**：不在 {allowed, restricted} 里的
+    一律 false，将来 M2 新增一个没见过的状态值也一律 false。
+    v1.0 在这里是 fail-open 的（`currently_usable is not False`）——
+    对新 M2 而言，一条 permission_status='unknown' 的观察会被判成可用。这是 v1.1 修掉的实质缺陷之一。
+    """
+    if "currently_usable" in obs and obs["currently_usable"] is not None:
+        return bool(obs["currently_usable"]), "m2_explicit"
+    if "permission_status" in obs:
+        st = obs.get("permission_status")
+        return (st in M2_CURRENTLY_USABLE_PERMISSION_STATUSES,
+                "derived_from_status_allowlist")
+    return None, "no_permission_model"
+
+
+def _project_market_observations_v11(rows, applicable_tracks, now_iso, from_list_endpoint=False):
+    """v1.1：五组语义分别承载，一组都不许坍缩。
+
+    `from_list_endpoint` 决定期间窗的可用状态：M2 的 /current 最小投影**不返回**
+    applicable_period_*（服务端按 queried_at 过滤后就不再外露），因此从该端点投影时
+    期间窗记 UNKNOWN——**不猜、也不填 null**，两者必须可区分。
+    """
+    tracks = set(applicable_tracks or [])
+    out = []
+    for obs in rows or []:
+        track = obs.get("applicable_track")
+        if tracks and track is not None and track not in tracks:
+            continue
+        expired = _observation_is_expired(obs, now_iso)
+        availability = EXPIRED if expired else PRESENT
+        usable, basis = _derive_currently_usable(obs)
+
+        has_period = from_list_endpoint or ("applicable_period_start" in obs
+                                            or "applicable_period_end" in obs)
+        out.append({
+            "observation_id": str(obs.get("id", "")),
+            "layer": obs.get("layer", "raw"),
+            "availability": availability,
+            "source": obs.get("source"),
+            "source_type": obs.get("source_type"),
+            "source_reference": obs.get("source_reference"),
+            "source_provider": obs.get("source_provider"),
+            "platform": obs.get("platform"),
+            "collected_at": obs.get("collected_at"),
+            "mechanism_summary": obs.get("mechanism_summary"),
+            "valid_until": obs.get("valid_until"),
+            "evidence_digest": obs.get("evidence_digest"),
+            "applicable_scope": {
+                "account_id": obs.get("account_id"),
+                "applicable_task_id": obs.get("applicable_task_id"),
+                "applicable_track": track,
+                "applicable_period_start": obs.get("applicable_period_start") if has_period else None,
+                "applicable_period_end": obs.get("applicable_period_end") if has_period else None,
+                "period_window_availability": PRESENT if has_period else UNKNOWN,
+                "scope_ref": obs.get("scope_ref") or {},
+            },
+            "usage_permission": {
+                "status": obs.get("permission_status"),
+                "currently_usable": usable,
+                "currently_usable_basis": basis,
+                "excluded_reason": obs.get("excluded_reason"),
+                "usage_limits": obs.get("usage_limits"),
+            },
+            # 第一道闸放行 + 没过期，才可用于推理。永远 ≤ M2 自己的判断。
+            "usable_for_inference": bool(availability == PRESENT and usable is not False),
+            # 第二道闸：M2 没有定义 usage_limits 的结构，M3 **不替它发明**一个可发布判断。
+            # 由第一道闸推出第二道，就是执行侧创造产品语义（A1 禁止）。
+            "external_publish_permission": {
+                "availability": UNKNOWN,
+                "value": None,
+                "basis": ("M2 @ main:a7b8101 只把 usage_limits 存成自由 JSONB，"
+                          "未定义其结构、也未给出可发布布尔；M3 不替 M2 发明该判断。"
+                          "原值已在 usage_permission.usage_limits 里逐字承载。"),
+            },
+        })
+    return out
+
+
+def project_market_observation_query(current_response):
+    """把 M2 /current 的诚实缺口账原样带过来。
+
+    丢掉它，「一条都没登记」「全被排除」「不在范围内」三种情形就塌成同一个空数组——
+    而 M2 明写它 never fabricates a comparison，缺口是它**故意**说出来的话。
+    """
+    r = current_response or {}
+    f = r.get("filters") or {}
+    return {
+        "queried_at": r.get("queried_at"),
+        "filters": {
+            "account_id": f.get("account_id"),
+            "applicable_track": f.get("applicable_track"),
+            "task_id": f.get("task_id"),
+        },
+        "available": bool(r.get("available")),
+        "excluded": [{"observation_id": str(e.get("id", "")), "reason": e.get("reason", "")}
+                     for e in (r.get("excluded") or [])],
+        "gap_reason": r.get("gap_reason"),
+    }
+
+
 def _project_feedback(rows, now_iso):
     """保留证据身份四元组 + 观察窗是否结束。
 
@@ -340,7 +459,9 @@ def build_projection(
     requested=None,
     projection_id=None,
     compiled_at=None,
-    m2_interface_baseline=M2_INTERFACE_BASELINE,
+    m2_interface_baseline=None,
+    schema_version=SCHEMA_VERSION,
+    market_observation_source="list",
 ):
     """把 M2 的原始响应编译成当轮最小投影。
 
@@ -358,6 +479,10 @@ def build_projection(
 
     requested = requested or {}
     declared = requested.get("declared_absences") or {}
+    if m2_interface_baseline is None:
+        m2_interface_baseline = (M2_INTERFACE_BASELINE_V11
+                                 if schema_version == SCHEMA_VERSION_V11
+                                 else M2_INTERFACE_BASELINE)
     now_iso = compiled_at or requested.get("now_iso") or ""
 
     cycle = m2.get("current_cycle") or {}
@@ -378,7 +503,7 @@ def build_projection(
         )
 
     projection = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": schema_version,
         "projection_id": projection_id or "proj-%s-%s" % (str(account_id)[:8], now_iso or "unbound"),
         "compiled_at": now_iso,
         "binding": {
@@ -466,8 +591,13 @@ def build_projection(
         "campaign_overlays": _project_overlays(m2.get("active_overrides")),
         "latest_cycle_decision": latest_decision_field,
         "feedback": _project_feedback(m2.get("feedback"), now_iso),
-        "market_observations": _project_market_observations(
-            m2.get("market_observations"), requested.get("applicable_tracks"), now_iso
+        "market_observations": (
+            _project_market_observations_v11(
+                m2.get("market_observations"), requested.get("applicable_tracks"), now_iso,
+                from_list_endpoint=(market_observation_source == "list"))
+            if schema_version == SCHEMA_VERSION_V11 else
+            _project_market_observations(
+                m2.get("market_observations"), requested.get("applicable_tracks"), now_iso)
         ),
         "permissions": {
             "expression_permission": _resolve(
@@ -485,6 +615,12 @@ def build_projection(
         },
         "gaps": list(requested.get("gaps") or []),
     }
+
+    if schema_version == SCHEMA_VERSION_V11:
+        # M2 /current 的诚实缺口账。没有它，「一条都没登记」「全被排除」「不在范围内」
+        # 三种情形塌成同一个空数组——那正是 AC-12 明确的 FAIL 形态。
+        projection["market_observation_query"] = project_market_observation_query(
+            m2.get("market_observations_current"))
 
     if requested.get("behaviors"):
         projection["requested_behaviors"] = list(requested["behaviors"])
@@ -604,6 +740,22 @@ def validate_projection(projection):
                 if dimension not in envelope:
                     problems.append("%s[%d] 缺维度 '%s'" % (dotted, i, dimension))
 
+    if projection.get("schema_version") == SCHEMA_VERSION_V11:
+        q = projection.get("market_observation_query")
+        if not isinstance(q, dict):
+            problems.append("v1.1 缺 market_observation_query——M2 的 excluded[] 与 gap_reason "
+                            "丢掉后，「一条都没登记」「全被排除」「不在范围内」塌成同一个空数组")
+        else:
+            for key in ("queried_at", "filters", "available", "excluded", "gap_reason"):
+                if key not in q:
+                    problems.append("market_observation_query 缺 '%s'" % key)
+            gr = q.get("gap_reason")
+            if gr not in (None, "no_observation_recorded", "no_observation_in_scope",
+                          "all_observations_excluded"):
+                problems.append("market_observation_query.gap_reason 非法：%r" % (gr,))
+            if q.get("available") and gr is not None:
+                problems.append("market_observation_query 同时声称有可用观察与存在缺口")
+
     for i, obs in enumerate(projection.get("market_observations") or []):
         if obs.get("availability") not in AVAILABILITY_VALUES:
             problems.append("market_observations[%d].availability 非法" % i)
@@ -620,6 +772,56 @@ def validate_projection(projection):
         if not isinstance(usable, bool):
             problems.append("market_observations[%d].usable_for_inference 必须是布尔" % i)
             continue
+
+        if projection.get("schema_version") == SCHEMA_VERSION_V11:
+            # v1.1 的五组语义，一组都不许坍缩。逐条检查，不靠 Schema——
+            # Schema 只能查键在不在，查不了「第二道闸有没有被第一道闸顶替」。
+            for key in ("source", "source_type", "source_reference", "source_provider"):
+                if key not in obs:
+                    problems.append("market_observations[%d] 缺来源分项 '%s'"
+                                    "——四分来源合并成一个 source 就分不清"
+                                    "「谁说的」与「哪儿看到的」" % (i, key))
+            scope = obs.get("applicable_scope")
+            if not isinstance(scope, dict):
+                problems.append("market_observations[%d].applicable_scope 缺失"
+                                "——一条属于别的账号/任务/期间的观察就无法被机械排除" % i)
+            else:
+                for key in ("account_id", "applicable_task_id", "applicable_track",
+                            "applicable_period_start", "applicable_period_end",
+                            "period_window_availability", "scope_ref"):
+                    if key not in scope:
+                        problems.append("market_observations[%d].applicable_scope 缺 '%s'" % (i, key))
+                if scope.get("period_window_availability") not in AVAILABILITY_VALUES:
+                    problems.append("market_observations[%d].applicable_scope."
+                                    "period_window_availability 非法——期间窗取不到时必须是 "
+                                    "UNKNOWN，不能填 null" % i)
+            basis = permission.get("currently_usable_basis")
+            if basis not in ("m2_explicit", "derived_from_status_allowlist", "no_permission_model"):
+                problems.append("market_observations[%d].usage_permission.currently_usable_basis "
+                                "非法——不记来源，「M2 说可用」与「我们按清单推的」不可区分" % i)
+            if (basis == "derived_from_status_allowlist"
+                    and permission.get("currently_usable") is not
+                    (permission.get("status") in M2_CURRENTLY_USABLE_PERMISSION_STATUSES)):
+                problems.append("market_observations[%d] 的 currently_usable 与 M2 自己的"
+                                "允许清单不一致——派生必须 fail-closed" % i)
+            epp = obs.get("external_publish_permission")
+            if not isinstance(epp, dict):
+                problems.append("market_observations[%d].external_publish_permission 缺失"
+                                "——「能不能当证据」与「能不能对外发布」是两道闸，"
+                                "M2 逐字写着 viewable never implies publishable" % i)
+            else:
+                if epp.get("availability") not in AVAILABILITY_VALUES:
+                    problems.append("market_observations[%d].external_publish_permission."
+                                    "availability 非法" % i)
+                if epp.get("value") is True and epp.get("availability") != PRESENT:
+                    problems.append("market_observations[%d] 声称可对外发布，"
+                                    "但该位的 availability 不是 PRESENT" % i)
+                if epp.get("value") is True and permission.get("usage_limits") is None:
+                    problems.append("market_observations[%d] 在 M2 没有表达 usage_limits 的情况下"
+                                    "声称可对外发布——这是执行侧替 M2 发明产品语义" % i)
+            if "evidence_digest" not in obs:
+                problems.append("market_observations[%d] 缺 evidence_digest 键"
+                                "——它由调用方给、M2 不算，缺键与 null 必须可区分" % i)
         # 单向不等式：M3 侧的结论位不得比 M2 更宽松。
         if permission.get("currently_usable") is False and usable:
             problems.append(
