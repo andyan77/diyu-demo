@@ -9,6 +9,7 @@
 | `M3_TO_M2_WRITEBACK_CANDIDATE_v1.0.schema.json` | M3 → M2 候选写回信封 | schema + 校验 `static_verified`；**未接 Dify、未 POST 真实 M2** = `NOT_VERIFIED` |
 | `M3_CONTENT_TASK_v1.0.schema.json` | M3 → Content Brief 内容任务（含合法无任务结论） | schema `static_verified`；**下游真实消费未测** = `NOT_VERIFIED` |
 | `projection.py` | 投影编译与两个校验函数；纯标准库 | 30 条 unittest 全通过（含 3 次变异验证） |
+| `M2_TO_M3_PROJECTION_v1.1.schema.json` | **当前版本**：适配 `main@a7b8101` 的市场观察权限语义 | schema + 编译器 + 24 条实况契约测试 `runtime_verified @ main:a7b8101` |
 
 ## 跑测试
 
@@ -16,9 +17,38 @@
 python3 -m unittest discover -s account-operations/tests -t account-operations/tests -v
 ```
 
+闸门与投影的确定性夹具是脚本式的，各自单跑（都以退出码报成败）：
+
+```bash
+python3 account-operations/tests/test_gate_v13.py        # 六族 48 条 + 误报/漏检两个数字
+python3 account-operations/tests/test_projection_v13.py  # 投影序列级回归
+```
+
 不需要数据库、不需要 Docker、不需要 pytest。`jsonschema` 用宿主已有的 3.2.0（Draft7）。
 
 ## 两条设计约束，以及为什么
+
+### 0. v1.1 为什么另起一版（2026-08-27）
+
+`main` 在 M3 施工期间前进到 `a7b8101`，M2 把市场观察改成**两道正交的闸**：
+`permission_status`（能不能当**当前证据**，默认 `unknown` 而非 `allowed`）与
+`usage_limits`（能不能**对外发布**）。它的模型注释逐字写着：
+
+> being a workspace member never implies a right to use an unknown-permission
+> observation as current, and "viewable" never implies "publishable"
+
+v1.0 把这两件事塌成了一个 `usage_permission`，并且在派生 `usable_for_inference` 时
+是 **fail-open** 的（`currently_usable is not False`）——`/current` 端点不返回该布尔，
+于是一条 `permission_status='unknown'` 的观察会被判成"可用于推理"。
+v1.1 改成按 **M2 自己的允许清单** fail-closed（只有 `allowed`/`restricted` 通过，
+将来出现的新状态值也一律排除），并把第二道闸独立成 `external_publish_permission`。
+
+**M3 不替 M2 发明它没说过的判断**：M2 没有定义 `usage_limits` 的结构，
+所以 `external_publish_permission` 在 M2 表达之前恒为 `UNKNOWN` / `null`。
+由第一道闸推出第二道，就是执行侧创造产品语义。
+
+同时把 M2 已经给出、而 v1.0 丢掉的 `excluded[]` 与 `gap_reason` 带回来——
+丢掉它，「一条都没登记」「全被排除」「不在范围内」三种情形塌成同一个空数组。
 
 ### 1. 六种「没有值」不得坍缩
 

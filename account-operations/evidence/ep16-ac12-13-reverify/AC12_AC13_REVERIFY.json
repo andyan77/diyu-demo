@@ -1,0 +1,196 @@
+{
+  "what": "AC-12 / AC-13 / AC-09（适用范围半）对 main@a7b8101 的定向复验",
+  "why_directed": "A3 §3 已逐字段算清失效面（四行 + AC-09 一半）；不曾失效的证据不重跑，也不声称重跑过",
+  "m2_binding_reverified": "business-persistence@main:a7b8101",
+  "checks": [
+    {
+      "id": "V-0",
+      "desc": "运行中的 M2 = main@a7b8101（容器内文件哈希 vs git show）",
+      "result": "PASS",
+      "detail": {
+        "app/api/knowledge.py": "69f12b79f72c5aeb8153f9ff22f79727ac3cf21e47192f0c686b5b15e30c1844",
+        "app/models/knowledge.py": "c39df629672763842629dff272f773314dad8c74d00126b021a6c7542a2190f4"
+      }
+    },
+    {
+      "id": "V-1",
+      "desc": "A3§3 行1 来源四分不坍缩",
+      "result": "PASS",
+      "detail": {
+        "observations": 7,
+        "source_keys": [
+          "source",
+          "source_provider",
+          "source_reference",
+          "source_type"
+        ],
+        "fully_populated_rows": 2,
+        "example": {
+          "source": "第三方行业报告",
+          "source_provider": "某咨询机构",
+          "source_reference": "https://example.invalid/report/2026-q3",
+          "source_type": "industry_report"
+        }
+      }
+    },
+    {
+      "id": "V-2",
+      "desc": "A3§3 行2 可用性与可发布性是两道互不推导的闸",
+      "result": "PASS",
+      "detail": {
+        "currently_usable": 3,
+        "external_publish_all_unknown": true,
+        "why": "M2 未定义 usage_limits 结构，M3 不得代它发明"
+      }
+    },
+    {
+      "id": "V-3",
+      "desc": "A3§3 行2 权限未知时 fail-closed（M2 允许清单逐字复制）",
+      "result": "PASS",
+      "detail": {
+        "unknown_rows": 3,
+        "all_excluded": true,
+        "allow_list": [
+          "allowed",
+          "restricted"
+        ]
+      }
+    },
+    {
+      "id": "V-4",
+      "desc": "A3§3 行3 适用范围四键齐备",
+      "result": "PASS",
+      "detail": {
+        "scope_keys": [
+          "account_id",
+          "applicable_period_end",
+          "applicable_period_start",
+          "applicable_task_id",
+          "applicable_track",
+          "period_window_availability",
+          "scope_ref"
+        ]
+      }
+    },
+    {
+      "id": "V-5",
+      "desc": "A3§3 行4 证据身份进入投影",
+      "result": "PASS",
+      "detail": {
+        "present_on": 7
+      }
+    },
+    {
+      "id": "V-6",
+      "desc": "AC-09 半：适用范围机器可读 + M2 的范围排除逐字带回 + 三种空可区分",
+      "result": "PASS",
+      "detail": {
+        "scope_fields_machine_readable": {
+          "152bf55d": {
+            "account_id": true,
+            "task_id": false
+          },
+          "e7ae09ca": {
+            "account_id": true,
+            "task_id": false
+          },
+          "66d10f28": {
+            "account_id": true,
+            "task_id": false
+          },
+          "dcf2a010": {
+            "account_id": true,
+            "task_id": false
+          },
+          "9b273b5e": {
+            "account_id": true,
+            "task_id": false
+          },
+          "a7132688": {
+            "account_id": true,
+            "task_id": false
+          },
+          "9a5449d4": {
+            "account_id": true,
+            "task_id": false
+          }
+        },
+        "m2_scope_exclusion_carried": {
+          "available": false,
+          "gap_reason": "no_observation_in_scope",
+          "excluded": 7
+        },
+        "three_empties": {
+          "有可用的": [
+            true,
+            null
+          ],
+          "全被排除·别的账号": [
+            false,
+            "no_observation_in_scope"
+          ],
+          "全被排除·赛道不符": [
+            false,
+            "no_observation_in_scope"
+          ]
+        },
+        "not_asserted": "M3 不自行判定 applicable_period_* 是否已过 —— 那是 M2 的域；M3 只保证字段机器可读并带回 M2 的排除结论"
+      }
+    },
+    {
+      "id": "V-7",
+      "desc": "A3 不多算：v1.0 路径行为原样保留",
+      "result": "PASS",
+      "detail": {
+        "v10_usable_for_inference_on_unknown": true,
+        "note": "v1.0 的 fail-open 行为**原样保留**，未被追溯修改；它属于 df2c595 绑定下的历史事实，改它才是篡改"
+      }
+    },
+    {
+      "id": "V-8",
+      "desc": "AC-13：M2 写回面零删除，M3 写回候选不碰权限",
+      "result": "PASS",
+      "detail": {
+        "routes_removed": 0,
+        "routes_added": [
+          "@router.get(\"/workspaces/{workspace_id}/market-observations/current\")",
+          "@router.post(\"/workspaces/{workspace_id}/market-observations/{observation_id}/permission\")"
+        ],
+        "writeback_touches_permission": false
+      }
+    }
+  ],
+  "criteria_provenance": {
+    "governing_criteria_frozen_before_everything": [
+      "M3_ECC_REBIND_004_FROZEN_v1.0.md §4.2 五组必须保留、不得坍缩的语义（提交 70a121b）",
+      "Founder 2026-08-26 CONTINUE_TASK 第 2 条（来源／当前可用性／对外发布权限／账号任务期间适用范围／证据身份）"
+    ],
+    "instrument_iterated_while_building": [
+      {
+        "check": "V-1",
+        "changed": "读取形状（四项在顶层摊平，非嵌套）",
+        "criterion_itself_changed": false,
+        "note": "命题仍是「四分不坍缩」，且改后**加严**了：新增「必须有一条四项齐备且四值互不相同」"
+      },
+      {
+        "check": "V-6",
+        "changed": "命题由「M3 自行判定期间窗已过」改为「字段机器可读 + M2 的排除结论逐字带回 + 三种空可区分」",
+        "criterion_itself_changed": true,
+        "changed_after_seeing_result": true,
+        "why": "原命题要求 M3 把 applicable_period_* 读成有效期并据以排除，那正是 V-2 所禁止的越域发明；原命题与冻结判据 §4.2 相抵触",
+        "a2_consequence": "本项为**探索级**，不作为「判据先于结果」的正式取证；若需正式化，须先版本化冻结新命题再重跑"
+      },
+      {
+        "check": "ROWS",
+        "changed": "输入由 create 响应改为读端点返回行",
+        "criterion_itself_changed": false,
+        "note": "create 响应是 {fixture_name, response} 包装且不含 M2 计算字段，喂错了对象，属执行侧脚本缺陷"
+      }
+    ]
+  },
+  "summary": {
+    "total": 9,
+    "pass": 9,
+    "fail": 0
+  }
+}
