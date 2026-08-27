@@ -332,8 +332,8 @@ def main():
     print("DRAFT SYNCED", res)
 
     st, pub = c.call("POST", f"/console/api/apps/{app_id}/workflows/publish", {
-        "marked_name": "m3-cand-v1.4.1",   # Dify 限 20 字符
-        "marked_comment": "M3 v1.4.1: errata-001 — new standing positions allowed on empty baseline",  # Dify 限 100 字符
+        "marked_name": "m3-cand-v1.4.2",   # Dify 限 20 字符
+        "marked_comment": "M3 v1.4.2: errata-002 — NEW: ids are self-authored, not from input list",  # Dify 限 100 字符
     })
     print("PUBLISH", st, json.dumps(pub, ensure_ascii=False)[:200])
     assert st in (200, 201), (st, pub)
