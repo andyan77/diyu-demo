@@ -1,0 +1,49 @@
+{
+  "candidate": "M3 载体 v1.3",
+  "frozen_by": "M3_ECC_REBIND_004_FROZEN_v1.0.md §6 第 4 步",
+  "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+  "dify": {
+    "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+    "published_version_name": "m3-cand-v1.3-pos",
+    "draft_graph_hash": "4760428dbd760ac1ef980b5ec9f61e190eba1f097ad35f7a8c9db89c41ec623f",
+    "nodes": [
+      "start",
+      "llm(写正文)",
+      "code(必填项闸门)",
+      "llm(补齐)",
+      "code(确定性取稿)",
+      "code(闭合复检)",
+      "end"
+    ]
+  },
+  "source_sha256": {
+    "SKILL.md": "d91eae1f3a842ff1233f9cd0e6c9501efd06503d935f46451643f20ca0cfb9b3",
+    "gate_v13/shared_checks.py": "c43bb9eacd3b93fdf1de2c34f73d4ab7eb864f7c617f57ff3c4c69f9acf3b00a",
+    "gate_v13/gate_main.py": "cd1df92250afccf5c61e949943f1142573020e150170788ecead40975671bab6",
+    "gate_v13/assemble_main.py": "2d1a5fd4e1ba91e50889e7b997618479a196827959032a1577bd843147448a76",
+    "gate_v13/post_gate_main.py": "8f9f53d2708842334cf8f6e2206d30c02a207f576373afb9a51dd4379193a7aa",
+    "gate_v13/projection_v13.py": "6b9b31443b68e4574625bd2274929d0c4413ee87b206a25a2449245e2fcbdd35",
+    "fixtures/gate_fixtures_v13.json": "87d84a1e8af2e4cde3fe1dec019abd953c80b48bf44836dd99a24120ac7f362e",
+    "oracle/BEHAVIOR_CASES_v2.json": "13e95684e387980267f2f4c2479c2b94bd04caf280cdb37e4b0d762f80286274",
+    "schema/M2_TO_M3_PROJECTION_v1.1.schema.json": "8e7331e29fa6fd9bd7cd8ad527fe0132025419f9c2ddb1e6400cba06332b9371",
+    "interfaces/projection.py": "0969afa28fc6e34b25b8970bb5c78bf02ec7fc0e577f41c75738c0fff95f0f4b",
+    "fixtures/m2_live_capture_v2.json": "5f338eb25da78db5a3a942dfe659df2e6e8635f6af057d652b9e357de53038da"
+  },
+  "m2_binding": {
+    "baseline": "business-persistence@main:a7b8101",
+    "verified_how": "docker exec sha256sum /srv/app/app/{api,models}/knowledge.py 对 git show a7b8101:..."
+  },
+  "gates_passed_before_freeze": {
+    "确定性夹具": "48/48，误报 0/17，漏检 0/25（account-operations/tests/test_gate_v13.py）",
+    "投影序列级回归": "通过（account-operations/tests/test_projection_v13.py）",
+    "静态契约测试": "107/107（30+5+12+9+27+24）",
+    "真实运行冒烟": "2/2 succeeded，持续位链路端到端通、零泄漏"
+  },
+  "not_yet_done_at_freeze": [
+    "完整正式重跑（保真 9 + 行为 49 + 纵向 12 + A/B 12 = 82）",
+    "独立判定",
+    "AC-00～AC-20 重算",
+    "Founder 实测包重生成"
+  ],
+  "git_head_at_freeze": "9715921084557b1b55dabbebbc28c6f8fce8963c"
+}
