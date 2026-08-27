@@ -48,6 +48,20 @@
 
 ---
 
+### 第 7 轮（载体 v1.3）
+
+```text
+授权     Founder 2026-08-26 第二次 CONTINUE_TASK（七条）
+判据     REBIND-004（70a121b）+ ADDENDUM_003 + Oracle v2.0，全部**先冻结后取证**
+运行     保真 9/9 · 行为 49/49 · 纵向 12/12 · A/B 12/12，全部 succeeded
+判定     40 名独立判定者，隔离核验全部 CLEAN
+终态     PARTIAL · AC-20 输出 AWAITING_FOUNDER
+```
+
+两次被丢弃的尝试如实在案，不并进"一次完整重跑"的叙述：
+`evidence/ep07-longitudinal-v13-aborted/`（字段漏改，执行侧已看过那份 E01）、
+`evidence/ep08-module-ab-v13-aborted/`（沙箱只读，12 份产出未落盘即丢失，一份未看）。
+
 ## L4 · 已排除路线（历史留痕，只加不改）
 
 | 路线 | 根因假设 | 干预 | 关键前提 | 证据 |
@@ -77,45 +91,33 @@
 ## L2 · 当前状态与下一动作（当前投影，变化时直接替换）
 
 ```text
-terminal_state             = 不是终态（allowed_final_states 里一个都不落）
-M3_ENGINEERING_TASK        = IN_PROGRESS（这是进度词，不是终态词）
-M3_TECHNICAL_CANDIDATE     = RUNNABLE_BUT_NOT_FULLY_VERIFIED
-M3_MODULE_PROFESSIONAL_GAIN= NOT_VERIFIED（A/B 12/12 已跑完；AC-18 = FAIL(INSUFFICIENT)，无整体增益）
-M3_MODULE_AB               = NOT_PASSED
-M3_FOUNDER_DIFY_ACCEPTANCE = AWAITING_FOUNDER（实测包已交付，裁决未请求）
-M5_INTEGRATION_GAIN        = NOT_EVALUATED_BY_M3
-REAL_BUSINESS_LIFT         = NOT_VERIFIED
+终态        PARTIAL   ·   AC-20 输出 AWAITING_FOUNDER
+HEAD        950db73（已推送，本地 == 远端）
+状态真源     account-operations/evidence/ep18-ac-recompute-v13/AC_STATE_v13.json
+Checkpoint  M3_CHECKPOINT_ROUND_7.md
+实测包       M3_FOUNDER_DIFY_TEST_PACK_v1.1.md（绑定最终候选 m3-cand-v1.3-pos）
 ```
 
-**Checkpoint**：[`M3_CHECKPOINT_ROUND_6.md`](../../M3_CHECKPOINT_ROUND_6.md)。
-**收口审查**：[`M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md`](../../M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md)
-（`R-1`/`R-2` `FAIL`、`R-3`～`R-7` `PASS`；两条阻断项已闭合）。
+**AC 汇总**：成立 15 · 成立（带限定）1 · 不得 `PASS` 2（`AC-09`／`AC-14`）·
+未独立成立 1（`AC-11`）· `NOT_VERIFIED` 2 · `FAIL(INSUFFICIENT)` 2（`AC-17`／`AC-18`）·
+部分成立 2（`AC-19`／`AC-20`）。
 
-### 第 4 轮那五项下一动作，现在的状态
+**本轮挣回来的**：`AC-01③` 由探索级升为正式 `PASS`（路径乙，不需事后授权）；
+`AC-12`／`AC-13` 解除 `STALE`；`AC-03`／`AC-15` 由不得 `PASS` 变成立。
 
-| # | 动作 | 结果 |
-|---|---|---|
-| 1 | Founder 为 DeepSeek 账户充值 | ✅ 已完成 |
-| 2 | 补跑行为 ECC 的 14 例 | ✅ 49 例全部 `succeeded`，独立判定完成 |
-| 3 | 整轮重跑 A/B 十二次 | ✅ 12/12；改用逐场景单臂盲评，36 名独立判定者 |
-| 4 | 推送任务分支并复读远端完整 hash | ✅ 已推送；远端 hash 回填在 `M3_CHECKPOINT_ROUND_6.md` §8 `AC-20` 行 |
-| 5 | 合并时补写五本账的一行定位 | ⏳ 合并时做（本任务未并入 `main`） |
+**本轮新出现的问题，且根因在执行侧**：这一轮修的 `G-4` 检查在 61 例上命中 12 次、
+**误报 11 次**、6 次拒收合格交付，误报集中打在冻结判据要求的行为上；
+`G-3` 的修法自身有两扇后门（新增位被补齐删除而计数器定义上看不见、补齐节点代写 POS 行）。
+证据在 `evidence/ep19-gate-v13-defects/`。
 
-### 下一动作（四样齐全）
+**下一动作（等 Founder，四样齐全）**：
 
-| # | 动作 | 对象 | 输入/基线 | 什么信号算做完 |
-|---|---|---|---|---|
-| 1 | 等 Founder 对四件事的决定 | `M3_CHECKPOINT_ROUND_6.md` §10 | 该节四条 | Founder 明确答复；执行侧不自行推进任何一条 |
-| 2 | （若授权）一次投影 schema 扩展，合并修 G-2/G-3/G-4 与 M2 接口漂移 | `M2_TO_M3_PROJECTION_v1.0.schema.json` | 结构化 `standing_positions[]` | 四条同时闭合，`AC-08`/`AC-17`/`AC-12`/`AC-13` 可复验 |
-| 3 | （若授权）`AC-01③` 走路径乙 | `ECC-M3-MODULE-AB-001` | `ADDENDUM_003` 为冻结判据 | 12 次 A/B + 36 名判定者在判据冻结**之后**完成 |
-| 4 | Founder 亲自跑 Dify 实测包 | `M3_FOUNDER_DIFY_TEST_PACK_v1.0.md` | 八个场景完整输入 | Founder 给出自然语言产品判断 |
+| | |
+|---|---|
+| 谁做 | Founder |
+| 做什么 | ①按 `M3_FOUNDER_DIFY_TEST_PACK_v1.1.md` 实测七个场景，对产品语义给「接受」或「退回」；②对 `M3_CHECKPOINT_ROUND_7.md` §10 的三条路（甲／乙／丙）选一条 |
+| 在哪里 | Dify App `b7fb5b1a-9278-426c-bb8a-f9f288639548`，版本 `m3-cand-v1.3-pos` |
+| 不选会怎样 | 按甲记账：`G-4` 维持现状并在 `AC-17` 记为已知缺陷，终态停在 `PARTIAL` |
 
-**需要 Founder 决定、执行侧不得自行推进的**（= Checkpoint 第 6 轮 §10 四件事）：
-
-1. 三条阻断类缺陷 `G-2`/`G-3`/`G-4` 要不要修——修法指向一次**新增产品语义**的投影 schema 扩展；
-2. M2 接口漂移（`AC-12`/`AC-13` 对当前 `main` 为 `STALE`）——与第 1 条**指向同一次 schema 扩展**；
-3. `AC-06` 的 Oracle 更正认不认——这是判据认定，属 Founder 域；
-4. `AC-01③` 走路径甲（补权威事件）还是路径乙（按 `ADDENDUM_003` 重跑）——不选即保持 `NOT_VERIFIED`。
-
-**已不再需要 Founder 决定的**（第 4 轮列过，现已消解）：`missing[]` 缺陷修不修（已修并实测）、
-Qwen 独立核验跳不跳（`NOT_APPLICABLE`，运行前判定）、远端推送权限（已放开并完成）。
+**执行侧不做的**：不自行开第二轮修复重跑（第 5 条明写不得在看到正式结果后原地改判据，
+而修 `G-4` 必然要收窄 `§2.3` 逐字冻结的正则）；不宣布合同已接受；不把终态往上推。
