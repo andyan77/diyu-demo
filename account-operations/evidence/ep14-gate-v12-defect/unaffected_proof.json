@@ -1,0 +1,31 @@
+{
+  "why": "缺陷 G-1 改了 check_input_contradiction 的否定短语判据；按 A3 逐次运行机械证明是否受影响，不使有证据不受影响的项失效，也不遗漏已知依赖。",
+  "compare_fields": [
+    "gate_status",
+    "missing_items",
+    "unanchored_items",
+    "hollow_items",
+    "decorative_items",
+    "overlapping_anchors",
+    "internal_leaks",
+    "input_contradiction",
+    "manifest_contradiction",
+    "triggers_effective",
+    "render_applied",
+    "audit_block_missing",
+    "inapplicable_items"
+  ],
+  "total": 73,
+  "unaffected": 72,
+  "affected": [
+    {
+      "dir": "ep07-longitudinal-v12",
+      "case": "E07",
+      "diff_fields": [
+        "gate_status",
+        "input_contradiction"
+      ]
+    }
+  ],
+  "conclusion": "受影响的运行按 A3 置 STALE 必须重跑；其余运行的处理过程与改后闸门逐项相同，证据继续有效。纵向序列另按其冻结件 §5「序列不可局部重跑」整条处理。"
+}
