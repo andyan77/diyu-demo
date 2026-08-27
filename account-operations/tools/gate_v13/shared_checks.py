@@ -532,6 +532,18 @@ REF_ALIASES = {
 }
 REF_NOUN = r"参考|资料|附件|清单|文件"
 REF_NEGATION = r"未加载|不可得|未读到|没有加载|未提供|不可用|没附|未附|没有附|拿不到|缺失"
+# ---- DD-4：否定必须落在**参考文件**上，不是落在账号事实上（REBIND-006 §2.4）----
+# 「对照服装经营参考资料判断了试穿证据的缺失边界——本周期没有试穿素材」：
+# 缺的是试穿素材（账号事实缺口），不是参考文件。v1.2 起的检查只要求同一分句里
+# 同时出现「参考类名词」与「否定类词」，于是把 SKILL.md O-6 **要求**分开写两类缺口
+# 的那句话判成了与清单矛盾（第 8 轮 B07-1）。
+# 修法：否定必须**紧贴**参考类名词——前后 4 字内、中间不跨标点，才算说的是参考文件本身。
+REF_NEG_ATTACHED = re.compile(
+    r"(?:参考|资料|附件|清单|文件)[^，。；、,\n]{0,4}"
+    r"(?:未加载|不可得|未读到|没有加载|没加载|未提供|不可用|没附|未附|没有附|拿不到|缺失)"
+    r"|"
+    r"(?:未加载|没有加载|没加载|未读到|未提供|不可用|没附|未附|没有附|拿不到|缺少|缺失|没有|无)"
+    r"[^，。；、,\n]{0,4}(?:参考|资料|附件|清单|文件)")
 
 
 def check_manifest(manifest, body, machine_lines=None):
@@ -567,7 +579,7 @@ def check_manifest(manifest, body, machine_lines=None):
         alias = REF_ALIASES.get(stem)
         for seg in csegs:
             hit_name = (stem in seg) or (alias and re.search(alias, seg))
-            if hit_name and re.search(REF_NOUN, seg) and re.search(REF_NEGATION, seg):
+            if hit_name and REF_NEG_ATTACHED.search(seg):
                 bad.append(f"{stem}: 清单为 LOADED，正文同一分句出现未加载类措辞 —— 「{seg.strip()[:40]}」")
                 break
     return loaded, notloaded, bad, ("<<REFERENCE_MANIFEST>>" in man), echo_note
@@ -732,15 +744,84 @@ PREDICATE_NO_PUNCT = re.compile(r"^[^，。；、,:：!！?？\n]*$")
 NEG_LOOKBACK = 16
 NEG_CANCEL = re.compile(r"而是|实际是|其实是|应为|应该是|改为|调整为|降到|降为|提到|提为")
 
+# ---- DD-2：槽位权威值只认主句（REBIND-006 §2.1）----------------------------
+# 「1 条（本周实际，低于基线 3 条）」的权威值是 1 条；括注里的 3 条是解释性对照。
+# v2 直接扫全串、只留带周期的数字，于是把括注里的对照值当成了权威值，正文里
+# 正确的「本周实际产能只有 1 条」反被判成用旧值压输入（第 8 轮 B04-1P）。
+# 修法就一句：**槽位里第一个数量是权威值，它后面的都是解释性对照**；周期允许
+# 从后半段借（借的是周期，不是值），这样「1 条（本周实际…）」才能认成 1 条/周。
+# 说明一句作用域：这条规则认不出反序写法（「陈晚 2 条 + 导购 1 条，合计每周 3 条」）。
+# 真实语料 14 个不同槽位取值里没有这种形状；出现了就是漏检，不是误报。
+# 曾经写过一版「先剥掉括注再取值」的 SLOT_ASIDE，在真实语料上消融无差别
+# （删掉它 64 例 ×2 份正文的命中集完全不变），按 A5 删除，不为对称保留。
+
+# ---- DD-3a：被拿掉的那部分不是速率主张（REBIND-006 §2.2）-------------------
+# 「本周必须让掉另外 2 条」说的是**被让掉的那 2 条**，不是「目标变成 2 条/周」。
+# SKILL.md O-3 恰恰**要求**写清让掉了哪几条，检查却对着这句话开火。
+#
+# 一个族，一次消融：句中这个数前面挂着「部分量限定词」或「移除类动词」时，
+# 它指的是整体里被拿走的那一块，不是整体的新值。
+# 移除类动词一律带结果补语（掉／出／走）或本身就是移交义，这是和**赋值类动词**的
+# 分界线：`砍到／减到／降到／压到 2 条` 说的是「现在变成 2 条」，是真覆盖，
+# 必须留在判据里能被抓到——所以这几个词**不进**这张表。
+# （曾经把「部分量限定词」与「移除类动词」写成两个独立守卫，二者在真实语料上互相
+#   遮蔽、单独关掉都无差别，按 A5 合并成这一个。）
+PARTITIVE_PREFIX = re.compile(
+    r"(另外|其余|其中|剩下|余下|多出|"
+    r"让掉|让出|让渡|去掉|减掉|删掉|压掉|省掉|挪走|推迟|延后|牺牲|留给)"
+    r"[^，。；、\n]{0,4}$")
+TRADEOFF_LOOKBACK = 14
+
+# ---- DD-3b：后置否定（REBIND-006 §2.3）------------------------------------
+# 「一周五条这周做不到，不是安排问题，是真实产能只剩两条」——「五条」是被否掉的
+# 那个方案，不是当前值；真正的赋值在后半句「只剩两条」，和输入一致。
+# 已有的 `_negated_at` 只往**前**看（「不为凑三条…」），这一支是同一个现象的另一侧。
+NEG_AFTER_LOOKAHEAD = 10
+NEG_AFTER = re.compile(r"做不到|做不了|做不完|办不到|排不下|排不开|达不到|完不成|"
+                       r"不可能|不现实|撑不住|顶不住|做不出|来不及")
+
+
+# 回看窗口不许跨小句：第 9 轮实测到一次——「一周五条这周做不到，**不是**安排问题，
+# 是真实产能只剩两条」里，前一小句的「不是」把后一小句「只剩两条」这个真赋值否掉了，
+# 于是把权威值改成必然冲突的值之后判据也不再开火（漏检）。否定只管自己那一小句。
+NEG_CLAUSE_CUT = re.compile(r"[，,、：:]")
+
 
 def _negated_at(seg, at):
-    pre = seg[max(0, at - NEG_LOOKBACK):at]
+    pre = NEG_CLAUSE_CUT.split(seg[max(0, at - NEG_LOOKBACK):at])[-1]
     last = None
     for last in re.finditer(NEGATION_BEFORE, pre):
         pass
     if last is None:
         return False
     return not NEG_CANCEL.search(pre[last.end():])
+
+
+def _negated_after(seg, end):
+    """数字**后面**紧跟「做不到／排不下」这类可行性否定 ⇒ 这个数是被否掉的方案，
+    不是当前值。中间不许跨标点，否则「本周 5 条，这我做不到」也会被吞掉。"""
+    win = seg[end:end + NEG_AFTER_LOOKAHEAD]
+    m = NEG_AFTER.search(win)
+    if not m:
+        return False
+    return PREDICATE_NO_PUNCT.match(win[:m.start()]) is not None
+
+
+def _slot_authority(raw):
+    """槽位的权威速率，最多一项：`[{n, unit, period_source}]`；取不到周期就返回 `[]`
+    （= 这个槽位没有速率主张，G-4 对它整槽豁免，宁可少挡也不挡掉对的）。"""
+    qs = _qty_scan(raw or "")
+    if not qs:
+        return []
+    head = dict(qs[0])                       # 第一个数量就是权威值，其后都是解释性对照
+    if head["unit"]:
+        return [head]
+    mw = PERIOD_WORD.search(raw or "")       # 主句没写周期：只借周期，不借值
+    if mw:
+        head["unit"] = {"日": "天"}.get(mw.group(2), mw.group(2))
+        head["period_source"] = "aside_word"
+        return [head]
+    return []
 
 
 def _qty_scan(text):
@@ -754,6 +835,11 @@ def _qty_scan(text):
     """
     out = []
     t = text or ""
+    # 已知漏检，本轮**不修**，如实记在 REBIND-006 §4：`／` 是全角斜杠，语料里
+    # `4 条／周` 这种写法有 5 个不同槽位取值，这条正则只认半角，于是它们整槽落进
+    # "没有周期"，G-4 对它们从来没生效过。改成 `[/／]` 只是一个字符，但在真实语料上
+    # 两个轴（误报集、漏检探针捕获数）都量不出差别——按 A5 不为"看起来更完整"而留，
+    # 留下来的是这条披露。哪天有样本能把它量出来，再按同一套程序收口。
     for m in re.finditer(r"(\d+|[零一两二三四五六七八九十])\s*条(?:\s*/\s*(天|日|周))?", t):
         raw = m.group(1)
         n = int(raw) if raw.isdigit() else _CN_NUM.get(raw)
@@ -771,8 +857,11 @@ def _qty_scan(text):
                 mw = PERIOD_WORD.search(pre)
                 if mw:
                     unit, src = mw.group(2), "word"
+        tpre = t[max(0, m.start() - TRADEOFF_LOOKBACK):m.start()]
+        partitive = bool(PARTITIVE_PREFIX.search(tpre))
         out.append({"n": n, "unit": {"日": "天"}.get(unit, unit),
-                    "period_source": src, "start": m.start(), "end": m.end()})
+                    "period_source": src, "partitive": partitive,
+                    "start": m.start(), "end": m.end()})
     return out
 
 
@@ -811,7 +900,7 @@ def check_stale_value_override(slots, body):
         raw = slots.get(slot)
         if raw is None or not _slot_filled(raw):
             continue
-        slot_q = [q for q in _qty_scan(raw) if q["unit"]]
+        slot_q = _slot_authority(raw)          # DD-2：权威值只认主句
         if not slot_q:
             continue
         slot_pw = {_per_week(q["n"], q["unit"]) for q in slot_q}
@@ -824,8 +913,10 @@ def check_stale_value_override(slots, body):
                 continue
             if re.search(PAST_MARKER, seg):
                 continue
-            qs = _qty_scan(seg)
-            periodic = [q for q in qs if q["unit"] and not _negated_at(seg, q["start"])]
+            qs = [q for q in _qty_scan(seg) if not q["partitive"]]   # DD-3a
+            periodic = [q for q in qs if q["unit"]
+                        and not _negated_at(seg, q["start"])
+                        and not _negated_after(seg, q["end"])]        # DD-3b
             if periodic:
                 # 任一带周期的数与槽位归一后相等 ⇒ 在复述或换算，不是覆盖。
                 if any(_per_week(q["n"], q["unit"]) in slot_pw for q in periodic):
@@ -853,6 +944,12 @@ def check_stale_value_override(slots, body):
             if near:
                 advisory.append(f"{slot}: 输入权威值 {_fmt_q(slot_q)}，正文里紧邻主语出现无周期的 "
                                 f"{_fmt_q(near)} —— 「{seg.strip()[:60]}」（无周期，不阻断）")
+            # DD-3 排掉的量必须留痕：漏检要看得见，不能因为被排掉就消失。
+            excl = [q for q in _qty_scan(seg)
+                    if q["unit"] and (q["partitive"] or _negated_after(seg, q["end"]))]
+            if excl:
+                advisory.append(f"{slot}: 已按取舍量／后置否定排除 {_fmt_q(excl)} —— "
+                                f"「{seg.strip()[:60]}」（不阻断，留痕备查）")
     return hits, advisory
 
 

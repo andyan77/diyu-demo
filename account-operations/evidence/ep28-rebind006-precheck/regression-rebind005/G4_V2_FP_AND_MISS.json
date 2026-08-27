@@ -1,0 +1,204 @@
+{
+  "what": "REBIND_005 §3 · G-4 v2 的误报与漏检，两个方向都在真实语料上量",
+  "corpus": {
+    "samples": 61,
+    "source": [
+      "ep06b-runtime-behavior-v13",
+      "ep07-longitudinal-v13"
+    ],
+    "note": "全部是真实模型输出，无一句由执行侧撰写"
+  },
+  "v1_baseline": {
+    "fired": 12,
+    "cases": [
+      "B02-2-blank-account",
+      "B02-4-blocking-dependency",
+      "B03-1-objective-01",
+      "B03-4-objective-04",
+      "B03-8-objective-08",
+      "B04-N1-all-in-one",
+      "B07-P-daily-three",
+      "B09-2-medium-signal-good-fit",
+      "B10-3-conflicting",
+      "E03",
+      "E04",
+      "E06"
+    ],
+    "false_positives": 11,
+    "true_positives": 1
+  },
+  "v2": {
+    "fired": 1,
+    "cases": [
+      "E04"
+    ],
+    "false_positives_remaining": [],
+    "true_positives_lost": [],
+    "new_hits_vs_v1": []
+  },
+  "miss_probe": {
+    "rule": "两族：同单位（权威值 = 正文每周值 + 1 条/周）与跨单位换算（权威值 = N 条/天，7N ≠ 正文每周值）；句子取自真实运行，未改一字",
+    "probes": 26,
+    "caught": 24,
+    "missed_assertive": 0,
+    "missed_assertive_detail": [],
+    "out_of_scope_negated": 2,
+    "out_of_scope_negated_detail": [
+      {
+        "case": "E03",
+        "slot": "expected_publish_count",
+        "family": "同单位",
+        "forged_authority": "2 条/周",
+        "sentence": "2. 不为凑三条把本周压缩成一条内容里同时讲价格、打理、层叠——那会破坏每条内容只有一个主要工作的原则，也让本周的观察目标变混",
+        "why": "句中那个数落在否定语境里；v2 明确不把否定句当当前值主张（作用域边界，不是漏检）"
+      },
+      {
+        "case": "E03",
+        "slot": "expected_publish_count",
+        "family": "跨单位换算",
+        "forged_authority": "2 条/天",
+        "sentence": "2. 不为凑三条把本周压缩成一条内容里同时讲价格、打理、层叠——那会破坏每条内容只有一个主要工作的原则，也让本周的观察目标变混",
+        "why": "句中那个数落在否定语境里；v2 明确不把否定句当当前值主张（作用域边界，不是漏检）"
+      }
+    ],
+    "note": "否定句探针保留在分母里、单独归类，不从分母里拿掉——拿掉了作用域边界就看不见了"
+  },
+  "named_families_founder_directive_3": {
+    "三值分离": [
+      {
+        "case": "B03-1-objective-01",
+        "v1": true,
+        "v2": false
+      },
+      {
+        "case": "B09-2-medium-signal-good-fit",
+        "v1": true,
+        "v2": false
+      }
+    ],
+    "等价单位换算": [
+      {
+        "case": "B07-P-daily-three",
+        "v1": true,
+        "v2": false
+      }
+    ],
+    "拒绝合并": [
+      {
+        "case": "B04-N1-all-in-one",
+        "v1": true,
+        "v2": false
+      }
+    ]
+  },
+  "rows": [
+    {
+      "case": "B02-2-blank-account",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 1条/? —— 「现在你的目标是长期价值，所以内容优先完成三件事：让第一次看到的人知道这个号持续提供什么（信任起点）、用一条具体判断内容证」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B02-4-blocking-dependency",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 3条/?、3条/? —— 「让掉的是：三条都不为短期流量设计，这周不会有爆款试探——这是长期价值目标下的选择，先用三条立住可积累的东西，不拿主线赌单」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B03-1-objective-01",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "baseline_capacity: 输入权威值 3条/周，正文却断言当前是 3条/?、3条/?、3条/? —— 「- 产能：你期望一周三条，账号基线产能一周三条，当前实际可投入也是一周三条」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B03-4-objective-04",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "actual_capacity: 输入权威值 3条/周，正文却断言当前是 3条/? —— 「三条都在当前产能内，不需要砍任务或降质」",
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 3条/?、1条/?、1条/?、1条/? —— 「本轮按流量传播目标做一周规划：三条内容全部服务于初秋通勤衣橱第一阶段上新这个当前任务窗口，各自承担一个不可互换的主要工作」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B03-8-objective-08",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 3条/? —— 「所以本周三条按目标分工，每条只背一个主工作」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B04-N1-all-in-one",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 1条/? —— 「** 用一条内容同时覆盖吸粉、GMV、线索、到店四个目标，四个目标会互相拆台：关注是\"先看看你值不值得跟\"，购买是\"现在」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B07-P-daily-three",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "actual_capacity: 输入权威值 3条/周，正文却断言当前是 21条/?、3条/? —— 「一旦把三个数分开，问题就不是“21 条怎么分配”，而是“当前实际产能只能支撑 3 条”」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B09-2-medium-signal-good-fit",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "baseline_capacity: 输入权威值 3条/周，正文却断言当前是 3条/?、3条/?、3条/?、3条/? —— 「你期望每周发三条，团队基线产能是三条，本周实际可用也是三条，三个数一致，不需要削产能，可以直接按三条来排」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "B10-3-conflicting",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 2条/? —— 「在长期价值目标下，两条反馈都不足以推翻当前内容方向，所以我选择有依据地保持不变，而不是改策略」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "E03",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 3条/?、1条/? —— 「2. 不为凑三条把本周压缩成一条内容里同时讲价格、打理、层叠——那会破坏每条内容只有一个主要工作的原则，也让本周的观察目」"
+      ],
+      "v2_hits": []
+    },
+    {
+      "case": "E04",
+      "ruling_round7": "真阳性",
+      "v1_hits": [
+        "actual_capacity: 输入权威值 3条/周，正文却断言当前是 1条/? —— 「3. 本周实际产能只有一条，已经排给四周验证序列的第一格“这个价位的通勤马甲凭什么值”」"
+      ],
+      "v2_hits": [
+        "actual_capacity: 输入权威值 3条/周，正文却断言当前是 1条/周 —— 「3. 本周实际产能只有一条，已经排给四周验证序列的第一格“这个价位的通勤马甲凭什么值”」"
+      ]
+    },
+    {
+      "case": "E06",
+      "ruling_round7": "误报",
+      "v1_hits": [
+        "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 1条/? —— 「2. 条件性内容任务：如果本周能安排试穿、或拿到可信的上身素材，下一条同类商品细节内容就以上身证据作为验证点，这条任务只」"
+      ],
+      "v2_hits": []
+    }
+  ],
+  "verdict": {
+    "误报清零": "PASS",
+    "真阳性保住": "PASS",
+    "漏检探针（主张句）全数命中": "PASS",
+    "三值分离不再被拦": "PASS",
+    "等价换算不再被拦": "PASS",
+    "拒绝合并不再被拦": "PASS"
+  },
+  "all_pass": true
+}

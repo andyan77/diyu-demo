@@ -53,8 +53,29 @@ def main(draft: str, manifest: str, account_context: str) -> dict:
     for it in list(ALWAYS_ITEMS) + [x for k, (_, items) in TRIGGER_ITEMS.items()
                                     if eff.get(k) for x in items]:
         required_lines.append(f"{it} :: <正文里承载这一项的那句原话，逐字复制>")
+    skeleton_pos_ids = []
     for pid in input_pos.get("positions", []):
+        skeleton_pos_ids.append(pid["id"])
         required_lines.append(f"POS :: {pid['id']} :: 继续|处置|替换 :: <正文里承载这一处置的那句原话>")
+    # ------------------------------------------------------------------ DD-1
+    # 骨架只装输入侧持续位 ⇒ 模型本轮**自己新声明**的位从不在骨架里 ⇒ 补齐节点按
+    # 系统提示词第 5 条「一行不多、一行不少」把它删掉 ⇒ D-1 开火，整份合格交付被拒。
+    # 第 8 轮 12 例拒收里 10 例是这么来的（8 例纯由它造成）。
+    # 修法钉在成因，不在检测器：骨架的义务集从「输入里的位」扩到
+    # 「输入里的位 ∪ 模型本轮已声明的位」。
+    # 与 D-3 不冲突：这里**只保留模型自己写下的 id 与状态**，不代模型创造 id、
+    # 不代模型选状态；锚点仍留给补齐节点指回最终正文，由复检逐字核对。
+    # 也**不**在复检侧加"自动补回"的兜底——那等于闸门替模型重新写出 POS 行，
+    # 正是 D-3 刚修掉的那条自证回路。骨架里已经点名还被删，那是补齐节点真的出错，
+    # 该拒。
+    _st_cn = {v: k for k, v in POS_STATUS.items()}
+    _kind_cn = {v: k for k, v in POS_NEW_KINDS.items()}
+    for d in decls:
+        if d["id"] in skeleton_pos_ids:
+            continue
+        skeleton_pos_ids.append(d["id"])
+        st = ("新增·" + _kind_cn.get(d["kind"], "常规")) if d["is_new"] else _st_cn.get(d["status"], "继续")
+        required_lines.append(f"POS :: {d['id']} :: {st} :: <正文里承载这一处置的那句原话>")
 
     repairable = bool(missing or unanchored or hollow or decorative or overlap
                       or leaks or contra_in or contra_man or audit_missing
@@ -73,7 +94,7 @@ def main(draft: str, manifest: str, account_context: str) -> dict:
         needs_fix = "no"
 
     report = {
-        "gate_version": "v1.3",
+        "gate_version": "v1.5",
         "gate_status": gate_status,
         "hard_fail_reasons": min_fails,
         "audit_block_missing": audit_missing,
@@ -100,6 +121,7 @@ def main(draft: str, manifest: str, account_context: str) -> dict:
         "draft_pos_lines": list(pos_lines or []),
         "draft_declared_position_ids": [d["id"] for d in decls],
         "draft_new_position_ids": [d["id"] for d in decls if d["is_new"]],
+        "skeleton_position_ids": skeleton_pos_ids,
         "manifest_present": man_present,
         "manifest_loaded": loaded,
         "manifest_not_loaded": notloaded,

@@ -1,0 +1,477 @@
+{
+  "what": "REBIND-006 预检 · DD-1～DD-4 的修法在真实语料上两个方向都量",
+  "zero_model_calls": true,
+  "baseline_commit": "ef35c67",
+  "corpus": {
+    "runs": 64,
+    "bodies": 128,
+    "source": [
+      "ep06b-runtime-behavior-v14 (49)",
+      "ep07-longitudinal-v14 (12)",
+      "ep08-module-ab-v14 B 臂 (3)"
+    ]
+  },
+  "P1_误报方向": {
+    "bodies_scanned": 128,
+    "v142_blocking_hits": 7,
+    "v142_detail": [
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "draft",
+        "check": "G4",
+        "hit": "actual_capacity: 输入权威值 3条/周，正文却断言当前是 1条/周 —— 「本周实际产能只有 1 条，所以按 1 条来排，不假装能做 3 条」",
+        "ruling": "误报（DD-2/DD-3）"
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "draft",
+        "check": "G4",
+        "hit": "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 2条/周 —— 「按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条」",
+        "ruling": "误报（DD-2/DD-3）"
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "final",
+        "check": "G4",
+        "hit": "actual_capacity: 输入权威值 3条/周，正文却断言当前是 1条/周 —— 「本周实际产能只有 1 条，所以按 1 条来排，不假装能做 3 条」",
+        "ruling": "误报（DD-2/DD-3）"
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "final",
+        "check": "G4",
+        "hit": "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 2条/周 —— 「按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条」",
+        "ruling": "误报（DD-2/DD-3）"
+      },
+      {
+        "case": "B07-1-traffic-full-facts",
+        "body": "final",
+        "check": "MAN",
+        "hit": "fashion-and-market: 清单为 LOADED，正文同一分句出现未加载类措辞 —— 「对照服装经营参考资料判断了试穿证据的缺失边界——本周期没有试穿素材」",
+        "ruling": "误报（DD-4）"
+      },
+      {
+        "case": "FX-M3-HOLD-02__B",
+        "body": "draft",
+        "check": "G4",
+        "hit": "actual_capacity: 输入权威值 2条/周，正文却断言当前是 5条/周 —— 「一周五条这周做不到，不是安排问题，是真实产能只剩两条」",
+        "ruling": "误报（DD-3b，本轮新查出，第 8 轮拒收台账未覆盖 A/B 臂）"
+      },
+      {
+        "case": "FX-M3-HOLD-02__B",
+        "body": "final",
+        "check": "G4",
+        "hit": "actual_capacity: 输入权威值 2条/周，正文却断言当前是 5条/周 —— 「一周五条这周做不到，不是安排问题，是真实产能只剩两条」",
+        "ruling": "误报（DD-3b，本轮新查出，第 8 轮拒收台账未覆盖 A/B 臂）"
+      }
+    ],
+    "v15_blocking_hits": 0,
+    "v15_detail": [],
+    "newly_blocked_by_v15": [],
+    "all_v142_hits_ruled_false_positive": true
+  },
+  "P2_漏检方向": {
+    "probes": 84,
+    "caught_v142": 84,
+    "caught_v15": 80,
+    "family3_body_forged": {
+      "probes": 54,
+      "caught_v142": 50,
+      "caught_v15": 52,
+      "v15_missed": [
+        {
+          "case": "B02-2-blank-account",
+          "body": "draft",
+          "slot": "expected_publish_count",
+          "authority": "3 条/周",
+          "sentence": "这个判断绑定的是：这个账号、长期价值目标、视频号平台、本周期这三条内容、以及\"初秋通勤衣橱\"这个任务上下文"
+        },
+        {
+          "case": "B02-2-blank-account",
+          "body": "final",
+          "slot": "expected_publish_count",
+          "authority": "3 条/周",
+          "sentence": "这个判断绑定的是：这个账号、长期价值目标、视频号平台、本周期这三条内容、以及\"初秋通勤衣橱\"这个任务上下文"
+        }
+      ],
+      "v142_missed": [
+        {
+          "case": "B02-2-blank-account",
+          "body": "draft",
+          "slot": "expected_publish_count",
+          "authority": "3 条/周",
+          "sentence": "这个判断绑定的是：这个账号、长期价值目标、视频号平台、本周期这三条内容、以及\"初秋通勤衣橱\"这个任务上下文"
+        },
+        {
+          "case": "B02-2-blank-account",
+          "body": "final",
+          "slot": "expected_publish_count",
+          "authority": "3 条/周",
+          "sentence": "这个判断绑定的是：这个账号、长期价值目标、视频号平台、本周期这三条内容、以及\"初秋通勤衣橱\"这个任务上下文"
+        },
+        {
+          "case": "FX-M3-HOLD-01__B",
+          "body": "draft",
+          "slot": "actual_capacity",
+          "authority": "4 条／周，本周排期已确认，无人员缺口",
+          "sentence": "你给的是四周每周 4 条共 16 条，账号和团队的基线也是每周 4 条，本周实际产能已确认无缺口——三个数一致，不需要砍内容，也不需要把“每天三条”偷偷换算成别"
+        },
+        {
+          "case": "FX-M3-HOLD-01__B",
+          "body": "final",
+          "slot": "actual_capacity",
+          "authority": "4 条／周，本周排期已确认，无人员缺口",
+          "sentence": "你给的是四周每周 4 条共 16 条，账号和团队的基线也是每周 4 条，本周实际产能已确认无缺口——三个数一致，不需要砍内容，也不需要把“每天三条”偷偷换算成别"
+        }
+      ],
+      "rule": "槽位保持真实原值，只把正文里的「N 条」机械改写成（槽位每周值+1）条/周；探针集合由独立解析器决定，不由被测的任何一版判据决定"
+    },
+    "new_misses_introduced_by_v15": 0,
+    "detail": [],
+    "out_of_scope_by_design": 4,
+    "out_of_scope_detail": [
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "draft",
+        "slot": "expected_publish_count",
+        "family": "同单位",
+        "forged_authority": "3 条/周",
+        "sentence": "按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条",
+        "why_out_of_scope": [
+          "2条/周 被『部分量／移除类前缀』排除"
+        ],
+        "segment_has_other_assertive_rate_claim": false
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "draft",
+        "slot": "expected_publish_count",
+        "family": "跨单位换算",
+        "forged_authority": "3 条/天",
+        "sentence": "按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条",
+        "why_out_of_scope": [
+          "2条/周 被『部分量／移除类前缀』排除"
+        ],
+        "segment_has_other_assertive_rate_claim": false
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "final",
+        "slot": "expected_publish_count",
+        "family": "同单位",
+        "forged_authority": "3 条/周",
+        "sentence": "按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条",
+        "why_out_of_scope": [
+          "2条/周 被『部分量／移除类前缀』排除"
+        ],
+        "segment_has_other_assertive_rate_claim": false
+      },
+      {
+        "case": "B04-1P-capacity-1",
+        "body": "final",
+        "slot": "expected_publish_count",
+        "family": "跨单位换算",
+        "forged_authority": "3 条/天",
+        "sentence": "按先保主目标和最高价值的一条来排，本周必须让掉另外 2 条",
+        "why_out_of_scope": [
+          "2条/周 被『部分量／移除类前缀』排除"
+        ],
+        "segment_has_other_assertive_rate_claim": false
+      }
+    ],
+    "caught_by_v15_only": 0,
+    "rule": "句子取自真实运行、一字未改；只把权威值机械改成必然冲突的值。判据是「旧能抓到的新也要抓到」；旧抓到而新没抓到的，只有当伪造值来自新判据明确排除的那个数时才算作用域边界，其余一律计为新漏检。"
+  },
+  "P3_清单方向": {
+    "sentences": 6,
+    "rows": [
+      {
+        "sentence": "另一份关于既有内容生产方法的参考没有附上",
+        "first_seen_in": "B09-1-strong-signal-poor-fit",
+        "fashion-and-market|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "fashion-and-market|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        }
+      },
+      {
+        "sentence": "另一份关于既有能力方法的参考没有附上",
+        "first_seen_in": "B02-1-no-matrix",
+        "fashion-and-market|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "fashion-and-market|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|LOADED": {
+          "v142": true,
+          "v15": true
+        },
+        "six-skill-methods|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        }
+      },
+      {
+        "sentence": "另一份关于既有能力方法细节的参考没有附上",
+        "first_seen_in": "B04-N7-mechanical-split",
+        "fashion-and-market|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "fashion-and-market|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|LOADED": {
+          "v142": true,
+          "v15": true
+        },
+        "six-skill-methods|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        }
+      },
+      {
+        "sentence": "另一份关于能力方法的参考没有附上",
+        "first_seen_in": "B01-P-publish-calendar",
+        "fashion-and-market|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "fashion-and-market|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|LOADED": {
+          "v142": true,
+          "v15": true
+        },
+        "six-skill-methods|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        }
+      },
+      {
+        "sentence": "对照服装经营参考资料判断了试穿证据的缺失边界——本周期没有试穿素材",
+        "first_seen_in": "B07-1-traffic-full-facts",
+        "fashion-and-market|LOADED": {
+          "v142": true,
+          "v15": false
+        },
+        "fashion-and-market|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        }
+      },
+      {
+        "sentence": "没有同类账号表现可参考（`market_observations: 未提供`）",
+        "first_seen_in": "B07-1-traffic-full-facts",
+        "fashion-and-market|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "fashion-and-market|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|LOADED": {
+          "v142": false,
+          "v15": false
+        },
+        "six-skill-methods|NOT_LOADED": {
+          "v142": false,
+          "v15": false
+        }
+      }
+    ],
+    "note": "清单说 LOADED 而正文说这份参考没加载 ⇒ 应命中；清单说 NOT_LOADED ⇒ 正文照实说，不该命中；正文说的是账号事实缺口（不是参考文件）⇒ 两种清单都不该命中"
+  },
+  "P4_具名族": {
+    "真实旧值覆盖": {
+      "rows": [
+        {
+          "slot": "actual_capacity",
+          "authority": "5 条/周",
+          "body": "本周实际产能砍到 2 条/周。",
+          "should_fire": true,
+          "v142": true,
+          "v15": true
+        },
+        {
+          "slot": "actual_capacity",
+          "authority": "5 条/周",
+          "body": "当前实际产能是每周 2 条。",
+          "should_fire": true,
+          "v142": true,
+          "v15": true
+        }
+      ],
+      "pass": true
+    },
+    "三值分离": {
+      "rows": [
+        {
+          "slot": "actual_capacity",
+          "authority": "3 条/周",
+          "body": "期望发布量、基线产能、本周实际可用产能都是每周 3 条，三者对齐。",
+          "should_fire": false,
+          "v142": false,
+          "v15": false
+        }
+      ],
+      "pass": true
+    },
+    "等价单位换算": {
+      "rows": [
+        {
+          "slot": "expected_publish_count",
+          "authority": "每天 3 条（用户口径）",
+          "body": "你说的每天 3 条，按本周算就是 21 条，这个数我按周口径来排。",
+          "should_fire": false,
+          "v142": false,
+          "v15": false
+        }
+      ],
+      "pass": true
+    },
+    "拒绝合并": {
+      "rows": [
+        {
+          "slot": "expected_publish_count",
+          "authority": "3 条/周",
+          "body": "本周目标 3 条不能压成一条内容同时覆盖四个目标。",
+          "should_fire": false,
+          "v142": false,
+          "v15": false
+        }
+      ],
+      "pass": true
+    },
+    "取舍陈述（O-3 要求写的）": {
+      "rows": [
+        {
+          "slot": "expected_publish_count",
+          "authority": "3 条/周",
+          "body": "按先保主目标的一条来排，本周必须让掉另外 2 条。",
+          "should_fire": false,
+          "v142": true,
+          "v15": false
+        }
+      ],
+      "pass": true
+    },
+    "后置否定（被否掉的方案）": {
+      "rows": [
+        {
+          "slot": "actual_capacity",
+          "authority": "本周实际 2 条。",
+          "body": "一周五条这周做不到，不是安排问题，是真实产能只剩两条。",
+          "should_fire": false,
+          "v142": true,
+          "v15": false
+        }
+      ],
+      "pass": true
+    }
+  },
+  "P5_消融": {
+    "baseline_fire_count": 0,
+    "baseline_miss_caught": 132,
+    "units": [
+      {
+        "unit": "PARTITIVE_PREFIX（部分量／移除类前缀）",
+        "fire_count_when_disabled": 2,
+        "miss_caught_when_disabled": 136,
+        "changed_on_fp_axis": true,
+        "changed_on_miss_axis": true,
+        "changed": true,
+        "delta_cases": [
+          "B04-1P-capacity-1/G4"
+        ]
+      },
+      {
+        "unit": "NEG_AFTER（后置可行性否定）",
+        "fire_count_when_disabled": 2,
+        "miss_caught_when_disabled": 132,
+        "changed_on_fp_axis": true,
+        "changed_on_miss_axis": false,
+        "changed": true,
+        "delta_cases": [
+          "FX-M3-HOLD-02__B/G4"
+        ]
+      },
+      {
+        "unit": "REF_NEG_ATTACHED（否定必须紧贴参考名词）",
+        "fire_count_when_disabled": 1,
+        "miss_caught_when_disabled": 132,
+        "changed_on_fp_axis": true,
+        "changed_on_miss_axis": false,
+        "changed": true,
+        "delta_cases": [
+          "B07-1-traffic-full-facts/MAN"
+        ]
+      },
+      {
+        "unit": "NEG_CLAUSE_CUT（前置否定不跨小句）",
+        "fire_count_when_disabled": 0,
+        "miss_caught_when_disabled": 128,
+        "changed_on_fp_axis": false,
+        "changed_on_miss_axis": true,
+        "changed": true,
+        "delta_cases": []
+      },
+      {
+        "unit": "_slot_authority（槽位权威值只认第一个数量）",
+        "fire_count_when_disabled": 2,
+        "miss_caught_when_disabled": 134,
+        "changed_on_fp_axis": true,
+        "changed_on_miss_axis": true,
+        "changed": true,
+        "delta_cases": [
+          "B04-1P-capacity-1/G4"
+        ]
+      }
+    ],
+    "all_units_ablatable": true
+  },
+  "P6_DD1骨架覆盖": {
+    "runs": 64,
+    "runs_with_draft_position_missing_from_skeleton": 0,
+    "detail": [],
+    "runs_with_extra_skeleton_lines": 30,
+    "extra_skeleton_lines_total": 45,
+    "claim": "骨架的义务集 = 输入侧持续位 ∪ 模型草稿已声明持续位；64 次运行里没有一个已声明位落在骨架外"
+  },
+  "verdict": {
+    "P1 旧判据的阻断命中全部是误报，且新判据全部清零": "PASS",
+    "P1 新判据没有引入任何新的阻断": "PASS",
+    "P2 没有引入新漏检": "PASS",
+    "P2 作用域边界探针逐条给出了排除理由": "PASS",
+    "P4 六族逐族符合预期": "PASS",
+    "P5 每个新守卫都可消融（关掉就变）": "PASS",
+    "P6 骨架零遗漏": "PASS"
+  },
+  "all_pass": true
+}
