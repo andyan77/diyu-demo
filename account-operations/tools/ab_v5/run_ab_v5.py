@@ -101,6 +101,9 @@ def write_rubric():
         f.write(body)
 
 
+RESUME = "--resume" in sys.argv
+
+
 def main():
     key = load_key()
     spec = json.load(open(ARMS_SPEC, encoding="utf-8"))
@@ -122,8 +125,46 @@ def main():
 
     jobs = [(h["fixture_id"], a) for h in holdouts for a in ("A", "Aplus", "B", "Bprime")]
 
+    # 只认传输故障签名，与已冻结的 rerun_transport_failures.py 同一份词表。
+    # 模型产出的坏结果（空正文、被闸门判死、内容不好）一律**不**重跑。
+    TRANSPORT_SIGNS = ("Server Unavailable", "SSLEOFError", "UNEXPECTED_EOF_WHILE_READING",
+                       "Max retries exceeded", "Connection reset", "Read timed out",
+                       "IncompleteRead", "Bad gateway", "502", "503", "504")
+    MODEL_SIGNS = ("Not all output parameters are validated", "Insufficient Balance",
+                   "content_filter", "invalid_param")
+
+    def transport_failure_reason(rec):
+        """返回传输故障原文；不是传输故障就返回 None。"""
+        if rec.get("http_status") == 200 and (rec.get("answer_text") or "").strip():
+            return None
+        blob = json.dumps(rec.get("draft_response") or rec.get("response") or {},
+                          ensure_ascii=False)
+        if any(m in blob for m in MODEL_SIGNS):
+            return None
+        for sgn in TRANSPORT_SIGNS:
+            if sgn in blob:
+                return blob[:400]
+        return None
+
     def one(job):
         cid, arm = job
+        dst = os.path.join(EVID, f"{cid}__{arm}.json")
+        if RESUME and os.path.exists(dst):
+            prev = json.load(open(dst, encoding="utf-8"))
+            if prev.get("http_status") == 200 and (prev.get("answer_text") or "").strip():
+                print(f"  reuse {cid} {arm}（已成功，逐字节沿用，不重跑）",
+                      file=sys.stderr, flush=True)
+                return prev
+            why = transport_failure_reason(prev)
+            if why is None:
+                raise SystemExit(f"{cid} {arm} 不是传输故障，拒绝重跑（模型产出坏结果属于证据）\n"
+                                 f"  http_status={prev.get('http_status')}")
+            n = 1
+            while os.path.exists(os.path.join(EVID, f"{cid}__{arm}__transport_failure_{n}.json")):
+                n += 1
+            shutil.copy(dst, os.path.join(EVID, f"{cid}__{arm}__transport_failure_{n}.json"))
+            print(f"  RETRY {cid} {arm}（传输故障 #{n}，失败那次已原样保留）：{why[:110]}",
+                  file=sys.stderr, flush=True)
         h = [x for x in holdouts if x["fixture_id"] == cid][0]
         um = h["account_context"] + "\n" + h["user_request"]
         sysp = arms[arm]["system_prompt"]
