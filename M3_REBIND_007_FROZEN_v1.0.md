@@ -3,7 +3,9 @@
 - `task_id`：`DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001`（不建 NEW_TASK）
 - 冻结时间：2026-08-27
 - 直接前身：`M3_ECC_REBIND_006_FROZEN_v1.0.md`（v1.5）。**本文件不覆盖它**，历史判据原样保留。
-- 候选：`v1.5.1`；改动只有一个文件、一处：`gate_v13/shared_checks.py::PERIOD_WORD`
+- 候选：`v1.5.1`。判据改动只有一个文件、一处：`gate_v13/shared_checks.py::PERIOD_WORD`；
+  另把 `gate_main.py` / `post_gate_main.py` 的自报版本号从 `v1.5` 改成 `v1.5.1`——
+  载体必须自己说得出自己是哪一版，否则部署后的读回证据会指向错的候选身份（A3）。
 - 对照组提交：`fc63add`（= v1.5，第 2 段正式取证真正跑的那份闸门）
 
 ---
