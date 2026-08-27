@@ -599,7 +599,7 @@ WHY（合同 `why`）= *给一个账号一项以证据为界的持续运营能�
 | M3-AC-17 | **`FAIL(INSUFFICIENT)`** | 修 G-1 后整条重跑，12 步全 `succeeded`、第 4 轮那类「零产出整体覆盖基线」事故**未复现**；但 `E04` `不足`，序列级「局部性」只部分成立。判定者独立追踪 8 个对象，投影真正保住 **1 个**，其余 7 个无声消失而 `dropped_without_notice` 全程为 `[]`（缺陷 G-3） |
 | M3-AC-18 | **`FAIL(INSUFFICIENT)`** | 12/12 跑完，硬门零退化但无整体增益；`M3_PROFESSIONAL_GAIN = NOT_VERIFIED`、`M3_MODULE_AB = NOT_PASSED`。**`AC-01③` 的降级不改变本条**——两种记法下它都不是 `PASS` |
 | M3-AC-19 | 部分成立 | Qwen `NOT_APPLICABLE`（Founder 指示，运行前判定）；**41 名判定者：40 名受隔离约束者机械核验全部 `CLEAN`、零违规，1 名按 Rubric 授权通读全部材料的独立收口 Reviewer 隔离性 `NOT_APPLICABLE` 并另核写入范围为 `CLEAN`**；留出强度上限如实记录；**独立收口审查已完成**（`M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md`：R-1/R-2 `FAIL`、R-3～R-7 `PASS`，两条阻断项已在本轮闭合） |
-| M3-AC-20 | 部分成立 | 回滚演练实测通过（破坏→恢复逐位相同，已发布版本未被触碰）；远端完整哈希 `83a11cf4…` 与本地 HEAD 逐字符一致（`evidence/ep10-closeout-v12/remote_hash_ac20.json`，可用 `verify_remote_hash.sh` 一条命令重验）；**Founder 产品接受未发生**——实测包已交付（`M3_FOUNDER_DIFY_TEST_PACK_v1.0.md`），裁决未请求 |
+| M3-AC-20 | 部分成立 | 回滚演练实测通过（破坏→恢复逐位相同，已发布版本未被触碰）；远端与本地 HEAD 一致性由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` **一条命令重验**（零参数、只读）；已验证的提交与完整哈希逐条记在 `remote_hash_ac20.json`；**Founder 产品接受未发生**——实测包已交付（`M3_FOUNDER_DIFY_TEST_PACK_v1.0.md`），裁决未请求 |
 
 **汇总**：`PASS` 3 条（AC-05 的结构半＋AC-16 的 Workflow 图半，以及对钉死绑定成立的 AC-12/AC-13——后者对当前 `main` 为 `STALE`）｜
 `FAIL(INSUFFICIENT)` 2 条（AC-17 / AC-18）｜`不得 PASS` 2 条（AC-03 / AC-15）｜其余成立或 `NOT_VERIFIED`。
@@ -616,9 +616,9 @@ WHY（合同 `why`）= *给一个账号一项以证据为界的持续运营能�
 |---|---|---|---|
 | 初版 | `f5a9aca` | §7.1 全部 21 条 `NOT_VERIFIED` | 判据冻结 |
 | 第 1 次 | `edcccb2` | 写入第 4 轮状态 | EP-10 第一次收口 |
-| 第 2 次（本次） | 本次提交 | 同步到第 6 轮状态；`AC-01③` 降级；`AC-12`/`AC-13` 改为双绑定分列并标 `STALE`；`AC-11` 改引 g1fix 轮；`AC-17`/`AC-18`/`AC-19`/`AC-20` 更新 | 独立收口 Reviewer 阻断项 `B-2` |
+| 第 2 次 | `83a11cf` | 同步到第 6 轮状态；`AC-01③` 降级；`AC-12`/`AC-13` 改为双绑定分列并标 `STALE`；`AC-11` 改引 g1fix 轮；`AC-17`/`AC-18`/`AC-19`/`AC-20` 更新 | 独立收口 Reviewer 阻断项 `B-2` |
 
-| 第 3 次（本次） | 本次提交 | `AC-20` 回填远端完整哈希 | 推送完成 |
+| 第 3 次 | `2aefe54` | `AC-20` 回填远端完整哈希 | 推送完成 |
 
 **§3 判据本体在以上四次里一字未改。**
 
