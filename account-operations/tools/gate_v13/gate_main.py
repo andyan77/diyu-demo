@@ -47,7 +47,7 @@ def main(draft: str, manifest: str, account_context: str) -> dict:
 
     leaks = check_leaks(body)
     contra_in, contra_in_adv = check_input_contradiction(slots, body)
-    stale_override = check_stale_value_override(slots, body)          # G-4
+    stale_override, stale_advisory = check_stale_value_override(slots, body)   # G-4 v2
     loaded, notloaded, contra_man, man_present, man_echo = check_manifest(manifest, body, machine)
 
     for it in list(ALWAYS_ITEMS) + [x for k, (_, items) in TRIGGER_ITEMS.items()
@@ -96,6 +96,10 @@ def main(draft: str, manifest: str, account_context: str) -> dict:
         "input_contradiction": contra_in,
         "input_contradiction_advisory": contra_in_adv,
         "stale_value_override": stale_override,
+        "stale_value_override_advisory": stale_advisory,
+        "draft_pos_lines": list(pos_lines or []),
+        "draft_declared_position_ids": [d["id"] for d in decls],
+        "draft_new_position_ids": [d["id"] for d in decls if d["is_new"]],
         "manifest_present": man_present,
         "manifest_loaded": loaded,
         "manifest_not_loaded": notloaded,

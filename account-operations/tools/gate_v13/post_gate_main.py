@@ -38,7 +38,7 @@ def main(final_text: str, manifest: str, prior_report: str,
     leaks = check_leaks(body)
     contra_in, contra_in_adv = check_input_contradiction(slots, body)
     loaded, notloaded, contra_man, man_present, man_echo = check_manifest(manifest, body, _mach)
-    stale_override = check_stale_value_override(slots, body)              # G-4
+    stale_override, stale_advisory = check_stale_value_override(slots, body)   # G-4 v2
 
     # 锚定行的实质检查在最终正文上重跑一遍（引用必须仍然逐字在正文里）
     (missing, unanchored, hollow, decorative, overlap,
@@ -47,12 +47,53 @@ def main(final_text: str, manifest: str, prior_report: str,
     # 持续位在最终正文上独立复算，不复用第一道闸门的结论（G-3）
     input_pos = parse_standing_positions(slots)
     decls, bad_pos_lines = parse_positions_declaration(pos_lines)
+
+    # ------------------------------------------------------------------ D-3
+    # 补齐节点替模型写出 `POS ::` 机器行 ⇒ 判据被闸门自己满足，对模型就没有约束力。
+    # `blanket_introduced_by_gate` 只盯散文里的概括句，盯不住代写的机器行；
+    # 第 7 轮 E12 实测过一次：模型整个审计块都没写，首闸正确阻断，补齐节点把 POS 行
+    # 补齐了，于是这一位在复检里显示为「模型已交代」。
+    # 修法不是记一笔就放行，而是**把代写的行剥掉再复算**——剥掉之后原本对不上的地方
+    # 会重新对不上，判据这才重新落回模型身上。
+    draft_pos_ids = set(prior.get("draft_declared_position_ids") or [])
+    gate_authored = []
+    if gate_path == "gate_repaired":
+        kept = []
+        for d in decls:
+            if d["id"] in draft_pos_ids:
+                kept.append(d)
+            else:
+                gate_authored.append(d["id"])
+        decls = kept
     if audit_missing_after_repair and not decls:
-        # 补齐节点没重发审计块 ⇒ 回落首轮的持续位声明；指不回新正文的会在下面被计为坏锚点
+        # 补齐节点没重发审计块 ⇒ 回落首轮的持续位声明；指不回新正文的会在下面被计为坏锚点。
+        # 回落必须**三类都回落**（继续／处置／新增）。只回落「继续」会让本轮新增位在这里
+        # 凭空消失，随后被 D-1 计成「补齐环节删位」——那是回落自己造出来的失效，
+        # 按 A3 属于「多算」：让有证据不受影响的项失效同样是错。
         prior_pos = (prior.get("positions") or {})
+        new_kind = {n["id"]: n.get("kind") for n in (prior_pos.get("new_positions") or [])}
         decls = [{"id": i, "status": "continued", "kind": None,
                   "anchor": "", "is_new": False} for i in prior_pos.get("continued", [])]
+        decls += [{"id": i, "status": "disposed", "kind": None,
+                   "anchor": "", "is_new": False} for i in prior_pos.get("disposed", [])]
+        decls += [{"id": i, "status": "new", "kind": k,
+                   "anchor": "", "is_new": True} for i, k in new_kind.items()]
     pos = check_positions(input_pos, decls, bad_pos_lines, body, used_spans=item_spans)
+
+    # ------------------------------------------------------------------ D-1
+    # 本轮**新增**的持续位不在输入里，所以 `positions_unaccounted`（只算输入差集）
+    # 对它天然是空的：被补齐节点删掉之后，三个计数器一起显示 `[]`，内容全丢而系统全绿。
+    # REBIND_004 §2.1 自称「不会再出现字段全程为空而内容全丢」——那句话对新增位不成立。
+    # 义务集必须从「输入里的位」扩到「输入里的位 ∪ 模型本轮声明过的位」。
+    final_ids = {d["id"] for d in decls}
+    dropped = [i for i in (prior.get("draft_declared_position_ids") or [])
+               if i not in final_ids and i not in gate_authored]
+    dropped_new = [i for i in (prior.get("draft_new_position_ids") or []) if i in dropped]
+    pos["positions_dropped_after_draft"] = dropped
+    pos["positions_dropped_new"] = dropped_new
+    pos["positions_introduced_by_gate"] = gate_authored
+    if dropped or gate_authored:
+        pos["blocking"] = True
 
     # 补齐节点替模型写概括性延续句 ⇒ 自证循环：判据可以被闸门自己满足，
     # 对模型就没有约束力。第 5 轮 E04 实测过一次（补齐节点写了「其余判断保持不变。」，
@@ -73,7 +114,8 @@ def main(final_text: str, manifest: str, prior_report: str,
     gaps_closed = not (hard or leaks or contra_in or contra_man
                        or missing or unanchored
                        or hollow or decorative or overlap
-                       or pos["blocking"] or stale_override)
+                       or pos["blocking"] or stale_override
+                       or dropped or gate_authored)
 
     reasons = []
     if hard:
@@ -83,6 +125,13 @@ def main(final_text: str, manifest: str, prior_report: str,
                        + " 本轮既没继续也没被点名处置 —— 交付未对它们负责")
     if pos["positions_fabricated"]:
         reasons.append("声明了输入里并不存在的持续位：" + "、".join(pos["positions_fabricated"]))
+    if dropped:
+        reasons.append("模型本轮声明过的持续位 " + "、".join(dropped)
+                       + " 在补齐环节之后消失了 —— 内容被静默丢掉，补齐不许删位"
+                       + ("（其中本轮新增位：" + "、".join(dropped_new) + "）" if dropped_new else ""))
+    if gate_authored:
+        reasons.append("补齐环节替模型写出了持续位 " + "、".join(gate_authored)
+                       + " 的机器行 —— 判据被闸门自己满足，已剥除后重新复算")
     if stale_override:
         reasons.append("用过期值压过本轮权威输入：" + "；".join(stale_override))
     if contra_in:
@@ -108,7 +157,8 @@ def main(final_text: str, manifest: str, prior_report: str,
     # 与旧值压过输入（G-4，= 承重依据是假的）。两者都属于"交付本身错了或丢了东西"。
     carry_blocking = bool(hard or contra_in or contra_man or leaks
                           or pos["positions_unaccounted"] or pos["positions_fabricated"]
-                          or pos["input_parse_error"] or stale_override)
+                          or pos["input_parse_error"] or stale_override
+                          or dropped or gate_authored)
     carry = "REJECTED_KEEP_PREVIOUS" if carry_blocking else "ACCEPTABLE_AS_NEW_BASELINE"
     if carry_blocking and not reasons:
         reasons.append("交付本身不合格，具体见 post_gate_report")
@@ -127,7 +177,7 @@ def main(final_text: str, manifest: str, prior_report: str,
     out_text = (body + ("\n\n" + notice if notice else ""))
 
     report = {
-        "post_gate_version": "v1.3",
+        "post_gate_version": "v1.4",
         "first_pass_gate_status": prior.get("gate_status"),
         "hard_fail_reasons": min_fails,
         "still_leaks": leaks,
@@ -142,6 +192,10 @@ def main(final_text: str, manifest: str, prior_report: str,
         "audit_missing_after_repair": audit_missing_after_repair,
         "positions": pos,
         "stale_value_override": stale_override,
+        "stale_value_override_advisory": stale_advisory,
+        "positions_dropped_after_draft": dropped,
+        "positions_dropped_new": dropped_new,
+        "positions_introduced_by_gate": gate_authored,
         "blanket_statement_in_final": blanket_in_final,
         "blanket_statement_in_draft": blanket_in_draft,
         "blanket_introduced_by_gate": blanket_introduced_by_gate,

@@ -14,7 +14,7 @@ v1.1 的设计根基错误：整个闸门跑在"模型自报四个触发标志"�
 import json
 import re
 
-__all__ = ['ABSENCE_NEAR', 'ACTION_MARKER', 'ADVISORY_SLOT_SUBJECTS', 'ALWAYS_ITEMS', 'BLANKET_CARRY', 'BODY_KEYWORDS', 'CONDITIONAL_VOID', 'EMPTY_SLOT_VALUES', 'HOLLOW_EXACT', 'LABEL_SHELL', 'LEAK_PATTERNS', 'MIN_ANCHOR_CHARS', 'MIN_BODY_CHARS', 'MIN_NON_REFERENCE_CHARS', 'MIN_SENTENCES', 'NEGATION_BEFORE', 'NOW_MARKER', 'PAST_MARKER', 'POS_NEW_KINDS', 'POS_STATUS', 'PROPOSAL_THESIS', 'PROPOSAL_WINDOW', 'QTY_SUBJECTS', 'REF_ALIASES', 'REF_DISPLAY', 'REF_NEGATION', 'REF_NOUN', 'REF_SENTENCE', 'SHELL_FAMILY', 'SLOT_ABSENCE_VALUE', 'SLOT_NAMES', 'SLOT_SUBJECTS', 'TRIGGER_ITEMS', '_CN_NUM', '_PUNCT', '_SLOT_HEAD', '_norm', '_nows', '_parse_slots', '_per_week', '_qty', '_segments', '_slot_filled', 'check_input_contradiction', 'check_items', 'check_leaks', 'check_manifest', 'check_min_output', 'check_positions', 'check_stale_value_override', 'compute_triggers_from_input', 'has_blanket_carry', 'parse_audit', 'parse_positions_declaration', 'parse_standing_positions', 'positive_hit', 'proposal_shape_hit', 'render_body', 'resolve_triggers', 'split_audit']
+__all__ = ['ABSENCE_NEAR', 'ACTION_MARKER', 'ADVISORY_SLOT_SUBJECTS', 'ALWAYS_ITEMS', 'BLANKET_CARRY', 'BODY_KEYWORDS', 'CONDITIONAL_VOID', 'EMPTY_SLOT_VALUES', 'HOLLOW_EXACT', 'LABEL_SHELL', 'LEAK_PATTERNS', 'MIN_ANCHOR_CHARS', 'MIN_BODY_CHARS', 'MIN_NON_REFERENCE_CHARS', 'MIN_SENTENCES', 'NEGATION_BEFORE', 'NOW_MARKER', 'PAST_MARKER', 'POS_NEW_KINDS', 'POS_STATUS', 'PROPOSAL_THESIS', 'PROPOSAL_WINDOW', 'QTY_SUBJECTS', 'REF_ALIASES', 'REF_DISPLAY', 'REF_NEGATION', 'REF_NOUN', 'REF_SENTENCE', 'SHELL_FAMILY', 'SLOT_ABSENCE_VALUE', 'SLOT_NAMES', 'SLOT_SUBJECTS', 'TRIGGER_ITEMS', '_CN_NUM', '_PUNCT', '_SLOT_HEAD', '_negated_at', '_norm', '_nows', '_parse_slots', '_per_week', '_fmt_q', '_qty', '_qty_scan', '_segments', '_slot_filled', 'check_input_contradiction', 'check_items', 'check_leaks', 'check_manifest', 'check_min_output', 'check_positions', 'check_stale_value_override', 'compute_triggers_from_input', 'has_blanket_carry', 'parse_audit', 'parse_positions_declaration', 'parse_standing_positions', 'positive_hit', 'proposal_shape_hit', 'render_body', 'resolve_triggers', 'split_audit']
 
 # ---------------------------------------------------------------- 常量（冻结）
 
@@ -687,7 +687,17 @@ def check_positions(input_pos, decls, bad_lines, body, used_spans=()):
     }
 
 
-# ================================================================ 旧值压过输入（G-4）
+# ================================================================ 旧值压过输入（G-4 v2）
+# REBIND_005 §2：v1 的判据在 61 例真实运行上命中 12 次、误报 11 次，6 次拒收了合格交付。
+# 根因只有一句：**没有周期的数字不是速率主张**。「用一条内容同时覆盖四个目标」里的
+# 「一条」是量词，不是发布量；v1 把它和槽位里的「3 条/周」直接比，于是几乎只在
+# 冻结判据**要求**的行为（三值分离、等价换算、拒绝合并）上开火。
+#
+# v2 把「数字」和「速率」分开：
+#   带周期的数字   → 正式判据，可阻断；
+#   不带周期的数字 → 只记 advisory，不阻断（宁可少挡，不可挡掉对的）。
+# 两个方向的数字（误报、漏检）都必须在真实语料上量出来并写进证据——这条方法义务
+# REBIND_004 §2.2 只给了 G-2，REBIND_005 §3 补给 G-4。
 _CN_NUM = {"零": 0, "一": 1, "两": 2, "二": 2, "三": 3, "四": 4, "五": 5,
            "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
 
@@ -699,13 +709,48 @@ QTY_SUBJECTS = {
 NOW_MARKER = r"当前|本周|这周|现在|目前|眼下|如今|此刻"
 PAST_MARKER = r"上周|上一轮|上个?周期|之前|原来|原本|曾|此前|过去|历史上|当初"
 
+# 序数与指代前缀：「第一条」「下一条」「另一条」——数的是内容的第几条，不是一周几条。
+# 不排掉它们，一个「本周三条内容：第一条讲价格…」就会被读成「本周 1 条」。
+ORDINAL_PREFIX = "第下上这那另某每前后同各"
+# 周期词回看窗口。「本周实际产能只有一条」从「一」往回 8 个字就能看到「本周」。
+PERIOD_LOOKBACK = 12
+PERIOD_WORD = re.compile(r"(每|本|这|一|该)\s*(天|日|周)")
+PERIOD_PREFIX = re.compile(r"每\s*(天|日|周)\s*(?:约|大约|差不多|近|上下|将近)?\s*$")
+# advisory：无周期的数字要离主语足够近才值得记一笔，否则整段里任何一个「一条」都会响。
+ADVISORY_NEAR = 12
+# 谓语式：主语**后面**紧跟系动词/量度词再接数字 —— 「当前实际产能只有一条」。
+# 这一支专门捞「没写周期但确实在给主语赋值」的真覆盖（S1、E04 都是这个形状）。
+# 它和量词式的区别是位置和结构，不是措辞：量词式里数字在主语**前面**（「用一条内容
+# 同时覆盖四个目标」），或者中间隔着标点（「长期价值目标下，两条反馈…」）。
+PREDICATE_COPULA = re.compile(r"是|为|只有|仅有|只剩|剩下|只能|仅能|能做|可做|做得了|"
+                              r"排得下|可投入|支撑|上限|降到|降为|不足|实际是|实为")
+PREDICATE_GAP_MAX = 14
+PREDICATE_NO_PUNCT = re.compile(r"^[^，。；、,:：!！?？\n]*$")
+# 否定语境：「不为凑三条把本周压缩成一条内容」说的是**不这么做**，不是「当前是一条」。
+# 用的是本文件已有的 `NEGATION_BEFORE`（G-2 探索位那一层同款回看），不另造一套词表。
+# `NEG_CANCEL` 挡住「不是每周 3 条，而是每周 1 条」——转折之后那个数仍然是主张。
+NEG_LOOKBACK = 16
+NEG_CANCEL = re.compile(r"而是|实际是|其实是|应为|应该是|改为|调整为|降到|降为|提到|提为")
 
-def _qty(text):
-    """抽 (数量, 单位)。三件事必须同时做对，少一件就会重演第 5 轮的漏检/误报：
-      1. 中文数字与阿拉伯数字都认——只认阿拉伯数字正是七步全被误记成「未重述」的原因；
-      2. 「每周约 21 条」「每天大约 3 条」这类带模糊词的单位前缀要认——
-         认不出就会把 Founder 第 3 条**明确允许**的等价换算判成矛盾；
-      3. 前缀式（每周 N 条）与后缀式（N 条/周）都认。
+
+def _negated_at(seg, at):
+    pre = seg[max(0, at - NEG_LOOKBACK):at]
+    last = None
+    for last in re.finditer(NEGATION_BEFORE, pre):
+        pass
+    if last is None:
+        return False
+    return not NEG_CANCEL.search(pre[last.end():])
+
+
+def _qty_scan(text):
+    """抽出全部「N 条」，并逐个判断它**有没有绑定周期**。
+
+    绑定来源三种，优先级从强到弱：
+      suffix  `3 条/周`
+      prefix  `每周约 3 条`
+      word    同一句里数字前 12 字内出现「本周／这周／一周／每天」等周期词
+    三种都没有 ⇒ `unit=None`，这个数字**不是速率主张**，不进正式判据。
     """
     out = []
     t = text or ""
@@ -714,20 +759,31 @@ def _qty(text):
         n = int(raw) if raw.isdigit() else _CN_NUM.get(raw)
         if n is None:
             continue
-        unit = m.group(2)
+        if m.start() > 0 and t[m.start() - 1] in ORDINAL_PREFIX:
+            continue                      # 第一条／下一条／另一条：序数，不是速率
+        unit, src = m.group(2), ("suffix" if m.group(2) else None)
         if not unit:
-            # 向前看一小段找单位前缀，允许中间夹模糊词
-            pre = t[max(0, m.start() - 10):m.start()]
-            mp = re.search(r"每\s*(天|日|周)\s*(?:约|大约|差不多|近|上下|将近)?\s*$", pre)
+            pre = t[max(0, m.start() - PERIOD_LOOKBACK):m.start()]
+            mp = PERIOD_PREFIX.search(pre)
             if mp:
-                unit = mp.group(1)
-        out.append((n, {"日": "天"}.get(unit, unit)))
+                unit, src = mp.group(1), "prefix"
+            else:
+                mw = PERIOD_WORD.search(pre)
+                if mw:
+                    unit, src = mw.group(2), "word"
+        out.append({"n": n, "unit": {"日": "天"}.get(unit, unit),
+                    "period_source": src, "start": m.start(), "end": m.end()})
     return out
+
+
+def _qty(text):
+    """兼容旧签名：只返回 (数量, 单位)。判据本身已改用 `_qty_scan`。"""
+    return [(q["n"], q["unit"]) for q in _qty_scan(text)]
 
 
 def _per_week(n, unit):
     """§3 的等价换算：每天 N 条 ⇒ 每周 7N 条。换算本身**不是**矛盾，
-    缩小目标量才是。单位缺失时不归一，只做同形比较。"""
+    缩小目标量才是。单位缺失时不归一，返回 None。"""
     if unit == "天":
         return n * 7
     if unit == "周":
@@ -735,44 +791,69 @@ def _per_week(n, unit):
     return None
 
 
-def check_stale_value_override(slots, body):
-    """只挡一个方向：正文用一个**现时性**的数量断言，压过当轮输入里该槽位的权威值。
+def _fmt_q(qs):
+    return "、".join(f"{q['n']}条/{q['unit'] or '?'}" for q in qs)
 
-    不挡「解释产能为什么会变」——那要写在输入里才算数。
-    不挡历史对比、不挡逐字引用输入原值后的比较。
+
+def check_stale_value_override(slots, body):
+    """只挡一个方向：正文用一个**现时性、带周期**的速率断言，压过当轮输入里该槽位的权威值。
+
+    不挡量词（「用一条内容同时覆盖四个目标」）——那不是速率。
+    不挡等价换算（每天 3 条 ⇒ 每周 21 条）——Founder 第 3 条逐字授权。
+    不挡三值分离的原句——三个数与槽位一致时整段豁免。
+    不挡历史对比，不挡逐字引用输入原值后的比较。
+
+    返回 (blocking_hits, advisory)。advisory 记的是「数字对不上但没有周期」的情形：
+    看得见、不阻断。漏检就漏在这里，所以它必须被记出来，而不是消失。
     """
-    hits = []
+    hits, advisory = [], []
     for slot, subj in QTY_SUBJECTS.items():
         raw = slots.get(slot)
         if raw is None or not _slot_filled(raw):
             continue
-        slot_q = _qty(raw)
+        slot_q = [q for q in _qty_scan(raw) if q["unit"]]
         if not slot_q:
             continue
+        slot_pw = {_per_week(q["n"], q["unit"]) for q in slot_q}
+        slot_n = {q["n"] for q in slot_q}
         for seg in _segments(body or ""):
-            if not re.search(subj, seg):
+            ms = re.search(subj, seg)
+            if not ms:
                 continue
             if not re.search(NOW_MARKER, seg):
                 continue
             if re.search(PAST_MARKER, seg):
                 continue
-            body_q = _qty(seg)
-            if not body_q:
-                continue
-            # 逐字引用了槽位原值 ⇒ 在做对比，不是覆盖
-            def _same(a, b):
-                """两边都缺单位时 _per_week 都是 None——那不是「相等」，是「都不知道」。
-                把它当相等会漏检，正是第 5 轮那类静默通过的形态。"""
-                pa, pb = _per_week(*a), _per_week(*b)
-                return (pa is not None and pa == pb) or a == b
-            if any(_same(a, b) for a in slot_q for b in body_q):
-                continue
-            def fmt(q):
-                return "、".join(f"{n}条/{u or '?'}" for n, u in q)
-            hits.append(f"{slot}: 输入权威值 {fmt(slot_q)}，正文却断言当前是 {fmt(body_q)}"
-                        f" —— 「{seg.strip()[:60]}」")
-            break
-    return hits
+            qs = _qty_scan(seg)
+            periodic = [q for q in qs if q["unit"] and not _negated_at(seg, q["start"])]
+            if periodic:
+                # 任一带周期的数与槽位归一后相等 ⇒ 在复述或换算，不是覆盖。
+                if any(_per_week(q["n"], q["unit"]) in slot_pw for q in periodic):
+                    continue
+                hits.append(f"{slot}: 输入权威值 {_fmt_q(slot_q)}，正文却断言当前是 "
+                            f"{_fmt_q(periodic)} —— 「{seg.strip()[:60]}」")
+                break
+            # 谓语式：主语后面 14 字内、中间不跨标点、且夹着系动词/量度词的那个数字，
+            # 是在给主语赋值。数值与槽位一致 ⇒ 复述，整段豁免；对不上 ⇒ 覆盖，阻断。
+            pred = [q for q in qs
+                    if q["start"] >= ms.end()
+                    and q["start"] - ms.end() <= PREDICATE_GAP_MAX
+                    and PREDICATE_NO_PUNCT.match(seg[ms.end():q["start"]])
+                    and PREDICATE_COPULA.search(seg[ms.end():q["start"]])
+                    and not _negated_at(seg, q["start"])]
+            if pred:
+                if any(q["n"] in slot_n for q in pred):
+                    continue
+                hits.append(f"{slot}: 输入权威值 {_fmt_q(slot_q)}，正文却把当前值说成 "
+                            f"{_fmt_q(pred)} —— 「{seg.strip()[:60]}」")
+                break
+            # 没有周期的数字：只有紧挨着主语、且数值也对不上时才记 advisory。
+            near = [q for q in qs
+                    if abs(q["start"] - ms.start()) <= ADVISORY_NEAR and q["n"] not in slot_n]
+            if near:
+                advisory.append(f"{slot}: 输入权威值 {_fmt_q(slot_q)}，正文里紧邻主语出现无周期的 "
+                                f"{_fmt_q(near)} —— 「{seg.strip()[:60]}」（无周期，不阻断）")
+    return hits, advisory
 
 
 BLANKET_CARRY = (r"(其余|其他|未涉及|未受影响|不受影响|没有涉及|以外)[^。；;\n]{0,24}"

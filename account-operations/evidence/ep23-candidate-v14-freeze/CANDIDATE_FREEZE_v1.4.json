@@ -1,0 +1,74 @@
+{
+  "candidate": "M3 载体 v1.4",
+  "frozen_by": "M3_ECC_REBIND_005_FROZEN_v1.0.md §8",
+  "authorized_by": "Founder CONTINUE_TASK 2026-08-27（第 1—8 条合并为一个最终修复批次）",
+  "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+  "supersedes": "ep15-candidate-v13-freeze/CANDIDATE_FREEZE_v1.3.json（不覆盖，原文保留）",
+  "dify": {
+    "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+    "published_version_name": "m3-cand-v1.4-fix",
+    "draft_graph_hash": "ea04fa92c6b8ad34b35025bd4e75c2dce214fa30bda816aaecc9a3c4023fe3cc",
+    "prev_graph_hash": "4760428dbd760ac1ef980b5ec9f61e190eba1f097ad35f7a8c9db89c41ec623f",
+    "nodes": [
+      "start",
+      "llm(写正文)",
+      "code(必填项闸门)",
+      "llm(补齐)",
+      "code(确定性取稿)",
+      "code(闭合复检)",
+      "end"
+    ],
+    "shape_unchanged_vs_v13": true
+  },
+  "system_prompt": {
+    "sha256": "068a30af07f089714fd9c6b428a879010dd04707b6f1134ee7d51dd815aff8c5",
+    "full_text": "account-operations/evidence/ep24-ac16-canvas-and-prompt/published_system_prompt_full.txt",
+    "read_from": "GET /console/api/apps/{app}/workflows/publish（已发布，非草稿）"
+  },
+  "canvas_evidence": "account-operations/evidence/ep24-ac16-canvas-and-prompt/CANVAS_EVIDENCE.json（含两张渲染截图）",
+  "source_sha256": {
+    "SKILL.md": "c8f6805bb8e54ed85eced02af42f0af8c0ce0c276a0c079313d4221f3ce3b978",
+    "references/fashion-and-market.md": "cee04beadafa604e6be3e8bf6c0c8677a000f854fe53f7d3d78b0703950f32aa",
+    "references/six-skill-methods.md": "e3798308988c2b12e1d450a610b429772944ec88c9f2cf1d26f4b16f4465ec6b",
+    "gate_v13/shared_checks.py": "6c8c4f78d0152e3da99bc2604d08d599b40d7acd42625502273642c81965aa30",
+    "gate_v13/gate_main.py": "9f0e96c02552adb721aa7b508727e2213dc4001b6b7122cedafec8b27b764ae5",
+    "gate_v13/assemble_main.py": "2d1a5fd4e1ba91e50889e7b997618479a196827959032a1577bd843147448a76",
+    "gate_v13/post_gate_main.py": "ac0d644055b367b65db105a6ceba1ef9dac5ec7d95079fa39417731841d3e931",
+    "gate_v13/projection_v13.py": "6b9b31443b68e4574625bd2274929d0c4413ee87b206a25a2449245e2fcbdd35",
+    "fixtures/gate_fixtures_v13.json": "87d84a1e8af2e4cde3fe1dec019abd953c80b48bf44836dd99a24120ac7f362e",
+    "oracle/BEHAVIOR_CASES_v2.json": "13e95684e387980267f2f4c2479c2b94bd04caf280cdb37e4b0d762f80286274",
+    "rebind005/verify_g4_v2.py": "9c8b1446f4f516fb9d2401afb144d2367181844d232db10b6abf07ca3cec9b72",
+    "rebind005/verify_d1_d3.py": "8e45de7ad9720d8bd6486cee663f2faad33a2af35acd49d651a561be205969b3",
+    "REBIND_005": "201bf75fa1d9d3422960d9019e2deeac9be1f10673ab5a8aff76c237d455bb99"
+  },
+  "changed_vs_v13": [
+    "SKILL.md",
+    "gate_v13/gate_main.py",
+    "gate_v13/post_gate_main.py",
+    "gate_v13/shared_checks.py"
+  ],
+  "unchanged_vs_v13": [
+    "fixtures/gate_fixtures_v13.json",
+    "gate_v13/assemble_main.py",
+    "gate_v13/projection_v13.py",
+    "oracle/BEHAVIOR_CASES_v2.json"
+  ],
+  "a_baseline_untouched": {
+    "file": "scratch:m3/ab/A_baseline_prompt.md",
+    "sha256": "160742918653b3f27ee2cbd072e86fada7dfa320978766f209b8254119eaa935",
+    "note": "Founder 第 7 条：不降低 A 基线。本轮一字未改；与第 7 轮同一文件同一哈希。"
+  },
+  "impact_surface_a3": {
+    "rerun": [
+      "EP-06 保真",
+      "EP-06b 行为",
+      "EP-07 纵向",
+      "EP-08 A/B + 36 盲评",
+      "确定性测试全套"
+    ],
+    "not_rerun": [
+      "AC-12/AC-13 对 main@a7b8101 的定向复验"
+    ],
+    "why_not_rerun": "M2 侧一字未动；本轮改动全部落在 M3 域内，与 M2 接口无依赖边。按 A3 不多算。"
+  }
+}
