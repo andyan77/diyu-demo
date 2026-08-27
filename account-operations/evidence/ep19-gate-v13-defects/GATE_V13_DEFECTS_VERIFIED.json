@@ -1,0 +1,90 @@
+{
+  "what": "对纵向判定者三条缺陷报告的机械复核",
+  "scope": "只读已冻结证据；未改任何判据，未重跑任何取证",
+  "source_of_claims": "M3_ECC_LONGITUDINAL_001_VERDICT_V13_v1.0.md（独立判定者）",
+  "D-1_new_position_dropped_by_repair": {
+    "claim": "模型声明的新持续位可以在补齐环节被删掉，而三处计数器全为空",
+    "confirmed": true,
+    "occurrences": [
+      {
+        "step": "E04",
+        "gate_declared": [
+          "NEW:选品判断支柱验证",
+          "NEW:通勤衣橱一件多穿验证"
+        ],
+        "post_gate_declared": [
+          "NEW:选品判断支柱验证"
+        ],
+        "lost_between_gate_and_repair": [
+          "NEW:通勤衣橱一件多穿验证"
+        ],
+        "positions_unaccounted_at_gate": [],
+        "projection_positions_unaccounted": [],
+        "projection_declared_new": [],
+        "prose_still_carries_it": true
+      }
+    ],
+    "why_counters_stay_empty": "positions_unaccounted 的定义是「输入里有、声明里没有的 id」。本轮新声明的位不在输入里，被删掉之后它既不在输入也不在声明，因此不进任何差集 —— 计数器在定义上就看不见这类丢失。",
+    "which_frozen_text_it_violates": "REBIND_004 §2.1：「positions_unaccounted[] ... 它非空即阻断，因此不会再出现『字段全程为空而内容全丢』这种事——空与不空这次真的有区别。」本例证明该断言对**本轮新增的位**不成立。"
+  },
+  "D-3_repair_authors_the_pos_line": {
+    "claim": "补齐节点可以代模型写出 POS 行，从而替它满足连续性判据",
+    "confirmed": true,
+    "gate_audit_block_missing": true,
+    "gate_declared": [],
+    "gate_positions_unaccounted": [
+      "NEW:选品判断支柱验证"
+    ],
+    "gate_blocking": true,
+    "post_gate_declared": [
+      "NEW:选品判断支柱验证"
+    ],
+    "blanket_introduced_by_gate": false,
+    "why_the_existing_guard_misses_it": "blanket_introduced_by_gate 只盯「其余保持不变」这一类概括句，不盯补齐节点代写的 POS 机器行。同一个病走了另一扇门。",
+    "which_frozen_text_it_violates": "REBIND_004 §2.1：「判据能被闸门自己满足，就对模型没有约束力。」"
+  },
+  "D-2_stale_override_false_positive": {
+    "claim": "主语锚里的裸词「目标」使旧值覆盖检查在无发布量主张的句子上命中",
+    "confirmed": true,
+    "subject_anchor_regex": "目标|期望发布|计划发布|想发|要发",
+    "segments_matching_anchor": 15,
+    "segments_matching_anchor_without_any_publishing_word": 14,
+    "examples": [
+      {
+        "anchor_word": "目标",
+        "segment": "只修改验证条件.\" But the output format requires \"受影响的任务，或明确的无任务结论.\" We can say \"受影响的是验证序列的观察目标和复验条件",
+        "has_now_marker": false,
+        "mentions_publishing": false
+      },
+      {
+        "anchor_word": "目标",
+        "segment": "1. 选品判断支柱验证（继续，但更新观察目标）：从“只看完播率”改为“完播 + 互动 + 关注变化 + 评论区是否继续出现上身诉求”，并新增一个待验证变量：在商品细节/选品判断内容里加入可信上身证据后，反应是否明显不同",
+        "has_now_marker": false,
+        "mentions_publishing": true
+      },
+      {
+        "anchor_word": "目标",
+        "segment": "不承载其他目标",
+        "has_now_marker": false,
+        "mentions_publishing": false
+      },
+      {
+        "anchor_word": "目标",
+        "segment": "We are changing a bit. Need clearly state which judgments remain unchanged. Need perhaps \"上一轮的判断保持不变的部分：方向不变、四周任务不变、每周三条",
+        "has_now_marker": false,
+        "mentions_publishing": false
+      },
+      {
+        "anchor_word": "目标",
+        "segment": "Need \"primary objective 长期价值\" and \"not use short-term data to replace value\": Need state \"既然主目标是长期价值，这个反馈不是用来追一轮流量，而是看它是",
+        "has_now_marker": false,
+        "mentions_publishing": false
+      }
+    ],
+    "what_actually_fired": [
+      "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 1条/? —— 「2. 条件性内容任务：如果本周能安排试穿、或拿到可信的上身素材，下一条同类商品细节内容就以上身证据作为验证点，这条任务只」"
+    ],
+    "consequence": "E06 整份交付被拒收（carry_blocking=true），该步独有的三项安排在 E07–E12 永久消失。",
+    "why_this_one_is_different": "D-1/D-3 是实现没做到自己冻结的判据，修它不改判据。D-2 相反：§2.3 把主语锚正则**逐字冻结**了，收窄它就是在看到结果之后改判据，按 A2 会使本轮 G-4 相关取证降为探索级。因此不在本轮自行改动。"
+  }
+}
