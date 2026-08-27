@@ -996,3 +996,155 @@ note: |
 of_record: "第 3 次"
 evidence: "decision-chain/evidence/m4/M4_AFFECTED_SCOPE_CLOSING.json"
 ```
+
+---
+
+# AC-31 用户可见交付非空修复 · 窄范围 REBASE（M4_ENGINEERING_EXECUTION_PROMPT_v1.4）
+
+```yaml
+task_id: "V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001"   # 不变
+task_entry_mode: "REBASE_TASK"
+previous_task_contract_hash: "b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6"
+current_task_contract_hash: "a5735c319402056f3c8552da229c816324a8a4ce56f36e0d781924114d68b40a"
+evidence_contract: "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.4.md（新版本，未原地修改 v0.2/v0.3）"
+```
+
+## M4-RB31-07 · Founder 权威事件入账（分层，不改写技术结果）
+
+```yaml
+founder_product_acceptance: "ACCEPTED"
+founder_blind_review_disposition: "ADOPT_EXECUTION_SIDE_CONCLUSION"
+founder_inconclusive_disposition: "FOUNDER_ONE_TIME_DEGRADED_ACCEPTANCE"
+technical_results_rewritten: false
+AC31_waived: false
+
+prior_technical_facts_preserved:
+  file: "decision-chain/evidence/m4/M4_POST_REVIEW_VERDICTS.json"
+  sha256: "0fd21300b5df3546b6749e000af922808b122bdf50007b19e3c629857337a20a"
+  PASS: 16
+  FAIL: 1
+  NOT_VERIFIED: 14
+  note: "文件本轮零改动；现场复算 sha256 与上值相等"
+```
+
+**分层含义**：Founder 接受的是产品语义与风险，不是技术证据。任何 `NOT_VERIFIED`
+在本账本中一律保持 `NOT_VERIFIED`，只在其旁并列记录 Founder 处置，不合并成 `PASS`。
+
+## 根因（M4-FND-020 / AC-31①）
+
+```yaml
+highest_damaged_layer: "输出合同没有兜底"
+evidence:
+  FA-10: "原始模型输出 4470 字，三对区块标记一个都没有"
+  FA-27: "原始模型输出 8629 字，只有 RETURNS 标记；末句「以上为完整专业产出，据此进入 M4 三块交付物。」"
+  FA-32: "原始模型输出 4075 字，三对区块标记一个都没有"
+mechanism: |
+  解析器要求区块标记；标记全无时把 raw 存进内部块、用户块置空。
+  守卫（D-01b）能检测到这一点，但只登记 Return，不恢复用户交付。
+  三次平台状态均为 succeeded / partial-succeeded —— 技术运行完成被当成了业务交付成功。
+not_root_cause: ["网络", "Token 截断", "模型服务不可用", "随机偶发"]
+```
+
+## 修法（三层，全部位于 skill_llm 之后，不碰专业生成）
+
+```yaml
+1_解析层: "returns_adapter 新增 needs_projection / projection_source：
+           专业内容已生成（≥400 字）但用户块缺失/空/回指时置 true"
+2_有界投影: "recovery_llm 一次有界用户投影。硬约束写在提示词里：
+             不新增业务事实、不重新做专业生产、不整份抄原文、不出现内部技术词、
+             不省掉用户必须知道的结论与条件；原文本身是阻断时如实讲阻断"
+3_交付收口: "delivery_finalize 保证非空，并把技术运行与业务交付分开：
+             DELIVERED / DELIVERED_AFTER_RECOVERY / NOT_DELIVERED。
+             投影结果过内部词泄漏检查，不合格落回 NOT_DELIVERED 并给非空自然语言说明"
+4_接缝: "SEAM_FINALIZE 的 completeness_guard 增加 business_delivery_outcome /
+         user_projection_used；NOT_DELIVERED 时登记组件级 Return。
+         接缝 END 零新增外壳字段（保护 AC-02）"
+model_params_unchanged: true
+recovery_llm_model: "与 skill_llm 同一 MODEL 常量，生成器硬断言 V5b"
+```
+
+## 复验结果（绑定新候选）
+
+```yaml
+M4-RB31-01: "PASS —— FA-10/FA-27/FA-32 以冻结输入精确重放（input_sha256 三条全等），
+             8/8 合取项成立；用户正文 603 / 594 / 519 字；原记录 sha256 未变"
+M4-RB31-02: "PASS —— 十种输出合同畸形情况（含投影为空、投影泄漏两种子情况）
+             全部落入 A（非空交付）或 B（非空且明确未成功交付），无一例『成功+空串』"
+M4-RB31-03: "PASS —— 11 次新运行零内部词泄漏、零整份复制、零空洞回指"
+M4-RB31-04: "PASS —— 投影节点 ≤1、能力调用 ≤1、同输入重复提交产生独立 run_id 且均正常交付"
+M4-RB31-05: "FAIL —— 见 M4-FND-024"
+M4-RB31-06: "PASS —— 影响面按真实依赖图给出，受影响 5 项已定向复验，26 项注明复用理由"
+M4-RB31-07: "PASS —— 见上"
+M4-RB31-08: "见最终收口回执"
+
+受影响 criterion 定向复验:
+  AC-31: "NOT_VERIFIED（①②③⑤ PASS，④ 继承的既有 NOT_VERIFIED）"
+  AC-12: "PASS"
+  AC-13: "NOT_VERIFIED（三项 PASS，一项属 Founder 产品语义域）"
+  AC-14: "NOT_VERIFIED（四项 PASS，一项需真实外部副作用场景，本轮明令不制造）"
+  AC-16: "远端收口后复算"
+```
+
+## 本轮新登记 Finding
+
+```yaml
+- id: "M4-FND-021"
+  what: "负向测试脚本把区块标记硬编码成 ---M4_ARTIFACT_END--- / ---M4_USER---，
+         与上线合同的 ---END_M4_ARTIFACT--- / ---M4_USER_DELIVERY--- 不符，
+         导致前两轮全部十个用例都在测『标记缺失』这一种情况"
+  severity: "MEDIUM"
+  status: "FIXED"
+  fix: "改为从被测节点代码的 A_OPEN/U_OPEN/R_OPEN 常量读取，测试夹具与上线合同不再各写一套"
+  self_note: "这是我自己的器械错误，不是产品缺陷。第一轮的 PASS 是假的。"
+
+- id: "M4-FND-022"
+  what: "RB31-03② 的实现（`ud in art`）比取证合同 §3 的冻结判据
+         （最长公共子串 < artifact 的 60% 且正文长度 < 80%）更严"
+  severity: "MEDIUM"
+  status: "FIXED"
+  fix: "按冻结判据逐字实现最长公共子串比较"
+  discipline_note: "改的是器械，不是判据。冻结判据一个字没动。"
+
+- id: "M4-FND-023"
+  what: "RB31-02 的判定里混入了 RB31-03 的判据（复制/泄漏），
+         而取证合同 §1.2 把这十种情况指派给 RB31-02，其判据只有『必须落入 A 或 B』"
+  severity: "MEDIUM"
+  status: "FIXED"
+  fix: "两个验收项分开判定；copy/leak 在负向套件里降为观测量，不参与 RB31-02 判定"
+
+- id: "M4-FND-024"
+  what: "RB31-05④『artifact 长度不低于同夹具基线的 80%』不具判别力"
+  severity: "HIGH"
+  status: "OPEN_RECORDED"
+  evidence: |
+    本轮 PUBLISHING_PACKAGING / FX-M4-REALIZATION-FINAL 产出 3880 字，
+    基线 FA-07 为 7342 字 —— 53%，按冻结判据判 FAIL。
+    但同一条冻结夹具在**修复前**系统上的另一次运行 FA-38 只有 3495 字，
+    即修复前系统对自己就是 48%。该阈值以 n=1 比较两次 LLM 生成，
+    测的是生成波动，不是回归。旧证据里 PUBLISHING_PACKAGING 的
+    artifact 长度跨度为 3495–9229（2.6×）。
+  causal_finding: |
+    「本次修复是否削弱了专业产出」有决定性答案——没有：
+      · skill_llm 系统提示词逐字不变（PUBLISHING_PACKAGING：33352 字，sha=be58fb4284ab…）
+      · completion_params 不变，MODEL 常量不变
+      · 六份源 Skill sha256 6/6 零差异
+      · 改动全部位于 skill_llm 之后
+      · 11 次新运行中投影节点触发 0 次
+  disposition: "如实判 FAIL，不改判据迁就结果；判据的判别力问题连同证据一并交独立 Reviewer"
+
+- id: "M4-FND-025"
+  what: "本轮新增的用户投影恢复路径，Runtime 级未观察到触发"
+  severity: "MEDIUM"
+  status: "OPEN_RECORDED"
+  detail: |
+    11 次新 Runtime 运行中模型均正常输出了交付块标记，needs_projection 全为 false，
+    recovery_llm 一次未执行。该路径目前只有节点代码级取证
+    （DETERMINISTIC_NODE_VERIFIED —— 按本项目既有等级，低于 Runtime Oracle，不产生 criterion PASS）。
+    原缺陷本身是间歇性的：同样三条冻结输入，修复前空、修复后不空，
+    但修复后这三次也没有复现缺陷条件，因此重放证明的是「同一输入现在不空」，
+    **不证明恢复路径起了作用**。
+  why_not_sampled: |
+    要观察触发就得重复采样。取证合同 v0.4 §4 明写「本合同不设置任何取样条款」，
+    看到结果之后再加取样条款就是在改冻结合同迁就结果，不做。
+  disposition: "如实登记，交独立 Reviewer"
+```

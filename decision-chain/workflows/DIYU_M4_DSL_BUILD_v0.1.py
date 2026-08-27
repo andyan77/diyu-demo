@@ -618,9 +618,16 @@ def main(final_text):
         or user_status != "OK"
     )
 
+    # AC-31 修复：专业内容已生成但用户交付块缺失/为空/回指 ⇒ 需要一次有界用户投影。
+    # 判据来自取证判据合同 v0.2 §1.1 的冻结阈值，不新增业务事实。
+    _sub = (artifact_out or "").strip()
+    _needs = (user_status != "OK" or not (user_out or "").strip()) and len(_sub) >= MIN_ARTIFACT_CHARS
+
     return {
         "artifact": artifact_out,
         "artifact_status": artifact_status,
+        "needs_projection": "true" if _needs else "false",
+        "projection_source": _sub if _needs else "",
         "user_delivery": user_out,
         "user_delivery_status": user_status,
         "user_delivery_leaks": leaks,
@@ -634,6 +641,104 @@ def main(final_text):
         "capability": CAPABILITY,
     }
 '''
+
+RECOVERY_PROJECTION_PROMPT = """你要做的**只有一件事**：把下面这份已经写好的专业产出，投影成一份**给用户看的自然语言正文**。
+
+## 硬约束
+
+1. **不得新增任何业务事实。** 只能用下面这份产出里已经存在的内容。产出里没有的商品、价格、面料、顾客、数字、平台数据，一个都不许补。
+2. **不得重新做一次专业生产。** 不重新判断、不换方向、不补候选、不改结论。你不是在写一份新的产出，你是在把已有的产出讲给用户听。
+3. **不得把整份原文抄过来。** 用户要的是能读、能判断、能据此行动的那部分，不是内部留档。
+4. **不得出现任何内部技术词**：字段名、状态码、节点名、哈希、trace、系统提示、自检过程、被淘汰的候选及其淘汰原因、`PARSE_FAIL`、`NOT_APPLICABLE`、`STALE` 之类。
+5. **不得省掉用户必须知道的东西**：结论、成立条件、限制、必要的选择、下一步。「不泄露内部」不等于「少给用户」。
+6. 如果原文本身就是一次**阻断**（资料不足、权限不成立、无法安全产出），那就如实把阻断讲清楚：缺什么、为什么卡住、需要补什么，用自然语言说。
+
+## 写法
+
+- 直接开始写正文，不要写「好的」「以下是」这类开场；
+- 不要标题党，不要总结这份任务；
+- 该分段就分段，该列点就列点；
+- 用用户能懂的话，不用工程化表达。
+
+## 已写好的专业产出
+
+{{#returns_adapter.projection_source#}}
+"""
+
+
+DELIVERY_FINALIZE_CODE = r'''
+import json
+
+# AC-31 交付收口：无论走哪条路径，用户都必须拿到非空正文。
+# 技术运行 succeeded != 业务交付成功；两者在此显式分离。
+
+LEAK = ["PARSE_FAIL", "SEAM_COMPLETENESS_GUARD", "NOT_APPLICABLE", "STALE",
+        "NOT_VERIFIED", "returns_json", "artifact_status", "user_delivery_status",
+        "system prompt", "goal_family", "capability_call", "professional_payload"]
+
+
+def main(adapter_user_delivery, adapter_status, needs_projection,
+         recovered_text, returns_json, capability):
+    ud = (adapter_user_delivery or "").strip()
+    rec = (recovered_text or "").strip()
+    need = str(needs_projection or "").strip().lower() == "true"
+
+    try:
+        rets = json.loads(returns_json or "[]")
+    except Exception:
+        rets = []
+
+    if not need and ud:
+        return {"user_delivery": ud, "delivery_outcome": "DELIVERED",
+                "user_delivery_status": adapter_status or "OK",
+                "returns_json": returns_json or "[]",
+                "recovery_used": "false"}
+
+    # ── 有界局部恢复：最多一次，已在上游完成 ──
+    if rec and len(rec) >= 80:
+        leaked = [w for w in LEAK if w in rec]
+        if not leaked:
+            return {"user_delivery": rec, "delivery_outcome": "DELIVERED_AFTER_RECOVERY",
+                    "user_delivery_status": "RECOVERED",
+                    "returns_json": json.dumps(rets + [{
+                        "return_id": "M4-RET-PROJECTION-RECOVERED",
+                        "source": "DELIVERY_FINALIZE",
+                        "highest_damaged_layer": "OUTPUT_CONTRACT_BLOCK_MARKERS",
+                        "precise_gap": "模型未输出用户交付块标记；已由一次有界用户投影补齐",
+                        "affected_objects": ["本次 %s 调用的用户交付块" % capability],
+                        "proposed_disposition": "ACCEPT_AND_PATCH",
+                        "needs_user_decision": False,
+                        "downstream_stale": [],
+                        "parse_status": "RECOVERED_ONCE",
+                    }], ensure_ascii=False),
+                    "recovery_used": "true"}
+
+    # ── 恢复失败：仍然必须给用户非空自然语言说明，且业务状态不是成功 ──
+    msg = (
+        "这一次没有成功给出可用的结果。\n\n"
+        "系统在内部已经把专业判断做出来了，但在整理成给你看的那一份时出了问题，"
+        "没能形成一份可以直接用的正文。\n\n"
+        "**这次不算交付成功**——请不要把上面的空白当成「没有结论」，"
+        "结论是有的，是整理环节断了。\n\n"
+        "你可以把同样的需求再提一次；如果第二次仍然这样，说明这条路径上有需要修的问题，"
+        "请把这次的情况反馈出来。"
+    )
+    return {"user_delivery": msg, "delivery_outcome": "NOT_DELIVERED",
+            "user_delivery_status": "PROJECTION_FAILED",
+            "returns_json": json.dumps(rets + [{
+                "return_id": "M4-RET-PROJECTION-FAILED",
+                "source": "DELIVERY_FINALIZE",
+                "highest_damaged_layer": "OUTPUT_CONTRACT_BLOCK_MARKERS",
+                "precise_gap": "用户交付块缺失，且一次有界投影未产出可用正文",
+                "affected_objects": ["本次 %s 调用的用户交付块" % capability],
+                "proposed_disposition": "ESCALATE",
+                "needs_user_decision": True,
+                "downstream_stale": ["仅真实依赖本次 %s 产出的下游项" % capability],
+                "parse_status": "PROJECTION_FAILED",
+            }], ensure_ascii=False),
+            "recovery_used": "attempted"}
+'''
+
 
 BINDING_RECORD_CODE = r'''
 import hashlib
@@ -780,7 +885,8 @@ ALL_CAPS = ["MATRIX", "CAMPAIGN", "CONTENT_BRIEF", "CREATIVE_SCRIPT",
 
 def main(capability_resolved, entry_resolved, run_mode, derivation,
          tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,
-         tool_local_block, tool_artifact_status, tool_user_delivery_status):
+         tool_local_block, tool_artifact_status, tool_user_delivery_status,
+         tool_delivery_outcome, tool_recovery_used):
     invoked = [capability_resolved]
     skipped = [c for c in ALL_CAPS if c != capability_resolved]
 
@@ -797,7 +903,24 @@ def main(capability_resolved, entry_resolved, run_mode, derivation,
         "tool_local_block": tool_local_block,
         "artifact_status": tool_artifact_status,
         "user_delivery_status": tool_user_delivery_status,
+        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）
+        "business_delivery_outcome": tool_delivery_outcome or "UNKNOWN",
+        "user_projection_used": tool_recovery_used or "false",
     }
+
+    # 业务交付失败时，即使平台技术状态为 succeeded，也必须登记为未成功交付
+    if str(tool_delivery_outcome or "").strip().upper() == "NOT_DELIVERED":
+        rets = list(rets) + [{
+            "return_id": "M4-RET-NOT-DELIVERED-" + str(call_hash or "")[:8],
+            "source": "SEAM_DELIVERY_OUTCOME",
+            "highest_damaged_layer": "USER_DELIVERY_PROJECTION",
+            "precise_gap": "本次未形成成功的用户交付；平台技术状态不代表业务交付成功",
+            "affected_objects": ["本次 %s 调用的用户交付" % capability_resolved],
+            "proposed_disposition": "ESCALATE",
+            "needs_user_decision": True,
+            "downstream_stale": ["仅真实依赖本次 %s 用户交付的下游项" % capability_resolved],
+            "parse_status": "NOT_DELIVERED",
+        }]
 
     if str(tool_local_block or "").strip().lower() == "true":
         gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)
@@ -1277,6 +1400,7 @@ def build_capability_app(cap):
         "desc": "确定性 Returns / 交付分离。解析失败置 PARSE_FAILED 并保留原文，绝不伪装成 NONE。",
         "outputs": {
             "artifact": out_str(), "artifact_status": out_str(),
+            "needs_projection": out_str(), "projection_source": out_str(),
             "user_delivery": out_str(), "user_delivery_status": out_str(),
             "user_delivery_leaks": out_arr(), "returns_json": out_str(),
             "returns_status": out_str(), "returns_parse_note": out_str(),
@@ -1286,6 +1410,42 @@ def build_capability_app(cap):
         "selected": False, "title": "Returns / 交付适配器", "type": "code",
         "variables": [{"value_selector": ["final_extract", "output"], "variable": "final_text"}],
     }, 2140, 220))
+
+    nodes.append(node("projection_gate", {
+        "cases": [{"case_id": "recover", "conditions": [
+            {"comparison_operator": "is", "value": "true",
+             "variable_selector": ["returns_adapter", "needs_projection"]}],
+            "logical_operator": "and"}],
+        "desc": "专业内容已生成但用户交付块缺失/为空/回指 ⇒ 走一次有界用户投影；否则直通收口。",
+        "logical_operator": "and", "selected": False,
+        "title": "交付缺失判定", "type": "if-else",
+    }, 2440, 220))
+
+    nodes.append(node("recovery_llm", {
+        "context": {"enabled": False, "variable_selector": []},
+        "desc": "有界用户投影：只把已生成的专业产出讲给用户听，不新增事实、不重做生产。",
+        "memory": None, "model": MODEL,
+        "prompt_template": [{"role": "system", "text": RECOVERY_PROJECTION_PROMPT}],
+        "selected": False, "title": "用户交付投影（一次有界恢复）", "type": "llm",
+        "vision": {"enabled": False},
+    }, 2740, 120, 244, 120))
+
+    nodes.append(node("delivery_finalize", {
+        "code": DELIVERY_FINALIZE_CODE, "code_language": "python3",
+        "desc": "交付收口：保证用户正文非空；技术运行完成 != 业务交付成功。",
+        "outputs": {"user_delivery": out_str(), "delivery_outcome": out_str(),
+                    "user_delivery_status": out_str(), "returns_json": out_str(),
+                    "recovery_used": out_str()},
+        "selected": False, "title": "交付收口", "type": "code",
+        "variables": [
+            {"value_selector": ["returns_adapter", "user_delivery"], "variable": "adapter_user_delivery"},
+            {"value_selector": ["returns_adapter", "user_delivery_status"], "variable": "adapter_status"},
+            {"value_selector": ["returns_adapter", "needs_projection"], "variable": "needs_projection"},
+            {"value_selector": ["recovery_llm", "text"], "variable": "recovered_text"},
+            {"value_selector": ["returns_adapter", "returns_json"], "variable": "returns_json"},
+            {"value_selector": ["returns_adapter", "capability"], "variable": "capability"},
+        ],
+    }, 3040, 220))
 
     nodes.append(node("binding_record", {
         "code": bind_code, "code_language": "python3",
@@ -1320,11 +1480,13 @@ def build_capability_app(cap):
     nodes.append(node("end_ok", {
         "desc": "正常产出", "outputs": [
             {"value_selector": ["returns_adapter", "artifact"], "variable": "artifact"},
-            {"value_selector": ["returns_adapter", "user_delivery"], "variable": "user_delivery"},
+            {"value_selector": ["delivery_finalize", "user_delivery"], "variable": "user_delivery"},
+            {"value_selector": ["delivery_finalize", "delivery_outcome"], "variable": "delivery_outcome"},
+            {"value_selector": ["delivery_finalize", "recovery_used"], "variable": "recovery_used"},
             {"value_selector": ["returns_adapter", "artifact_status"], "variable": "artifact_status"},
-            {"value_selector": ["returns_adapter", "user_delivery_status"], "variable": "user_delivery_status"},
+            {"value_selector": ["delivery_finalize", "user_delivery_status"], "variable": "user_delivery_status"},
             {"value_selector": ["returns_adapter", "user_delivery_leaks"], "variable": "user_delivery_leaks"},
-            {"value_selector": ["returns_adapter", "returns_json"], "variable": "returns_json"},
+            {"value_selector": ["delivery_finalize", "returns_json"], "variable": "returns_json"},
             {"value_selector": ["returns_adapter", "returns_status"], "variable": "returns_status"},
             {"value_selector": ["returns_adapter", "returns_parse_note"], "variable": "returns_parse_note"},
             {"value_selector": ["returns_adapter", "returns_raw"], "variable": "returns_raw"},
@@ -1368,7 +1530,11 @@ def build_capability_app(cap):
     edges.append(edge("projection_record", "skill_llm", "template-transform", "llm"))
     edges.append(edge("skill_llm", "final_extract", "llm", "template-transform"))
     edges.append(edge("final_extract", "returns_adapter", "template-transform", "code"))
-    edges.append(edge("returns_adapter", "binding_record", "code", "code"))
+    edges.append(edge("returns_adapter", "projection_gate", "code", "if-else"))
+    edges.append(edge("projection_gate", "recovery_llm", "if-else", "llm", "recover"))
+    edges.append(edge("projection_gate", "delivery_finalize", "if-else", "code", "false"))
+    edges.append(edge("recovery_llm", "delivery_finalize", "llm", "code"))
+    edges.append(edge("delivery_finalize", "binding_record", "code", "code"))
     edges.append(edge("binding_record", "end_ok", "code", "end"))
     edges.append(edge("component_return", "end_component_return", "code", "end"))
 
@@ -1492,6 +1658,8 @@ def build_seam_app():
                 {"value_selector": [tool_id, "local_block"], "variable": "tool_local_block"},
                 {"value_selector": [tool_id, "artifact_status"], "variable": "tool_artifact_status"},
                 {"value_selector": [tool_id, "user_delivery_status"], "variable": "tool_user_delivery_status"},
+                {"value_selector": [tool_id, "delivery_outcome"], "variable": "tool_delivery_outcome"},
+                {"value_selector": [tool_id, "recovery_used"], "variable": "tool_recovery_used"},
             ],
         }, 1300, y))
 
@@ -2136,6 +2304,11 @@ def cmd_verify():
         # V5 模型参数一致
         if nodes["skill_llm"]["data"]["model"] != MODEL:
             fails.append("%s: 模型/参数与冻结绑定不一致" % cap["capability"])
+        # V5b 恢复投影节点不得单独调参（取证合同 v0.4 §2 硬断言）
+        if "recovery_llm" not in nodes:
+            fails.append("%s: 缺少 recovery_llm 用户投影节点" % cap["capability"])
+        elif nodes["recovery_llm"]["data"]["model"] != MODEL:
+            fails.append("%s: recovery_llm 模型/参数与冻结绑定不一致" % cap["capability"])
 
         # V6 图连通性
         ids = set(nodes)

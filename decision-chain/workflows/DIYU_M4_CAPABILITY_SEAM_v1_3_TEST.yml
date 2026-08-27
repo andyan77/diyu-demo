@@ -639,22 +639,31 @@ workflow:
           \ ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n\
           \            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved,\
           \ run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n\
-          \         tool_local_block, tool_artifact_status, tool_user_delivery_status):\n    invoked = [capability_resolved]\n\
-          \    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷\
-          \ M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard =\
-          \ {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n\
-          \        \"user_delivery_status\": tool_user_delivery_status,\n    }\n\n    if str(tool_local_block or \"\").strip().lower()\
-          \ == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if\
-          \ x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" +\
-          \ str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\"\
-          : \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true\
-          \ 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\"\
-          : \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\"\
-          \ % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets,\
-          \ ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r\
-          \ in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n   \
-          \ trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
+          \         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n\
+          \    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n\
+          \        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31\
+          \ 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact\
+          \ or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n\
+          \        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n\
+          \        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome\
+          \ or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为\
+          \ succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\"\
+          ,\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps\
+          \ = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\"\
+          ,\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\"\
+          : [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"\
+          needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n\
+          \            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n\
+          \    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if\
+          \ isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"\
+          call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
           : skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n\
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
@@ -739,6 +748,14 @@ workflow:
           - tool_matrix
           - user_delivery_status
           variable: tool_user_delivery_status
+        - value_selector:
+          - tool_matrix
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_matrix
+          - recovery_used
+          variable: tool_recovery_used
       height: 100
       id: fin_matrix
       position:
@@ -849,22 +866,31 @@ workflow:
           \ ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n\
           \            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved,\
           \ run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n\
-          \         tool_local_block, tool_artifact_status, tool_user_delivery_status):\n    invoked = [capability_resolved]\n\
-          \    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷\
-          \ M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard =\
-          \ {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n\
-          \        \"user_delivery_status\": tool_user_delivery_status,\n    }\n\n    if str(tool_local_block or \"\").strip().lower()\
-          \ == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if\
-          \ x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" +\
-          \ str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\"\
-          : \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true\
-          \ 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\"\
-          : \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\"\
-          \ % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets,\
-          \ ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r\
-          \ in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n   \
-          \ trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
+          \         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n\
+          \    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n\
+          \        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31\
+          \ 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact\
+          \ or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n\
+          \        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n\
+          \        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome\
+          \ or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为\
+          \ succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\"\
+          ,\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps\
+          \ = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\"\
+          ,\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\"\
+          : [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"\
+          needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n\
+          \            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n\
+          \    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if\
+          \ isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"\
+          call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
           : skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n\
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
@@ -949,6 +975,14 @@ workflow:
           - tool_campaign
           - user_delivery_status
           variable: tool_user_delivery_status
+        - value_selector:
+          - tool_campaign
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_campaign
+          - recovery_used
+          variable: tool_recovery_used
       height: 100
       id: fin_campaign
       position:
@@ -1059,22 +1093,31 @@ workflow:
           \ ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n\
           \            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved,\
           \ run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n\
-          \         tool_local_block, tool_artifact_status, tool_user_delivery_status):\n    invoked = [capability_resolved]\n\
-          \    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷\
-          \ M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard =\
-          \ {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n\
-          \        \"user_delivery_status\": tool_user_delivery_status,\n    }\n\n    if str(tool_local_block or \"\").strip().lower()\
-          \ == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if\
-          \ x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" +\
-          \ str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\"\
-          : \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true\
-          \ 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\"\
-          : \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\"\
-          \ % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets,\
-          \ ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r\
-          \ in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n   \
-          \ trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
+          \         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n\
+          \    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n\
+          \        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31\
+          \ 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact\
+          \ or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n\
+          \        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n\
+          \        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome\
+          \ or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为\
+          \ succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\"\
+          ,\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps\
+          \ = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\"\
+          ,\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\"\
+          : [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"\
+          needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n\
+          \            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n\
+          \    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if\
+          \ isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"\
+          call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
           : skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n\
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
@@ -1159,6 +1202,14 @@ workflow:
           - tool_content_brief
           - user_delivery_status
           variable: tool_user_delivery_status
+        - value_selector:
+          - tool_content_brief
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_content_brief
+          - recovery_used
+          variable: tool_recovery_used
       height: 100
       id: fin_content_brief
       position:
@@ -1269,22 +1320,31 @@ workflow:
           \ ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n\
           \            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved,\
           \ run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n\
-          \         tool_local_block, tool_artifact_status, tool_user_delivery_status):\n    invoked = [capability_resolved]\n\
-          \    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷\
-          \ M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard =\
-          \ {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n\
-          \        \"user_delivery_status\": tool_user_delivery_status,\n    }\n\n    if str(tool_local_block or \"\").strip().lower()\
-          \ == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if\
-          \ x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" +\
-          \ str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\"\
-          : \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true\
-          \ 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\"\
-          : \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\"\
-          \ % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets,\
-          \ ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r\
-          \ in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n   \
-          \ trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
+          \         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n\
+          \    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n\
+          \        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31\
+          \ 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact\
+          \ or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n\
+          \        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n\
+          \        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome\
+          \ or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为\
+          \ succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\"\
+          ,\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps\
+          \ = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\"\
+          ,\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\"\
+          : [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"\
+          needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n\
+          \            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n\
+          \    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if\
+          \ isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"\
+          call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
           : skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n\
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
@@ -1369,6 +1429,14 @@ workflow:
           - tool_creative_script
           - user_delivery_status
           variable: tool_user_delivery_status
+        - value_selector:
+          - tool_creative_script
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_creative_script
+          - recovery_used
+          variable: tool_recovery_used
       height: 100
       id: fin_creative_script
       position:
@@ -1479,22 +1547,31 @@ workflow:
           \ ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n\
           \            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved,\
           \ run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n\
-          \         tool_local_block, tool_artifact_status, tool_user_delivery_status):\n    invoked = [capability_resolved]\n\
-          \    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷\
-          \ M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard =\
-          \ {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n\
-          \        \"user_delivery_status\": tool_user_delivery_status,\n    }\n\n    if str(tool_local_block or \"\").strip().lower()\
-          \ == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if\
-          \ x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" +\
-          \ str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\"\
-          : \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true\
-          \ 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\"\
-          : \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\"\
-          \ % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets,\
-          \ ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r\
-          \ in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n   \
-          \ trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
+          \         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n\
+          \    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n\
+          \        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31\
+          \ 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact\
+          \ or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n\
+          \        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n\
+          \        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome\
+          \ or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为\
+          \ succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\"\
+          ,\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps\
+          \ = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\"\
+          ,\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\"\
+          : [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"\
+          needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n\
+          \            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n\
+          \    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if\
+          \ isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"\
+          call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
           : skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n\
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
@@ -1579,6 +1656,14 @@ workflow:
           - tool_production_director
           - user_delivery_status
           variable: tool_user_delivery_status
+        - value_selector:
+          - tool_production_director
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_production_director
+          - recovery_used
+          variable: tool_recovery_used
       height: 100
       id: fin_production_director
       position:
@@ -1689,22 +1774,31 @@ workflow:
           \ ∪ unknown_dependency_items\n\nALL_CAPS = [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\",\n\
           \            \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"]\n\n\ndef main(capability_resolved, entry_resolved,\
           \ run_mode, derivation,\n         tool_artifact, tool_user_delivery, tool_returns_json, tool_binding_json, call_hash,\n\
-          \         tool_local_block, tool_artifact_status, tool_user_delivery_status):\n    invoked = [capability_resolved]\n\
-          \    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n        rets = json.loads(tool_returns_json\
-          \ or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷\
-          \ M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact or \"\" 静默放行为成功。\n    guard =\
-          \ {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n        \"artifact_status\": tool_artifact_status,\n\
-          \        \"user_delivery_status\": tool_user_delivery_status,\n    }\n\n    if str(tool_local_block or \"\").strip().lower()\
-          \ == \"true\":\n        gaps = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if\
-          \ x and x != \"OK\"]\n        rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" +\
-          \ str(call_hash or \"\")[:8],\n            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\"\
-          : \"CAPABILITY_OUTPUT_COMPLETENESS\",\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true\
-          \ 但状态未指明\",\n            \"affected_objects\": [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\"\
-          : \"ESCALATE\",\n            \"needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\"\
-          \ % capability_resolved],\n            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets,\
-          \ ensure_ascii=False)\n    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r\
-          \ in rets:\n        if isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n   \
-          \ trace = {\n        \"call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
+          \         tool_local_block, tool_artifact_status, tool_user_delivery_status,\n         tool_delivery_outcome, tool_recovery_used):\n\
+          \    invoked = [capability_resolved]\n    skipped = [c for c in ALL_CAPS if c != capability_resolved]\n\n    try:\n\
+          \        rets = json.loads(tool_returns_json or \"[]\")\n    except Exception:\n        rets = []\n\n    # D-01b（AC-31\
+          \ 合取项③）：Tool 已算出的阻断信号必须端到端生效。\n    # 缺陷 M4-FND-012：此前 local_block / *_status 被计算后在本节点整体丢弃，\n    # 产出塌陷因此被 tool_artifact\
+          \ or \"\" 静默放行为成功。\n    guard = {\n        \"checked\": True,\n        \"tool_local_block\": tool_local_block,\n\
+          \        \"artifact_status\": tool_artifact_status,\n        \"user_delivery_status\": tool_user_delivery_status,\n\
+          \        # v1.4：Dify 技术运行状态与 M4 业务交付状态必须分开表达（取证合同 v0.4 §3 RB31-04⑦）\n        \"business_delivery_outcome\": tool_delivery_outcome\
+          \ or \"UNKNOWN\",\n        \"user_projection_used\": tool_recovery_used or \"false\",\n    }\n\n    # 业务交付失败时，即使平台技术状态为\
+          \ succeeded，也必须登记为未成功交付\n    if str(tool_delivery_outcome or \"\").strip().upper() == \"NOT_DELIVERED\":\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-NOT-DELIVERED-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_DELIVERY_OUTCOME\",\n            \"highest_damaged_layer\": \"USER_DELIVERY_PROJECTION\"\
+          ,\n            \"precise_gap\": \"本次未形成成功的用户交付；平台技术状态不代表业务交付成功\",\n            \"affected_objects\": [\"本次 %s 调用的用户交付\"\
+          \ % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"needs_user_decision\"\
+          : True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 用户交付的下游项\" % capability_resolved],\n            \"parse_status\"\
+          : \"NOT_DELIVERED\",\n        }]\n\n    if str(tool_local_block or \"\").strip().lower() == \"true\":\n        gaps\
+          \ = [x for x in (tool_artifact_status, tool_user_delivery_status)\n                if x and x != \"OK\"]\n     \
+          \   rets = list(rets) + [{\n            \"return_id\": \"M4-RET-SEAM-COMPLETENESS-\" + str(call_hash or \"\")[:8],\n\
+          \            \"source\": \"SEAM_COMPLETENESS_GUARD\",\n            \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\"\
+          ,\n            \"precise_gap\": \" | \".join(gaps) if gaps else \"local_block=true 但状态未指明\",\n            \"affected_objects\"\
+          : [\"本次 %s 调用的产出块\" % capability_resolved],\n            \"proposed_disposition\": \"ESCALATE\",\n            \"\
+          needs_user_decision\": True,\n            \"downstream_stale\": [\"仅真实依赖本次 %s 产出的下游项\" % capability_resolved],\n\
+          \            \"parse_status\": \"PARSE_FAIL\",\n        }]\n        returns_out = json.dumps(rets, ensure_ascii=False)\n\
+          \    else:\n        returns_out = tool_returns_json or \"[]\"\n\n    stale = []\n    for r in rets:\n        if\
+          \ isinstance(r, dict):\n            stale.extend(r.get(\"downstream_stale\") or [])\n\n    trace = {\n        \"\
+          call_hash\": call_hash,\n        \"capability_invoked\": invoked,\n        \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\"\
           : skipped,\n        \"entry\": entry_resolved,\n        \"run_mode\": run_mode,\n        \"entry_derivation\": derivation,\n\
           \        \"upstream_auto_invoked\": [],\n        \"upstream_auto_invoked_note\": (\n            \"M4 六个能力应用之间零 tool\
           \ 调用边；组合只由本接缝按显式 plan 编排。\"\n            \"本次未暗跑任何上游能力。\"\n        ),\n        \"stale_set\": stale,\n        \"\
@@ -1789,6 +1883,14 @@ workflow:
           - tool_publishing_packaging
           - user_delivery_status
           variable: tool_user_delivery_status
+        - value_selector:
+          - tool_publishing_packaging
+          - delivery_outcome
+          variable: tool_delivery_outcome
+        - value_selector:
+          - tool_publishing_packaging
+          - recovery_used
+          variable: tool_recovery_used
       height: 100
       id: fin_publishing_packaging
       position:
