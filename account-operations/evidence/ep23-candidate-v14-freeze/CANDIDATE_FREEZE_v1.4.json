@@ -1,14 +1,14 @@
 {
-  "candidate": "M3 载体 v1.4",
+  "candidate": "M3 载体 v1.4.1",
   "frozen_by": "M3_ECC_REBIND_005_FROZEN_v1.0.md §8",
   "authorized_by": "Founder CONTINUE_TASK 2026-08-27（第 1—8 条合并为一个最终修复批次）",
   "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
   "supersedes": "ep15-candidate-v13-freeze/CANDIDATE_FREEZE_v1.3.json（不覆盖，原文保留）",
   "dify": {
     "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
-    "published_version_name": "m3-cand-v1.4-fix",
-    "draft_graph_hash": "ea04fa92c6b8ad34b35025bd4e75c2dce214fa30bda816aaecc9a3c4023fe3cc",
-    "prev_graph_hash": "4760428dbd760ac1ef980b5ec9f61e190eba1f097ad35f7a8c9db89c41ec623f",
+    "published_version_name": "m3-cand-v1.4.1",
+    "draft_graph_hash": "61b7cec626618818f7a9f70a12afcd5b28fb35be25c5be66c3a65d29285ad4e8",
+    "prev_graph_hash": "ea04fa92c6b8ad34b35025bd4e75c2dce214fa30bda816aaecc9a3c4023fe3cc",
     "nodes": [
       "start",
       "llm(写正文)",
@@ -21,13 +21,13 @@
     "shape_unchanged_vs_v13": true
   },
   "system_prompt": {
-    "sha256": "068a30af07f089714fd9c6b428a879010dd04707b6f1134ee7d51dd815aff8c5",
+    "sha256": "d85a994d625c0d398a88c30c59e0a7ee4a3a1761accb95fa6f6f1bc761586197",
     "full_text": "account-operations/evidence/ep24-ac16-canvas-and-prompt/published_system_prompt_full.txt",
     "read_from": "GET /console/api/apps/{app}/workflows/publish（已发布，非草稿）"
   },
   "canvas_evidence": "account-operations/evidence/ep24-ac16-canvas-and-prompt/CANVAS_EVIDENCE.json（含两张渲染截图）",
   "source_sha256": {
-    "SKILL.md": "c8f6805bb8e54ed85eced02af42f0af8c0ce0c276a0c079313d4221f3ce3b978",
+    "SKILL.md": "04b571795bafd4ca6899c21b5c73b20f1509caac9e27fadad489494820884f49",
     "references/fashion-and-market.md": "cee04beadafa604e6be3e8bf6c0c8677a000f854fe53f7d3d78b0703950f32aa",
     "references/six-skill-methods.md": "e3798308988c2b12e1d450a610b429772944ec88c9f2cf1d26f4b16f4465ec6b",
     "gate_v13/shared_checks.py": "6c8c4f78d0152e3da99bc2604d08d599b40d7acd42625502273642c81965aa30",
@@ -39,7 +39,8 @@
     "oracle/BEHAVIOR_CASES_v2.json": "13e95684e387980267f2f4c2479c2b94bd04caf280cdb37e4b0d762f80286274",
     "rebind005/verify_g4_v2.py": "9c8b1446f4f516fb9d2401afb144d2367181844d232db10b6abf07ca3cec9b72",
     "rebind005/verify_d1_d3.py": "8e45de7ad9720d8bd6486cee663f2faad33a2af35acd49d651a561be205969b3",
-    "REBIND_005": "201bf75fa1d9d3422960d9019e2deeac9be1f10673ab5a8aff76c237d455bb99"
+    "REBIND_005": "201bf75fa1d9d3422960d9019e2deeac9be1f10673ab5a8aff76c237d455bb99",
+    "REBIND_005_ERRATA_001": "d4a2c8ef4bedc3dd141c66ef709c02974d87d9ed69bc69316093fd71ecbf238b"
   },
   "changed_vs_v13": [
     "SKILL.md",
@@ -70,5 +71,16 @@
       "AC-12/AC-13 对 main@a7b8101 的定向复验"
     ],
     "why_not_rerun": "M2 侧一字未动；本轮改动全部落在 M3 域内，与 M2 接口无依赖边。按 A3 不多算。"
-  }
+  },
+  "errata": "M3_ECC_REBIND_005_FROZEN_v1.0_ERRATA_001.md（只改候选一句话，判据零改动）",
+  "aborted_batches": [
+    {
+      "dir": "account-operations/evidence/ep08-module-ab-v14-aborted",
+      "why": "A/B 臂规格沿用第 7 轮 JSON，B 臂 system_prompt 是快照进去的 v1.3 全文"
+    },
+    {
+      "dir": "account-operations/evidence/*-v14-aborted-pos-defect",
+      "why": "SKILL.md 的 AC-09 那句话把新增持续位一并禁掉，见 ERRATA_001"
+    }
+  ]
 }

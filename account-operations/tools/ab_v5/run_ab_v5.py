@@ -28,6 +28,15 @@ from gate_pipeline_v14 import run_gated            # noqa: E402
 from shared_checks import check_leaks, LABEL_SHELL, REF_DISPLAY  # noqa: E402
 
 EVID = os.path.join(WORKTREE, "account-operations/evidence/ep08-module-ab-v14")
+# 臂与留出场景**沿用第 7 轮那一份，不重新生成**。Founder 第 7 条要的是
+# 「同等基线、同模型、同输入」——重新生成一份等于换了输入，比较就不成立了。
+# 臂规格取本轮那一份：留出场景与 A/A+/B′ 三臂**逐字沿用**第 7 轮（哈希相同即为证，
+# 由 prepare_ab_v5.py 在生成时机械断言），B 臂重绑到 SKILL.md v1.4。
+# 第一次启动时这里指的是第 7 轮那份 v4 —— B 臂因此还是 v1.3 的提示词，
+# 等于拿旧候选重跑一遍。发现后立即中止，已产出的 7 份移进 -aborted 并记录。
+ARMS_SPEC = os.path.join(WORKTREE,
+                         "account-operations/evidence/ep08-module-ab-v14",
+                         "_arms_and_holdouts_v5.json")
 OUT_OF_REPO = ("/tmp/claude-1000/-home-faye-diyu-demo/"
                "2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/m3-ab-blind-v5")
 UNITS_DIR = os.path.join(OUT_OF_REPO, "units")
@@ -94,7 +103,7 @@ def write_rubric():
 
 def main():
     key = load_key()
-    spec = json.load(open(os.path.join(EVID, "_arms_and_holdouts_v4.json"), encoding="utf-8"))
+    spec = json.load(open(ARMS_SPEC, encoding="utf-8"))
     arms, holdouts = spec["arms"], spec["holdouts"]
     os.makedirs(EVID, exist_ok=True)
 

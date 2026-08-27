@@ -28,11 +28,15 @@ GATE = os.path.join(WT, "account-operations/tools/gate_v13")
 OUT = os.path.join(WT, "account-operations/evidence/ep22-rebind005-g4")
 sys.path.insert(0, GATE)
 
+# 对照组钉在**改动之前那一次提交**，不用 HEAD。判据一旦提交，HEAD 里就已经是新版了，
+# 那时再拿 HEAD 当对照组，比的是新版对新版 —— 等于没有对照组。
+V1_COMMIT = "788e3fb"
+
 import shared_checks as v2                                             # noqa: E402
 
 # ---- v1 从 git 里取，不手抄。手抄的对照组等于没有对照组 ----
 _V1_SRC = subprocess.run(
-    ["git", "-C", WT, "show", "HEAD:account-operations/tools/gate_v13/shared_checks.py"],
+    ["git", "-C", WT, "show", f"{V1_COMMIT}:account-operations/tools/gate_v13/shared_checks.py"],
     capture_output=True, text=True, check=True).stdout
 _V1_DIR = tempfile.mkdtemp(prefix="g4v1_")
 with open(os.path.join(_V1_DIR, "shared_checks_v1.py"), "w", encoding="utf-8") as f:

@@ -1,0 +1,78 @@
+{
+  "what": "第 8 轮第一次正式取证批次作废记录（候选自身有构造缺陷）",
+  "aborted_at": "保真 9/9 完成、行为 19/49、纵向 8/12、A/B 3/12 时",
+  "defect": {
+    "where": "SKILL.md〈持续位〉一节，本轮为 AC-09 新加的那一句",
+    "wrote": "「输入里没有 standing_positions 这一段，或者它是空数组 ⇒ 一行 `POS ::` 都不要写」",
+    "why_wrong": "这句话把**新增位**也一起禁掉了。`新增·探索`／`新增·常规` 本来就不在输入里——它是模型本轮新提出的东西。基线为空时不许新增，持续位这条链就永远起不来：第一轮基线必然是空的。",
+    "model_quoted_it_back": "E01 审计块原文：「POS 行：none（standing_positions 为空数组）」；E03：「POS行：standing_positions为空，所以一行都不写」——因果链是直的。"
+  },
+  "measured_damage": {
+    "v13 行为": "49 例中 10 例声明了新持续位，9 例产生结构性探索位",
+    "v14 行为": "19 例中 0 例，0 例",
+    "v13 纵向": "12 步中 2 步（E01、E04）声明了新持续位",
+    "v14 纵向": "8 步中 0 步；整条纵向链的 standing_positions 全程为空数组",
+    "consequence": "G-2 的结构判定层、G-3 的持续位链条、本轮新修的 D-1（新增位不得被删）在这批证据上**全部无从检验**——不是通过了，是根本没被触发。"
+  },
+  "why_abort_not_continue": "这不是「看到结果后改判据」。判据（REBIND_005）一个字没改，也没有任何一份判定书产生。作废的原因是**被测对象本身构造错了**：继续跑下去，花掉的每一次调用都在测一个已知有缺陷的候选。与四十分钟前 A/B 臂绑错版本那次同类处置。",
+  "fix": "把禁令收窄到 `继续`／`处置`／`替换` 三种状态，明写 `新增·*` 不受限制、基线为空时照写，并补一组 ❌/✅ 对照。SKILL.md sha256 c8f6805b… → 04b57179…",
+  "preserved_files": {
+    "ep06-runtime-fidelity-dify-v14-aborted-pos-defect": [
+      "G1-A-goal-long-term-value.json",
+      "G1-B-goal-gmv.json",
+      "G2-negative-cta-permission.json",
+      "G3-boundary-capacity-conflict.json",
+      "G4-degradation-partial-product-failure.json",
+      "G5-evidence-expiry-observation-window.json",
+      "G5-evidence-expiry-observation-window__transport_failure_1.json",
+      "G6-attachment-unloaded.json",
+      "G7-A-platform-locked.json",
+      "G7-B-platform-unlocked.json",
+      "_run_index.json",
+      "_transport_retries.json"
+    ],
+    "ep06b-runtime-behavior-v14-aborted-pos-defect": [
+      "B01-P-publish-calendar.json",
+      "B02-1-no-matrix.json",
+      "B02-2-blank-account.json",
+      "B02-2P-probe-positioning.json",
+      "B02-3-enterprise-provisional.json",
+      "B02-4-blocking-dependency.json",
+      "B03-1-objective-01.json",
+      "B03-2-objective-02.json",
+      "B03-3-objective-03.json",
+      "B03-4-objective-04.json",
+      "B03-5-objective-05.json",
+      "B03-6-objective-06.json",
+      "B03-7-objective-07.json",
+      "B03-8-objective-08.json",
+      "B03-N2-traffic-rewritten.json",
+      "B03-N3-gmv-no-path.json",
+      "B04-1-mixed-capacity-3.json",
+      "B04-1P-capacity-1.json",
+      "B04-N7-mechanical-split.json",
+      "B05-1-combined-behaviour.json"
+    ],
+    "ep07-longitudinal-v14-aborted-pos-defect": [
+      "E01.json",
+      "E02.json",
+      "E03.json",
+      "E04.json",
+      "E05.json",
+      "E06.json",
+      "E07.json",
+      "E08.json",
+      "E09.json"
+    ],
+    "ep08-module-ab-v14-aborted-pos-defect": [
+      "FX-M3-HOLD-01__A.json",
+      "FX-M3-HOLD-01__Aplus.json",
+      "FX-M3-HOLD-01__B.json",
+      "FX-M3-HOLD-01__Bprime.json",
+      "FX-M3-HOLD-02__A.json",
+      "FX-M3-HOLD-02__Aplus.json"
+    ]
+  },
+  "not_used_for_any_verdict": true,
+  "read_before_abort": "只读了闸门报告里的结构化计数字段（declared_position_ids / new_positions / structural_exploration_positions / stale_value_override）与 draft_raw 里的 POS 行，用于定位缺陷。**没有读任何一份交付正文的实质内容**，因此不存在按内容择优的梯度。"
+}

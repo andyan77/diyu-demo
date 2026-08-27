@@ -23,6 +23,10 @@ GATE = os.path.join(WT, "account-operations/tools/gate_v13")
 OUT = os.path.join(WT, "account-operations/evidence/ep22-rebind005-g4")
 LONG = os.path.join(WT, "account-operations/evidence/ep07-longitudinal-v13")
 sys.path.insert(0, GATE)
+
+# 对照组钉在**改动之前那一次提交**，不用 HEAD。判据一旦提交，HEAD 里就已经是新版了，
+# 那时再拿 HEAD 当对照组，比的是新版对新版 —— 等于没有对照组。
+V13_COMMIT = "788e3fb"
 import post_gate_main as new_pg                                        # noqa: E402
 import shared_checks as sc                                             # noqa: E402
 
@@ -30,7 +34,7 @@ import shared_checks as sc                                             # noqa: E
 _OLD = tempfile.mkdtemp(prefix="pgv13_")
 for f in ("shared_checks.py", "post_gate_main.py"):
     src = subprocess.run(["git", "-C", WT, "show",
-                          f"HEAD:account-operations/tools/gate_v13/{f}"],
+                          f"{V13_COMMIT}:account-operations/tools/gate_v13/{f}"],
                          capture_output=True, text=True, check=True).stdout
     open(os.path.join(_OLD, f), "w", encoding="utf-8").write(src)
 sys.path.insert(0, _OLD)
