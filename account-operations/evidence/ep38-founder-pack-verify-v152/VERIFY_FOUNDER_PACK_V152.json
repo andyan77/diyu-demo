@@ -1,0 +1,73 @@
+{
+  "what": "Founder 七场景实测包独立复算",
+  "executor_model_calls": 0,
+  "V1_input_file_hashes": {
+    "mismatched": [],
+    "pass": true
+  },
+  "V2_verbatim_byte_identical": {
+    "checked": [
+      "S1",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "mismatched": [],
+    "pass": true
+  },
+  "V3_compiled_delta_exact": {
+    "S2": {
+      "equals_declared_substitution": true,
+      "changed_lines": [
+        "-primary_objective: 长期价值",
+        "-secondary_objectives: 未提供",
+        "+primary_objective: 到店（本周期主要目标）",
+        "+secondary_objectives: GMV（次要，有限次）；线索（次要，有限次）"
+      ],
+      "changed_line_count": 4,
+      "expected_line_count": 4,
+      "pass": true
+    },
+    "S7": {
+      "account_context_byte_identical_to_source": true,
+      "pass": true
+    },
+    "no_new_business_facts_in_written_requests": {
+      "hits": {},
+      "pass": true
+    },
+    "pass": true
+  },
+  "V4_manifest_rebuild": {
+    "mismatched": [],
+    "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+    "matches_freeze_manifest": true,
+    "pass": true
+  },
+  "V5_live_binding": {
+    "checks": {
+      "published_version": true,
+      "published_marked_name": true,
+      "published_graph_hash": true,
+      "system_prompt_sha256": true,
+      "skill_md_sha256": true,
+      "system_prompt_starts_with_skill": true,
+      "graph_shape": true,
+      "no_http_request_or_tool_node": true
+    },
+    "transport": "direct",
+    "pass": true
+  },
+  "V6_pairwise_ablation": {
+    "subsumed_pairs": [],
+    "pass": true
+  },
+  "V7_shape": {
+    "set_size": 7,
+    "runs_per_input": 1,
+    "one_purpose_each": true,
+    "pass": true
+  },
+  "ALL_PASS": true
+}

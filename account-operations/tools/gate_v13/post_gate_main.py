@@ -177,7 +177,7 @@ def main(final_text: str, manifest: str, prior_report: str,
     out_text = (body + ("\n\n" + notice if notice else ""))
 
     report = {
-        "post_gate_version": "v1.5.1",
+        "post_gate_version": "v1.5.2",
         "first_pass_gate_status": prior.get("gate_status"),
         "hard_fail_reasons": min_fails,
         "still_leaks": leaks,

@@ -1,0 +1,254 @@
+{
+  "what": "候选 v1.5.2 零模型技术闭合（Execution Prompt v1.2 §4.3）",
+  "executor_model_calls": 0,
+  "Z1_skill_static": {
+    "base_commit": "5e1b6ee",
+    "lines_added": [
+      "- 审计块只能出现在正文之后；正文不存在时不许单独输出审计块。",
+      "- 审计块不加代码围栏，前后不加任何三个反引号标记。"
+    ],
+    "lines_removed": [
+      "```text",
+      "```"
+    ],
+    "added_is_exactly_approved_delta": true,
+    "removed_is_exactly_the_two_fence_markers": true,
+    "audit_field_list_byte_identical": true,
+    "O6_section_byte_identical_no_new_ac09_synonym": true,
+    "everything_else_byte_identical": true,
+    "audit_template_still_fenced": false,
+    "skill_sha256_before": "245ee2ab3fe683acc2835cf3453ce367461c394e97ebd0bca34b8f17b6879837",
+    "skill_sha256_after": "90596da5170730b90bfa87089d456e7a2f4d670c46f98ea6ae60138e1f4d3c41",
+    "pass": true
+  },
+  "Z2_Z5_Z6_replay": {
+    "replay": {
+      "main": {
+        "axis": "main",
+        "samples": 69,
+        "skipped_no_draft": [
+          "G1-A-goal-long-term-value"
+        ],
+        "as_run_rejected": {
+          "n": 2,
+          "cases": [
+            "B09-5-no-market-data",
+            "B15-DIR-02-topic-to-brief"
+          ]
+        },
+        "v151_rejected": {
+          "n": 1,
+          "cases": [
+            "B09-5-no-market-data"
+          ]
+        },
+        "cleared": [
+          "B15-DIR-02-topic-to-brief"
+        ],
+        "newly_rejected": [],
+        "path_shift": [],
+        "grades": {
+          "已观察": 59,
+          "推断": 10
+        }
+      },
+      "regression": {
+        "axis": "regression",
+        "samples": 64,
+        "skipped_no_draft": [],
+        "as_run_rejected": {
+          "n": 13,
+          "cases": [
+            "B02-3-enterprise-provisional",
+            "B02-4-blocking-dependency",
+            "B03-1-objective-01",
+            "B03-2-objective-02",
+            "B04-1P-capacity-1",
+            "B06-P-identical-values",
+            "B07-1-traffic-full-facts",
+            "B07-P-daily-three",
+            "B09-N5-uniqueness-probe",
+            "B10-3-conflicting",
+            "E07",
+            "E08",
+            "FX-M3-HOLD-02__B"
+          ]
+        },
+        "v151_rejected": {
+          "n": 2,
+          "cases": [
+            "E07",
+            "E08"
+          ]
+        },
+        "cleared": [
+          "B02-3-enterprise-provisional",
+          "B02-4-blocking-dependency",
+          "B03-1-objective-01",
+          "B03-2-objective-02",
+          "B04-1P-capacity-1",
+          "B06-P-identical-values",
+          "B07-1-traffic-full-facts",
+          "B07-P-daily-three",
+          "B09-N5-uniqueness-probe",
+          "B10-3-conflicting",
+          "FX-M3-HOLD-02__B"
+        ],
+        "newly_rejected": [],
+        "path_shift": [],
+        "grades": {
+          "推断": 22,
+          "已观察": 42
+        }
+      }
+    },
+    "Z5_b15_no_longer_rejected": true,
+    "Z6_newly_rejected_main": [],
+    "Z6_newly_rejected_regression": [],
+    "Z4_still_rejected_regression": [
+      "E07",
+      "E08"
+    ],
+    "pass": true
+  },
+  "Z3_audit_only_hard_gate": {
+    "cases": [
+      {
+        "case": "B09-5@v1.5 (真实退化草稿)",
+        "source": "account-operations/evidence/ep06b-runtime-behavior-v15/B09-5-no-market-data.json",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 0,
+        "carry": "REJECTED_KEEP_PREVIOUS",
+        "final_text": "",
+        "not_authored": true,
+        "ok": true
+      },
+      {
+        "case": "B09-5@v1.3 (真实退化草稿，带代码围栏)",
+        "source": "account-operations/evidence/ep06b-runtime-behavior-v13/B09-5-no-market-data.json",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 8,
+        "carry": "REJECTED_KEEP_PREVIOUS",
+        "final_text": "```\n\n```",
+        "not_authored": true,
+        "ok": true
+      },
+      {
+        "case": "E09@v1.2 (真实退化草稿)",
+        "source": "account-operations/evidence/ep07-longitudinal-v12/E09.json",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 1,
+        "carry": "REJECTED_KEEP_PREVIOUS",
+        "final_text": "`",
+        "not_authored": true,
+        "ok": true
+      },
+      {
+        "case": "机械构造·裸审计块",
+        "source": "synthesized",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 0,
+        "final_text": "",
+        "not_authored": true,
+        "ok": true
+      },
+      {
+        "case": "机械构造·围栏包住的审计块",
+        "source": "synthesized",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 8,
+        "final_text": "```\n\n```",
+        "not_authored": true,
+        "ok": true
+      },
+      {
+        "case": "机械构造·前面只有空白",
+        "source": "synthesized",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 0,
+        "final_text": "",
+        "not_authored": true,
+        "ok": true
+      },
+      {
+        "case": "机械构造·前面只有一句寒暄",
+        "source": "synthesized",
+        "gate_status": "HARD_FAIL_MIN_OUTPUT",
+        "path": "hard_fail_no_repair",
+        "final_text_len": 3,
+        "final_text": "好的。",
+        "not_authored": true,
+        "ok": true
+      }
+    ],
+    "criterion": "硬门开火 + 路径 hard_fail_no_repair + 周期状态拒收 + 交付里没有一个字是闸门／补齐节点代写的。**不要求 final_text 长度为 0**——模型自己留下的 ``` 或一句寒暄本来就该原样留着，它们被硬门挡住即可，抹掉它们反而是执行侧在改模型输出。",
+    "pass": true
+  },
+  "Z4_e07_e08_invariance": {
+    "rows": [
+      {
+        "case": "E07",
+        "input_position_ids": [
+          "NEW:选品逻辑固定位"
+        ],
+        "draft_declared_position_ids": [],
+        "universe": [
+          "NEW:选品逻辑固定位",
+          "NEW:补齐节点凭空写的一个位"
+        ],
+        "possible_repair_outputs_enumerated": 4,
+        "rejected_in": 4,
+        "counterexamples_where_it_would_pass": [],
+        "invariant": true
+      },
+      {
+        "case": "E08",
+        "input_position_ids": [
+          "NEW:选品逻辑固定位"
+        ],
+        "draft_declared_position_ids": [
+          "选品逻辑固定位"
+        ],
+        "universe": [
+          "NEW:选品逻辑固定位",
+          "选品逻辑固定位",
+          "NEW:补齐节点凭空写的一个位"
+        ],
+        "possible_repair_outputs_enumerated": 8,
+        "rejected_in": 8,
+        "counterexamples_where_it_would_pass": [],
+        "invariant": true
+      }
+    ],
+    "all_invariant": true,
+    "pass": true
+  },
+  "Z7_layer_separation": {
+    "samples": 133,
+    "criterion": "① 闸门正文里的每个字符要么来自草稿、要么来自 render_body 那张封闭替换表（子序列判定，只许删不许插）；② 直发路上装配必须逐字返回闸门正文，一个字都不加；③ 同一输入两次跑，报告逐字节相同。",
+    "gate_authored_text_outside_declared_table": [],
+    "assemble_changed_text_on_direct_path": [],
+    "non_deterministic": [],
+    "note": "补齐路的终稿由补齐 LLM 产出，零模型拿不到，不在本项覆盖内；那一层由 Z4 的穷举不变性与闸门的 D-3 代写检测分别覆盖。",
+    "pass": true
+  },
+  "Z8_credential_scan": {
+    "files_scanned": 5,
+    "secret_names_checked": [
+      "DEEPSEEK_API_KEY",
+      "DIFY_APP_API_KEY",
+      "DIFY_CONSOLE_PASSWORD"
+    ],
+    "exact_hits": [],
+    "pattern_hits": [],
+    "pass": true
+  },
+  "ALL_PASS": true,
+  "claim_limit": "零模型回放只能证明确定性组件的行为。那两句 Skill 规则是否真的被模型执行，本轮**无法证明**，等级为推断；只有 Founder 亲测能给出观察。"
+}

@@ -94,7 +94,7 @@ def main(draft: str, manifest: str, account_context: str) -> dict:
         needs_fix = "no"
 
     report = {
-        "gate_version": "v1.5.1",
+        "gate_version": "v1.5.2",
         "gate_status": gate_status,
         "hard_fail_reasons": min_fails,
         "audit_block_missing": audit_missing,
