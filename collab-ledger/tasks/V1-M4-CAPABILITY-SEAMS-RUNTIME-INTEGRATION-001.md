@@ -937,6 +937,41 @@ historical_isolation:
     记录已改为 NOT_COMPARABLE；该项若需正式判定须用节点级轨迹重取证。
 ```
 
+```yaml
+# ===== Reviewer（唯一一次隔离只读）新发现，绑定冻结提交 398ec63 =====
+- id: "M4-FND-019"
+  what: "M4_FINAL_VERDICTS.json 中 9 条合取项的 evidence 引号原文，在冻结候选 runs/ 下不存在，
+         只存在于被取代候选 0dcd66f —— 这些判定所引的不是被冻结的证据"
+  severity: "HIGH"
+  status: "OPEN_RECORDED_NOT_FIXED"
+  affected: ["AC-07②","AC-09②","AC-11①","AC-14②","AC-20②","AC-21②","AC-21④","AC-28②","AC-28③"]
+  found_by: "隔离只读 Reviewer 的跨判据存在性检索"
+  numbering_note: "首版误记为 M4-FND-017，与既有「复验覆盖漏跑」条目冲突，已改 019"
+  disposition: "如实登记，不修（裁决 §10）"
+
+- id: "M4-FND-020"
+  what: "AC-31 合取项① 在冻结证据上不成立 —— 46 份能力运行中 USER_DELIVERY_EMPTY 命中 3 份
+         (FA-10 / FA-27 / FA-32)，违反取证判据合同 v0.2 §1.2「user_delivery 仍必须非空」"
+  severity: "BLOCKING"
+  status: "OPEN_RECORDED_NOT_FIXED"
+  found_by: "隔离只读 Reviewer 主动扫描（不在其指派清单内）"
+  execution_side_error: |
+    执行侧原判 AC-31① 为 PASS，所用理由是「无『守卫未命中却交付块为空』的运行」——
+    那是另一个命题，不是合取项①。判定逻辑偷换了要件。
+  disposition: "按裁决 §10 如实登记并停止；**不自行开启修复循环**，不重新发布 Dify，不改冻结候选"
+  budget_note: "本轮判定器修复预算与 Delta 修复预算均已用完"
+
+- id: "M4-FND-010-CORRECTION"
+  what: "M4-FND-010 的事实前提不成立"
+  severity: "MEDIUM"
+  status: "CORRECTED"
+  detail: |
+    原记录称 FA-28 产出中「没有」cta_contract = KNOWN_BUT_NOT_AUTHORIZED 字面量。
+    Reviewer 在冻结 runs/FA-28.json 中确认该字面量**存在**（1 处）。
+    且原判定条目 result=PASS 而 evidence 正文写「如实判 FAIL」，自相矛盾。
+  effect: "AC-28 维持 PASS；FND-010 不再作为未决项"
+```
+
 ## 本轮不做的（Founder 已明令）
 
 ```yaml
