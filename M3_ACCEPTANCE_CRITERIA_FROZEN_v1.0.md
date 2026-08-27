@@ -579,6 +579,27 @@ WHY（合同 `why`）= *给一个账号一项以证据为界的持续运营能�
 > 因此凡冻结件要求「由未参与实现者判定」的项，一律 `NOT_VERIFIED`。
 > **`workflow_status == "succeeded"` 不是任何验收项的 `PASS` 依据**——本表没有一条状态由它推出。
 
+> 本表是**状态投影**，随证据变化更新；判据本体（§3 各卡的命题／冻结输入／候选／锁定变量／
+> Oracle／成功／不足／无结果／失败／反证探针）**一个字未改**。
+>
+> **第 7 轮起，本表不再手写。** 状态只存一份真源
+> `account-operations/evidence/ep27-ac-recompute-v14/AC_STATE_v14.json`，
+> 本表与 `M3_CHECKPOINT_ROUND_8.md` §3 都由
+> `account-operations/tools/ac_state/render_ac_state.py` 从它渲染，
+> 可用 `--check` **整行**机械核对。第 4→6 轮那次"判据文件停在旧状态、Checkpoint 已推进"
+> 被独立收口 Reviewer 报为阻断项 `B-2`，当时的修法是「任一方更新另一方必须同轮更新」——
+> **靠自觉的规则会再犯**。现在两处不可能不一致，因为它们不是两份数据。
+
+**汇总**（按绑定计数，`AC-01`／`AC-05`／`AC-12`／`AC-13`／`AC-16` 各带多个绑定分列，
+AC 总数恒为 21，绑定总数 27）：**成立 9 · `NOT_VERIFIED` 18**。
+
+**本轮不输出终态。** 进度保持 `IN_PROGRESS`，真源的 `terminal_state` 字段为 `null`
+（Founder `PAUSE_NEW_MODEL_CALLS` 第 7 条）。
+
+**18 个 `NOT_VERIFIED` 里绝大多数不是证据缺失，是证据齐备但独立判定被中止。**
+行为 49 例、纵向 12 步、保真 9 次、A/B 12 份 + 36 份冻结提示词全部已落盘，
+**判定不需要任何新的模型调用**。这两件事必须分开记，否则下一轮会误以为需要重跑取证。
+
 | AC | 当前状态 | 依据 |
 |---|---|---|
 | M3-AC-00 | 成立 | 绑定半成立且为实测非自述：候选 v1.4.2 的 SKILL/四份闸门源码/参考文件哈希由 CANDIDATE_FREEZE_v1.4 记录；系统提示词从 **publish 端点**读回全文并与 SKILL.md 逐字节相等（sha256 76d51208…）；Dify App、已发布版本名 m3-cand-v1.4.2、图哈希 3bc0950b… 落盘。任务身份、合同哈希、分支/worktree 全程未变，非 NEW_TASK。远端半本次收口后闭合：已推送，本地 HEAD == 远端 HEAD（`e95ed04`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验 |
