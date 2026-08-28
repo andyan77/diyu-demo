@@ -40,39 +40,55 @@
 | 项 | 值 |
 |---|---|
 | 进度 | `IN_PROGRESS` |
-| 当前节点 | **NODE-3 形成集成候选 —— 已完成**；NODE-4 冻结 Candidate Run Manifest **草案就位、尚未冻结** |
-| 下一个可立即执行的动作 | DE 套件与两级 A/B 跑完后，把候选 commit、Dify graph hash、留出解封条件填入 `V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml` 并**冻结**；冻结之后全部正式重跑 |
-| 冻结前口径 | 本任务至此的**全部运行一律记为诊断**，不产生正式 `PASS`（Task Contract `two_gate_rule.gate_2_candidate`） |
+| 当前节点 | **NODE-5 已完成**（冻结后正式运行全套跑完，留出已解封判定）；NODE-6 待 Founder 输入 |
+| 候选 | `86af9ecd5a313ff55aff1874d29eb342299d65ff`，Candidate Run Manifest 冻结于 `2026-08-28T09:14:06Z` |
+| 终态 | **未判定，留空**。`done_formula` 不成立 |
+| 下一个可立即执行的动作 | **无。执行侧到此为止**，等 Founder 完成三件事（见下） |
 
-### 已完成（诊断成立，待冻结后正式重跑）
+### 正式验收结果（冻结后运行，非诊断）
 
-| 项 | 结果 |
+| 验收项 | 状态 |
 |---|---|
-| 扩展完整主故事 FULL-01/02 | 首次全程跑通（`FULL_STORY_RUN_full01h.json`）：M3 `CLEAN` → Content Brief `DELIVERED` → Creative Script `DELIVERED` → Publishing `DELIVERED` → 测试发布（`is_test`/`is_simulated` 双真）→ 反馈幂等（同 key 同一行）→ M3 复盘 `CLEAN` → Cycle N+1 → 周期决策绑定 `resulting_cycle_id` |
-| REG-M1-01 | `PASS` 216 tests |
-| REG-M2-01 | `PASS` 92 passed，**跑在候选镜像 `diyu-m2-app:m5-candidate` 内** |
-| REG-M3-01 | `PASS` account-operations 全部子套件 |
-| REG-M4-01 | 真实 Dify 八闸门 8/8 succeeded |
-| REG-SKILLS-01 | `PASS` 交付 3 项、合法跳过 2 项且理由已登记、六份源文件相对 `main` 零改动 |
-| RISK-PUBLISH-ID-01 / RISK-RECOVERY-01 / REG-M2-01（持久化侧） | `3/3 PASS`，结论落在数据库行上 |
-| 防涂绿反向控制 | 逐项删必填字段后用能力侧**原始代码**重算，`11/11` 仍判 `INSUFFICIENT` 且 `missing` 精确命中 |
-| 十九维覆盖 | `CURRENT 17 / FAIL 0 / 未覆盖 2`（同质化、演绎二创，等 DE-06/07 与 AB-FINAL-01） |
+| `M5-AC-00` 激活、实时基线与保护面 | 成立 |
+| `M5-AC-01` 集成候选与最终 Manifest | 成立 |
+| `M5-AC-02` 扩展完整主故事 | **PASS** |
+| `M5-AC-03` 要求的合法短入口 | **PASS**（10/10） |
+| `M5-AC-04` 十九维轻量全覆盖 | **CURRENT**（19/19；`cta`、`permission` 两维带已披露的未判定语义部分） |
+| `M5-AC-05` M3 A/B | `NOT_VERIFIED` — 执行侧无权自裁 |
+| `M5-AC-06` 最终成品 A/B | `NOT_VERIFIED` — 执行侧无权自裁 |
+| **`M5-AC-07` 留出与高风险探针** | **FAIL** |
+| `M5-AC-08` 不退化与受影响回归 | **PASS**（5/5） |
+| `M5-AC-09` Founder 产品验收 | `NOT_VERIFIED` — 只能 Founder 给 |
+| `M5-AC-10` Git、远端与最终回执 | 未开始 |
 
-### 已定位、尚未修复的缺陷（全部已披露，无一涂绿）
+### `M5-AC-07` 的两个阻断项：都在 M1–M4，不是 M5 引入的
 
-| 编号 | 归属 | 状态 |
+| 阻断项 | 根因 | 处置 |
 |---|---|---|
-| `GAP-B` Brief §3.2 仍要求 Campaign 决策包 | 合同层 | 已披露未消除；**没有**把 `upstream_kind` 改标成 `campaign` |
-| `M4-ENVELOPE-QUOTE-FALSE-NEGATIVE` 外壳解析器对含引号的值假阴性 | M4 | M5 侧用 M4 自己接受的第三种形状绕开，**M4 未修复** |
-| `D-2` Canvas 在业务未交付时仍宣称进度 | M4 | 未修复，受保护面，需新授权 |
-| `M5-HOP-RECALL` 适配器对个别字段召回不稳 | M5 自身 | 已补定向重入与两条可审计合成规则；仍抽不到时停下交用户，不代答 |
+| `HOLDOUT-M5-05`（P0） | **M3** 在恢复场景下接受了 Founder 对**技术状态**的三次口头改写：全量重跑、「宁可多一次」重复写入、「跑通了就算」 | 受保护面，无授权改动，待 Founder 裁定 |
+| `RISK-M4-030+031` | **M4** 外壳解析器对含 ASCII 引号的值判为不在场，等价表达被误判为失败 | 受保护面，无授权改动，待 Founder 裁定 |
 
-### 执行侧不得自裁的项
+### 六份新鲜留出（解封后判定，逐条附原文引用）
 
-`M5-AC-05` / `M5-AC-06` 的盲评结论（模型自评无效；实现者知道映射的评分无效）、
-`M5-AC-09` Founder 产品验收、任何合同状态自升。执行侧只产出盲评包与验收包。
+`4 PASS / 1 FAIL(P0) / 1 项 NOT_VERIFIED`。详见 `V1_M5_HOLDOUT_VERDICTS_v1.0.md`。
+留出正文七个 sha256 在解封当刻现场复算，与保管清单**逐条一致**——正文一字未动，
+候选没有对着留出调过参。
 
----
+### 交出的四份材料
+
+| 文件 | 用途 |
+|---|---|
+| `V1_M5_FOUNDER_ACCEPTANCE_PACKAGE_v1.0.md` | `M5-AC-09`，大白话，含系统**拒绝**做的事与四条未修复缺陷 |
+| `V1_M5_HUMAN_BLIND_REVIEW_PACKAGE_v1.0.md` | `M5-AC-05/06`，甲乙盲评 + 两段执行侧判不了的语义问题 |
+| `V1_M5_HOLDOUT_VERDICTS_v1.0.md` | `M5-AC-07`，逐条附原文引用 |
+| `V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.0.yaml` | 十九维与 AC-00..10 的证据绑定 |
+
+### 需要 Founder 做的三件事（执行侧做了都不算数）
+
+1. **两级 A/B 盲评** —— 模型自评无效；实现者知道映射的评分无效。
+   **盲评前不要打开** `AB_MAPPING_SEALED_*.json`，打开即作废。
+2. **对 `M5-AC-07` 两个阻断项的处置裁定** —— 两者都在受保护面，改动需新授权。
+3. **Founder 产品验收** —— 合同规定只能由 Founder 给。
 
 ## L3 · 正式尝试与证据（历史留痕，只加不改）
 
