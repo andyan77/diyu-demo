@@ -24,8 +24,10 @@ import sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 DOCS = os.path.join(ROOT, "decision-chain", "docs")
 V10 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml")
-V11 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml")
-V11_SUPERSEDED = "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1_AC07_REBASE.yaml"
+V11 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.2_AC07_REBASE.yaml")
+V11_SUPERSEDED = ("V1_M5_CANDIDATE_RUN_MANIFEST_v1.1_AC07_REBASE.yaml（INVALID_BINDING_DEFECT）"
+                  " / V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml"
+                  "（SUPERSEDED：候选运行时在其冻结后发生变化，见下）")
 PLAN = "/mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning"
 
 RB_PROMPT = "M5_AC07_BLOCKER_REMEDIATION_AND_EVIDENCE_REBASE_EXECUTION_PROMPT_v1.0.md"
@@ -134,10 +136,12 @@ def main():
         "supersedes": [
             "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml（保留不删；原候选 %s 只读留存）"
             % base["git"]["candidate_commit"],
-            V11_SUPERSEDED + "（保留不删，已标 INVALID_BINDING_DEFECT：冻结脚本用 -F \"|\" "
-                             "切分 psql 输出，而七个应用名里本身带竖线，字段错位，"
-                             "写进去的 graph_md5 是应用名。该缺陷在任何正式运行之前被发现，"
-                             "其上没有产生过任何正式证据）",
+            V11_SUPERSEDED,
+            "v1.1.1 被取代的原因：新鲜留出的环境规格要求一个账号上同时存在三个 task "
+            "各带一份运行状态，而 v1.1.1 的候选投影只投一个 task —— 这是候选运行时的"
+            "真实缺口，由留出的形状在它运行**之前**暴露出来。修投影就是改候选运行时，"
+            "按冻结语义必须版本化后重新冻结。v1.1.1 之上的正式运行在 P1 阶段被我主动中止，"
+            "未产生任何完成的正式证据。",
         ],
         "parent_candidate": {"commit": base["git"]["candidate_commit"],
                              "frozen_at": base["frozen_at"]},

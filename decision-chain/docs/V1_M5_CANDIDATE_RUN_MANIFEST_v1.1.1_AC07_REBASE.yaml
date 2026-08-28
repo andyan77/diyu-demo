@@ -7,7 +7,7 @@ supersedes:
   输出，而七个应用名里本身带竖线，字段错位，写进去的 graph_md5 是应用名。该缺陷在任何正式运行之前被发现，其上没有产生过任何正式证据）
 frozen_at: '2026-08-28T13:12:52Z'
 frozen_by: EXECUTION
-status: FROZEN
+status: SUPERSEDED_CANDIDATE_RUNTIME_CHANGED
 freeze_semantics:
   changing_any_binding_after_freeze: 本次正式运行降级为探索，受影响验收项置 STALE，必须版本化后重新冻结
   oracle_must_precede_result: true
@@ -377,3 +377,6 @@ formal_evidence_selection:
   prohibited: glob / 排序 / 「最新」「最好」推断
   builder_behaviour_without_manifest: 非零退出，不降级为猜
   why: v1.0 的 sorted(glob)[-1] 系统性反选：正式产物带大写 F 标签排在前，结果索引里绑定的全是冻结前诊断件
+superseded_by: V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.2_AC07_REBASE.yaml
+supersede_note: 候选投影只投一个 task 的运行状态，而新鲜留出的环境规格要求一个账号上同时存在三个 task 各带一份运行状态。这是候选运行时的真实缺口，由留出的形状在它运行之前暴露。修投影
+  = 改候选运行时 → 必须版本化重新冻结。本清单之上的正式运行在 P1 阶段被主动中止，未产生任何完成的正式证据；中止是我的决定，如实登记。保留不删。

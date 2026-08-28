@@ -25,7 +25,7 @@ EB = importlib.util.module_from_spec(_eb_spec)
 _eb_spec.loader.exec_module(EB)
 
 MANIFEST = os.path.join(DOCS, os.environ.get(
-    "M5_CANDIDATE_MANIFEST", "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml"))
+    "M5_CANDIDATE_MANIFEST", "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.2_AC07_REBASE.yaml"))
 
 # 三类文件，性质不同，处置也不同。都放在 decision-chain/workflows/ 下，
 # 但混为一谈会得出错误结论，所以显式分开：

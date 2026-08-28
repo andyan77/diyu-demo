@@ -365,7 +365,7 @@ def record_feedback(ws, actor, publish_instance_id, payload, idempotency_key,
     return m2("POST", "/workspaces/%s/feedback" % ws, body, actor=actor)
 
 
-def current_projection(ws, actor, account_id, task_id=None):
+def current_projection(ws, actor, account_id, task_id=None, task_ids=None):
     """M2 最小当前投影 —— M3 的 account_context 由此而来，不靠人手抄。
 
     **补上运行状态。** 旧版只投影周期与最近决策，投出来实测 217 字符，里面
@@ -381,9 +381,20 @@ def current_projection(ws, actor, account_id, task_id=None):
                   actor=actor)
     out = {"cycle_current": {"status": st, "body": cyc},
            "decision_latest": {"status": st2, "body": dec}}
-    if task_id:
-        st3, rs = m2("GET", "/workspaces/%s/tasks/%s/run-state" % (ws, task_id), actor=actor)
-        out["run_state"] = {"status": st3, "body": rs}
+    # 一个账号上同时有多条在跑的事是常态：这周的内容安排、上周的发布登记、
+    # 某一条的推进，各自有各自的运行状态。只投一个 task 等于让系统看不见其余的，
+    # 而看不见就只能靠用户说——那正是本轮要修的毛病。M2 没有按账号列 task 的端点，
+    # 所以由调用方交出它这次涉及哪些 task；它本来就知道，是它建的。
+    ids = list(task_ids) if task_ids else ([task_id] if task_id else [])
+    states = []
+    for t in ids:
+        tid = t["id"] if isinstance(t, dict) else t
+        label = t.get("label") if isinstance(t, dict) else None
+        st3, rs = m2("GET", "/workspaces/%s/tasks/%s/run-state" % (ws, tid), actor=actor)
+        states.append({"task_id": tid, "label": label, "status": st3, "body": rs})
+    if states:
+        out["run_states"] = states
+        out["run_state"] = states[0]          # 向后兼容：单 task 调用方行为不变
     return out
 
 

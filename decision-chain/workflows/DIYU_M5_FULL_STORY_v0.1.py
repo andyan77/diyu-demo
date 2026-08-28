@@ -91,7 +91,7 @@ def projection_text(boot):
     恢复场景里就分不清系统是真不知道还是没问。
     """
     p = RT.current_projection(boot["ws"], boot["actor"], boot["account"],
-                              task_id=boot.get("task"))
+                              task_id=boot.get("task"), task_ids=boot.get("tasks"))
     cyc = (p["cycle_current"] or {}).get("body") or {}
     dec = (p["decision_latest"] or {}).get("body") or {}
     lines = [
@@ -104,18 +104,27 @@ def projection_text(boot):
         "最近一次周期决策：%s" % (dec.get("decision") or "（本周期尚无决策记录）"),
         "已发布内容与反馈：%s" % (dec.get("based_on") or "（本周期尚无发布与反馈）"),
     ]
-    lines += run_state_lines(p, boot.get("task"))
+    for st in ((p.get("run_states") or []) or
+               ([{"task_id": boot.get("task"), "label": None,
+                  "status": None, "body": None}] if boot.get("task") else [])):
+        lines += run_state_lines(st)
     return "\n".join(str(x) for x in lines), p
 
 
-def run_state_lines(proj, task_id):
-    """把 M2 的运行状态照抄成行。只抄字段，不代为解释、不代为下结论。"""
-    rs = (proj or {}).get("run_state") or {}
-    body = rs.get("body") if isinstance(rs.get("body"), dict) else None
-    head = ["", "【上一轮运行状态 · 来源 M2 服务实时读取 /tasks/%s/run-state】" % task_id]
-    if rs.get("status") != 200 or not body:
+def run_state_lines(state):
+    """把 M2 的**一个** task 的运行状态照抄成行。只抄字段，不代为解释、不下结论。
+
+    多个 task 逐条列，**不合并**：把「这周内容安排断在拍摄计划」和「上周发布登记
+    断在写反馈」并成一条，就把两件独立的事变成一件，影响面从此算不对。
+    """
+    tid = state.get("task_id")
+    label = state.get("label")
+    head = ["", "【上一轮运行状态 · 来源 M2 服务实时读取 /tasks/%s/run-state】%s"
+            % (tid, ("（%s）" % label) if label else "")]
+    body = state.get("body") if isinstance(state.get("body"), dict) else None
+    if state.get("status") != 200 or not body:
         return head + ["M2 没有本任务的上一轮运行状态记录（HTTP %s）。"
-                       "这表示查过而查不到，不表示没查。" % rs.get("status")]
+                       "这表示查过而查不到，不表示没查。" % state.get("status")]
     se = body.get("side_effects") or {}
     out = head + [
         "最后成功步骤：%s" % (body.get("last_success_step") or "（无）"),
