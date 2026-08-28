@@ -219,3 +219,87 @@ Content Brief 的 `user_delivery` 表现出下列行为，均可回指：
   `source_kind: M3_OPERATION` 通过能力侧的**确定性外壳校验**，没有把
   `upstream_kind` 改标成 `campaign`。下游消费测试 9 条仍全过，
   冻结断言「五条里恰好一条 ABSENT」保持不变。
+
+---
+
+## M5-DIAG-006 · 六个能力的必填清单互不相同，一份写死的清单接不完整条链（诊断）
+
+**怎么发现的**：v0.1 适配器只覆盖 `M3 → Content Brief` 一跳，必填清单被写死成
+Content Brief 的六项。把链路往下延伸时，后三个能力全部在 `外壳校验` 处返回
+`INPUT_INSUFFICIENT`。
+
+**现场读出的事实**（直接读四个能力**已发布** graph 的 `外壳校验` 节点源码，未经改写）：
+
+| 能力 | `REQUIRED` |
+|---|---|
+| MATRIX | applicability_reason / subject_and_account_scope / objective / facts_registered / expression_boundary |
+| CAMPAIGN | objective / deadline_or_stage_boundary / audience_problem / facts_registered / capacity_or_owner |
+| CONTENT_BRIEF | objective / audience_problem / expected_change / content_promise / facts_registered / expression_subject_and_boundary |
+| CREATIVE_SCRIPT | objective / expected_change / content_promise / **expression_subject** / **content_origin_mode** / facts_registered |
+| PRODUCTION_DIRECTOR | **script_or_equivalent_beats** / content_origin_mode / **production_profile** / **time_window** / content_promise |
+| PUBLISHING_PACKAGING | **content_body_or_beats** / content_promise / **explicit_non_promise** / facts_registered / **cta_contract** / **asset_publish_permission** |
+
+**这不是 M4 的缺陷。** M4 冻结的正是「六个能力之间零调用边」；谁把上一跳的产出接成
+下一跳的外壳，M4 没有规定也不该由 M4 规定——那是 M5「统一集成」要补的接缝。
+
+后三个能力要的字段（产能班底、时间窗口、出镜与引用授权）**在 M3 的运营判断里没有
+也不该有**：它们是资源事实，不是运营判断。真源是已登记事实夹具。因此完整主故事
+必须把夹具作为可加载参考真正送进链路，而不是由运行脚本代抄。
+
+**处置**：新建 M5 测试候选应用「跨能力接缝适配器（能力感知抽取）」
+`6c46fdb1-5f49-4513-a0c0-29957b3dcee4`，按 `target_capability` 各自的必填清单，
+从四类已登记来源（M3 判断 / 上游能力已交付产出 / 已登记事实夹具 / 用户原话与账号投影）
+抽取。每个字段必须报出来自哪一个来源，不得跨源拼接。
+
+---
+
+## M5-DIAG-007 · M4 外壳解析器对含引号的值存在硬门假阴性（真实缺陷）
+
+**症状**：`FULL-01` 第一跳，适配器自报只缺 1 项，Content Brief 却报缺 4 项：
+`audience_problem, expected_change, facts_registered, expression_subject_and_boundary`。
+其中前三项**确实写在外壳里**，能力侧却看不见。
+
+**根因**（`外壳校验` 节点 `_find_scalar` 的第二条正则，原文）：
+
+```python
+r"^\s*%s\s*:\s*[\"']?([^\"'\n]+)[\"']?\s*$" % re.escape(key)
+```
+
+捕获组 `[^\"'\n]+` **不允许值里出现 ASCII 引号**。而 M3 的运营判断大量使用
+`'看着差不多、上身差很多'`、`'人人可穿'` 这类引用。一旦值里出现一个 `'` 或 `"`，
+正则在第一个引号处截断、随后 `\s*$` 失败、且因字符类排除引号而无法回溯，整行判为不在场。
+
+**影响面**：任何一条合法 YAML 写法的外壳，只要值里引用了一句话，该字段就对能力侧隐形。
+后果不是产出变差，而是**硬门给出假阴性**——能力侧回头向用户索要一份用户已经给过的东西。
+六个能力共用同一份 `_find_scalar`，因此六个能力全部受影响。
+
+**为什么不改 M4**：M4 八个已发布应用属受保护面，本任务无授权改动。
+
+**M5 侧处置（不改 M4 一个字）**：改用 M4 解析器**自己就接受**的第三种形状
+`` `key`: value ``，其正则为 `` r"`%s`\s*[:：]\s*([^\n]+)" ``，捕获组 `([^\n]+)`
+接受任意字符。值一个字都不改写，引号原样保留，能力侧能读到。
+
+**离线复算**（直接 `exec` 能力侧已发布源码，未改一字）：用本次实跑抽到的**原值**
+（含 ASCII 引号）重算——YAML 平铺形状 → `INSUFFICIENT`，缺 3 项；
+反引号形状 → `SUFFICIENT`，`missing = 无`，`goal_family = MIXED`，
+`cta_level = LOW_RISK_INTERACTION`。
+
+**反向控制（防涂绿）**：逐项删除必填字段后重算，11/11 全部仍判 `INSUFFICIENT`
+且 `missing` 精确命中被删项。适配器没有替能力侧放松闸门，只是让在场的字段可被看见。
+
+**登记为待 Founder 裁定的 M4 遗留缺陷**：本任务只在 M5 接缝侧绕开，**没有修复 M4**。
+任何未来直接用 YAML 平铺写法调用这六个能力的调用方，都会再次踩中。
+
+---
+
+## M5-DIAG-008 · 唯一一条允许的合成规则
+
+抽取器在不同跳上对 `expression_subject` 的召回不一致：Publishing 那跳从夹具抽到了，
+Content Brief 那跳没抽到，导致复合字段 `expression_subject_and_boundary` 缺失。
+
+处置：**只在两个部件都已从已登记来源抽到时**，把 `expression_subject` 与
+`expression_boundary` 拼成复合字段，并在 `source_map` 里标为
+`DERIVED(expression_subject+expression_boundary)`。任一部件缺失一律不合成，照旧计入缺口。
+
+这是格式化不是编造：没有引入任何新事实，且合成事实可审计。
+复合字段的定义本身就是「出镜者＋表达边界」。

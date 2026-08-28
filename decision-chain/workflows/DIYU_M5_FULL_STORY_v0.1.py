@@ -100,10 +100,39 @@ def projection_text(boot):
     return "\n".join(str(x) for x in lines), p
 
 
+# ---------------------------------------------------------------- 已登记事实
+# 这三份夹具是 M4 后三个能力必填项的**真源**：产能班底、时间窗口、出镜与引用授权、
+# 明确的不承诺，M3 的运营判断里没有也不该有——它们是资源事实，不是运营判断。
+FIXTURES = [
+    "序里集_Campaign当前素材与资源夹具_v0.1.md",
+    "序里集_Campaign最小承接条件夹具_v0.1.md",
+    "一页纸夹具品牌事实 v0.1.md",
+]
+
+
+def registered_facts():
+    """读取已登记事实夹具原文。照抄，不摘要、不改写、不代为解释。"""
+    parts = []
+    for name in FIXTURES:
+        path = os.path.join(ROOT, "decision-chain", "fixtures", name)
+        with open(path, encoding="utf-8") as fh:
+            parts.append("===== 夹具：%s =====\n%s" % (name, fh.read()))
+    return "\n\n".join(parts)
+
+
 # ---------------------------------------------------------------- FULL-01
 def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_SCRIPT",
-                                                    "PRODUCTION_DIRECTOR", "PUBLISHING_PACKAGING")):
-    rec = {"case": "FULL-01", "steps": [], "skipped": [], "boot": boot}
+                                                    "PRODUCTION_DIRECTOR", "PUBLISHING_PACKAGING"),
+                  facts=None):
+    """一次自然使用：自然语言诉求 → 落到可发布的成品包。
+
+    每进一个专业能力之前先过一次**跨能力接缝适配**，因为六个能力的必填清单
+    实测互不相同（现场从已发布 graph 读出）。适配器只抽取、不推断；抽不到就留空，
+    由能力侧自己判 INSUFFICIENT——离线反向控制 11/11 证明闸门仍然咬得住。
+    """
+    facts = registered_facts() if facts is None else facts
+    rec = {"case": "FULL-01", "steps": [], "skipped": [], "boot": boot,
+           "registered_facts_chars": len(facts)}
 
     # 1. M1 任务上下文 —— 账号锚点由 M2 投影供给（M1 预留的 account_anchor_supplied 入口）
     acct_text, raw_proj = projection_text(boot)
@@ -122,8 +151,9 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
                          "decision_http": raw_proj["decision_latest"]["status"],
                          "account_context_chars": len(acct_text)})
 
-    # 3. M3 周期判断与内容任务
-    m3 = rt.m3_operate(account_context=acct_text, user_request=nl_request)
+    # 3. M3 周期判断与内容任务（夹具作为可加载参考进入，不由本文件代抄事实）
+    m3 = rt.m3_operate(account_context=acct_text, user_request=nl_request,
+                       loaded_references=facts)
     rec["steps"].append({"step": "M3_operate", "platform_status": m3["platform_status"],
                          "run_id": m3["run_id"], "elapsed": m3["elapsed_seconds"],
                          "gate_status": (m3["outputs"] or {}).get("gate_status"),
@@ -134,13 +164,33 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
         return rec, m3
 
     # 4-7. 按需进入专业能力，一次一个；跳过如实登记
-    carried = judgment
+    upstream = ""
+    last_delivered = None
     for cap in RT.CAPABILITIES:
         if cap not in applicable:
             rec["skipped"].append({"capability": cap,
                                    "reason": "本轮任务不适用；合法跳过，不暗跑"})
             continue
-        r = rt.seam(cap, capability_call=carried, professional_input=carried)
+
+        h = rt.hop(cap, m3_judgment=judgment, upstream_delivery=upstream,
+                   registered_facts=facts, account_context=acct_text,
+                   user_request=nl_request)
+        ho = h["outputs"] or {}
+        rec["steps"].append({
+            "step": "hop:%s" % cap, "platform_status": h["platform_status"],
+            "run_id": h["run_id"], "elapsed": h["elapsed_seconds"],
+            "extraction_gaps": ho.get("extraction_gaps_text"),
+            "extraction_gaps_count": ho.get("extraction_gaps_count"),
+            "source_map": ho.get("source_map_json"),
+            "envelope_chars": len(ho.get("capability_call") or ""),
+        })
+        call = ho.get("capability_call") or ""
+        prof = ho.get("professional_input") or ""
+        if not call:
+            rec["steps"].append({"step": "seam:%s" % cap, "not_run": "适配器未产出外壳，本跳不发起调用"})
+            continue
+
+        r = rt.seam(cap, capability_call=call, professional_input=prof)
         rec["steps"].append({
             "step": "seam:%s" % cap,
             "platform_status": r["platform_status"],
@@ -152,7 +202,11 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
         })
         # 组件级 Return 是本分支结果，不是整任务硬停：记录后继续，由调用方决定
         if RT.delivered(r) and (r["user_delivery"] or "").strip():
-            carried = r["user_delivery"]
+            upstream = r["user_delivery"]
+            last_delivered = cap
+            rec.setdefault("deliveries", {})[cap] = r["user_delivery"]
+    rec["last_delivered_step"] = last_delivered
+    rec["final_text"] = upstream
     return rec, m3
 
 

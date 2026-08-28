@@ -49,6 +49,13 @@ CAPABILITY_APPS = {
 }
 CAPABILITIES = tuple(CAPABILITY_APPS)
 
+# M5 测试候选：M3 判断（散文）→ 能力外壳（扁平）的抽取适配器。
+# 它是 M5 自己新建的应用，不改 M1-M4 任何已发布应用；只做抽取与格式化，不做业务判断。
+ADAPTER_APP = "e1013ce2-69c5-44c1-ad83-26534f3c5e4c"   # m5-adapter-v0.1（只覆盖 CONTENT_BRIEF 一跳）
+# v0.2 能力感知版：按目标能力各自的必填清单抽取，覆盖六个能力的全部跨能力接缝。
+# 六个能力的必填清单实测互不相同，一份写死的清单接不完整条链——这是诊断出来的，不是设计假设。
+HOP_ADAPTER_APP = "6c46fdb1-5f49-4513-a0c0-29957b3dcee4"   # m5-hop-adapter-v0.2
+
 M2_BASE = "http://diyu-m2-app:8000"
 M2_RELAY_CONTAINER = "docker-api-1"   # 与 dify_client 同一条 relay 通道
 DIFY_ENV = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env"
@@ -134,6 +141,37 @@ class Runtime(object):
             "account_context": account_context,
             "user_request": user_request,
             "loaded_references": loaded_references,
+        }, user=user)
+        return _wf_result(r)
+
+    # ------------------------------------------------------------ M3 -> M4 抽取适配
+    def adapt(self, m3_judgment, account_context="", user_request="", user="m5-runtime"):
+        """把 M3 的运营判断抽取成能力侧可解析的扁平外壳。
+
+        **只抽取，不判断。** 抽不到就留空并计入 extraction_gaps，不推断、不补全、
+        不跨源搬运——缺口如实上报比填满字段重要。
+        """
+        r = DC.run_workflow(self.key(ADAPTER_APP), {
+            "m3_judgment": m3_judgment,
+            "account_context": account_context,
+            "user_request": user_request,
+        }, user=user)
+        return _wf_result(r)
+
+    def hop(self, target_capability, m3_judgment="", upstream_delivery="",
+            registered_facts="", account_context="", user_request="", user="m5-runtime"):
+        """跨能力接缝：按目标能力的必填清单，从四类已登记来源抽取扁平外壳。
+
+        与 adapt() 的区别是它**知道自己要进哪个能力**。M4 冻结了六个能力各自的
+        必填清单且能力之间零调用边，谁来接这一跳由 M5 负责——这就是那一跳。
+        """
+        r = DC.run_workflow(self.key(HOP_ADAPTER_APP), {
+            "target_capability": target_capability,
+            "m3_judgment": m3_judgment,
+            "upstream_delivery": upstream_delivery,
+            "registered_facts": registered_facts,
+            "account_context": account_context,
+            "user_request": user_request,
         }, user=user)
         return _wf_result(r)
 
