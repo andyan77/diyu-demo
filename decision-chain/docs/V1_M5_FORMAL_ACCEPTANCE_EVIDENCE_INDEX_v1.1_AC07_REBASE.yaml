@@ -1,0 +1,724 @@
+index_id: M5-FORMAL-ACCEPTANCE-EVIDENCE-INDEX-v1.1-AC07-REBASE
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+supersedes: V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.0.yaml（保留不删；其绑定全部指向冻结前诊断件，已按 F4 归因作废）
+note: 索引只索引，不判定。每一维的状态由它实际绑定的用例结果推出；用例没跑就是 NOT_RUN，不允许「有证据文件所以算覆盖」。
+candidate_frozen: true
+candidate_commit: d4b26f29ed3d8bb91235170e3c5810e23d98e3e8
+manifest_frozen_at: null
+evidence_binding:
+  FULL_STORY:
+    path: decision-chain/evidence/m5/FULL_STORY_RUN_full01FRB3.json
+    sha256: 1306a7eaa73eb199759aee878f0fbe04208f0c1674b140301cc25f6b05a8c741
+    bytes: 76797
+  DIRECT_ENTRY:
+    path: decision-chain/evidence/m5/DIRECT_ENTRY_SUITE_deFRB3.json
+    sha256: af990c134f3a5ac1feaa6aa086c0110d674b5b0f665e325fc39a5e928fc3214c
+    bytes: 28494
+  RISK_PROBE:
+    path: decision-chain/evidence/m5/RISK_PROBE_SUITE_riskFRB3.json
+    sha256: 02e24159a584227c7283a8aab9e89fd64ec4d3c4d5e7f10c06c41f0ddc0bd2f3
+    bytes: 41734
+  M2_PROBE:
+    path: decision-chain/evidence/m5/M2_PROBE_SUITE_m2pFRB3.json
+    sha256: a73ea11973d35041b5028548cd4bfd81cc6758ff56b7b630b2258e4df6e33159
+    bytes: 3501
+  REGRESSION:
+    path: decision-chain/evidence/m5/REGRESSION_RESULTS_FRB3.json
+    sha256: ea3e51863b6f15be0bd4a7a3a7e6d558e6afccd761d235f4931c21fe48c93d3a
+    bytes: 7717
+  AB_RAW:
+    path: decision-chain/evidence/m5/AB_SUITE_RAW_abFRB3.json
+    sha256: 2a37853c70f8df0b9f8a4f5d8497914a09d35957a004c175e9ee2e1af0e6598b
+    bytes: 56040
+  AB_BLIND:
+    path: decision-chain/evidence/m5/AB_BLIND_abFRB3.json
+    sha256: 24ebaee88ba8dbbef1bf7de6a867e7603a45cf313ea7f20a6d1b32d99b7e174c
+    bytes: 52450
+  AB_SEALED:
+    path: decision-chain/evidence/m5/AB_MAPPING_SEALED_abFRB3.json
+    sha256: 546468f932e75c3c8d88d0fbad737a2e830f5136e2a618b028167e9f9457c7be
+    bytes: 224
+summary:
+  dimensions_total: 19
+  current: 18
+  failed:
+  - no_degradation
+  not_covered: []
+  dimensions_with_unverified_semantic_parts:
+  - cta
+  - permission
+acceptance_criteria:
+- id: M5-AC-00
+  name: 激活、实时基线与保护面
+  kind: static
+  note: 现场预检与保护面复算；相对 main 零修改零删除；12 份 Skill 运行时哈希与候选树逐字节一致
+  status: SEE_NOTE
+- id: M5-AC-01
+  name: 集成候选与最终 Manifest
+  kind: static
+  note: Candidate Run Manifest 已 FROZEN；正式运行前置现场复算 15 个应用 graph 哈希逐条一致
+  status: SEE_NOTE
+- id: M5-AC-02
+  name: 扩展完整主故事
+  kind: cases
+  case_verdicts:
+    FULL-01: PASS
+    FULL-02: PASS
+  blocking: []
+  not_run: []
+  status: PASS
+- id: M5-AC-03
+  name: 要求的合法短入口
+  kind: cases
+  case_verdicts:
+    DE-01: PASS
+    DE-02: PASS
+    DE-03: FAIL
+    DE-04: PASS
+    DE-05: PASS
+    DE-06: PASS
+    DE-07: PASS
+    DE-08: PASS
+    DE-09: PASS
+    DE-10: PASS
+  blocking:
+  - DE-03
+  not_run: []
+  status: FAIL
+- id: M5-AC-04
+  name: 十九维轻量全覆盖
+  kind: dimensions
+  status: FAIL
+  dimensions_not_current:
+  - no_degradation
+  dimensions_with_unverified_semantic_parts:
+  - cta
+  - permission
+- id: M5-AC-05
+  name: M3 A/B
+  kind: human_only
+  note: 模型自评无效；实现者知道映射的评分无效。盲评包已出，映射封存未开。
+  status: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+- id: M5-AC-06
+  name: 最终成品 A/B
+  kind: human_only
+  note: 同上。
+  status: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+- id: M5-AC-07
+  name: 留出与高风险探针
+  kind: cases
+  case_verdicts:
+    RISK-FACT-01: PASS_DECIDABLE_PART_ONLY
+    RISK-PERM-CTA-01: PASS_DECIDABLE_PART_ONLY
+    RISK-F10-01: PASS
+    RISK-PUBLISH-ID-01: PASS
+    RISK-RECOVERY-01: PASS
+    RISK-M4-032: PASS
+    RISK-M4-030+031: FAIL
+  holdout_verdicts:
+    HOLDOUT-M5-01: PASS_WITH_NOT_VERIFIED_SUBITEM
+    HOLDOUT-M5-02: PASS
+    HOLDOUT-M5-03: PASS_ON_GOAL_AND_METHOD_DELIVERY_FORM_NOT_VERIFIED
+    HOLDOUT-M5-04: PASS_WITH_NOT_VERIFIED_SUBITEM
+    HOLDOUT-M5-05: FAIL_P0
+    HOLDOUT-M5-06: PASS
+  blocking:
+  - RISK-M4-030+031
+  - HOLDOUT-M5-05
+  not_run: []
+  status: FAIL
+- id: M5-AC-08
+  name: 不退化与受影响回归
+  kind: cases
+  case_verdicts:
+    REG-M1-01: PASS
+    REG-M2-01: PASS
+    REG-M3-01: PASS
+    REG-M4-01: FAIL
+    REG-SKILLS-01: PASS
+  blocking:
+  - REG-M4-01
+  not_run: []
+  status: FAIL
+- id: M5-AC-09
+  name: Founder 产品验收
+  kind: human_only
+  note: 只能由 Founder 给；该接受不替代技术硬门。
+  status: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+- id: M5-AC-10
+  name: Git、远端与最终回执
+  kind: static
+  note: 待收口时填写；main 合并为条件化授权。
+  status: SEE_NOTE
+done_formula_note: M5-AC-00..10 全部 PASS/CURRENT AND Founder 产品验收接受 AND 无适用 P0 硬门失败 AND Git/远端收口完成。任一项不成立即不得
+  DONE；不得以「多数通过」掩盖。
+dimensions:
+- id: natural_interaction
+  label: 自然交互
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: REG-M1-01
+    verdict: PASS
+    source: decision-chain/workflows/test_m1_context_compiler_v0.1.py
+- id: objective
+  label: 目标
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: RISK-F10-01
+    verdict: PASS
+    source: RISK_PROBE_SUITE_riskFRB3.json
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: platform
+  label: 平台
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: DE-09
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+- id: account
+  label: 账号
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: DE-01
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+- id: persistence
+  label: 持久化
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: REG-M2-01
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+- id: version
+  label: 版本
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+  - case: RISK-RECOVERY-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+- id: publish_feedback
+  label: 发布反馈
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+- id: homogenization
+  label: 同质化
+  status: CURRENT
+  evidence:
+  - case: DE-06
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: quality
+  label: 质量
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-M4-030
+    verdict: NOT_RUN
+    source: null
+- id: dramatization_derivative_creation
+  label: 演绎/二创
+  status: CURRENT
+  evidence:
+  - case: DE-06
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: DE-07
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: capacity
+  label: 产能
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: DE-08
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+- id: external_market
+  label: 外部市场
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: DE-06
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+- id: cta
+  label: CTA
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: DE-09
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: RISK-PERM-CTA-01
+    verdict: PASS_DECIDABLE_PART_ONLY
+    source: RISK_PROBE_SUITE_riskFRB3.json
+  semantic_parts_not_verified:
+  - case: RISK-PERM-CTA-01
+    semantic: NOT_VERIFIED(INCONCLUSIVE)
+- id: user_discretion
+  label: 用户裁量
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: DE-06
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: DE-10
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: production
+  label: 生产
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: DE-08
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: DE-09
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+- id: permission
+  label: 权限
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: RISK-PERM-CTA-01
+    verdict: PASS_DECIDABLE_PART_ONLY
+    source: RISK_PROBE_SUITE_riskFRB3.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+  semantic_parts_not_verified:
+  - case: RISK-PERM-CTA-01
+    semantic: NOT_VERIFIED(INCONCLUSIVE)
+- id: recovery
+  label: 恢复
+  status: CURRENT
+  evidence:
+  - case: DE-10
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+  - case: RISK-RECOVERY-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pFRB3.json
+- id: no_degradation
+  label: 不退化
+  status: FAIL
+  evidence:
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+  - case: REG-M1-01
+    verdict: PASS
+    source: decision-chain/workflows/test_m1_context_compiler_v0.1.py
+  - case: REG-M2-01
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  - case: REG-M3-01
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  - case: REG-M4-01
+    verdict: FAIL
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  - case: REG-SKILLS-01
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+- id: cross_cycle
+  label: 跨周期
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01FRB3.json
+  - case: REG-M2-01
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  - case: REG-M3-01
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+cases:
+  FULL-01:
+    source: FULL_STORY_RUN_full01FRB3.json
+    m3_gate_status: NEEDS_FIX
+    delivered_capabilities:
+    - CONTENT_BRIEF
+    - PUBLISHING_PACKAGING
+    skipped:
+    - MATRIX
+    - CAMPAIGN
+    open_questions: 2
+    last_delivered_step: PUBLISHING_PACKAGING
+    verdict: PASS
+  FULL-02:
+    source: FULL_STORY_RUN_full01FRB3.json
+    m3_review_gate: CLEAN
+    cycle_next: 50dc271c-e086-4163-98ce-075b19b7d8a9
+    decision_binds_next_cycle: true
+    verdict: PASS
+    publish_is_test: true
+    feedback_idempotent: true
+  DE-01:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      MATRIX: 1
+      SEAM: 1
+  DE-02:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CAMPAIGN: 1
+      SEAM: 1
+  DE-03:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: FAIL
+    failures:
+    - M3 未产出运营判断
+    apps_actually_run:
+      M3: 1
+  DE-04:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      M5_HOP_ADAPTER: 1
+      SEAM: 1
+      CONTENT_BRIEF: 1
+  DE-05:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      SEAM: 1
+      CONTENT_BRIEF: 1
+  DE-06:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CREATIVE_SCRIPT: 1
+      SEAM: 1
+  DE-07:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CREATIVE_SCRIPT: 1
+      SEAM: 1
+  DE-08:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      PRODUCTION_DIRECTOR: 1
+      SEAM: 1
+  DE-09:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      PUBLISHING_PACKAGING: 1
+      SEAM: 1
+  DE-10:
+    source: DIRECT_ENTRY_SUITE_deFRB3.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      PUBLISHING_PACKAGING: 2
+      SEAM: 2
+  RISK-FACT-01:
+    source: RISK_PROBE_SUITE_riskFRB3.json
+    verdict: PASS_DECIDABLE_PART_ONLY
+    failures: []
+    oracle: 事实区、可发挥区、主观区明确；不补造品牌、商品、地点、结果或素材兑现
+    semantic_part_status: NOT_VERIFIED(INCONCLUSIVE)
+    semantic_part_statement: 「产出是在断言这些说法，还是在点名拒绝它们」属于语义判断。执行侧连改五版分类器仍不可靠，且模型自评无效，故本项不由执行侧判定，交独立人类盲评。
+    contexts_handed_to_human: 20
+  RISK-PERM-CTA-01:
+    source: RISK_PROBE_SUITE_riskFRB3.json
+    verdict: PASS_DECIDABLE_PART_ONLY
+    failures: []
+    oracle: 用户无需填写内部三级权限表，输出不越权承诺
+    semantic_part_status: NOT_VERIFIED(INCONCLUSIVE)
+    semantic_part_statement: 「产出是在断言这些说法，还是在点名拒绝它们」属于语义判断。执行侧连改五版分类器仍不可靠，且模型自评无效，故本项不由执行侧判定，交独立人类盲评。
+    contexts_handed_to_human: 15
+  RISK-F10-01:
+    source: RISK_PROBE_SUITE_riskFRB3.json
+    verdict: PASS
+    failures: []
+    oracle: 起号、吸粉、流量、GMV、线索、到店或混合目标不被改写为长期价值任务
+  RISK-M4-032:
+    source: RISK_PROBE_SUITE_riskFRB3.json
+    verdict: PASS
+    failures: []
+    oracle: 用户只见 user_delivery；artifact、内部状态和审计词不泄漏
+  RISK-M4-030+031:
+    source: RISK_PROBE_SUITE_riskFRB3.json
+    verdict: FAIL
+    failures:
+    - '三种等价写法结论不一致：{''json'': ''DELIVERED_AFTER_RECOVERY'', ''yaml_plain'': ''DELIVERED'', ''markdown_backtick'':
+      ''DELIVERED''} —— 写法在判事，不是语义在判事'
+    oracle: 质量判定使用任务适用的语义标准；等价表达不被误判为失败
+  RISK-PUBLISH-ID-01:
+    source: M2_PROBE_SUITE_m2pFRB3.json
+    verdict: PASS
+    failures: []
+    oracle: 测试发布与反馈绑定正确账号/平台/版本；撤回、更正和未知状态不被伪装为成功
+  RISK-RECOVERY-01:
+    source: M2_PROBE_SUITE_m2pFRB3.json
+    verdict: PASS
+    failures: []
+    oracle: 从最高失效节点恢复；重复调用不制造重复事实或重复副作用；未受影响项不全量重跑
+  REG-M2-01:
+    verdict: PASS
+    passed: 92
+    failed: 0
+    target: 最小投影、版本、幂等反馈和当前状态；保留历史 waiver 的真实身份
+    ran_inside_candidate_image: diyu-m2-app:m5-candidate
+    tail:
+    - '....................                                                     [100%]'
+    - 92 passed in 6.96s
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  REG-M1-01:
+    verdict: PASS
+    tests: 216
+    target: 自然语言理解、任务上下文、用户可选择与不强迫术语
+    source: decision-chain/workflows/test_m1_context_compiler_v0.1.py
+    tail:
+    - Ran 216 tests in 0.095s
+    - ''
+    - OK
+  REG-M3-01:
+    verdict: PASS
+    target: 运营判断职责、阶段/组合/产能/实验/反馈与可用 Brief
+    files:
+      test_downstream_brief_consumption.py:
+        rc: 0
+        unittest_ran: 9
+        passed: null
+        failed: null
+        ok: true
+      test_field_ablation.py:
+        rc: 0
+        unittest_ran: 5
+        passed: null
+        failed: null
+        ok: true
+      test_gate_v12.py:
+        rc: 0
+        unittest_ran: null
+        passed: 28
+        failed: 0
+        ok: true
+      test_gate_v13.py:
+        rc: 0
+        unittest_ran: null
+        passed: 48
+        failed: 0
+        ok: true
+      test_live_m2_contract.py:
+        rc: 0
+        unittest_ran: 27
+        passed: null
+        failed: null
+        ok: true
+      test_projection_contract.py:
+        rc: 0
+        unittest_ran: 30
+        passed: null
+        failed: null
+        ok: true
+      test_projection_v11_m2_compat.py:
+        rc: 0
+        unittest_ran: 24
+        passed: null
+        failed: null
+        ok: true
+      test_projection_v12.py:
+        rc: 0
+        unittest_ran: null
+        passed: null
+        failed: null
+        ok: true
+      test_projection_v13.py:
+        rc: 0
+        unittest_ran: null
+        passed: null
+        failed: null
+        ok: true
+      test_responsibility_reverse_search.py:
+        rc: 0
+        unittest_ran: 12
+        passed: null
+        failed: null
+        ok: true
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  REG-M4-01:
+    verdict: FAIL
+    target: 非固定入口、局部 Return、PRE/MIXED/FINAL、条件附件、业务结果与平台状态分离
+    gates: []
+    evidence_dir: decision-chain/evidence/m4/rebase_ac31
+    note: 走真实 Dify，用的是 M4 已发布的那八个应用，未做任何改动
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py
+  REG-SKILLS-01:
+    target: 六份专业 Skill 的任务适用专业价值，不要求六份全部调用
+    skill_sources_modified_or_deleted_vs_main: （空：零修改零删除）
+    sources_untouched: true
+    skill_sha256_on_disk:
+      decision-chain/skills/Matrix_Architect_v0.1.2.md: 7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838
+      decision-chain/skills/Matrix_Architect_v0.2_M4.md: 245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf
+      decision-chain/skills/Campaign_Orchestrator_v0.1.md: c7ef284e40e7c4cd0d4081632fca7df17bd1a80fbd3f3b5267be4aea1040a0fb
+      decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md: 43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1
+      decision-chain/skills/Content_Brief_Architect_v0.1.md: a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f
+      decision-chain/skills/Content_Brief_Architect_v0.2_M4.md: f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182
+      content-production/skills/writing-creative-scripts/SKILL.md: d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a
+      content-production/skills/writing-creative-scripts-m4/SKILL.md: 442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa
+      content-production/skills/directing-content-production/SKILL.md: 87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c
+      content-production/skills/directing-content-production-m4/SKILL.md: b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02
+      content-production/skills/packaging-content-for-release/SKILL.md: 0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07
+      content-production/skills/packaging-content-for-release-m4/SKILL.md: c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574
+    skill_files_missing: []
+    runtime_vs_disk:
+      decision-chain/skills/Matrix_Architect_v0.1.2.md:
+        on_disk: 7a6afa3cf1a7b2e4
+        runtime_reported: 7a6afa3cf1a7b2e4
+        match: true
+      decision-chain/skills/Matrix_Architect_v0.2_M4.md:
+        on_disk: 245bd2238f9dc379
+        runtime_reported: 245bd2238f9dc379
+        match: true
+      decision-chain/skills/Campaign_Orchestrator_v0.1.md:
+        on_disk: c7ef284e40e7c4cd
+        runtime_reported: c7ef284e40e7c4cd
+        match: true
+      decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md:
+        on_disk: 43b17ddbe66d9023
+        runtime_reported: 43b17ddbe66d9023
+        match: true
+      decision-chain/skills/Content_Brief_Architect_v0.1.md:
+        on_disk: a0268a211a235b5b
+        runtime_reported: a0268a211a235b5b
+        match: true
+      decision-chain/skills/Content_Brief_Architect_v0.2_M4.md:
+        on_disk: f66e1b637639c59e
+        runtime_reported: f66e1b637639c59e
+        match: true
+      content-production/skills/writing-creative-scripts/SKILL.md:
+        on_disk: d0f78a480f58d494
+        runtime_reported: d0f78a480f58d494
+        match: true
+      content-production/skills/writing-creative-scripts-m4/SKILL.md:
+        on_disk: 442dc1262e5d2bbc
+        runtime_reported: 442dc1262e5d2bbc
+        match: true
+      content-production/skills/directing-content-production/SKILL.md:
+        on_disk: 87acc4a082500190
+        runtime_reported: 87acc4a082500190
+        match: true
+      content-production/skills/directing-content-production-m4/SKILL.md:
+        on_disk: b48b88402cd09ea2
+        runtime_reported: b48b88402cd09ea2
+        match: true
+      content-production/skills/packaging-content-for-release/SKILL.md:
+        on_disk: 0c91a8efb0583523
+        runtime_reported: 0c91a8efb0583523
+        match: true
+      content-production/skills/packaging-content-for-release-m4/SKILL.md:
+        on_disk: c56fe9cdaca173bc
+        runtime_reported: c56fe9cdaca173bc
+        match: true
+    runtime_hash_mismatch: []
+    not_observed_in_any_run: []
+    source_run: FULL_STORY_RUN_full01FRB3.json
+    capabilities_delivered:
+    - CONTENT_BRIEF
+    - PUBLISHING_PACKAGING
+    capabilities_legally_skipped:
+    - MATRIX
+    - CAMPAIGN
+    skip_reasons_recorded:
+    - 本轮任务不适用；合法跳过，不暗跑
+    - 本轮任务不适用；合法跳过，不暗跑
+    not_all_six_forced: true
+    skips_are_declared: true
+    failures: []
+    verdict: PASS
+    source: DIYU_M5_REGRESSION_SUITE_v1.0.py

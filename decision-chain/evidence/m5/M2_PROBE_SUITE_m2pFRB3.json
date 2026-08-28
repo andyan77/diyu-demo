@@ -1,0 +1,105 @@
+{
+  "boot": {
+    "actor": "m5-m2pFRB3",
+    "user": {
+      "external_ref": "m5-m2pFRB3",
+      "display_name": null,
+      "id": "d1e2f6e0-39ab-4bb0-b625-0d7765ffd9d4",
+      "created_at": "2026-08-28T15:52:00.373766+00:00"
+    },
+    "ws": "84cd06f6-57e9-4dfe-89e5-bb2a9ce970ef",
+    "account": "2156a178-35c9-4315-bd20-31e55f2e9af5",
+    "cycle": "627c77be-8497-4d79-9254-94caf24b1ea5",
+    "task": "bdd738f9-2ef6-4b77-b662-26744e07b367",
+    "tag": "m2pFRB3"
+  },
+  "results": [
+    {
+      "id": "RISK-PUBLISH-ID-01",
+      "target": "发布身份、版本、撤回与反馈归属",
+      "oracle": "测试发布与反馈绑定正确账号/平台/版本；撤回、更正和未知状态不被伪装为成功",
+      "observed": {
+        "artifact_http": 200,
+        "two_versions_distinct": true,
+        "publish_http": 200,
+        "publish_is_test": true,
+        "publish_is_simulated": true,
+        "publish_bound_version": true,
+        "publish_bound_account": true,
+        "publish_platform": "test-platform",
+        "feedback_idempotent_same_row": true,
+        "feedback_rows_in_db": "1",
+        "feedback_leaked_to_other_version": "0",
+        "feedback_on_unknown_publish_http": 404,
+        "feedback_on_unknown_publish_rejected": true,
+        "material_http": 200,
+        "withdraw_http": 200,
+        "material_state_after_withdraw": "{\"workspace_id\": \"84cd06f6-57e9-4dfe-89e5-bb2a9ce970ef\", \"source\": null, \"owner_ref\": null, \"analysis_authorized\": false, \"generation_authorized\": false, \"publish_authorized\": false, \"scope_ref\": {}, "
+      },
+      "failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "id": "RISK-RECOVERY-01",
+      "target": "中断恢复、局部失效与幂等",
+      "oracle": "从最高失效节点恢复；重复调用不制造重复事实或重复副作用；未受影响项不全量重跑",
+      "observed": {
+        "run_state_put_http": 200,
+        "run_state_get_http": 200,
+        "last_success_step": "seam:CONTENT_BRIEF",
+        "failed_step": "seam:CREATIVE_SCRIPT",
+        "resumable_from": "seam:CREATIVE_SCRIPT",
+        "side_effects_readback": {
+          "m2_writes": [
+            "artifact",
+            "version"
+          ],
+          "external_publish": false
+        },
+        "resume_point_survives": true,
+        "highest_failed_node_recorded": true,
+        "completed_work_not_lost": true,
+        "external_side_effect_declared_false": true,
+        "idempotency": {
+          "cycle": {
+            "http": [
+              200,
+              200
+            ],
+            "same_id": true,
+            "db_rows": "1"
+          },
+          "task": {
+            "http": [
+              200,
+              200
+            ],
+            "same_id": true,
+            "db_rows": "1"
+          }
+        },
+        "independent_write_http": 200,
+        "two_independent_task_rows": "2"
+      },
+      "failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "id": "REG-M2-01",
+      "target": "最小投影、版本、幂等反馈和当前状态",
+      "oracle": "最小投影可读、产能有来源、成员鉴权成立",
+      "observed": {
+        "cycle_current_http": 200,
+        "decision_latest_http": 200,
+        "cycle_has_label": true,
+        "cycle_has_capacity_source": true,
+        "no_actor_http": 401,
+        "no_actor_rejected": true,
+        "outsider_http": 403,
+        "outsider_rejected": true
+      },
+      "failures": [],
+      "verdict": "PASS"
+    }
+  ]
+}

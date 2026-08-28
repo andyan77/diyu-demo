@@ -1,0 +1,518 @@
+{
+  "catalog_id": "M5-DIRECT-ENTRY-CATALOG-v1.0",
+  "boot": {
+    "actor": "m5-deFRB3",
+    "user": {
+      "external_ref": "m5-deFRB3",
+      "display_name": null,
+      "id": "59eca35f-1a72-4b66-be6b-4aa4753409d2",
+      "created_at": "2026-08-28T15:06:45.813254+00:00"
+    },
+    "ws": "f8e4ea50-bfa8-4b6a-9936-ea61a4a11f3a",
+    "account": "fafdac5e-b10e-4f51-aa62-8b148f980686",
+    "cycle": "b7c930e7-d668-4eda-b642-bb950ff8ecef",
+    "task": "de9dde97-58ab-4dce-99f0-78b6fb702a48",
+    "tag": "deFRB3"
+  },
+  "results": [
+    {
+      "id": "DE-01",
+      "name": "Matrix-only 账号定位/诊断",
+      "oracle": "只返回 Matrix 专业判断或组件级补充请求；不启动内容生产",
+      "window_start": "2026-08-28 15:10:15.067804",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 1170,
+      "artifact_chars": 6059,
+      "capabilities_skipped": [
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-01",
+      "run_mode": "DEFAULT",
+      "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "decision-chain/skills/Matrix_Architect_v0.1.2.md",
+      "source_skill_sha256": "7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838",
+      "run_id": "f4eb4f78-a90c-4889-8c91-ce038bd5e90f",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "f4eb4f78-a90c-4889-8c91-ce038bd5e90f",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"3102f6fc012dfc2eb93eb6e159cf3bcd9760e59579b129256da049a1834a569d\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"MATRIX\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-01\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:11:17.081336",
+      "apps_actually_run": {
+        "MATRIX": 1,
+        "SEAM": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-02",
+      "name": "Campaign-only 策划",
+      "oracle": "输出策划或合法 Content Task 接缝；不强制 Matrix/M3/全链",
+      "window_start": "2026-08-28 15:11:17.220751",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 2214,
+      "artifact_chars": 5918,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-02",
+      "run_mode": "PLANNING",
+      "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "decision-chain/skills/Campaign_Orchestrator_v0.1.md",
+      "source_skill_sha256": "c7ef284e40e7c4cd0d4081632fca7df17bd1a80fbd3f3b5267be4aea1040a0fb",
+      "run_id": "8b84509e-2488-4e09-b71d-3ad6c6d74e95",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "8b84509e-2488-4e09-b71d-3ad6c6d74e95",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"df121268bdfb9cc35a59bc4cd0907a2aa1f0b362fb86d9fe18aa995205854c43\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CAMPAIGN\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-02\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLANNING\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:12:20.540970",
+      "apps_actually_run": {
+        "CAMPAIGN": 1,
+        "SEAM": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-03",
+      "name": "M3 运营判断-only",
+      "oracle": "可停在运营判断，不伪造内容任务或暗启生产链",
+      "window_start": "2026-08-28 15:12:20.688955",
+      "m3_run_id": "b11a98e1-8116-4419-bc4c-16ab8aee64b4",
+      "m3_gate_status": null,
+      "judgment_chars": 0,
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "failed",
+          "run_id": "b11a98e1-8116-4419-bc4c-16ab8aee64b4",
+          "error": "req_id: 78c0a59509 PluginInvokeError: {\"args\":{\"traceback\":\"Traceback (most recent call last):\\n  File \\\"/app/storage/cwd/langgenius/deepseek-0.0.20@850efe73fb62bbe7ab2229116086596596297a77174fb86f73e"
+        }
+      ],
+      "window_end": "2026-08-28 15:17:07.710480",
+      "apps_actually_run": {
+        "M3": 1
+      },
+      "verdict": "FAIL",
+      "failures": [
+        "M3 未产出运营判断"
+      ]
+    },
+    {
+      "id": "DE-04",
+      "name": "M3 Content Task 到 Content Brief",
+      "oracle": "以统一业务语义进入 Brief；不重跑 M1/Matrix/Campaign",
+      "window_start": "2026-08-28 15:17:07.857100",
+      "hop_gaps": "无",
+      "hop_source_map": "{\"primary_goal\": \"M3\", \"goal_family\": \"M3\", \"applicability_reason\": \"M3\", \"subject_and_account_scope\": \"ASK\", \"audience_problem\": \"M3\", \"expected_change\": \"M3\", \"content_promise\": \"M3\", \"facts_registered\": \"FACT\", \"expression_subject\": \"M3\", \"expression_boundary\": \"M3\", \"expression_subject_and_boundary\": \"M3\", \"explicit_non_promise\": \"M3\", \"content_body_or_beats\": \"M3\", \"production_profile\": \"FACT\", \"time_window\": \"M3\", \"capacity_or_owner\": \"FACT\", \"deadline_or_stage_boundary\": \"M3\", \"cta_contract\": \"M3\", \"cta_level\": \"M3\", \"asset_publish_permission\": \"FACT\"}",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 953,
+      "artifact_chars": 7025,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-03",
+      "run_mode": "DEFAULT",
+      "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "decision-chain/skills/Content_Brief_Architect_v0.1.md",
+      "source_skill_sha256": "a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f",
+      "run_id": "10b0c648-5ac7-4d8f-bc18-5eefa6a7c2c7",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "10b0c648-5ac7-4d8f-bc18-5eefa6a7c2c7",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"cd55b72c736253e88ea8c041e6dacd3e18a6be83fc3fd0b461ab3c729b2e77eb\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:19:29.474345",
+      "apps_actually_run": {
+        "M5_HOP_ADAPTER": 1,
+        "SEAM": 1,
+        "CONTENT_BRIEF": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-05",
+      "name": "Direct Content Brief",
+      "oracle": "直达 Brief；单条主目标收敛；保留事实、权限和表达裁量",
+      "window_start": "2026-08-28 15:19:29.632444",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 872,
+      "artifact_chars": 4436,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-03",
+      "run_mode": "DEFAULT",
+      "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "decision-chain/skills/Content_Brief_Architect_v0.1.md",
+      "source_skill_sha256": "a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f",
+      "run_id": "6e9369f9-cd8d-41ef-84aa-7ee008182c6e",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "6e9369f9-cd8d-41ef-84aa-7ee008182c6e",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"8d5d6588311acc4a0ab105a9c300d64fbb80382d6533d949052e35ed82c829e0\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:21:23.284041",
+      "apps_actually_run": {
+        "SEAM": 1,
+        "CONTENT_BRIEF": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-06",
+      "name": "Direct Creative Tournament",
+      "oracle": "复用唯一锦标赛；候选实质不同；不固定候选数",
+      "window_start": "2026-08-28 15:21:23.437226",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 808,
+      "artifact_chars": 3131,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-04",
+      "run_mode": "TOURNAMENT_ONLY",
+      "entry_derivation": "输入结构上显示至少三个结构轴的候选差异标注 ⇒ 进入 CS-1；差异是否实质由 CS-1 正文裁决",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "content-production/skills/writing-creative-scripts/SKILL.md",
+      "source_skill_sha256": "d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a",
+      "run_id": "524f4232-a8b4-4132-ae14-36955d9275dd",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "524f4232-a8b4-4132-ae14-36955d9275dd",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"df07b5472c0ca079453ddfba082053932ef7c75b102fd9bed7758caf2c59a9ff\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-04\", \"entry_derivation\": \"输入结构上显示至少三个结构轴的候选差异标注 ⇒ 进入 CS-1；差异是否实质由 CS-1 正文裁决\", \"run_mode\": \"TOURNAMENT_ONLY\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:22:18.408244",
+      "apps_actually_run": {
+        "CREATIVE_SCRIPT": 1,
+        "SEAM": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-07",
+      "name": "Direct Creative Script",
+      "oracle": "直达脚本；不强制重赛、物理 Brief 或重复确认",
+      "window_start": "2026-08-28 15:22:18.548478",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 733,
+      "artifact_chars": 3746,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-05",
+      "run_mode": "SELECTED_DIRECTION_TO_SCRIPT",
+      "entry_derivation": "已存在 accepted_direction ⇒ 直达脚本（不重开锦标赛）",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "content-production/skills/writing-creative-scripts/SKILL.md",
+      "source_skill_sha256": "d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a",
+      "run_id": "0c9d4b3a-7cfc-4f0b-bc7f-d3f7030de2c0",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "0c9d4b3a-7cfc-4f0b-bc7f-d3f7030de2c0",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"43870d85378c29be231dd14f5d52a1723ed49e6662c267e3984f033536773785\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-05\", \"entry_derivation\": \"已存在 accepted_direction ⇒ 直达脚本（不重开锦标赛）\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:24:06.924504",
+      "apps_actually_run": {
+        "CREATIVE_SCRIPT": 1,
+        "SEAM": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-08",
+      "name": "Direct Production Director",
+      "oracle": "直达制作计划/manifest；不重跑运营、Brief 或脚本",
+      "window_start": "2026-08-28 15:24:07.088648",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": true,
+      "user_delivery_chars": 1297,
+      "artifact_chars": 7694,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PUBLISHING_PACKAGING"
+      ],
+      "entry_resolved": "ENTRY-06",
+      "run_mode": "PLAN",
+      "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PUBLISHING_PACKAGING"
+      ],
+      "source_skill_path": "content-production/skills/directing-content-production/SKILL.md",
+      "source_skill_sha256": "87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c",
+      "run_id": "d4b37fe8-d41a-4a00-ab78-e0ab7d0d10a4",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "d4b37fe8-d41a-4a00-ab78-e0ab7d0d10a4",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"d696e421908b9e8451b07bfd020151db89f5d868e8413eeb808119d8e9805e9f\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"PRODUCTION_DIRECTOR\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"true\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-06\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"PLAN\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"NONE\", \"仅真实依赖本次 PRODUCTION_DIRECTOR 产出的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:26:36.238180",
+      "apps_actually_run": {
+        "PRODUCTION_DIRECTOR": 1,
+        "SEAM": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-09",
+      "name": "Direct Publishing & Packaging",
+      "oracle": "直达包装；不补跑上游；承诺不超兑现和权限",
+      "window_start": "2026-08-28 15:26:36.381094",
+      "business_delivery_outcome": "DELIVERED",
+      "delivered": true,
+      "component_return": false,
+      "user_delivery_chars": 1477,
+      "artifact_chars": 4247,
+      "capabilities_skipped": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR"
+      ],
+      "entry_resolved": "ENTRY-07",
+      "run_mode": "DEFAULT",
+      "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+      "upstream_auto_invoked": [],
+      "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+      "capabilities_skipped_declared": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR"
+      ],
+      "source_skill_path": "content-production/skills/packaging-content-for-release/SKILL.md",
+      "source_skill_sha256": "0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07",
+      "run_id": "3cdfb134-d6d9-46fe-b38f-3c493d7ee378",
+      "attempts": [
+        {
+          "attempt": 1,
+          "platform_status": "succeeded",
+          "run_id": "3cdfb134-d6d9-46fe-b38f-3c493d7ee378",
+          "error": null
+        }
+      ],
+      "seam_trace_json": "{\"call_hash\": \"ca7760ee99f020d1639d044ade90d2fb9edeee3ae650aefa479b66f884c9cf5e\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\"], \"capability_invoked\": [\"PUBLISHING_PACKAGING\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-07\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+      "window_end": "2026-08-28 15:28:17.529254",
+      "apps_actually_run": {
+        "PUBLISHING_PACKAGING": 1,
+        "SEAM": 1
+      },
+      "verdict": "PASS",
+      "failures": []
+    },
+    {
+      "id": "DE-10",
+      "name": "局部 Return 后合法重入",
+      "oracle": "只重入最高失效节点及受影响下游；不把组件 Return 变成全任务硬停或全链重跑",
+      "window_start": "2026-08-28 15:28:17.693325",
+      "phase1": {
+        "business_delivery_outcome": "UNKNOWN",
+        "component_return": true,
+        "is_task_terminal_state": "false",
+        "fabricated_artifact_produced": "false",
+        "downstream_invoked": "false",
+        "triggers_downstream_invalidation": "false",
+        "branch_result": "INPUT_INSUFFICIENT",
+        "missing": "asset_publish_permission",
+        "user_delivery_leaks": [],
+        "precise_gap": "asset_publish_permission",
+        "highest_damaged_layer": "PUBLISHING_PACKAGING_INPUT_SUFFICIENCY",
+        "single_question": "这些素材可以公开发布吗？有没有第三方入镜或授权限制？",
+        "capability_run_fields_seen": [
+          "branch_result",
+          "downstream_invoked",
+          "fabricated_artifact_produced",
+          "is_task_terminal_state",
+          "missing",
+          "returns_json",
+          "returns_status",
+          "single_question",
+          "triggers_downstream_invalidation",
+          "user_delivery",
+          "user_delivery_leaks"
+        ],
+        "run_id": "3578ffa6-fa9c-4fbb-a07c-5ef78993f8b1"
+      },
+      "phase2": {
+        "business_delivery_outcome": "DELIVERED",
+        "delivered": true,
+        "component_return": false,
+        "user_delivery_chars": 820,
+        "artifact_chars": 4562,
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR"
+        ],
+        "entry_resolved": "ENTRY-07",
+        "run_mode": "DEFAULT",
+        "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "upstream_auto_invoked": [],
+        "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+        "capabilities_skipped_declared": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR"
+        ],
+        "source_skill_path": "content-production/skills/packaging-content-for-release/SKILL.md",
+        "source_skill_sha256": "0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07",
+        "run_id": "790d710c-a288-4ed2-949d-18abe81ff70c",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "790d710c-a288-4ed2-949d-18abe81ff70c",
+            "error": null
+          }
+        ],
+        "seam_trace_json": "{\"call_hash\": \"ca7760ee99f020d1639d044ade90d2fb9edeee3ae650aefa479b66f884c9cf5e\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\"], \"capability_invoked\": [\"PUBLISHING_PACKAGING\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-07\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}"
+      },
+      "window_end": "2026-08-28 15:29:28.194212",
+      "apps_actually_run": {
+        "PUBLISHING_PACKAGING": 2,
+        "SEAM": 2
+      },
+      "verdict": "PASS",
+      "failures": []
+    }
+  ]
+}
