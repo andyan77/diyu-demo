@@ -54,8 +54,25 @@ def preflight():
     facts["head"] = head
     want = (m.get("git") or {}).get("candidate_commit")
     facts["manifest_candidate_commit"] = want
-    if want and want != "PENDING_FREEZE" and not head.startswith(want[:12]):
-        fails.append("HEAD %s 与清单登记的候选 commit %s 不一致" % (head[:12], str(want)[:12]))
+    if want and want != "PENDING_FREEZE":
+        # 清单登记的候选，必然早于「提交这份清单」本身那一次提交——先有候选，
+        # 才谈得上给它冻一份清单。所以口径不是「HEAD 必须等于候选」，而是：
+        #   候选必须是 HEAD 的祖先，且两者之间**不能有任何运行代码的改动**。
+        # 只允许记账类文件变化（清单、证据、账本、说明）。
+        rc, _ = sh(["git", "merge-base", "--is-ancestor", want, head])
+        facts["candidate_is_ancestor_of_head"] = (rc == 0)
+        if rc != 0:
+            fails.append("清单登记的候选 %s 不是 HEAD %s 的祖先" % (want[:12], head[:12]))
+        rc2, diff = sh(["git", "diff", "--name-only", want, head])
+        changed = [x for x in diff.splitlines() if x.strip()]
+        RECORD_ONLY = ("decision-chain/docs/", "decision-chain/evidence/",
+                       "collab-ledger/", ".md")
+        code_changed = [x for x in changed
+                        if not any(x.startswith(r) or x.endswith(r) for r in RECORD_ONLY)]
+        facts["files_changed_since_candidate"] = changed
+        facts["runtime_code_changed_since_candidate"] = code_changed
+        if code_changed:
+            fails.append("候选之后动过运行代码，冻结失效：%s" % code_changed[:8])
 
     rc, st = sh(["git", "status", "--porcelain"])
     facts["worktree_clean"] = not st.strip()
