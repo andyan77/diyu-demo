@@ -1,0 +1,471 @@
+{
+  "branch_runs": [
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "MATRIX"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 201
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "CAMPAIGN"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 202
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "CONTENT_BRIEF"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 200
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "CREATIVE_SCRIPT"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 199
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "PRODUCTION_DIRECTOR"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 200
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "PUBLISHING_PACKAGING"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 198
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": ""
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 197
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": null
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 197
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "UNKNOWN_X"
+      },
+      "leaks": [],
+      "node": "seam_tool_fail",
+      "nonempty": true,
+      "returns_parsed": 1,
+      "user_delivery_len": 197
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": ""
+      },
+      "leaks": [],
+      "node": "unsupported",
+      "nonempty": true,
+      "user_delivery_len": 193
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": null
+      },
+      "leaks": [],
+      "node": "unsupported",
+      "nonempty": true,
+      "user_delivery_len": 193
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "SOMETHING_ELSE"
+      },
+      "leaks": [],
+      "node": "unsupported",
+      "nonempty": true,
+      "user_delivery_len": 193
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "input": {
+        "route": "M1_PLANNING"
+      },
+      "leaks": [],
+      "node": "unsupported",
+      "nonempty": true,
+      "user_delivery_len": 193
+    },
+    {
+      "business_delivery_outcome": "DELIVERED",
+      "case": "正常交付",
+      "expected": "DELIVERED",
+      "leaks": [],
+      "node": "fin_content_brief",
+      "nonempty": true,
+      "user_delivery_len": 60
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "case": "子应用已判未交付",
+      "expected": "NOT_DELIVERED",
+      "leaks": [],
+      "node": "fin_content_brief",
+      "nonempty": true,
+      "user_delivery_len": 15
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "case": "子应用返回空正文",
+      "expected": "NOT_DELIVERED",
+      "leaks": [],
+      "node": "fin_content_brief",
+      "nonempty": true,
+      "user_delivery_len": 189
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "case": "空正文且状态缺失",
+      "expected": "NOT_DELIVERED",
+      "leaks": [],
+      "node": "fin_content_brief",
+      "nonempty": true,
+      "user_delivery_len": 189
+    },
+    {
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "case": "只有空白字符",
+      "expected": "NOT_DELIVERED",
+      "leaks": [],
+      "node": "fin_content_brief",
+      "nonempty": true,
+      "user_delivery_len": 189
+    },
+    {
+      "case": "直通交付",
+      "delivery_outcome": "DELIVERED",
+      "expected": "DELIVERED",
+      "node": "delivery_finalize",
+      "nonempty": true,
+      "user_delivery_len": 56
+    },
+    {
+      "case": "恢复成功",
+      "delivery_outcome": "DELIVERED_AFTER_RECOVERY",
+      "expected": "DELIVERED_AFTER_RECOVERY",
+      "node": "delivery_finalize",
+      "nonempty": true,
+      "user_delivery_len": 120
+    },
+    {
+      "case": "恢复为空",
+      "delivery_outcome": "NOT_DELIVERED",
+      "expected": "NOT_DELIVERED",
+      "node": "delivery_finalize",
+      "nonempty": true,
+      "user_delivery_len": 168
+    },
+    {
+      "case": "恢复过短",
+      "delivery_outcome": "NOT_DELIVERED",
+      "expected": "NOT_DELIVERED",
+      "node": "delivery_finalize",
+      "nonempty": true,
+      "user_delivery_len": 168
+    },
+    {
+      "case": "恢复泄漏内部词",
+      "delivery_outcome": "NOT_DELIVERED",
+      "expected": "NOT_DELIVERED",
+      "node": "delivery_finalize",
+      "nonempty": true,
+      "user_delivery_len": 168
+    },
+    {
+      "case": "有缺项",
+      "field_name_leaks": [],
+      "node": "component_return",
+      "nonempty": true,
+      "user_delivery_len": 110
+    },
+    {
+      "case": "无缺项",
+      "field_name_leaks": [],
+      "node": "component_return",
+      "nonempty": true,
+      "user_delivery_len": 93
+    },
+    {
+      "case": "未知缺项名",
+      "field_name_leaks": [],
+      "node": "component_return",
+      "nonempty": true,
+      "user_delivery_len": 93
+    },
+    {
+      "case": "缺项为 None",
+      "field_name_leaks": [],
+      "node": "component_return",
+      "nonempty": true,
+      "user_delivery_len": 93
+    }
+  ],
+  "branch_runs_total": 27,
+  "conjuncts": {
+    "①": "PASS",
+    "②": "PASS",
+    "③": "PASS",
+    "④": "PASS",
+    "⑤": "PASS"
+  },
+  "contract": "V1-M4-EVIDENCE-COLLECTION-v0.5",
+  "criterion": "M4-CL31-01",
+  "end_nodes": [
+    {
+      "end_node": "end_campaign",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "fin_campaign",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_content_brief",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "fin_content_brief",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_creative_script",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "fin_creative_script",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_matrix",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "fin_matrix",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_production_director",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "fin_production_director",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_publishing_packaging",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "fin_publishing_packaging",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_tool_fail",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "seam_tool_fail",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_unsupported",
+      "has_business_delivery_outcome": true,
+      "has_user_delivery": true,
+      "scope": "SEAM",
+      "user_delivery_source": [
+        "unsupported",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_component_return",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "MATRIX",
+      "user_delivery_source": [
+        "component_return",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_ok",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "MATRIX",
+      "user_delivery_source": [
+        "delivery_finalize",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_component_return",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "CAMPAIGN",
+      "user_delivery_source": [
+        "component_return",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_ok",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "CAMPAIGN",
+      "user_delivery_source": [
+        "delivery_finalize",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_component_return",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "CONTENT_BRIEF",
+      "user_delivery_source": [
+        "component_return",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_ok",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "CONTENT_BRIEF",
+      "user_delivery_source": [
+        "delivery_finalize",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_component_return",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "CREATIVE_SCRIPT",
+      "user_delivery_source": [
+        "component_return",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_ok",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "CREATIVE_SCRIPT",
+      "user_delivery_source": [
+        "delivery_finalize",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_component_return",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "PRODUCTION_DIRECTOR",
+      "user_delivery_source": [
+        "component_return",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_ok",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "PRODUCTION_DIRECTOR",
+      "user_delivery_source": [
+        "delivery_finalize",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_component_return",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "PUBLISHING_PACKAGING",
+      "user_delivery_source": [
+        "component_return",
+        "user_delivery"
+      ]
+    },
+    {
+      "end_node": "end_ok",
+      "has_business_delivery_outcome": false,
+      "has_user_delivery": true,
+      "scope": "PUBLISHING_PACKAGING",
+      "user_delivery_source": [
+        "delivery_finalize",
+        "user_delivery"
+      ]
+    }
+  ],
+  "end_nodes_total": 20,
+  "failures": [],
+  "verdict": "PASS"
+}

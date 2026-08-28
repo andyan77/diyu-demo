@@ -1,0 +1,107 @@
+# 笛语 V1 M4 最终窄收口 · 任务合同规范化载体
+# 用途：本文件是 M4_ENGINEERING_EXECUTION_PROMPT_v1.5 稳定合同字段的规范化载体，
+#       其 SHA-256 即 current_task_contract_hash。
+# 纪律：本文件冻结后不得原地修改。任何权威改版另建 v1.1，不覆盖本文件。
+# 权威域：本文件属「任务合同」域，不改 WHAT/WHY/BOUNDARY/ACCEPTANCE，只做规范化承载。
+
+protocol: UNIVERSAL-BOUNDED-EVIDENCE-AI-COLLABORATION
+protocol_version: 0.3.1-kernel-revision-2
+execution_protocol_ref: DIYU-BOUNDED-EXECUTION-OWNER-PROTOCOL v1.3
+
+task_id: V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001
+task_entry_mode: REBASE_TASK
+new_task_forbidden: true
+manifest_id: V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001-FINAL-CLOSURE
+manifest_version: v1.0
+task_type: MIXED
+risk_level: HIGH
+
+previous_task_contract_hash: a5735c319402056f3c8552da229c816324a8a4ce56f36e0d781924114d68b40a
+
+WHAT:
+  primary_observable_change: >
+    Capability Seam 的每一条终止分支都向用户返回非空自然语言；
+    并在真实 Dify Runtime 中受控证明失败终止与一次有界用户投影恢复确实按合同执行。
+  supporting:
+    - 以有效保真量尺替换无判别力的单次长度阈值
+    - 只做受影响范围复验
+
+WHY: >
+  Founder 要解决的核心问题是「内部专业产出已经生成，但用户可见正文为空」。
+  前序 REBASE 修好了成功路径，但失败终止分支结构上仍可返回空正文，
+  且恢复路径在 13 次 Runtime 运行中触发 0 次，缺少 Runtime 级证据。
+
+BOUNDARY:
+  allowed_change_surface:
+    - decision-chain/workflows/DIYU_M4_CAPABILITY_SEAM_v1_3_TEST.yml
+    - decision-chain/workflows/DIYU_M4_DSL_BUILD_v0.1.py 中生成接缝终止分支的部分
+    - 必须同步的 M4 专用验证、发布与取证脚本
+    - 新版本 M4 取证合同、Delta 合同与夹具
+    - decision-chain/evidence/m4/ 下本轮新证据
+    - 当前 M4 任务账本的只追加记录
+    - 本轮收口回执
+  allowed_only_if_dependency_proven:
+    - decision-chain/workflows/DIYU_M4_FOUNDER_CANVAS_v1_3_TEST.yml
+    - 六个 M4 TEST 能力 DSL 的用户投影后处理层
+    - content-production/workflows/ 下对应 M4 TEST DSL
+  protected_baseline:
+    - 六份源 Skill 及其专业方法、判断、责任边界与差异
+    - 六份注入 Workflow 的专业正文
+    - skill_llm 的 model/provider/thinking/reasoning/top_p/temperature/max_tokens
+    - 九个保护应用
+    - M1/M2/M3/M5 资产与职责
+    - PRE / MIXED / FINAL
+    - 合法等价输入与按需调用
+    - M3/Campaign 的 Content Task 业务语义
+    - 旧合同、旧 Attempt、旧 Reviewer 结果与旧失败
+    - main、生产 Dify、真实发布平台与数据库
+    - 已经通过的用户正文修复
+  non_goals:
+    - 修改六份源 Skill 或专业 Prompt
+    - 改模型与参数
+    - 重做 M1 / M2 / M3
+    - 启动 M5
+    - 建第二套路由、生产链、知识库或 Judge
+    - 把六 Skill 固定成全链
+    - 通过随机重复采样等待空交付复现
+    - 重跑全部 31 项
+    - 重开产品语义验收
+    - 修改旧证据或旧结果
+    - 把 Founder 风险接受写成技术 PASS
+    - 用单次输出长度决定专业能力退化
+    - 在正式应用中保留故障注入开关
+    - 修改 main、创建 PR 或发布生产环境
+    - 宣称完整纵向链或真实经营提升
+  non_promises:
+    - 不承诺旧 NOT_VERIFIED 被改成 PASS
+    - 不承诺 M5 已启动
+    - 不承诺完整纵向切片已验证
+    - 不承诺真实经营提升已发生
+
+ACCEPTANCE:
+  items:
+    M4-CL31-01: 所有终止分支都有非空用户交付
+    M4-CL31-02: end_tool_fail 真实 Runtime 复验
+    M4-CL31-03: 恢复路径在 Runtime 中实际触发
+    M4-CL31-04: 恢复语义保真
+    M4-CL31-05: 六 Skill 专业非退化后继判据
+    M4-CL31-06: 旧技术未知与 Founder 风险接受分层
+    M4-CL31-07: 保护资产与受影响回归
+    M4-CL31-08: Dify 与 Git 远程收口
+  oracle_ref: decision-chain/docs/V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.5.md
+  backcheck: >
+    全部八项通过 == WHY 中「用户可见正文为空」在所有终止分支上不再结构可达，
+    且恢复路径已有真实 Runtime 证据。反查成立。
+
+review_budget:
+  executor_self_verification: required
+  independent_reviewer_count: 1
+  reviewer_context_isolated: true
+  reviewer_read_only: true
+  formal_review_budget: 1
+  repair_budget: 1
+  closing_verification: affected_scope_only
+
+allowed_final_states: [DONE, BLOCKED, FAILED, INVALID]
+partial_forbidden: true
+p1_enabled: false

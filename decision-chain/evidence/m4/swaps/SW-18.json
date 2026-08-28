@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "swap_id": "SW-18",
+    "dst_capability": "CREATIVE_SCRIPT",
+    "src_capability": "CONTENT_BRIEF",
+    "src_fixture": "FX-M4-CT-M3",
+    "run_id": "5b3a43a3-19a6-4291-b1a5-892b562a2f3d",
+    "status": "succeeded",
+    "error": null,
+    "blocked_or_insufficient": false,
+    "returns_count": 0,
+    "artifact_sha256": "5c1a1ddde70e52bb94310f6925b5375fcb99cdcfccf2ca826225a2ae960d2375",
+    "artifact_len": 3617,
+    "user_delivery_len": 419
+  },
+  "raw_response": {
+    "task_id": "5aca73ca-db8d-4377-89ff-e226236e0816",
+    "workflow_run_id": "5b3a43a3-19a6-4291-b1a5-892b562a2f3d",
+    "data": {
+      "id": "5b3a43a3-19a6-4291-b1a5-892b562a2f3d",
+      "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "# 内容脚本（初秋通勤分层判断）\n\n你早上在衣柜前站了多久？十分钟？十五分钟？\n\n我试了三组。三处都偏挤。不是外套的问题。\n\n你卡住，不是衣服不够，是里面那层没跟场合分开。\n\n拿掉马甲，正式感会掉一档——这组记录里是这么写的。所以不是让你全拿掉。\n\n你要做的就一件事：把层跟场合分开——正式场合留一层，通勤松一层。至少在我这几组试穿里是这样。你可以直接打开自己的衣橱，照这个分法重排一次。\n\n---\n\n**执行提示（三条）**\n1. 苏禾本人出镜口播，手机拍摄即可，约 45 秒。\n2. 试穿的三组画面如有留存照片/视频，可作证明「偏挤」的素材；没有也不影响。\n3. 这条没有绑定平台，可在任一平台直接发；标题、封面、发布文案由下游另配。\n\n**这条内容明确不做的事**：不推荐你买新衣服；不承诺解决所有通勤场合；不涉及身材与年龄话题。\n\n**我们想要观众记住的**：不是「买这几件」，而是「把层跟场合分开」——她的问题不在衣橱，在分法。",
+        "artifact": "# 创意脚本产出 —— 分层判断（M3 运营直接指定方向）\n\n## 运行信息\n- capability：CREATIVE_SCRIPT｜entry：ENTRY-05｜run_mode：SELECTED_DIRECTION_TO_SCRIPT\n- subject_domain：服装 / 门店零售｜platform：NOT_LOCKED（平台中立母版）｜duration_band：SHORT（≤60s）\n- content_origin_mode：现拍（可产出完整逐字稿）\n- expression_subject：NATURAL_PERSON（苏禾，零售搭配负责人）\n- goal_family：LONG_TERM_VALUE（只读继承，未改写）\n- cta_level：LOW_RISK_INTERACTION\n\n## 方向说明\n方向由 M3 运营层选定：**「问题不是衣服不够，是层数与场合没分开」**。本版不重开锦标赛、不产生候选方向。原因：入口语义已充分指向单一机制方向（M3 持续运营决策直接给定核心判断），不存在需要取舍的平行机制。\n\n## 核心判断摘要\n\n| 项 | 值 | 依据 |\n|---|---|---|\n| `content_promise` | 给出一个可以在自己衣橱里直接照做的分层判断 | 上游给定 |\n| `audience_shift` | 她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定） | 上游给定 |\n| `explicit_non_promise[]` | 不承诺买新衣／不承诺解决所有通勤场合／不承诺身材变化 | 下游只读继承 |\n| `tension_mode` | 强张力：`UNRESOLVED_TRADEOFF`（正式与松弛两边都想要，只能分层取舍——试穿记录显示两侧未同时满足）；替代理由：`Utility`（可直接照做） | 两个并存 |\n| `expression_subject` | `NATURAL_PERSON`：苏禾。事实由本人（试穿记录）确认；辨识度来自她的内部试穿观察而非通用穿搭建议 | — |\n| `fact_refs[].type` | 全部事实来自内部试穿记录 → `INTERNAL`；分层判断方法 → `SUBJECTIVE` | 无 EXTERNAL |\n\n## 逐字稿（平台中立母版）\n\n**beat 1**\n- state_change：情境\n- 事实：有｜素材：待产出·可控（现拍）\n- 逐字稿（发挥区）：你早上在衣柜前站了多久？十分钟？十五分钟？\n- zone：发挥区\n\n**beat 2**\n- state_change：信息（输入里苏禾三组试穿记录的事实，观众第一次知道有人真去试了）\n- 事实：有｜素材：待产出·可控\n- 逐字稿（准确区）：我试了三组。三处都偏挤。不是外套的问题。\n- zone：准确区（「三组」「三处偏挤」来自试穿记录，逐字不改）\n\n**beat 3**\n- state_change：判断（卡住的不是衣服不够，是层没分）\n- 事实：有｜素材：待产出·可控\n- 逐字稿（发挥区）：你卡住，不是衣服不够，是里面那层没跟场合分开。\n- zone：发挥区（方法性判断，按本人说话方式表达；但「内部试穿记录支持此观察」保留在 fact_refs）\n\n**beat 4**\n- state_change：预期（原以为要多买，结论是从手头衣橱做分层）\n- 事实：有｜素材：待产出·可控\n- 逐字稿（准确区）：拿掉马甲，正式感会掉一档——这组记录里是这么写的。所以不是让你全拿掉。\n- zone：准确区（「去掉马甲正式感掉一档」是记录原文内容，逐字保留。注意保留记录里「掉了正式感」这另一侧，不能只说「拿掉就好了」）\n\n**beat 5**\n- state_change：判断（可照做的具体动作）\n- 事实：有｜素材：待产出·可控\n- 逐字稿（发挥区·安全表述）：你要做的就一件事：把层跟场合分开——正式场合留一层，通勤松一层。至少在我这几组试穿里是这样。你可以直接打开自己的衣橱，照这个分法重排一次。\n- zone：发挥区（「至少在我这几组试穿里」是限定语，属于理由的一部分，一个字都不删——它防止这句话被升级成普遍结论）\n\n### 两问表\n| beat | 事实 | 素材 |\n|---|---|---|\n| 1 | 有（早上站衣柜前是开场情境，非外部事实主张） | 待产出·可控 |\n| 2 | 有（三组试穿、三处偏挤，源自试穿记录） | 待产出·可控 |\n| 3 | 有（内部试穿记录支持「层没分开」观察） | 待产出·可控 |\n| 4 | 有（「去掉马甲正式感掉一档」出自记录） | 待产出·可控 |\n| 5 | 有（分层方法来自苏禾试穿后的判断） | 待产出·可控 |\n\n### fact_refs[]\n\n| 内容 | 来源 | type |\n|---|---|---|\n| 苏禾做了三组试穿 | 内部试穿记录 | INTERNAL |\n| 三处偏挤 | 内部试穿记录 | INTERNAL |\n| 去掉马甲正式感掉一档 | 内部试穿记录 | INTERNAL |\n| 「不是衣服不够，是层与场合没分开」的判断 | 苏禾本人（零售搭配负责人） | SUBJECTIVE |\n| 「至少在我这几组试穿里是这样」的限定 | 苏禾本人 | SUBJECTIVE（限定语不得删） |\n\n### 其他输出字段\n\n- `content_origin_mode[]`：`现拍`（唯一来源，平台中立母版）\n- `question_list[]`：NOT_APPLICABLE（无「事实=无」的 beat，现拍来源，事实均已由试穿记录支撑）\n- `检索判据清单`：NOT_APPLICABLE（素材=待产出·可控，无「待检索」单元）\n- `skeleton`：NOT_APPLICABLE（无「事实=无」的 beat）\n- `voiceover[]`：NOT_APPLICABLE（口播出镜，无画外音需求）\n- `screen_text[]`：NOT_APPLICABLE（平台未锁定，不占屏字。若有后续平台锁定需求，由下游按平台规范补充）\n- `evidence_requirements[]`：试穿记录对应的三组画面（如已有试穿照片/视频素材可用作证明；不得用画面强化「分层判断」这一主观结论）\n- `resource_note`：苏禾半天出镜 + 单人手机；无其他人员、无场地外景需求\n- `constraints[]`：不得出现真实顾客形象或冒充真实顾客的表述；不得出现身材/年龄焦虑表述；演示场景若需出现「顾客」角色，须显式标注为演示假设，不得引用真实顾客原话（输入中无此类原话可用）\n- `failure_case`：把这条做成「三件单品推荐」——变成购物清单推荐后，观众记住的是「买这三件」，不是「分层判断」；且推荐逻辑会把「去掉马甲掉一档」这半句吞掉，违反 CS-7 第六条（保留记录两侧）。该类型失败源于把机制（分层判断）降级为罗列（单品清单），观众学不到可迁移的判断。\n- `assumptions[]`：\n  - duration_band 缺省按 SHORT 处理（≤60s，本稿约 45s）\n  - platform=NOT_LOCKED，产出平台中立母版，不锁平台包装（标题、封面、发布文案归下游）\n  - content_origin_mode=现拍，已足够产出完整逐字稿\n  - 无其他缺省\n- `missing[]`：无阻断性缺失。后续如需配平台包装，需平台锁定信息（现为 NOT_LOCKED，不阻塞本条产出）\n\n## 创作约束与安全备注\n\n- beat 4 刻意保留「正式感掉一档」这半句：输入记录里「去掉马甲」与「正式感掉一档」是同一组记录的两侧，只写「拿掉就好了」等于替记录宣布了一个它没宣布的结论。动词层面不做「全拿掉」的收束，改为「把层跟场合分开」——这是输入支持的判断，「分开」不等于「拿掉」，是可照做的分层动作。\n- 「至少在我这几组试穿里是这样」的限定语保留：它把「分层判断」标识为本人经验而非普遍定理，符合 SUBJECTIVE 的处理规则（措辞可改，理由不可改——这句「理由」是限定的来源）。\n- 不出现任何真实顾客案例或原话：输入无相关素材，不编造。\n- 不出现「瘦身」「显瘦」「遮肉」等表述：遵守 expression_boundary，不制造身材或年龄焦虑。\n- ENTRY-05 短入口不降低标准：三区标注完整、两问表完整、fact_refs 类型判定完整执行（INTERNAL 不得表述为顾客案例或第三方验证，SUBJECTIVE 不得用画面强化）。",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"5c1a1ddde70e52bb94310f6925b5375fcb99cdcfccf2ca826225a2ae960d2375\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8\", \"input_professional_sha256\": \"9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n    ,\\\"industry-conditions.md :: 服装 / 门店零售\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "seam_trace_json": "{\"call_hash\": \"4ae5ff2e0cc9863358a07b9f65cae9c3235cd0bf0df15f8db915b78b620c0e72\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\"}, \"entry\": \"ENTRY-05\", \"entry_derivation\": \"未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 39.354218,
+      "total_tokens": 17824,
+      "total_steps": 6,
+      "created_at": 1787811760,
+      "finished_at": 1787811799
+    }
+  },
+  "input_sha256": "9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8",
+  "input_text": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n",
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "timestamp": "2026-08-26T23:23:19-0700"
+}

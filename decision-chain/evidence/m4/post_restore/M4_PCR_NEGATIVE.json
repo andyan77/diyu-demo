@@ -1,0 +1,132 @@
+{
+  "cases": [
+    {
+      "case": "NEG-P01",
+      "detail": null,
+      "expected": "检查器报 FAIL",
+      "name": "隐藏/删除旧 BLOCKED 回执",
+      "observed": {
+        "absent": false,
+        "present&blocked": true,
+        "present_but_not_blocked": false
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P02",
+      "detail": null,
+      "expected": "检查器报 FAIL",
+      "name": "把 Founder 风险接受写成旧技术 PASS",
+      "observed": {
+        "命中": [
+          "AC31_④"
+        ],
+        "把历史改成PASS": false,
+        "正确分层": true
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P03",
+      "detail": null,
+      "expected": "漂移被检出且失效集不多算",
+      "name": "官方应用图漂移 -> 只使直接/传递依赖 STALE",
+      "observed": {
+        "drift_detected": true,
+        "stale_set": [
+          "CAPABILITY_SEAM",
+          "CONTENT_BRIEF",
+          "FOUNDER_CANVAS"
+        ],
+        "未被牵连": "CAMPAIGN"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P04",
+      "detail": null,
+      "expected": "检查器报 FAIL",
+      "name": "注入对象仍被正式链引用",
+      "observed": {
+        "无provider无引用": true,
+        "有provider": false,
+        "有反向引用": false
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P05",
+      "detail": null,
+      "expected": "两种情形均报 FAIL",
+      "name": "用户正文为空 / 含 <think>",
+      "observed": {
+        "empty命中": [
+          "A"
+        ],
+        "leak命中": {
+          "A": [
+            "<think>",
+            "</think>"
+          ]
+        },
+        "带think": false,
+        "正常": true,
+        "空正文": false
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P06",
+      "detail": null,
+      "expected": "检查器报 FAIL",
+      "name": "受保护资产哈希变化",
+      "observed": {
+        "不同": false,
+        "相同": true
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P07",
+      "detail": null,
+      "expected": "越界文件被列出并判 FAIL",
+      "name": "越界改动（M4 DSL / M5 资产）",
+      "observed": {
+        "合规": [],
+        "越界": [
+          "decision-chain/workflows/DIYU_M4_TOOL_MATRIX_v1_3_TEST.yml",
+          "m5/engine.py"
+        ]
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P08",
+      "detail": null,
+      "expected": "检查器报 FAIL",
+      "name": "只有文件与自述、无目标系统绑定",
+      "observed": {
+        "无运行记录": false,
+        "绑定不符": false,
+        "绑定成立": true
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-P09",
+      "detail": null,
+      "expected": "差异数 == 0",
+      "name": "九个既有受保护应用零变化（真实目标系统）",
+      "observed": {
+        "diff_count": 0,
+        "diffs": []
+      },
+      "result": "PASS"
+    }
+  ],
+  "failed": 0,
+  "nine_protected_apps_diffs": [],
+  "source": "Execution Prompt v1.0 §10 强制负向测试 + 九保护应用复核",
+  "total": 9,
+  "verdict": "PASS"
+}

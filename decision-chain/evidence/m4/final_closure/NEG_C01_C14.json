@@ -1,0 +1,209 @@
+{
+  "cases": [
+    {
+      "case": "NEG-C01",
+      "detail": null,
+      "expected_before_run": "非空正文 + NOT_DELIVERED",
+      "name": "tool 节点直接失败",
+      "observed": {
+        "len": 200,
+        "outcome": "NOT_DELIVERED"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C02",
+      "detail": null,
+      "expected_before_run": "outputs 含 user_delivery",
+      "name": "end_tool_fail 终止",
+      "observed": [
+        "user_delivery",
+        "business_delivery_outcome",
+        "returns_json",
+        "failure_kind",
+        "note",
+        "capability",
+        "fabricated_artifact_produced"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C03",
+      "detail": null,
+      "expected_before_run": "needs_projection=true",
+      "name": "专业内容在但用户块缺失",
+      "observed": {
+        "artifact_len": 540,
+        "needs_projection": "true"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C04",
+      "detail": null,
+      "expected_before_run": "DELIVERED_AFTER_RECOVERY",
+      "name": "恢复成功",
+      "observed": "DELIVERED_AFTER_RECOVERY",
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C05",
+      "detail": null,
+      "expected_before_run": "NOT_DELIVERED + 非空失败说明",
+      "name": "恢复输出为空",
+      "observed": {
+        "len": 168,
+        "outcome": "NOT_DELIVERED",
+        "used": "attempted"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C06",
+      "detail": null,
+      "expected_before_run": "NOT_DELIVERED",
+      "name": "恢复输出含内部词 PARSE_FAIL",
+      "observed": "NOT_DELIVERED",
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C06",
+      "detail": null,
+      "expected_before_run": "NOT_DELIVERED",
+      "name": "恢复输出含内部词 <think>",
+      "observed": "NOT_DELIVERED",
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C06",
+      "detail": null,
+      "expected_before_run": "NOT_DELIVERED",
+      "name": "恢复输出含内部词 </think>",
+      "observed": "NOT_DELIVERED",
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C06b",
+      "detail": null,
+      "expected_before_run": "剥离后交付，正文不含 think",
+      "name": "恢复输出带 thinking 段",
+      "observed": {
+        "has_reason": false,
+        "has_think": false,
+        "outcome": "NOT_DELIVERED"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C07",
+      "detail": null,
+      "expected_before_run": "CL31-03⑥ 判 FAIL",
+      "name": "恢复输出整份复制 Artifact",
+      "observed": {
+        "criterion_says": "FAIL",
+        "lcs_ratio": 1.0,
+        "len_ratio": 1.0
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C08",
+      "detail": null,
+      "expected_before_run": "unsupported_fact_count > 0",
+      "name": "恢复输出新增未支撑事实",
+      "observed": {
+        "count": 4,
+        "unsupported": [
+          "1299",
+          "15",
+          "7",
+          "风衣"
+        ]
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C08b",
+      "detail": null,
+      "expected_before_run": "unsupported_fact_count == 0",
+      "name": "合规正文不得被误报新增事实",
+      "observed": {
+        "unsupported": []
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C09",
+      "detail": null,
+      "expected_before_run": "图上不存在第二次恢复边",
+      "name": "第二次恢复",
+      "observed": {
+        "into_recovery": [
+          "projection_gate"
+        ],
+        "out_of_recovery": [
+          "delivery_finalize"
+        ]
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C10",
+      "detail": null,
+      "expected_before_run": "skill_llm 无回边",
+      "name": "恢复后重跑 skill_llm",
+      "observed": {
+        "into_skill_llm": [
+          "projection_record"
+        ]
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C11",
+      "detail": null,
+      "expected_before_run": "非空正文 + 非任务终态",
+      "name": "合法资料不足 Return",
+      "observed": {
+        "invalidation": "false",
+        "len": 110,
+        "terminal": "false"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C12",
+      "detail": null,
+      "expected_before_run": "DELIVERED + recovery_used=false",
+      "name": "正常不需要恢复的交付",
+      "observed": {
+        "outcome": "DELIVERED",
+        "used": "false"
+      },
+      "result": "PASS"
+    },
+    {
+      "case": "NEG-C13",
+      "detail": null,
+      "expected_before_run": "非空正文 + NOT_DELIVERED",
+      "name": "不支持的能力",
+      "observed": {
+        "end_outputs": [
+          "user_delivery",
+          "business_delivery_outcome",
+          "returns_json",
+          "note",
+          "capability"
+        ],
+        "len": 193,
+        "outcome": "NOT_DELIVERED"
+      },
+      "result": "PASS"
+    }
+  ],
+  "contract": "V1-M4-EVIDENCE-COLLECTION-v0.5 §4",
+  "failed": 0,
+  "note_C14": "NEG-C14（Founder Canvas 失败说明的用户可见呈现）为 Runtime 项，由 CL31-07⑩ 的 Canvas 实跑承担，不在本离线套件内。",
+  "total": 17,
+  "verdict": "PASS"
+}

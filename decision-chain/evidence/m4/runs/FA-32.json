@@ -1,0 +1,491 @@
+{
+  "attempt_id": "FA-32",
+  "attempt_kind": "FORMAL",
+  "fixture_id": "FX-M4-RETURN-PARSE-FAIL",
+  "fixture_pack_section": "§16.1",
+  "fixture_pack_sha256": "9ac684d27acec7572934bd4f4c179212be7f196f5b7c81d9c4af6e2b48367a5a",
+  "fixture_transcription_note": "可运行转写：逐字取自冻结夹具包 v0.1 §16.1（含 §0 共用背景中的真实组织角色与表达边界）；只做散文→同义字段的形式变换，未新增任何夹具未提供的经营事实。",
+  "capability": "CONTENT_BRIEF",
+  "entry_requested": "(由确定性充分性规则推导)",
+  "serves_criteria": [
+    "AC-14",
+    "N-12"
+  ],
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "seam_app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+  "provider_bindings": {
+    "_seam": {
+      "app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+      "provider_id": "2daa2d27-4305-4d24-95ec-3cb424eaeb2f",
+      "tool_name": "diyu_m4_capability_seam"
+    },
+    "campaign": {
+      "app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+      "provider_id": "0737d719-10c8-4799-8310-6579d20c86f1",
+      "published_workflow_id": "121291b1-fd7e-4361-bdf6-31373061b0c3",
+      "tool_name": "diyu_m4_campaign"
+    },
+    "content_brief": {
+      "app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+      "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+      "published_workflow_id": "3accf365-1d8b-44eb-a083-9411a5c1cde6",
+      "tool_name": "diyu_m4_content_brief"
+    },
+    "creative_script": {
+      "app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+      "provider_id": "08a225b4-268f-4eb8-80c1-66f8792da71f",
+      "published_workflow_id": "33a3958c-e6ea-4652-97da-86625c1ef792",
+      "tool_name": "diyu_m4_creative_script"
+    },
+    "matrix": {
+      "app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+      "provider_id": "36905561-5728-4581-93b0-09ea5baec97b",
+      "published_workflow_id": "acedc1df-9f33-4888-9492-186234c43d63",
+      "tool_name": "diyu_m4_matrix"
+    },
+    "production_director": {
+      "app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+      "provider_id": "e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0",
+      "published_workflow_id": "45f48072-8280-4acd-9f37-4ddd98c9bd2a",
+      "tool_name": "diyu_m4_production_director"
+    },
+    "publishing_packaging": {
+      "app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+      "provider_id": "e34c2aaa-c8b1-4026-af07-a031e3b3d759",
+      "published_workflow_id": "a6453673-73bf-4d91-9ce9-f863bc9a9e4f",
+      "tool_name": "diyu_m4_publishing_packaging"
+    }
+  },
+  "input_sha256": "c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c",
+  "input_text": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+  "run_id": "607bbdf3-31e4-4cdf-9d84-eb88a04a9662",
+  "elapsed_s": 46.7,
+  "error": null,
+  "raw_response": {
+    "task_id": "85437dbe-6465-4be7-9784-2e6499a26fab",
+    "workflow_run_id": "607bbdf3-31e4-4cdf-9d84-eb88a04a9662",
+    "data": {
+      "id": "607bbdf3-31e4-4cdf-9d84-eb88a04a9662",
+      "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "",
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "returns_json": "[{\"return_id\": \"M4-RET-SEAM-COMPLETENESS-0de45388\", \"source\": \"SEAM_COMPLETENESS_GUARD\", \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\", \"precise_gap\": \"STRUCTURE_MISSING_RAW_PRESERVED | MISSING\", \"affected_objects\": [\"本次 CONTENT_BRIEF 调用的产出块\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"parse_status\": \"PARSE_FAIL\"}]",
+        "binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+        "seam_trace_json": "{\"call_hash\": \"0de45388e9ba644f4b0985f480ae8d56ea5cbe6ace57d8a43c9498b85ac16795\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": \"STRUCTURE_MISSING_RAW_PRESERVED\", \"checked\": true, \"tool_local_block\": \"true\", \"user_delivery_status\": \"MISSING\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 46.56531,
+      "total_tokens": 15588,
+      "total_steps": 6,
+      "created_at": 1787811328,
+      "finished_at": 1787811374
+    }
+  },
+  "node_trace": [
+    {
+      "id": "d107b496-12ff-4471-b925-5f854b0785ee",
+      "index": 1,
+      "predecessor_node_id": null,
+      "node_id": "1788000000001",
+      "node_type": "start",
+      "title": "能力调用意图",
+      "inputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "professional_input": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "example_reference_requested": "NO"
+      },
+      "process_data": {},
+      "outputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "professional_input": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "example_reference_requested": "NO"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 9.9e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787811328,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787811328,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "afb3b01c-aa72-4ac3-a9c7-1df99bee78c9",
+      "index": 2,
+      "predecessor_node_id": null,
+      "node_id": "entry_resolver",
+      "node_type": "code",
+      "title": "入口解析（确定性）",
+      "inputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "professional_input": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n"
+      },
+      "process_data": {},
+      "outputs": {
+        "call_hash": "0de45388e9ba644f4b0985f480ae8d56ea5cbe6ace57d8a43c9498b85ac16795",
+        "capability_resolved": "CONTENT_BRIEF",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "entry_resolved": "ENTRY-03",
+        "route": "CONTENT_BRIEF",
+        "run_mode": "DEFAULT"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.050223,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787811328,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787811328,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "40a06a09-d9c1-4c2b-88f1-626301c96856",
+      "index": 3,
+      "predecessor_node_id": null,
+      "node_id": "seam_dispatch",
+      "node_type": "if-else",
+      "title": "能力分派",
+      "inputs": {
+        "conditions": [
+          {
+            "actual_value": "CONTENT_BRIEF",
+            "expected_value": "CONTENT_BRIEF",
+            "comparison_operator": "is"
+          }
+        ]
+      },
+      "process_data": {
+        "condition_results": [
+          {
+            "group": {
+              "case_id": "matrix",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "MATRIX",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "campaign",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CAMPAIGN",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "content_brief",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CONTENT_BRIEF",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              true
+            ],
+            "final_result": true
+          }
+        ]
+      },
+      "outputs": {
+        "result": true,
+        "selected_case_id": "content_brief"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000139,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787811328,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787811328,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "f0cd5580-62de-4ab8-bbde-e7516f33407d",
+      "index": 4,
+      "predecessor_node_id": null,
+      "node_id": "tool_content_brief",
+      "node_type": "tool",
+      "title": "调用 DIYU M4 v1.3 TEST · Content Brief Architect",
+      "inputs": {
+        "capability_call": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "entry": "ENTRY-03",
+        "example_reference_requested": "NO",
+        "professional_input": "\nprovenance:\n  source_kind: M3_OPERATION\n  confirmation_state: CONFIRMED_BY_USER\nobjective:\n  primary_goal: 让目标顾客形成分层判断，并愿意继续听这个账号的判断\n  goal_family: LONG_TERM_VALUE\naudience_problem: 已经有几件通勤外套的顾客，早上仍然要花十几分钟才决定穿什么\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject_and_boundary: 苏禾；允许显式标注的演示场景，不允许冒充真实顾客\nexpression_subject: NATURAL_PERSON\nexpression_boundary: 不得制造身材或年龄焦虑\nsubject_and_account_scope: 序里集品牌号 + 零售搭配负责人苏禾\napplicability_reason: 本次涉及单条内容任务，不涉及长期定位实质修改\ndeadline_or_stage_boundary: 初秋通勤衣橱第一阶段\ncapacity_or_owner: 苏禾半天出镜 + 单人手机拍摄\nfacts_registered: 苏禾三组试穿记录；三处偏挤；去掉马甲正式感掉一档\ncontent_origin_mode: 现拍\nsubject_domain: 服装 / 门店零售\nplatform: NOT_LOCKED\nduration_band: SHORT\ncta_level: LOW_RISK_INTERACTION\nequivalence_basis: 持续运营决策直接给出统一 Content Task 核心\n\ndownstream_return_raw: '{\"return_id\": \"RETURN-X-001\", \"source\": \"CREATIVE_SCRIPT\", \"precise_gap\": '\ndownstream_return_note: \"[夹具登记事实] 上面这段就是下游实际返回的原文：非法 JSON，且缺必填项\"\n",
+        "run_mode": "DEFAULT"
+      },
+      "process_data": {},
+      "outputs": {
+        "text": "{\"artifact\": \"# Content Brief Pack\\n\\n## 0. 运行结论\\n- 顶层状态：READY_WITH_CONDITIONS\\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\\n- 上游锁定项：见 §2 已接受项清单\\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\\n- 当前未成立条件：发布平台未锁定\\n\\n## 1. 内容单元索引\\n\\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\\n|---|---|---|---|---|---|---|\\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\\n\\n## 2. 已授权发布内容的独立 Brief\\n\\n### brief_id：CB-001\\n\\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\\n\\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\\n\\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\\n\\n- **证据地图**：\\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\\n- **叙事结构**：\\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\\n  5. 收束：明确“不是衣服不够”这一新判断。\\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\\n- **必须使用的素材**：\\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\\n  - 出镜人：苏禾本人。\\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\\n- **必须表达**：\\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\\n  - 去掉马甲后正式感掉档这一观察；\\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\\n- **明确不得表达**：\\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\\n  - 不得制造身材或年龄焦虑，不评价身材；\\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\\n- **进入脚本与拍摄设计前必须确认的事项**：\\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\\n  - 确认门店环境拍摄许可与营业时间安排。\\n\\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\\n\\n## 3. 条件性内容与不发布账号\\n- 条件尚未触发：无\\n- 本轮不发布：无\\n- 仅提供事实确认：无\\n- 仅承担后台承接：无\\n- 取消：无\\n\\n## 4. 跨内容共享制作计划\\n- 可共享素材：无（本轮唯一内容单元）\\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\\n- 素材与人员优先级：不适用（仅苏禾单人）\\n- 事实确认顺序：苏禾本人一次确认即可\\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\\n\\n## 5. 统一事实、承接与审核边界\\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\\n- 跨账号引用纪律：本轮无跨账号引用。\\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\\n\\n---\\n## 本次不适用项（NOT_APPLICABLE）说明\\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\\n\\n## 被条件化的已接受项\\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。\", \"user_delivery\": \"\", \"artifact_status\": \"STRUCTURE_MISSING_RAW_PRESERVED\", \"user_delivery_status\": \"MISSING\", \"user_delivery_leaks\": [], \"returns_json\": \"[]\", \"returns_status\": \"PARSE_FAILED\", \"returns_parse_note\": \"缺少 RETURNS 块，无法判定是无回改还是产出被截断\", \"returns_raw\": \"ABSENT\", \"local_block\": \"true\", \"raw_preserved\": \"# Content Brief Pack\\n\\n## 0. 运行结论\\n- 顶层状态：READY_WITH_CONDITIONS\\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\\n- 上游锁定项：见 §2 已接受项清单\\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\\n- 当前未成立条件：发布平台未锁定\\n\\n## 1. 内容单元索引\\n\\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\\n|---|---|---|---|---|---|---|\\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\\n\\n## 2. 已授权发布内容的独立 Brief\\n\\n### brief_id：CB-001\\n\\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\\n\\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\\n\\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\\n\\n- **证据地图**：\\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\\n- **叙事结构**：\\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\\n  5. 收束：明确“不是衣服不够”这一新判断。\\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\\n- **必须使用的素材**：\\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\\n  - 出镜人：苏禾本人。\\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\\n- **必须表达**：\\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\\n  - 去掉马甲后正式感掉档这一观察；\\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\\n- **明确不得表达**：\\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\\n  - 不得制造身材或年龄焦虑，不评价身材；\\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\\n- **进入脚本与拍摄设计前必须确认的事项**：\\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\\n  - 确认门店环境拍摄许可与营业时间安排。\\n\\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\\n\\n## 3. 条件性内容与不发布账号\\n- 条件尚未触发：无\\n- 本轮不发布：无\\n- 仅提供事实确认：无\\n- 仅承担后台承接：无\\n- 取消：无\\n\\n## 4. 跨内容共享制作计划\\n- 可共享素材：无（本轮唯一内容单元）\\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\\n- 素材与人员优先级：不适用（仅苏禾单人）\\n- 事实确认顺序：苏禾本人一次确认即可\\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\\n\\n## 5. 统一事实、承接与审核边界\\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\\n- 跨账号引用纪律：本轮无跨账号引用。\\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\\n\\n---\\n## 本次不适用项（NOT_APPLICABLE）说明\\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\\n\\n## 被条件化的已接受项\\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。\", \"binding_json\": \"{\\\"artifact_sha256\\\": \\\"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\\\", \\\"capability\\\": \\\"CONTENT_BRIEF\\\", \\\"completion_params\\\": {\\\"max_tokens\\\": 384000, \\\"reasoning_effort\\\": \\\"low\\\", \\\"thinking\\\": true, \\\"top_p\\\": 0.8}, \\\"entry\\\": \\\"ENTRY-03\\\", \\\"goal_family_readonly_inherited\\\": \\\"LONG_TERM_VALUE\\\", \\\"input_envelope_sha256\\\": \\\"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\\\", \\\"input_professional_sha256\\\": \\\"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\\\", \\\"model_name\\\": \\\"deepseek-v4-flash\\\", \\\"model_provider\\\": \\\"langgenius/deepseek/deepseek\\\", \\\"note\\\": \\\"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\\\", \\\"reference_load_matrix\\\": {\\\"examples\\\": \\\"NEVER\\\", \\\"industry\\\": \\\"NONE\\\", \\\"platforms\\\": \\\"NONE\\\"}, \\\"reference_projection_declared\\\": \\\"{\\\\n  \\\\\\\"capability\\\\\\\": \\\\\\\"CONTENT_BRIEF\\\\\\\",\\\\n  \\\\\\\"loaded_reference_sections\\\\\\\": [\\\\n    \\\\\\\"SKILL.md :: 后继版全文（始终加载）\\\\\\\"\\\\n  ],\\\\n  \\\\\\\"load_matrix_ref\\\\\\\": \\\\\\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\\\\\",\\\\n  \\\\\\\"second_attachment_library_built\\\\\\\": false,\\\\n  \\\\\\\"rag_first_layer_built\\\\\\\": false\\\\n}\\\", \\\"run_mode\\\": \\\"COMPILE_SINGLE_CONTENT_CONTRACT\\\", \\\"self_reported_only\\\": true, \\\"source_skill_path\\\": \\\"decision-chain/skills/Content_Brief_Architect_v0.1.md\\\", \\\"source_skill_sha256\\\": \\\"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\\\", \\\"successor_skill_path\\\": \\\"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\\\", \\\"successor_skill_sha256\\\": \\\"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\\\", \\\"system_prompt_sha256\\\": \\\"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\\\", \\\"target_environment\\\": \\\"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\\\", \\\"task_contract_hash\\\": \\\"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\\\", \\\"task_id\\\": \\\"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\\\", \\\"user_prompt_sha256\\\": \\\"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\\\"}\", \"reference_projection\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"reference_projection_text\": \"## 参考投影 · 本次未加载任何参考文件\\n\\n按 M4 统一能力合同 §12 加载矩阵，本能力（CONTENT_BRIEF）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。\\n\\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**\", \"entry\": \"ENTRY-03\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"sufficiency_status\": \"SUFFICIENT\", \"goal_family\": \"LONG_TERM_VALUE\", \"conditionalized\": \"platform 未锁定：只产出平台中立母版，锁定平台列为条件\"}",
+        "files": [],
+        "json": [
+          {
+            "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**...",
+            "artifact_status": "STRUCTURE_MISSING_RAW_PRESERVED",
+            "binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+            "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件",
+            "entry": "ENTRY-03",
+            "goal_family": "LONG_TERM_VALUE",
+            "local_block": "true",
+            "raw_preserved": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来...",
+            "reference_projection": "{\n  \"capability\": \"CONTENT_BRIEF\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+            "reference_projection_text": "## 参考投影 · 本次未加载任何参考文件\n\n按 M4 统一能力合同 §12 加载矩阵，本能力（CONTENT_BRIEF）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+            "returns_json": "[]",
+            "returns_parse_note": "缺少 RETURNS 块，无法判定是无回改还是产出被截断",
+            "returns_raw": "ABSENT",
+            "returns_status": "PARSE_FAILED",
+            "run_mode": "COMPILE_SINGLE_CONTENT_CONTRACT",
+            "sufficiency_status": "SUFFICIENT",
+            "user_delivery": "",
+            "user_delivery_leaks": [],
+            "user_delivery_status": "MISSING"
+          }
+        ],
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "user_delivery": "",
+        "artifact_status": "STRUCTURE_MISSING_RAW_PRESERVED",
+        "user_delivery_status": "MISSING",
+        "user_delivery_leaks": [],
+        "returns_json": "[]",
+        "returns_status": "PARSE_FAILED",
+        "returns_parse_note": "缺少 RETURNS 块，无法判定是无回改还是产出被截断",
+        "returns_raw": "ABSENT",
+        "local_block": "true",
+        "raw_preserved": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+        "reference_projection": "{\n  \"capability\": \"CONTENT_BRIEF\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+        "reference_projection_text": "## 参考投影 · 本次未加载任何参考文件\n\n按 M4 统一能力合同 §12 加载矩阵，本能力（CONTENT_BRIEF）不加载 `platforms.md` / `industry-conditions.md` / `examples.md` 的任何片段。\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+        "entry": "ENTRY-03",
+        "run_mode": "COMPILE_SINGLE_CONTENT_CONTRACT",
+        "sufficiency_status": "SUFFICIENT",
+        "goal_family": "LONG_TERM_VALUE",
+        "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 46.347105,
+      "execution_metadata": {
+        "tool_info": {
+          "provider_type": "workflow",
+          "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+          "plugin_unique_identifier": null
+        },
+        "total_tokens": 15588,
+        "total_price": "0",
+        "currency": "USD"
+      },
+      "extras": {
+        "icon": {
+          "background": "#E4FBCC",
+          "content": "🧩"
+        }
+      },
+      "created_at": 1787811328,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787811374,
+      "inputs_truncated": false,
+      "outputs_truncated": true,
+      "process_data_truncated": false
+    },
+    {
+      "id": "0d9e6974-dabc-4eb9-a933-ceab7932c34e",
+      "index": 5,
+      "predecessor_node_id": null,
+      "node_id": "fin_content_brief",
+      "node_type": "code",
+      "title": "接缝收口｜CONTENT_BRIEF",
+      "inputs": {
+        "capability_resolved": "CONTENT_BRIEF",
+        "entry_resolved": "ENTRY-03",
+        "run_mode": "DEFAULT",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "tool_artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "tool_user_delivery": "",
+        "tool_returns_json": "[]",
+        "tool_binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+        "call_hash": "0de45388e9ba644f4b0985f480ae8d56ea5cbe6ace57d8a43c9498b85ac16795",
+        "tool_local_block": "true",
+        "tool_artifact_status": "STRUCTURE_MISSING_RAW_PRESERVED",
+        "tool_user_delivery_status": "MISSING"
+      },
+      "process_data": {},
+      "outputs": {
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "capability_invoked": "CONTENT_BRIEF",
+        "returns_json": "[{\"return_id\": \"M4-RET-SEAM-COMPLETENESS-0de45388\", \"source\": \"SEAM_COMPLETENESS_GUARD\", \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\", \"precise_gap\": \"STRUCTURE_MISSING_RAW_PRESERVED | MISSING\", \"affected_objects\": [\"本次 CONTENT_BRIEF 调用的产出块\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"parse_status\": \"PARSE_FAIL\"}]",
+        "seam_trace_json": "{\"call_hash\": \"0de45388e9ba644f4b0985f480ae8d56ea5cbe6ace57d8a43c9498b85ac16795\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": \"STRUCTURE_MISSING_RAW_PRESERVED\", \"checked\": true, \"tool_local_block\": \"true\", \"user_delivery_status\": \"MISSING\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "user_delivery": ""
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.048123,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787811374,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787811374,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "689e065d-62bd-4399-8194-0162c322126d",
+      "index": 6,
+      "predecessor_node_id": null,
+      "node_id": "end_content_brief",
+      "node_type": "end",
+      "title": "结束｜CONTENT_BRIEF",
+      "inputs": {
+        "user_delivery": "",
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "returns_json": "[{\"return_id\": \"M4-RET-SEAM-COMPLETENESS-0de45388\", \"source\": \"SEAM_COMPLETENESS_GUARD\", \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\", \"precise_gap\": \"STRUCTURE_MISSING_RAW_PRESERVED | MISSING\", \"affected_objects\": [\"本次 CONTENT_BRIEF 调用的产出块\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"parse_status\": \"PARSE_FAIL\"}]",
+        "binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+        "seam_trace_json": "{\"call_hash\": \"0de45388e9ba644f4b0985f480ae8d56ea5cbe6ace57d8a43c9498b85ac16795\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": \"STRUCTURE_MISSING_RAW_PRESERVED\", \"checked\": true, \"tool_local_block\": \"true\", \"user_delivery_status\": \"MISSING\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "process_data": {},
+      "outputs": {
+        "user_delivery": "",
+        "artifact": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（来源为持续运营决策，不涉 Campaign 决策包）\n- 本次来源类型与来源标识：持续运营决策 / M3_OPERATION\n- 上游锁定项：见 §2 已接受项清单\n- 当前成立条件：事实链完整、责任边界确认、产能明确、CTA 授权成立\n- 当前未成立条件：发布平台未锁定\n\n## 1. 内容单元索引\n\n| 内容单元 | 账号 | 发布身份 | 顺序 | 内容类型 | 当前状态 | 是否需要独立 Brief |\n|---|---|---|---|---|---|---|\n| CB-001 | 序里集品牌号 | 零售搭配负责人苏禾（真实身份） | 01 | 通勤衣橱分层判断（试穿演示） | BRIEF_READY_WITH_CONDITIONS | 是 |\n\n## 2. 已授权发布内容的独立 Brief\n\n### brief_id：CB-001\n\n- **本条来源与来源标识**：持续运营决策（M3_OPERATION），直接给出统一 Content Task 核心；不涉及 Campaign。\n- **本条唯一主要工作**：让目标顾客形成并记住一个可照做的分层判断——通勤外套问题不是“衣服不够”，而是“层数与场合没分开”。\n- **本条有限次要贡献**：顺带建立“苏禾是会在店里反复试穿、把真实感受讲清楚的搭配负责人”这一账号信任。\n- **本条明确不承担的目标**：不在本条内完成到店引流、商品点击、留资等经营承接；不承担起号或涨粉的实验任务。\n- **目标取舍方案、代价与推荐**：无（本条内主要工作与次要贡献不构成结构冲突，直接按推荐执行）。\n\n- **账号与本轮责任**：序里集品牌号发布；出镜与事实确认均为苏禾本人（零售搭配负责人，真实身份）；苏禾为事实确认人。\n- **内容类型与顺序**：单条短视频（现拍试穿演示），本轮唯一内容单元，顺序 01。\n- **当前状态**：BRIEF_READY_WITH_CONDITIONS（平台未锁定）。\n\n- **唯一顾客情境与问题**：她已经有好几件通勤外套，不算缺衣服，但每天早上出门前仍要花十几分钟来回试、来回换，才决定穿什么。\n- **顾客当前卡点**：她把“我今天穿什么”当成一次整体搭配决策——同时想保暖、想正式、想好看，结果层数和场合混在一起，越选越慢。\n- **内容后需要形成的唯一新判断**：她卡住的不是衣服不够，而是层数与场合没分开；对应的方法是——先定场合（要的正式度），再定层数（内层厚度），两层分开选。\n- **核心内容判断**：通勤外套“合适”的标准可以拆成两件事——最外层管场合正式度，内层管体感厚度，不要在同一件衣服上同时逼它完成两件事；这正是苏禾三组试穿中发现“偏挤”与“去掉马甲掉档”的共因。\n\n- **证据地图**：\n  - “苏禾三组试穿记录”——已登记一手事实（亲历观察），来源：苏禾本人试穿记录，确认人：苏禾。\n  - “三处偏挤”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - “去掉马甲正式感掉一档”——已登记一手事实（亲历观察），来源同上，确认人：苏禾。\n  - 以上均为演示场景中的真实试穿过程；**没有任何信息使用虚构顾客、虚构反馈或虚构冲突**。\n- **事实、观察、专业判断与待验证变量的区分**：事实与观察如上；专业判断为“把正式度交给外层、把体感交给内层的分层分工”；本轮不设置待验证变量。\n- **叙事结构**：\n  1. 进入点：从“早上试穿纠结”这个具体场景切入（不出现虚构顾客，可以苏禾自己或门店环境为背景）；\n  2. 真实摩擦：试穿时外套“偏挤”——她一开始以为是外套尺码问题，调整后发现是内层叠加方式；\n  3. 调整与比较：换一种层数组合后再试，偏紧改善；再去掉马甲看效果，发现正式感明显掉档；\n  4. 落点判断：把“层数”和“场合”分开各管一件事，得出可直接照做的分层原则；\n  5. 收束：明确“不是衣服不够”这一新判断。\n- **真实摩擦或决定性张力**：摩擦来自已登记的真实试穿过程——“三处偏挤”本可以被归因为“外套买小了”，但归因到层数后才成立；另一个张力是“去掉马甲正式感掉一档”说明正式度主要由外层承担。这两处都是苏禾实际遇到、实际归因后的结果，不虚构。\n- **账号关系姿态**：苏禾以“在店里反复试穿、会把真实感受讲清楚的人”出现；不居高临下教育，不制造身材或年龄焦虑，不把自己包装成顾客。\n- **与上一条和下一条的接力**：本轮唯一内容单元，无接力；本账号如需后续内容承接，由后续独立 Brief 另行定义，不在此预设。\n- **必须使用的素材**：\n  - 苏禾的三组试穿记录（其中至少包含出现“偏挤”的一组、去掉马甲的对比一组）；\n  - 出镜人：苏禾本人。\n- **可选素材**：门店衣橱/货架环境作为背景即可；不需要额外道具。\n- **出镜人与事实确认人**：出镜人苏禾；事实确认人苏禾；出镜身份为真实身份“零售搭配负责人”，**不是顾客**；任何演示部分需显式标注，不得冒充真实顾客案例。\n- **制作要求**：苏禾半天出镜；单人手机拍摄即可；需至少包含“试穿偏紧→调整→去掉马甲掉档”三段可剪辑过程；光线与声音需保证试穿过程中的说明清晰可听。\n- **必须表达**：\n  - 外套“偏挤”与尺码之外的原因（层数叠加）；\n  - 去掉马甲后正式感掉档这一观察；\n  - 分层判断：先定场合/正式度，再定体感层数，两层分开选；\n  - 观众可照做的步骤：打开衣橱，先挑外层定正式度，再配内层厚度。\n- **明确不得表达**：\n  - 不得出现虚构顾客故事、虚构反馈、虚构转述；\n  - 不得新增任何未登记的功能、质量、效果、人群适配或经营结果；\n  - 不得制造身材或年龄焦虑，不评价身材；\n  - 不得出现价格、优惠、库存、稀缺或紧迫感表述；\n  - 不得输出完整逐字稿、逐镜分镜、最终标题、最终封面或最终发布文案。\n- **CTA 或无 CTA 的决定**：设置低风险互动 CTA——引导观众在评论区说出自己早上出门前最常卡在哪个环节（选外套、选内搭、选层数均可）。不涉及商品点击、咨询、留资、到店、预约或购买引导。\n- **发布条件**：平台锁定后即可进入制作（见 §5 平台条件）；发布前苏禾对试穿过程与上述事实表述做最终确认。\n- **降级条件**：若平台语境不适合完整三段演示，可收窄为“偏挤一组 + 调整后对比一组”，保留分层结论；若无法展示真实试穿过程，则降级为平实口述试穿感受并保留归因判断，但不得用通用知识替代事实。\n- **取消或不发条件**：若无法提供任何真实试穿画面或苏禾本人出镜，不发；若需加入虚构顾客、虚构冲突或身材评价，不发。\n- **进入脚本与拍摄设计前必须确认的事项**：\n  - 锁定发布平台（决定时长、画幅与首帧）——平台未锁定为当前唯一未成立条件；\n  - 确认“演示场景标注”的具体呈现形式（角标或口播说明）；\n  - 确认门店环境拍摄许可与营业时间安排。\n\n- **本条被下游消费的关键语义与失效范围**：主目标（形成分层判断）、受众问题（层数与场合没分开）、核心命题（两层分开选）、事实证据（三组试穿、三处偏挤、去掉马甲掉档）、表达边界（不冒充顾客、不造焦虑）、CTA 条件（仅评论引导）。上述任一项实质变化时，下游创意、脚本、制作与包装产物中实际消费该项的对应部分需复验；其他未变化部分保持有效。平台锁定不触发失效，仅补齐时长与画幅参数。\n\n## 3. 条件性内容与不发布账号\n- 条件尚未触发：无\n- 本轮不发布：无\n- 仅提供事实确认：无\n- 仅承担后台承接：无\n- 取消：无\n\n## 4. 跨内容共享制作计划\n- 可共享素材：无（本轮唯一内容单元）\n- 不得重复拍摄的事实：无（本轮唯一内容单元）\n- 素材与人员优先级：不适用（仅苏禾单人）\n- 事实确认顺序：苏禾本人一次确认即可\n- 最低运行版本：一段真实试穿（偏挤）+ 一段调整后对比 + 口述归因\n- 产能不足时的缩减顺序：去掉马甲对比段 → 保留偏挤与归因 → 改为平实口述（仍需真实试穿经历支撑）\n\n## 5. 统一事实、承接与审核边界\n- 事实确认责任：苏禾本人；所有出现在内容中的试穿与体感信息均来自已登记试穿记录，无新增事实。\n- 跨账号引用纪律：本轮无跨账号引用。\n- 平台条件：平台未锁定——不选择平台，产出平台中立母版；锁定平台列为进入平台规格制作前的条件，影响时长、画幅与首帧形态。\n- CTA 条件：当前只允许低风险互动（评论引导），不涉及经营承接；无站外导流、价格、优惠、到店或购买引导。\n- 申请与确认边界：不涉及申请/确认流程；评论区互动不构成服务承诺。\n- 普通问题与升级边界：评论区普通搭配问题由账号日常运营处理；涉及商品功能、价格、售后或服务承诺的问题不在本条 CTA 范围内承接。\n\n---\n## 本次不适用项（NOT_APPLICABLE）说明\n- **适用 Campaign**：无 Campaign 来源，标 NOT_APPLICABLE。\n- **内容顺序与接力关系**：本轮为单条内容任务，不存在多单元顺序或接力，相关项标 NOT_APPLICABLE。\n- **周期角色**：本轮由持续运营决策直接给出单条业务核心，不涉及周期组合分配，标 NOT_APPLICABLE。\n- **参战账号组合**：单条内容、单一账号发布，无参战组合概念，标 NOT_APPLICABLE。\n\n## 被条件化的已接受项\n- **平台**：未锁定 → 输出平台中立母版，锁定平台为进入平台规格制作前必须确认的条件（影响时长、画幅、首帧）。",
+        "returns_json": "[{\"return_id\": \"M4-RET-SEAM-COMPLETENESS-0de45388\", \"source\": \"SEAM_COMPLETENESS_GUARD\", \"highest_damaged_layer\": \"CAPABILITY_OUTPUT_COMPLETENESS\", \"precise_gap\": \"STRUCTURE_MISSING_RAW_PRESERVED | MISSING\", \"affected_objects\": [\"本次 CONTENT_BRIEF 调用的产出块\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"parse_status\": \"PARSE_FAIL\"}]",
+        "binding_json": "{\"artifact_sha256\": \"9412d5e26c7aa75ae287acc8219236a72564702771adb4a346d875470c6b3d0e\", \"capability\": \"CONTENT_BRIEF\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-03\", \"goal_family_readonly_inherited\": \"LONG_TERM_VALUE\", \"input_envelope_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"input_professional_sha256\": \"c00c7657396b63683c8307d4b210799240db3814d4029b77f371d9408b6cb35c\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"NEVER\", \"industry\": \"NONE\", \"platforms\": \"NONE\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CONTENT_BRIEF\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"COMPILE_SINGLE_CONTENT_CONTRACT\", \"self_reported_only\": true, \"source_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.1.md\", \"source_skill_sha256\": \"a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f\", \"successor_skill_path\": \"decision-chain/skills/Content_Brief_Architect_v0.2_M4.md\", \"successor_skill_sha256\": \"f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182\", \"system_prompt_sha256\": \"aeb118c12220cbb4ad87ef0ab3b3dfe9feb2f55029400b2176574f4af9171169\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"d0a03d13712db705342a0e0c8e105802ea7fedaffecbbef611009403a0c9206f\"}",
+        "seam_trace_json": "{\"call_hash\": \"0de45388e9ba644f4b0985f480ae8d56ea5cbe6ace57d8a43c9498b85ac16795\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": \"STRUCTURE_MISSING_RAW_PRESERVED\", \"checked\": true, \"tool_local_block\": \"true\", \"user_delivery_status\": \"MISSING\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 产出的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 7.5e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787811374,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "fb9da1f2-d7c5-4178-958b-522191bfe2cf",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-closing-verification"
+      },
+      "finished_at": 1787811374,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    }
+  ],
+  "timestamp": "2026-08-26T23:16:15-0700"
+}

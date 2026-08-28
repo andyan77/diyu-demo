@@ -1,0 +1,25 @@
+{
+ "attempt_id": "SMOKE-01",
+ "attempt_kind": "SMOKE_PROBE_NOT_FORMAL_EVIDENCE",
+ "purpose": "D-01b 端到端通路验证：新入参是否让 code 节点崩、守卫是否触发",
+ "candidate": "REBASE 新候选（未 commit）",
+ "input_reused_from": "FA-39 逐字",
+ "result": {
+  "status": "succeeded",
+  "total_steps": 6,
+  "artifact_len": 2830,
+  "user_delivery_len": 0,
+  "completeness_guard": {
+   "tool_local_block": "true",
+   "artifact_status": "STRUCTURE_MISSING_RAW_PRESERVED",
+   "user_delivery_status": "MISSING",
+   "checked": true
+  },
+  "returns_sources": [
+   "SEAM_COMPLETENESS_GUARD"
+  ]
+ },
+ "conclusion": "守卫端到端生效：改前此运行是静默空交付报成功，改后触发组件级 Return 并留痕",
+ "n30_note": "本次为通路冒烟，不作正式证据，不参与任何 criterion 判定；如实登记，不隐藏",
+ "raises": "AC-31 判据措辞歧义（见 M4-FND-013）"
+}

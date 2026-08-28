@@ -1,0 +1,191 @@
+{
+  "affected_scope_rule": "只复验受本轮变化影响的项：六项能力的用户交付、接缝失败终止路径、Canvas 用户可见结果。专业生成链已由 CL31-05①②③④ 静态证明零变化，不整体失效（A3 不得多算）。",
+  "canvas_runs": [
+    {
+      "answer_excerpt": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "answer_length": 110,
+      "case": "CV-01",
+      "leaks": [],
+      "query_head": "帮我把序里集这条初秋通勤外套的内容任务判断做出来。\nprovenance:\n  ",
+      "result": "PASS",
+      "service_error": null
+    },
+    {
+      "answer_excerpt": "这个需求我这边做不了。工资条和五险一金属于人事薪酬，不在我的工作范围内，我也不会碰账务数据。\n\n我能做的是下面这几件事，都和你的服装品牌内容经营有关：\n\n- 账号矩阵：你品牌在各平台要开哪些号、各号怎么定位、发什么方向的内容。\n- Campaign 决策包：一次营销战役的目标、主题、主推商品、节奏和衡量指标。\n- Content Brief：给内容制作方看的创作要求，包括风格、调性、必含信息、禁忌。\n- 脚本与拍摄方案：具体视频或图文内",
+      "answer_length": 358,
+      "case": "CV-02",
+      "leaks": [],
+      "query_head": "帮我算一下这个月的工资条和五险一金。",
+      "result": "PASS",
+      "service_error": null
+    }
+  ],
+  "capabilities_covered": [
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CREATIVE_SCRIPT",
+    "MATRIX",
+    "PRODUCTION_DIRECTOR",
+    "PUBLISHING_PACKAGING"
+  ],
+  "criteria": [
+    "M4-CL31-05⑧⑨",
+    "M4-CL31-07⑥⑦⑩",
+    "NEG-C14"
+  ],
+  "failed": [],
+  "max_capability_tools_per_run": 1,
+  "seam_runs": [
+    {
+      "artifact_length": 4200,
+      "business_delivery_outcome": "DELIVERED",
+      "capability": "CONTENT_BRIEF",
+      "capability_tool_nodes_executed": [
+        "tool_content_brief"
+      ],
+      "case": "RG-01",
+      "expected_outcome": "DELIVERED",
+      "fixture": "FX-M4-CT-M3",
+      "input_sha256": "9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "044c3dd2-3b80-4032-8d49-8aa7336232b4",
+      "service_error": null,
+      "user_delivery_excerpt": "status: READY_WITH_CONDITIONS\n\n这条内容已经可以进入制作准备。你要做的事，我先说清楚：\n\n**这条内容是什么**\n不是一套穿搭模板，而是一个可以在她自己衣橱里照做的判断方法：把「层数」和「场合」分开看。目标顾客已经有几件通勤外套，早晨还是纠结，真正卡住的不是衣服不够，而是没把「见谁、在哪、",
+      "user_delivery_length": 565
+    },
+    {
+      "artifact_length": 1158,
+      "business_delivery_outcome": "DELIVERED_AFTER_RECOVERY",
+      "capability": "MATRIX",
+      "capability_tool_nodes_executed": [
+        "tool_matrix"
+      ],
+      "case": "RG-02",
+      "expected_outcome": "ANY",
+      "fixture": "FX-M4-MATRIX-INSUFFICIENT-WITH-UNRELATED",
+      "input_sha256": "85d1aff1575a922c966f42825318d9f05b77fdc49978fd22164248dfa2071000",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "d35648f3-c824-423d-a9f3-f92afc37a74c",
+      "service_error": null,
+      "user_delivery_excerpt": "你这次提出要给四个账号建立长期分工，这个方向本身可以进入系统性的账号规划流程。但目前我手上的信息，还不足以真正开始这一步。\n\n原因在于：这套方法的第一步，是先从你的实际业务里识别出“哪些工作是这家企业不可替代的核心能力”，再由这个核心能力反推四个账号各自的主责角色。这一步必须先有你的真实业务内容才能做。不巧的是，这次请",
+      "user_delivery_length": 814
+    },
+    {
+      "artifact_length": 3483,
+      "business_delivery_outcome": "DELIVERED",
+      "capability": "CAMPAIGN",
+      "capability_tool_nodes_executed": [
+        "tool_campaign"
+      ],
+      "case": "RG-03",
+      "expected_outcome": "ANY",
+      "fixture": "FX-M4-CT-CAMPAIGN",
+      "input_sha256": "6cdc6105af636db08f3351f560273cbda93485bd525094871f70ca7b3a8b4087",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "f7122a31-317d-4ec9-ac62-063a9d63bf43",
+      "service_error": null,
+      "user_delivery_excerpt": "status: READY_WITH_CONDITIONS\n\n这轮可以交给制作：一条短视频，主讲人是零售搭配负责人苏禾，发布在序里集品牌号。\n\n**核心内容一句话**：你早上穿衣服纠结，不是衣服不够，而是没把层数和场合分开。\n\n**为什么成立**：苏禾有三组真实试穿记录——三处偏挤、去掉马甲正式感掉一档，都是她亲身试出",
+      "user_delivery_length": 396
+    },
+    {
+      "artifact_length": 6447,
+      "business_delivery_outcome": "DELIVERED",
+      "capability": "CREATIVE_SCRIPT",
+      "capability_tool_nodes_executed": [
+        "tool_creative_script"
+      ],
+      "case": "RG-04",
+      "expected_outcome": "ANY",
+      "fixture": "FX-M4-ACCEPTED-DIRECTION",
+      "input_sha256": "1f0d0839b522db9b89478c0b295356de88a3b84861bf1006642fb808261fbf49",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "dcd6525d-3f9b-4857-b63b-867b9fb6952d",
+      "service_error": null,
+      "user_delivery_excerpt": "status: READY\n\n**条内容已就位，可直接排拍摄。**\n\n**开场（前 3 秒）**\n苏禾站在试衣镜前，手里拎着一件马甲，停顿半拍再开口。\n\n**逐字稿（约 130 字，60 秒内）**\n\n> 这三组试穿，我没试出结论。（停）加马甲：三处偏挤。去掉：正式感掉一档。\n>\n> 我本来想要一个答案——但两边确实不",
+      "user_delivery_length": 732
+    },
+    {
+      "artifact_length": 7417,
+      "business_delivery_outcome": "DELIVERED",
+      "capability": "PRODUCTION_DIRECTOR",
+      "capability_tool_nodes_executed": [
+        "tool_production_director"
+      ],
+      "case": "RG-05",
+      "expected_outcome": "ANY",
+      "fixture": "FX-M4-SCRIPT-LEGAL",
+      "input_sha256": "8a245f8cb5d30ec0aacdad9ff23093b4ea0820820c831bfb279a7a196f6a8d47",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "7a8190de-901d-4e58-a4d3-9238dbc1b3c7",
+      "service_error": null,
+      "user_delivery_excerpt": "# 制作方案（可直接照做）\n\n## 一句话\n\n在你的衣橱前，用**同一个机位、同一个光、同一种拿法**，把三件衣服摆在一起看——不评价哪件更好，只展示\"它们确实不一样\"，然后按一个判断顺序把它们分开放。\n\n**时长**：约 54 秒成片。\n\n**拍摄**：单人手机、固定机位、半天内拍完（实际约 1 小时）。不需要第二个",
+      "user_delivery_length": 1358
+    },
+    {
+      "artifact_length": 5429,
+      "business_delivery_outcome": "DELIVERED",
+      "capability": "PUBLISHING_PACKAGING",
+      "capability_tool_nodes_executed": [
+        "tool_publishing_packaging"
+      ],
+      "case": "RG-06",
+      "expected_outcome": "ANY",
+      "fixture": "FX-M4-REALIZATION-FINAL",
+      "input_sha256": "e9ac419f1874ece446a9704d1c16b5e3d1a1a66bd5137fe5d543d23b1360bbf0",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "a054ce01-8254-4307-8be3-c423ece4c99e",
+      "service_error": null,
+      "user_delivery_excerpt": "status: READY\n\n试穿这条内容的发布包已按可发布状态整理好。平台还没锁定，所以下面是平台中立的母版。等平台定了，再补做标题长度、封面尺寸、字幕单屏字数这些按平台规格的适配。\n\n**标题（推荐用第 1 个）**\n1. 试穿踩坑，多半是没看这三处\n2. 三个试穿动作，决定一件衣服留不留\n3. 衣服留不留，和好不",
+      "user_delivery_length": 1268
+    },
+    {
+      "artifact_length": 3127,
+      "business_delivery_outcome": "DELIVERED",
+      "capability": "CONTENT_BRIEF",
+      "capability_tool_nodes_executed": [
+        "tool_content_brief"
+      ],
+      "case": "RG-07",
+      "expected_outcome": "ANY",
+      "fixture": "FX-M4-THIN-FIELDS（资料不足 Return）",
+      "input_sha256": "15c8aeff9b7a563cd5367c22e606cd4e3e15099463a801de9ff0354d674f09be",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "208374ab-f258-4120-a102-b5397d83ca86",
+      "service_error": null,
+      "user_delivery_excerpt": "status: NEEDS_DECISION\n\n现在这份输入还没法变成一份能交给制作人员的内容 Brief。\n\n不是字段没填——字段是齐的，但业务语义还是空的，缺的是真正能支撑内容的东西：\n\n- **没有具体要做的这件事**：只有「提升影响力」这个目标方向，没有这条内容具体讲什么；\n- **没有具体的观众情境**：「顾",
+      "user_delivery_length": 660
+    },
+    {
+      "artifact_length": 0,
+      "business_delivery_outcome": "NOT_DELIVERED",
+      "capability": "NOT_A_CAPABILITY",
+      "capability_tool_nodes_executed": [],
+      "case": "RG-08",
+      "expected_outcome": "NOT_DELIVERED",
+      "fixture": "不支持的能力",
+      "input_sha256": "9f313e92e8bebe25d579365921b0187ef700ada71a254bda56ce25cdd0fcfbd8",
+      "leaks": [],
+      "platform_status": "succeeded",
+      "result": "PASS",
+      "run_id": "0a8b9cba-006c-4084-990d-be7c270387fa",
+      "service_error": null,
+      "user_delivery_excerpt": "这一次我没有往下做。\n\n你要的这件事不在我这一层能处理的范围里。我能做的是这六件：账号架构与诊断、单次经营任务策划、内容任务判断、创意与脚本、拍摄执行方案、发布包装。\n\n**这不算一次成功交付**——我没有硬凑一个看起来相关的结果给你，也不替你决定该做上面哪一件，那不是我该替你拿的主意。\n\n你可以直接说明这次想解决的是",
+      "user_delivery_length": 193
+    }
+  ],
+  "verdict": "PASS"
+}

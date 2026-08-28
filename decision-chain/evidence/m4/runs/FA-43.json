@@ -1,0 +1,514 @@
+{
+  "attempt_id": "FA-43",
+  "attempt_kind": "FORMAL",
+  "fixture_id": "FX-M4-NO-TRADEOFF",
+  "fixture_pack_section": "§13",
+  "fixture_pack_sha256": "9ac684d27acec7572934bd4f4c179212be7f196f5b7c81d9c4af6e2b48367a5a",
+  "fidelity": "包正文逐字节引用 + 统一外壳必填槽映射头；已机械断言 pack_body in PACK_TEXT",
+  "pack_body_sha256": "d577051406d3668c22c7d38f44c1e5a24389cf8d292550f63310d23cc51e7d83",
+  "pack_body_verbatim": "任务只有一条合理路径（事实只支持一个核心矛盾）。",
+  "capability": "CREATIVE_SCRIPT",
+  "serves_criteria": [
+    "AC-22",
+    "AC-29",
+    "N-50"
+  ],
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "seam_app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+  "provider_bindings": {
+    "_seam": {
+      "app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+      "provider_id": "2daa2d27-4305-4d24-95ec-3cb424eaeb2f",
+      "tool_name": "diyu_m4_capability_seam"
+    },
+    "campaign": {
+      "app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+      "provider_id": "0737d719-10c8-4799-8310-6579d20c86f1",
+      "published_workflow_id": "121291b1-fd7e-4361-bdf6-31373061b0c3",
+      "tool_name": "diyu_m4_campaign"
+    },
+    "content_brief": {
+      "app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+      "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+      "published_workflow_id": "3accf365-1d8b-44eb-a083-9411a5c1cde6",
+      "tool_name": "diyu_m4_content_brief"
+    },
+    "creative_script": {
+      "app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+      "provider_id": "08a225b4-268f-4eb8-80c1-66f8792da71f",
+      "published_workflow_id": "33a3958c-e6ea-4652-97da-86625c1ef792",
+      "tool_name": "diyu_m4_creative_script"
+    },
+    "matrix": {
+      "app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+      "provider_id": "36905561-5728-4581-93b0-09ea5baec97b",
+      "published_workflow_id": "acedc1df-9f33-4888-9492-186234c43d63",
+      "tool_name": "diyu_m4_matrix"
+    },
+    "production_director": {
+      "app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+      "provider_id": "e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0",
+      "published_workflow_id": "45f48072-8280-4acd-9f37-4ddd98c9bd2a",
+      "tool_name": "diyu_m4_production_director"
+    },
+    "publishing_packaging": {
+      "app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+      "provider_id": "e34c2aaa-c8b1-4026-af07-a031e3b3d759",
+      "published_workflow_id": "a6453673-73bf-4d91-9ce9-f863bc9a9e4f",
+      "tool_name": "diyu_m4_publishing_packaging"
+    }
+  },
+  "input_sha256": "7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba",
+  "input_text": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+  "run_id": "ed0466db-a499-46c9-bc70-ae2d92f6d7f8",
+  "elapsed_s": 67.63,
+  "error": null,
+  "raw_response": {
+    "task_id": "efd05a2a-8cef-4e23-b7f9-74a8b829ef50",
+    "workflow_run_id": "ed0466db-a499-46c9-bc70-ae2d92f6d7f8",
+    "data": {
+      "id": "ed0466db-a499-46c9-bc70-ae2d92f6d7f8",
+      "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。",
+        "artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "seam_trace_json": "{\"call_hash\": \"0c43e7787e65a50e71872a8be02ff1b4302562325c8f9062a5631f8e0b64ecf6\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\"}, \"entry\": \"ENTRY-05\", \"entry_derivation\": \"未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 67.534883,
+      "total_tokens": 20371,
+      "total_steps": 6,
+      "created_at": 1787814921,
+      "finished_at": 1787814989
+    }
+  },
+  "node_trace": [
+    {
+      "id": "37f88fad-9763-4c3d-9fea-f95324a9568f",
+      "index": 1,
+      "predecessor_node_id": null,
+      "node_id": "1788000000001",
+      "node_type": "start",
+      "title": "能力调用意图",
+      "inputs": {
+        "capability": "CREATIVE_SCRIPT",
+        "entry": "",
+        "capability_call": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "professional_input": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "example_reference_requested": "NO"
+      },
+      "process_data": {},
+      "outputs": {
+        "capability": "CREATIVE_SCRIPT",
+        "entry": "",
+        "capability_call": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "professional_input": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "example_reference_requested": "NO"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000185,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787814921,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787814921,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "78c53d8b-9cc7-418b-99bf-a01c2edeaf6d",
+      "index": 2,
+      "predecessor_node_id": null,
+      "node_id": "entry_resolver",
+      "node_type": "code",
+      "title": "入口解析（确定性）",
+      "inputs": {
+        "capability": "CREATIVE_SCRIPT",
+        "entry": "",
+        "capability_call": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "professional_input": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n"
+      },
+      "process_data": {},
+      "outputs": {
+        "call_hash": "0c43e7787e65a50e71872a8be02ff1b4302562325c8f9062a5631f8e0b64ecf6",
+        "capability_resolved": "CREATIVE_SCRIPT",
+        "derivation": "未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选",
+        "entry_resolved": "ENTRY-05",
+        "route": "CREATIVE_SCRIPT",
+        "run_mode": "SELECTED_DIRECTION_TO_SCRIPT"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.045752,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787814921,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787814921,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "1dc7e241-fb38-43dd-9aa3-50433fdeeec9",
+      "index": 3,
+      "predecessor_node_id": null,
+      "node_id": "seam_dispatch",
+      "node_type": "if-else",
+      "title": "能力分派",
+      "inputs": {
+        "conditions": [
+          {
+            "actual_value": "CREATIVE_SCRIPT",
+            "expected_value": "CREATIVE_SCRIPT",
+            "comparison_operator": "is"
+          }
+        ]
+      },
+      "process_data": {
+        "condition_results": [
+          {
+            "group": {
+              "case_id": "matrix",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "MATRIX",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "campaign",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CAMPAIGN",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "content_brief",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CONTENT_BRIEF",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "creative_script",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CREATIVE_SCRIPT",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              true
+            ],
+            "final_result": true
+          }
+        ]
+      },
+      "outputs": {
+        "result": true,
+        "selected_case_id": "creative_script"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000145,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787814921,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787814921,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "1c4f21e3-4493-430e-b0be-b503ff4c91d9",
+      "index": 4,
+      "predecessor_node_id": null,
+      "node_id": "tool_creative_script",
+      "node_type": "tool",
+      "title": "调用 DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)",
+      "inputs": {
+        "capability_call": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "entry": "ENTRY-05",
+        "example_reference_requested": "NO",
+        "professional_input": "objective: {primary_goal: 让目标顾客形成分层判断, goal_family: LONG_TERM_VALUE}\nexpected_change: 她能说出自己卡住的不是衣服不够，而是层数与场合没分开\ncontent_promise: 给出一个可以在自己衣橱里直接照做的分层判断\nexpression_subject: NATURAL_PERSON（苏禾）\ncontent_origin_mode: [现拍]\nfacts_registered: 苏禾三组试穿记录：三处偏挤；去掉马甲正式感掉一档\n\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\n任务只有一条合理路径（事实只支持一个核心矛盾）。\ncore_claim: 初秋通勤的困难不在单品，在层数与场合的对应关系\n",
+        "run_mode": "SELECTED_DIRECTION_TO_SCRIPT"
+      },
+      "process_data": {},
+      "outputs": {
+        "text": "{\"artifact\": \"# Creative Script — 内部 Artifact\\n\\n## 运行记录\\n- `entry`：ENTRY-05\\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\\n- `content_origin_mode`：现拍\\n- `expression_subject`：NATURAL_PERSON（苏禾）\\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\\n- `duration_band`：SHORT（≤60s）\\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\\n\\n## CS-1 处理（只记录，不重跑）\\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\\n- 方向描述（五轴）：\\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\\n\\n## 两问表（逐 beat）\\n| beat_id | 内容摘要 | 事实 | 素材 |\\n|---|---|---|---|\\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\\n\\n## fact_refs\\n| 内容 | 来源 | type |\\n|---|---|---|\\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\\n| 三处偏挤 | 同上 | INTERNAL |\\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\\n\\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\\n\\n## 三区标注\\n| zone | beat |\\n|---|---|\\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\\n\\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\\n- B4 为规则表述，允许按本人习惯自由表达。\\n\\n## 其他\\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\\n- `explicit_non_promise[]`：上游未声明，不新增。\\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\\n- `missing[]`：无。所有必需专业输入已由外壳提供。\", \"user_delivery\": \"status: READY\\n\\n## 创意方向（1 个）\\n\\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\\n\\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\\n\\n## 逐字稿（≤60 秒）\\n\\n> 三套试下来，三处偏紧。\\n> 我以为是件数的问题。\\n>\\n> 第三套，我把马甲摘了——松了。\\n> 正式感，掉了一档。\\n>\\n> 我卡住的，不是衣服不够。\\n> 是层数和场合，我一直没拆开。\\n>\\n> 以后，想舒服——动单品；\\n> 想正式——动层数。\\n> 两件事，分开动。\\n\\n**念稿提示**：\\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\\n- 最后一段可以随意，按你平时说话的口气来。\\n\\n**如果现在就去拍**：\\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。\", \"artifact_status\": \"OK\", \"user_delivery_status\": \"OK\", \"user_delivery_leaks\": [], \"returns_json\": \"[]\", \"returns_status\": \"NONE\", \"returns_parse_note\": \"显式声明无回改\", \"returns_raw\": \"NONE\", \"local_block\": \"false\", \"raw_preserved\": \"---M4_ARTIFACT---\\n# Creative Script — 内部 Artifact\\n\\n## 运行记录\\n- `entry`：ENTRY-05\\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\\n- `content_origin_mode`：现拍\\n- `expression_subject`：NATURAL_PERSON（苏禾）\\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\\n- `duration_band`：SHORT（≤60s）\\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\\n\\n## CS-1 处理（只记录，不重跑）\\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\\n- 方向描述（五轴）：\\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\\n\\n## 两问表（逐 beat）\\n| beat_id | 内容摘要 | 事实 | 素材 |\\n|---|---|---|---|\\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\\n\\n## fact_refs\\n| 内容 | 来源 | type |\\n|---|---|---|\\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\\n| 三处偏挤 | 同上 | INTERNAL |\\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\\n\\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\\n\\n## 三区标注\\n| zone | beat |\\n|---|---|\\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\\n\\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\\n- B4 为规则表述，允许按本人习惯自由表达。\\n\\n## 其他\\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\\n- `explicit_non_promise[]`：上游未声明，不新增。\\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\\n- `missing[]`：无。所有必需专业输入已由外壳提供。\\n\\n---END_M4_ARTIFACT---\\n\\n---M4_USER_DELIVERY---\\nstatus: READY\\n\\n## 创意方向（1 个）\\n\\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\\n\\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\\n\\n## 逐字稿（≤60 秒）\\n\\n> 三套试下来，三处偏紧。\\n> 我以为是件数的问题。\\n>\\n> 第三套，我把马甲摘了——松了。\\n> 正式感，掉了一档。\\n>\\n> 我卡住的，不是衣服不够。\\n> 是层数和场合，我一直没拆开。\\n>\\n> 以后，想舒服——动单品；\\n> 想正式——动层数。\\n> 两件事，分开动。\\n\\n**念稿提示**：\\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\\n- 最后一段可以随意，按你平时说话的口气来。\\n\\n**如果现在就去拍**：\\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。\\n---END_M4_USER_DELIVERY---\\n\\n---M4_RETURNS---\\nNONE\\n---END_M4_RETURNS---\", \"binding_json\": \"{\\\"artifact_sha256\\\": \\\"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\\\", \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\", \\\"completion_params\\\": {\\\"max_tokens\\\": 384000, \\\"reasoning_effort\\\": \\\"low\\\", \\\"thinking\\\": true, \\\"top_p\\\": 0.8}, \\\"entry\\\": \\\"ENTRY-05\\\", \\\"goal_family_readonly_inherited\\\": \\\"UNDECLARED\\\", \\\"input_envelope_sha256\\\": \\\"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\\\", \\\"input_professional_sha256\\\": \\\"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\\\", \\\"model_name\\\": \\\"deepseek-v4-flash\\\", \\\"model_provider\\\": \\\"langgenius/deepseek/deepseek\\\", \\\"note\\\": \\\"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\\\", \\\"reference_load_matrix\\\": {\\\"examples\\\": \\\"ON_REQUEST\\\", \\\"industry\\\": \\\"BY_DOMAIN\\\", \\\"platforms\\\": \\\"STRUCTURAL\\\"}, \\\"reference_projection_declared\\\": \\\"{\\\\n  \\\\\\\"capability\\\\\\\": \\\\\\\"CREATIVE_SCRIPT\\\\\\\",\\\\n  \\\\\\\"loaded_reference_sections\\\\\\\": [\\\\n    \\\\\\\"SKILL.md :: 后继版全文（始终加载）\\\\\\\"\\\\n    ,\\\\\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\\\\\"\\\\n  ],\\\\n  \\\\\\\"load_matrix_ref\\\\\\\": \\\\\\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\\\\\",\\\\n  \\\\\\\"second_attachment_library_built\\\\\\\": false,\\\\n  \\\\\\\"rag_first_layer_built\\\\\\\": false\\\\n}\\\", \\\"run_mode\\\": \\\"SELECTED_DIRECTION_TO_SCRIPT\\\", \\\"self_reported_only\\\": true, \\\"source_skill_path\\\": \\\"content-production/skills/writing-creative-scripts/SKILL.md\\\", \\\"source_skill_sha256\\\": \\\"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\\\", \\\"successor_skill_path\\\": \\\"content-production/skills/writing-creative-scripts-m4/SKILL.md\\\", \\\"successor_skill_sha256\\\": \\\"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\\\", \\\"system_prompt_sha256\\\": \\\"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\\\", \\\"target_environment\\\": \\\"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\\\", \\\"task_contract_hash\\\": \\\"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\\\", \\\"task_id\\\": \\\"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\\\", \\\"user_prompt_sha256\\\": \\\"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\\\"}\", \"reference_projection\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"reference_projection_text\": \"## 参考投影 · 按 M4 统一能力合同 §12 加载矩阵确定性选出\\n\\n### platforms.md :: 结构性参数（只取影响内容结构 / 构图的部分）\\n\\n**只在它改变结构时读。** 数值型参数若在主本中无当前有效条目，置 `PLATFORM_SPEC_UNVERIFIED` 并改写为定性制作要求，**不得自造数字**；分支型参数改写为条件式，两支都写完整。\\n\\n本次 `platform` = NOT_LOCKED。`NOT_LOCKED` 时只产出平台中立母版，不出任何平台改写。\\n### industry-conditions.md :: 未加载\\n\\n`subject_domain` =  不在五个已登记行业内 ⇒ **按通用处理并在 `assumptions[]` 声明**，不要挑一个「最像的」套上去。\\n### examples.md :: 未加载\\n\\n本次未显式请求案例参考 ⇒ 不加载。**不得凭记忆补一个案例上去。**\\n\\n\\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**\", \"entry\": \"ENTRY-05\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"sufficiency_status\": \"SUFFICIENT\", \"goal_family\": \"UNDECLARED\", \"conditionalized\": \"platform 未锁定：只产出平台中立母版，锁定平台列为条件；objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注\"}",
+        "files": [],
+        "json": [
+          {
+            "artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+            "user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。",
+            "artifact_status": "OK",
+            "user_delivery_status": "OK",
+            "user_delivery_leaks": [],
+            "returns_json": "[]",
+            "returns_status": "NONE",
+            "returns_parse_note": "显式声明无回改",
+            "returns_raw": "NONE",
+            "local_block": "false",
+            "raw_preserved": "---M4_ARTIFACT---\n# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。\n\n---END_M4_ARTIFACT---\n\n---M4_USER_DELIVERY---\nstatus: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。\n---END_M4_USER_DELIVERY---\n\n---M4_RETURNS---\nNONE\n---END_M4_RETURNS---",
+            "binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+            "reference_projection": "{\n  \"capability\": \"CREATIVE_SCRIPT\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n    ,\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+            "reference_projection_text": "## 参考投影 · 按 M4 统一能力合同 §12 加载矩阵确定性选出\n\n### platforms.md :: 结构性参数（只取影响内容结构 / 构图的部分）\n\n**只在它改变结构时读。** 数值型参数若在主本中无当前有效条目，置 `PLATFORM_SPEC_UNVERIFIED` 并改写为定性制作要求，**不得自造数字**；分支型参数改写为条件式，两支都写完整。\n\n本次 `platform` = NOT_LOCKED。`NOT_LOCKED` 时只产出平台中立母版，不出任何平台改写。\n### industry-conditions.md :: 未加载\n\n`subject_domain` =  不在五个已登记行业内 ⇒ **按通用处理并在 `assumptions[]` 声明**，不要挑一个「最像的」套上去。\n### examples.md :: 未加载\n\n本次未显式请求案例参考 ⇒ 不加载。**不得凭记忆补一个案例上去。**\n\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+            "entry": "ENTRY-05",
+            "run_mode": "SELECTED_DIRECTION_TO_SCRIPT",
+            "sufficiency_status": "SUFFICIENT",
+            "goal_family": "UNDECLARED",
+            "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件；objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注"
+          }
+        ],
+        "artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+        "user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。",
+        "artifact_status": "OK",
+        "user_delivery_status": "OK",
+        "user_delivery_leaks": [],
+        "returns_json": "[]",
+        "returns_status": "NONE",
+        "returns_parse_note": "显式声明无回改",
+        "returns_raw": "NONE",
+        "local_block": "false",
+        "raw_preserved": "---M4_ARTIFACT---\n# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。\n\n---END_M4_ARTIFACT---\n\n---M4_USER_DELIVERY---\nstatus: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。\n---END_M4_USER_DELIVERY---\n\n---M4_RETURNS---\nNONE\n---END_M4_RETURNS---",
+        "binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "reference_projection": "{\n  \"capability\": \"CREATIVE_SCRIPT\",\n  \"loaded_reference_sections\": [\n    \"SKILL.md :: 后继版全文（始终加载）\"\n    ,\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\"\n  ],\n  \"load_matrix_ref\": \"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\",\n  \"second_attachment_library_built\": false,\n  \"rag_first_layer_built\": false\n}",
+        "reference_projection_text": "## 参考投影 · 按 M4 统一能力合同 §12 加载矩阵确定性选出\n\n### platforms.md :: 结构性参数（只取影响内容结构 / 构图的部分）\n\n**只在它改变结构时读。** 数值型参数若在主本中无当前有效条目，置 `PLATFORM_SPEC_UNVERIFIED` 并改写为定性制作要求，**不得自造数字**；分支型参数改写为条件式，两支都写完整。\n\n本次 `platform` = NOT_LOCKED。`NOT_LOCKED` 时只产出平台中立母版，不出任何平台改写。\n### industry-conditions.md :: 未加载\n\n`subject_domain` =  不在五个已登记行业内 ⇒ **按通用处理并在 `assumptions[]` 声明**，不要挑一个「最像的」套上去。\n### examples.md :: 未加载\n\n本次未显式请求案例参考 ⇒ 不加载。**不得凭记忆补一个案例上去。**\n\n\n**未列出的参考内容本次没有加载，不得引用、不得凭记忆补写。**",
+        "entry": "ENTRY-05",
+        "run_mode": "SELECTED_DIRECTION_TO_SCRIPT",
+        "sufficiency_status": "SUFFICIENT",
+        "goal_family": "UNDECLARED",
+        "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件；objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 67.328886,
+      "execution_metadata": {
+        "tool_info": {
+          "provider_type": "workflow",
+          "provider_id": "08a225b4-268f-4eb8-80c1-66f8792da71f",
+          "plugin_unique_identifier": null
+        },
+        "total_tokens": 20371,
+        "total_price": "0",
+        "currency": "USD"
+      },
+      "extras": {
+        "icon": {
+          "background": "#E4FBCC",
+          "content": "🧩"
+        }
+      },
+      "created_at": 1787814921,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787814989,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "713c76bf-5bfc-4e80-99c9-f63a506aa3c2",
+      "index": 5,
+      "predecessor_node_id": null,
+      "node_id": "fin_creative_script",
+      "node_type": "code",
+      "title": "接缝收口｜CREATIVE_SCRIPT",
+      "inputs": {
+        "capability_resolved": "CREATIVE_SCRIPT",
+        "entry_resolved": "ENTRY-05",
+        "run_mode": "SELECTED_DIRECTION_TO_SCRIPT",
+        "derivation": "未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选",
+        "tool_artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+        "tool_user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。",
+        "tool_returns_json": "[]",
+        "tool_binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "call_hash": "0c43e7787e65a50e71872a8be02ff1b4302562325c8f9062a5631f8e0b64ecf6",
+        "tool_local_block": "false",
+        "tool_artifact_status": "OK",
+        "tool_user_delivery_status": "OK"
+      },
+      "process_data": {},
+      "outputs": {
+        "artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+        "binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "capability_invoked": "CREATIVE_SCRIPT",
+        "returns_json": "[]",
+        "seam_trace_json": "{\"call_hash\": \"0c43e7787e65a50e71872a8be02ff1b4302562325c8f9062a5631f8e0b64ecf6\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\"}, \"entry\": \"ENTRY-05\", \"entry_derivation\": \"未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.043331,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787814989,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787814989,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "f18c8c26-4e5e-4d29-8e24-17019c5c41ed",
+      "index": 6,
+      "predecessor_node_id": null,
+      "node_id": "end_creative_script",
+      "node_type": "end",
+      "title": "结束｜CREATIVE_SCRIPT",
+      "inputs": {
+        "user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。",
+        "artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "seam_trace_json": "{\"call_hash\": \"0c43e7787e65a50e71872a8be02ff1b4302562325c8f9062a5631f8e0b64ecf6\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\"}, \"entry\": \"ENTRY-05\", \"entry_derivation\": \"未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "process_data": {},
+      "outputs": {
+        "user_delivery": "status: READY\n\n## 创意方向（1 个）\n\n从你三套试穿的记录起手——三处偏紧，摘掉马甲后正式感掉一档。结论不是「该换单品」，而是「层数和场合一直没拆开」。结尾给一个可直接照做的规则。\n\n**为什么只有一个方向**：你这次的事实记录全部指向同一个核心判断（困难在层数与场合的对应关系，不在单品本身），没有第二个真正不同的讲法。硬凑只会得到同义的变体。\n\n## 逐字稿（≤60 秒）\n\n> 三套试下来，三处偏紧。\n> 我以为是件数的问题。\n>\n> 第三套，我把马甲摘了——松了。\n> 正式感，掉了一档。\n>\n> 我卡住的，不是衣服不够。\n> 是层数和场合，我一直没拆开。\n>\n> 以后，想舒服——动单品；\n> 想正式——动层数。\n> 两件事，分开动。\n\n**念稿提示**：\n- 前两句和中间两句（「三套试下来」到「掉了一档」）照稿念，一字不改——这是你试穿记录里的实际结果。\n- 「我卡住的，不是衣服不够。」这句按你自己的节奏说，「我」字别省——省了这个字，它就变成了一句普遍的断言，而它只是你的判断。\n- 最后一段可以随意，按你平时说话的口气来。\n\n**如果现在就去拍**：\n- 试穿镜头要有「穿马甲」和「摘掉马甲」两段，不然「正式感掉了一档」这句话没有画面支撑。\n- 服装和衣橱按你自己真实的状态来，不需要额外布置。",
+        "artifact": "# Creative Script — 内部 Artifact\n\n## 运行记录\n- `entry`：ENTRY-05\n- `run_mode`：SELECTED_DIRECTION_TO_SCRIPT（外壳提供确定性方向，不重跑 CS-1 锦标赛）\n- `cs_run_mode`：SELECTED_DIRECTION_TO_SCRIPT\n- `content_origin_mode`：现拍\n- `expression_subject`：NATURAL_PERSON（苏禾）\n- `platform`：NOT_LOCKED → 平台中立母版，不输出任何平台改写\n- `objective.goal_family`：UNDECLARED（只读继承，不代推）\n- `duration_band`：SHORT（≤60s）\n- `facts_registered`：仅 3 条——三组试穿记录、三处偏挤、摘掉马甲正式感掉一档。核心主张「层数与场合的对应关系」由冻结夹具包给定。\n- `subject_domain`：未登记行业 → 按通用处理，不加载行业段。\n- `content_origin_mode`：现拍 → 产出完整逐字稿，不产出分镜／机位／剪辑／标题／封面／发布文案。\n\n## CS-1 处理（只记录，不重跑）\n- 候选数量：**1**。理由：冻结夹具包 v0.1 显式声明「任务只有一条合理路径（事实只支持一个核心矛盾）」。事实记录仅 3 条，全部指向同一机制（层数与场合的对应关系），不构成五轴至少差三轴的第二候选。不机械凑候选。\n- 方向描述（五轴）：\n  - 核心矛盾：初秋通勤的困难不在单品，在层数与场合的对应关系（衣橱里缺的不是件数，是分层判断）。\n  - 叙事发动机：测试记录本身——三组试穿、三处偏紧，摘掉马甲后正式感掉一档；从「紧」到「为什么紧」的定位转变。\n  - 人物关系：苏禾对自己衣橱的操作者视角；无第三方人物。\n  - 信息释放顺序：问题（三处偏紧）→ 测试结果（摘掉马甲，正式感掉档）→ 归因（层数与场合没拆开）→ 可操作规则（动单品 vs 动层数）。\n  - 视觉前提：试穿／手部整理衣物／衣橱前景（现拍，具体画面由下游 PD 决定）。\n\n## 两问表（逐 beat）\n| beat_id | 内容摘要 | 事实 | 素材 |\n|---|---|---|---|\n| B1 | 三套试穿、三处偏紧 | 有（测试记录） | 待产出·可控（现拍） |\n| B2 | 摘掉马甲→松了；正式感掉一档 | 有（测试记录） | 待产出·可控（现拍） |\n| B3 | 归因：卡住的不是衣服不够，是层数与场合没拆开 | 有（记录直接指向；本人判断，`SUBJECTIVE`） | 待产出·可控（现拍） |\n| B4 | 规则：想舒服动单品，想正式动层数 | 有（由记录推导的可执行规则） | 待产出·可控（现拍） |\n\n## fact_refs\n| 内容 | 来源 | type |\n|---|---|---|\n| 三组试穿记录 | 苏禾内部试穿记录（v0.1 夹具包） | INTERNAL |\n| 三处偏挤 | 同上 | INTERNAL |\n| 去掉马甲正式感掉一档 | 同上 | INTERNAL |\n| 核心主张「初秋通勤困难在层数与场合的对应关系」 | 冻结夹具包 v0.1 给定 | INTERNAL |\n\n无 `EXTERNAL` 事实。无 `KNOWN_UNKNOWN`。无 `SETTING`。\n\n## 三区标注\n| zone | beat |\n|---|---|\n| 准确区（逐字） | B1：三套试下来，三处偏紧；我以为是件数的问题。<br>B2：第三套，我把马甲摘了——松了。正式感，掉了一档。 |\n| 主观区（逐字或改写均可，理由不可改；限定语不可删） | B3：我卡住的，不是衣服不够。是层数和场合，我一直没拆开。 |\n| 发挥区（按本人说话方式自由表达） | B4：以后，想舒服——动单品；想正式——动层数。两件事，分开动。 |\n\n- B3 限定语「我卡住的」保留——删除即把主观判断升级成普遍结论。\n- B4 为规则表述，允许按本人习惯自由表达。\n\n## 其他\n- `tension_mode`：无强张力。替代理由：`Utility`（观众可直接照做的分层判断）。\n- `audience_shift`：她能说出自己卡住的不是衣服不够，而是层数与场合没分开（上游给定）。\n- `content_promise`：给出一个可以在自己衣橱里直接照做的分层判断（上游给定）。\n- `explicit_non_promise[]`：上游未声明，不新增。\n- `constraints[]`：无第三方出镜；无引用授权问题；无 CTA（NO_CTA）。\n- `voiceover[]`：NOT_APPLICABLE（无画外音需求，纯口播）。\n- `screen_text[]`：NOT_APPLICABLE（不做画面文字标注；下游如需要由 PD 决定）。\n- `evidence_requirements[]`：B2「正式感掉档」需要画面证明（试穿前后对比或马甲摘除动作）。\n- `resource_note`：苏禾本人出镜；现拍；无外部素材排期。\n- `failure_case`：若把 B3 主观判断换用普遍语气（删掉「我」，变成「大家卡住的都是……」），会升级成无出处的结论。原句必须保留「我」。\n- `assumptions[]`：platform NOT_LOCKED → 只产平台中立母版；`subject_domain` 未登记 → 按通用处理；`duration_band` SHORT → 按 ≤60s 控制节奏。\n- `missing[]`：无。所有必需专业输入已由外壳提供。",
+        "returns_json": "[]",
+        "binding_json": "{\"artifact_sha256\": \"671575ab0539e60e5e95b37e2d1a83652ed0f0a22b3f7c408d5194f9502c9f76\", \"capability\": \"CREATIVE_SCRIPT\", \"completion_params\": {\"max_tokens\": 384000, \"reasoning_effort\": \"low\", \"thinking\": true, \"top_p\": 0.8}, \"entry\": \"ENTRY-05\", \"goal_family_readonly_inherited\": \"UNDECLARED\", \"input_envelope_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"input_professional_sha256\": \"7962e171bbf2d612e628bb2f49b46c12ee5b532d6df13dd9fe20ed96a79abdba\", \"model_name\": \"deepseek-v4-flash\", \"model_provider\": \"langgenius/deepseek/deepseek\", \"note\": \"自报 hash 不构成保真证明。AC-12 以从已发布 Runtime 实际读出的 system prompt 字节 sha256 为准；两者不一致时以实际字节为准并判 FAIL（N-19）。\", \"reference_load_matrix\": {\"examples\": \"ON_REQUEST\", \"industry\": \"BY_DOMAIN\", \"platforms\": \"STRUCTURAL\"}, \"reference_projection_declared\": \"{\\n  \\\"capability\\\": \\\"CREATIVE_SCRIPT\\\",\\n  \\\"loaded_reference_sections\\\": [\\n    \\\"SKILL.md :: 后继版全文（始终加载）\\\"\\n    ,\\\"platforms.md :: 结构性参数（仅当影响内容结构/构图）\\\"\\n  ],\\n  \\\"load_matrix_ref\\\": \\\"V1_M4_UNIFIED_CAPABILITY_CONTRACT_v0.1.md §12\\\",\\n  \\\"second_attachment_library_built\\\": false,\\n  \\\"rag_first_layer_built\\\": false\\n}\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"self_reported_only\": true, \"source_skill_path\": \"content-production/skills/writing-creative-scripts/SKILL.md\", \"source_skill_sha256\": \"d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a\", \"successor_skill_path\": \"content-production/skills/writing-creative-scripts-m4/SKILL.md\", \"successor_skill_sha256\": \"442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa\", \"system_prompt_sha256\": \"f6cf29ca045ee2ddc49a51d4c6b4e5d0a6fcc9973abf0b54e38a09eb437f28c0\", \"target_environment\": \"本机 Docker Dify 1.16.1 · DEVELOPMENT_TEST\", \"task_contract_hash\": \"b3ceabcbe9bcd82dae2fae84161dce0f0aadd96e395a8d6fa06a3355138331c6\", \"task_id\": \"V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001\", \"user_prompt_sha256\": \"35ab8b5d133eb177cb82f689d9d669dc83829b8d15faf02fb30c164bf398b63b\"}",
+        "seam_trace_json": "{\"call_hash\": \"0c43e7787e65a50e71872a8be02ff1b4302562325c8f9062a5631f8e0b64ecf6\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CREATIVE_SCRIPT\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\"}, \"entry\": \"ENTRY-05\", \"entry_derivation\": \"未发现真实取舍的结构前提 ⇒ 直接推荐一个方向并成稿，不机械凑候选\", \"run_mode\": \"SELECTED_DIRECTION_TO_SCRIPT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 7e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787814989,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787814989,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    }
+  ],
+  "timestamp": "2026-08-27T00:16:29-0700"
+}

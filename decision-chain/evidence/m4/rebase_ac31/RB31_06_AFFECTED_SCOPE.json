@@ -1,0 +1,265 @@
+{
+  "criterion": "M4-RB31-06",
+  "contract_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.4.md",
+  "result": "PASS",
+  "flag": "CURRENT",
+  "prior_verdicts_file": "M4_POST_REVIEW_VERDICTS.json",
+  "prior_verdicts_sha256_expected": "0fd21300b5df3546b6749e000af922808b122bdf50007b19e3c629857337a20a",
+  "prior_verdicts_sha256_now": "0fd21300b5df3546b6749e000af922808b122bdf50007b19e3c629857337a20a",
+  "prior_verdicts_unmodified": true,
+  "impact_graph": {
+    "changed_bindings": [
+      "RETURNS_ADAPTER_CODE：新增 needs_projection / projection_source",
+      "六个能力应用图：新增 projection_gate / recovery_llm / delivery_finalize 三节点及连线",
+      "六个能力应用 END：user_delivery / user_delivery_status / returns_json 改由 delivery_finalize 提供，新增 delivery_outcome / recovery_used",
+      "SEAM_FINALIZE_CODE：新增 tool_delivery_outcome / tool_recovery_used 入参，completeness_guard 增加 business_delivery_outcome / user_projection_used，NOT_DELIVERED 时登记组件级 Return",
+      "接缝与 Canvas 已发布版本、六个 provider 版本"
+    ],
+    "invalidated_direct": [
+      "AC-31",
+      "AC-13",
+      "AC-14",
+      "AC-12",
+      "AC-16"
+    ],
+    "invalidated_transitive": [
+      "所有以 user_delivery 为证据来源的 criterion 的证据载体（本轮以新运行重取）"
+    ],
+    "unknown_impact_marked_stale": [],
+    "explicitly_not_invalidated": [
+      {
+        "scope": "六份源 Skill 的专业判断（AC-15 等）",
+        "reason": "源 Skill sha256 6/6 零差异；skill_llm 系统提示词逐字不变（如 PUBLISHING_PACKAGING 33352 字 sha=be58fb42…）；MODEL 常量不变；改动全部位于 skill_llm 之后的解析与投影层"
+      },
+      {
+        "scope": "路由与能力选择（AC-03/AC-04 等）",
+        "reason": "capability_resolved / entry_resolved / run_mode 计算路径与代码未改动"
+      },
+      {
+        "scope": "九个受保护应用",
+        "reason": "本轮不导入不发布不修改；发布前后两次由目标系统复算完整性，差异 0 项"
+      },
+      {
+        "scope": "AC-15 匿名盲评结论",
+        "reason": "v1.4 §3 已按 ADOPT_EXECUTION_SIDE_CONCLUSION 终结，本轮不重开"
+      }
+    ],
+    "reused_with_reason": [
+      "M4_POST_REVIEW_VERDICTS.json 中未列入 invalidated_direct 的 26 项结果继续复用；复用理由：其证据载体不依赖 user_delivery 的生成路径，且生成层零变化"
+    ]
+  },
+  "reverified": [
+    {
+      "criterion_id": "AC-31",
+      "name": "产出完整性与显式失败",
+      "result": "NOT_VERIFIED",
+      "flag": "CURRENT",
+      "conjuncts": [
+        {
+          "conjunct": "① artifact 与适用的 user_delivery 满足冻结的非空/最低完整性结构",
+          "result": "PASS",
+          "detail": "11 次新 Runtime 运行，user_delivery 为空的次数=0（修复前 FA-10/FA-27/FA-32 为 3 次）"
+        },
+        {
+          "conjunct": "② 两块均不出现对另一块的回指",
+          "result": "PASS",
+          "detail": "空洞回指命中=无"
+        },
+        {
+          "conjunct": "③ 不满足时必须显式 PARSE_FAIL 或组件级 Return，绝不以成功空串放行",
+          "result": "PASS",
+          "detail": "十种输出合同畸形情况全部落入 A（非空交付）或 B（非空且明确未成功交付）；「守卫未命中却交付块为空」的运行=0"
+        },
+        {
+          "conjunct": "④ 恢复/重试保留原失败且不重复副作用",
+          "result": "NOT_VERIFIED",
+          "detail": "**继承的既有 NOT_VERIFIED，不是本轮新增**：冻结夹具 FX-M4-IDEMPOTENT-RECOVERY 需要真实外部副作用中断，v1.4 §8 明令本轮不制造。本轮新增的用户投影恢复路径在节点代码级已取证（DETERMINISTIC_NODE_VERIFIED，按既有等级不产生 criterion PASS），Runtime 级未观察到触发——11 次新运行模型均正常输出交付块标记。"
+        },
+        {
+          "conjunct": "⑤ 判据措辞冲突（M4-FND-013）",
+          "result": "NOT_VERIFIED",
+          "detail": "**维持前序冻结结果。执行侧一度把本项改判为 PASS，理由是『新候选上交付块为空的运行为 0 次，冲突前提消失』；独立 Reviewer 以接缝 end_tool_fail 的图结构证伪该理由：该失败分支的 outputs 中没有 user_delivery，本轮修复位于六个能力子应用内部，不覆盖接缝的 tool 失败分支，因此『status=succeeded 而交付块为空』在新候选上依旧结构可达，11 次运行只是没有采样到。改判已撤回。**本项由前序 Reviewer 明文指定交规划侧裁定，执行侧不得自行改判。"
+        }
+      ],
+      "attempts": [
+        "RB31-G01",
+        "RB31-G02",
+        "RB31-G03",
+        "RB31-G04",
+        "RB31-G05",
+        "RB31-G06",
+        "RB31-G07",
+        "RB31-G08",
+        "RB31-R10",
+        "RB31-R27",
+        "RB31-R32"
+      ],
+      "verifier": "D+S"
+    },
+    {
+      "criterion_id": "AC-12",
+      "name": "源到 Runtime 保真",
+      "result": "PASS",
+      "flag": "CURRENT",
+      "conjuncts": [
+        {
+          "conjunct": "七级回指全部可解析，已发布 Prompt 字节 sha256 与本地期望逐能力一致",
+          "result": "PASS",
+          "detail": "六份源 Skill 现场 6/6 一致；六个能力注入正文 sha256 已随 DSL 落盘；MODEL 常量逐能力一致=True；11 次新运行的 provider/model/参数/workflow_id 绑定完整=True"
+        }
+      ],
+      "attempts": [
+        "RB31-G01",
+        "RB31-G02",
+        "RB31-G03",
+        "RB31-G04",
+        "RB31-G05",
+        "RB31-G06",
+        "RB31-G07",
+        "RB31-G08",
+        "RB31-R10",
+        "RB31-R27",
+        "RB31-R32"
+      ],
+      "verifier": "D"
+    },
+    {
+      "criterion_id": "AC-13",
+      "name": "内部与用户交付分离",
+      "result": "NOT_VERIFIED",
+      "flag": "CURRENT",
+      "conjuncts": [
+        {
+          "conjunct": "用户交付块不含统一合同 §11.3 列举的禁项字面量",
+          "result": "PASS",
+          "detail": "扫描 11 次新运行；命中=无"
+        },
+        {
+          "conjunct": "内部 Artifact 含完整专业产出与未选候选",
+          "result": "PASS",
+          "detail": "11 次新运行内部 Artifact 均非空，长度 1053–8820 字"
+        },
+        {
+          "conjunct": "用户正文不是内部 Artifact 的整体复制",
+          "result": "PASS",
+          "detail": "按取证合同 §3 冻结判据（最长公共子串 < artifact 的 60% 且正文长度 < 80%）逐条核验 11 次运行，无一命中"
+        },
+        {
+          "conjunct": "必要选择与成立条件未被投影掉（『不泄露』不是『少给』）",
+          "result": "NOT_VERIFIED",
+          "detail": "**继承的既有 NOT_VERIFIED**：属 Founder 产品语义域，v1.4 §3 已按 product_semantic_disposition=ACCEPTED 收口，不再退回 Founder。"
+        }
+      ],
+      "attempts": [
+        "RB31-G01",
+        "RB31-G02",
+        "RB31-G03",
+        "RB31-G04",
+        "RB31-G05",
+        "RB31-G06",
+        "RB31-G07",
+        "RB31-G08",
+        "RB31-R10",
+        "RB31-R27",
+        "RB31-R32"
+      ],
+      "verifier": "D+S"
+    },
+    {
+      "criterion_id": "AC-14",
+      "name": "Return / 失效 / 恢复 / 幂等",
+      "result": "NOT_VERIFIED",
+      "flag": "CURRENT",
+      "conjuncts": [
+        {
+          "conjunct": "解析失败保留原文且局部阻断，不伪装成空数组或 NONE",
+          "result": "PASS",
+          "detail": "NEG-06 Returns 块格式损坏：交付非空且 Return 被登记；NEG-01/02/04/05/07 结构缺失：raw 保留、投影补齐、原格式失败在 returns_json 中留痕"
+        },
+        {
+          "conjunct": "只失效真实依赖项，不全链级联",
+          "result": "PASS",
+          "detail": "本轮影响面按真实依赖图计算，见本文件 impact_graph；六项能力代表性运行与 Canvas 端到端均未被无关失效牵连"
+        },
+        {
+          "conjunct": "最多一次局部恢复且不重跑上游生产链",
+          "result": "PASS",
+          "detail": "11 次新运行：投影节点 ≤1、能力调用 ≤1，无一违反"
+        },
+        {
+          "conjunct": "同输入重复提交不产生重复业务动作",
+          "result": "PASS",
+          "detail": "{\"same_input\": true, \"distinct_run_ids\": true, \"both_delivered\": true, \"note\": \"同输入重复提交产生两条独立运行记录，均正常交付，未产生重复业务动作\"}"
+        },
+        {
+          "conjunct": "恢复前先查目标系统副作用（幂等，真实外部副作用场景）",
+          "result": "NOT_VERIFIED",
+          "detail": "**继承的既有 NOT_VERIFIED，不是本轮新增**：v1.4 §8 明令不制造真实外部副作用。"
+        }
+      ],
+      "attempts": [
+        "RB31-G01",
+        "RB31-G02",
+        "RB31-G03",
+        "RB31-G04",
+        "RB31-G05",
+        "RB31-G06",
+        "RB31-G07",
+        "RB31-G08",
+        "RB31-R10",
+        "RB31-R27",
+        "RB31-R32"
+      ],
+      "verifier": "D+S"
+    },
+    {
+      "criterion_id": "AC-16",
+      "name": "Runtime、Founder、远程收口",
+      "result": "NOT_VERIFIED",
+      "flag": "CURRENT",
+      "conjuncts": [
+        {
+          "conjunct": "后继应用真实运行（有 run_id）",
+          "result": "PASS",
+          "detail": "本轮带 run_id 的新正式运行 11/11 次"
+        },
+        {
+          "conjunct": "Founder 画布可达",
+          "result": "PASS",
+          "detail": "RB31-G09/G10 端到端 message_id 存在，用户可见输出 246/110 字"
+        },
+        {
+          "conjunct": "九个保护应用绑定零变化",
+          "result": "PASS",
+          "detail": "发布后由目标系统复算：差异 0 项"
+        },
+        {
+          "conjunct": "远端分支 commit 与本地一致",
+          "result": "NOT_VERIFIED",
+          "detail": "本项在 Git 远端收口步骤完成后由收口核验现场复算；当前本地 HEAD=b80ee4e787c8"
+        }
+      ],
+      "attempts": [
+        "RB31-G01",
+        "RB31-G02",
+        "RB31-G03",
+        "RB31-G04",
+        "RB31-G05",
+        "RB31-G06",
+        "RB31-G07",
+        "RB31-G08",
+        "RB31-G09",
+        "RB31-G10",
+        "RB31-R10",
+        "RB31-R27",
+        "RB31-R32"
+      ],
+      "verifier": "D"
+    }
+  ],
+  "rb31_01": "PASS",
+  "rb31_02": "PASS",
+  "rb31_03": "PASS",
+  "rb31_04": "PASS",
+  "rb31_05": "FAIL"
+}

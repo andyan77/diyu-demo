@@ -1,0 +1,35 @@
+{
+  "action": "隔离上一轮遗留的故障注入对象（EVALUATION_ONLY_NOT_ROUTABLE）",
+  "injection_tool_provider_remaining": [],
+  "official_seam_provider": [
+    {
+      "id": "2daa2d27-4305-4d24-95ec-3cb424eaeb2f",
+      "name": "diyu_m4_capability_seam"
+    }
+  ],
+  "status": "EVALUATION_ONLY_NOT_ROUTABLE",
+  "steps": [
+    {
+      "delete_tool_provider": "/console/api/workspaces/current/tool-provider/workflow/delete",
+      "result": {
+        "result": "success"
+      }
+    },
+    {
+      "app": {
+        "id": "c733f426-6e54-4c09-8ad7-8192b426ac38",
+        "name": "DIYU M4 AC31 FAULT INJECTION EVAL ONLY · Content Brief child",
+        "status": "normal",
+        "workflow_id": "fc1c9ff9-91a1-4109-bf10-32784a657099"
+      }
+    },
+    {
+      "app": {
+        "id": "86ba24e1-ae01-4b29-af04-fbeffc499bb3",
+        "name": "DIYU M4 AC31 FAULT INJECTION EVAL ONLY · Capability Seam",
+        "status": "normal",
+        "workflow_id": "033ca8e2-702d-478a-ba15-6574ba7093f8"
+      }
+    }
+  ]
+}

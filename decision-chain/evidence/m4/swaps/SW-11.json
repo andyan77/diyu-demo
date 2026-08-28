@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "swap_id": "SW-11",
+    "dst_capability": "CONTENT_BRIEF",
+    "src_capability": "MATRIX",
+    "src_fixture": "FX-M4-MATRIX-SUFFICIENT",
+    "run_id": "2681832c-e2aa-4a9e-a00f-53efaaee6b42",
+    "status": "succeeded",
+    "error": null,
+    "blocked_or_insufficient": true,
+    "returns_count": 1,
+    "artifact_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifact_len": 0,
+    "user_delivery_len": 92
+  },
+  "raw_response": {
+    "task_id": "03540123-853f-4622-ae1d-d19afe1bca32",
+    "workflow_run_id": "2681832c-e2aa-4a9e-a00f-53efaaee6b42",
+    "data": {
+      "id": "2681832c-e2aa-4a9e-a00f-53efaaee6b42",
+      "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n你想说给谁听？她现在具体卡在哪一步？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "artifact": "",
+        "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-f72df7ff\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"audience_problem；expected_change；content_promise；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "binding_json": "{}",
+        "seam_trace_json": "{\"call_hash\": \"0bb39d8026ad0ba55d34926efc593ae806d96d084c4da406f0ee6d86fb16e8fe\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 0.424101,
+      "total_tokens": 0,
+      "total_steps": 6,
+      "created_at": 1787811641,
+      "finished_at": 1787811641
+    }
+  },
+  "input_sha256": "f72df7ffd2910f7714b23afb47a4d26c4155801ed91f1c19f712319ad0a163dd",
+  "input_text": "\nprovenance:\n  source_kind: USER_DIRECT\napplicability_reason: 用户要求建立四个账号的长期分工，涉及长期定位与账号职责\nsubject_and_account_scope: 序里集，四个账号\nbusiness_model: 面向 30–45 岁城市女性的中高端女装集合店，华东新一线，2 家直营门店\ncore_customer: 30–45 岁城市女性；已有几件通勤外套，早上仍要花十几分钟决定穿什么\ncurrent_business_task: 「初秋通勤衣橱」第一阶段上新；重点商品为廓形西装、阔腿裤、针织马甲、衬衫、半裙、轻外套\nobjective:\n  primary_goal: 建立四个账号的长期分工\n  goal_family: LONG_TERM_VALUE\ncandidate_roles:\n  - name: 林序\n    title: 创始人\n    duty: 买手与门店经营出身；决定品牌方向与选品口径；表达直接务实\n    first_person_source: 亲自跑市场与看货的判断过程；门店经营决策现场\n  - name: 周宁\n    title: 商品负责人\n    duty: 选品、商品组合、版型比较\n    first_person_source: 每一季的版型比较记录与商品组合决策\n  - name: 苏禾\n    title: 零售搭配负责人\n    duty: 陈列、试穿、成套搭配\n    first_person_source: 门店试穿记录（如三组试穿：领口、袖窿、下摆三处偏挤）\n  - name: 陈晚\n    title: 旗舰店店长\n    duty: 一线销售、熟客维护\n    first_person_source: 顾客原话记录（如「上班需要正式，但下班接孩子时不想显得过于用力」）\nexpression_boundary: 禁年龄身材身份焦虑；禁「显瘦十斤」「闭眼入」类无依据话术；禁虚构顾客故事冒充真实案例\nfacts_registered:\n  - \"[夹具登记事实] 林序：买手与门店经营出身，亲自跑市场看货；一手来源=选品决策现场\"\n  - \"[夹具登记事实] 周宁：负责选品、商品组合、版型比较；一手来源=每季版型比较记录\"\n  - \"[夹具登记事实] 苏禾：负责陈列、试穿、成套搭配；一手来源=门店试穿记录（三组试穿：领口、袖窿、下摆三处偏挤）\"\n  - \"[夹具登记事实] 陈晚：负责一线销售与熟客维护；一手来源=顾客原话记录\"\n",
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "timestamp": "2026-08-26T23:20:41-0700"
+}

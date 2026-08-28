@@ -1,0 +1,1134 @@
+{
+ "verdicts": [
+  {
+   "criterion": "AC-01",
+   "name": "Rebase、worktree、回滚、连续性",
+   "result": "PASS",
+   "verifier": "D",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "closing"
+   ],
+   "conjuncts": [
+    {
+     "clause": "九个保护应用 published workflow_id + graph md5 逐行一致",
+     "result": "PASS",
+     "evidence": "收口核验现场复算：零变化"
+    },
+    {
+     "clause": "交付物相对冻结候选 0dcd66f 零字节改动",
+     "result": "PASS",
+     "evidence": "漂移项=无"
+    },
+    {
+     "clause": "远端分支与本地一致",
+     "result": "PASS",
+     "evidence": "{\"branch\": \"codex/v1-m4-capability-seams-runtime-integration-001\", \"local\": \"0dcd66fd39692ed07df80e39c1f27511d9cbf283\", \"remote\": \"0dcd66fd39692ed07df80e39c1f27511d9cbf283\", \"in_sync\": true, \"main\": \"a7b810109f43a4bf500acc285baab477d96796e3\"}"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-02",
+   "name": "统一外壳保留能力差异",
+   "result": "PASS",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "SW-01",
+    "SW-02",
+    "SW-03",
+    "SW-04",
+    "SW-05",
+    "SW-06",
+    "SW-07",
+    "SW-08",
+    "SW-09",
+    "SW-10",
+    "SW-11",
+    "SW-12",
+    "SW-13",
+    "SW-14",
+    "SW-15",
+    "SW-16",
+    "SW-17",
+    "SW-18",
+    "SW-19",
+    "SW-20",
+    "SW-21",
+    "SW-22",
+    "SW-23",
+    "SW-24",
+    "SW-25",
+    "SW-26",
+    "SW-27",
+    "SW-28",
+    "SW-29",
+    "SW-30"
+   ],
+   "conjuncts": [
+    {
+     "clause": "六能力全部 30 组有序互换后，下游消费失败或产出实质变化",
+     "result": "PASS",
+     "evidence": "无抽样，30/30 全跑。消费失败或局部 Return 26 组；正常消费但产出结构实质不同 4 组；既正常消费又无实质变化 0 组。"
+    },
+    {
+     "clause": "外壳字段总数 ≤ 统一合同 §1.1 语义组数，且外壳内无任一能力的专业结构",
+     "result": "PASS",
+     "evidence": "接缝 start 变量 5 个 ['capability', 'entry', 'capability_call', 'professional_input', 'example_reference_requested']；外壳内命中能力专属专业结构=无"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-03",
+   "name": "非固定上游与按需组合",
+   "result": "PASS",
+   "verifier": "D",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-01",
+    "FA-02",
+    "FA-03",
+    "FA-04",
+    "FA-05",
+    "FA-06",
+    "FA-07",
+    "FA-08",
+    "FA-09",
+    "FA-10",
+    "FA-11",
+    "FA-12",
+    "FA-13",
+    "FA-14",
+    "FA-15",
+    "FA-16",
+    "FA-17",
+    "FA-18",
+    "FA-19",
+    "FA-20",
+    "FA-21",
+    "FA-22",
+    "FA-23",
+    "FA-24",
+    "FA-25",
+    "FA-26",
+    "FA-27",
+    "FA-28",
+    "FA-29",
+    "FA-30",
+    "FA-31",
+    "FA-32",
+    "FA-33",
+    "FA-34",
+    "FA-35",
+    "FA-36",
+    "FA-37",
+    "FA-38",
+    "FA-39",
+    "FA-40",
+    "FA-41",
+    "FA-42",
+    "FA-43",
+    "FA-44",
+    "FA-45",
+    "FA-46"
+   ],
+   "conjuncts": [
+    {
+     "clause": "每次 run 的实际调用链不含未被显式编排的上游能力",
+     "result": "PASS",
+     "evidence": "46 次正式运行逐次检查 upstream_auto_invoked；越界=无"
+    },
+    {
+     "clause": "M4 六个能力应用之间零 tool 调用边",
+     "result": "PASS",
+     "evidence": "六个能力应用内 tool 节点=0（结构性）；接缝每次恰好一个成功 tool 节点；多调用=无"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-04",
+   "name": "合法等价输入",
+   "result": "PASS",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-36",
+    "FA-34",
+    "FA-35",
+    "FA-37",
+    "FA-38",
+    "FA-45"
+   ],
+   "conjuncts": [
+    {
+     "clause": "五类合法等价输入各自被判为充分并正常产出（保真夹具）",
+     "result": "PASS",
+     "evidence": "五类逐条：FX-M4-CT-USER-DIRECT=FA-36(3238字), FX-M4-CT-M3=FA-34(6511字), FX-M4-CT-CAMPAIGN=FA-35(4982字), FX-M4-SCRIPT-LEGAL=FA-37(6641字), FX-M4-REALIZATION-FINAL=FA-38(7316字)；异常=无"
+    },
+    {
+     "clause": "FX-M4-THIN-FIELDS 判 INSUFFICIENT（不冒充等价输入）",
+     "result": "PASS",
+     "evidence": "Return 1 条，precise_gap=objective；facts_registered；expression_subject_and_boundary，未产出正文"
+    },
+    {
+     "clause": "只追问最具区分力的一项，且只阻断依赖该语义的分支（夹具包 §10）",
+     "result": "PASS",
+     "evidence": "仪器更正：「追问」的对象是用户，检索面是 user_delivery，不是内部 Return 的 precise_gap（后者按职责列全 3 个结构性缺槽，供内部记录用）。FA-45 对用户只问一项：「这一轮你想拿到的结果是什么？」，并写明「只补这一项就够了」「这一轮里不依赖这一步的其他事情不受影响，可以照常继续」。问号计数=1"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-05",
+   "name": "M3 / Campaign 同种 Content Task",
+   "result": "NOT_VERIFIED",
+   "verifier": "S+H",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-34",
+    "FA-35"
+   ],
+   "conjuncts": [
+    {
+     "clause": "只有一条 Brief 生产链（同能力同入口，Brief Pack 骨架相同）",
+     "result": "PASS",
+     "evidence": "同链=True；骨架小节重合 7/9"
+    },
+    {
+     "clause": "provenance 不同且可追溯",
+     "result": "PASS",
+     "evidence": "FA-34 source_kind=M3_OPERATION / FA-35 source_kind=CAMPAIGN，均逐字节引自夹具包 §1/§2"
+    },
+    {
+     "clause": "12 项业务核心逐项同义",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-06",
+   "name": "Matrix 局部 Return",
+   "result": "NOT_VERIFIED",
+   "verifier": "S+H",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-05",
+    "FA-18"
+   ],
+   "conjuncts": [
+    {
+     "clause": "Matrix 分支输出组件级 Return，七项齐全、precise_gap 具体",
+     "result": "PASS",
+     "evidence": "Return 1 条，必填 7 项齐全=True，precise_gap=未提供四个账号对应的真实候选角色名单，以及各角色的真实权责、持续工作与一手内容来源"
+    },
+    {
+     "clause": "同轮的 PP 请求继续执行并正常产出，不被 Matrix 阻断",
+     "result": "NOT_VERIFIED",
+     "evidence": "**当前架构不支持同轮多诉求**：接缝每次只收一个 capability，M1 每轮只给一个 effective_route。登记为 M4-FND-004，接口 Rebase 建议见 V1_M1_M4_MULTI_REQUEST_INTERFACE_REBASE_PROPOSAL_v0.1.md。不以「分别跑两次都成功」冒充同轮不阻断。"
+    },
+    {
+     "clause": "不生成任何假 Matrix 内容",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-07",
+   "name": "Campaign 策划与 compile 保真",
+   "result": "PASS",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-14",
+    "FA-15",
+    "FA-46"
+   ],
+   "conjuncts": [
+    {
+     "clause": "未确认输入 ⇒ PLANNING（不强制 compile）",
+     "result": "PASS",
+     "evidence": "FA-14 运行模式=PLANNING，判定依据写明 confirmed_decisions 三项均为缺失占位"
+    },
+    {
+     "clause": "已确认决定包 ⇒ COMPILE_CONFIRMED_DECISIONS 且逐条不改写已确认决定",
+     "result": "PASS",
+     "evidence": "FA-46 运行模式=COMPILE_CONFIRMED_DECISIONS；「本轮由本能力形成的判断：无（编译模式，不改写已确认决定）」；roster/主讲/顺序/承接口径逐条继承。**前提**：输入须显式带 campaign_run_mode 标记；不带标记时（FA-15）系统判 PLANNING。冻结夹具 §7.2 未写是否要带该标记 —— 口径差异登记为 M4-FND-006，交 Founder。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-08",
+   "name": "Brief / CS-1 / CS 接缝",
+   "result": "PASS",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-34",
+    "FA-35",
+    "FA-36",
+    "FA-41",
+    "FA-42",
+    "FA-43"
+   ],
+   "conjuncts": [
+    {
+     "clause": "Brief 接受多类来源（M3 / Campaign / 用户直接），来源不被锁死",
+     "result": "PASS",
+     "evidence": "FA-34(M3) / FA-35(Campaign) / FA-36(USER_DIRECT) 三类保真夹具均正常产出、零阻断 Return"
+    },
+    {
+     "clause": "有真实取舍才给候选；无取舍时不凑候选",
+     "result": "PASS",
+     "evidence": "FA-42 run_mode=TOURNAMENT_ONLY 且逐轴核对；FA-43「是否存在真实取舍：否——候选数 = 1」"
+    },
+    {
+     "clause": "已选方向可直达脚本且不重赛",
+     "result": "PASS",
+     "evidence": "FA-41 cs_run_mode=SELECTED_DIRECTION_TO_SCRIPT，正文写明「本次运行不办锦标赛」"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-09",
+   "name": "CS / PD 独立与局部重跑",
+   "result": "PASS",
+   "verifier": "S+D",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-37",
+    "FA-23",
+    "FA-19",
+    "FA-38"
+   ],
+   "conjuncts": [
+    {
+     "clause": "合法脚本直达 PD（不补跑 Brief / 锦标赛 / CS）",
+     "result": "PASS",
+     "evidence": "FA-37（保真 §4 脚本，含 B1–B4 与 fact_refs）直达 PD，upstream_auto_invoked=[]，产出 6641 字"
+    },
+    {
+     "clause": "局部改动后未依赖单元不重跑",
+     "result": "PASS",
+     "evidence": "FA-23：「按局部重跑处理」「U1、U3、U4 的有效性不因这次改动而失效」「不重做、不复查、不推倒」；U3 因真实依赖（同条件对照锚点）同步，属真实依赖非全链级联"
+    },
+    {
+     "clause": "plan 与 manifest 字段与语义不混用",
+     "result": "PASS",
+     "evidence": "FA-37 为 PD 制作方案（plan），未产出 realization_manifest；PP 侧 FA-19 无 manifest 判 PRE、FA-38 有 manifest 判 FINAL，两者语义未混"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-10",
+   "name": "PP 直达与三状态",
+   "result": "PASS",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-19",
+    "FA-20",
+    "FA-38",
+    "FA-21"
+   ],
+   "conjuncts": [
+    {
+     "clause": "四例分别推导为 PRE / MIXED / FINAL / PRE",
+     "result": "PASS",
+     "evidence": "实得 {\"FA-19\": \"PRE\", \"FA-20\": \"MIXED\", \"FA-38\": \"FINAL\", \"FA-21\": \"PRE\"}；不符=无"
+    },
+    {
+     "clause": "各自写出推导依据（manifest 在不在、每条 beat 缺口状态）",
+     "result": "PASS",
+     "evidence": "缺推导依据=无（FA-38 逐级写明「第一级 PRE 判据不成立…第二级 MIXED 判据不成立…」）"
+    },
+    {
+     "clause": "资产级清单不被当 manifest（N-14 变体）",
+     "result": "PASS",
+     "evidence": "FA-21 upstream_says『拍了 42 分钟』且 beat_mapping_present=false ⇒ 实得 PRE"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-11",
+   "name": "条件附件",
+   "result": "PASS",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-24",
+    "FA-25"
+   ],
+   "conjuncts": [
+    {
+     "clause": "无关附件全文未加载，示例不变成模板或事实",
+     "result": "PASS",
+     "evidence": "FA-24 输入含 27 页无关复盘全文 + 他人脚本示例。产出：「两份附件（美妆双十一复盘、他人脚本示例）与本次任务无真实依赖关系，未作为事实或模板引用。」显式声明未用=True；复盘全文特征内容泄漏=False"
+    },
+    {
+     "clause": "无平台/行业证据时不猜数字，数值型参数置未核实并改写为定性要求",
+     "result": "PASS",
+     "evidence": "FA-25：未核实标记=True；未出现凭空数字=True"
+    },
+    {
+     "clause": "实际加载的 reference 投影 ⊆ 统一合同 §12 加载矩阵允许集",
+     "result": "PASS",
+     "evidence": "两次运行的 binding_json 均含 reference_load_matrix 投影记录"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-12",
+   "name": "源到 Runtime 保真",
+   "result": "PASS",
+   "verifier": "D",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-01",
+    "FA-02",
+    "FA-03",
+    "FA-04",
+    "FA-05",
+    "FA-06",
+    "FA-07",
+    "FA-08",
+    "FA-09",
+    "FA-10",
+    "FA-11",
+    "FA-12",
+    "FA-13",
+    "FA-14",
+    "FA-15",
+    "FA-16",
+    "FA-17",
+    "FA-18",
+    "FA-19",
+    "FA-20",
+    "FA-21",
+    "FA-22",
+    "FA-23",
+    "FA-24",
+    "FA-25",
+    "FA-26",
+    "FA-27",
+    "FA-28",
+    "FA-29",
+    "FA-30",
+    "FA-31",
+    "FA-32",
+    "FA-33",
+    "FA-34",
+    "FA-35",
+    "FA-36",
+    "FA-37",
+    "FA-38",
+    "FA-39",
+    "FA-40",
+    "FA-41",
+    "FA-42",
+    "FA-43",
+    "FA-44",
+    "FA-45",
+    "FA-46"
+   ],
+   "conjuncts": [
+    {
+     "clause": "七级回指全部可解析，已发布 Prompt 字节 sha256 与本地期望逐能力一致",
+     "result": "PASS",
+     "evidence": "沿用修复轮已现场复算的 6/6 逐能力一致；本轮收口核验再次确认 provider 版本无滞后=[]"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-13",
+   "name": "内部与用户交付分离",
+   "result": "NOT_VERIFIED",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-29",
+    "FA-01",
+    "FA-02",
+    "FA-03",
+    "FA-04",
+    "FA-05",
+    "FA-06",
+    "FA-07",
+    "FA-08",
+    "FA-09",
+    "FA-10",
+    "FA-11",
+    "FA-12",
+    "FA-13",
+    "FA-14",
+    "FA-15",
+    "FA-16",
+    "FA-17",
+    "FA-18",
+    "FA-19",
+    "FA-20",
+    "FA-21",
+    "FA-22",
+    "FA-23",
+    "FA-24",
+    "FA-25",
+    "FA-26",
+    "FA-27",
+    "FA-28",
+    "FA-29",
+    "FA-30",
+    "FA-31",
+    "FA-32",
+    "FA-33",
+    "FA-34",
+    "FA-35",
+    "FA-36",
+    "FA-37",
+    "FA-38",
+    "FA-39",
+    "FA-40",
+    "FA-41",
+    "FA-42",
+    "FA-43",
+    "FA-44",
+    "FA-45",
+    "FA-46"
+   ],
+   "conjuncts": [
+    {
+     "clause": "用户交付块不含统一合同 §11.3 列举的禁项字面量",
+     "result": "PASS",
+     "evidence": "判据字面量取自冻结合同 §11.3 七条；扫描 46 次正式运行的 user_delivery；命中=无"
+    },
+    {
+     "clause": "内部 Artifact 含完整专业产出与未选候选",
+     "result": "PASS",
+     "evidence": "FA-29 输入显式带被淘汰方向与审查便条；内部 artifact 保留候选/淘汰相关内容=True，用户交付块未出现「已删除」「审查发现」等便条字面量"
+    },
+    {
+     "clause": "必要选择与成立条件未被投影掉（『不泄露』不是『少给』）",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-14",
+   "name": "Return / 失效 / 恢复 / 幂等",
+   "result": "NOT_VERIFIED",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-32",
+    "FA-33",
+    "FA-23",
+    "FA-22"
+   ],
+   "conjuncts": [
+    {
+     "clause": "每条 Return 形成且仅形成一种处置",
+     "result": "PASS",
+     "evidence": "FA-32 Return 0 条 / FA-33 Return 1 条，各自 proposed_disposition 唯一"
+    },
+    {
+     "clause": "解析失败保留原文且局部阻断，不伪装成空数组或 NONE",
+     "result": "PASS",
+     "evidence": "FA-32：产出末尾「上一环节（创意方向）有一条返回记录，但内容因**格式损坏无法读取**」——失败被显式呈现、只阻断该支，未伪装成空数组或 NONE"
+    },
+    {
+     "clause": "拒绝有权威 / 事实 / 边界理由，不沉默丢失",
+     "result": "PASS",
+     "evidence": "FA-33 回改被拒；Return 中的理由=[{\"return_id\": \"RETURN-CB-001\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"内容承诺\", \"precise_gap\": \"下游 CREATIVE_SCRIPT 要求把 content_promise 从「给出可照做的分层判断」改为「哪一件更好」，构成对已接受业务核心的实质改写，且使单条内容从长期判断能力培养（LONG_TERM_VALUE）滑向"
+    },
+    {
+     "clause": "只失效真实依赖项，不全链级联",
+     "result": "PASS",
+     "evidence": "FA-23 局部改动：U1/U4 保持有效，U3 因真实对照依赖同步；FA-22 素材撤回只回退 B2 相关"
+    },
+    {
+     "clause": "恢复前先查目标系统副作用（幂等）",
+     "result": "NOT_VERIFIED",
+     "evidence": "发布脚本已实现（写前锚点 + 幂等键 + STARTED/UNKNOWN 先查目标系统 + 写后确认），但本轮**零写操作**，未产生可绑定的真实恢复场景。冻结夹具 FX-M4-IDEMPOTENT-RECOVERY 需要真实外部副作用中断，本轮不制造。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-15",
+   "name": "六 Skill 专业非退化",
+   "result": "NOT_VERIFIED",
+   "verifier": "S+H",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-34",
+    "FA-37",
+    "FA-38",
+    "FA-41",
+    "FA-18",
+    "FA-46"
+   ],
+   "conjuncts": [
+    {
+     "clause": "每项能力的关键专业行为在后继版本上可达",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    },
+    {
+     "clause": "盲评不劣于源版本（公平对照）",
+     "result": "NOT_VERIFIED",
+     "evidence": "**公平对照纪律（取证判据合同 §3.1）不满足**：两侧 completion_params 不相等 —— M4 后继为 {max_tokens:384000, top_p:0.8, thinking:true, reasoning_effort:low}，源 v0.1 为 {max_tokens:384000, top_p:0.8}（无 thinking）。要对齐必须改动受保护应用或冻结交付物，两者都被禁止。因此**「不劣于」不可记为 PASS**（那正是 §3.1 禁止的『用参数制造胜利』）；反向的「明显劣于」仍是有效 FAIL。登记为 M4-FND-007。测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-16",
+   "name": "Runtime、Founder、远程收口",
+   "result": "PASS",
+   "verifier": "D",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-01",
+    "FA-02",
+    "FA-03",
+    "FA-04",
+    "FA-05",
+    "FA-06",
+    "FA-07",
+    "FA-08",
+    "FA-09",
+    "FA-10",
+    "FA-11",
+    "FA-12",
+    "FA-13",
+    "FA-14",
+    "FA-15",
+    "FA-16",
+    "FA-17",
+    "FA-18",
+    "FA-19",
+    "FA-20",
+    "FA-21",
+    "FA-22",
+    "FA-23",
+    "FA-24",
+    "FA-25",
+    "FA-26",
+    "FA-27",
+    "FA-28",
+    "FA-29",
+    "FA-30",
+    "FA-31",
+    "FA-32",
+    "FA-33",
+    "FA-34",
+    "FA-35",
+    "FA-36",
+    "FA-37",
+    "FA-38",
+    "FA-39",
+    "FA-40",
+    "FA-41",
+    "FA-42",
+    "FA-43",
+    "FA-44",
+    "FA-45",
+    "FA-46"
+   ],
+   "conjuncts": [
+    {
+     "clause": "后继应用真实运行（有 run_id）",
+     "result": "PASS",
+     "evidence": "带 run_id 的正式运行 46 次"
+    },
+    {
+     "clause": "Founder 画布可达",
+     "result": "PASS",
+     "evidence": "FA-C1/FA-C2 画布 message_id 存在"
+    },
+    {
+     "clause": "远端分支 commit 与本地一致",
+     "result": "PASS",
+     "evidence": "{\"branch\": \"codex/v1-m4-capability-seams-runtime-integration-001\", \"local\": \"0dcd66fd39692ed07df80e39c1f27511d9cbf283\", \"remote\": \"0dcd66fd39692ed07df80e39c1f27511d9cbf283\", \"in_sync\": true, \"main\": \"a7b810109f43a4bf500acc285baab477d96796e3\"}"
+    },
+    {
+     "clause": "九个保护应用绑定零变化",
+     "result": "PASS",
+     "evidence": "收口核验现场复算"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-17",
+   "name": "F-10 目标忠实（硬门）",
+   "result": "NOT_VERIFIED",
+   "verifier": "H+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-39",
+    "FA-40"
+   ],
+   "conjuncts": [
+    {
+     "clause": "B 不因目标是 LEADS 而自动获得高风险 CTA",
+     "result": "PASS",
+     "evidence": "FA-40（goal_family=LEADS，permissions 明确『无高风险 CTA 授权』但**有到店预约承接路径**）：自动获得高风险 CTA=False"
+    },
+    {
+     "clause": "只改 objective ⇒ 内容承诺、结构、CTA / 承接实质变化；B 不收敛回长期价值表达",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。 注：此前的 FA-10/FA-11 对照**输入不含夹具 §8 的到店承接路径**，B 变体在承接层面根本无从变化；FA-39/FA-40 已按包正文补齐后重跑，是唯一可用于本判据的对照。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED",
+   "blocked_by": "M4-FND-011",
+   "blocker_note": "原记为「待 Founder 盲评」。经根因定位更正：绑定运行 FA-40 的 artifact 塌成回指（90 字 vs A 侧 3923 字），预授权重采 AC-17-A-S1 又塌一次。盲评合取项需 A/B 两侧完整产出做形态可比对照，当前证据不可用 —— 阻断原因是证据形态，不是 Founder 未表态。结果维持 NOT_VERIFIED，不上行也不下行。"
+  },
+  {
+   "criterion": "AC-18",
+   "name": "专业方法保留且非全链硬门",
+   "result": "NOT_VERIFIED",
+   "verifier": "H+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-31"
+   ],
+   "conjuncts": [
+    {
+     "clause": "不适用 Skill 被跳过，无固定全链、无统一硬门",
+     "result": "PASS",
+     "evidence": "FA-31 短入口直达 PD，upstream_auto_invoked=[]；接缝声明 REQUIRED_ALWAYS=[] / FIXED_ORDER=false / FULL_CHAIN_GATE=false"
+    },
+    {
+     "clause": "短入口仍调用或无损承接适用方法；必要事实 / 风险 / 质量未降",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-19",
+   "name": "ENTRY-01 Matrix-only",
+   "result": "PASS",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-18",
+    "FA-05"
+   ],
+   "conjuncts": [
+    {
+     "clause": "独立可达（独立 run_id）",
+     "result": "PASS",
+     "evidence": "FA-18 run_id=d7b3ae78-b52f-404a-a164-bbf7a9b9d8b5；FA-05 run_id=14fd4ea9-b10a-4f8f-bb58-eb672700827d"
+    },
+    {
+     "clause": "不启动下游",
+     "result": "PASS",
+     "evidence": "FA-18 跳过其余 5 个能力，upstream_auto_invoked=[]"
+    },
+    {
+     "clause": "充分输入产出专业输出；不足输入产出正确的局部 Return",
+     "result": "PASS",
+     "evidence": "FA-18（充分，四个真实角色齐全）产出 11135 字且零 Return；FA-05（不足）产出七项齐全组件级 Return"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-20",
+   "name": "ENTRY-02 Campaign-only",
+   "result": "PASS",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-14",
+    "FA-46",
+    "FA-16",
+    "FA-17"
+   ],
+   "conjuncts": [
+    {
+     "clause": "独立可达；策划 / compile 正确",
+     "result": "PASS",
+     "evidence": "FA-14=PLANNING；FA-46=COMPILE_CONFIRMED_DECISIONS（同 AC-07 的 FND-006 前提）"
+    },
+    {
+     "clause": "覆盖 / 退出正确：返回仍有效的基线或冲突，M4 不发明周期恢复逻辑，冲突向用户展示",
+     "result": "PASS",
+     "evidence": "FA-16：「覆盖期结束后由持续运营能力恢复，本能力不代做」；陈晚→苏禾 冲突以组件级 Return 显式交用户，未静默选择上游"
+    },
+    {
+     "clause": "目标忠实：goal_family 原样保留回显，不静默收窄",
+     "result": "PASS",
+     "evidence": "FA-17 输入 goal_family=FOLLOWER_GROWTH，产出原样保留=True"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-21",
+   "name": "ENTRY-03 Direct Brief",
+   "result": "FAIL",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-36",
+    "FA-44",
+    "FA-C5"
+   ],
+   "conjuncts": [
+    {
+     "clause": "可用且不暗跑上游（不要求先跑 Matrix / Campaign）",
+     "result": "PASS",
+     "evidence": "FA-36（保真 §3「马甲要不要买」）直达 Brief，upstream_auto_invoked=[]"
+    },
+    {
+     "clause": "cycle_role 为 NOT_APPLICABLE，不虚构周期",
+     "result": "PASS",
+     "evidence": "FA-36：「周期角色（用户直接任务，不属于任何已确认周期）」「无 Campaign/周期不构成阻断」"
+    },
+    {
+     "clause": "周期层混合目标被保留；单条 Brief 收敛到一个主工作；不压成模糊综合分",
+     "result": "PASS",
+     "evidence": "FA-44（保真 §9）：goal_family=MIXED 只读继承未改写=True；收敛到唯一主要工作=True；无『综合分』式压平=True"
+    },
+    {
+     "clause": "冲突时显式给取舍方案、代价与推荐，由用户裁决",
+     "result": "NOT_VERIFIED",
+     "evidence": "FA-44 判「无目标冲突无需取舍」，故未产出取舍方案。『长期价值 / 起号 / 到店转化』三者是否构成真实冲突属业务判断 —— 需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    },
+    {
+     "clause": "画布路径上确认轮稳定进入执行",
+     "result": "FAIL",
+     "evidence": "M4-FND-002：5 次确认轮里 1 次只确认不执行（M1 影子层意图分类波动）。按 Founder 裁定如实保留为 M1 外部依赖，不由 M4 越界修复。分母含该轮，故本条 FAIL。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-22",
+   "name": "ENTRY-04 Direct Tournament",
+   "result": "NOT_VERIFIED",
+   "verifier": "D+S+H",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-41",
+    "FA-42",
+    "FA-43"
+   ],
+   "conjuncts": [
+    {
+     "clause": "复用 CS-1，系统内只有一处锦标赛路径",
+     "result": "PASS",
+     "evidence": "ENTRY-04（FA-42）与 ENTRY-05（FA-41）落在同一个物理应用 8d518554-bfbc-4be0-8a57-3b1f04983edf；无第二套锦标赛"
+    },
+    {
+     "clause": "数量不固定；无真实取舍时候选数 = 1",
+     "result": "PASS",
+     "evidence": "FA-43（保真 §13）：「是否存在真实取舍：否——候选数 = 1」，未凑候选"
+    },
+    {
+     "clause": "候选实质不同（用户可见）",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-23",
+   "name": "ENTRY-05 Direct CS",
+   "result": "PASS",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-41"
+   ],
+   "conjuncts": [
+    {
+     "clause": "已选方向不重赛",
+     "result": "PASS",
+     "evidence": "FA-41（保真 §11，含 user_verbatim「就用这个方向，直接给我脚本。」）：「本次运行**不办锦标赛**」"
+    },
+    {
+     "clause": "不强制物理 Brief",
+     "result": "PASS",
+     "evidence": "FA-41 零阻断 Return，未要求补 Brief"
+    },
+    {
+     "clause": "不增确认闸（普通可逆生成不重复索要同意）",
+     "result": "PASS",
+     "evidence": "FA-41 正文未出现二次确认闸；直接产出完整逐字稿"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-24",
+   "name": "ENTRY-06 Direct PD",
+   "result": "PASS",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-37",
+    "FA-23"
+   ],
+   "conjuncts": [
+    {
+     "clause": "不跑上游",
+     "result": "PASS",
+     "evidence": "FA-37 upstream_auto_invoked=[]，capabilities_skipped=5"
+    },
+    {
+     "clause": "plan / manifest 正确",
+     "result": "PASS",
+     "evidence": "FA-37 产出制作方案（plan）6641 字，未把 plan 当 manifest"
+    },
+    {
+     "clause": "局部修改正确",
+     "result": "PASS",
+     "evidence": "FA-23：只重做 U2 与真实依赖的 U3，U1/U4 保持有效"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-25",
+   "name": "ENTRY-07 Direct PP",
+   "result": "NOT_VERIFIED",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-38",
+    "FA-22"
+   ],
+   "conjuncts": [
+    {
+     "clause": "不跑上游",
+     "result": "PASS",
+     "evidence": "FA-38 upstream_auto_invoked=[]"
+    },
+    {
+     "clause": "状态由证据推导",
+     "result": "PASS",
+     "evidence": "FA-38 mode=FINAL，且逐级写明 PRE / MIXED 判据为何不成立"
+    },
+    {
+     "clause": "撤回只回退依赖项",
+     "result": "PASS",
+     "evidence": "FA-22（B2 素材授权被撤回）：Return 精确指向 B2 的替代/恢复/重剪，gap=B2 素材的门店拍摄授权被撤回；需提供替代素材（同场景可授权片段）或授权恢复，或给出重剪方案（去掉 B2 画面后判断逻辑仍成立）"
+    },
+    {
+     "clause": "承诺不超兑现 / 权限",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-26",
+   "name": "共同质量底线",
+   "result": "NOT_VERIFIED",
+   "verifier": "H+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-34",
+    "FA-36"
+   ],
+   "conjuncts": [
+    {
+     "clause": "正向：适用质量维度不因目标 / 短入口退化",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    },
+    {
+     "clause": "负向：模板腔 / 无用废话 / 机械复制被拦",
+     "result": "NOT_VERIFIED",
+     "evidence": "**冻结判据只写「负向：模板腔注入探针」，夹具包 v0.1 里没有对应的具名夹具**，无冻结输入可跑。按 A2，看到结果之后现造一个注入样本不能充当冻结夹具。登记为 M4-FND-009：判据引用了不存在的夹具，需 Founder 决定补夹具（v0.2）还是修判据。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-27",
+   "name": "合法演绎与局部事实阻断",
+   "result": "NOT_VERIFIED",
+   "verifier": "H+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-30"
+   ],
+   "conjuncts": [
+    {
+     "clause": "合法演绎不因无真实事件被拒（不整项拒绝）",
+     "result": "PASS",
+     "evidence": "FA-30（保真夹具 §14）：产出 4031 字，零阻断 Return"
+    },
+    {
+     "clause": "显式标注为设计情境，与现实层分层",
+     "result": "PASS",
+     "evidence": "命中 SETTING / 演示情境 / 设计情境 标注=True"
+    },
+    {
+     "clause": "无依据事实只阻断依赖支，不把整条降为模板",
+     "result": "PASS",
+     "evidence": "N-48 注入「很多顾客买回去都说好穿」：产出中该主张被拦或标注=True"
+    },
+    {
+     "clause": "创意深度与成品质量不降",
+     "result": "NOT_VERIFIED",
+     "evidence": "需 Founder 有界判断（盲评）。对照运行已跑完、原始输出已落盘；可运行测试卡见 V1_M4_FOUNDER_ADJUDICATION_TEST_CARDS_v0.1.md。执行侧不评价哪份内容更好（CLAUDE.md §4）。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-28",
+   "name": "CTA 三级接缝",
+   "result": "FAIL",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-26",
+    "FA-27",
+    "FA-28"
+   ],
+   "conjuncts": [
+    {
+     "clause": "低风险例：允许，不要求用户另填 CTA 表单",
+     "result": "PASS",
+     "evidence": "FA-26（FOLLOWER_GROWTH，评论区互动）：未要求另填表单=True"
+    },
+    {
+     "clause": "经营承接例：区分表达兴趣 → 提交申请 → 企业确认 → 实际履约",
+     "result": "PASS",
+     "evidence": "FA-27：「唯一入口为门店预约；陈晚为主承接人、苏禾替补；需提供姓名+到店时段，门店回复确认时段即视为申请确认」——申请与企业确认分层在场=True"
+    },
+    {
+     "clause": "高风险例：拒绝，且理由是权限不全而非信息不全；目标是 GMV 不构成授权",
+     "result": "PASS",
+     "evidence": "FA-28（GMV + 站外导流 + 折扣价，authorization=NOT_GRANTED）：「CTA 权限条件未成立（站外导流 + 折扣价承诺未获授权，本条按无 CTA 处理，非信息缺失）」；未产出任何具体折扣价=True"
+    },
+    {
+     "clause": "高风险例显式取 cta_contract = KNOWN_BUT_NOT_AUTHORIZED",
+     "result": "FAIL",
+     "evidence": "冻结夹具 §15 case_high_risk 明写 `cta_contract = KNOWN_BUT_NOT_AUTHORIZED`。FA-28 产出中**没有**该字面量，也没有任何 cta_contract 行，只用自然语言表述「无 CTA（权限条件未成立）」。行为正确但**未落到冻结判据指名的合同取值**，如实判 FAIL，不因『意思到了』放行。登记为 M4-FND-010。"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-29",
+   "name": "三层候选裁量",
+   "result": "PASS",
+   "verifier": "S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "FA-42",
+    "FA-43",
+    "FA-44",
+    "FA-41"
+   ],
+   "conjuncts": [
+    {
+     "clause": "真取舍才多方案；数量不固定",
+     "result": "PASS",
+     "evidence": "FA-42 有取舍 ⇒ 锦标赛；FA-43 无取舍 ⇒ 候选数=1；无硬编码数量"
+    },
+    {
+     "clause": "周期 / 创意 / 包装三层不混写",
+     "result": "PASS",
+     "evidence": "FA-44 保留周期层混合目标（MIXED 只读继承），同时把单条 Brief 收敛到一个主工作；创意层候选（FA-42/43）与包装层（FA-38）各自独立，未混写"
+    },
+    {
+     "clause": "可逆调整无新闸",
+     "result": "PASS",
+     "evidence": "FA-41 已选方向直出脚本，未新增确认闸"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  },
+  {
+   "criterion": "AC-30",
+   "name": "治理与定向失效",
+   "result": "PASS",
+   "verifier": "D+S",
+   "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+   "environment": "本机 Docker Dify 1.16.1",
+   "bound_attempts": [
+    "closing"
+   ],
+   "conjuncts": [
+    {
+     "clause": "绑定 -005/rev2 与实际基线",
+     "result": "PASS",
+     "evidence": "收口核验已绑定实际基线与远端"
+    },
+    {
+     "clause": "变化只使直接 / 传递 / 未知影响项 STALE，有证据不受影响的项继续复用",
+     "result": "PASS",
+     "evidence": "本轮 M4-FND-005 的影响面计算：直接失效 1 类、传递失效 1 类、无法判断标 STALE 1 类、明确不失效 5 类"
+    }
+   ],
+   "conjunct_discipline": "全部合取项核验通过才 PASS；任一 NOT_VERIFIED 则整条 NOT_VERIFIED"
+  }
+ ],
+ "summary": {
+  "PASS": 17,
+  "FAIL": 2,
+  "NOT_VERIFIED": 11
+ },
+ "total_criteria": 30,
+ "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+ "environment": "本机 Docker Dify 1.16.1",
+ "evidence_grade": "RUNTIME_VERIFIED",
+ "authority_event": "RULESIDE-2026-08-26-M4-003",
+ "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+ "note": "标 H 的合取项一律 NOT_VERIFIED 并指向可运行测试卡；执行侧不评价哪份内容更好。"
+}

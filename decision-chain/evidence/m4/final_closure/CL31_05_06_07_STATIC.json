@@ -1,0 +1,541 @@
+{
+  "M4-CL31-05": {
+    "conjuncts": {
+      "①": "PASS",
+      "②": "PASS",
+      "③": "PASS",
+      "④": "PASS",
+      "⑤": "PASS",
+      "⑥": "PASS",
+      "⑦": "PASS"
+    },
+    "detail": {
+      "capability_apps_with_tool_nodes": [],
+      "changed_nodes_per_capability": {
+        "CAMPAIGN": [
+          "delivery_finalize"
+        ],
+        "CONTENT_BRIEF": [
+          "delivery_finalize"
+        ],
+        "CREATIVE_SCRIPT": [
+          "delivery_finalize"
+        ],
+        "MATRIX": [
+          "delivery_finalize"
+        ],
+        "PRODUCTION_DIRECTOR": [
+          "delivery_finalize"
+        ],
+        "PUBLISHING_PACKAGING": [
+          "delivery_finalize"
+        ]
+      },
+      "changed_nodes_seam": [
+        "end_campaign",
+        "end_content_brief",
+        "end_creative_script",
+        "end_matrix",
+        "end_production_director",
+        "end_publishing_packaging",
+        "end_tool_fail",
+        "end_unsupported",
+        "fin_campaign",
+        "fin_content_brief",
+        "fin_creative_script",
+        "fin_matrix",
+        "fin_production_director",
+        "fin_publishing_packaging",
+        "seam_tool_fail",
+        "unsupported"
+      ],
+      "dispatch_branches": 7,
+      "length_is_not_evidence": "本判据不使用任何单次输出长度比例。输出更短或更长本身不构成 FAIL。这正是 v0.4 RB31-05④ 被版本化替换的原因。",
+      "professional_bodies": {
+        "CAMPAIGN": {
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          },
+          "model_identical": true,
+          "prompt_bytewise_identical": true,
+          "prompt_sha256": "a22a9e14403a33268f0d5fd7e89a490f217c705a98908cbf9d5987a27f5d12af"
+        },
+        "CONTENT_BRIEF": {
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          },
+          "model_identical": true,
+          "prompt_bytewise_identical": true,
+          "prompt_sha256": "900d5eb968c0c5dd73e80b407e834c4c8f9b99ea6b243f8e65c964cfd8f18d9d"
+        },
+        "CREATIVE_SCRIPT": {
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          },
+          "model_identical": true,
+          "prompt_bytewise_identical": true,
+          "prompt_sha256": "9ffc2e16840650a4594d6d3b7348aad30a18f302bd6a0fdf421fcde9f2b73a05"
+        },
+        "MATRIX": {
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          },
+          "model_identical": true,
+          "prompt_bytewise_identical": true,
+          "prompt_sha256": "ec1dd9308a776f167edb1b7e6d616ad22b30466d66e6aa8861a6993fa8b73b0b"
+        },
+        "PRODUCTION_DIRECTOR": {
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          },
+          "model_identical": true,
+          "prompt_bytewise_identical": true,
+          "prompt_sha256": "f12f3264de0d3aee525be551ddb2700ed7604d0b20d54b47efbb0f08e67a6eb7"
+        },
+        "PUBLISHING_PACKAGING": {
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          },
+          "model_identical": true,
+          "prompt_bytewise_identical": true,
+          "prompt_sha256": "05f8db54d97551cc6477717500abb162b80ff60526ffded7b1777bd1e0c657d8"
+        }
+      },
+      "seam_tool_to_tool_edges": 0,
+      "skill_llm_inbound_edges": [
+        "projection_record"
+      ],
+      "source_skills": {
+        "CAMPAIGN": {
+          "git_diff_empty": true,
+          "identical": true,
+          "path": "decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md",
+          "sha256_at_freeze": "43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1",
+          "sha256_now": "43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1"
+        },
+        "CONTENT_BRIEF": {
+          "git_diff_empty": true,
+          "identical": true,
+          "path": "decision-chain/skills/Content_Brief_Architect_v0.2_M4.md",
+          "sha256_at_freeze": "f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182",
+          "sha256_now": "f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182"
+        },
+        "CREATIVE_SCRIPT": {
+          "git_diff_empty": true,
+          "identical": true,
+          "path": "content-production/skills/writing-creative-scripts-m4/SKILL.md",
+          "sha256_at_freeze": "442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa",
+          "sha256_now": "442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa"
+        },
+        "MATRIX": {
+          "git_diff_empty": true,
+          "identical": true,
+          "path": "decision-chain/skills/Matrix_Architect_v0.2_M4.md",
+          "sha256_at_freeze": "245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf",
+          "sha256_now": "245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf"
+        },
+        "PRODUCTION_DIRECTOR": {
+          "git_diff_empty": true,
+          "identical": true,
+          "path": "content-production/skills/directing-content-production-m4/SKILL.md",
+          "sha256_at_freeze": "b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02",
+          "sha256_now": "b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02"
+        },
+        "PUBLISHING_PACKAGING": {
+          "git_diff_empty": true,
+          "identical": true,
+          "path": "content-production/skills/packaging-content-for-release-m4/SKILL.md",
+          "sha256_at_freeze": "c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574",
+          "sha256_now": "c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574"
+        }
+      },
+      "④_argument": "能力子应用唯一变化节点是 delivery_finalize，位于 skill_llm → final_extract → returns_adapter 之后，不进入专业生成；接缝变化全部位于收口与失败终止路径。"
+    },
+    "note": "⑧⑨⑩ 由回归实跑与 Reviewer 承担，见 CL31_07_REGRESSION.json 与审查记录"
+  },
+  "M4-CL31-06": {
+    "conjuncts": {
+      "①": "PASS",
+      "②": "PASS",
+      "③": "PASS",
+      "④": "PASS",
+      "⑤": "PASS",
+      "⑥": "PASS"
+    },
+    "detail": {
+      "current_rebase_successor_evidence_for_AC31_⑤": [
+        "M4-CL31-01",
+        "M4-CL31-02"
+      ],
+      "founder_disposition": {
+        "AC31_④": "FOUNDER_ONE_TIME_DEGRADED_ACCEPTANCE",
+        "anonymous_blind_review": "ADOPT_EXECUTION_SIDE_CONCLUSION",
+        "product_acceptance": "ACCEPTED"
+      },
+      "historical_results_preserved": {
+        "AC31_④": "NOT_VERIFIED",
+        "M4-RB31-03_under_v0.4": "NOT_VERIFIED",
+        "M4-RB31-05_under_v0.4": "FAIL",
+        "historical_AC31_⑤": "NOT_VERIFIED"
+      },
+      "layering_rule": "技术历史结果与 Founder 风险接受分层存放；不得互相改写（Prompt v1.5 §8 CL31-06）",
+      "old_evidence_files": {
+        "decision-chain/docs/V1_M4_AC31_REBASE_CLOSING_RECEIPT_v0.1.md": {
+          "git_diff_empty": true,
+          "sha256_now": "56e7652e9d20ec78e29cabc795641329e345ad962e31e31e5538afe4e7986339"
+        },
+        "decision-chain/docs/V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.4.md": {
+          "git_diff_empty": true,
+          "sha256_now": "dd0edb1ed49b65ceecce0bcea53bb4fb68804f9c99f5923b1e736e4aad16942d"
+        },
+        "decision-chain/evidence/m4/M4_FINAL_VERDICTS.json": {
+          "git_diff_empty": true,
+          "sha256_now": "1554f14529492f4954c56c1096ce0d409bcb257207764cd7144485653e7b61ba"
+        },
+        "decision-chain/evidence/m4/M4_POST_REVIEW_VERDICTS.json": {
+          "git_diff_empty": true,
+          "sha256_now": "0fd21300b5df3546b6749e000af922808b122bdf50007b19e3c629857337a20a"
+        },
+        "decision-chain/evidence/m4/rebase_ac31/RB31_03_04_05_VERDICT.json": {
+          "git_diff_empty": true,
+          "sha256_now": "f81d14ede8bae72fe5c73a075069316d33e7afc3cf5a556a48053db2dbeeb4e0"
+        },
+        "decision-chain/evidence/m4/rebase_ac31/RB31_REPAIR_CLOSING.json": {
+          "git_diff_empty": true,
+          "sha256_now": "d084181905ae2aed9e4e3e6e162d00ec11a112bf9c2a1043a4bae61b2bae2683"
+        }
+      },
+      "rewritten": false
+    },
+    "verdict": "PASS"
+  },
+  "M4-CL31-07_static": {
+    "conjuncts": {
+      "①": "PASS",
+      "②": "PASS",
+      "③": "PASS",
+      "④": "PASS",
+      "⑤": "PASS",
+      "⑪": "PASS"
+    },
+    "detail": {
+      "changed_files": [
+        "content-production/workflows/DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml",
+        "content-production/workflows/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml",
+        "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml",
+        "decision-chain/evidence/m4/final_closure/CL31_01_BRANCH_ENUM.json",
+        "decision-chain/evidence/m4/final_closure/CL31_02_03_04_VERDICT_A1.json",
+        "decision-chain/evidence/m4/final_closure/CL31_PUBLISH.json",
+        "decision-chain/evidence/m4/final_closure/CL31_PUBLISH_CAPS.json",
+        "decision-chain/evidence/m4/final_closure/CL31_RUNTIME_RAW_A1.json",
+        "decision-chain/evidence/m4/final_closure/INJECTION_EQUIVALENCE.json",
+        "decision-chain/evidence/m4/final_closure/INJECTION_OBJECTS.json",
+        "decision-chain/evidence/m4/final_closure/NEG_C01_C14.json",
+        "decision-chain/workflows/DIYU_M4_AC31_INJECT_CHILD_EVAL_ONLY.yml",
+        "decision-chain/workflows/DIYU_M4_AC31_INJECT_SEAM_EVAL_ONLY.yml",
+        "decision-chain/workflows/DIYU_M4_CAPABILITY_SEAM_v1_3_TEST.yml",
+        "decision-chain/workflows/DIYU_M4_CL31_ATTEMPT2_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_BRANCH_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_FIDELITY_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_INJECT_BUILD_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_INJECT_PUBLISH_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_JUDGE_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_NEGATIVE_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_PUBLISH_CAPS_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_PUBLISH_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_RUNTIME_COLLECT_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_CL31_RUNTIME_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_DSL_BUILD_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_TOOL_CAMPAIGN_v1_3_TEST.yml",
+        "decision-chain/workflows/DIYU_M4_TOOL_CONTENT_BRIEF_v1_3_TEST.yml",
+        "decision-chain/workflows/DIYU_M4_TOOL_MATRIX_v1_3_TEST.yml"
+      ],
+      "dify_anchor_before": {
+        "CAMPAIGN": {
+          "app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+          "current_graph_sha256": "1d5ae1e9addf1bed204b18d98d0d1aa1422db1d8672d5f25aba13aae46d62321",
+          "current_workflow_id": "18fda0d2-4bf6-4f71-bff5-09c2ec0ad3fb",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Campaign Orchestrator",
+          "recent_workflows": [
+            {
+              "graph_len": "153957",
+              "graph_md5": "a49832683e9d9d597a57ca495d4ae5ed",
+              "id": "18fda0d2-4bf6-4f71-bff5-09c2ec0ad3fb",
+              "version": "2026-08-27 19:08:21.160723"
+            },
+            {
+              "graph_len": "153957",
+              "graph_md5": "a49832683e9d9d597a57ca495d4ae5ed",
+              "id": "6165aab0-feba-48ad-9cce-ba1db72f2aa2",
+              "version": "2026-08-27 18:54:52.618956"
+            },
+            {
+              "graph_len": "140805",
+              "graph_md5": "da8373bb4d016f083a8549210a43a38f",
+              "id": "121291b1-fd7e-4361-bdf6-31373061b0c3",
+              "version": "2026-08-27 05:30:51.158161"
+            }
+          ],
+          "status": "normal"
+        },
+        "CAPABILITY_SEAM": {
+          "app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+          "current_graph_sha256": "bd37ac73d0d6aaa8c94a778a92633163ae7a00aa2a2f28aa584294232dd8ca73",
+          "current_workflow_id": "9895c761-86d5-43e1-8b6d-1bdf91b5349e",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Capability Seam",
+          "recent_workflows": [
+            {
+              "graph_len": "84228",
+              "graph_md5": "4311a37537c5c8acd5fd51fa016d1832",
+              "id": "9895c761-86d5-43e1-8b6d-1bdf91b5349e",
+              "version": "2026-08-27 19:08:25.378752"
+            },
+            {
+              "graph_len": "84228",
+              "graph_md5": "4311a37537c5c8acd5fd51fa016d1832",
+              "id": "ef229893-f940-4e07-9c7f-158c5e0f1c5c",
+              "version": "2026-08-27 19:08:23.003352"
+            },
+            {
+              "graph_len": "73656",
+              "graph_md5": "09a32f8be39de695fcddbdb92081866d",
+              "id": "381d913c-d6f2-42ed-859f-134b4242c940",
+              "version": "2026-08-27 18:55:10.179997"
+            }
+          ],
+          "status": "normal"
+        },
+        "CONTENT_BRIEF": {
+          "app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+          "current_graph_sha256": "be8c9b7b3e4c3a0b0950eb1740c7be847601059a6cdd672f2f23df26eab4c407",
+          "current_workflow_id": "23d23c45-367c-40e5-9b86-33d4bb0636e8",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Content Brief Architect",
+          "recent_workflows": [
+            {
+              "graph_len": "140555",
+              "graph_md5": "780e15ca2c53fd95e49e92a4215e230a",
+              "id": "23d23c45-367c-40e5-9b86-33d4bb0636e8",
+              "version": "2026-08-27 19:08:21.511234"
+            },
+            {
+              "graph_len": "140555",
+              "graph_md5": "780e15ca2c53fd95e49e92a4215e230a",
+              "id": "6be57d44-9b6b-48c6-a3ee-ca3e86c4e118",
+              "version": "2026-08-27 18:54:52.979860"
+            },
+            {
+              "graph_len": "127403",
+              "graph_md5": "b01b207d1ca6638771483d3e362fe6db",
+              "id": "3accf365-1d8b-44eb-a083-9411a5c1cde6",
+              "version": "2026-08-27 05:30:51.478764"
+            }
+          ],
+          "status": "normal"
+        },
+        "CREATIVE_SCRIPT": {
+          "app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+          "current_graph_sha256": "ca9fc920087f7911c539d57488fd0857a8cb27969eefb4fdda8dc01bd97e0ad7",
+          "current_workflow_id": "244c0768-1689-4ec6-ad82-cd05c090b689",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)",
+          "recent_workflows": [
+            {
+              "graph_len": "155779",
+              "graph_md5": "b30434861afb86c8ddbc75e256cbad12",
+              "id": "244c0768-1689-4ec6-ad82-cd05c090b689",
+              "version": "2026-08-27 19:08:21.864026"
+            },
+            {
+              "graph_len": "155779",
+              "graph_md5": "b30434861afb86c8ddbc75e256cbad12",
+              "id": "1b036e2b-eaf6-4c99-a975-603fcc38d643",
+              "version": "2026-08-27 18:54:53.356393"
+            },
+            {
+              "graph_len": "142627",
+              "graph_md5": "8e77139eff17aa4587a08bec5892df4d",
+              "id": "33a3958c-e6ea-4652-97da-86625c1ef792",
+              "version": "2026-08-27 05:30:51.830671"
+            }
+          ],
+          "status": "normal"
+        },
+        "FOUNDER_CANVAS": {
+          "app_id": "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8",
+          "current_graph_sha256": "27f6aa48fce03c2e775727e417beec6ecc9c45f17a81a2de76f1c81a8bfed502",
+          "current_workflow_id": "61c4ce01-8924-4330-90ef-d9d1dd78b5ff",
+          "found": true,
+          "mode": "advanced-chat",
+          "name": "DIYU M4 v1.3 TEST · Founder Canvas",
+          "recent_workflows": [
+            {
+              "graph_len": "90999",
+              "graph_md5": "67b717d1365c2fb75a3b8e761b0527da",
+              "id": "61c4ce01-8924-4330-90ef-d9d1dd78b5ff",
+              "version": "2026-08-27 19:08:25.952990"
+            },
+            {
+              "graph_len": "90999",
+              "graph_md5": "67b717d1365c2fb75a3b8e761b0527da",
+              "id": "9a5b335f-934a-46b7-a9be-0eba9dc37d3d",
+              "version": "2026-08-27 19:08:23.331699"
+            },
+            {
+              "graph_len": "90999",
+              "graph_md5": "67b717d1365c2fb75a3b8e761b0527da",
+              "id": "4b4ff6ce-96b2-40cb-9ce3-a459cfaf2e30",
+              "version": "2026-08-27 18:55:10.784625"
+            }
+          ],
+          "status": "normal"
+        },
+        "MATRIX": {
+          "app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+          "current_graph_sha256": "807bdb5166e8d8eff61c4c6b41a2e408b15302674ba711649f6ef2fb35ef4f5d",
+          "current_workflow_id": "d52435ac-8314-4b2c-9a68-77cbe019bb3b",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Matrix Architect",
+          "recent_workflows": [
+            {
+              "graph_len": "124377",
+              "graph_md5": "09de87eda84a91ad183320ab4fff076c",
+              "id": "d52435ac-8314-4b2c-9a68-77cbe019bb3b",
+              "version": "2026-08-27 19:08:20.810938"
+            },
+            {
+              "graph_len": "124377",
+              "graph_md5": "09de87eda84a91ad183320ab4fff076c",
+              "id": "3d865410-8b96-4859-b16a-6713318cf8b8",
+              "version": "2026-08-27 18:54:52.253984"
+            },
+            {
+              "graph_len": "111225",
+              "graph_md5": "bd185209d6a0a3972d01e7cea1f0722d",
+              "id": "acedc1df-9f33-4888-9492-186234c43d63",
+              "version": "2026-08-27 05:30:50.838242"
+            }
+          ],
+          "status": "normal"
+        },
+        "PRODUCTION_DIRECTOR": {
+          "app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+          "current_graph_sha256": "8fe3596b33c0c0aae9999aa6c814f566f4df95a9607d1ec02b2636c1e30abb09",
+          "current_workflow_id": "1af7eef0-6cbe-48c6-a264-c697a45b999f",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Production Director",
+          "recent_workflows": [
+            {
+              "graph_len": "154441",
+              "graph_md5": "ddd6241ea51a25bf8974f4ba1b576ac5",
+              "id": "1af7eef0-6cbe-48c6-a264-c697a45b999f",
+              "version": "2026-08-27 19:08:22.204261"
+            },
+            {
+              "graph_len": "154441",
+              "graph_md5": "ddd6241ea51a25bf8974f4ba1b576ac5",
+              "id": "adeabe39-3fba-424f-ac69-0202c4756b2d",
+              "version": "2026-08-27 18:54:53.702978"
+            },
+            {
+              "graph_len": "141289",
+              "graph_md5": "5035e93de6a2c13b881bb2a2f2f16d70",
+              "id": "45f48072-8280-4acd-9f37-4ddd98c9bd2a",
+              "version": "2026-08-27 05:30:52.157014"
+            }
+          ],
+          "status": "normal"
+        },
+        "PUBLISHING_PACKAGING": {
+          "app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+          "current_graph_sha256": "515f10bb0e39132af6306f3531004150810a0c0f86ef84aad097822ad65ca2df",
+          "current_workflow_id": "42ba7345-fde7-47e9-985b-16ea1ae371c1",
+          "found": true,
+          "mode": "workflow",
+          "name": "DIYU M4 v1.3 TEST · Publishing & Packaging",
+          "recent_workflows": [
+            {
+              "graph_len": "180486",
+              "graph_md5": "86fb6aa1129fb7fcaa30329b6913e7b0",
+              "id": "42ba7345-fde7-47e9-985b-16ea1ae371c1",
+              "version": "2026-08-27 19:08:22.568739"
+            },
+            {
+              "graph_len": "180486",
+              "graph_md5": "86fb6aa1129fb7fcaa30329b6913e7b0",
+              "id": "072a2aba-87d3-4a00-8ecf-c5386d8888b6",
+              "version": "2026-08-27 18:54:54.073920"
+            },
+            {
+              "graph_len": "167334",
+              "graph_md5": "5481d10e5de647b3adcca42e0640c91e",
+              "id": "a6453673-73bf-4d91-9ce9-f863bc9a9e4f",
+              "version": "2026-08-27 05:30:52.875233"
+            }
+          ],
+          "status": "normal"
+        }
+      },
+      "out_of_scope_files": [],
+      "protected_nine_diffs": []
+    }
+  },
+  "contract": "V1-M4-EVIDENCE-COLLECTION-v0.5",
+  "freeze_commit": "9122fbbee6b60a9998f232202d00d941b7218ea2"
+}

@@ -1,0 +1,473 @@
+{
+  "attempt_id": "FA-45",
+  "attempt_kind": "FORMAL",
+  "fixture_id": "FX-M4-THIN-FIELDS",
+  "fixture_pack_section": "§10",
+  "fixture_pack_sha256": "9ac684d27acec7572934bd4f4c179212be7f196f5b7c81d9c4af6e2b48367a5a",
+  "fidelity": "包正文逐字节引用 + 统一外壳必填槽映射头；已机械断言 pack_body in PACK_TEXT",
+  "pack_body_sha256": "4b797a20e0cf193aa9e27ec33001adc076c0e483b7285a588b8ba1c1bbd8a3a8",
+  "pack_body_verbatim": "content_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+  "capability": "CONTENT_BRIEF",
+  "serves_criteria": [
+    "AC-04",
+    "N-34"
+  ],
+  "oracle_ref": "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.1.md §2（结果前冻结）",
+  "environment": "本机 Docker Dify 1.16.1",
+  "frozen_candidate": "0dcd66fd39692ed07df80e39c1f27511d9cbf283",
+  "seam_app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+  "provider_bindings": {
+    "_seam": {
+      "app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+      "provider_id": "2daa2d27-4305-4d24-95ec-3cb424eaeb2f",
+      "tool_name": "diyu_m4_capability_seam"
+    },
+    "campaign": {
+      "app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+      "provider_id": "0737d719-10c8-4799-8310-6579d20c86f1",
+      "published_workflow_id": "121291b1-fd7e-4361-bdf6-31373061b0c3",
+      "tool_name": "diyu_m4_campaign"
+    },
+    "content_brief": {
+      "app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+      "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+      "published_workflow_id": "3accf365-1d8b-44eb-a083-9411a5c1cde6",
+      "tool_name": "diyu_m4_content_brief"
+    },
+    "creative_script": {
+      "app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+      "provider_id": "08a225b4-268f-4eb8-80c1-66f8792da71f",
+      "published_workflow_id": "33a3958c-e6ea-4652-97da-86625c1ef792",
+      "tool_name": "diyu_m4_creative_script"
+    },
+    "matrix": {
+      "app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+      "provider_id": "36905561-5728-4581-93b0-09ea5baec97b",
+      "published_workflow_id": "acedc1df-9f33-4888-9492-186234c43d63",
+      "tool_name": "diyu_m4_matrix"
+    },
+    "production_director": {
+      "app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+      "provider_id": "e6390e00-d0f6-46ea-b0d5-e5ad9ac709b0",
+      "published_workflow_id": "45f48072-8280-4acd-9f37-4ddd98c9bd2a",
+      "tool_name": "diyu_m4_production_director"
+    },
+    "publishing_packaging": {
+      "app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+      "provider_id": "e34c2aaa-c8b1-4026-af07-a031e3b3d759",
+      "published_workflow_id": "a6453673-73bf-4d91-9ce9-f863bc9a9e4f",
+      "tool_name": "diyu_m4_publishing_packaging"
+    }
+  },
+  "input_sha256": "0076d6440b589d9db77bfd325506260ca057629bba4ff23ea390bf04edcfc32b",
+  "input_text": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+  "run_id": "d013031c-4083-4a4c-82f5-d0e5a2bd28a0",
+  "elapsed_s": 0.53,
+  "error": null,
+  "raw_response": {
+    "task_id": "52e55c4b-18b5-463d-b134-6665bd7bddb2",
+    "workflow_run_id": "d013031c-4083-4a4c-82f5-d0e5a2bd28a0",
+    "data": {
+      "id": "d013031c-4083-4a4c-82f5-d0e5a2bd28a0",
+      "workflow_id": "b1bf4685-9ef5-40aa-a314-07ec13675a27",
+      "status": "succeeded",
+      "outputs": {
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "artifact": "",
+        "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "binding_json": "{}",
+        "seam_trace_json": "{\"call_hash\": \"9533ea8d770725210accc1d4bb1e865bbf94e1416dd12714fbdba21fbf8c2694\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "error": null,
+      "elapsed_time": 0.432228,
+      "total_tokens": 0,
+      "total_steps": 6,
+      "created_at": 1787815083,
+      "finished_at": 1787815083
+    }
+  },
+  "node_trace": [
+    {
+      "id": "71e48f6b-e8f1-4102-8965-b01d893ba530",
+      "index": 1,
+      "predecessor_node_id": null,
+      "node_id": "1788000000001",
+      "node_type": "start",
+      "title": "能力调用意图",
+      "inputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "professional_input": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "example_reference_requested": "NO"
+      },
+      "process_data": {},
+      "outputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "professional_input": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "example_reference_requested": "NO"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000177,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787815083,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787815083,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "7d17c91c-7340-4935-b9a7-bc3654ece727",
+      "index": 2,
+      "predecessor_node_id": null,
+      "node_id": "entry_resolver",
+      "node_type": "code",
+      "title": "入口解析（确定性）",
+      "inputs": {
+        "capability": "CONTENT_BRIEF",
+        "entry": "",
+        "capability_call": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "professional_input": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n"
+      },
+      "process_data": {},
+      "outputs": {
+        "call_hash": "9533ea8d770725210accc1d4bb1e865bbf94e1416dd12714fbdba21fbf8c2694",
+        "capability_resolved": "CONTENT_BRIEF",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "entry_resolved": "ENTRY-03",
+        "route": "CONTENT_BRIEF",
+        "run_mode": "DEFAULT"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.047962,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787815083,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787815083,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "9ad48d15-c4c6-4509-9828-96ce7740bd4b",
+      "index": 3,
+      "predecessor_node_id": null,
+      "node_id": "seam_dispatch",
+      "node_type": "if-else",
+      "title": "能力分派",
+      "inputs": {
+        "conditions": [
+          {
+            "actual_value": "CONTENT_BRIEF",
+            "expected_value": "CONTENT_BRIEF",
+            "comparison_operator": "is"
+          }
+        ]
+      },
+      "process_data": {
+        "condition_results": [
+          {
+            "group": {
+              "case_id": "matrix",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "MATRIX",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "campaign",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CAMPAIGN",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              false
+            ],
+            "final_result": false
+          },
+          {
+            "group": {
+              "case_id": "content_brief",
+              "logical_operator": "and",
+              "conditions": [
+                {
+                  "variable_selector": [
+                    "entry_resolver",
+                    "route"
+                  ],
+                  "comparison_operator": "is",
+                  "value": "CONTENT_BRIEF",
+                  "sub_variable_condition": null
+                }
+              ]
+            },
+            "results": [
+              true
+            ],
+            "final_result": true
+          }
+        ]
+      },
+      "outputs": {
+        "result": true,
+        "selected_case_id": "content_brief"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.000142,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787815083,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787815083,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "625156e5-4049-4c9d-84ff-4373a3dd460b",
+      "index": 4,
+      "predecessor_node_id": null,
+      "node_id": "tool_content_brief",
+      "node_type": "tool",
+      "title": "调用 DIYU M4 v1.3 TEST · Content Brief Architect",
+      "inputs": {
+        "capability_call": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "entry": "ENTRY-03",
+        "example_reference_requested": "NO",
+        "professional_input": "\n# ===== 以下逐字节引自冻结夹具包 v0.1（sha256=9ac684d27acec757）=====\ncontent_promise: \"做一条好内容\"\naudience_problem: \"顾客不了解我们\"\nexpected_change: \"让大家更了解我们\"\ncore_claim: \"\"\nfacts: []\nprimary_goal: \"提升影响力\"\ngoal_family: TRAFFIC\n",
+        "run_mode": "DEFAULT"
+      },
+      "process_data": {},
+      "outputs": {
+        "text": "{\"user_delivery\": \"这一步我还差一样东西才能往下判断：\\n\\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\\n\\n只补这一项就够了，其他已经给过的内容不用再说一遍。\\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。\", \"returns_json\": \"[{\\\"return_id\\\": \\\"M4-RET-CONTENT_BRIEF-0076d644\\\", \\\"source\\\": \\\"CONTENT_BRIEF\\\", \\\"highest_damaged_layer\\\": \\\"CONTENT_BRIEF_INPUT_SUFFICIENCY\\\", \\\"precise_gap\\\": \\\"objective；facts_registered；expression_subject_and_boundary\\\", \\\"affected_objects\\\": [\\\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\\\"], \\\"proposed_disposition\\\": \\\"ESCALATE\\\", \\\"needs_user_decision\\\": true, \\\"downstream_stale\\\": [\\\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\\\"], \\\"parse_status\\\": \\\"OK\\\"}]\", \"returns_status\": \"COMPONENT_RETURN\", \"branch_result\": \"INPUT_INSUFFICIENT\", \"is_task_terminal_state\": \"false\", \"triggers_downstream_invalidation\": \"false\", \"single_question\": \"这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\", \"user_delivery_leaks\": [], \"fabricated_artifact_produced\": \"false\", \"downstream_invoked\": \"false\", \"missing\": \"objective, facts_registered, expression_subject_and_boundary\"}",
+        "files": [],
+        "json": [
+          {
+            "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+            "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+            "returns_status": "COMPONENT_RETURN",
+            "branch_result": "INPUT_INSUFFICIENT",
+            "is_task_terminal_state": "false",
+            "triggers_downstream_invalidation": "false",
+            "single_question": "这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）",
+            "user_delivery_leaks": [],
+            "fabricated_artifact_produced": "false",
+            "downstream_invoked": "false",
+            "missing": "objective, facts_registered, expression_subject_and_boundary"
+          }
+        ],
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "returns_status": "COMPONENT_RETURN",
+        "branch_result": "INPUT_INSUFFICIENT",
+        "is_task_terminal_state": "false",
+        "triggers_downstream_invalidation": "false",
+        "single_question": "这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）",
+        "user_delivery_leaks": [],
+        "fabricated_artifact_produced": "false",
+        "downstream_invoked": "false",
+        "missing": "objective, facts_registered, expression_subject_and_boundary"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.279207,
+      "execution_metadata": {
+        "tool_info": {
+          "provider_type": "workflow",
+          "provider_id": "ced38bed-a7d4-4058-8080-5aa2fd117ff8",
+          "plugin_unique_identifier": null
+        }
+      },
+      "extras": {
+        "icon": {
+          "background": "#E4FBCC",
+          "content": "🧩"
+        }
+      },
+      "created_at": 1787815083,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787815083,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "d3597dc3-9c69-4fbb-b279-72738fae8556",
+      "index": 5,
+      "predecessor_node_id": null,
+      "node_id": "fin_content_brief",
+      "node_type": "code",
+      "title": "接缝收口｜CONTENT_BRIEF",
+      "inputs": {
+        "capability_resolved": "CONTENT_BRIEF",
+        "entry_resolved": "ENTRY-03",
+        "run_mode": "DEFAULT",
+        "derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "tool_artifact": null,
+        "tool_user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "tool_returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "tool_binding_json": null,
+        "call_hash": "9533ea8d770725210accc1d4bb1e865bbf94e1416dd12714fbdba21fbf8c2694",
+        "tool_local_block": null,
+        "tool_artifact_status": null,
+        "tool_user_delivery_status": null
+      },
+      "process_data": {},
+      "outputs": {
+        "artifact": "",
+        "binding_json": "{}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "capability_invoked": "CONTENT_BRIEF",
+        "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "seam_trace_json": "{\"call_hash\": \"9533ea8d770725210accc1d4bb1e865bbf94e1416dd12714fbdba21fbf8c2694\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。"
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 0.046404,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787815083,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787815083,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    },
+    {
+      "id": "e0122957-e332-4f18-8c8a-8f348a4d8232",
+      "index": 6,
+      "predecessor_node_id": null,
+      "node_id": "end_content_brief",
+      "node_type": "end",
+      "title": "结束｜CONTENT_BRIEF",
+      "inputs": {
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "artifact": "",
+        "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "binding_json": "{}",
+        "seam_trace_json": "{\"call_hash\": \"9533ea8d770725210accc1d4bb1e865bbf94e1416dd12714fbdba21fbf8c2694\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "process_data": {},
+      "outputs": {
+        "user_delivery": "这一步我还差一样东西才能往下判断：\n\n这一轮你想拿到的结果是什么？（比如让人看懂某个判断、涨粉、带来到店咨询）\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+        "artifact": "",
+        "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-0076d644\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"objective；facts_registered；expression_subject_and_boundary\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+        "binding_json": "{}",
+        "seam_trace_json": "{\"call_hash\": \"9533ea8d770725210accc1d4bb1e865bbf94e1416dd12714fbdba21fbf8c2694\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ]
+      },
+      "status": "succeeded",
+      "error": null,
+      "elapsed_time": 6.7e-05,
+      "execution_metadata": {},
+      "extras": {},
+      "created_at": 1787815083,
+      "created_by_role": "end_user",
+      "created_by_account": null,
+      "created_by_end_user": {
+        "id": "289b0f25-095f-4da9-b9e2-19bb4a98cda4",
+        "type": "service-api",
+        "is_anonymous": false,
+        "session_id": "m4-fixture-fidelity"
+      },
+      "finished_at": 1787815083,
+      "inputs_truncated": false,
+      "outputs_truncated": false,
+      "process_data_truncated": false
+    }
+  ],
+  "timestamp": "2026-08-27T00:18:03-0700"
+}
