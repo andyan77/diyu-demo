@@ -1,0 +1,157 @@
+{
+  "started_at": null,
+  "preflight": {
+    "manifest_status": "FROZEN",
+    "head": "ff4afab7bc3b7159d4c3b31f5fbba051c7da2128",
+    "manifest_candidate_commit": "86af9ecd5a313ff55aff1874d29eb342299d65ff",
+    "candidate_is_ancestor_of_head": true,
+    "files_changed_since_candidate": [
+      "decision-chain/docs/V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml",
+      "decision-chain/workflows/DIYU_M5_FORMAL_RUN_v1.0.py"
+    ],
+    "candidate_runtime_changed": [],
+    "oracle_changed_since_freeze": [],
+    "worktree_clean": true,
+    "dify_graph_mismatch": [],
+    "oracle_files_committed_before_run": true,
+    "dify_running_now": "0"
+  },
+  "steps": [
+    {
+      "step": "P1 完整主故事",
+      "rc": 0,
+      "seconds": 886,
+      "tail": [
+        "      \"http\": 200,",
+        "      \"cycle_id\": \"ed5b6b26-cfe5-4cdb-909b-16b62694bc75\"",
+        "    },",
+        "    {",
+        "      \"step\": \"M2_cycle_decision\",",
+        "      \"http\": 200,",
+        "      \"decision_id\": \"3387e92b-8f76-40b5-8e4d-e2fdfc4845a2\",",
+        "      \"resulting_cycle_id\": \"ed5b6b26-cfe5-4cdb-909b-16b62694bc75\"",
+        "    }",
+        "  ]",
+        "}",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/evidence/m5/FULL_STORY_RUN_full01F1.json"
+      ]
+    },
+    {
+      "step": "P2 合法短入口",
+      "rc": 0,
+      "seconds": 1103,
+      "tail": [
+        "",
+        ">>> DE-08 Direct Production Director",
+        "    PASS apps_run={'PRODUCTION_DIRECTOR': 1, 'SEAM': 1}",
+        "",
+        ">>> DE-09 Direct Publishing & Packaging",
+        "    PASS apps_run={'PUBLISHING_PACKAGING': 1, 'SEAM': 1}",
+        "",
+        ">>> DE-10 局部 Return 后合法重入",
+        "    PASS apps_run={'PUBLISHING_PACKAGING': 2, 'SEAM': 2}",
+        "",
+        "=== DE 套件 10/10 PASS ===",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/evidence/m5/DIRECT_ENTRY_SUITE_deF.json"
+      ]
+    },
+    {
+      "step": "P5a 生成侧风险探针",
+      "rc": 0,
+      "seconds": 919,
+      "tail": [
+        "    PASS",
+        "",
+        ">>> RISK-M4-032 内部状态词泄漏",
+        "    PASS",
+        "",
+        ">>> RISK-M4-030+031 长度阈值无区分度 / 精确子串假阴性",
+        "    FAIL",
+        "    ! 三种等价写法结论不一致：{'json': 'DELIVERED', 'yaml_plain': 'DELIVERED', 'markdown_backtick': 'NOT_DELIVERED'} —— 写法在判事，不是语义在判事",
+        "    ! 同一语义只因值里多一个引号就换了结论：DELIVERED vs UNKNOWN（M4 外壳解析器假阴性）",
+        "",
+        "=== 风险探针 2/5 PASS ===",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/evidence/m5/RISK_PROBE_SUITE_riskF.json"
+      ]
+    },
+    {
+      "step": "P5b 持久化侧风险探针",
+      "rc": 0,
+      "seconds": 5,
+      "tail": [
+        "",
+        ">>> RISK-PUBLISH-ID-01 发布身份、版本、撤回与反馈归属",
+        "    PASS",
+        "",
+        ">>> RISK-RECOVERY-01 中断恢复、局部失效与幂等",
+        "    PASS",
+        "",
+        ">>> REG-M2-01 最小投影、版本、幂等反馈和当前状态",
+        "    PASS",
+        "",
+        "=== M2 侧探针 3/3 PASS ===",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/evidence/m5/M2_PROBE_SUITE_m2pF.json"
+      ]
+    },
+    {
+      "step": "P6 不退化与受影响回归",
+      "rc": 0,
+      "seconds": 560,
+      "tail": [
+        "",
+        ">>> REG-M3-01",
+        "    PASS  {}",
+        "",
+        ">>> REG-M4-01",
+        "    PASS  {\"gates\": [\"G01:succeeded\", \"G02:succeeded\", \"G03:succeeded\", \"G04:succeeded\", \"G05:succeeded\", \"G06:succeeded\", \"G07:succeeded\", \"G08:succeeded\"]}",
+        "",
+        ">>> REG-SKILLS-01",
+        "    PASS  {\"capabilities_delivered\": [\"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capabilities_legally_skipped\": [\"MATRIX\", \"CAMPAIGN\"]}",
+        "",
+        "=== 回归 5/5 PASS ===",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/evidence/m5/REGRESSION_RESULTS.json"
+      ]
+    },
+    {
+      "step": "P4 两级 A/B（只产盲评包，不产分数）",
+      "rc": 0,
+      "seconds": 847,
+      "tail": [
+        ">>> AB-M3-01 A 组",
+        ">>> AB-M3-01 B 组",
+        ">>> AB-FINAL-01 B 组（走链路）",
+        ">>> AB-FINAL-01 A 组",
+        "",
+        "映射已封存：AB_MAPPING_SEALED_abF.json（评分完成前不要打开）",
+        "  AB-M3-01       A=2520字 B=2002字",
+        "  AB-FINAL-01    A=4751字 B=7498字",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/evidence/m5"
+      ]
+    },
+    {
+      "step": "P3 十九维覆盖回填",
+      "rc": 0,
+      "seconds": 0,
+      "tail": [
+        "十九维：CURRENT 19 / FAIL 0 / NOT_COVERED 0",
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/docs/V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.0.yaml"
+      ]
+    },
+    {
+      "step": "盲评包",
+      "rc": 0,
+      "seconds": 0,
+      "tail": [
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/docs/V1_M5_HUMAN_BLIND_REVIEW_PACKAGE_v1.0.md | 来源 AB_BLIND_aba.json"
+      ]
+    },
+    {
+      "step": "Founder 验收包",
+      "rc": 0,
+      "seconds": 0,
+      "tail": [
+        "SAVED /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1/decision-chain/docs/V1_M5_FOUNDER_ACCEPTANCE_PACKAGE_v1.0.md | 取自 FULL_STORY_RUN_full01F1.json | 交付能力数 4"
+      ]
+    }
+  ]
+}
