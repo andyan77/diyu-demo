@@ -137,12 +137,11 @@ class Runtime(object):
     # ------------------------------------------------------------ M3
     def m3_operate(self, account_context, user_request, loaded_references="", user="m5-runtime"):
         """M3 周期判断与内容任务。account_context = M2→M3 最小当前投影。"""
-        r = DC.run_workflow(self.key(M3_APP), {
+        return _run_with_retry(self.key(M3_APP), {
             "account_context": account_context,
             "user_request": user_request,
             "loaded_references": loaded_references,
-        }, user=user)
-        return _wf_result(r)
+        }, user, "m3")
 
     # ------------------------------------------------------------ M3 -> M4 抽取适配
     def adapt(self, m3_judgment, account_context="", user_request="", user="m5-runtime"):
@@ -165,15 +164,14 @@ class Runtime(object):
         与 adapt() 的区别是它**知道自己要进哪个能力**。M4 冻结了六个能力各自的
         必填清单且能力之间零调用边，谁来接这一跳由 M5 负责——这就是那一跳。
         """
-        r = DC.run_workflow(self.key(HOP_ADAPTER_APP), {
+        return _run_with_retry(self.key(HOP_ADAPTER_APP), {
             "target_capability": target_capability,
             "m3_judgment": m3_judgment,
             "upstream_delivery": upstream_delivery,
             "registered_facts": registered_facts,
             "account_context": account_context,
             "user_request": user_request,
-        }, user=user)
-        return _wf_result(r)
+        }, user, "hop:%s" % target_capability)
 
     # ------------------------------------------------------------ M4 接缝
     def seam(self, capability, capability_call, professional_input,
@@ -185,14 +183,48 @@ class Runtime(object):
         """
         if capability not in CAPABILITIES:
             raise ValueError("capability 必须是六项之一，收到：%r" % (capability,))
-        r = DC.run_workflow(self.key(SEAM_APP), {
+        return _run_with_retry(self.key(SEAM_APP), {
             "capability": capability,
             "entry": entry,
             "capability_call": capability_call,
             "professional_input": professional_input,
             "example_reference_requested": example_reference_requested,
-        }, user=user)
-        return _wf_result(r)
+        }, user, "seam:%s" % capability)
+
+
+# 只有这些是**传输层/模型可用性**故障，可以重试。业务结果一律不重试——
+# INPUT_INSUFFICIENT、组件级 Return、UNKNOWN 都是真实业务结论，重试就是掩盖。
+TRANSIENT_MARKERS = (
+    "Server Unavailable Error", "SSLEOFError", "UNEXPECTED_EOF_WHILE_READING",
+    "Max retries exceeded", "Connection aborted", "Read timed out",
+    "Remote end closed connection", "Bad gateway", "502", "503", "504",
+)
+MAX_TRANSIENT_ATTEMPTS = 3
+
+
+def _is_transient(result):
+    if (result or {}).get("platform_status") != "failed":
+        return False
+    err = str((result or {}).get("error") or "")
+    return any(m in err for m in TRANSIENT_MARKERS)
+
+
+def _run_with_retry(key, inputs, user, label):
+    """有界重试。每次尝试都记进 attempts，失败原因原样保留，不吞。"""
+    attempts = []
+    for i in range(MAX_TRANSIENT_ATTEMPTS):
+        r = _wf_result(DC.run_workflow(key, inputs, user=user))
+        attempts.append({"attempt": i + 1, "platform_status": r["platform_status"],
+                         "run_id": r["run_id"],
+                         "error": (str(r.get("error"))[:200] if r.get("error") else None)})
+        if not _is_transient(r):
+            r["attempts"] = attempts
+            return r
+        if i + 1 < MAX_TRANSIENT_ATTEMPTS:
+            time.sleep(5 * (i + 1))
+    r["attempts"] = attempts
+    r["transient_exhausted"] = True
+    return r
 
 
 def _wf_result(r):
@@ -208,7 +240,14 @@ def _wf_result(r):
         "outputs": outputs,
         # 业务真相以此字段为准（M4 交接契约明写）
         "business_delivery_outcome": outputs.get("business_delivery_outcome"),
+        # user_delivery 是唯一可**直接呈现给用户**的字段。
+        # artifact 不整份透出给用户，但它是**给下一个专业能力用的产物本体**——
+        # 「不给用户看」和「不给下一跳用」是两件事，不能混为一谈。
         "user_delivery": outputs.get("user_delivery"),
+        "artifact": outputs.get("artifact"),
+        "binding_json": outputs.get("binding_json"),
+        "seam_trace_json": outputs.get("seam_trace_json"),
+        "capabilities_skipped": outputs.get("capabilities_skipped"),
         "error": body.get("error") or (data.get("error") if isinstance(data, dict) else None),
     }
 

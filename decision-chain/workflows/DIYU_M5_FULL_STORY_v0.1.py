@@ -100,6 +100,14 @@ def projection_text(boot):
     return "\n".join(str(x) for x in lines), p
 
 
+def _artifact_sha(r):
+    """能力侧自己算过的 artifact 哈希，直接取用，不重算——避免两套哈希各说各话。"""
+    try:
+        return json.loads(r.get("binding_json") or "{}").get("artifact_sha256")
+    except Exception:
+        return None
+
+
 # ---------------------------------------------------------------- 已登记事实
 # 这三份夹具是 M4 后三个能力必填项的**真源**：产能班底、时间窗口、出镜与引用授权、
 # 明确的不承诺，M3 的运营判断里没有也不该有——它们是资源事实，不是运营判断。
@@ -156,6 +164,7 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
                        loaded_references=facts)
     rec["steps"].append({"step": "M3_operate", "platform_status": m3["platform_status"],
                          "run_id": m3["run_id"], "elapsed": m3["elapsed_seconds"],
+                         "attempts": m3.get("attempts"),
                          "gate_status": (m3["outputs"] or {}).get("gate_status"),
                          "judgment_chars": len((m3["outputs"] or {}).get("operating_judgment") or "")})
     judgment = (m3["outputs"] or {}).get("operating_judgment") or ""
@@ -179,6 +188,7 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
         rec["steps"].append({
             "step": "hop:%s" % cap, "platform_status": h["platform_status"],
             "run_id": h["run_id"], "elapsed": h["elapsed_seconds"],
+            "attempts": h.get("attempts"),
             "extraction_gaps": ho.get("extraction_gaps_text"),
             "extraction_gaps_count": ho.get("extraction_gaps_count"),
             "source_map": ho.get("source_map_json"),
@@ -194,19 +204,28 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
         rec["steps"].append({
             "step": "seam:%s" % cap,
             "platform_status": r["platform_status"],
+            "attempts": r.get("attempts"),
             "business_delivery_outcome": r["business_delivery_outcome"],
             "delivered": RT.delivered(r),
             "component_return": RT.is_component_return(r),
             "run_id": r["run_id"], "elapsed": r["elapsed_seconds"],
             "user_delivery_chars": len(r["user_delivery"] or ""),
+            "artifact_chars": len(r.get("artifact") or ""),
+            "capabilities_skipped_by_seam": r.get("capabilities_skipped"),
+            "artifact_sha256": _artifact_sha(r),
         })
         # 组件级 Return 是本分支结果，不是整任务硬停：记录后继续，由调用方决定
-        if RT.delivered(r) and (r["user_delivery"] or "").strip():
-            upstream = r["user_delivery"]
+        if RT.delivered(r) and (r.get("artifact") or "").strip():
+            # 往下一跳传的是 artifact（产物本体），不是 user_delivery（用户投影）。
+            # 用 user_delivery 当上游输入会让下游拿不到脚本节拍等产物内容——
+            # 实测 PRODUCTION_DIRECTOR 就栽在这上面，报缺 script_or_equivalent_beats。
+            upstream = r["artifact"]
             last_delivered = cap
-            rec.setdefault("deliveries", {})[cap] = r["user_delivery"]
+            rec.setdefault("deliveries", {})[cap] = {
+                "user_delivery": r["user_delivery"], "artifact": r["artifact"]}
     rec["last_delivered_step"] = last_delivered
     rec["final_text"] = upstream
+    rec["final_user_delivery"] = (rec.get("deliveries", {}).get(last_delivered) or {}).get("user_delivery") if last_delivered else None
     return rec, m3
 
 
