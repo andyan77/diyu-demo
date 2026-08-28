@@ -95,3 +95,64 @@ M4 的八个已发布应用受合同保护：`overwrite_or_delete_existing_m1_m4
 按 Root Prompt Node 3.7「只修集成所需的最高失效节点」，在 M5 测试候选对象中修复
 Canvas 意图层 → `capability_call` 的组装；既有 M4/M3 应用零改动。
 修复后重跑完整主故事，仍属诊断；正式运行一律等 Candidate Run Manifest 冻结之后。
+
+---
+
+## M5-DIAG-004 · 根因已精确定位：外壳形状不匹配（确定性可复现）
+
+前面把最高失效节点定位到 Canvas 的 `m4_intent_adapter`。现在根因是确定的，不是推测。
+
+**能力侧的判据（`Content Brief Architect` 的 `envelope_check` 节点，确定性代码）**
+
+```python
+REQUIRED = ["objective", "audience_problem", "expected_change",
+            "content_promise", "facts_registered", "expression_subject_and_boundary"]
+```
+
+`_find_scalar` 只认三种写法：`"key": "字符串"`、YAML 行 `key: value`、`` `key`: value ``；
+`_present` 另外认 YAML 块（`key:` 独占一行 + 缩进块）。
+
+**Canvas 适配器实际发出的东西（`m4_intent_adapter` 节点）**
+
+```python
+envelope = {..., "objective": {"primary_goal": task_goal, "goal_family": "UNDECLARED"}, ...}
+capability_call = json.dumps(envelope, ensure_ascii=False, indent=2)
+```
+
+即**嵌套 JSON**，且 `objective` 的值是对象不是字符串。
+
+**离线复算判定（把两种形状分别喂给 `envelope_check` 的同一套正则）**
+
+| 输入形状 | `missing` | 判定 |
+|---|---|---|
+| Canvas 适配器当前输出（嵌套 JSON） | `objective, audience_problem, expected_change, content_promise, facts_registered, expression_subject_and_boundary` —— **六项全缺** | `INSUFFICIENT` |
+| M4 冻结夹具 `FX-M4-CT-M3` 的扁平 YAML | 无 | `SUFFICIENT` |
+
+**注意 `objective` 也在缺失名单里。** 适配器确实填了它，但解析器看不见带引号的键 + 对象值，
+所以连唯一被填的那个字段也没被识别。
+
+**由此推出的三个连带事实**
+
+1. 经 Canvas 发起的能力调用，`goal_family` 恒为 `UNDECLARED`、`platform` 恒为 `NOT_LOCKED`、
+   `cta_level` 恒为 `NO_CTA` —— 不是业务上没声明，是**解析器从来没看见过**。
+   这三项随后驱动 `conditionalized`，于是产出被无声降级。
+2. D-1 表现为「只问目标」，是因为组件级 Return 一次只问一个问题（M4 的 `single_question` 语义）；
+   实际缺的是六项。**D-1 不是抽取召回不足，是外壳形状不匹配** —— 前一版判断在此更正。
+   `RISK-M4-033` 是否独立成立，需在修好形状后重新观察，当前证据**不足以**判定它成立。
+3. M4 交接映射记的是 `e2e_reached_capability_seam: true` —— **到达接缝**，不是交付成功；
+   其 smoke 输出正是本次同一句回问。M4 把它归因为「首轮先走自然对话，属设计行为」。
+   设计行为的部分成立，但**形状不匹配这一层此前未被发现**：在当前形状下，
+   Canvas 无论对话多少轮都不可能让能力交付，因为缺的六项永远不会以可识别的形状出现。
+
+**为什么 M4 自己的验收没抓到**：M4 的正式运行（`DIYU_M4_FORMAL_ATTEMPT`）是把扁平夹具
+**直接注入 Seam**，绕过了 Canvas 适配器。被测的是 Seam→能力这一段，适配器那一段没有被覆盖。
+这不是 M4 造假，是覆盖缺口：M5 是第一个真正端到端跑 Canvas 的。
+
+**修复方向（最小、且不碰受保护资产）**
+
+在 M5 测试候选里，把 `m4_intent_adapter` 的输出从嵌套 JSON 改为**扁平外壳**，
+并把业务实质从 M1 快照投影到 `REQUIRED` 的六个键上。
+投影不新造语义：复用 `m1_context_compiler_v0.1.py::project_content_task()` 已声明的映射，
+取不到的字段如实留空并计入 `projection_gaps`，**不代为推断、不编造**。
+
+M4 的八个已发布应用零改动（`overwrite_or_delete_existing_m1_m4_apps = PROHIBITED`）。
