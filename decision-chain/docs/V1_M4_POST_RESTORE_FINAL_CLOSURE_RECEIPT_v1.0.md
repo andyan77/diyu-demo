@@ -261,4 +261,75 @@ note_no_self_reference: >
 | M4-FND-033 | 事实回查提取器对专有名词、商品名、地点召回接近零 |
 | M4-ENV-001 | 已更正：21:38 事件为整栈重启时 bind mount 未挂上，非整库销毁；宿主数据完好并已恢复 |
 
+## 八、简化追加 Prompt 001 规定字段块
+
+依据 `M4_POST_RESTORE_FINAL_CLOSEOUT_SIMPLIFICATION_ADDENDUM_001`（`priority_on_conflict: THIS_ADDENDUM_PREVAILS`）第三步第二项，
+本节按其规定字段原样记录本轮收口结论。本节为追加，不覆盖前七节，也不改写任何历史记录。
+
+```yaml
+task_id: V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001
+task_entry_mode: REBASE_TASK
+
+historical_status:
+  previous_formal_status: BLOCKED
+  previous_receipts_preserved: true
+  historical_technical_results_preserved: true
+  historical_results_rewritten_as_pass: false
+
+founder_disposition:
+  M4_FOUNDER_ACCEPTANCE: PASS
+  disclosed_residuals: ACCEPTED_FOR_THIS_DELIVERY_ONLY
+
+restored_delivery:
+  M4_FINAL_DIFY_DELIVERY: RESTORED
+  M4_DIFY_APPLICATIONS: RUNNABLE
+  application_count: 8
+  empty_user_delivery_count: 0
+  think_leak_count: 0
+  six_skill_fidelity_changed: false
+  m4_m5_handoff_map: V1_M4_M5_HANDOFF_MAP_v0.1.yaml
+
+task_final_status: DONE
+next_stage_allowed: true:M5_INTEGRATION_HANDOFF
+m5_engineering_execution_started: false
+```
+
+### 8.1 现场确认（追加 Prompt 第一步，只读）
+
+```yaml
+branch: codex/v1-m4-capability-seams-runtime-integration-001
+worktree_clean: true
+eight_final_apps_present: true
+eight_final_apps_published: true
+app_ids_unchanged: true
+restore_evidence_files_readable: 3
+m5_handoff_map_readable: true
+new_model_calls_this_round: 0
+blocking_conditions_hit: 0
+```
+
+八个最终应用与其当前已发布工作流（现场只读复核）：
+
+| 能力 | app_id | 已发布工作流 |
+|---|---|---|
+| Founder Canvas | `f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8` | `61c4ce01-8924-4330-90ef-d9d1dd78b5ff` |
+| Capability Seam | `de0cb1e9-2af8-415a-9762-31b6cf348c22` | `4c5e2bab-9a4b-47f0-8ab0-1b844df4bb9d` |
+| Matrix Architect | `d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3` | `3a9e0d8b-8151-4922-acd7-0926a6af49fd` |
+| Campaign Orchestrator | `cfd48281-d2e6-4f77-b4a6-32f0fca98f2b` | `2da44fc7-09f0-4ed3-a000-addc641e077a` |
+| Content Brief Architect | `a3264c95-9b30-4ac8-833a-dc96ea8b7ee1` | `7f7fe5d1-3217-43e6-a3ed-7450b64b070b` |
+| Creative Script | `8d518554-bfbc-4be0-8a57-3b1f04983edf` | `3341b4de-e658-42a8-bc49-26fcf7e30bf7` |
+| Production Director | `57ebc138-ed9e-4202-bce2-38e44da0ec1d` | `9a81b5c9-3773-44a6-af19-6255f8f30dce` |
+| Publishing & Packaging | `10056fcf-9237-4889-a3e3-81e3a695cae0` | `d838536b-6779-4d1e-951f-4cdabffa50d7` |
+
+### 8.2 Dify 事故事实更正（写清楚，不删除原记录）
+
+**此前不是数据库被清空。** 是 Dify 整栈重启时 bind mount 一度没有挂上：容器内 `pgdata` / `storage`
+指向的是容器自身镜像层的空目录（inode 34 / 19），而不是宿主目录（inode 203539 / 203532）。
+postgres 于是对着那个空目录跑了一次 `initdb`，产出只有 76.3 MB，**看起来像是被初始化**。
+
+宿主机原始数据自始至终完好：`pgdata` 688.3 MB，数据库目录 `16384 / 16385 / 31985` 俱在。
+恢复挂载后，原应用、原 app ID、原工作流与原运行记录全部回归，未做任何数据恢复或伪造。
+
+原「整库重新初始化」描述作为当时的真实观察保留在历史段落，本节只做事实更正，不回改历史文本。
+
 `END_MARKER: V1-M4-POST-RESTORE-FINAL-CLOSEOUT-RECEIPT-v1.0-END`

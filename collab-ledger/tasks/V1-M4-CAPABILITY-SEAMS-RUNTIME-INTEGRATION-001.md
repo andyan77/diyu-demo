@@ -1553,3 +1553,33 @@ m5_engineering_execution_started = false
 已验证真实运营闭环；已证明经营提升。
 
 历史 `FAIL` / `NOT_VERIFIED` / `STALE` / `BLOCKED` 一条未改。
+
+---
+
+## 状态事件 · 简化追加 Prompt 001 收口（2026-08-27，追加，不覆盖旧记录）
+
+依据 `M4_POST_RESTORE_FINAL_CLOSEOUT_SIMPLIFICATION_ADDENDUM_001`
+（`addendum_status: FOUNDER_AUTHORIZED_CURRENT_INSTRUCTION`，`priority_on_conflict: THIS_ADDENDUM_PREVAILS`）。
+
+本轮只做四步：最小现场确认 → 补后继正式回执 → 追加账本 → 提交推送并停止。
+**不重算 `M4-PCR-01..12`、不重跑历史 31 项、不重开盲评、不启动独立 Reviewer、不重新调用六个能力、不新建治理文件。**
+上一轮已跑完的 `M4-PCR` 结果与负向套件原样保留在上文，作为历史记录，不因本轮简化而删除或改写。
+
+现场确认结论（只读，零模型调用）：八个 M4 最终应用全部在位、保持原 app ID、处于已发布状态；
+`M4_RESTORE_SMOKE.json` / `M4_RESTORE_CANVAS_E2E.json` / `M4_RESTORE_INJECTION_ISOLATION.json` /
+`V1_M4_M5_HANDOFF_MAP_v0.1.yaml` 均存在且可读；追加 Prompt 第 4 节五项阻断条件**一项未命中**。
+
+```text
+M4 = DONE
+M4_FOUNDER_ACCEPTANCE = PASS
+M4_FINAL_DIFY_DELIVERY = RESTORED
+M4_DIFY_APPLICATIONS = RUNNABLE
+M4_M5_HANDOFF = READY
+next_stage_allowed = true:M5_INTEGRATION_HANDOFF
+m5_engineering_execution_started = false
+```
+
+本记录只取代**当前状态指针**。旧 `BLOCKED` 回执、旧 `FAIL` 与 `NOT_VERIFIED` 一条未删、未改、未被改写成 PASS；
+Founder 的产品接受与一次性风险接受与技术结果分层存放，互不覆盖。
+
+后继正式回执：`decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSURE_RECEIPT_v1.0.md`（第八节为本轮追加字段块）。
