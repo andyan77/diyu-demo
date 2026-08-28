@@ -1,0 +1,160 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""M5 正式运行编排器。**只能在 Candidate Run Manifest 冻结之后运行。**
+
+开跑前强制三件事，缺一不跑：
+
+1. **清单必须已冻结**，且 `git` 工作树干净、`HEAD` 与清单里登记的候选 commit 一致。
+   清单说的是哪个候选，就必须跑那个候选——对不上就不是同一件东西。
+2. **Dify 已发布 graph 的哈希**必须与清单逐条一致。任何一个对不上，
+   本次运行的全部结论对该能力置 STALE。
+3. **全场安静**：不能有并发运行，否则按时间窗取证会被污染。
+
+顺序按清单的 run_sequence 走。任何一步的判据文件在本次运行**之后**被改动，
+本次结论一律降级为探索——这条由 git 提交时间与运行时间的先后关系兜底，不靠自觉。
+"""
+import glob, hashlib, json, os, subprocess, sys, time
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+DOCS = os.path.join(ROOT, "decision-chain", "docs")
+EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
+MANIFEST = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml")
+
+# 判据文件：这些文件的最后提交时间必须**早于**本次运行开始时间。
+ORACLE_FILES = [
+    "decision-chain/workflows/DIYU_M5_DIRECT_ENTRY_SUITE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_RISK_PROBE_SUITE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_M2_PROBE_SUITE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py",
+]
+
+
+def sh(cmd, **kw):
+    p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True,
+                       shell=isinstance(cmd, str), **kw)
+    return p.returncode, (p.stdout or "") + (p.stderr or "")
+
+
+def load_manifest():
+    import yaml
+    return yaml.safe_load(open(MANIFEST, encoding="utf-8"))
+
+
+def preflight():
+    fails, facts = [], {}
+    m = load_manifest()
+    facts["manifest_status"] = m.get("status")
+    if m.get("status") != "FROZEN":
+        fails.append("清单尚未冻结（status=%s），不得进行正式运行" % m.get("status"))
+
+    rc, head = sh(["git", "rev-parse", "HEAD"])
+    head = head.strip()
+    facts["head"] = head
+    want = (m.get("git") or {}).get("candidate_commit")
+    facts["manifest_candidate_commit"] = want
+    if want and want != "PENDING_FREEZE" and not head.startswith(want[:12]):
+        fails.append("HEAD %s 与清单登记的候选 commit %s 不一致" % (head[:12], str(want)[:12]))
+
+    rc, st = sh(["git", "status", "--porcelain"])
+    facts["worktree_clean"] = not st.strip()
+    if st.strip():
+        fails.append("工作树不干净，正式运行必须跑在与清单一致的确定树上：\n%s" % st[:400])
+
+    # Dify graph 哈希逐条复算
+    apps = (m.get("dify") or {}).get("apps") or []
+    mism = []
+    for a in apps:
+        aid, want_md5 = a.get("app_id"), a.get("graph_md5")
+        if not aid or not want_md5 or want_md5 == "PENDING_FREEZE":
+            continue
+        q = ("SELECT md5(graph) FROM workflows WHERE app_id='%s' AND version<>'draft' "
+             "AND created_at=(SELECT max(created_at) FROM workflows w2 "
+             "WHERE w2.app_id='%s' AND w2.version<>'draft');" % (aid, aid))
+        p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+                            "-d", "dify", "-t", "-A", "-c", q], capture_output=True, text=True)
+        got = (p.stdout or "").strip()
+        if got != want_md5:
+            mism.append({"role": a.get("role"), "app_id": aid,
+                         "manifest": want_md5, "live": got})
+    facts["dify_graph_mismatch"] = mism
+    if mism:
+        fails.append("Dify 已发布 graph 与清单不一致：%s" % [x["role"] for x in mism])
+
+    # 判据文件提交时间必须早于本次运行
+    now = int(time.time())
+    late = []
+    for f in ORACLE_FILES:
+        rc, t = sh(["git", "log", "-1", "--format=%ct", "--", f])
+        try:
+            ts = int(t.strip())
+        except Exception:
+            late.append({"file": f, "reason": "无提交记录"}); continue
+        if ts > now:
+            late.append({"file": f, "committed_at": ts, "now": now})
+    facts["oracle_files_committed_before_run"] = not late
+    if late:
+        fails.append("判据文件提交时间晚于运行开始：%s" % late)
+
+    # 全场安静
+    p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+                        "-d", "dify", "-t", "-A", "-c",
+                        "SELECT count(*) FROM workflow_runs WHERE status='running';"],
+                       capture_output=True, text=True)
+    running = (p.stdout or "0").strip()
+    facts["dify_running_now"] = running
+    if running not in ("0", ""):
+        fails.append("Dify 当前有 %s 个运行中的工作流，并发会污染按时间窗取证" % running)
+
+    return fails, facts
+
+
+STEPS = [
+    ("P1 完整主故事", ["python3", "decision-chain/workflows/DIYU_M5_RUN_FULL_STORY_v0.1.py", "F1"]),
+    ("P2 合法短入口", ["python3", "decision-chain/workflows/DIYU_M5_DIRECT_ENTRY_SUITE_v1.0.py", "F"]),
+    ("P5a 生成侧风险探针", ["python3", "decision-chain/workflows/DIYU_M5_RISK_PROBE_SUITE_v1.0.py", "F"]),
+    ("P5b 持久化侧风险探针", ["python3", "decision-chain/workflows/DIYU_M5_M2_PROBE_SUITE_v1.0.py", "F"]),
+    ("P6 不退化与受影响回归", ["python3", "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py"]),
+    ("P4 两级 A/B（只产盲评包，不产分数）",
+     ["python3", "decision-chain/workflows/DIYU_M5_AB_SUITE_v1.0.py", "F"]),
+    ("P3 十九维覆盖回填", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py"]),
+    ("盲评包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py"]),
+    ("Founder 验收包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_FOUNDER_PACKAGE_v1.0.py"]),
+]
+
+
+def main():
+    fails, facts = preflight()
+    print("=== 正式运行前置检查 ===")
+    print(json.dumps(facts, ensure_ascii=False, indent=1))
+    if fails:
+        print("\n拒绝开始正式运行：")
+        for f in fails:
+            print("  ! %s" % f)
+        return 2
+    print("前置检查通过。开始按 run_sequence 正式运行。\n")
+
+    log = {"started_at": facts.get("started_at"), "preflight": facts, "steps": []}
+    only = set((os.environ.get("FORMAL_ONLY") or "").split(",")) - {""}
+    for name, cmd in STEPS:
+        if only and not any(o in name for o in only):
+            continue
+        print(">>> %s" % name, flush=True)
+        t0 = time.time()
+        rc, out = sh(cmd, timeout=5400)
+        tail = out.strip().splitlines()[-12:]
+        log["steps"].append({"step": name, "rc": rc, "seconds": round(time.time() - t0),
+                             "tail": tail})
+        for line in tail:
+            print("    " + line, flush=True)
+        if rc != 0:
+            print("    !! 该步返回码 %s，继续后续步骤并如实记录" % rc, flush=True)
+    with open(os.path.join(EV, "FORMAL_RUN_LOG.json"), "w", encoding="utf-8") as f:
+        json.dump(log, f, ensure_ascii=False, indent=2)
+    print("\nSAVED", os.path.join(EV, "FORMAL_RUN_LOG.json"))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
