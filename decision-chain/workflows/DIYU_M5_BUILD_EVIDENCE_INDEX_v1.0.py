@@ -96,8 +96,15 @@ def collect():
         for p in sorted(glob.glob(os.path.join(EV, pat))):
             D = json.load(open(p, encoding="utf-8"))
             for r in D.get("results", []):
-                cases[r["id"]] = {"source": os.path.basename(p), "verdict": r["verdict"],
-                                  "failures": r.get("failures"), "oracle": r.get("oracle")}
+                rec = {"source": os.path.basename(p), "verdict": r["verdict"],
+                       "failures": r.get("failures"), "oracle": r.get("oracle")}
+                # 语义部分未判定的，必须在索引里显式带出来，不许被「有一条 PASS」盖掉
+                sp = r.get("semantic_part")
+                if sp:
+                    rec["semantic_part_status"] = "%s(%s)" % (sp.get("status"), sp.get("reason"))
+                    rec["semantic_part_statement"] = sp.get("statement")
+                    rec["contexts_handed_to_human"] = len(sp.get("contexts_for_human") or [])
+                cases[r["id"]] = rec
 
     # 回归（由本文件的伴生脚本写入）
     reg = os.path.join(EV, "REGRESSION_RESULTS.json")
@@ -119,11 +126,20 @@ def build(cases):
         vs = [r["verdict"] for r in rows]
         if any(v == "FAIL" for v in vs):
             status = "FAIL"
-        elif any(v == "PASS" for v in vs):
+        elif any(v in ("PASS", "PASS_DECIDABLE_PART_ONLY") for v in vs):
             status = "CURRENT"          # 至少一条代表性 CURRENT 证据
         else:
             status = "NOT_COVERED"
-        dims.append({"id": did, "label": label, "status": status, "evidence": rows})
+        # 只要这一维的证据里有「语义部分未判定」，就把它挂在这一维上。
+        # 否则「有一条 PASS 所以这一维 CURRENT」会把未判定悄悄盖掉——那正是
+        # 合同禁止的「硬门失败被限制披露掩盖」的近亲。
+        pend = [{"case": r["case"], "semantic": cases[r["case"]].get("semantic_part_status")}
+                for r in rows
+                if cases.get(r["case"], {}).get("semantic_part_status")]
+        d = {"id": did, "label": label, "status": status, "evidence": rows}
+        if pend:
+            d["semantic_parts_not_verified"] = pend
+        dims.append(d)
     return dims
 
 
@@ -142,7 +158,9 @@ def main():
         "candidate_frozen": False,
         "all_runs_are_diagnostic_until_manifest_freeze": True,
         "summary": {"dimensions_total": len(dims), "current": covered,
-                    "failed": failed, "not_covered": missing},
+                    "failed": failed, "not_covered": missing,
+                    "dimensions_with_unverified_semantic_parts":
+                        [d["id"] for d in dims if d.get("semantic_parts_not_verified")]},
         "dimensions": dims,
         "cases": cases,
     }

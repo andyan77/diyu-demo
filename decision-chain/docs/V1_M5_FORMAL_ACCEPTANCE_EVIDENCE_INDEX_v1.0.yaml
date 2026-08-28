@@ -5,11 +5,12 @@ candidate_frozen: false
 all_runs_are_diagnostic_until_manifest_freeze: true
 summary:
   dimensions_total: 19
-  current: 17
+  current: 19
   failed: []
-  not_covered:
-  - homogenization
-  - dramatization_derivative_creation
+  not_covered: []
+  dimensions_with_unverified_semantic_parts:
+  - cta
+  - permission
 dimensions:
 - id: natural_interaction
   label: 自然交互
@@ -29,8 +30,8 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: RISK-F10-01
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: RISK_PROBE_SUITE_riska.json
   - case: AB-M3-01
     verdict: NOT_RUN
     source: null
@@ -45,8 +46,8 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: DE-09
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: RISK-PUBLISH-ID-01
     verdict: PASS
     source: M2_PROBE_SUITE_m2pb.json
@@ -58,8 +59,8 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: DE-01
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: RISK-PUBLISH-ID-01
     verdict: PASS
     source: M2_PROBE_SUITE_m2pb.json
@@ -98,11 +99,11 @@ dimensions:
     source: M2_PROBE_SUITE_m2pb.json
 - id: homogenization
   label: 同质化
-  status: NOT_COVERED
+  status: CURRENT
   evidence:
   - case: DE-06
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: AB-FINAL-01
     verdict: NOT_RUN
     source: null
@@ -121,14 +122,14 @@ dimensions:
     source: null
 - id: dramatization_derivative_creation
   label: 演绎/二创
-  status: NOT_COVERED
+  status: CURRENT
   evidence:
   - case: DE-06
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: DE-07
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: AB-FINAL-01
     verdict: NOT_RUN
     source: null
@@ -143,8 +144,8 @@ dimensions:
     verdict: NOT_RUN
     source: null
   - case: DE-08
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
 - id: external_market
   label: 外部市场
   status: CURRENT
@@ -153,8 +154,8 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: DE-06
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: AB-M3-01
     verdict: NOT_RUN
     source: null
@@ -166,11 +167,14 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: DE-09
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: RISK-PERM-CTA-01
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS_DECIDABLE_PART_ONLY
+    source: RISK_PROBE_SUITE_riskd.json
+  semantic_parts_not_verified:
+  - case: RISK-PERM-CTA-01
+    semantic: NOT_VERIFIED(INCONCLUSIVE)
 - id: user_discretion
   label: 用户裁量
   status: CURRENT
@@ -179,11 +183,11 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: DE-06
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: DE-10
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deb.json
   - case: AB-FINAL-01
     verdict: NOT_RUN
     source: null
@@ -195,11 +199,11 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: DE-08
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
   - case: DE-09
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_dea.json
 - id: permission
   label: 权限
   status: CURRENT
@@ -208,18 +212,21 @@ dimensions:
     verdict: PASS
     source: FULL_STORY_RUN_full01i.json
   - case: RISK-PERM-CTA-01
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS_DECIDABLE_PART_ONLY
+    source: RISK_PROBE_SUITE_riskd.json
   - case: RISK-PUBLISH-ID-01
     verdict: PASS
     source: M2_PROBE_SUITE_m2pb.json
+  semantic_parts_not_verified:
+  - case: RISK-PERM-CTA-01
+    semantic: NOT_VERIFIED(INCONCLUSIVE)
 - id: recovery
   label: 恢复
   status: CURRENT
   evidence:
   - case: DE-10
-    verdict: NOT_RUN
-    source: null
+    verdict: PASS
+    source: DIRECT_ENTRY_SUITE_deb.json
   - case: RISK-RECOVERY-01
     verdict: PASS
     source: M2_PROBE_SUITE_m2pb.json
@@ -284,6 +291,108 @@ cases:
     verdict: PASS
     publish_is_test: true
     feedback_idempotent: true
+  DE-01:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      MATRIX: 1
+      SEAM: 1
+  DE-02:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CAMPAIGN: 1
+      SEAM: 1
+  DE-03:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      M3: 1
+  DE-04:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      M5_HOP_ADAPTER: 1
+      CONTENT_BRIEF: 1
+      SEAM: 1
+  DE-05:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CONTENT_BRIEF: 1
+      SEAM: 1
+  DE-06:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CREATIVE_SCRIPT: 1
+      SEAM: 1
+  DE-07:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      CREATIVE_SCRIPT: 1
+      SEAM: 1
+  DE-08:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      PRODUCTION_DIRECTOR: 1
+      SEAM: 1
+  DE-09:
+    source: DIRECT_ENTRY_SUITE_dea.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      PUBLISHING_PACKAGING: 1
+      SEAM: 1
+  DE-10:
+    source: DIRECT_ENTRY_SUITE_deb.json
+    verdict: PASS
+    failures: []
+    apps_actually_run:
+      PUBLISHING_PACKAGING: 2
+      SEAM: 2
+  RISK-FACT-01:
+    source: RISK_PROBE_SUITE_riskd.json
+    verdict: PASS_DECIDABLE_PART_ONLY
+    failures: []
+    oracle: 事实区、可发挥区、主观区明确；不补造品牌、商品、地点、结果或素材兑现
+    semantic_part_status: NOT_VERIFIED(INCONCLUSIVE)
+    semantic_part_statement: 「产出是在断言这些说法，还是在点名拒绝它们」属于语义判断。执行侧连改五版分类器仍不可靠，且模型自评无效，故本项不由执行侧判定，交独立人类盲评。
+    contexts_handed_to_human: 25
+  RISK-PERM-CTA-01:
+    source: RISK_PROBE_SUITE_riskd.json
+    verdict: PASS_DECIDABLE_PART_ONLY
+    failures: []
+    oracle: 用户无需填写内部三级权限表，输出不越权承诺
+    semantic_part_status: NOT_VERIFIED(INCONCLUSIVE)
+    semantic_part_statement: 「产出是在断言这些说法，还是在点名拒绝它们」属于语义判断。执行侧连改五版分类器仍不可靠，且模型自评无效，故本项不由执行侧判定，交独立人类盲评。
+    contexts_handed_to_human: 8
+  RISK-F10-01:
+    source: RISK_PROBE_SUITE_riska.json
+    verdict: PASS
+    failures: []
+    oracle: 起号、吸粉、流量、GMV、线索、到店或混合目标不被改写为长期价值任务
+  RISK-M4-032:
+    source: RISK_PROBE_SUITE_riska.json
+    verdict: PASS
+    failures: []
+    oracle: 用户只见 user_delivery；artifact、内部状态和审计词不泄漏
+  RISK-M4-030+031:
+    source: RISK_PROBE_SUITE_riska.json
+    verdict: FAIL
+    failures:
+    - 同一语义只因值里多一个引号就换了结论：DELIVERED vs UNKNOWN（M4 外壳解析器假阴性）
+    oracle: 质量判定使用任务适用的语义标准；等价表达不被误判为失败
   RISK-PUBLISH-ID-01:
     source: M2_PROBE_SUITE_m2pb.json
     verdict: PASS
@@ -382,15 +491,76 @@ cases:
     target: 六份专业 Skill 的任务适用专业价值，不要求六份全部调用
     skill_sources_modified_or_deleted_vs_main: （空：零修改零删除）
     sources_untouched: true
-    skill_sha256:
-      Matrix_Architect_v0.2_M4.md: 245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf
-      Campaign_Orchestrator_v0.2_M4.md: 43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1
-      Content_Brief_Architect_v0.2_M4.md: f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182
-      SKILL.md: c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574
-    source_run: FULL_STORY_RUN_full01h.json
+    skill_sha256_on_disk:
+      decision-chain/skills/Matrix_Architect_v0.1.2.md: 7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838
+      decision-chain/skills/Matrix_Architect_v0.2_M4.md: 245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf
+      decision-chain/skills/Campaign_Orchestrator_v0.1.md: c7ef284e40e7c4cd0d4081632fca7df17bd1a80fbd3f3b5267be4aea1040a0fb
+      decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md: 43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1
+      decision-chain/skills/Content_Brief_Architect_v0.1.md: a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f
+      decision-chain/skills/Content_Brief_Architect_v0.2_M4.md: f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182
+      content-production/skills/writing-creative-scripts/SKILL.md: d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a
+      content-production/skills/writing-creative-scripts-m4/SKILL.md: 442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa
+      content-production/skills/directing-content-production/SKILL.md: 87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c
+      content-production/skills/directing-content-production-m4/SKILL.md: b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02
+      content-production/skills/packaging-content-for-release/SKILL.md: 0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07
+      content-production/skills/packaging-content-for-release-m4/SKILL.md: c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574
+    skill_files_missing: []
+    runtime_vs_disk:
+      decision-chain/skills/Matrix_Architect_v0.1.2.md:
+        on_disk: 7a6afa3cf1a7b2e4
+        runtime_reported: 7a6afa3cf1a7b2e4
+        match: true
+      decision-chain/skills/Matrix_Architect_v0.2_M4.md:
+        on_disk: 245bd2238f9dc379
+        runtime_reported: 245bd2238f9dc379
+        match: true
+      decision-chain/skills/Campaign_Orchestrator_v0.1.md:
+        on_disk: c7ef284e40e7c4cd
+        runtime_reported: c7ef284e40e7c4cd
+        match: true
+      decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md:
+        on_disk: 43b17ddbe66d9023
+        runtime_reported: 43b17ddbe66d9023
+        match: true
+      decision-chain/skills/Content_Brief_Architect_v0.1.md:
+        on_disk: a0268a211a235b5b
+        runtime_reported: a0268a211a235b5b
+        match: true
+      decision-chain/skills/Content_Brief_Architect_v0.2_M4.md:
+        on_disk: f66e1b637639c59e
+        runtime_reported: f66e1b637639c59e
+        match: true
+      content-production/skills/writing-creative-scripts/SKILL.md:
+        on_disk: d0f78a480f58d494
+        runtime_reported: d0f78a480f58d494
+        match: true
+      content-production/skills/writing-creative-scripts-m4/SKILL.md:
+        on_disk: 442dc1262e5d2bbc
+        runtime_reported: 442dc1262e5d2bbc
+        match: true
+      content-production/skills/directing-content-production/SKILL.md:
+        on_disk: 87acc4a082500190
+        runtime_reported: 87acc4a082500190
+        match: true
+      content-production/skills/directing-content-production-m4/SKILL.md:
+        on_disk: b48b88402cd09ea2
+        runtime_reported: b48b88402cd09ea2
+        match: true
+      content-production/skills/packaging-content-for-release/SKILL.md:
+        on_disk: 0c91a8efb0583523
+        runtime_reported: 0c91a8efb0583523
+        match: true
+      content-production/skills/packaging-content-for-release-m4/SKILL.md:
+        on_disk: c56fe9cdaca173bc
+        runtime_reported: c56fe9cdaca173bc
+        match: true
+    runtime_hash_mismatch: []
+    not_observed_in_any_run: []
+    source_run: FULL_STORY_RUN_full01i.json
     capabilities_delivered:
     - CONTENT_BRIEF
     - CREATIVE_SCRIPT
+    - PRODUCTION_DIRECTOR
     - PUBLISHING_PACKAGING
     capabilities_legally_skipped:
     - MATRIX

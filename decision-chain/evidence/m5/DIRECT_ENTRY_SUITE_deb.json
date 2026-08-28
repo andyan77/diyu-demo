@@ -1,0 +1,98 @@
+{
+  "catalog_id": "M5-DIRECT-ENTRY-CATALOG-v1.0",
+  "boot": {
+    "actor": "m5-deb",
+    "user": {
+      "external_ref": "m5-deb",
+      "display_name": null,
+      "id": "a36bcebd-18cb-4770-8eea-4cbafa899abb",
+      "created_at": "2026-08-28T08:21:23.450778+00:00"
+    },
+    "ws": "9115a021-c543-4f6a-906a-41f18ec10fdd",
+    "account": "52ceeffe-4dcd-474d-8df0-e03bfc83800f",
+    "cycle": "4f659744-e4fe-4bf7-a630-171b1dc3b138",
+    "task": "e7845567-f4f5-4d5e-915f-92e9dbf8532e",
+    "tag": "deb"
+  },
+  "results": [
+    {
+      "id": "DE-10",
+      "name": "局部 Return 后合法重入",
+      "oracle": "只重入最高失效节点及受影响下游；不把组件 Return 变成全任务硬停或全链重跑",
+      "window_start": "2026-08-28 08:26:26.476403",
+      "phase1": {
+        "business_delivery_outcome": "UNKNOWN",
+        "component_return": true,
+        "is_task_terminal_state": "false",
+        "fabricated_artifact_produced": "false",
+        "downstream_invoked": "false",
+        "triggers_downstream_invalidation": "false",
+        "branch_result": "INPUT_INSUFFICIENT",
+        "missing": "asset_publish_permission",
+        "user_delivery_leaks": [],
+        "precise_gap": "asset_publish_permission",
+        "highest_damaged_layer": "PUBLISHING_PACKAGING_INPUT_SUFFICIENCY",
+        "single_question": "这些素材可以公开发布吗？有没有第三方入镜或授权限制？",
+        "capability_run_fields_seen": [
+          "branch_result",
+          "downstream_invoked",
+          "fabricated_artifact_produced",
+          "is_task_terminal_state",
+          "missing",
+          "returns_json",
+          "returns_status",
+          "single_question",
+          "triggers_downstream_invalidation",
+          "user_delivery",
+          "user_delivery_leaks"
+        ],
+        "run_id": "447733a5-970b-4466-889a-5e00121cfb6d"
+      },
+      "phase2": {
+        "business_delivery_outcome": "DELIVERED",
+        "delivered": true,
+        "component_return": false,
+        "user_delivery_chars": 1413,
+        "artifact_chars": 5793,
+        "capabilities_skipped": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR"
+        ],
+        "entry_resolved": "ENTRY-07",
+        "run_mode": "DEFAULT",
+        "entry_derivation": "该能力只有一个直接入口，按能力确定性映射",
+        "upstream_auto_invoked": [],
+        "upstream_auto_invoked_note": "M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。",
+        "capabilities_skipped_declared": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR"
+        ],
+        "source_skill_path": "content-production/skills/packaging-content-for-release/SKILL.md",
+        "source_skill_sha256": "0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07",
+        "run_id": "4471d9dd-4358-430a-acb1-4ec1d0238444",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "4471d9dd-4358-430a-acb1-4ec1d0238444",
+            "error": null
+          }
+        ],
+        "seam_trace_json": "{\"call_hash\": \"ca7760ee99f020d1639d044ade90d2fb9edeee3ae650aefa479b66f884c9cf5e\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CONTENT_BRIEF\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\"], \"capability_invoked\": [\"PUBLISHING_PACKAGING\"], \"completeness_guard\": {\"artifact_status\": \"OK\", \"business_delivery_outcome\": \"DELIVERED\", \"checked\": true, \"tool_local_block\": \"false\", \"user_delivery_status\": \"OK\", \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-07\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}"
+      },
+      "window_end": "2026-08-28 08:29:44.788879",
+      "apps_actually_run": {
+        "PUBLISHING_PACKAGING": 2,
+        "SEAM": 2
+      },
+      "verdict": "PASS",
+      "failures": []
+    }
+  ]
+}
