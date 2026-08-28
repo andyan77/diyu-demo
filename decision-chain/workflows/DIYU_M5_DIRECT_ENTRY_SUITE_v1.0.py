@@ -48,6 +48,23 @@ def runs_in_window(t0, t1):
     return out
 
 
+def assert_no_concurrent_runs():
+    """本套件的「不暗跑」证据靠按时间窗查 Dify 运行台账。
+    只要同时有**任何**别的运行在跑，窗口里就会混进不属于本用例的调用，
+    这条证据当场作废。所以开跑前先确认全场安静，不安静就拒绝开始——
+    宁可不跑，也不要产出一条看起来成立、实则被污染的证据。"""
+    p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+                        "-d", "dify", "-t", "-A", "-F", "|", "-c",
+                        "SELECT app_id, count(*) FROM workflow_runs "
+                        "WHERE status='running' GROUP BY app_id;"],
+                       capture_output=True, text=True, timeout=60)
+    rows = [l for l in (p.stdout or "").strip().splitlines() if l.strip()]
+    if rows:
+        names = [APP_ROLE.get(l.split("|")[0].strip(), l.split("|")[0].strip()) for l in rows]
+        raise SystemExit("拒绝开跑：Dify 当前有运行中的工作流 %s。"
+                         "并发会污染时间窗台账，使「不暗跑」证据失效。" % names)
+
+
 def db_now():
     p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
                         "-d", "dify", "-t", "-A", "-c",
@@ -350,6 +367,7 @@ def judge(case, rec):
 
 
 def main():
+    assert_no_concurrent_runs()
     rt = RT.Runtime()
     facts = FS.registered_facts()
     boot = FS.bootstrap("de" + (sys.argv[1] if len(sys.argv) > 1 else "a"))

@@ -1,0 +1,132 @@
+{
+  "REG-M1-01": {
+    "verdict": "PASS",
+    "tests": 216,
+    "target": "自然语言理解、任务上下文、用户可选择与不强迫术语",
+    "source": "decision-chain/workflows/test_m1_context_compiler_v0.1.py",
+    "tail": [
+      "Ran 216 tests in 0.110s",
+      "",
+      "OK"
+    ]
+  },
+  "REG-M2-01": {
+    "verdict": "PASS",
+    "passed": 92,
+    "failed": 0,
+    "target": "最小投影、版本、幂等反馈和当前状态；保留历史 waiver 的真实身份",
+    "ran_inside_candidate_image": "diyu-m2-app:m5-candidate",
+    "tail": [
+      "....................                                                     [100%]",
+      "92 passed in 7.39s"
+    ],
+    "source": "DIYU_M5_REGRESSION_SUITE_v1.0.py"
+  },
+  "REG-M3-01": {
+    "verdict": "PASS",
+    "target": "运营判断职责、阶段/组合/产能/实验/反馈与可用 Brief",
+    "files": {
+      "test_downstream_brief_consumption.py": {
+        "rc": 0,
+        "unittest_ran": 9,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_field_ablation.py": {
+        "rc": 0,
+        "unittest_ran": 5,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_gate_v12.py": {
+        "rc": 0,
+        "unittest_ran": null,
+        "passed": 28,
+        "failed": 0,
+        "ok": true
+      },
+      "test_gate_v13.py": {
+        "rc": 0,
+        "unittest_ran": null,
+        "passed": 48,
+        "failed": 0,
+        "ok": true
+      },
+      "test_live_m2_contract.py": {
+        "rc": 0,
+        "unittest_ran": 27,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_projection_contract.py": {
+        "rc": 0,
+        "unittest_ran": 30,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_projection_v11_m2_compat.py": {
+        "rc": 0,
+        "unittest_ran": 24,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_projection_v12.py": {
+        "rc": 0,
+        "unittest_ran": null,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_projection_v13.py": {
+        "rc": 0,
+        "unittest_ran": null,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      },
+      "test_responsibility_reverse_search.py": {
+        "rc": 0,
+        "unittest_ran": 12,
+        "passed": null,
+        "failed": null,
+        "ok": true
+      }
+    },
+    "source": "DIYU_M5_REGRESSION_SUITE_v1.0.py"
+  },
+  "REG-SKILLS-01": {
+    "target": "六份专业 Skill 的任务适用专业价值，不要求六份全部调用",
+    "skill_sources_modified_or_deleted_vs_main": "（空：零修改零删除）",
+    "sources_untouched": true,
+    "skill_sha256": {
+      "Matrix_Architect_v0.2_M4.md": "245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf",
+      "Campaign_Orchestrator_v0.2_M4.md": "43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1",
+      "Content_Brief_Architect_v0.2_M4.md": "f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182",
+      "SKILL.md": "c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574"
+    },
+    "source_run": "FULL_STORY_RUN_full01h.json",
+    "capabilities_delivered": [
+      "CONTENT_BRIEF",
+      "CREATIVE_SCRIPT",
+      "PUBLISHING_PACKAGING"
+    ],
+    "capabilities_legally_skipped": [
+      "MATRIX",
+      "CAMPAIGN"
+    ],
+    "skip_reasons_recorded": [
+      "本轮任务不适用；合法跳过，不暗跑",
+      "本轮任务不适用；合法跳过，不暗跑"
+    ],
+    "not_all_six_forced": true,
+    "skips_are_declared": true,
+    "failures": [],
+    "verdict": "PASS",
+    "source": "DIYU_M5_REGRESSION_SUITE_v1.0.py"
+  }
+}

@@ -1,0 +1,300 @@
+index_id: M5-FORMAL-ACCEPTANCE-EVIDENCE-INDEX-v1.0
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+note: 索引只索引，不判定。每一维的状态由它实际绑定的用例结果推出；用例没跑就是 NOT_RUN，不允许「有证据文件所以算覆盖」。
+candidate_frozen: false
+all_runs_are_diagnostic_until_manifest_freeze: true
+summary:
+  dimensions_total: 19
+  current: 17
+  failed: []
+  not_covered:
+  - homogenization
+  - dramatization_derivative_creation
+dimensions:
+- id: natural_interaction
+  label: 自然交互
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: REG-M1-01
+    verdict: NOT_RUN
+    source: null
+- id: objective
+  label: 目标
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: RISK-F10-01
+    verdict: NOT_RUN
+    source: null
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: platform
+  label: 平台
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: DE-09
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: account
+  label: 账号
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: DE-01
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: persistence
+  label: 持久化
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: REG-M2-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: version
+  label: 版本
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+  - case: RISK-RECOVERY-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: publish_feedback
+  label: 发布反馈
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: homogenization
+  label: 同质化
+  status: NOT_COVERED
+  evidence:
+  - case: DE-06
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: quality
+  label: 质量
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-M4-030
+    verdict: NOT_RUN
+    source: null
+- id: dramatization_derivative_creation
+  label: 演绎/二创
+  status: NOT_COVERED
+  evidence:
+  - case: DE-06
+    verdict: NOT_RUN
+    source: null
+  - case: DE-07
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: capacity
+  label: 产能
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: DE-08
+    verdict: NOT_RUN
+    source: null
+- id: external_market
+  label: 外部市场
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: DE-06
+    verdict: NOT_RUN
+    source: null
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+- id: cta
+  label: CTA
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: DE-09
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-PERM-CTA-01
+    verdict: NOT_RUN
+    source: null
+- id: user_discretion
+  label: 用户裁量
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: DE-06
+    verdict: NOT_RUN
+    source: null
+  - case: DE-10
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+- id: production
+  label: 生产
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: DE-08
+    verdict: NOT_RUN
+    source: null
+  - case: DE-09
+    verdict: NOT_RUN
+    source: null
+- id: permission
+  label: 权限
+  status: CURRENT
+  evidence:
+  - case: FULL-01
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: RISK-PERM-CTA-01
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-PUBLISH-ID-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: recovery
+  label: 恢复
+  status: CURRENT
+  evidence:
+  - case: DE-10
+    verdict: NOT_RUN
+    source: null
+  - case: RISK-RECOVERY-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+- id: no_degradation
+  label: 不退化
+  status: CURRENT
+  evidence:
+  - case: AB-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: AB-FINAL-01
+    verdict: NOT_RUN
+    source: null
+  - case: REG-M1-01
+    verdict: NOT_RUN
+    source: null
+  - case: REG-M2-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+  - case: REG-M3-01
+    verdict: NOT_RUN
+    source: null
+  - case: REG-M4-01
+    verdict: NOT_RUN
+    source: null
+  - case: REG-SKILLS-01
+    verdict: NOT_RUN
+    source: null
+- id: cross_cycle
+  label: 跨周期
+  status: CURRENT
+  evidence:
+  - case: FULL-02
+    verdict: PASS
+    source: FULL_STORY_RUN_full01h.json
+  - case: REG-M2-01
+    verdict: PASS
+    source: M2_PROBE_SUITE_m2pb.json
+  - case: REG-M3-01
+    verdict: NOT_RUN
+    source: null
+cases:
+  FULL-01:
+    source: FULL_STORY_RUN_full01h.json
+    m3_gate_status: CLEAN
+    delivered_capabilities:
+    - CONTENT_BRIEF
+    - CREATIVE_SCRIPT
+    - PUBLISHING_PACKAGING
+    skipped:
+    - MATRIX
+    - CAMPAIGN
+    open_questions: 1
+    last_delivered_step: PUBLISHING_PACKAGING
+    verdict: PASS
+  FULL-02:
+    source: FULL_STORY_RUN_full01h.json
+    m3_review_gate: CLEAN
+    cycle_next: 9e14492b-91f2-4f42-a172-35f6f65a58b6
+    decision_binds_next_cycle: true
+    verdict: PASS
+    publish_is_test: true
+    feedback_idempotent: true
+  RISK-PUBLISH-ID-01:
+    source: M2_PROBE_SUITE_m2pb.json
+    verdict: PASS
+    failures: []
+    oracle: 测试发布与反馈绑定正确账号/平台/版本；撤回、更正和未知状态不被伪装为成功
+  RISK-RECOVERY-01:
+    source: M2_PROBE_SUITE_m2pb.json
+    verdict: PASS
+    failures: []
+    oracle: 从最高失效节点恢复；重复调用不制造重复事实或重复副作用；未受影响项不全量重跑
+  REG-M2-01:
+    source: M2_PROBE_SUITE_m2pb.json
+    verdict: PASS
+    failures: []
+    oracle: 最小投影可读、产能有来源、成员鉴权成立
