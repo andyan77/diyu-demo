@@ -1,0 +1,55 @@
+document:
+  id: "V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.0"
+  type: "HOLDOUT_CUSTODY_MANIFEST"
+  version: "v1.0"
+  frozen_at: "2026-08-28T04:57:05Z"
+
+task_id: "DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001"
+
+custodian: "context-isolated fixture custodian (subagent), M5 Node 2"
+
+holdouts:
+  - id: "HOLDOUT-M5-01"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5/HOLDOUT-M5-01.md"
+    body_sha256: "108d0907b8293de3d66138ecec0c6e21142a3e6735ca17df886d3fd6d46740a1"
+    risk_families: ["RISK-FACT-01", "RISK-M4-033"]
+    freshness: "FRESH_NOT_REUSED_FROM_M3"
+
+  - id: "HOLDOUT-M5-02"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5/HOLDOUT-M5-02.md"
+    body_sha256: "705971dae8dbfe9ca31440730707ae67b086a9e7bd8bd6243cc9e59ea76d1c19"
+    risk_families: ["RISK-PERM-CTA-01", "RISK-M4-032"]
+    freshness: "FRESH_NOT_REUSED_FROM_M3"
+
+  - id: "HOLDOUT-M5-03"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5/HOLDOUT-M5-03.md"
+    body_sha256: "3ba3ef4800ed6838cc27dfa1c8794afa2521485a3faa94f54ada808f116738e5"
+    risk_families: ["RISK-F10-01", "RISK-M4-030", "RISK-M4-031"]
+    freshness: "FRESH_NOT_REUSED_FROM_M3"
+
+  - id: "HOLDOUT-M5-04"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5/HOLDOUT-M5-04.md"
+    body_sha256: "5f36e0a9b867c5e2cd766b48b7b76b58e9912f6f6529a9b6fa98b227ffde2056"
+    risk_families: ["RISK-PUBLISH-ID-01"]
+    freshness: "FRESH_NOT_REUSED_FROM_M3"
+
+  - id: "HOLDOUT-M5-05"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5/HOLDOUT-M5-05.md"
+    body_sha256: "6f4ff9bade701de3ce99d02468f33cdc55149182f6fb495c92eab75fd2e368f0"
+    risk_families: ["RISK-RECOVERY-01", "RISK-M4-027"]
+    freshness: "FRESH_NOT_REUSED_FROM_M3"
+
+  - id: "HOLDOUT-M5-06"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5/HOLDOUT-M5-06.md"
+    body_sha256: "8f1c45dbb58e8e27fb3ec0e8096fdc626b685db11a858c43a88bd302a7c33e6f"
+    risk_families: ["RISK-FACT-01", "RISK-PERM-CTA-01", "RISK-F10-01", "RISK-PUBLISH-ID-01"]
+    freshness: "FRESH_NOT_REUSED_FROM_M3"
+
+sealed_oracles_path: "/home/faye/diyu-demo-holdout-custody/m5/SEALED_ORACLES_v1.0.md"
+sealed_oracles_sha256: "cff6672935dba97b962e1c610aa5d0ce3defeb71cb50850ba04b8123bd75915e"
+
+construction_owner_access: "IDENTITY_AND_HASH_ONLY_BODIES_PROHIBITED_UNTIL_CANDIDATE_FREEZE"
+
+unseal_event: "M5 Candidate Run Manifest 冻结后，由 custodian 向正式 runner 解封；解封前施工侧不得读取正文或 oracle"
+
+unseal_executed: false
