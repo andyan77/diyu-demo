@@ -158,7 +158,8 @@ class Runtime(object):
         return _wf_result(r)
 
     def hop(self, target_capability, m3_judgment="", upstream_delivery="",
-            registered_facts="", account_context="", user_request="", user="m5-runtime"):
+            registered_facts="", account_context="", user_request="", focus_fields="",
+            user="m5-runtime"):
         """跨能力接缝：按目标能力的必填清单，从四类已登记来源抽取扁平外壳。
 
         与 adapt() 的区别是它**知道自己要进哪个能力**。M4 冻结了六个能力各自的
@@ -171,6 +172,7 @@ class Runtime(object):
             "registered_facts": registered_facts,
             "account_context": account_context,
             "user_request": user_request,
+            "focus_fields": focus_fields,
         }, user, "hop:%s" % target_capability)
 
     # ------------------------------------------------------------ M4 接缝
@@ -268,6 +270,25 @@ def is_component_return(result):
     except Exception:
         return False
     return bool(arr)
+
+
+def component_return_gaps(result):
+    """从组件级 Return 里取出**能力侧自己写的**精确缺口与那一个问题。
+    不由本文件猜能力在缺什么——它已经说了。"""
+    try:
+        arr = json.loads((result.get("outputs") or {}).get("returns_json") or "[]")
+    except Exception:
+        return None
+    if not arr:
+        return None
+    r0 = arr[0] or {}
+    return {"precise_gap": r0.get("precise_gap"),
+            "highest_damaged_layer": r0.get("highest_damaged_layer"),
+            "affected_objects": r0.get("affected_objects"),
+            "downstream_stale": r0.get("downstream_stale"),
+            "needs_user_decision": r0.get("needs_user_decision"),
+            "single_question": (result.get("outputs") or {}).get("single_question"),
+            "missing": (result.get("outputs") or {}).get("missing")}
 
 
 def delivered(result):

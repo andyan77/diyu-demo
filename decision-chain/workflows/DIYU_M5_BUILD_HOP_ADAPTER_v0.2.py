@@ -40,8 +40,8 @@ _s.loader.exec_module(DC)
 
 ENV = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env"
 APP_NAME = "DIYU M5 TEST CANDIDATE · 跨能力接缝适配器（能力感知抽取）"
-MARKED_NAME = "m5-hop-adapt-v0.2.2"
-MARKED_COMMENT = "M5 集成候选 v0.2.1：改用能力侧接受的反引号形状，修复含引号值被判缺失的硬门假阴性；补一条可审计的复合字段合成规则"
+MARKED_NAME = "m5-hop-adapt-v0.3"
+MARKED_COMMENT = "M5 集成候选 v0.3：加定向补齐入口，支持组件级 Return 后只重入该节点；定向段明示不是来源，找不到仍留空"
 
 MODEL = {"mode": "chat", "name": "deepseek-v4-flash",
          "provider": "langgenius/deepseek/deepseek",
@@ -76,6 +76,8 @@ EXTRACT_SYSTEM = """你是一个**抽取器**，不是判断者，也不是创�
    一个字段的内容不得由多个来源拼接而成；拼不出来就留空。
 4. 尽量用来源原文的表述，可做最小限度截断，不要改写成你自己的话。
 5. 不要把「可能」「暂定」「建议」写成确定；不要把没发生的事写成已发生。
+6. 「定向补齐」一段**不是来源**，它只告诉你上一轮哪几项没抽到，请你在四个来源里
+   再找一遍这几项。**在四个来源里找不到，就仍然留空**——定向补齐不是让你去编。
 
 输出严格 JSON，只输出 JSON 本体，不要代码块围栏，不要解释：
 
@@ -166,7 +168,7 @@ def _parse(raw):
 
 
 def main(extract_raw, target_capability, m3_judgment, upstream_delivery,
-         registered_facts, account_context, user_request):
+         registered_facts, account_context, user_request, focus_fields):
     cap = (target_capability or "").strip().upper()
     if cap not in REQUIRED_BY_CAPABILITY:
         return {"capability_call": "", "professional_input": "",
@@ -293,6 +295,8 @@ def main(extract_raw, target_capability, m3_judgment, upstream_delivery,
     prof = "\n\n".join(parts)
 
     note = parse_note or ("按 %s 的必填清单抽取；空字段一律计入 extraction_gaps，未代为推断" % cap)
+    if focus_fields:
+        note += "；本轮为定向补齐：%s" % str(focus_fields)[:200]
 
     return {
         "capability_call": envelope,
@@ -324,6 +328,8 @@ def build_graph():
                       "type": "paragraph", "required": False, "max_length": 60000, "options": []},
                      {"variable": "user_request", "label": "[ASK] 用户本轮原话", "type": "paragraph",
                       "required": False, "max_length": 20000, "options": []},
+                     {"variable": "focus_fields", "label": "定向补齐字段（不是来源）",
+                      "type": "paragraph", "required": False, "max_length": 2000, "options": []},
                  ]}}
     extract = {
         "id": "m5_extract", "type": "custom", "position": {"x": 400, "y": 200},
@@ -341,6 +347,8 @@ def build_graph():
                               "===== [FACT] 已登记事实夹具 =====\n{{#m5_start.registered_facts#}}\n\n"
                               "===== [ASK] 账号最小当前投影 =====\n{{#m5_start.account_context#}}\n\n"
                               "===== [ASK] 用户本轮原话 =====\n{{#m5_start.user_request#}}\n\n"
+                              "===== 定向补齐（这不是来源，只是告诉你哪几项上一轮没抽到） =====\n"
+                              "{{#m5_start.focus_fields#}}\n\n"
                               "只输出 JSON。四个来源都没写的字段一律空字符串，并且不要出现在 _sources 里。"}],
                  }}
     compose = {
@@ -357,6 +365,7 @@ def build_graph():
                      {"variable": "registered_facts", "value_selector": ["m5_start", "registered_facts"]},
                      {"variable": "account_context", "value_selector": ["m5_start", "account_context"]},
                      {"variable": "user_request", "value_selector": ["m5_start", "user_request"]},
+                     {"variable": "focus_fields", "value_selector": ["m5_start", "focus_fields"]},
                  ],
                  "outputs": {
                      "capability_call": {"type": "string", "children": None},

@@ -214,6 +214,47 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
             "capabilities_skipped_by_seam": r.get("capabilities_skipped"),
             "artifact_sha256": _artifact_sha(r),
         })
+        # ---- 局部 Return 后的一次有界合法重入 ----
+        # 能力侧已经说清楚缺什么（precise_gap）与要问什么（single_question）。
+        # 正确做法是拿这个精确缺口回到**已登记来源**里定向再找一遍，
+        # 只重入这一个节点，不全链重跑；找不到就停下来把问题交给用户，不代答、不编。
+        if RT.is_component_return(r) and not RT.delivered(r):
+            g = RT.component_return_gaps(r) or {}
+            gap_text = g.get("precise_gap") or g.get("missing") or ""
+            if gap_text:
+                h2 = rt.hop(cap, m3_judgment=judgment, upstream_delivery=upstream,
+                            registered_facts=facts, account_context=acct_text,
+                            user_request=nl_request, focus_fields=str(gap_text))
+                ho2 = h2["outputs"] or {}
+                still = ho2.get("extraction_gaps_text")
+                rec["steps"].append({
+                    "step": "reentry_hop:%s" % cap, "attempts": h2.get("attempts"),
+                    "asked_for": gap_text, "single_question": g.get("single_question"),
+                    "remaining_gaps_after_focus": still,
+                    "run_id": h2["run_id"]})
+                if (ho2.get("capability_call") or "").strip() and still == "无":
+                    r2 = rt.seam(cap, capability_call=ho2["capability_call"],
+                                 professional_input=ho2.get("professional_input") or "")
+                    rec["steps"].append({
+                        "step": "reentry_seam:%s" % cap,
+                        "attempts": r2.get("attempts"),
+                        "business_delivery_outcome": r2["business_delivery_outcome"],
+                        "delivered": RT.delivered(r2),
+                        "component_return": RT.is_component_return(r2),
+                        "run_id": r2["run_id"],
+                        "user_delivery_chars": len(r2.get("user_delivery") or ""),
+                        "artifact_chars": len(r2.get("artifact") or ""),
+                        "artifact_sha256": _artifact_sha(r2),
+                        "reentered_only_this_node": True})
+                    r = r2
+                else:
+                    # 已登记来源里确实没有 —— 停在这里，把那一个问题交给用户。
+                    rec.setdefault("open_questions", []).append({
+                        "capability": cap, "question": g.get("single_question"),
+                        "precise_gap": gap_text,
+                        "why_not_auto_answered": "四类已登记来源里都没有写，不代答不编造",
+                        "downstream_stale": g.get("downstream_stale")})
+
         # 组件级 Return 是本分支结果，不是整任务硬停：记录后继续，由调用方决定
         if RT.delivered(r) and (r.get("artifact") or "").strip():
             # 往下一跳传的是 artifact（产物本体），不是 user_delivery（用户投影）。
