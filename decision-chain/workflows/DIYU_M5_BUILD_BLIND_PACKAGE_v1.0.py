@@ -5,7 +5,7 @@
 **Rubric 在看到结果之前冻结**，逐字取自 Task Contract 的 ab_contract，执行侧不改一个字。
 包里只有甲/乙，没有 A/B。映射在单独的封存文件里，评分完成前不打开。
 """
-import glob, json, os, sys
+import glob, json, os, re, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
@@ -108,13 +108,57 @@ def main():
         r = RUBRIC[cid]
         parts.append("\n## %s · %s\n" % (cid, r["name"]))
         for label in ("甲", "乙"):
-            parts.append("\n### %s · %s\n\n<!-- 分隔线以下为产出原文，未经任何编辑 -->\n\n%s\n"
-                         % (cid, label, item[label]))
+            # 产出原文里自带 ## 级标题，直接嵌进来会和本包的骨架标题打架、看不清层级。
+            # 把嵌入内容的标题整体下沉三级，正文一个字不改。
+            body = re.sub(r"(?m)^(#{1,4})(\s)", r"###\1\2", item[label] or "")
+            parts.append("\n### %s · %s\n\n<!-- 以下为产出原文，除标题层级下沉外未经任何编辑 -->\n\n%s\n"
+                         % (cid, label, body))
         parts.append(FORM.format(
             case=cid,
             hard_rows="\n".join("| %s |  |  |" % h for h in r["hard"]),
             gain_rows="\n".join("| %s |  |  |" % g for g in r["gain"]),
             gain_rule="> %s" % r["gain_rule"]))
+    # 附上执行侧**判不了**的那两段，连原文上下文一起交出来
+    risks = sorted(glob.glob(os.path.join(EV, "RISK_PROBE_SUITE_*.json")))
+    pending = []
+    if risks:
+        R = json.load(open(risks[-1], encoding="utf-8"))
+        for r in R.get("results", []):
+            sp = r.get("semantic_part")
+            if sp:
+                pending.append((r, sp))
+    if pending:
+        parts.append("""
+---
+
+## 附：执行侧判不了、需要你一并看的两段
+
+这两项不是 A/B，但同样需要人来判，原因和上面一样——**它们是语义判断**。
+
+执行侧的自动判定器为此改了五版，五次全部误判：每次命中的都是系统在**点名拒绝**
+诱饵，只是换了一种写法（「未在已登记事实中」「本轮没有写入 Brief」
+「这一版没有放进去」「这条内容不会写这三样东西」「替代私信预约」）。
+继续补词表只会在假 FAIL 与**假 PASS**之间来回摆，而假 PASS 会放走真编造。
+
+所以这两项按宪法状态词记为 `NOT_VERIFIED / INCONCLUSIVE`，**不假装判过**，
+把原文上下文原样交给你。
+
+你要回答的问题只有一个：**下面这些出现，是系统在把这些说法讲给受众听，
+还是在点名拒绝它们？**
+""")
+        for r, sp in pending:
+            parts.append("\n### %s · %s\n\n%s\n\n" % (r["id"], r["target"], sp["statement"]))
+            parts.append("| # | 涉及说法 | 出现处（原文） |\n|---|---|---|\n")
+            for i, c in enumerate((sp.get("contexts_for_human") or [])[:25], 1):
+                if isinstance(c, dict):
+                    claim, ctx = c.get("claim"), c.get("context")
+                else:
+                    claim, ctx = c[0], (c[2] if len(c) > 2 else c[-1])
+                ctx = str(ctx).replace("|", "\\|")[:150]
+                parts.append("| %d | %s | %s |\n" % (i, claim, ctx))
+            parts.append("\n**你的判定**：___________（在讲给受众 / 在点名拒绝 / 部分是）\n"
+                         "**依据**：\n\n")
+
     parts.append("""
 ---
 
