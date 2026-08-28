@@ -22,7 +22,7 @@
 |---|---|---|
 | HOLDOUT-M5-01 | RISK-FACT-01 / RISK-M4-033 | **PASS**（一子项 `NOT_VERIFIED`） |
 | HOLDOUT-M5-02 | RISK-PERM-CTA-01 / RISK-M4-032 | **PASS** |
-| HOLDOUT-M5-03 | RISK-F10-01 / M4-030 / M4-031 | **目标忠实与专业方法双 PASS**；交付形态 `NOT_VERIFIED`（受路由影响，需定向复验） |
+| HOLDOUT-M5-03 | RISK-F10-01 / M4-030 / M4-031 | **目标忠实与专业方法双 PASS**；交付形态 `NOT_VERIFIED`（定向复验已做，未解决：两次运行结果不同） |
 | HOLDOUT-M5-04 | RISK-PUBLISH-ID-01 | **PASS**（一子项 `NOT_VERIFIED`） |
 | HOLDOUT-M5-05 | RISK-RECOVERY-01 / M4-027 | **FAIL（P0）** |
 | HOLDOUT-M5-06 | 四族合并 | **PASS** |
@@ -126,6 +126,25 @@
 只选了 CREATIVE_SCRIPT**，没有接 PUBLISHING。因此这一项不判 FAIL 也不判 PASS，
 记 `NOT_VERIFIED`，需补一次接上 PUBLISHING 的**定向复验**。
 路由选择是我做的、写在运行器里可审计，这一点如实记在此处。
+
+### 定向复验结果：没有解决这一项，但给出了第三个信息
+
+补上 `PUBLISHING_PACKAGING` 重跑（`HOLDOUT_M5_03_REVERIFY.json`，**判据一字未动，只改路由**）：
+
+| 能力 | 本次结果 | 正式运行时 |
+|---|---|---|
+| CREATIVE_SCRIPT | `UNKNOWN`，索要 `content_promise` | `DELIVERED`，给出钩子与口播内容 |
+| PUBLISHING_PACKAGING | `UNKNOWN`，索要「成片内容或逐段说明」 | 未跑 |
+
+**同一份留出、同一个冻结候选，两次运行结果不同。** 这不是判据问题，是
+**运行间波动**：上游 M3 判断每次生成的措辞不同，跨能力抽取据以取到的字段就不同。
+
+因此三条标题这一交付形态仍为 `NOT_VERIFIED`，并新增一条观察：
+**本候选在这一输入上不具备稳定的交付形态**。
+这一条对 Founder 有直接意义——同样的话问两次，可能一次直接给东西、一次先问你要一句话。
+
+另记一次事故与修复：定向复验最初**覆盖了六份正式留出的证据文件**（运行器输出文件名
+不带标签），靠 git 里已提交的版本恢复。运行器已改为按标签输出、只增不覆盖。
 
 ---
 

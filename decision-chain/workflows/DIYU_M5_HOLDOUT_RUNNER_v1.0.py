@@ -103,7 +103,11 @@ def main():
         for s in rec["steps"]:
             print("    %-22s %s deliver=%s" % (s.get("hop"),
                   s.get("business_delivery_outcome"), s.get("delivered")), flush=True)
-    p = os.path.join(EV, "HOLDOUT_RUNS.json")
+    # 输出带标签：不带标签时任何一次复验都会**覆盖正式证据**。
+    # 这是实际发生过的事故（HOLDOUT-03 定向复验覆盖了六份正式留出的结果，
+    # 靠 git 里的提交才恢复回来）。证据文件必须只增不覆盖。
+    tag = os.environ.get("HOLDOUT_TAG") or ("only_" + "_".join(sorted(only)) if only else "formal")
+    p = os.path.join(EV, "HOLDOUT_RUNS_%s.json" % tag)
     with open(p, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
     print("\n产出已原样存下，**本文件不做任何判定**。SAVED", p)
