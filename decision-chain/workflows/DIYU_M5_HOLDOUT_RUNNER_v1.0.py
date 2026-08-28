@@ -77,7 +77,7 @@ def run_one(rt, hid, text, facts, refs, boot):
 def main():
     import yaml
     man = yaml.safe_load(open(os.path.join(ROOT, "decision-chain", "docs",
-                                           "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml"),
+                                           "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml"),
                               encoding="utf-8"))
     if man.get("status") != "FROZEN":
         print("拒绝运行：候选清单尚未冻结，留出不得在冻结前使用。")
