@@ -1,0 +1,375 @@
+manifest_id: M5-CANDIDATE-RUN-MANIFEST-v1.1-AC07-REBASE
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+gate: GATE_2_CANDIDATE
+supersedes: V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml（保留不删；原候选 86af9ecd5a313ff55aff1874d29eb342299d65ff 只读留存）
+frozen_at: '2026-08-28T13:10:08Z'
+frozen_by: EXECUTION
+status: FROZEN
+freeze_semantics:
+  changing_any_binding_after_freeze: 本次正式运行降级为探索，受影响验收项置 STALE，必须版本化后重新冻结
+  oracle_must_precede_result: true
+  diagnostic_runs_before_freeze_produce_no_formal_pass: true
+git:
+  repository: https://github.com/andyan77/diyu-demo.git
+  branch: codex/v1-m5-unified-integration-final-acceptance-001
+  worktree: /home/faye/diyu-demo-worktrees/m5-unified-integration-final-acceptance-v1
+  candidate_commit: a68a7c0f6aafca6ff580ab81e5dcbfa8f2b8d167
+  working_tree_must_be_clean_at_freeze: true
+  main_at_fork: f6eb86c
+  parent_candidate_commit: 86af9ecd5a313ff55aff1874d29eb342299d65ff
+  origin_main_at_freeze: f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e
+dify:
+  platform: Dify 1.16.1 自托管
+  api_container: docker-api-1
+  transport: dify_client.py direct/relay 自动选路；宿主到容器无端口映射时走 relay
+  protected_apps_unchanged_since_m4_closeout: true
+  apps:
+  - role: M4 统一能力接缝（唯一调用入口）
+    app_id: de0cb1e9-2af8-415a-9762-31b6cf348c22
+    graph_md5: 71a99dbcad9c40115291afa57368c4ea
+    app_name: DIYU M4 v1.3 TEST · Capability Seam
+    published_at: '2026-08-27 20:36:22.268983'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 71a99dbcad9c40115291afa57368c4ea
+  - role: M4 Founder Canvas
+    app_id: f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8
+    graph_md5: 67b717d1365c2fb75a3b8e761b0527da
+    app_name: DIYU M4 v1.3 TEST · Founder Canvas
+    published_at: '2026-08-27 19:08:25.953314'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 67b717d1365c2fb75a3b8e761b0527da
+  - role: M4 能力 · Matrix Architect
+    app_id: d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3
+    graph_md5: 40281a7ee7fa42c4e2ccf5e67bc89e80
+    app_name: DIYU M4 v1.3 TEST · Matrix Architect
+    published_at: '2026-08-27 20:51:56.846071'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 40281a7ee7fa42c4e2ccf5e67bc89e80
+  - role: M4 能力 · Campaign Orchestrator
+    app_id: cfd48281-d2e6-4f77-b4a6-32f0fca98f2b
+    graph_md5: 446133525104e297ff4e07ce6d871180
+    app_name: DIYU M4 v1.3 TEST · Campaign Orchestrator
+    published_at: '2026-08-27 20:51:57.574146'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 446133525104e297ff4e07ce6d871180
+  - role: M4 能力 · Content Brief Architect
+    app_id: a3264c95-9b30-4ac8-833a-dc96ea8b7ee1
+    graph_md5: 248df0afbd44be58ec553c1566205ef8
+    app_name: DIYU M4 v1.3 TEST · Content Brief Architect
+    published_at: '2026-08-27 20:51:58.335362'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 248df0afbd44be58ec553c1566205ef8
+  - role: M4 能力 · Creative Script (CS-1 + Script)
+    app_id: 8d518554-bfbc-4be0-8a57-3b1f04983edf
+    graph_md5: 4b5986b665d228c20998e69bb7444148
+    app_name: DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)
+    published_at: '2026-08-27 20:51:59.000393'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 4b5986b665d228c20998e69bb7444148
+  - role: M4 能力 · Production Director
+    app_id: 57ebc138-ed9e-4202-bce2-38e44da0ec1d
+    graph_md5: 695cb2d5e3224e50d72e103e22aadf98
+    app_name: DIYU M4 v1.3 TEST · Production Director
+    published_at: '2026-08-27 20:51:59.623404'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 695cb2d5e3224e50d72e103e22aadf98
+  - role: M4 能力 · Publishing & Packaging
+    app_id: 10056fcf-9237-4889-a3e3-81e3a695cae0
+    graph_md5: 5c03afae6fe7450cc42f9f58f97c53be
+    app_name: DIYU M4 v1.3 TEST · Publishing & Packaging
+    published_at: '2026-08-27 20:52:00.266654'
+    protected: true
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 5c03afae6fe7450cc42f9f58f97c53be
+  - role: M3 单账号持续运营候选
+    app_id: b7fb5b1a-9278-426c-bb8a-f9f288639548
+    graph_md5: ' DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001 '
+    app_name: 'M3 单账号持续运营候选 '
+    published_at: e80f227eb30f95132a7c7ef41e157cc8
+    protected: true
+    marked_name: ' CANDIDATE TEST ONLY - DO NOT USE FOR PRODUCTION'
+    note: 受保护，本轮零改动；graph_md5 必须仍等于 v1.0 冻结值 e80f227eb30f95132a7c7ef41e157cc8
+  - role: M5 RB successor · 能力 MATRIX（只换 envelope_check 的 _find_scalar）
+    app_id: 47e52165-f6cb-48ff-93be-6c6a8ea5cecf
+    graph_md5: 91704faf63c0628fee7cb3f6450bc9b5
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Matrix Architect
+    published_at: '2026-08-28 12:48:33.88202'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3，patched_node=envelope_check
+  - role: M5 RB successor · 能力 CAMPAIGN（只换 envelope_check 的 _find_scalar）
+    app_id: 7d10e28d-30e6-4c4a-950b-88dcbb5fd0fc
+    graph_md5: d3f0f904e094a9a273c969560c8fcb01
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Campaign Orchestrator
+    published_at: '2026-08-28 12:48:35.753297'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 cfd48281-d2e6-4f77-b4a6-32f0fca98f2b，patched_node=envelope_check
+  - role: M5 RB successor · 能力 CONTENT_BRIEF（只换 envelope_check 的 _find_scalar）
+    app_id: cbbeab61-a4de-4a21-a6be-7dc2385dd6f3
+    graph_md5: 18fe62af78c952963ba49c51a1c9b681
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Content Brief Architect
+    published_at: '2026-08-28 12:48:37.683367'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 a3264c95-9b30-4ac8-833a-dc96ea8b7ee1，patched_node=envelope_check
+  - role: M5 RB successor · 能力 CREATIVE_SCRIPT（只换 envelope_check 的 _find_scalar）
+    app_id: 4fbcfea8-48a3-41b3-b2b5-cdb50276eeb2
+    graph_md5: 8ffd62290c86590aa6585944977a9fe2
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)
+    published_at: '2026-08-28 12:48:39.600409'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 8d518554-bfbc-4be0-8a57-3b1f04983edf，patched_node=envelope_check
+  - role: M5 RB successor · 能力 PRODUCTION_DIRECTOR（只换 envelope_check 的 _find_scalar）
+    app_id: 07e99f7b-71a3-40af-85f3-fc43b68e774a
+    graph_md5: 2cde3915f2d1ecdc7e14ec1fa3586e18
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Production Director
+    published_at: '2026-08-28 12:48:41.457269'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 57ebc138-ed9e-4202-bce2-38e44da0ec1d，patched_node=envelope_check
+  - role: M5 RB successor · 能力 PUBLISHING_PACKAGING（只换 envelope_check 的 _find_scalar）
+    app_id: 0fb7636a-55e8-49a9-92f7-3d11ad0a35fa
+    graph_md5: 16c81a2283843a4ef04e009361024318
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Publishing & Packaging
+    published_at: '2026-08-28 12:48:43.331442'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 10056fcf-9237-4889-a3e3-81e3a695cae0，patched_node=envelope_check
+  - role: M5 RB successor · 统一能力接缝（只把 6 个 tool 节点改指新能力）
+    app_id: 9e1b1fd8-f696-436d-9d42-54700a29a4dd
+    graph_md5: d89f5086425880af04692264777fa805
+    app_name: DIYU M5 RB · DIYU M4 v1.3 TEST · Capability Seam
+    published_at: '2026-08-28 12:48:45.236098'
+    protected: false
+    marked_name: m5rb-parser-v1.1
+    note: 源 de0cb1e9-2af8-415a-9762-31b6cf348c22，改指 6 个 tool 节点
+  - role: M5 RB successor · M3 单账号持续运营（恢复状态权威）
+    app_id: ca4c28aa-e0fd-4c54-bde3-a0918dc4c884
+    graph_md5: 66102a967097d2eb6fda07df140007c6
+    app_name: DIYU M5 RB · M3 单账号持续运营（恢复状态权威）
+    published_at: '2026-08-28 12:53:44.421287'
+    protected: false
+    marked_name: m5rb-m3-recov-v1.1
+    note: 源 b7fb5b1a-9278-426c-bb8a-f9f288639548，只在 O-11 末尾补 343 字符
+  - role: M5 新建 · 跨能力接缝适配器（能力感知抽取）
+    app_id: 6c46fdb1-5f49-4513-a0c0-29957b3dcee4
+    graph_md5: d230b62fc9ebea1c7ee2426f13f9d279
+    app_name: DIYU M5 TEST CANDIDATE · 跨能力接缝适配器（能力感知抽取）
+    published_at: '2026-08-28 07:28:55.139472'
+    protected: false
+    marked_name: m5-hop-adapt-v0.4
+    note: 'M4 冻结了「六个能力之间零调用边」，并给六个能力各自不同的确定性外壳必填清单。
+
+      谁把上一跳的产出接成下一跳的外壳，M4 没有规定也不该由 M4 规定——这是 M5 的接缝。
+
+      本应用只做抽取与格式化，不做任何业务判断，不调用任何能力应用。
+
+      '
+  - role: M5 新建 · M3 判断到统一外壳（v0.1，只覆盖 Content Brief 一跳）
+    app_id: e1013ce2-69c5-44c1-ad83-26534f3c5e4c
+    graph_md5: b57fa0f61e1be75a3cdc202869f11e22
+    app_name: DIYU M5 TEST CANDIDATE · M3 判断 → 统一能力外壳（抽取适配）
+    published_at: '2026-08-28 05:56:11.442308'
+    protected: false
+    marked_name: m5-adapter-v0.1
+  - role: M5 新建 · DIYU M5 PROBE · 模型可用性探针（一次性）
+    app_id: 300f78e7-89f0-4669-b4bd-a464c86ac736
+    graph_md5: 5645a923c6449196ccbb82c272d583ba
+    app_name: DIYU M5 PROBE · 模型可用性探针（一次性）
+    published_at: '2026-08-28 07:05:31.086894'
+    protected: false
+    marked_name: probe-qwen
+    note: A/B 对照基线或可用性探针；不参与产品能力，只用于取证
+  - role: M5 新建 · DIYU M5 PROBE · deepseek 可用性
+    app_id: 668b1817-db52-4ec1-8522-6157fb5a6e82
+    graph_md5: 8de61b7c64ac77e894bd41bed9670d42
+    app_name: DIYU M5 PROBE · deepseek 可用性
+    published_at: '2026-08-28 07:15:41.16338'
+    protected: false
+    marked_name: probe
+    note: A/B 对照基线或可用性探针；不参与产品能力，只用于取证
+  - role: M5 新建 · DIYU M5 AB · A 组基线（运营判断）
+    app_id: f804df8d-3415-40f1-a986-04bbf93442ad
+    graph_md5: e8e3f13c2cd6f5de040db60ccc09c802
+    app_name: DIYU M5 AB · A 组基线（运营判断）
+    published_at: '2026-08-28 08:59:24.175493'
+    protected: false
+    marked_name: ab-baseline-a
+    note: A/B 对照基线或可用性探针；不参与产品能力，只用于取证
+  - role: M5 新建 · DIYU M5 AB · A 组基线（最终成品）
+    app_id: 8c6afe13-fdd8-4853-9a35-50a877007742
+    graph_md5: afbdc6eb560370bb077e16999fb31a8e
+    app_name: DIYU M5 AB · A 组基线（最终成品）
+    published_at: '2026-08-28 08:59:24.429735'
+    protected: false
+    marked_name: ab-baseline-a
+    note: A/B 对照基线或可用性探针；不参与产品能力，只用于取证
+  binding_switch:
+    env: M5_BIND
+    default: rb
+    rb: 本轮候选：M3/M4 的 successor
+    legacy: M4 已接受的八个应用与 M3 源，只读、只用于同输入对照
+model:
+  provider: langgenius/deepseek/deepseek
+  name: deepseek-v4-flash
+  silent_substitution: PROHIBITED
+  unavailable_target_effect: BLOCKED unless Founder authorizes a versioned contract change
+  observed_completion_params_across_bound_apps:
+  - '{"temperature": 0.4}'
+  - '{"top_p": 0.8, "max_tokens": 12000}'
+  - '{"top_p": 0.8, "max_tokens": 16000}'
+  - '{"top_p": 0.8, "thinking": false, "max_tokens": 32000, "reasoning_effort": "low"}'
+  - '{"top_p": 0.8, "thinking": true, "max_tokens": 384000, "reasoning_effort": "low"}'
+  transient_failure_policy:
+    retryable: 仅传输层与模型可用性故障（SSL EOF、连接中断、502/503/504、读超时）
+    not_retryable: 任何业务结果——INPUT_INSUFFICIENT、组件级 Return、UNKNOWN 一律不重试
+    max_attempts: 3
+    every_attempt_recorded: true
+    rationale: 重试业务结果就是掩盖失败；不重试传输故障则把外部抖动记成假 FAIL
+database:
+  m2_service_container: diyu-m2-app
+  m2_image: diyu-m2-app:m5-candidate
+  m2_image_id: sha256:f01357c2295431a6a9f92669812b3cbd20e765c179afd1bcb2748e8612a1dfa3
+  m2_pre_m5_container_preserved_as: diyu-m2-app-pre-m5
+  postgres_container: docker-db_postgres-1
+  business_database: diyu_business
+  network: docker_default
+  time_source: 数据库 now() AT TIME ZONE 'UTC'，不用宿主本地时钟
+  test_data_policy:
+    每个正式用例独立测试工作区: true
+    发布与反馈一律显式 is_test=true 且 is_simulated=true: true
+    非测试数据变更: PROHIBITED
+    破坏性迁移: PROHIBITED
+fixtures:
+  policy_index: M5_ACCEPTANCE_FIXTURE_AND_19D_COVERAGE_INDEX_v1.0.yaml
+  loaded_as_registered_facts_into_chain: true
+  files:
+  - path: decision-chain/fixtures/序里集_Campaign当前素材与资源夹具_v0.1.md
+    sha256: 53ea76e93c6529d211bcc41161e9771f7cc5818fe99caf54c4af5f7539ae0074
+  - path: decision-chain/fixtures/序里集_Campaign最小承接条件夹具_v0.1.md
+    sha256: 17b41d3ae37635fcd1e97f6af1136c71afa6310a9c51e1db12948b0b2e1e2b06
+  - path: decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md
+    sha256: 8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a
+  - path: decision-chain/fixtures/V1_SCENARIO_INPUTS_v0.1.md
+    sha256: cd7eb0ad78736e54045371b3d0cf8d4fcea9b97d0b0fc2252870de7403ccd460
+  fact_boundary: 夹具为虚构演示品牌的模拟事实，不得对外描述为现实企业事实
+holdout:
+  regression_custody_manifest: decision-chain/fixtures/V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.0.yaml
+  regression_custody_sha256: a4d9a10a612d80eec7ed71d63077a2dadd6bba5253ece8f1fae77a9c90d3bcee
+  fresh_custody_manifest: decision-chain/fixtures/V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.1_RB.yaml
+  fresh_custody_sha256: 2c5c4a2e65eba753d6f04ebeb5231ef50733358a73f3918c20c8ad615714ed23
+  exposed_cases_are_regressions_only:
+  - HOLDOUT-M5-05
+  - RISK-M4-030+031
+  fresh_holdouts:
+  - HOLDOUT-M5-RB-01
+  - HOLDOUT-M5-RB-02
+  construction_owner_access_before_this_freeze: IDENTITY_AND_HASH_ONLY_BODIES_PROHIBITED（新鲜留出正文在本次冻结前未被施工侧读取）
+  unseal_condition: 本清单 FROZEN 之后，由取证执行单元解封
+  unseal_executed: false
+run_sequence:
+- phase: P1 完整主故事
+  cases:
+  - FULL-01
+  - FULL-02
+  covers:
+  - M5-AC-02
+- phase: P2 合法短入口
+  cases:
+  - DE-01
+  - DE-02
+  - DE-03
+  - DE-04
+  - DE-05
+  - DE-06
+  - DE-07
+  - DE-08
+  - DE-09
+  - DE-10
+  catalog_id: M5-DIRECT-ENTRY-CATALOG-v1.0
+  catalog_semantics: 本次正式验收的有限库存，不把数量冻结为永久产品语义
+  covers:
+  - M5-AC-03
+- phase: P3 十九维覆盖回填
+  note: 案例可一对多；N/A 必须在运行前冻结，失败后不得追溯填写
+  covers:
+  - M5-AC-04
+- phase: P4 两级 A/B
+  cases:
+  - AB-M3-01
+  - AB-FINAL-01
+  covers:
+  - M5-AC-05
+  - M5-AC-06
+  blocking_note: 模型自评无效；实现者知道映射的评分无效。执行侧只产出盲评包，不产出分数。
+- phase: P5 留出与高风险探针
+  cases:
+  - HOLDOUT-01..06
+  - RISK-FACT-01
+  - RISK-PERM-CTA-01
+  - RISK-F10-01
+  - RISK-PUBLISH-ID-01
+  - RISK-RECOVERY-01
+  - RISK-M4-027
+  - RISK-M4-030
+  - RISK-M4-031
+  - RISK-M4-032
+  - RISK-M4-033
+  covers:
+  - M5-AC-07
+- phase: P6 不退化与受影响回归
+  cases:
+  - REG-M1
+  - REG-M2
+  - REG-M3
+  - REG-M4
+  - REG-SKILLS
+  covers:
+  - M5-AC-08
+- phase: P7 一次上下文隔离的只读开放审查
+  covers:
+  - M5-AC-08
+  constraint: 候选冻结之后进行，只读
+known_gaps_at_freeze:
+- id: GAP-B
+  statement: Content_Brief_Architect_v0.1.md §3.2 仍要求已接受的 Campaign 决策包， 而共享合同二已把持续运营决策冻结为第一合法上游。
+  status: 已披露，未消除，未涂绿
+  evidence: account-operations/tests/test_downstream_brief_consumption.py 9/9 通过， 且冻结断言恰好一条 ABSENT 指向本冲突
+  handling: 'M5 通过 source_kind: M3_OPERATION 走确定性外壳校验， **没有**把 upstream_kind 改标成 campaign'
+  resolution_owner: 合同层，不在本任务内解决
+- id: M4-ENVELOPE-QUOTE-FALSE-NEGATIVE
+  statement: 六个能力共用的 _find_scalar，其 YAML 分支捕获组排除 ASCII 引号； 值里引用了一句话该字段就对能力侧隐形，硬门给出假阴性。
+  status: 已定位，M5 侧绕开，M4 未修复
+  handling: '改用 M4 解析器自己接受的第三种形状 `key`: value，值一字不改'
+  resolution_owner: 待 Founder 裁定是否开 M4 后继任务
+- id: D-2
+  statement: Founder Canvas 在 business_delivery_outcome = UNKNOWN 且 artifact 为空时， 仍对用户宣称进度（「内容 Brief 现在开始做」）。
+  status: 已定位，未修复
+  handling: Canvas 属受保护面；任何修复须进 M5 测试候选克隆，且需新授权
+  resolution_owner: 待 Founder 裁定
+execution_may_not_declare:
+- M5-AC-05 / M5-AC-06 的盲评结论——模型自评无效，实现者知道映射的评分无效
+- M5-AC-09 Founder 产品验收
+- 任何合同状态从 IN_PROGRESS 自升为 DONE
+- 把 Founder waiver 写成技术 PASS
+freeze_preconditions_verified:
+  worktree_clean: true
+  no_running_dify_workflows: true
+  graph_hashes_read_live_at_freeze: true
+entry_mode: REBASE_TASK
+parent_candidate:
+  commit: 86af9ecd5a313ff55aff1874d29eb342299d65ff
+  frozen_at: '2026-08-28T09:14:06Z'
+rebase_authority:
+  prompt:
+    path: /mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/M5_AC07_BLOCKER_REMEDIATION_AND_EVIDENCE_REBASE_EXECUTION_PROMPT_v1.0.md
+    sha256: 9b988027438f498b25421cecd73cd9d9d302bddcf15876c6b9833eaf624ddecb
+  contract:
+    path: /mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/M5_ENGINEERING_TASK_CONTRACT_v1.1_AC07_REBASE.yaml
+    sha256: a13b5651c2065eb8ffd70c1cdbf4bf1de09fbc39f7bb5693b31231f2da2ce7dc
+formal_evidence_selection:
+  rule: 只按 FORMAL_EVIDENCE_MANIFEST_<tag>.json 的显式路径与 sha256 取证据
+  prohibited: glob / 排序 / 「最新」「最好」推断
+  builder_behaviour_without_manifest: 非零退出，不降级为猜
+  why: v1.0 的 sorted(glob)[-1] 系统性反选：正式产物带大写 F 标签排在前，结果索引里绑定的全是冻结前诊断件
