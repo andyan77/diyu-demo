@@ -257,6 +257,13 @@ def _seam_field(r, key):
         return None
 
 
+def _binding(r, key):
+    try:
+        return json.loads(r.get("binding_json") or "{}").get(key)
+    except Exception:
+        return None
+
+
 def _returns(r):
     try:
         return json.loads(((r.get("outputs") or {}).get("returns_json")) or "[]")
@@ -323,8 +330,18 @@ def _seam_record(r):
             "user_delivery_chars": len(r.get("user_delivery") or ""),
             "artifact_chars": len(r.get("artifact") or ""),
             "capabilities_skipped": o.get("capabilities_skipped"),
-            "entry_resolved": _seam_field(r, "entry_resolved") or o.get("entry_resolved"),
-            "run_mode": _seam_field(r, "run_mode") or o.get("run_mode"),
+            # 接缝自报的键名是 entry / run_mode（现场读已发布输出确认，不是猜）
+            "entry_resolved": _seam_field(r, "entry"),
+            "run_mode": _seam_field(r, "run_mode"),
+            "entry_derivation": _seam_field(r, "entry_derivation"),
+            # 接缝自己就报「有没有自动补跑上游」——这是不暗跑的**直接自报**，
+            # 与时间窗台账互为独立证据；两条都要，只信一条不够。
+            "upstream_auto_invoked": _seam_field(r, "upstream_auto_invoked"),
+            "upstream_auto_invoked_note": _seam_field(r, "upstream_auto_invoked_note"),
+            "capabilities_skipped_declared": _seam_field(
+                r, "capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied"),
+            "source_skill_path": _binding(r, "source_skill_path"),
+            "source_skill_sha256": _binding(r, "source_skill_sha256"),
             "run_id": r["run_id"], "attempts": r.get("attempts"),
             "seam_trace_json": r.get("seam_trace_json")}
 
@@ -339,6 +356,10 @@ def judge(case, rec):
     extra = ran - set(e.get("apps_allowed", set()))
     if extra:
         fails.append("窗口内出现未预期的应用调用：%s" % ", ".join(sorted(extra)))
+    ua = rec.get("upstream_auto_invoked")
+    if ua not in (None, False, "false", "False", "", [], {}):
+        fails.append("接缝自报自动补跑了上游：%r（%s）"
+                     % (ua, rec.get("upstream_auto_invoked_note")))
     if e.get("entry_resolved") and rec.get("entry_resolved") != e["entry_resolved"]:
         fails.append("entry 期望 %s 实得 %s" % (e["entry_resolved"], rec.get("entry_resolved")))
     if e.get("run_mode") and rec.get("run_mode") != e["run_mode"]:
