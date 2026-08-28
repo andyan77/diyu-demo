@@ -52,9 +52,9 @@ ORACLE_FILES = [
     "decision-chain/workflows/DIYU_M5_DIRECT_ENTRY_SUITE_v1.0.py",
     "decision-chain/workflows/DIYU_M5_RISK_PROBE_SUITE_v1.0.py",
     "decision-chain/workflows/DIYU_M5_M2_PROBE_SUITE_v1.0.py",
-    "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.1.py",
     "decision-chain/workflows/DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py",
-    "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.1.py",
     "decision-chain/workflows/DIYU_M5_BUILD_FOUNDER_PACKAGE_v1.0.py",
     "decision-chain/workflows/DIYU_M5_EVIDENCE_BINDING_v1.1.py",
 ]
@@ -184,7 +184,7 @@ SUITE_STEPS = [
      ["python3", "decision-chain/workflows/DIYU_M5_M2_PROBE_SUITE_v1.0.py", "F%s" % RUN_TAG],
      {"M2_PROBE": E + "M2_PROBE_SUITE_m2pF%s.json" % RUN_TAG}),
     ("P6 不退化与受影响回归",
-     ["python3", "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py",
+     ["python3", "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.1.py",
       "--full-story", E + "FULL_STORY_RUN_full01F%s.json" % RUN_TAG],
      {"REGRESSION": E + "REGRESSION_RESULTS_F%s.json" % RUN_TAG}),
     ("P4 两级 A/B（只产盲评包，不产分数）",
@@ -197,7 +197,7 @@ SUITE_STEPS = [
 # 出包步骤在证据清单生成之后才跑，且必须显式接清单。
 PACKAGE_STEPS = [
     ("P3 十九维覆盖回填", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py"]),
-    ("盲评包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py"]),
+    ("盲评包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.1.py"]),
     ("Founder 验收包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_FOUNDER_PACKAGE_v1.0.py"]),
 ]
 

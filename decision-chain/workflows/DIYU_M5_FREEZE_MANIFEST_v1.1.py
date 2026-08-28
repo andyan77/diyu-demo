@@ -17,17 +17,32 @@ v1.1 相对 v1.0 的绑定变化：
 """
 import hashlib
 import json
+import importlib.util
 import os
 import subprocess
 import sys
 
+
+def _load(name, rel):
+    spec = importlib.util.spec_from_file_location(
+        name, os.path.join(os.path.dirname(os.path.abspath(__file__)), rel))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+# 判据集合只有一份真源：正式运行器。清单从那里读，不另抄一份。
+ORACLE_FILES = _load("m5_formal_run", "DIYU_M5_FORMAL_RUN_v1.0.py").ORACLE_FILES
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 DOCS = os.path.join(ROOT, "decision-chain", "docs")
 V10 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml")
-V11 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.2_AC07_REBASE.yaml")
+V11 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml")
 V11_SUPERSEDED = ("V1_M5_CANDIDATE_RUN_MANIFEST_v1.1_AC07_REBASE.yaml（INVALID_BINDING_DEFECT）"
                   " / V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml"
-                  "（SUPERSEDED：候选运行时在其冻结后发生变化，见下）")
+                  "（SUPERSEDED：候选运行时在其冻结后发生变化，见下）"
+                  " / V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.2_AC07_REBASE.yaml"
+                  "（SUPERSEDED：判据版本化，见下）")
 PLAN = "/mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning"
 
 RB_PROMPT = "M5_AC07_BLOCKER_REMEDIATION_AND_EVIDENCE_REBASE_EXECUTION_PROMPT_v1.0.md"
@@ -137,6 +152,13 @@ def main():
             "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml（保留不删；原候选 %s 只读留存）"
             % base["git"]["candidate_commit"],
             V11_SUPERSEDED,
+            "v1.1.2 被取代的原因：RB2 正式运行暴露两个**判据文件**自身的缺陷——"
+            "回归套件把 --full-story 的值当成用例过滤器跑出 0/0（且返回码被丢弃，"
+            "守卫等于没装），盲评包尾部引用已删除变量 NameError。判据是在看到结果之后"
+            "才发现要改的，按 A2 不得原地改：v1.0 两份原样保留，修复版另出 v1.1，"
+            "本清单绑定新的判据集合并重新冻结。**候选运行时零改动**，"
+            "但为避免跨冻结的结转推理，RB3 重跑全部套件，不结转 RB2 的任何正式结论。"
+            "RB2 的产物一律只读留存，标 EXPLORATORY。",
             "v1.1.1 被取代的原因：新鲜留出的环境规格要求一个账号上同时存在三个 task "
             "各带一份运行状态，而 v1.1.1 的候选投影只投一个 task —— 这是候选运行时的"
             "真实缺口，由留出的形状在它运行**之前**暴露出来。修投影就是改候选运行时，"
@@ -153,6 +175,15 @@ def main():
         "frozen_at": now,
         "frozen_by": "EXECUTION",
         "status": "FROZEN",
+        "oracle_files": [{"path": f, "sha256": sha(os.path.join(ROOT, f))}
+                         for f in ORACLE_FILES],
+        "oracle_version_bump": {
+            "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py":
+                "保留冻结原件，不再被正式运行调用；缺陷：0/0 当成 PASS",
+            "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py":
+                "保留冻结原件，不再被正式运行调用；缺陷：NameError",
+            "note": "两份 v1.1 与各自 v1.0 的差异经逐行核对，零行触及判定逻辑",
+        },
     })
     out["git"] = dict(base["git"])
     out["git"].update({"candidate_commit": head,

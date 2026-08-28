@@ -4,6 +4,9 @@
 
 **Rubric 在看到结果之前冻结**，逐字取自 Task Contract 的 ab_contract，执行侧不改一个字。
 包里只有甲/乙，没有 A/B。映射在单独的封存文件里，评分完成前不打开。
+
+v1.1 相对 v1.0：尾行还在引用 v1.0 时代已删除的 raws 变量，NameError。
+改为从证据清单取来源名。其余一行未动。
 """
 import importlib.util, json, os, re, sys
 
@@ -193,7 +196,7 @@ def main():
     p = os.path.join(ROOT, "decision-chain", "docs",
                      "V1_M5_HUMAN_BLIND_REVIEW_PACKAGE_v1.0.md")
     open(p, "w", encoding="utf-8").write("".join(parts))
-    print("SAVED", p, "| 来源", os.path.basename(raws[-1]))
+    print("SAVED", p, "| 来源", EB.source_name(man, "AB_BLIND"))
     return 0
 
 

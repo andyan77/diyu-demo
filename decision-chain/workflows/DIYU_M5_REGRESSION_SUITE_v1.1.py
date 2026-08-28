@@ -8,6 +8,12 @@
 REG-SKILLS-01 的判据特别写清楚：合同要的是「六份专业 Skill 的任务适用专业价值，
 **不要求六份全部调用**」。因此这一条既要证「用到的那几份确实产生了专业价值」，
 也要证「没用到的那几份是合法跳过、且跳过被如实登记」——两头都要，只证一头是漏判。
+
+v1.1 相对 v1.0：**只修参数解析与退出码，判定逻辑一行未动。**
+v1.0 在 RB2 正式运行中跑出 0/0 PASS，原因是命令行过滤写成「丢掉所有 -- 开头的」，
+于是 --full-story 的**路径值**留了下来被当成用例过滤器，一个用例都没匹配上。
+按 A2「判据在看到结果后改必须版本化」，v1.0 原样保留不动，修复出这一版。
+本文件与 v1.0 的差异必须为零行触及 def reg_* / verdict / fails.append。
 """
 import glob, json, os, re, subprocess, sys
 
@@ -217,7 +223,21 @@ def _full_story_path():
 
 
 def main():
-    argv = [a for a in sys.argv[1:] if not a.startswith("--")]
+    # 只吃**位置参数**。上一版写成「丢掉所有 -- 开头的」，于是 --full-story 的
+    # 那个路径值留了下来被当成用例过滤器，结果一个用例都没匹配上，跑出 0/0 PASS。
+    # 0/0 不是通过，是什么都没跑。
+    FLAGS_WITH_VALUE = ("--full-story",)
+    argv, skip = [], False
+    for a in sys.argv[1:]:
+        if skip:
+            skip = False
+            continue
+        if a in FLAGS_WITH_VALUE:
+            skip = True
+            continue
+        if a.startswith("--"):
+            continue
+        argv.append(a)
     only = set((argv[0] if argv else "").split(",")) - {""}
     todo = [("REG-M1-01", reg_m1), ("REG-M2-01", reg_m2), ("REG-M3-01", reg_m3),
             ("REG-M4-01", reg_m4), ("REG-SKILLS-01", reg_skills)]
@@ -245,10 +265,18 @@ def main():
                                          ensure_ascii=False)[:220]), flush=True)
     with open(existing, "w", encoding="utf-8") as f:
         json.dump(res, f, ensure_ascii=False, indent=2)
+    print("SAVED", existing)
+    if not res:
+        # 0/0 不是通过，是什么都没跑。必须以非零退出，否则正式运行器
+        # 会把「没跑」记成「跑过且没有失败」。
+        print("\n=== 回归 0/0 —— 一个用例都没跑，这不是通过 ===")
+        return 2
     npass = sum(1 for v in res.values() if v.get("verdict") == "PASS")
     print("\n=== 回归 %d/%d PASS ===" % (npass, len(res)))
-    print("SAVED", existing)
+    return 0 if npass == len(res) else 1
 
 
 if __name__ == "__main__":
-    main()
+    # 上一版是裸 main()，返回值被丢掉，退出码永远是 0——
+    # 上面那个 0/0 守卫等于没装。
+    sys.exit(main())
