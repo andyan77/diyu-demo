@@ -24,7 +24,8 @@ import sys
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 DOCS = os.path.join(ROOT, "decision-chain", "docs")
 V10 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml")
-V11 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1_AC07_REBASE.yaml")
+V11 = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml")
+V11_SUPERSEDED = "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1_AC07_REBASE.yaml"
 PLAN = "/mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning"
 
 RB_PROMPT = "M5_AC07_BLOCKER_REMEDIATION_AND_EVIDENCE_REBASE_EXECUTION_PROMPT_v1.0.md"
@@ -33,7 +34,7 @@ RB_CONTRACT = "M5_ENGINEERING_TASK_CONTRACT_v1.1_AC07_REBASE.yaml"
 
 def psql(q, db="dify"):
     p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
-                        "-d", db, "-t", "-A", "-F", "|", "-c", q],
+                        "-d", db, "-t", "-A", "-c", q],
                        capture_output=True, text=True, timeout=180)
     return [l for l in (p.stdout or "").strip().splitlines() if l.strip()]
 
@@ -68,17 +69,25 @@ def main():
     head = sh(["git", "rev-parse", "HEAD"])
     now = psql("SELECT to_char(now() AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"');")[0]
 
+    # 用 JSON 取，不用分隔符切。v1.1 曾用 -F "|" 切分，而**七个应用的名字里本身带竖线**
+    # （M3 那个就是「… | DIYU-V1-M3-… | CANDIDATE TEST ONLY …」），字段整体错位，
+    # 写进冻结件的 graph_md5 是应用名。v1.0 没踩到只是因为它没查 name 列。
     rows = psql("""
-        SELECT a.id, a.name, md5(w.graph), coalesce(w.marked_name,''), w.created_at
-        FROM apps a JOIN workflows w ON w.app_id=a.id
-        WHERE w.version<>'draft'
-          AND w.created_at=(SELECT max(created_at) FROM workflows w2
-                            WHERE w2.app_id=a.id AND w2.version<>'draft');""")
+        SELECT row_to_json(t) FROM (
+          SELECT a.id AS id, a.name AS name, md5(w.graph) AS graph_md5,
+                 coalesce(w.marked_name,'') AS marked_name,
+                 w.created_at::text AS published_at
+          FROM apps a JOIN workflows w ON w.app_id=a.id
+          WHERE w.version<>'draft'
+            AND w.created_at=(SELECT max(created_at) FROM workflows w2
+                              WHERE w2.app_id=a.id AND w2.version<>'draft')) t;""")
     live = {}
     for r in rows:
-        p = r.split("|")
-        if len(p) >= 5:
-            live[p[0]] = {"name": p[1], "graph_md5": p[2], "marked_name": p[3], "published_at": p[4]}
+        try:
+            j = json.loads(r)
+        except Exception:
+            continue
+        live[j["id"]] = j
 
     m4 = json.load(open(os.path.join(ROOT, "decision-chain", "evidence", "m5-rb",
                                      "M4_PARSER_SUCCESSOR_BUILD.json"), encoding="utf-8"))
@@ -122,8 +131,14 @@ def main():
     out.update({
         "manifest_id": "M5-CANDIDATE-RUN-MANIFEST-v1.1-AC07-REBASE",
         "entry_mode": "REBASE_TASK",
-        "supersedes": "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml（保留不删；原候选 %s 只读留存）"
-                      % base["git"]["candidate_commit"],
+        "supersedes": [
+            "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml（保留不删；原候选 %s 只读留存）"
+            % base["git"]["candidate_commit"],
+            V11_SUPERSEDED + "（保留不删，已标 INVALID_BINDING_DEFECT：冻结脚本用 -F \"|\" "
+                             "切分 psql 输出，而七个应用名里本身带竖线，字段错位，"
+                             "写进去的 graph_md5 是应用名。该缺陷在任何正式运行之前被发现，"
+                             "其上没有产生过任何正式证据）",
+        ],
         "parent_candidate": {"commit": base["git"]["candidate_commit"],
                              "frozen_at": base["frozen_at"]},
         "rebase_authority": {

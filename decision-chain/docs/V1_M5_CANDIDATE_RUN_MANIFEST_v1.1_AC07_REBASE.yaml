@@ -4,7 +4,7 @@ gate: GATE_2_CANDIDATE
 supersedes: V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml（保留不删；原候选 86af9ecd5a313ff55aff1874d29eb342299d65ff 只读留存）
 frozen_at: '2026-08-28T13:10:08Z'
 frozen_by: EXECUTION
-status: FROZEN
+status: INVALID_BINDING_DEFECT
 freeze_semantics:
   changing_any_binding_after_freeze: 本次正式运行降级为探索，受影响验收项置 STALE，必须版本化后重新冻结
   oracle_must_precede_result: true
@@ -373,3 +373,5 @@ formal_evidence_selection:
   prohibited: glob / 排序 / 「最新」「最好」推断
   builder_behaviour_without_manifest: 非零退出，不降级为猜
   why: v1.0 的 sorted(glob)[-1] 系统性反选：正式产物带大写 F 标签排在前，结果索引里绑定的全是冻结前诊断件
+invalidated_note: 冻结脚本用 -F "|" 切分 psql 输出，而七个应用的名字里本身带竖线，字段整体错位：写进本文件的 graph_md5 实际是应用名。缺陷在任何正式运行之前被发现，本文件之上没有产生过任何正式证据。保留不删，作为失败留痕。接替者：V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml
+superseded_by: V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml
