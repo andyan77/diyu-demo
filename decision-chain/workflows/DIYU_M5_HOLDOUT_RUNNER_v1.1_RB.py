@@ -30,7 +30,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 CUSTODY_MANIFEST = os.path.join(ROOT, "decision-chain", "fixtures",
                                 "V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.1_RB.yaml")
 CANDIDATE = os.path.join(ROOT, "decision-chain", "docs",
-                         "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.2_AC07_REBASE.yaml")
+                         "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml")
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5-rb")
 
 
