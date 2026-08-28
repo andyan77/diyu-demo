@@ -230,6 +230,7 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
             continue
 
         h = rt.hop(cap, m3_judgment=judgment, upstream_delivery=upstream,
+                   upstream_capability=(last_delivered or ""),
                    registered_facts=facts, account_context=acct_text,
                    user_request=nl_request)
         ho = h["outputs"] or {}
@@ -271,6 +272,7 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
             gap_text = g.get("precise_gap") or g.get("missing") or ""
             if gap_text:
                 h2 = rt.hop(cap, m3_judgment=judgment, upstream_delivery=upstream,
+                            upstream_capability=(last_delivered or ""),
                             registered_facts=facts, account_context=acct_text,
                             user_request=nl_request, focus_fields=str(gap_text))
                 ho2 = h2["outputs"] or {}

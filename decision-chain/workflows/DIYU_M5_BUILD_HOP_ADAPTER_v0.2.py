@@ -40,8 +40,8 @@ _s.loader.exec_module(DC)
 
 ENV = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env"
 APP_NAME = "DIYU M5 TEST CANDIDATE · 跨能力接缝适配器（能力感知抽取）"
-MARKED_NAME = "m5-hop-adapt-v0.3"
-MARKED_COMMENT = "M5 集成候选 v0.3：加定向补齐入口，支持组件级 Return 后只重入该节点；定向段明示不是来源，找不到仍留空"
+MARKED_NAME = "m5-hop-adapt-v0.4"
+MARKED_COMMENT = "M5 集成候选 v0.4：补第二条可审计合成规则——上游能力已交付的 artifact 定义上就是对应字段本体；上游身份不匹配或未交付一律不合成"
 
 MODEL = {"mode": "chat", "name": "deepseek-v4-flash",
          "provider": "langgenius/deepseek/deepseek",
@@ -168,7 +168,7 @@ def _parse(raw):
 
 
 def main(extract_raw, target_capability, m3_judgment, upstream_delivery,
-         registered_facts, account_context, user_request, focus_fields):
+         upstream_capability, registered_facts, account_context, user_request, focus_fields):
     cap = (target_capability or "").strip().upper()
     if cap not in REQUIRED_BY_CAPABILITY:
         return {"capability_call": "", "professional_input": "",
@@ -216,6 +216,23 @@ def main(extract_raw, target_capability, m3_judgment, upstream_delivery,
         f["expression_subject_and_boundary"] = "%s；%s" % (f["expression_subject"],
                                                           f["expression_boundary"])
         smap["expression_subject_and_boundary"] = "DERIVED(expression_subject+expression_boundary)"
+
+    # ---- 第二条允许的合成规则：能力身份即字段身份 ----
+    # CREATIVE_SCRIPT 这个能力**交付**出来的 artifact，定义上就是脚本本身；
+    # PRODUCTION_DIRECTOR 交付的就是可执行的制作内容本体。因此当上一跳正是这些
+    # 能力且确实已交付时，把它的产物本体作为下一跳对应字段的值，
+    # **不是编造**——没有引入任何新事实，值就是上游能力自己交付的产物。
+    # 上游身份不匹配、或上游根本没交付时一律不合成，照旧计入缺口。
+    up_cap = (upstream_capability or "").strip().upper()
+    up_text = _clean(upstream_delivery)
+    ARTIFACT_IS_FIELD = {
+        "CREATIVE_SCRIPT": ["script_or_equivalent_beats", "content_body_or_beats"],
+        "PRODUCTION_DIRECTOR": ["content_body_or_beats"],
+    }
+    for key in ARTIFACT_IS_FIELD.get(up_cap, []):
+        if key in required and not f.get(key) and up_text:
+            f[key] = up_text[:6000]
+            smap[key] = "DERIVED(upstream_%s_artifact)" % up_cap
 
     # ---- 组装扁平外壳：只写目标能力真正需要的键 + 不放松边界的附加键 ----
     lines = ["provenance:",
@@ -322,6 +339,8 @@ def build_graph():
                       "required": False, "max_length": 60000, "options": []},
                      {"variable": "upstream_delivery", "label": "[UP] 上游能力已交付产出",
                       "type": "paragraph", "required": False, "max_length": 60000, "options": []},
+                     {"variable": "upstream_capability", "label": "上游能力身份（哪个能力交付了 UP）",
+                      "type": "text-input", "required": False, "max_length": 64, "options": []},
                      {"variable": "registered_facts", "label": "[FACT] 已登记事实夹具",
                       "type": "paragraph", "required": False, "max_length": 60000, "options": []},
                      {"variable": "account_context", "label": "[ASK] 账号最小当前投影",
@@ -342,6 +361,7 @@ def build_graph():
                      {"role": "user", "id": "usr-1",
                       "text": "本次要进入的专业能力：{{#m5_start.target_capability#}}\n\n"
                               "===== [M3] 运营判断正文 =====\n{{#m5_start.m3_judgment#}}\n\n"
+                              "（上一个专业能力是：{{#m5_start.upstream_capability#}}）\n"
                               "===== [UP] 上一个专业能力的已交付产出 =====\n"
                               "{{#m5_start.upstream_delivery#}}\n\n"
                               "===== [FACT] 已登记事实夹具 =====\n{{#m5_start.registered_facts#}}\n\n"
@@ -362,6 +382,7 @@ def build_graph():
                      {"variable": "target_capability", "value_selector": ["m5_start", "target_capability"]},
                      {"variable": "m3_judgment", "value_selector": ["m5_start", "m3_judgment"]},
                      {"variable": "upstream_delivery", "value_selector": ["m5_start", "upstream_delivery"]},
+                     {"variable": "upstream_capability", "value_selector": ["m5_start", "upstream_capability"]},
                      {"variable": "registered_facts", "value_selector": ["m5_start", "registered_facts"]},
                      {"variable": "account_context", "value_selector": ["m5_start", "account_context"]},
                      {"variable": "user_request", "value_selector": ["m5_start", "user_request"]},
