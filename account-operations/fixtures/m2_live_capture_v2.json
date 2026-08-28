@@ -1,0 +1,1016 @@
+{
+  "account_full": {
+    "created_at": "2026-08-27T03:17:49.393464+00:00",
+    "handle": "m3-acco-001-full",
+    "id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+    "platform": "douyin",
+    "subject_id": null,
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "account_sparse": {
+    "created_at": "2026-08-27T03:17:49.401368+00:00",
+    "handle": "m3-acco-001-sparse",
+    "id": "8d7ff29b-03db-4862-83ab-da370a2152e7",
+    "platform": "douyin",
+    "subject_id": null,
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "artifact": {
+    "content_hash": "sha256:aaaaaaaa",
+    "created_at": "2026-08-27T03:17:49.498842+00:00",
+    "id": "6ee820ba-c443-4116-a27f-34abae37a743",
+    "kind": "content",
+    "parent_artifact_id": null,
+    "task_id": "16e4b70d-f11c-41fe-b4b8-e32190c15e30"
+  },
+  "campaign_override_create_response": {
+    "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+    "created_at": "2026-08-27T03:17:49.424721+00:00",
+    "cycle_id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+    "ended_at": null,
+    "id": "41a1b3d0-5c4b-4cdb-9123-d3f583e88e40",
+    "name": "秋上新冲刺",
+    "rationale": "新品到货窗口",
+    "row_version": 1,
+    "scope_end": "2026-08-31T00:00:00+00:00",
+    "scope_start": "2026-08-20T00:00:00+00:00",
+    "status": "active",
+    "targeted_positions": [
+      "slot-2",
+      "slot-5"
+    ],
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "capture_meta": {
+    "api_base": "http://127.0.0.1:8000",
+    "baseline_equivalence_claim": {
+      "actual_build": "diyu-m2-app（运行中）",
+      "method": "docker exec sha256sum /srv/app/<f> 对 git show a7b8101:business-persistence/<f> | sha256sum",
+      "note": "v1 抓取时这两个文件只在 M2 任务分支上，因此 v1 的 market_observations 一族对 main@df2c595 记 STALE。该 STALE 现在由 v2 定向复验解除，**v1 的抓取文件不删不改**，作为历史记录保留。",
+      "result": "两个文件逐字节相同 ⇒ 本次抓取整份绑定 main@a7b8101，无分歧栏",
+      "verified_files": [
+        "app/api/knowledge.py",
+        "app/models/knowledge.py"
+      ]
+    },
+    "bound_baseline": "business-persistence@main:a7b8101",
+    "frozen_now": "2026-08-26T00:00:00+00:00",
+    "note": "真实 M2 实例响应，未经任何手工编辑",
+    "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001"
+  },
+  "content_version": {
+    "artifact_id": "6ee820ba-c443-4116-a27f-34abae37a743",
+    "content_hash": "sha256:bbbbbbbb",
+    "content_ref": null,
+    "created_at": "2026-08-27T03:17:49.512502+00:00",
+    "id": "472bf56d-73fb-41f7-9eee-9d3e21cdbb49",
+    "idempotency_key": "m3-acco-001:version-1",
+    "invalidated_at": null,
+    "invalidation_reason": null,
+    "is_current": false,
+    "produced_by": "m3-contract-capture",
+    "promoted_at": null,
+    "promoted_by": null,
+    "row_version": 1,
+    "superseded_at": null,
+    "version_no": 1,
+    "was_produced": false,
+    "was_selected": false
+  },
+  "cycle_decision_create_response": {
+    "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+    "based_on": {
+      "feedback_ids": [
+        "f9bcd000-9cd4-44ef-8c05-50129ffc4453"
+      ]
+    },
+    "created_at": "2026-08-27T03:17:49.567049+00:00",
+    "cycle_id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+    "decision": "kept_unchanged",
+    "id": "3c064f33-35b7-4dc9-9f02-53314e01f59f",
+    "idempotency_key": "m3-acco-001:decision-1",
+    "rationale": "证据不足，保持不变",
+    "resulting_cycle_id": null,
+    "source": "m3-contract-capture",
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "cycle_full_create_response": {
+    "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+    "actual_capacity": 2.0,
+    "actual_capacity_source": "本周排班",
+    "baseline_capacity": 10.0,
+    "baseline_capacity_source": "团队自述",
+    "created_at": "2026-08-27T03:17:49.408457+00:00",
+    "end_at": null,
+    "expected_publish_count": 21.0,
+    "expected_publish_count_source": "用户本轮要求",
+    "id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+    "idempotency_key": "m3-acco-001:cycle-full",
+    "is_current": true,
+    "label": "2026-08 周期（三类产能齐全）",
+    "row_version": 1,
+    "start_at": "2026-08-01T00:00:00+00:00",
+    "supersedes_cycle_id": null,
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "cycle_sparse_create_response": {
+    "account_id": "8d7ff29b-03db-4862-83ab-da370a2152e7",
+    "actual_capacity": null,
+    "actual_capacity_source": null,
+    "baseline_capacity": null,
+    "baseline_capacity_source": null,
+    "created_at": "2026-08-27T03:17:49.417048+00:00",
+    "end_at": null,
+    "expected_publish_count": 21.0,
+    "expected_publish_count_source": "用户本轮要求",
+    "id": "71a109ff-d34a-47c3-9932-b33d044fda56",
+    "idempotency_key": "m3-acco-001:cycle-sparse",
+    "is_current": true,
+    "label": "2026-08 周期（产能未知）",
+    "row_version": 1,
+    "start_at": "2026-08-01T00:00:00+00:00",
+    "supersedes_cycle_id": null,
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "feedback_create_responses": [
+    {
+      "content_version_id": null,
+      "created_at": "2026-08-27T03:17:49.538366+00:00",
+      "goal_at_the_time": "吸粉",
+      "id": "f9bcd000-9cd4-44ef-8c05-50129ffc4453",
+      "idempotency_key": "m3-acco-001:fb-real",
+      "is_manual_entry": false,
+      "is_pre_publish_review": false,
+      "is_simulated": false,
+      "is_test": false,
+      "kind": "observation",
+      "observed_at": "2026-08-22T00:00:00+00:00",
+      "payload": {
+        "views": 12000
+      },
+      "publish_instance_id": "016a6b38-80a7-4cc0-98ac-493d9e90e35b",
+      "source": "平台后台",
+      "window_end": "2026-08-24T00:00:00+00:00",
+      "window_start": "2026-08-21T00:00:00+00:00",
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    {
+      "content_version_id": "472bf56d-73fb-41f7-9eee-9d3e21cdbb49",
+      "created_at": "2026-08-27T03:17:49.550497+00:00",
+      "goal_at_the_time": "吸粉",
+      "id": "18cb67f9-669c-498e-baea-e1ea3db9cf5a",
+      "idempotency_key": "m3-acco-001:fb-prepublish",
+      "is_manual_entry": true,
+      "is_pre_publish_review": true,
+      "is_simulated": true,
+      "is_test": true,
+      "kind": "observation",
+      "observed_at": "2026-08-25T00:00:00+00:00",
+      "payload": {
+        "note": "模拟"
+      },
+      "publish_instance_id": null,
+      "source": "工程夹具",
+      "window_end": "2026-09-30T00:00:00+00:00",
+      "window_start": null,
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    }
+  ],
+  "healthz": {
+    "status": "ok"
+  },
+  "market_observation_create_responses": [
+    {
+      "fixture_name": "obs-current",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-20T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.432322+00:00",
+        "evidence_digest": null,
+        "id": "e7ae09ca-5ac4-49c7-91d9-8e75424f5691",
+        "idempotency_key": "m3-acco-001:obs-current",
+        "layer": "analysis",
+        "mechanism_summary": "通勤场景内容集中度上升",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "unknown",
+        "platform": "douyin",
+        "scope_ref": {
+          "region": "华东"
+        },
+        "source": "平台榜单",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": null,
+        "usage_limits": null,
+        "valid_until": "2026-09-30T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    },
+    {
+      "fixture_name": "obs-stale",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-03-01T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.439371+00:00",
+        "evidence_digest": null,
+        "id": "dcf2a010-24ac-4d61-8f0a-b6de3504741e",
+        "idempotency_key": "m3-acco-001:obs-stale",
+        "layer": "raw",
+        "mechanism_summary": "春季通勤",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "unknown",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "旧报告",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": null,
+        "usage_limits": null,
+        "valid_until": "2026-05-01T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    },
+    {
+      "fixture_name": "obs-other-track",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "母婴",
+        "collected_at": "2026-08-20T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.446810+00:00",
+        "evidence_digest": null,
+        "id": "a7132688-b9de-477d-828e-d82c9e2ee63e",
+        "idempotency_key": "m3-acco-001:obs-other-track",
+        "layer": "raw",
+        "mechanism_summary": "与本账号无关",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "unknown",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "平台榜单",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": null,
+        "usage_limits": null,
+        "valid_until": null,
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    },
+    {
+      "fixture_name": "obs-allowed-full-provenance",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-25T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.454490+00:00",
+        "evidence_digest": "sha256:0000demo0000allowed",
+        "id": "152bf55d-9a1e-4f42-9ad2-419ff82fe376",
+        "idempotency_key": "m3-acco-001:obs-allowed-full-provenance",
+        "layer": "analysis",
+        "mechanism_summary": "通勤品类搜索词结构变化",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "allowed",
+        "platform": "douyin",
+        "scope_ref": {
+          "region": "华东"
+        },
+        "source": "第三方行业报告",
+        "source_provider": "某咨询机构",
+        "source_reference": "https://example.invalid/report/2026-q3",
+        "source_type": "industry_report",
+        "usage_limits": null,
+        "valid_until": "2026-12-31T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    },
+    {
+      "fixture_name": "obs-restricted-with-limits",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-26T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.463213+00:00",
+        "evidence_digest": "sha256:0000demo0000restricted",
+        "id": "9a5449d4-a91c-4910-8f78-74442c12a9f0",
+        "idempotency_key": "m3-acco-001:obs-restricted-with-limits",
+        "layer": "raw",
+        "mechanism_summary": "门店试穿转化",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "restricted",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "合作方后台数据",
+        "source_provider": "合作门店",
+        "source_reference": "partner://dashboard/2026-08",
+        "source_type": "partner_backend",
+        "usage_limits": {
+          "internal_only": true,
+          "note": "仅供内部判断，禁止对外引用"
+        },
+        "valid_until": "2026-10-31T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    },
+    {
+      "fixture_name": "obs-denied",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-26T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.473664+00:00",
+        "evidence_digest": null,
+        "id": "66d10f28-c20a-4821-b77d-99d4ff1cf3ff",
+        "idempotency_key": "m3-acco-001:obs-denied",
+        "layer": "raw",
+        "mechanism_summary": "无法确认出处",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "denied",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "来源不明的截图",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": "screenshot",
+        "usage_limits": null,
+        "valid_until": null,
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    },
+    {
+      "fixture_name": "obs-period-window",
+      "response": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": "2026-08-15T00:00:00+00:00",
+        "applicable_period_start": "2026-08-01T00:00:00+00:00",
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-01T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.481418+00:00",
+        "evidence_digest": "sha256:0000demo0000period",
+        "id": "9b273b5e-730f-450f-bdfe-b36090f68974",
+        "idempotency_key": "m3-acco-001:obs-period-window",
+        "layer": "analysis",
+        "mechanism_summary": "只在活动期内适用",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "allowed",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "期间限定活动数据",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": "campaign_report",
+        "usage_limits": null,
+        "valid_until": null,
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    }
+  ],
+  "missing_actor_header": {
+    "body": {
+      "detail": "X-Actor-Ref header is required"
+    },
+    "status_code": 401
+  },
+  "permission_denied": {
+    "body": {
+      "detail": "actor is not a member of this workspace"
+    },
+    "status_code": 403
+  },
+  "publish_instance": {
+    "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+    "content_version_id": "472bf56d-73fb-41f7-9eee-9d3e21cdbb49",
+    "created_at": "2026-08-27T03:17:49.526478+00:00",
+    "id": "016a6b38-80a7-4cc0-98ac-493d9e90e35b",
+    "idempotency_key": "m3-acco-001:publish-1",
+    "is_simulated": false,
+    "is_test": false,
+    "platform": "douyin",
+    "published_at": "2026-08-21T00:00:00+00:00",
+    "registered_by": "m3-acco-001-founder",
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "reads": {
+    "campaign_overrides_active__full": [
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "created_at": "2026-08-27T03:17:49.424721+00:00",
+        "cycle_id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+        "ended_at": null,
+        "id": "41a1b3d0-5c4b-4cdb-9123-d3f583e88e40",
+        "name": "秋上新冲刺",
+        "rationale": "新品到货窗口",
+        "row_version": 1,
+        "scope_end": "2026-08-31T00:00:00+00:00",
+        "scope_start": "2026-08-20T00:00:00+00:00",
+        "status": "active",
+        "targeted_positions": [
+          "slot-2",
+          "slot-5"
+        ],
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    ],
+    "campaign_overrides_active__sparse": [],
+    "cycle_decisions_latest__full": {
+      "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+      "based_on": {
+        "feedback_ids": [
+          "f9bcd000-9cd4-44ef-8c05-50129ffc4453"
+        ]
+      },
+      "created_at": "2026-08-27T03:17:49.567049+00:00",
+      "cycle_id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+      "decision": "kept_unchanged",
+      "id": "3c064f33-35b7-4dc9-9f02-53314e01f59f",
+      "idempotency_key": "m3-acco-001:decision-1",
+      "rationale": "证据不足，保持不变",
+      "resulting_cycle_id": null,
+      "source": "m3-contract-capture",
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "cycle_decisions_latest__sparse": {
+      "decision": "none_recorded"
+    },
+    "cycles_current__full": {
+      "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+      "actual_capacity": 2.0,
+      "actual_capacity_source": "本周排班",
+      "baseline_capacity": 10.0,
+      "baseline_capacity_source": "团队自述",
+      "created_at": "2026-08-27T03:17:49.408457+00:00",
+      "end_at": null,
+      "expected_publish_count": 21.0,
+      "expected_publish_count_source": "用户本轮要求",
+      "id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+      "idempotency_key": "m3-acco-001:cycle-full",
+      "is_current": true,
+      "label": "2026-08 周期（三类产能齐全）",
+      "row_version": 1,
+      "start_at": "2026-08-01T00:00:00+00:00",
+      "supersedes_cycle_id": null,
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "cycles_current__sparse": {
+      "account_id": "8d7ff29b-03db-4862-83ab-da370a2152e7",
+      "actual_capacity": null,
+      "actual_capacity_source": null,
+      "baseline_capacity": null,
+      "baseline_capacity_source": null,
+      "created_at": "2026-08-27T03:17:49.417048+00:00",
+      "end_at": null,
+      "expected_publish_count": 21.0,
+      "expected_publish_count_source": "用户本轮要求",
+      "id": "71a109ff-d34a-47c3-9932-b33d044fda56",
+      "idempotency_key": "m3-acco-001:cycle-sparse",
+      "is_current": true,
+      "label": "2026-08 周期（产能未知）",
+      "row_version": 1,
+      "start_at": "2026-08-01T00:00:00+00:00",
+      "supersedes_cycle_id": null,
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "market_observations": [
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-25T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.454490+00:00",
+        "currently_usable": true,
+        "evidence_digest": "sha256:0000demo0000allowed",
+        "excluded_reason": null,
+        "id": "152bf55d-9a1e-4f42-9ad2-419ff82fe376",
+        "idempotency_key": "m3-acco-001:obs-allowed-full-provenance",
+        "is_expired": false,
+        "layer": "analysis",
+        "mechanism_summary": "通勤品类搜索词结构变化",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "allowed",
+        "platform": "douyin",
+        "scope_ref": {
+          "region": "华东"
+        },
+        "source": "第三方行业报告",
+        "source_provider": "某咨询机构",
+        "source_reference": "https://example.invalid/report/2026-q3",
+        "source_type": "industry_report",
+        "usage_limits": null,
+        "valid_until": "2026-12-31T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      },
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-20T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.432322+00:00",
+        "currently_usable": false,
+        "evidence_digest": null,
+        "excluded_reason": "permission_unknown",
+        "id": "e7ae09ca-5ac4-49c7-91d9-8e75424f5691",
+        "idempotency_key": "m3-acco-001:obs-current",
+        "is_expired": false,
+        "layer": "analysis",
+        "mechanism_summary": "通勤场景内容集中度上升",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "unknown",
+        "platform": "douyin",
+        "scope_ref": {
+          "region": "华东"
+        },
+        "source": "平台榜单",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": null,
+        "usage_limits": null,
+        "valid_until": "2026-09-30T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      },
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-26T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.473664+00:00",
+        "currently_usable": false,
+        "evidence_digest": null,
+        "excluded_reason": "permission_denied",
+        "id": "66d10f28-c20a-4821-b77d-99d4ff1cf3ff",
+        "idempotency_key": "m3-acco-001:obs-denied",
+        "is_expired": false,
+        "layer": "raw",
+        "mechanism_summary": "无法确认出处",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "denied",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "来源不明的截图",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": "screenshot",
+        "usage_limits": null,
+        "valid_until": null,
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      },
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-03-01T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.439371+00:00",
+        "currently_usable": false,
+        "evidence_digest": null,
+        "excluded_reason": "permission_unknown",
+        "id": "dcf2a010-24ac-4d61-8f0a-b6de3504741e",
+        "idempotency_key": "m3-acco-001:obs-stale",
+        "is_expired": true,
+        "layer": "raw",
+        "mechanism_summary": "春季通勤",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "unknown",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "旧报告",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": null,
+        "usage_limits": null,
+        "valid_until": "2026-05-01T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      },
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": "2026-08-15T00:00:00+00:00",
+        "applicable_period_start": "2026-08-01T00:00:00+00:00",
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-01T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.481418+00:00",
+        "currently_usable": true,
+        "evidence_digest": "sha256:0000demo0000period",
+        "excluded_reason": null,
+        "id": "9b273b5e-730f-450f-bdfe-b36090f68974",
+        "idempotency_key": "m3-acco-001:obs-period-window",
+        "is_expired": false,
+        "layer": "analysis",
+        "mechanism_summary": "只在活动期内适用",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "allowed",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "期间限定活动数据",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": "campaign_report",
+        "usage_limits": null,
+        "valid_until": null,
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      },
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "母婴",
+        "collected_at": "2026-08-20T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.446810+00:00",
+        "currently_usable": false,
+        "evidence_digest": null,
+        "excluded_reason": "permission_unknown",
+        "id": "a7132688-b9de-477d-828e-d82c9e2ee63e",
+        "idempotency_key": "m3-acco-001:obs-other-track",
+        "is_expired": false,
+        "layer": "raw",
+        "mechanism_summary": "与本账号无关",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "unknown",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "平台榜单",
+        "source_provider": null,
+        "source_reference": null,
+        "source_type": null,
+        "usage_limits": null,
+        "valid_until": null,
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      },
+      {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_period_end": null,
+        "applicable_period_start": null,
+        "applicable_task_id": null,
+        "applicable_track": "女装",
+        "collected_at": "2026-08-26T00:00:00+00:00",
+        "created_at": "2026-08-27T03:17:49.463213+00:00",
+        "currently_usable": true,
+        "evidence_digest": "sha256:0000demo0000restricted",
+        "excluded_reason": null,
+        "id": "9a5449d4-a91c-4910-8f78-74442c12a9f0",
+        "idempotency_key": "m3-acco-001:obs-restricted-with-limits",
+        "is_expired": false,
+        "layer": "raw",
+        "mechanism_summary": "门店试穿转化",
+        "permission_basis": null,
+        "permission_confirmed_at": null,
+        "permission_confirmed_by": null,
+        "permission_status": "restricted",
+        "platform": "douyin",
+        "scope_ref": {},
+        "source": "合作方后台数据",
+        "source_provider": "合作门店",
+        "source_reference": "partner://dashboard/2026-08",
+        "source_type": "partner_backend",
+        "usage_limits": {
+          "internal_only": true,
+          "note": "仅供内部判断，禁止对外引用"
+        },
+        "valid_until": "2026-10-31T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    ],
+    "market_observations__current_no_filter": {
+      "available": true,
+      "excluded": [
+        {
+          "id": "e7ae09ca-5ac4-49c7-91d9-8e75424f5691",
+          "reason": "permission_unknown"
+        },
+        {
+          "id": "66d10f28-c20a-4821-b77d-99d4ff1cf3ff",
+          "reason": "permission_denied"
+        },
+        {
+          "id": "dcf2a010-24ac-4d61-8f0a-b6de3504741e",
+          "reason": "permission_unknown"
+        },
+        {
+          "id": "9b273b5e-730f-450f-bdfe-b36090f68974",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "a7132688-b9de-477d-828e-d82c9e2ee63e",
+          "reason": "permission_unknown"
+        }
+      ],
+      "filters": {
+        "account_id": null,
+        "applicable_track": null,
+        "task_id": null
+      },
+      "gap_reason": null,
+      "observations": [
+        {
+          "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+          "applicable_task_id": null,
+          "applicable_track": "女装",
+          "collected_at": "2026-08-25T00:00:00+00:00",
+          "evidence_digest": "sha256:0000demo0000allowed",
+          "id": "152bf55d-9a1e-4f42-9ad2-419ff82fe376",
+          "layer": "analysis",
+          "mechanism_summary": "通勤品类搜索词结构变化",
+          "permission_status": "allowed",
+          "platform": "douyin",
+          "source": "第三方行业报告",
+          "source_provider": "某咨询机构",
+          "source_reference": "https://example.invalid/report/2026-q3",
+          "source_type": "industry_report",
+          "usage_limits": null,
+          "valid_until": "2026-12-31T00:00:00+00:00"
+        },
+        {
+          "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+          "applicable_task_id": null,
+          "applicable_track": "女装",
+          "collected_at": "2026-08-26T00:00:00+00:00",
+          "evidence_digest": "sha256:0000demo0000restricted",
+          "id": "9a5449d4-a91c-4910-8f78-74442c12a9f0",
+          "layer": "raw",
+          "mechanism_summary": "门店试穿转化",
+          "permission_status": "restricted",
+          "platform": "douyin",
+          "source": "合作方后台数据",
+          "source_provider": "合作门店",
+          "source_reference": "partner://dashboard/2026-08",
+          "source_type": "partner_backend",
+          "usage_limits": {
+            "internal_only": true,
+            "note": "仅供内部判断，禁止对外引用"
+          },
+          "valid_until": "2026-10-31T00:00:00+00:00"
+        }
+      ],
+      "queried_at": "2026-08-26T00:00:00+00:00",
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "market_observations__current_other_account": {
+      "available": false,
+      "excluded": [
+        {
+          "id": "152bf55d-9a1e-4f42-9ad2-419ff82fe376",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "e7ae09ca-5ac4-49c7-91d9-8e75424f5691",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "66d10f28-c20a-4821-b77d-99d4ff1cf3ff",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "dcf2a010-24ac-4d61-8f0a-b6de3504741e",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "9b273b5e-730f-450f-bdfe-b36090f68974",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "a7132688-b9de-477d-828e-d82c9e2ee63e",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "9a5449d4-a91c-4910-8f78-74442c12a9f0",
+          "reason": "scope_mismatch"
+        }
+      ],
+      "filters": {
+        "account_id": "8d7ff29b-03db-4862-83ab-da370a2152e7",
+        "applicable_track": null,
+        "task_id": null
+      },
+      "gap_reason": "no_observation_in_scope",
+      "observations": [],
+      "queried_at": "2026-08-26T00:00:00+00:00",
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "market_observations__current_track": {
+      "available": true,
+      "excluded": [
+        {
+          "id": "e7ae09ca-5ac4-49c7-91d9-8e75424f5691",
+          "reason": "permission_unknown"
+        },
+        {
+          "id": "66d10f28-c20a-4821-b77d-99d4ff1cf3ff",
+          "reason": "permission_denied"
+        },
+        {
+          "id": "dcf2a010-24ac-4d61-8f0a-b6de3504741e",
+          "reason": "permission_unknown"
+        },
+        {
+          "id": "9b273b5e-730f-450f-bdfe-b36090f68974",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "a7132688-b9de-477d-828e-d82c9e2ee63e",
+          "reason": "scope_mismatch"
+        }
+      ],
+      "filters": {
+        "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+        "applicable_track": "女装",
+        "task_id": null
+      },
+      "gap_reason": null,
+      "observations": [
+        {
+          "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+          "applicable_task_id": null,
+          "applicable_track": "女装",
+          "collected_at": "2026-08-25T00:00:00+00:00",
+          "evidence_digest": "sha256:0000demo0000allowed",
+          "id": "152bf55d-9a1e-4f42-9ad2-419ff82fe376",
+          "layer": "analysis",
+          "mechanism_summary": "通勤品类搜索词结构变化",
+          "permission_status": "allowed",
+          "platform": "douyin",
+          "source": "第三方行业报告",
+          "source_provider": "某咨询机构",
+          "source_reference": "https://example.invalid/report/2026-q3",
+          "source_type": "industry_report",
+          "usage_limits": null,
+          "valid_until": "2026-12-31T00:00:00+00:00"
+        },
+        {
+          "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+          "applicable_task_id": null,
+          "applicable_track": "女装",
+          "collected_at": "2026-08-26T00:00:00+00:00",
+          "evidence_digest": "sha256:0000demo0000restricted",
+          "id": "9a5449d4-a91c-4910-8f78-74442c12a9f0",
+          "layer": "raw",
+          "mechanism_summary": "门店试穿转化",
+          "permission_status": "restricted",
+          "platform": "douyin",
+          "source": "合作方后台数据",
+          "source_provider": "合作门店",
+          "source_reference": "partner://dashboard/2026-08",
+          "source_type": "partner_backend",
+          "usage_limits": {
+            "internal_only": true,
+            "note": "仅供内部判断，禁止对外引用"
+          },
+          "valid_until": "2026-10-31T00:00:00+00:00"
+        }
+      ],
+      "queried_at": "2026-08-26T00:00:00+00:00",
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "market_observations__current_track_mismatch": {
+      "available": false,
+      "excluded": [
+        {
+          "id": "152bf55d-9a1e-4f42-9ad2-419ff82fe376",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "e7ae09ca-5ac4-49c7-91d9-8e75424f5691",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "66d10f28-c20a-4821-b77d-99d4ff1cf3ff",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "dcf2a010-24ac-4d61-8f0a-b6de3504741e",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "9b273b5e-730f-450f-bdfe-b36090f68974",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "a7132688-b9de-477d-828e-d82c9e2ee63e",
+          "reason": "scope_mismatch"
+        },
+        {
+          "id": "9a5449d4-a91c-4910-8f78-74442c12a9f0",
+          "reason": "scope_mismatch"
+        }
+      ],
+      "filters": {
+        "account_id": null,
+        "applicable_track": "不存在的赛道",
+        "task_id": null
+      },
+      "gap_reason": "no_observation_in_scope",
+      "observations": [],
+      "queried_at": "2026-08-26T00:00:00+00:00",
+      "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+    },
+    "publish_instance_feedback": [
+      {
+        "content_version_id": null,
+        "created_at": "2026-08-27T03:17:49.538366+00:00",
+        "goal_at_the_time": "吸粉",
+        "id": "f9bcd000-9cd4-44ef-8c05-50129ffc4453",
+        "idempotency_key": "m3-acco-001:fb-real",
+        "is_manual_entry": false,
+        "is_pre_publish_review": false,
+        "is_simulated": false,
+        "is_test": false,
+        "kind": "observation",
+        "observed_at": "2026-08-22T00:00:00+00:00",
+        "payload": {
+          "views": 12000
+        },
+        "publish_instance_id": "016a6b38-80a7-4cc0-98ac-493d9e90e35b",
+        "source": "平台后台",
+        "window_end": "2026-08-24T00:00:00+00:00",
+        "window_start": "2026-08-21T00:00:00+00:00",
+        "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+      }
+    ]
+  },
+  "rejected__feedback_bound_to_both": {
+    "body": {
+      "detail": "exactly one of publish_instance_id or content_version_id must be set"
+    },
+    "status_code": 422
+  },
+  "rejected__prepublish_bound_to_publish_instance": {
+    "body": {
+      "detail": "is_pre_publish_review must be true iff content_version_id is set"
+    },
+    "status_code": 422
+  },
+  "task": {
+    "account_id": "88bd4b2c-d19f-46e9-b647-1bc820e84d9e",
+    "created_at": "2026-08-27T03:17:49.489389+00:00",
+    "cycle_id": "a8e6df2d-9dbb-473b-8dd1-dcc6d5ce63b4",
+    "id": "16e4b70d-f11c-41fe-b4b8-e32190c15e30",
+    "idempotency_key": "m3-acco-001:task",
+    "kind": "content_task",
+    "row_version": 1,
+    "status": "open",
+    "workspace_id": "9445511c-8008-4ca8-84a7-bab2ec80ce77"
+  },
+  "user": {
+    "created_at": "2026-08-26T11:58:02.357757+00:00",
+    "display_name": "M3 契约取证账号",
+    "external_ref": "m3-acco-001-founder",
+    "id": "c7bd95dd-0fb2-4c3f-8ee8-2a8ef558f322"
+  },
+  "workspace": {
+    "created_at": "2026-08-27T03:17:49.384503+00:00",
+    "id": "9445511c-8008-4ca8-84a7-bab2ec80ce77",
+    "kind": "personal",
+    "name": "M3 契约取证 workspace"
+  }
+}

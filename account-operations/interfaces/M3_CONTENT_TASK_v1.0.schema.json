@@ -1,0 +1,440 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diyu.local/schemas/M3_CONTENT_TASK_v1.0.schema.json",
+  "title": "M3 → Content Brief 内容任务（含合法无任务结论）",
+  "description": "M3 交给 Content Brief 的业务实质，到此为止。它刻意不包含钩子、创意机制、完整叙事、台词、镜头、表演指导、标题、封面或最终发布文案——那些是下游的选择空间，M3 写了等于把它拿走。upstream_kind 显式标注来源：已接受的共享合同二已冻结「持续运营决策」是 Content Brief 的第一条合法上游，不需要先伪造一个 Campaign 决策包。注意：仓库现行 Content_Brief_Architect_v0.1 正文仍把 Campaign 决策包写成必需输入（已登记缺口 B），因此「Brief 端是否真的接受」在下游消费测试跑通前保持 NOT_VERIFIED。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "result_kind"
+  ],
+  "oneOf": [
+    {
+      "required": [
+        "content_task"
+      ],
+      "properties": {
+        "result_kind": {
+          "const": "content_task"
+        }
+      }
+    },
+    {
+      "required": [
+        "no_content_task"
+      ],
+      "properties": {
+        "result_kind": {
+          "const": "no_content_task"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "result_kind": {
+      "enum": [
+        "content_task",
+        "no_content_task"
+      ]
+    },
+    "content_task": {
+      "$ref": "#/definitions/content_task"
+    },
+    "no_content_task": {
+      "$ref": "#/definitions/no_content_task"
+    }
+  },
+  "definitions": {
+    "content_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "upstream_kind",
+        "cycle_role",
+        "account",
+        "platform",
+        "content_form",
+        "primary_job",
+        "secondary_contributions",
+        "priority",
+        "non_sacrifice_conditions",
+        "audience_problem",
+        "audience_shift",
+        "promise_or_hypothesis",
+        "facts",
+        "gaps",
+        "capacity",
+        "permission",
+        "explicit_non_promise",
+        "observation_target",
+        "m2_binding",
+        "downstream_freedom"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "upstream_kind": {
+          "enum": [
+            "continuous_operation_decision",
+            "campaign",
+            "user_direct_topic",
+            "valid_prior_artifact",
+            "existing_script_concept"
+          ],
+          "description": "共享合同二冻结的五条合法上游。M3 产出的一律是第一条。"
+        },
+        "cycle_role": {
+          "$ref": "#/definitions/nullable_text",
+          "description": "直接任务可明确 NOT_APPLICABLE；不得为直接任务伪造周期字段。"
+        },
+        "account": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expression_subject": {
+          "$ref": "#/definitions/nullable_text"
+        },
+        "platform": {
+          "$ref": "#/definitions/nullable_text",
+          "description": "未锁定时明确写未锁定并保留平台上下文，不替用户选平台。"
+        },
+        "content_form": {
+          "$ref": "#/definitions/nullable_text"
+        },
+        "primary_job": {
+          "type": "string",
+          "minLength": 1,
+          "description": "一条任务只有一个主要业务工作。这是单值而不是数组，是刻意的。"
+        },
+        "secondary_contributions": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "string"
+          },
+          "description": "有限次要贡献。上限存在的理由：不设上限时，「有限」会退化成「把周期全部目标都写进来」。"
+        },
+        "priority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "non_sacrifice_conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "audience_problem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audience_shift": {
+          "type": "string",
+          "minLength": 1,
+          "description": "希望观众发生的变化。"
+        },
+        "promise_or_hypothesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "statement",
+              "source",
+              "confirmed_by",
+              "evidence_identity"
+            ],
+            "properties": {
+              "statement": {
+                "type": "string"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "confirmed_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "事实确认人。Content Brief v0.1 §3.2 把「该事实链有明确的事实确认人」列为阻塞项，§1 又明确区分素材提供者与事实确认人是两种身份。required 且允许 null：拿不到确认人时必须显式写 null，让「这条事实链没有确认人」对下游可见——省略这个键会让「没有确认人」和「忘了填」不可区分。"
+              },
+              "evidence_identity": {
+                "enum": [
+                  "user_statement",
+                  "confirmed_fact",
+                  "professional_judgment",
+                  "provisional_hypothesis",
+                  "real_publication_observation",
+                  "manual_platform_note",
+                  "manual_business_outcome",
+                  "external_market_observation",
+                  "simulated_or_test_feedback",
+                  "unknown"
+                ]
+              },
+              "valid_until": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "明确缺口。资料不足只降低可主张的事实专属性，不降低创意深度，也不阻断整个任务。"
+        },
+        "product_conditions": {
+          "$ref": "#/definitions/nullable_object",
+          "description": "商品/库存/价格/门店/承接窗口。仅在相关时填；不相关时 NOT_APPLICABLE，不虚构。"
+        },
+        "capacity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "actual_capacity_note"
+          ],
+          "properties": {
+            "actual_capacity_note": {
+              "type": "string"
+            },
+            "timing": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "critical_material_needs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "infeasible_if": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "什么条件会让这条任务不可行——Production Director 需要它才能早点发现不可行。"
+            }
+          }
+        },
+        "permission": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cta_class",
+            "cta_intent",
+            "risk_boundary"
+          ],
+          "properties": {
+            "cta_class": {
+              "enum": [
+                "in_platform_low_risk",
+                "business_conversion",
+                "high_risk",
+                "none"
+              ],
+              "description": "business_conversion 需要对应经营目标 + 当前有效承接路径；high_risk 需要明确授权。永远不得从经营目标推出。"
+            },
+            "cta_intent": {
+              "$ref": "#/definitions/nullable_text"
+            },
+            "fulfillment_path_verified": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "authorization_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "risk_boundary": {
+              "type": "string"
+            }
+          }
+        },
+        "explicit_non_promise": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "明确不可承诺事项。它是下游只读约束——最容易在包装环节被悄悄补回来，所以必填。"
+        },
+        "observation_target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "what_to_observe"
+          ],
+          "properties": {
+            "what_to_observe": {
+              "type": "string"
+            },
+            "evidence_identity_expected": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "expires_at": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "m2_binding": {
+          "$ref": "#/definitions/nullable_object",
+          "description": "与当前周期/对象/版本的绑定。无持久化时 NOT_APPLICABLE，且此时不得声称跨周期闭环成立。"
+        },
+        "downstream_freedom": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "下游仍可决定的创意与生产空间。写不出任何一条，通常意味着 M3 已经越界替下游做完了。"
+        }
+      }
+    },
+    "no_content_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reason",
+        "grounded_in",
+        "scope",
+        "reopen_trigger"
+      ],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "grounded_in": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "affected",
+            "unaffected"
+          ],
+          "properties": {
+            "affected": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "unaffected": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "reopen_trigger": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "nullable_text": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "availability"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "PRESENT",
+            "UNKNOWN",
+            "NOT_PROVIDED",
+            "NOT_APPLICABLE",
+            "REFUSED",
+            "EXPIRED"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "nullable_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "availability"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "PRESENT",
+            "UNKNOWN",
+            "NOT_PROVIDED",
+            "NOT_APPLICABLE",
+            "REFUSED",
+            "EXPIRED"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

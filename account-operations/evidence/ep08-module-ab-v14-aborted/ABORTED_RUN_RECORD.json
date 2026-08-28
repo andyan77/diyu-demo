@@ -1,0 +1,27 @@
+{
+  "what": "EP-08 第 8 轮 A/B 首次启动作废记录",
+  "aborted_at": "启动后约 12 分钟，完成 7/12 次调用时",
+  "why": "臂规格沿用了第 7 轮的 `_arms_and_holdouts_v4.json`，而 B 臂的 system_prompt 是**在那一轮生成时快照进去的 SKILL.md v1.3 全文**，不是运行时读取。于是这次 A/B 的 B 臂跑的仍然是旧候选——比较的是 v1.3 而不是 v1.4，拿它去判 AC-18 等于用错的东西回答问题。",
+  "how_found": "落盘前核对 arms['B']['system_prompt_sha256'] 与当前 SKILL.md 的哈希，两者不等。",
+  "disposition": "立即中止；已产出的 7 份原样移进本目录，一份不删不改，也**不进入任何判定**。",
+  "not_a_reroll": "作废的不是模型产出不好，是**输入绑错了**。四臂的输入在作废时没有任何一份被读过内容，只读过 sha256 与文件名；因此不存在按结果择优的梯度。",
+  "aborted_files": [
+    "FX-M3-HOLD-01__A.json",
+    "FX-M3-HOLD-01__Aplus.json",
+    "FX-M3-HOLD-01__B.json",
+    "FX-M3-HOLD-01__Bprime.json",
+    "FX-M3-HOLD-02__A.json",
+    "FX-M3-HOLD-02__Aplus.json",
+    "FX-M3-HOLD-02__Bprime.json"
+  ],
+  "aborted_file_sha256": {
+    "FX-M3-HOLD-01__A.json": "b4e0ef7e811bbbe95e90e97a02c7221df1403a6d5aebfa1173e974992f8e1185",
+    "FX-M3-HOLD-01__Aplus.json": "4c68e6fdc3f2d8a46f6493e36010f48844c12a8039ccefc1812757a19b19942e",
+    "FX-M3-HOLD-01__B.json": "7a836059465f524005fa28961871bc85af78da0367053ce75b679c9f8290a117",
+    "FX-M3-HOLD-01__Bprime.json": "bc478e101639352fd9911cfa3f4e9b8cbb0070187be9175f51a64b7bfe328cbc",
+    "FX-M3-HOLD-02__A.json": "184aa0dd7dd6f915af66c6b75a3db336efa5ebcf1961048881345c7acd65c75b",
+    "FX-M3-HOLD-02__Aplus.json": "124d75d3c522221c4d290ad2f783d3170b36bfb003929debf9d2271cc4ca5f71",
+    "FX-M3-HOLD-02__Bprime.json": "34f68cd836fb5d9453eafcac5980a0d0376cb64bca6920aa2841e11c0da0fe8f"
+  },
+  "fix": "新建 `prepare_ab_v5.py` 重生成臂规格：A / Aplus / Bprime **逐字节沿用**（哈希与第 7 轮相同，由脚本机械断言，不符即拒绝生成），B 臂重绑到 SKILL.md v1.4（25232 → 28445 字符，sha 4a2df40d… → 29ffed7d…）。脚本另断言 B 臂哈希**必须**变，没变就说明 SKILL 没换、重跑没有意义。"
+}

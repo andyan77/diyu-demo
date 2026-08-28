@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diyu.local/schemas/M2_TO_M3_PROJECTION_v1.0.schema.json",
+  "title": "M2 → M3 当轮最小投影",
+  "description": "本轮任务真正需要、且仍然有效的最小必要输入。不是完整数据库，不是完整账号历史。每个可缺字段一律用显式状态信封承载：缺失、拒绝、暂定、过期、不适用、未知六种情形两两不等，禁止坍缩为同一个 null。五个正交维度（信息性质／来源与证据／确认与生命周期／作用域与有效期／可用性）来自已接受的共享合同一 §三，本文件只是把它落成一个可测的载体，不新增产品语义。绑定 business-persistence @ main:df2c595 的 API 形状；该形状变化时本 Schema 与 projection.py 一并置 STALE。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projection_id",
+    "compiled_at",
+    "binding",
+    "account_anchor",
+    "objectives",
+    "stage_evidence",
+    "capacity",
+    "current_cycle",
+    "campaign_overlays",
+    "latest_cycle_decision",
+    "feedback",
+    "market_observations",
+    "permissions",
+    "gaps"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "projection_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "description": "本轮投影身份。写回候选通过 binding.projection_id 指回它，使「这个判断依据的是哪一轮的哪些输入」可回指。"
+    },
+    "compiled_at": {
+      "type": "string",
+      "description": "投影编译时间（ISO-8601 UTC）。动态证据的时效判断以它为基准。"
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workspace_id",
+        "account_id",
+        "m2_interface_baseline",
+        "task_id"
+      ],
+      "properties": {
+        "workspace_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "account_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "m2_interface_baseline": {
+          "type": "string",
+          "description": "被投影的 M2 接口基线标识，例如 main@df2c595。变化即触发 STALE。"
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "任务身份绑定。§14 要求每份证据可回指任务；允许 null，但键必须在——省略它会让「这份投影不属于任何任务」和「忘了绑」不可区分。"
+        }
+      }
+    },
+    "account_anchor": {
+      "$ref": "#/definitions/field",
+      "description": "当前有效定位，或明确标注的暂定锚点。confirmation=system_provisional 表示暂定；系统推断不因为被写入持久化就升级为用户确认事实。"
+    },
+    "objectives": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary",
+        "secondary",
+        "priority_note",
+        "non_sacrifice_conditions"
+      ],
+      "properties": {
+        "primary": {
+          "$ref": "#/definitions/field"
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        },
+        "priority_note": {
+          "$ref": "#/definitions/field"
+        },
+        "non_sacrifice_conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/field"
+          }
+        }
+      },
+      "description": "八类经营目标（长期价值/起号/吸粉/流量/GMV/线索/到店/混合）不冻结为枚举——周期层允许混合，单条内容的收敛是 Content Brief 的事。这里只承载值与它的证据身份。"
+    },
+    "stage_evidence": {
+      "$ref": "#/definitions/field",
+      "description": "成熟度线索。阶段本身由 M3 解释，不由 M2 判定，也不在投影里预先贴标签。"
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_publish_count",
+        "baseline_capacity",
+        "actual_capacity"
+      ],
+      "properties": {
+        "expected_publish_count": {
+          "$ref": "#/definitions/field"
+        },
+        "baseline_capacity": {
+          "$ref": "#/definitions/field"
+        },
+        "actual_capacity": {
+          "$ref": "#/definitions/field"
+        }
+      },
+      "description": "三值必须分别承载。任何把三者合并成一个数字、或用其中一个顶替另一个的做法，都会让产能取舍变成假的。"
+    },
+    "current_cycle": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/field"
+        },
+        {
+          "properties": {
+            "value": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/cycle_summary"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "description": "value 只能是 null 或最小周期摘要。additionalProperties:false 让「把 M2 整行塞进来」在语法层就过不去。"
+    },
+    "campaign_overlays": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "overlay_id",
+          "name",
+          "status",
+          "targeted_positions",
+          "scope_start",
+          "scope_end",
+          "rationale"
+        ],
+        "properties": {
+          "overlay_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "targeted_positions": {
+            "type": "array",
+            "description": "只有被点名的位置才被覆盖；未列出的位置仍由 M3 管理。"
+          },
+          "scope_start": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scope_end": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Campaign 到期时间。AC-11 的整条命题建立在「到期后默认恢复仍然有效的基线」之上，到期时间因此不可省略；null = 未设结束时间，与「忘了带」必须可区分。"
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "latest_cycle_decision": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/field"
+        },
+        {
+          "properties": {
+            "value": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/definitions/decision_summary"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "description": "M2 在没有任何决策记录时返回 {\"decision\":\"none_recorded\"}。它必须映射为 availability=UNKNOWN，不得与 kept_unchanged（评估过并决定保持）混为一谈。"
+    },
+    "feedback": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/feedback_item"
+      }
+    },
+    "market_observations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/market_observation_item"
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expression_permission",
+        "cta_authorizations"
+      ],
+      "properties": {
+        "expression_permission": {
+          "$ref": "#/definitions/field"
+        },
+        "cta_authorizations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/field"
+          },
+          "description": "高风险 CTA 必须来自这里的明确授权，永远不得从经营目标推出。"
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field_path",
+          "availability",
+          "note"
+        ],
+        "properties": {
+          "field_path": {
+            "type": "string"
+          },
+          "availability": {
+            "$ref": "#/definitions/availability"
+          },
+          "note": {
+            "type": "string"
+          },
+          "degraded": {
+            "type": "boolean",
+            "description": "该缺口是否已被降级处理（可条件化继续），对应共享合同一 §二第 11 项。"
+          }
+        }
+      },
+      "description": "哪些信息缺失、哪些缺失已被降级处理。空数组是合法的，表示本轮没有登记到缺口。"
+    },
+    "requested_behaviors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "可选。来自用户自然语言的行为线索，仅供参考。刻意不做成枚举、不可互斥、不构成执行路径——四类行为可组合、可跳序（AC-05）。"
+    },
+    "carried_side_requests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "可选。本轮主诉求之外尚未处理的附带诉求（共享合同一 §二第 13 项）——不进投影就会在换组件时消失。"
+    }
+  },
+  "definitions": {
+    "availability": {
+      "enum": [
+        "PRESENT",
+        "UNKNOWN",
+        "NOT_PROVIDED",
+        "NOT_APPLICABLE",
+        "REFUSED",
+        "EXPIRED"
+      ],
+      "description": "六个取值两两不等，直接对应共享合同一 §三的可用性维度：已具备／未知／未提供／不适用／拒绝提供／已失效。把其中任意两个映射成同一个 null，就是 AC-12 明确的 FAIL。"
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "availability"
+      ],
+      "properties": {
+        "value": {
+          "description": "availability 不是 PRESENT 时，value 必须为 null（由 validate_projection 强制，Schema 层不表达该跨字段约束）。"
+        },
+        "availability": {
+          "$ref": "#/definitions/availability"
+        },
+        "info_nature": {
+          "enum": [
+            "fact",
+            "preference",
+            "reference",
+            "system_judgment"
+          ],
+          "description": "共享合同一 §三 维度一。"
+        },
+        "provenance": {
+          "enum": [
+            "user_direct",
+            "sourced_material",
+            "valid_prior_artifact",
+            "authorized_external",
+            "system_derived"
+          ],
+          "description": "共享合同一 §三 维度二。"
+        },
+        "confirmation": {
+          "enum": [
+            "user_confirmed",
+            "system_provisional",
+            "rejected",
+            "superseded",
+            "expired"
+          ],
+          "description": "共享合同一 §三 维度三。系统暂定不因为被持久化就升级为用户确认。"
+        },
+        "scope": {
+          "enum": [
+            "this_content",
+            "this_cycle",
+            "this_account",
+            "long_term_subject"
+          ],
+          "description": "共享合同一 §三 维度四。「这条不要剧情」不得升级为「这个账号永久禁止剧情」。"
+        },
+        "as_of": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "valid_until": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "feedback_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feedback_id",
+        "kind",
+        "is_test",
+        "is_simulated",
+        "is_manual_entry",
+        "is_pre_publish_review",
+        "bound_to",
+        "source",
+        "observed_at",
+        "window_start",
+        "window_end",
+        "window_closed",
+        "goal_at_the_time",
+        "payload"
+      ],
+      "properties": {
+        "feedback_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "observation",
+            "interpretation",
+            "decision"
+          ],
+          "description": "观测→解释假设→是否调整的决策，三层不得跳跃（共享合同三 §四）。"
+        },
+        "is_test": {
+          "type": "boolean"
+        },
+        "is_simulated": {
+          "type": "boolean"
+        },
+        "is_manual_entry": {
+          "type": "boolean"
+        },
+        "is_pre_publish_review": {
+          "type": "boolean"
+        },
+        "bound_to": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "binding_kind",
+            "binding_id"
+          ],
+          "properties": {
+            "binding_kind": {
+              "enum": [
+                "publish_instance",
+                "content_version"
+              ]
+            },
+            "binding_id": {
+              "type": "string"
+            }
+          },
+          "description": "结构等价不代表业务身份等价：模拟/测试记录即使字段结构与真实发布相同，也必须保留可区分标注。"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observed_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "window_start": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "window_end": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "window_closed": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "观察窗是否已结束。null = 判断不了，既不是「已结束」也不是「未结束」；观察窗未结束时不得据此改判（AC-10）。三态都必须可见，所以此键 required。"
+        },
+        "goal_at_the_time": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "写入当时的目标。复盘必须按当时的目标判断，而不是按现在的目标——省略此键会让「目标变过」这件事在复盘时不可见（AC-10）。"
+        },
+        "payload": {
+          "type": "object"
+        }
+      }
+    },
+    "market_observation_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id",
+        "layer",
+        "availability",
+        "usage_permission",
+        "usable_for_inference",
+        "source",
+        "platform",
+        "collected_at",
+        "applicable_track",
+        "scope_ref",
+        "mechanism_summary",
+        "valid_until"
+      ],
+      "properties": {
+        "observation_id": {
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            "raw",
+            "analysis",
+            "homogeneous_judgment"
+          ],
+          "description": "原始观察／分析结果／高度同质判断必须分清，调用方要知道自己在看哪一层。"
+        },
+        "availability": {
+          "$ref": "#/definitions/availability"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "platform": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "collected_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "applicable_track": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scope_ref": {
+          "type": "object"
+        },
+        "mechanism_summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "valid_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "有效窗。AC-09 要求外部市场证据的时效可见；省略此键会让「这条证据没有有效期」和「不知道有效期」不可区分。"
+        },
+        "usage_permission": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "currently_usable",
+            "excluded_reason",
+            "usage_limits"
+          ],
+          "properties": {
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "M2 的来源使用授权状态原值。null = 该 M2 构建尚无权限概念，**不等于** 'unknown'。"
+            },
+            "currently_usable": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "M2 自己的可用裁决。null = 未表达。"
+            },
+            "excluded_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "usage_limits": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "description": "使用权限与时效是两个正交维度。合并进 availability 会让「为什么不能用」不可区分。"
+        },
+        "usable_for_inference": {
+          "type": "boolean",
+          "description": "唯一给下游看的结论位，永远 <= M2 自己的判断：availability=PRESENT 且 M2 未判定不可用时才为 true。"
+        }
+      },
+      "description": "过期观察以 availability=EXPIRED 保留而不是丢弃——丢弃会让「证据已过期」这件事本身不可见（AC-09）。"
+    },
+    "cycle_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cycle_id",
+        "label",
+        "start_at",
+        "end_at",
+        "is_current",
+        "supersedes_cycle_id"
+      ],
+      "properties": {
+        "cycle_id": {
+          "type": "string"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "end_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_current": {
+          "type": "boolean"
+        },
+        "supersedes_cycle_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "description": "周期摘要刻意不含任何产能字段：产能已在 capacity 里逐个带着自己的来源与可用状态，重复携带等于同一份投影里出现两个真源，declared_absences 的防坍缩会当场失效。也不含 row_version / idempotency_key 等 M2 内部键（过量读取）。"
+    },
+    "decision_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_id",
+        "cycle_id",
+        "decision",
+        "rationale",
+        "source",
+        "based_on",
+        "resulting_cycle_id"
+      ],
+      "properties": {
+        "decision_id": {
+          "type": "string"
+        },
+        "cycle_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "based_on": {
+          "type": "object"
+        },
+        "resulting_cycle_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

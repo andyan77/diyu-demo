@@ -1,0 +1,174 @@
+contract_id: DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-CONTRACT
+contract_version: "1.4"
+contract_status: FINAL_PLANNING_DELIVERABLE_READY_FOR_EXACT_FOUNDER_AUTHORIZATION
+task_id: DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001
+planning_task_id: 01a038f4-000b-7cd0-9dd2-d2dac022bf70
+task_type: MIXED
+risk_level: HIGH
+entry_mode: REBASE_TASK
+
+authority:
+  governance: RULESIDE-2026-08-25-005 / UNIVERSAL-BOUNDED-EVIDENCE-AI-COLLABORATION-v0.3.1-revision-2
+  predecessor_contract:
+    file: M3_ENGINEERING_TASK_CONTRACT_v1.3_FOUNDER_SINGLE_SET_REBASE.yaml
+    sha256: 49021e601658194bc734285830d531352c19c1fa4416855c1f524efb073bff49
+  founder_product_acceptance: PASS
+  founder_recovery_intent: >-
+    Complete M3 overall closeout by repairing the Docker Desktop to Ubuntu-22.04
+    host-volume connection, preferring recovery of the original Dify database and
+    App identity, and conditionally reconstructing only the M3 task App from the
+    frozen ep37 DSL if the correctly mounted original database remains empty.
+  engineering_authority_created_by_contract: false
+
+authorization_gate: >-
+  This contract and its paired recovery Execution Prompt become executable only
+  when Founder explicitly authorizes their exact filenames and SHA-256 hashes.
+  The authorization includes one bounded Docker Desktop restart that will stop
+  all current containers, but no volume deletion, pruning, reset, reinstall or
+  unrelated Dify recovery.
+
+what: >-
+  Recover a current, persistent, task-specific M3 v1.5.2 Dify candidate from the
+  host-mount failure; close AC-00 and AC-20 using current runtime, rollback,
+  Founder PASS and remote evidence; and finish the existing M3 engineering task
+  without any new model call, Founder test run, main merge or M5 work.
+
+why: >-
+  Repository artifacts and Founder-accepted outputs are already preserved, but
+  the currently mounted Dify database contains zero Apps. M3 cannot be called a
+  runnable closed module until a persistent live candidate is restored and bound
+  without falsifying historical App identity or test provenance.
+
+accepted_baseline:
+  task_branch: task/m3-account-content-operator-v1
+  task_branch_remote_head: 26ca3601b8d2bdd83f9b2f405b112d7d706b6986
+  observed_remote_main: a7b810109f43a4bf500acc285baab477d96796e3
+  founder_product_acceptance: PASS
+  founder_official_test_runs: 7
+  disclosed_extra_submissions: 1
+  applicable_ac_state:
+    M3-AC-01_through_M3-AC-17: PASS
+    M3-AC-18: NOT_APPLICABLE_BY_FOUNDER_REBASE
+    M3-AC-19: NOT_APPLICABLE_BY_FOUNDER_REBASE
+    M3-AC-00: NOT_VERIFIED_ABSENT
+    M3-AC-20: NOT_VERIFIED_ABSENT
+  binding_decisions:
+    - unnamed republish accepted as execution-content-equivalent, not label-identical
+    - official S6 run is 55eb0a6b; 0a0f406d remains UNAUTHORIZED_EXTRA_SUBMISSION
+    - exactly one terminal LF in user_request is accepted carrier normalization with raw mismatch retained
+  blocker_evidence:
+    - file: M3_DIFY_RECOVERY_BLOCKER_v1.0.md
+      sha256: b1c49993159d0b657cd2be61d2aff9b5c61ae6ca4f634ac3e954dbd6d7e9f400
+    - file: account-operations/evidence/ep41-founder-binding-decisions/FOUNDER_BINDING_DECISIONS.json
+      sha256: 0837d3ad6adb90d51a618a2538a9dfa0791e2635475203d9c6408c3d8f2c63ff
+    - file: account-operations/evidence/ep40-dify-recovery-v152/RECOVERY_PRECHECK_AND_BLOCKER.json
+      sha256: bdc9af3d66a75ae94874639030721dbf756dcccc1855c14c84a3d58be41f6061
+  current_progress: BLOCKED
+
+allowed_delta:
+  - inventory and preserve the current Docker/Dify state before restart
+  - confirm Docker Desktop WSL Integration for Ubuntu-22.04 and perform at most one normal Apply-and-Restart cycle
+  - perform read-only mount, PostgreSQL, storage, tenant, App and workflow-history diagnostics after restart
+  - if the original database returns, reuse it without importing ep37
+  - if the correctly mounted persistent database remains empty and all safety gates pass, initialize only the required non-production Dify recovery tenant and import the frozen ep37 M3 DSL
+  - accept a new App UUID only as a recovered current App, never as the historical Founder-run App
+  - re-establish v1.5.2 Skill, system-prompt, graph, model and rollback bindings with zero model calls
+  - update evidence, AC-00, AC-20, checkpoint, task branch and remote closeout
+
+authorized_scope:
+  docker_desktop:
+    - read settings and current container/mount inventory
+    - ensure Ubuntu-22.04 WSL Integration through supported Docker Desktop UI or supported CLI
+    - one normal Docker Desktop restart after inventory and safety checks
+  docker_and_dify:
+    - read-only inspect all existing containers, mounts, volumes and current Dify database state
+    - start the existing Dify compose stack after Docker Desktop restart if it does not start automatically
+    - read original database and storage after correct mount resolution
+    - conditionally write one recovered M3 task App only when the original persistent database is confirmed empty and safety gates pass
+    - publish the recovered v1.5.2 candidate without executing its model workflow
+  repository:
+    - write only the existing M3 task worktree and task branch
+    - commit and push only the M3 task branch
+
+never_authorized:
+  - docker factory reset, uninstall, reinstall, prune, system prune, volume prune or deletion of any volume/directory
+  - deleting, renaming, chowning, chmodding, moving or overwriting host db/storage directories
+  - editing raw Docker Desktop settings JSON when supported UI/CLI cannot safely express the change
+  - restoring, altering or claiming ownership of non-M3 Apps, tenants, users, knowledge bases or files
+  - importing ep37 before the post-restart mount and original-database checks finish
+  - presenting a new recovered App UUID as the historical b7fb5b1a-9278-426c-bb8a-f9f288639548 App
+  - any DeepSeek, Qwen or other model call; any S1-S7 rerun; any blind review or A/B
+  - modifying main, creating or merging a PR, starting M5 or claiming real business lift
+
+recovery_decision_tree:
+  original_database_returns:
+    condition: apps_count_is_nonzero_and_original_identity_evidence_is_consistent
+    action: >-
+      Do not import ep37. Locate the historical M3 App and Founder runs, verify
+      v1.5.2 content/current binding, and close using the original App identity.
+  correctly_mounted_database_remains_empty:
+    condition: >-
+      apps, accounts and tenants remain zero after correct persistent mount is
+      proven, no protected data would be overwritten, storage/db identities do
+      not conflict, and a backup/snapshot exists.
+    action: >-
+      Import ep37 as a new recovered M3 task App, record the new UUID and dual
+      identity, publish without running the workflow, and close only if all
+      deterministic bindings match.
+  unsafe_or_ambiguous:
+    action: >-
+      Stop without writes beyond preserved diagnostics. Keep BLOCKED and report
+      the exact mount, asset, tenant or permission conflict.
+
+historical_and_current_identity:
+  historical_founder_run_app_id: b7fb5b1a-9278-426c-bb8a-f9f288639548
+  historical_founder_acceptance: remains bound only to the extracted seven official runs
+  recovered_app_id: original ID if original DB returns; otherwise a newly generated UUID
+  recovered_app_claim: current content-addressed v1.5.2 reconstruction, not the historical run container
+  no_new_founder_run_required: true
+
+acceptance:
+  mount_and_persistence:
+    - post-restart mounts resolve to the intended persistent host-backed data and storage
+    - current Dify state survives one ordinary compose/container restart check without Docker Desktop factory reset
+  original_recovery_branch:
+    - original M3 App identity and historical run records are readable
+    - current published candidate is or can be restored to v1.5.2 without model calls
+  dsl_reconstruction_branch:
+    - import source is the exact frozen ep37 DSL with recorded SHA-256
+    - new App UUID and historical App UUID are separately recorded
+    - recovered graph, Skill, system prompt, model/provider/temperature and topology match frozen v1.5.2
+    - no claim that historical runs occurred on the new UUID
+  common_technical_gates:
+    - no unauthorized App, tenant, storage, credential or production mutation
+    - no http_request/tool node or unauthorized external write
+    - published prompt readback, Skill, graph and Git binding are current
+    - rollback export and restoration procedure are current and persistent
+    - credential scans are clean
+    - executor model calls remain zero
+    - main, PR and M5 remain untouched
+  ac_closeout:
+    M3-AC-00: PASS only with current persistent live candidate binding
+    M3-AC-20: PASS only with current live candidate, Founder PASS, rollback, evidence and remote closure
+    M3-AC-01_through_M3-AC-17: preserve PASS unless recovery introduces a proven dependency impact
+    M3-AC-18: NOT_APPLICABLE_BY_FOUNDER_REBASE
+    M3-AC-19: NOT_APPLICABLE_BY_FOUNDER_REBASE
+
+claim_limit: >-
+  DONE proves a persistent current v1.5.2 M3 candidate, applicable technical
+  closure and Founder acceptance of the preserved seven historical outputs. It
+  does not prove those runs occurred on a newly reconstructed UUID, superiority
+  to a good prompt, production deployment, M5 gain or real business lift.
+
+terminal_rules:
+  evaluation_order: [INVALID, DONE, PARTIAL, BLOCKED, FAILED]
+  allowed_final_states: [INVALID, DONE, BLOCKED, FAILED]
+  partial_delivery_authorized: false
+  done: AC-00 and AC-20 pass with all other applicable gates current
+  blocked: safe recovery cannot proceed without new host access, asset ownership or destructive authority
+  failed: authorized recovery changes protected data or an applicable hard gate fails irrecoverably
+  invalid: evidence identity, task authority or protected boundary is irrecoverably violated
+
+next_stage_default: false
+merge_main: NOT_AUTHORIZED
+m5: NOT_STARTED_NOT_AUTHORIZED

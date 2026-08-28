@@ -1,0 +1,405 @@
+{
+  "round": "v1.2 / 第 5 轮",
+  "method": "机械核验第 5 轮全部独立判定者是否真的只读了被允许读的东西。\n\n方法沿用第 3/4 轮：解析判定者**自己的执行记录**，只扫会造成文件访问的参数\n（`Read.file_path` / `Bash.command` / `Grep`|`Glob` 的 pattern 与 path），\n不扫 `Write`/`Edit` 的正文，也不扫 Bash heredoc 的载荷——\n判定者在自己写的文件里提到某个文件名是\"提及\"，不是\"读取\"。\n这两个形态各在第 3、4 轮造成过一次假阳性，都已修掉并留在这里作回归。\n\n本轮新增：36 名单臂盲评者跑在 workflow 里，执行记录是\n`subagents/workflows/<run>/agent-*.jsonl`，格式与 Agent 工具的 `tasks/*.output` 相同。\n\n**本核验能证明什么、不能证明什么**：它能证明判定者没有读过去盲文件；\n它**不能**证明盲评有效——第 4 轮的盲评正是被输出自身的结构指纹去盲的，\n那条通道不需要读任何文件。指纹本身由 `_leak_scan_v3.json` 单独机械扫描。",
+  "repo_judge_forbidden_markers": [
+    "M3_CHECKPOINT_",
+    "M3_ACCEPTANCE_CRITERIA_FROZEN",
+    "M3_ECC_REBIND_",
+    "M3_FOUNDER_",
+    "GATE_DEFECTS_",
+    "_VERDICT_",
+    "git log",
+    "git show",
+    "git reflog"
+  ],
+  "blind_judge_forbidden_markers": [
+    "diyu-demo",
+    "diyu-demo-worktrees",
+    "_SEALED",
+    "_arms_and_holdouts",
+    "SKILL.md",
+    "M3_",
+    "git log",
+    "git show",
+    "git reflog",
+    "git ",
+    "scratchpad/m3/",
+    "ep08-module-ab"
+  ],
+  "blind_judge_note": "本核验只能证明盲评者没读过去盲文件；它**不能**证明盲评有效。输出自身的结构指纹是另一条通道，由 _leak_scan_v3.json 单独机械扫描。",
+  "judges": {
+    "fidelity-v12": {
+      "transcript_found": true,
+      "transcript": "a4ae25c9e43bdab1f.output",
+      "tool_use_count": 32,
+      "distinct_path_refs": 12,
+      "refs_outside_allowlist": [
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/",
+        "SKILL.md"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "behavior-002-v12": {
+      "transcript_found": true,
+      "transcript": "acec0c5738427274c.output",
+      "tool_use_count": 48,
+      "distinct_path_refs": 14,
+      "refs_outside_allowlist": [
+        "/home/faye/.claude/projects/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/tool-results/bd1dfo0tc.txt",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/v.txt",
+        "M3_ACCOUNT_CONTENT_OPERATOR_SEMANTIC_COMPILATION_v1.0.md",
+        "SKILL.md"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "longitudinal-v12-stale": {
+      "transcript_found": true,
+      "transcript": "a309ff0111652f15a.output",
+      "tool_use_count": 50,
+      "distinct_path_refs": 23,
+      "refs_outside_allowlist": [
+        "/home/faye/diyu-demo-worktrees/",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/account-operations/evidence/",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/ep07snap",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/ep07snap/"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "longitudinal-v12-g1fix": {
+      "transcript_found": true,
+      "transcript": "ae2530e6e27c2d2d7.output",
+      "tool_use_count": 41,
+      "distinct_path_refs": 13,
+      "refs_outside_allowlist": [
+        "M3_ACCOUNT_CONTENT_OPERATOR_SEMANTIC_COMPILATION_v1.0.md",
+        "SKILL.md"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_08-a0516e": {
+      "transcript_found": true,
+      "transcript": "agent-a0516eec6b901b152.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_08",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_02-a19d7e": {
+      "transcript_found": true,
+      "transcript": "agent-a19d7e0ad22509f19.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_02",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_10-a1c9f4": {
+      "transcript_found": true,
+      "transcript": "agent-a1c9f4bcefbd30bcf.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_10",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_09-a1f59c": {
+      "transcript_found": true,
+      "transcript": "agent-a1f59c6886caefa7e.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_09",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_01-a233ab": {
+      "transcript_found": true,
+      "transcript": "agent-a233ab1aa2f450735.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_01",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_08-a26c66": {
+      "transcript_found": true,
+      "transcript": "agent-a26c6684be3fd7d42.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_08",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_11-a26f3c": {
+      "transcript_found": true,
+      "transcript": "agent-a26f3ce6e86dbf23b.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_11",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_11-a29fba": {
+      "transcript_found": true,
+      "transcript": "agent-a29fbae26a074d992.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_11",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_06-a36e42": {
+      "transcript_found": true,
+      "transcript": "agent-a36e421d32a27e0ae.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_06",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_09-a3d33d": {
+      "transcript_found": true,
+      "transcript": "agent-a3d33d49fe01f31fa.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_09",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_07-a47ad5": {
+      "transcript_found": true,
+      "transcript": "agent-a47ad503979a6bfa9.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_07",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_12-a4dbde": {
+      "transcript_found": true,
+      "transcript": "agent-a4dbde80c349c7e1b.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_12",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_04-a50994": {
+      "transcript_found": true,
+      "transcript": "agent-a50994bb217f7ef1e.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_04",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_03-a5305d": {
+      "transcript_found": true,
+      "transcript": "agent-a5305d295431310a4.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_03",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_03-a58ac8": {
+      "transcript_found": true,
+      "transcript": "agent-a58ac82190a688776.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_03",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_01-a5a0ce": {
+      "transcript_found": true,
+      "transcript": "agent-a5a0ce7481ce0f888.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_01",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_09-a61c99": {
+      "transcript_found": true,
+      "transcript": "agent-a61c995b54f89be1d.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_09",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_10-a6293f": {
+      "transcript_found": true,
+      "transcript": "agent-a6293ffe3f4994f3a.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_10",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_04-a66be5": {
+      "transcript_found": true,
+      "transcript": "agent-a66be58696a88cd26.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_04",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_08-a79a2e": {
+      "transcript_found": true,
+      "transcript": "agent-a79a2e3c47fa80722.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_08",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_05-a82103": {
+      "transcript_found": true,
+      "transcript": "agent-a821038a187ea8739.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_05",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_01-a8d840": {
+      "transcript_found": true,
+      "transcript": "agent-a8d84015a2bf2830f.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_01",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_06-a95e78": {
+      "transcript_found": true,
+      "transcript": "agent-a95e78de367460e4d.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_06",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_05-aad4f1": {
+      "transcript_found": true,
+      "transcript": "agent-aad4f1af206002a7c.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_05",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_03-ab2509": {
+      "transcript_found": true,
+      "transcript": "agent-ab250929cc5d97d59.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_03",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_02-ab9e5d": {
+      "transcript_found": true,
+      "transcript": "agent-ab9e5da7e684ab6ff.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_02",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_02-ac2922": {
+      "transcript_found": true,
+      "transcript": "agent-ac29220981afa8482.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_02",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_05-ac9d4c": {
+      "transcript_found": true,
+      "transcript": "agent-ac9d4cb74f5ee2811.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_05",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_12-aca745": {
+      "transcript_found": true,
+      "transcript": "agent-aca745bb3f0e3e7a4.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_12",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_10-acac47": {
+      "transcript_found": true,
+      "transcript": "agent-acac470b637019c8a.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_10",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_06-acc042": {
+      "transcript_found": true,
+      "transcript": "agent-acc0426614abf01d0.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_06",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_04-ad7e2d": {
+      "transcript_found": true,
+      "transcript": "agent-ad7e2dd4d6934de43.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_04",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_07-ae5041": {
+      "transcript_found": true,
+      "transcript": "agent-ae5041c6daac5d8ae.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_07",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_12-aea31f": {
+      "transcript_found": true,
+      "transcript": "agent-aea31ffdc89095db0.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_12",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_11-af4fb1": {
+      "transcript_found": true,
+      "transcript": "agent-af4fb1b49d866059e.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_11",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_07-af6201": {
+      "transcript_found": true,
+      "transcript": "agent-af620132a725e50a9.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_07",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "closeout-reviewer-v12": {
+      "role": "独立收口 Reviewer（EP-09 / AC-19）",
+      "transcript": "a9b181bf8201bbc4d.output",
+      "tool_use_count": 69,
+      "isolation_applicability": "NOT_APPLICABLE",
+      "applicability_basis": "M3_INDEPENDENT_REVIEWER_RUBRIC_FROZEN_v1.0.md 在它开跑之前即授权其通读全部材料（含 Checkpoint、验收判据、REBIND 件、判定件、证据目录、git 历史）。本角色的判据就是找声明与证据的落差，因此不存在'被禁读且确实未读'的文件清单。适用性在运行前由权威依据定，不是失败后追溯填写。",
+      "what_is_still_mechanically_checked": "它有没有写过 M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md 之外的任何仓库文件。",
+      "repo_writes_outside_own_file": [],
+      "mutating_bash_commands": [],
+      "write_scope_verdict": "CLEAN",
+      "corroboration": "Reviewer 交付后 `git status --short` 只有一条 `?? M3_INDEPENDENT_CLOSEOUT_REVIEW_V12_v1.0.md`，与本项一致。",
+      "checker_false_positive_families_fixed": [
+        "把裸 `cat X`（读）当成写 —— 31 条全假阳性",
+        "`git merge-base` / `git branch --show-current` 被 `git merge` / `git branch` 词干误命中",
+        "heredoc 与 `python3 -c` 正文里的 `>` `>=` 是比较号，不是重定向 —— 与判定者扫描器第 3、4 轮修过的两次同类",
+        "`echo \"a -> b\"` 里的 `->` 被当成重定向"
+      ],
+      "checker_note": "本核验器与判定者扫描器一样，是逐次被假阳性打磨出来的；上面四类已写死为判据。它**只能**证明'没有写过自己那份文件之外的仓库文件'，不能证明判定内容正确——内容正确与否由 Reviewer 自己的复算和任何人的重跑决定。"
+    }
+  },
+  "summary": {
+    "total": 41,
+    "violations": [],
+    "transcript_missing": [],
+    "isolation_verified": 40,
+    "isolation_not_applicable": [
+      "closeout-reviewer-v12"
+    ],
+    "note": "41 = 40 名受隔离约束的判定者（全部 CLEAN）+ 1 名按 Rubric 授权通读全部材料的独立收口 Reviewer（隔离性 NOT_APPLICABLE，另核写入范围）。"
+  }
+}

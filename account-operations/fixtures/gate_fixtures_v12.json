@@ -1,0 +1,325 @@
+{
+  "suite": "M3-GATE-V12-DETERMINISTIC-FIXTURES",
+  "version": "v1.0",
+  "note": "正负夹具：每条绑定一个 v1.1 实测缺陷或一条必须不误伤的合法形态。",
+  "cases": [
+    {
+      "case_id": "POS-01-conflict-full",
+      "why": "冲突反馈四项齐备、无泄漏、逐个点名延续",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "gate_status": "CLEAN",
+        "needs_fix": "no",
+        "continuity_status": "OK"
+      }
+    },
+    {
+      "case_id": "NEG-A1-zero-output",
+      "why": "G6 复现：模型零正文",
+      "draft": "",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: NOT_LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "gate_status_prefix": "HARD_FAIL_MIN_OUTPUT",
+        "needs_fix": "no"
+      }
+    },
+    {
+      "case_id": "NEG-A2-think-only",
+      "why": "只有推理块，正文为空",
+      "draft": "<think>\n<!--dify-deepseek-reasoning-->`\n</think>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: NOT_LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "gate_status_prefix": "HARD_FAIL_MIN_OUTPUT",
+        "needs_fix": "no"
+      }
+    },
+    {
+      "case_id": "NEG-A3-reference-only",
+      "why": "G6 补齐后的形态：整份交付只是一句参考文件说明",
+      "draft": "本轮没有附上任何参考资料，所以我不引用行业惯例、季节结论或平台规则；相关的行业判断本轮不可得，也没有别的资料可以代替。这一点先说明清楚。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=否;无内容任务=否\n参考文件加载状态 :: 本轮没有附上任何参考资料，所以我不引用行业惯例、季节结论或平台规则\n已加载参考文件 :: 无\n未加载参考文件 :: references/fashion-and-market.md, references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: NOT_LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "gate_status_prefix": "HARD_FAIL_MIN_OUTPUT",
+        "needs_fix": "no"
+      }
+    },
+    {
+      "case_id": "NEG-B1-no-audit-block",
+      "why": "B-1 复现：审计块缺失。v1.1 会静默跳过全部检查；v1.2 判为可修复缺口，且触发条件改由输入计算 + 正文结构证据决定，不靠自报，也不一律按触发处理（一律按触发会逼模型为不存在的提案编内容）",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "gate_status": "NEEDS_FIX",
+        "needs_fix": "yes",
+        "audit_block_missing": true,
+        "trigger_effective_conflict": true,
+        "trigger_effective_explore": false
+      }
+    },
+    {
+      "case_id": "NEG-B2-selfreport-false-but-input-true",
+      "why": "E07 复现：输入里三条冲突反馈，模型自报冲突反馈=否且声称反馈没进来",
+      "draft": "**结论**：本轮是复盘更新轮，但核心输入缺了——新反馈的本体还没有进来。没有反馈内容，我进不了绑定与判断流程；现在硬做等于编造反馈，会把上一轮刚形成的三条判断一起污染。所以本轮先不产出任何改判。\n\n**依据**：要谈改判，得先绑定这条反馈的内容版本、平台、观察窗、来源和分发条件，再写观察，再谈原因。现在缺的正是第一步的输入本身。上轮挂着的素材确认仍未回答，它和新反馈是否相交，要看到反馈后才能判断。\n\n**收到反馈后我会**：先做绑定与证据身份检查；再判断它支持、冲突还是推翻上轮哪条判断；只改证据实际支持的最小范围，未受影响的判断明确保持。\n\n**下一步（一个问题）**：新反馈的具体内容是什么？最好连同它绑定的内容、来源和观察窗口一起发我。本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=否;无内容任务=否\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "needs_fix": "yes",
+        "min_missing_items": 4,
+        "has_input_contradiction": true,
+        "trigger_effective_conflict": true
+      }
+    },
+    {
+      "case_id": "POS-B3-input-says-no-conflict",
+      "why": "反向：输入确实没有反馈时不得误触发冲突反馈",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：本轮没有新的反馈进来——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=否;无内容任务=否\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "trigger_effective_conflict": false
+      }
+    },
+    {
+      "case_id": "NEG-B4-anchor-tentative-computed",
+      "why": "account_anchor 未提供 ⇒ 暂定锚点必然触发，自报=否压不下去",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=否;无内容任务=否\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 未提供\npositioning: 暂定 —— 用户口头说是做女装的新号，尚未确认\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "trigger_effective_anchor": true,
+        "needs_fix": "yes",
+        "min_missing_items": 4
+      }
+    },
+    {
+      "case_id": "NEG-B5-explore-selfreport-no-but-body-yes",
+      "why": "探索算不出 ⇒ 自报=否但正文有探索措辞 ⇒ fail-closed",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n另外这次我想小范围测试一个新方向，看看会不会有反应。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "trigger_effective_explore": true,
+        "has_fail_closed_block": true,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-D1-label-in-body",
+      "why": "v1.1 的形态：方括号标签与机器值进了用户可见正文",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n`[参考文件加载状态]` references/fashion-and-market.md: LOADED；references/six-skill-methods.md: NOT_LOADED（已记入 missing[]，按规则跳过）。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_render": 2,
+        "min_leaks": 1,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-D2-rule-id-leak",
+      "why": "内部规则号 O-10 出现在用户可见正文",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n我按 O-10 的七步走了一遍。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_leaks": 1,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-P6-shell-family-as-evidence",
+      "why": "审计块缺失但正文里写了 [探索·*] 标签族 ⇒ 渲染层剥掉它的同时把该族记为结构证据，触发判是",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n[探索·不确定性] 受众看到上身效果后是否真的不再集中索要，现在没有把握。",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "trigger_effective_explore": true,
+        "audit_block_missing": true,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-E1-bare-labels",
+      "why": "B08-P 复现：裸标签自检段，v1.1 的精确匹配整族逃逸",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n[参考文件加载状态] 已列明。\n[冲突反馈] 已按规则处理。\n[暂定锚点] 不适用\n[无内容任务] 不适用\n[]\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_render": 1,
+        "no_bracket_labels_in_final": true
+      }
+    },
+    {
+      "case_id": "NEG-E2-hollow-anchor",
+      "why": "锚定行引用空洞短语",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 不适用\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_hollow": 1,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-E3-unanchored",
+      "why": "锚定行引用了正文里根本没有的句子",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 我已经完整分析了三条反馈之间的全部冲突关系\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_unanchored": 1,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-E4-overlap",
+      "why": "多项锚定行引用正文同一段文字",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_overlap": 1,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-E5-decorative",
+      "why": "触发未命中却写了该族锚定行",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：本轮没有新的反馈进来——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "min_decorative": 4,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "NEG-F1-dropped",
+      "why": "基线里的 P1/P2/P3 与节奏在本轮全部消失且无处置",
+      "draft": "**结论**：这条内容我建议先不发，等门店那边把尺码补齐再说。\n\n**关键依据**：现在手里只有一条昨天发布的数据，观察窗还没走完，拿它改判会把上一轮刚形成的判断一起推翻。门店那边由陈晚口头转述的顾客变少，和后台看到的互动升高不是一回事，两者的证据身份完全不同。\n\n**主要取舍**：让掉的是立刻响应门店反馈这条路，代价是慢一周才能确认。\n\n**下一步**：等门店把尺码口径给我。本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 门店那边由陈晚口头转述的顾客变少，和后台看到的互动升高不是一回事\n冲突反馈·各自证据身份 :: 两者的证据身份完全不同\n冲突反馈·为什么保持或改变 :: 这条内容我建议先不发，等门店那边把尺码补齐再说\n冲突反馈·还需要什么观察 :: 现在手里只有一条昨天发布的数据，观察窗还没走完\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "continuity_status": "MERGED",
+        "projection_mode": "MERGED_KEEP_PRIOR",
+        "why_not_blocking": "本轮未重述 ≠ 内容丢了；O-11 要求限定影响面，聚焦回答不该被逼成全量重写。真正的防线在投影侧：逐字保留上一基线相应原句，显式记 MERGED_KEEP_PRIOR。"
+      }
+    },
+    {
+      "case_id": "POS-F2-blanket",
+      "why": "概括性延续声明 ⇒ 交付不判失败，但投影必须改为逐字保留",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，其余判断保持不变。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "continuity_status": "BLANKET_CARRY",
+        "gate_status": "CLEAN"
+      }
+    },
+    {
+      "case_id": "POS-F3-no-baseline",
+      "why": "首轮没有基线 ⇒ 连续性不适用，不得误报",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：本轮没有新的反馈进来——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=否;无内容任务=否\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 未提供\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 尚无 —— 本账号还没有被接受的周期基线\n",
+      "expect": {
+        "continuity_status": "NO_BASELINE"
+      }
+    },
+    {
+      "case_id": "NEG-G1-manifest-contradiction",
+      "why": "清单说 LOADED，正文说未加载",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：服装经营方面的参考资料本轮未加载，另一份方法参考也没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 服装经营方面的参考资料本轮未加载，另一份方法参考也没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "min_manifest_contradiction": 1,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "POS-P1-explore-negated",
+      "why": "SKILL O-5 要求写「本轮不安排探索」，不得因此被判成触发",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n本轮不安排探索：三个待验证方向的承接条件都还没到位，产能也已满。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "trigger_effective_explore": false,
+        "gate_status": "CLEAN"
+      }
+    },
+    {
+      "case_id": "POS-P2-explore-conditional",
+      "why": "复验触发条款里的「是否要试新方向」是未来条件，不是本轮提案",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n复验触发：出现任一新反馈或市场观察后，重新评估是否要试新方向。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "trigger_effective_explore": false,
+        "gate_status": "CLEAN"
+      }
+    },
+    {
+      "case_id": "NEG-P3-explore-real-proposal",
+      "why": "真的提出探索却自报=否 ⇒ 必须 fail-closed",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n另外本周期我建议先试一次上身效果展示，小范围跑一条看反应。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "trigger_effective_explore": true,
+        "has_fail_closed_block": true,
+        "needs_fix": "yes"
+      }
+    },
+    {
+      "case_id": "POS-P4-slot-value-is-absence",
+      "why": "槽值本身就是一句缺失声明（无覆盖／无任何外部市场资料），逐字回抄不得被判自相矛盾",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n本轮没有外部市场资料可用，也没有活动覆盖，所以我不引入外部机会判断。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 无任何外部市场资料\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "has_input_contradiction": false,
+        "gate_status": "CLEAN"
+      }
+    },
+    {
+      "case_id": "POS-P5-inapplicable-exempt",
+      "why": "触发命中但某项确实不适用 ⇒ 写「不适用：<实质原因>」即可，不必往正文塞话",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 不适用：这三条的观察窗口安排本轮不由本能力决定\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "gate_status": "CLEAN",
+        "min_inapplicable": 1
+      }
+    },
+    {
+      "case_id": "POS-P7-topic-absent-not-slot-absent",
+      "why": "正文说「三条反馈里没有任何一条提到上身效果」——这是真话（L5 三色对比 / L6 门店顾客 / L7 价格），旧口径把它判成「说槽位缺失」，补齐节点据此改成「反馈里确实有内容提到上身效果」，**闸门逼出了假话**。这条夹具锁死：内容里没有某个话题 ≠ 槽位本身没送到。",
+      "draft": "**结论**：本轮不改周期方向，只把 P2 版型对比这一条的验证重点换成门店端反馈与线上互动为什么不同向。\n\n**关键依据和假设**：这三条反馈指向的方向并不一致——视频号后台的发布观测说三色对比互动高于同类，门店那边由陈晚口头转述说来问针织马甲的顾客反而变少了，还有一条昨天刚发的只有一天数据、观察窗到 9 月 1 日才结束。这三条不是一回事：一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完，不能拿来改判。既然线上互动和门店问询指向相反，我先保留原判断，不因为其中任何一条单独改周期。要真正说清楚，需要再看一次门店问询的口径是不是和线上人群同一批人，以及那条未结束的内容在窗口走完之后的完整数据。\n\n**主要取舍和代价**：让掉的是立刻按门店反馈收缩针织马甲内容这条路，代价是如果门店的下滑是真的，我会晚一周才发现。\n\n**受影响的任务**：P2 版型对比改验证重点，P1、P3 保持不变，本周期节奏仍为 3 条/周。\n\n**下一步**：本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上，所以我没有引用那部分方法细节。\n\n上一轮把三条归成观众想看上身效果，这个结论要撤回：三条反馈里没有任何一条提到上身效果或试穿。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "has_input_contradiction": false,
+        "gate_status": "CLEAN"
+      }
+    },
+    {
+      "case_id": "NEG-P8-slot-absent-still-caught",
+      "why": "反向：真的声称槽位本身没送到，仍然必须命中（E07 第 4 轮的原始失效形态）",
+      "draft": "**结论**：本轮是复盘更新轮，但核心输入缺了——新反馈的本体还没有进来。没有反馈内容，我进不了绑定与判断流程；现在硬做等于编造反馈。\n\n**依据**：要谈改判，得先绑定这条反馈的内容版本、平台、观察窗、来源和分发条件，再写观察，再谈原因。现在缺的正是第一步的输入本身。\n\n**收到反馈后我会**：先做绑定与证据身份检查；再判断它支持、冲突还是推翻上轮哪条判断；只改证据实际支持的最小范围，未受影响的判断明确保持。\n\n**下一步（一个问题）**：新反馈的具体内容是什么？最好连同它绑定的内容、来源和观察窗口一起发我。本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上。\n\n<<AUDIT>>\n探索提案=否;暂定锚点=否;冲突反馈=是;无内容任务=否\n冲突反馈·冲突在哪 :: 既然线上互动和门店问询指向相反，我先保留原判断\n冲突反馈·各自证据身份 :: 一条是平台上的真实发布观测，一条是人工转述的经营结果，一条的观察窗根本还没走完\n冲突反馈·为什么保持或改变 :: 不因为其中任何一条单独改周期\n冲突反馈·还需要什么观察 :: 需要再看一次门店问询的口径是不是和线上人群同一批人\n参考文件加载状态 :: 本轮附了服装经营方面的参考资料，另一份关于六份既有能力的方法参考本轮没有附上\n已加载参考文件 :: references/fashion-and-market.md\n未加载参考文件 :: references/six-skill-methods.md\n<<END_AUDIT>>",
+      "manifest": "<<REFERENCE_MANIFEST>>\nreferences/fashion-and-market.md: LOADED\nreferences/six-skill-methods.md: NOT_LOADED\n<<END_REFERENCE_MANIFEST>>",
+      "account_context": "[账号上下文 — 由 M2→M3 最小投影提供，非用户口头输入]\naccount_anchor: 序里集 商品负责人「周宁」账号（已确认组织角色）\npositioning: 已确认 —— 商品选品、版型比较的第一手讲述人\nplatform: 视频号\ncurrent_task: 初秋通勤衣橱第一阶段上新（四周）\nstage_evidence: 未提供\nexpected_publish_count: 3 条/周\nbaseline_capacity: 3 条/周\nactual_capacity: 3 条/周\nfacts_and_assets: 针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货\nmarket_observations: 未提供\nfeedback: 反馈L5：kind=真实发布观测，is_test=false，window 已结束，source=视频号后台；内容：三色对比互动高于同类。反馈L6：kind=人工经营结果，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：仅 1 天数据\ncampaign_overlay: 无覆盖\nexpression_permission: 低风险互动 CTA 可自主提出\nprimary_objective: 长期价值\nsecondary_objectives: 未提供\nstanding_cycle_baseline: 本周期节奏为 3 条/周。P1 上身效果展示，P2 版型对比，P3 供应商取舍讲述。\n",
+      "expect": {
+        "has_input_contradiction": true,
+        "needs_fix": "yes"
+      }
+    }
+  ]
+}

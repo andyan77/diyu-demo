@@ -1,0 +1,209 @@
+
+======================================================================
+=== EP-06 保真 9 例 -> ep06-runtime-fidelity-dify-v15 ===
+=== dify G1-A-goal-long-term-value start ===
+=== dify G1-B-goal-gmv start ===
+=== dify G2-negative-cta-permission start ===
+    done G1-B-goal-gmv 200 succeeded tokens=35093 165.79s
+=== dify G3-boundary-capacity-conflict start ===
+    done G1-A-goal-long-term-value 200 failed tokens=36000 201.66s
+=== dify G4-degradation-partial-product-failure start ===
+    done G2-negative-cta-permission 200 succeeded tokens=39466 203.71s
+=== dify G5-evidence-expiry-observation-window start ===
+    done G3-boundary-capacity-conflict 200 succeeded tokens=50864 265.76s
+=== dify G6-attachment-unloaded start ===
+    done G5-evidence-expiry-observation-window 200 succeeded tokens=48536 262.46s
+=== dify G7-A-platform-locked start ===
+    done G4-degradation-partial-product-failure 200 succeeded tokens=55077 334.42s
+=== dify G7-B-platform-unlocked start ===
+    done G6-attachment-unloaded 200 succeeded tokens=32824 162.65s
+    done G7-A-platform-locked 200 succeeded tokens=51465 299.58s
+    done G7-B-platform-unlocked 200 succeeded tokens=61360 372.96s
+
+done. total_tokens=410685
+=== EP-06 保真 9 例 结束 ok=True err=None 用时 15.2 分钟
+
+======================================================================
+=== EP-06b 行为 49 例 -> ep06b-runtime-behavior-v15 ===
+oracle: BEHAVIOR_CASES_v2.json v2.0 sha256 13e95684e3879802
+start B01-P-publish-calendar
+start B02-1-no-matrix
+start B02-2-blank-account
+  done B02-2-blank-account 200 succeeded tok=55800 340.0s
+start B02-2P-probe-positioning
+  done B02-1-no-matrix 200 succeeded tok=60906 361.86s
+start B02-3-enterprise-provisional
+    transport failure, retry 1/2 in 20s: [models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443):
+  done B02-3-enterprise-provisional 200 succeeded tok=36643 143.03s
+start B02-4-blocking-dependency
+  done B02-2P-probe-positioning 200 succeeded tok=42546 207.6s
+start B03-1-objective-01
+  done B01-P-publish-calendar 200 succeeded tok=49868 291.24s
+start B03-2-objective-02
+  done B03-1-objective-01 200 succeeded tok=66637 427.79s
+start B03-3-objective-03
+    transport failure, retry 1/2 in 20s: [models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443):
+  done B03-2-objective-02 200 succeeded tok=62120 377.08s
+start B03-4-objective-04
+  done B03-3-objective-03 200 succeeded tok=42625 206.67s
+start B03-5-objective-05
+    transport failure, retry 1/2 in 20s: [models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443):
+  done B02-4-blocking-dependency 200 succeeded tok=42334 203.77s
+start B03-6-objective-06
+  done B03-5-objective-05 200 succeeded tok=37055 177.11s
+start B03-7-objective-07
+  done B03-6-objective-06 200 succeeded tok=35298 165.89s
+start B03-8-objective-08
+  done B03-4-objective-04 200 succeeded tok=45831 291.1s
+start B03-N2-traffic-rewritten
+  done B03-7-objective-07 200 succeeded tok=57136 361.04s
+start B03-N3-gmv-no-path
+  done B03-N2-traffic-rewritten 200 succeeded tok=62602 346.77s
+start B04-1-mixed-capacity-3
+  done B03-8-objective-08 200 succeeded tok=61128 390.34s
+start B04-1P-capacity-1
+  done B04-1P-capacity-1 200 succeeded tok=34226 139.47s
+start B04-N1-all-in-one
+  done B04-1-mixed-capacity-3 200 succeeded tok=35419 168.47s
+start B04-N7-mechanical-split
+  done B04-N1-all-in-one 200 succeeded tok=37672 173.85s
+start B05-1-combined-behaviour
+  done B04-N7-mechanical-split 200 succeeded tok=33378 166.79s
+start B05-2-skip-order
+  done B03-N3-gmv-no-path 200 succeeded tok=66958 428.3s
+start B06-1-capacity-conflict
+  done B05-1-combined-behaviour 200 succeeded tok=37670 192.52s
+start B06-P-identical-values
+  done B05-2-skip-order 200 succeeded tok=35401 197.1s
+start B07-1-traffic-full-facts
+  done B06-P-identical-values 200 succeeded tok=30261 124.19s
+start B07-2-gmv-fact-gap
+  done B07-1-traffic-full-facts 200 succeeded tok=36812 189.7s
+start B07-3-fiction-allowed
+  done B07-2-gmv-fact-gap 200 succeeded tok=30837 139.48s
+start B07-P-daily-three
+  done B07-P-daily-three 200 succeeded tok=34730 194.03s
+start B08-1-three-mechanisms
+  done B06-1-capacity-conflict 200 succeeded tok=85881 567.36s
+start B08-P-single-anomaly
+  done B07-3-fiction-allowed 200 succeeded tok=41639 253.58s
+start B09-1-strong-signal-poor-fit
+  done B09-1-strong-signal-poor-fit 200 succeeded tok=28201 105.7s
+start B09-2-medium-signal-good-fit
+  done B09-2-medium-signal-good-fit 200 succeeded tok=33045 129.4s
+start B09-3-crowded-no-demand
+  done B08-P-single-anomaly 200 succeeded tok=52906 294.51s
+start B09-4-expired-broad
+  done B08-1-three-mechanisms 200 succeeded tok=54846 299.87s
+start B09-5-no-market-data
+  done B09-5-no-market-data 200 succeeded tok=17012 7.02s
+start B09-N5-uniqueness-probe
+  done B09-4-expired-broad 200 succeeded tok=28309 105.59s
+start B10-1-single-sufficient
+  done B09-3-crowded-no-demand 200 succeeded tok=40256 198.42s
+start B10-2-multi-consistent
+  done B09-N5-uniqueness-probe 200 succeeded tok=48289 249.02s
+start B10-3-conflicting
+  done B10-2-multi-consistent 200 succeeded tok=43588 203.36s
+start B10-4-window-open
+    transport failure, retry 1/2 in 20s: [models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443):
+  done B10-3-conflicting 200 succeeded tok=59345 321.43s
+start B10-P-simulated-feedback
+  done B10-4-window-open 200 succeeded tok=48381 235.92s
+start B14-1-brief-consumable
+  done B10-1-single-sufficient 200 succeeded tok=33876 158.72s
+start B14-2-legit-no-content-task
+  done B10-P-simulated-feedback 200 succeeded tok=30700 122.14s
+start B14-3-hesitation-not-escape
+  done B14-2-legit-no-content-task 200 succeeded tok=24302 67.7s
+start B15-DIR-01-ready-script
+  done B14-1-brief-consumable 200 succeeded tok=33617 145.34s
+start B15-DIR-02-topic-to-brief
+  done B15-DIR-01-ready-script 200 succeeded tok=24501 78.4s
+start B15-DIR-03-finished-to-pp
+  done B15-DIR-02-topic-to-brief 200 succeeded tok=29250 91.02s
+start B15-CTA-three-layer
+  done B14-3-hesitation-not-escape 200 succeeded tok=34157 142.74s
+start B15-N6-gmv-offsite
+  done B15-CTA-three-layer 200 succeeded tok=23323 63.65s
+  done B15-DIR-03-finished-to-pp 200 succeeded tok=28672 104.43s
+  done B15-N6-gmv-offsite 200 succeeded tok=33887 163.17s
+
+done. 49 cases, 0 not succeeded
+=== EP-06b 行为 49 例 结束 ok=True err=None 用时 67.3 分钟
+
+======================================================================
+=== EP-07 纵向 12 步 -> ep07-longitudinal-v15 ===
+projection record contract ok: mode, positions_before, positions_unaccounted
+start E01 (diagnosis)
+  done E01 200 succeeded tok=28076 87.57s carry_len=1346
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=[] unaccounted=[]
+start E02 (cycle_planning)
+  done E02 200 succeeded tok=41595 199.16s carry_len=2085
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=[] unaccounted=[]
+start E03 (capacity_drop)
+  done E03 200 succeeded tok=51113 265.89s carry_len=1768
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:公开取舍过程探索', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E04 (market_opportunity)
+  done E04 200 succeeded tok=34566 137.97s carry_len=972
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:选品判断固定栏目'] unaccounted=[]
+start E05 (single_anomaly)
+  done E05 200 succeeded tok=44439 251.83s carry_len=1185
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:选品判断固定栏目'] unaccounted=[]
+start E06 (multi_consistent)
+  done E06 200 succeeded tok=51305 291.62s carry_len=2234
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E07 (reentry_conflict_openwindow)
+  done E07 200 succeeded tok=31296 104.47s carry_len=1245
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:商品细节内容上身效果受控验证', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E08 (objective_conflict)
+  done E08 200 succeeded tok=53009 266.25s carry_len=2114
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:商品细节内容上身效果受控验证', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E09 (campaign_overlay_start)
+  done E09 200 succeeded tok=49025 217.82s carry_len=1978
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:商品细节内容上身效果受控验证', 'NEW:线索捕获受控验证', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E10 (baseline_change_during_campaign)
+  done E10 200 succeeded tok=29371 96.97s carry_len=1409
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:商品细节内容上身效果受控验证', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E11 (campaign_expiry_and_reuse_probe)
+  done E11 200 succeeded tok=36681 165.34s carry_len=1953
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:商品细节内容上身效果受控验证', 'NEW:选品判断固定栏目'] unaccounted=[]
+start E12 (evidence_expiry)
+  done E12 200 succeeded tok=26330 76.55s carry_len=1299
+    projection: ADVANCED carry=ACCEPTABLE_AS_NEW_BASELINE before=['NEW:下期同类内容完播对照观察', 'NEW:初秋通勤衣橱搭配内容位', 'NEW:商品细节内容上身效果受控验证', 'NEW:选品判断固定栏目'] unaccounted=[]
+
+done. executed 12/12 steps
+=== EP-07 纵向 12 步 结束 ok=True err=None 用时 36.0 分钟
+
+{
+  "what": "第 9 轮第 2 段：候选 v1.5 正式取证（Dify 三组）",
+  "carrier": "dify_workflow",
+  "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+  "candidate": "m3-cand-v1.5",
+  "steps": [
+    {
+      "step": "EP-06 保真 9 例",
+      "module": "ep06_dify_fidelity_v14",
+      "out": "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/account-operations/evidence/ep06-runtime-fidelity-dify-v15",
+      "ok": true,
+      "error": null,
+      "minutes": 15.2
+    },
+    {
+      "step": "EP-06b 行为 49 例",
+      "module": "run_behavior_002_v14",
+      "out": "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/account-operations/evidence/ep06b-runtime-behavior-v15",
+      "ok": true,
+      "error": null,
+      "minutes": 67.3
+    },
+    {
+      "step": "EP-07 纵向 12 步",
+      "module": "run_longitudinal_v14",
+      "out": "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/account-operations/evidence/ep07-longitudinal-v15",
+      "ok": true,
+      "error": null,
+      "minutes": 36.0
+    }
+  ]
+}

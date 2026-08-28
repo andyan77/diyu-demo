@@ -1,0 +1,21 @@
+{
+  "what": "本轮新增证据中的账号邮箱脱敏记录",
+  "field": "Dify 图/应用响应里的 created_by_account.email（工作区所有者账号元数据）",
+  "not_a_credential": "它不是密钥、不授予任何访问权；replaced with <REDACTED_ACCOUNT_EMAIL>",
+  "why_redacted": "Execution Prompt v1.0 §12「任何含凭据的原始输出不得进入 Git；只保存脱敏结构、哈希和检查结果」的从严执行",
+  "already_present_in_previously_committed_evidence": true,
+  "previously_committed_examples": [
+    "account-operations/evidence/ep10-closeout/dify_draft_graph.json",
+    "account-operations/evidence/ep21-structural-v13/dify_draft_graph.json",
+    "account-operations/evidence/ep23-candidate-v14-freeze/m3_app_draft_graph_v14.json"
+  ],
+  "historical_files_left_untouched": "历史证据不覆盖、不改写（合同：新证据只追加）",
+  "no_asserted_hash_affected": "本轮所有绑定哈希都算在 graph 子对象或 DSL 上，不含被脱敏的账号元数据；已核对无任何报告对这些文件断言过哈希",
+  "files_redacted": [
+    "account-operations/evidence/ep43-dify-live-candidate-binding/after_draft_graph.json",
+    "account-operations/evidence/ep43-dify-live-candidate-binding/after_published_graph.json",
+    "account-operations/evidence/ep43-dify-live-candidate-binding/before_draft_graph.json",
+    "account-operations/evidence/ep43-dify-live-candidate-binding/before_published_graph.json",
+    "account-operations/evidence/ep43-dify-live-candidate-binding/dify_draft_graph.json"
+  ]
+}

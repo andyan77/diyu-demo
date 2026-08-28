@@ -1,0 +1,40 @@
+{
+  "what": "E07 / E08：补齐节点任意输出下拒收是否恒成立（枚举，零模型）",
+  "note": "枚举的是终稿审计块里持续位声明的**全部子集**，含『凭空写一个外来位』这一支。其余拒收理由（泄漏、清单、G-4）在真实终稿上已单独重跑，均为 0，所以持续位这一层就是这两例拒收的全部依据。",
+  "rows": [
+    {
+      "case": "E07",
+      "input_position_ids": [
+        "NEW:选品逻辑固定位"
+      ],
+      "draft_declared_position_ids": [],
+      "universe": [
+        "NEW:选品逻辑固定位",
+        "NEW:补齐节点凭空写的一个位"
+      ],
+      "possible_repair_outputs_enumerated": 4,
+      "rejected_in": 4,
+      "counterexamples_where_it_would_pass": [],
+      "invariant": true
+    },
+    {
+      "case": "E08",
+      "input_position_ids": [
+        "NEW:选品逻辑固定位"
+      ],
+      "draft_declared_position_ids": [
+        "选品逻辑固定位"
+      ],
+      "universe": [
+        "NEW:选品逻辑固定位",
+        "选品逻辑固定位",
+        "NEW:补齐节点凭空写的一个位"
+      ],
+      "possible_repair_outputs_enumerated": 8,
+      "rejected_in": 8,
+      "counterexamples_where_it_would_pass": [],
+      "invariant": true
+    }
+  ],
+  "all_invariant": true
+}

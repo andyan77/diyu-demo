@@ -1,0 +1,77 @@
+{
+  "round": "v1.5 正式取证（第 2 段）",
+  "groups": [
+    {
+      "group": "EP-06 载体保真",
+      "dir": "ep06-runtime-fidelity-dify-v15",
+      "runs_attempted": 9,
+      "runs_with_draft": 8,
+      "runs_without_draft": [
+        "G1-A-goal-long-term-value"
+      ],
+      "total_tokens": 410685,
+      "gate_path": {
+        "—": 1,
+        "draft_verbatim": 6,
+        "gate_repaired": 2
+      },
+      "rejected": [],
+      "transport_failures": []
+    },
+    {
+      "group": "EP-06b 行为",
+      "dir": "ep06b-runtime-behavior-v15",
+      "runs_attempted": 49,
+      "runs_with_draft": 49,
+      "runs_without_draft": [],
+      "total_tokens": 2049876,
+      "gate_path": {
+        "draft_verbatim": 42,
+        "gate_repaired": 6,
+        "hard_fail_no_repair": 1
+      },
+      "rejected": [
+        "B09-5-no-market-data",
+        "B15-DIR-02-topic-to-brief"
+      ],
+      "transport_failures": [
+        {
+          "case": "B01-P-publish-calendar",
+          "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url"
+        },
+        {
+          "case": "B02-4-blocking-dependency",
+          "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url"
+        },
+        {
+          "case": "B03-5-objective-05",
+          "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url"
+        },
+        {
+          "case": "B10-1-single-sufficient",
+          "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url"
+        }
+      ]
+    },
+    {
+      "group": "EP-07 纵向",
+      "dir": "ep07-longitudinal-v15",
+      "runs_attempted": 12,
+      "runs_with_draft": 12,
+      "runs_without_draft": [],
+      "total_tokens": 476806,
+      "gate_path": {
+        "draft_verbatim": 10,
+        "gate_repaired": 2
+      },
+      "rejected": [],
+      "transport_failures": []
+    }
+  ],
+  "total": {
+    "runs_attempted": 70,
+    "total_tokens": 2937367,
+    "ab_b_arm": "未启动（Founder 指令：不得启动 A/B B 臂）",
+    "blind_judges": "未启动（Founder 指令：取消盲评）"
+  }
+}

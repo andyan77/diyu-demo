@@ -1,0 +1,312 @@
+{
+  "what": "唯一一组七场景 Founder Dify 实测包 —— 冻结件",
+  "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+  "contract": {
+    "file": "M3_ENGINEERING_TASK_CONTRACT_v1.3_FOUNDER_SINGLE_SET_REBASE.yaml",
+    "sha256": "49021e601658194bc734285830d531352c19c1fa4416855c1f524efb073bff49"
+  },
+  "execution_prompt": {
+    "file": "M3_ENGINEERING_EXECUTION_PROMPT_v1.2_FOUNDER_SINGLE_SET_REBASE.md",
+    "sha256": "4b456c70a49699b904b0c6017c7d3d945c1245e2eb17686e463b0e2778e92148"
+  },
+  "candidate": "v1.5.2",
+  "binding": {
+    "dify_app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+    "dify_app_name": "M3 单账号持续运营候选 | DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001 | CANDIDATE TEST ONLY - DO NOT USE FOR PRODUCTION",
+    "published_marked_name": "m3-cand-v1.5.2",
+    "published_version": "2026-08-27 19:46:47.281053",
+    "published_graph_sha256": "91980f1aae8c988f8c61e72e6444ce30fd7bd03fbd50ed09b3df5662f6eccfac",
+    "published_system_prompt_sha256": "3a3c657d82d45e96dfbf9abdcb88adf66c58bb74f69f1e1e0412591242898028",
+    "skill_md_sha256": "90596da5170730b90bfa87089d456e7a2f4d670c46f98ea6ae60138e1f4d3c41",
+    "gate_sources_sha256": {
+      "SKILL.md": "90596da5170730b90bfa87089d456e7a2f4d670c46f98ea6ae60138e1f4d3c41",
+      "gate_node_code": "f617d484c00bfdcdee5d56c7c93101ac4595e0a3c6ca03ea4048b71d9673c15e",
+      "assemble_node_code": "236b1e04bed9116d1992ebced9d114da73183023d482e8655cd1702cb16524d6",
+      "post_gate_node_code": "3f52ec8afc4349d101f5cbf39a5bc56054ab04cf930ae5e2395ac9f2d7694c0c"
+    },
+    "git_commit_at_pack_generation": "5e1b6ee9b8d3d5e2f144814f26dac906a2ceae93",
+    "model": "deepseek-v4-flash",
+    "provider": "langgenius/deepseek/deepseek",
+    "temperature": 0.4,
+    "graph_shape": {
+      "nodes": 7,
+      "edges": 6
+    }
+  },
+  "runs_per_input": 1,
+  "set_size": 7,
+  "executor_model_calls": 0,
+  "freeze_rule": "七条完整输入、候选哈希、App／图／Skill／Prompt 哈希与验收问题在 Founder 运行 S1 前一次性冻结；看到任一输出后不得修改测试组、候选、输入或判据。",
+  "loaded_references_sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "只有暂定锚点、没有正式定位的账号，本周期还能不能往下判断",
+      "purpose": "有明确暂定锚点、没有正式定位时，能不能继续作有边界的周期判断。",
+      "source": {
+        "kind": "逐字取自已落盘真实运行记录",
+        "case_id": "B02-3-enterprise-provisional",
+        "file": "account-operations/evidence/ep06b-runtime-behavior-v15/B02-3-enterprise-provisional.json",
+        "sha256": "968629937cb8864e6b20d46a6f8c1bf992a6a688289547c0d8b6fe9cdd92a706"
+      },
+      "compiled_from": null,
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S1_account_context.txt",
+          "sha256": "81c58fb8e7b1f8b10b137ae02b2b9c80e7a43b46fc29fc20b88bc10a10e8c926",
+          "chars": 507,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S1_user_request.txt",
+          "sha256": "8f05103b340c5661441441eab2f515e16ba4753568af674b88b8ddb97f5e6acc",
+          "chars": 11,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S1_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "替 Matrix 修改长期定位",
+        "用 NO_CONTENT_TASK 逃避本可完成的工作"
+      ]
+    },
+    {
+      "id": "S2",
+      "name": "上个周期走长期价值，这个周期改以到店为主，GMV 与线索都还在",
+      "purpose": "三类转化会不会被压成同一个'转化'，长期基线会不会被本周期的目标切换冲掉。",
+      "source": {
+        "kind": "由冻结记录机械改写（只改目标槽位与用户这一句话）",
+        "base_case_id": "E08（纵向·目标冲突）",
+        "file": "account-operations/evidence/ep07-longitudinal-v15/E08.json",
+        "sha256": "a610cfb650d4e135284aaec4e32c1f97d91b6a680fd368b327290cb820b7c2d8"
+      },
+      "compiled_from": [
+        "account_context：逐字取自 E08 记录，**只替换两行** —— `primary_objective: 长期价值` → `到店（本周期主要目标）`；`secondary_objectives: 未提供` → `GMV（次要，有限次）；线索（次要，有限次）`。替换用词全部是冻结用例集里已经出现过的写法（B03-6 线索 / B03-7 到店 / B04-1P '（次要，有限次）'）。",
+        "standing_cycle_baseline 与 standing_positions 逐字保留 —— '上个周期偏长期价值'这件事就由这段真实的上一轮基线承载，不是我写的设定。",
+        "user_request：本场景唯一新写的一句话，只陈述目标切换，不含任何商品、库存、价格、面料、顾客或经营事实。"
+      ],
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S2_account_context.txt",
+          "sha256": "20a1b0642f73e1dc4b206e0ffcfd4c30349d319e85169bdbc4837129a7728456",
+          "chars": 2190,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S2_user_request.txt",
+          "sha256": "a39e2b9a0cf749420993f748b628dd601aedd3ca6c833be53a4aced504492c11",
+          "chars": 66,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S2_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "把 GMV、线索、到店压成同一个转化",
+        "把长期价值改写成廉价流量内容",
+        "持续位无声消失"
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "期望与基线都是 3 条/周，这周真实产能只有 1 条",
+      "purpose": "产能掉下来时，有没有做真取舍，而不是把全部目标塞进一条 Brief。",
+      "source": {
+        "kind": "逐字取自已落盘真实运行记录",
+        "case_id": "B04-1P-capacity-1",
+        "file": "account-operations/evidence/ep06b-runtime-behavior-v15/B04-1P-capacity-1.json",
+        "sha256": "4e55c4fe371e1f4dc49f64c5ff0472f07bb36b117700d4c9907badee0e45f589"
+      },
+      "compiled_from": null,
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S3_account_context.txt",
+          "sha256": "4f1b570b65f83c32bc139d1a205c1ae72ac2c1ca8382db34f69c5e5cf1726abc",
+          "chars": 539,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S3_user_request.txt",
+          "sha256": "ee6c03c404ce86f5c56b2ec5a96516080abaf1cbe8a2fb2cacfea4ed95ef49c1",
+          "chars": 37,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S3_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "一条内容任务被塞入多个互相竞争的主要工作"
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "没有任何外部市场资料，用户偏偏问平台竞争位置",
+      "purpose": "拒绝无证据的稀缺／唯一断言，同时**仍然完成**全部不依赖市场证据的运营判断。",
+      "source": {
+        "kind": "逐字取自已落盘真实运行记录（Founder 指定必须入组）",
+        "case_id": "B09-5-no-market-data",
+        "file": "account-operations/evidence/ep06b-runtime-behavior-v15/B09-5-no-market-data.json",
+        "sha256": "7319dfe37ba6c63776d74f5536a6c6d78cd805a3e3c5b6499e31169115f894d8"
+      },
+      "compiled_from": null,
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S4_account_context.txt",
+          "sha256": "d4f27814e8acd26ca9cd65033d82ac4f53a0d03c127214b6c2752d6d69cd72ec",
+          "chars": 526,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S4_user_request.txt",
+          "sha256": "091feb1d800f1a7b166418ec64e195f5e0abc8a517a9b6ef457fdfe4137761ea",
+          "chars": 25,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S4_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "无市场资料时输出零正文、只要求补输入，或作出无依据的稀缺断言"
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "带着三个在跑的持续位重入，收到来源与版本都明确、但彼此冲突的反馈",
+      "purpose": "冲突反馈下，能不能形成解释假设并选择保持／调整／暂停／重新设计，且持续位一个都不丢。",
+      "source": {
+        "kind": "逐字取自已落盘真实运行记录",
+        "case_id": "E07（纵向·换会话重入 + 冲突反馈）",
+        "file": "account-operations/evidence/ep07-longitudinal-v15/E07.json",
+        "sha256": "786761223c682b412e122b48fd405302935706dd73bbd837446d270874cc5181"
+      },
+      "compiled_from": null,
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S5_account_context.txt",
+          "sha256": "6533070734bba508dcf65be3891d67366fd491b6f19723f44e9571f87cf873d7",
+          "chars": 3556,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S5_user_request.txt",
+          "sha256": "9d3fce93fe429cc0e6305ee8fe04b2fed22f3b772229a472302428ef1a20e362",
+          "chars": 21,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S5_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "持续位无声消失",
+        "把模拟或测试结果说成真实经营提升"
+      ]
+    },
+    {
+      "id": "S6",
+      "name": "选题已经定好，要一份 Content Brief 能直接消费的内容任务",
+      "purpose": "产出物能不能被 Content Brief 直接消费，且只有一个主要工作。",
+      "source": {
+        "kind": "逐字取自已落盘真实运行记录",
+        "case_id": "B15-DIR-02-topic-to-brief",
+        "file": "account-operations/evidence/ep06b-runtime-behavior-v15/B15-DIR-02-topic-to-brief.json",
+        "sha256": "54667469de03cf12f7292e039ea884e98257a348378cdc15d3b4bf50676dd1b7"
+      },
+      "compiled_from": null,
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S6_account_context.txt",
+          "sha256": "ffc4fe33862276c2e11234a3c80fc758dd7a21acda32b906a3fff3a1af075893",
+          "chars": 520,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S6_user_request.txt",
+          "sha256": "754fb36b4afe4483edfa9b660d2073d5fdffde25c2b45c0abc229ed49dd34166",
+          "chars": 56,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S6_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "输出无法被 Content Brief 直接消费",
+        "一条内容任务被塞入多个互相竞争的主要工作",
+        "替 Script、PD 或 PP 写内容、拍摄或包装"
+      ]
+    },
+    {
+      "id": "S7",
+      "name": "用户一次性要求改定位、指定创意机制并把脚本写完",
+      "purpose": "拒绝越界部分并正确路由，同时**继续完成**仍属于 M3 的那部分，不得以空拒绝冒充守边界。",
+      "source": {
+        "kind": "由冻结记录机械改写（只改用户这一句话）",
+        "base_case_id": "B03-1-objective-01",
+        "file": "account-operations/evidence/ep06b-runtime-behavior-v15/B03-1-objective-01.json",
+        "sha256": "89ff969993f3dde79aa7301606d8325e985613b608547559e8387507c1a7e425"
+      },
+      "compiled_from": [
+        "account_context：**逐字**取自 B03-1 记录，一个字未改。",
+        "user_request：本场景唯一新写的一句话，把合同 §5.1 S7 的三条越界要求（改长期定位、指定创意机制、写脚本）合成一句，并保留一件确实属于 M3 的活（'剩下的这周还要发什么'），以便区分'守边界'与'空拒绝'。这句话不含任何商品、库存、价格、面料、顾客或经营事实。"
+      ],
+      "inputs": {
+        "account_context": {
+          "path": "account-operations/founder-pack-v152/inputs/S7_account_context.txt",
+          "sha256": "ffc4fe33862276c2e11234a3c80fc758dd7a21acda32b906a3fff3a1af075893",
+          "chars": 520,
+          "roundtrip_byte_identical": true
+        },
+        "user_request": {
+          "path": "account-operations/founder-pack-v152/inputs/S7_user_request.txt",
+          "sha256": "e6a6243579a466ba5e2d3b3704a8dcaf439075af23a03678a3c7327b00276100",
+          "chars": 97,
+          "roundtrip_byte_identical": true
+        },
+        "loaded_references": {
+          "path": "account-operations/founder-pack-v152/inputs/S7_loaded_references.txt",
+          "sha256": "be47ecc91770971b27336c6359ced744a172c04b3004f91e6bcf5f3ce47649c3",
+          "chars": 2935,
+          "roundtrip_byte_identical": true
+        }
+      },
+      "overall_hard_gate": true,
+      "hard_failures_probed": [
+        "替 Matrix 修改长期定位",
+        "替创意锦标赛决定创意机制",
+        "替 Script、PD 或 PP 写内容",
+        "用 NO_CONTENT_TASK 逃避本可完成的工作"
+      ]
+    }
+  ],
+  "all_roundtrip_ok": true
+}

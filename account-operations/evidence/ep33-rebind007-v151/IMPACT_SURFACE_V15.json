@@ -1,0 +1,203 @@
+{
+  "what": "第 9 轮 A3 影响面：确定性修法 → 各取证的失效集与复验集",
+  "baseline_commit": "fc63add",
+  "zero_model_calls_this_round": true,
+  "file_diff": {
+    "SKILL.md": {
+      "path": "account-operations/skills/operating-one-account/SKILL.md",
+      "sha256_now": "245ee2ab3fe683acc2835cf3453ce367461c394e97ebd0bca34b8f17b6879837",
+      "sha256_prev": "245ee2ab3fe683acc2835cf3453ce367461c394e97ebd0bca34b8f17b6879837",
+      "changed": false
+    },
+    "shared_checks.py": {
+      "path": "account-operations/tools/gate_v13/shared_checks.py",
+      "sha256_now": "adbdce01eacbdd512639864ac14512ba5925771fe8c6da18b4c84fb191151a05",
+      "sha256_prev": "22293d65861ceafb332e7515588760491da4e57717d9b2af81a62dd333ebc435",
+      "changed": true
+    },
+    "gate_main.py": {
+      "path": "account-operations/tools/gate_v13/gate_main.py",
+      "sha256_now": "25c77087b2c1efca40ec63ccfd52318c589697b278b759c671c3321d0ae4e4ff",
+      "sha256_prev": "25c77087b2c1efca40ec63ccfd52318c589697b278b759c671c3321d0ae4e4ff",
+      "changed": false
+    },
+    "post_gate_main.py": {
+      "path": "account-operations/tools/gate_v13/post_gate_main.py",
+      "sha256_now": "036fb01161fbd2d951d6c35dee365ccf09f3572222e390ae3aeb583eeb7ad3d2",
+      "sha256_prev": "036fb01161fbd2d951d6c35dee365ccf09f3572222e390ae3aeb583eeb7ad3d2",
+      "changed": false
+    },
+    "assemble_main.py": {
+      "path": "account-operations/tools/gate_v13/assemble_main.py",
+      "sha256_now": "2d1a5fd4e1ba91e50889e7b997618479a196827959032a1577bd843147448a76",
+      "sha256_prev": "2d1a5fd4e1ba91e50889e7b997618479a196827959032a1577bd843147448a76",
+      "changed": false
+    },
+    "projection_v13.py": {
+      "path": "account-operations/tools/gate_v13/projection_v13.py",
+      "sha256_now": "6b9b31443b68e4574625bd2274929d0c4413ee87b206a25a2449245e2fcbdd35",
+      "sha256_prev": "6b9b31443b68e4574625bd2274929d0c4413ee87b206a25a2449245e2fcbdd35",
+      "changed": false
+    },
+    "gate_pipeline_v14.py": {
+      "path": "account-operations/tools/runners_v14/gate_pipeline_v14.py",
+      "sha256_now": "c5ad20c66429a7336a632356ba20f652afb4d2ce12e0b7c3eb7a34ace34c0d1a",
+      "sha256_prev": "c5ad20c66429a7336a632356ba20f652afb4d2ce12e0b7c3eb7a34ace34c0d1a",
+      "changed": false
+    },
+    "update_m3_app_v14.py(含 FINALIZE_SYS)": {
+      "path": "account-operations/tools/runners_v14/update_m3_app_v14.py",
+      "sha256_now": "32a87844c3bc81cd9c16fbbb69ba3bb14b472531ead4bfc43e90c6790eddde21",
+      "sha256_prev": "32a87844c3bc81cd9c16fbbb69ba3bb14b472531ead4bfc43e90c6790eddde21",
+      "changed": false
+    }
+  },
+  "changed_things": {
+    "SKILL.md": false,
+    "闸门三节点": true,
+    "图": true,
+    "projection_v13.py": false,
+    "M2 接口": false,
+    "A 基线提示词": false,
+    "参考文件": false,
+    "M3_CONTENT_TASK schema": false,
+    "B 臂正文": true,
+    "候选绑定": true
+  },
+  "rows": [
+    {
+      "取证": "EP-06 保真 9 例",
+      "载体": "Dify 已发布图",
+      "依赖": [
+        "SKILL.md",
+        "闸门三节点",
+        "图"
+      ],
+      "被本轮变化触及的依赖": [
+        "闸门三节点",
+        "图"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    },
+    {
+      "取证": "EP-06b 行为 49 例",
+      "载体": "Dify 已发布图",
+      "依赖": [
+        "SKILL.md",
+        "闸门三节点",
+        "图"
+      ],
+      "被本轮变化触及的依赖": [
+        "闸门三节点",
+        "图"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    },
+    {
+      "取证": "EP-07 纵向 12 步",
+      "载体": "Dify 已发布图 + 投影",
+      "依赖": [
+        "SKILL.md",
+        "闸门三节点",
+        "图",
+        "projection_v13.py"
+      ],
+      "被本轮变化触及的依赖": [
+        "闸门三节点",
+        "图"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    },
+    {
+      "取证": "EP-08 A/B · B 臂 3 例",
+      "载体": "直连镜像 gate_pipeline_v14",
+      "依赖": [
+        "SKILL.md",
+        "闸门三节点"
+      ],
+      "被本轮变化触及的依赖": [
+        "闸门三节点"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    },
+    {
+      "取证": "EP-08 A/B · A / A+ / B′ 9 例",
+      "载体": "直连单次调用，不过闸门",
+      "依赖": [
+        "A 基线提示词",
+        "参考文件"
+      ],
+      "被本轮变化触及的依赖": [],
+      "结论": "不受影响 ⇒ 按 A3 不多算，复用"
+    },
+    {
+      "取证": "EP-08 盲评 36 份判词",
+      "载体": "冻结提示词 + 盲评单元",
+      "依赖": [
+        "B 臂正文"
+      ],
+      "被本轮变化触及的依赖": [
+        "B 臂正文"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    },
+    {
+      "取证": "M2→M3 投影契约",
+      "载体": "纯确定性代码",
+      "依赖": [
+        "projection_v13.py",
+        "M2 接口"
+      ],
+      "被本轮变化触及的依赖": [],
+      "结论": "不受影响 ⇒ 按 A3 不多算，复用"
+    },
+    {
+      "取证": "AC-12 / AC-13 定向复验",
+      "载体": "运行中的 M2 容器 + 投影",
+      "依赖": [
+        "M2 接口",
+        "projection_v13.py"
+      ],
+      "被本轮变化触及的依赖": [],
+      "结论": "不受影响 ⇒ 按 A3 不多算，复用"
+    },
+    {
+      "取证": "下游 Brief 消费",
+      "载体": "纯确定性代码",
+      "依赖": [
+        "M3_CONTENT_TASK schema"
+      ],
+      "被本轮变化触及的依赖": [],
+      "结论": "不受影响 ⇒ 按 A3 不多算，复用"
+    },
+    {
+      "取证": "AC-16 系统提示词绑定 + 画布实证",
+      "载体": "已发布图的读回",
+      "依赖": [
+        "SKILL.md",
+        "图"
+      ],
+      "被本轮变化触及的依赖": [
+        "图"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    },
+    {
+      "取证": "Founder 实测包 v1.1",
+      "载体": "从证据逐字取材",
+      "依赖": [
+        "候选绑定",
+        "EP-06b 与 EP-07 的运行记录"
+      ],
+      "被本轮变化触及的依赖": [
+        "候选绑定"
+      ],
+      "结论": "STALE ⇒ 必须重跑"
+    }
+  ],
+  "复用项的机械证据": [
+    "SKILL.md 本轮 sha256 与上一轮逐字节相同 ⇒ 系统提示词未动 ⇒ A/A+/B′ 三臂与 A 基线提示词不受影响，可逐字复用，不需要任何模型调用。",
+    "projection_v13.py 未动、business-persistence/ 未动 ⇒ 投影契约与 AC-12/AC-13 的定向复验结论按 A3 不多算，复用。"
+  ],
+  "判断不了因而标 STALE 的": []
+}

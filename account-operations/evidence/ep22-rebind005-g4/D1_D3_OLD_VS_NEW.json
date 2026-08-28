@@ -1,0 +1,81 @@
+{
+  "what": "D-1 / D-3 在第 7 轮真实运行记录上的旧码—新码对照",
+  "method": "复检输入按记录机械重建；重建的忠实性先由旧码复现记录里的 positions 逐字段证明，对不上就不算数。旧码从 git HEAD 取，不手抄。",
+  "cases": [
+    {
+      "step": "E04",
+      "what": "D-1 · 模型声明的新探索位在补齐后消失，三个计数器全 []",
+      "reconstruction_matches_record": {
+        "declared_position_ids": true,
+        "positions_unaccounted": true,
+        "positions_fabricated": true,
+        "positions_duplicated": true,
+        "blocking": true
+      },
+      "reconstruction_faithful": true,
+      "recorded_v13": {
+        "declared": [
+          "NEW:选品判断支柱验证"
+        ],
+        "unaccounted": [],
+        "fabricated": [],
+        "blocking": false,
+        "carry": "ACCEPTABLE_AS_NEW_BASELINE"
+      },
+      "new_v14": {
+        "dropped_after_draft": [
+          "NEW:通勤衣橱一件多穿验证"
+        ],
+        "dropped_new": [
+          "NEW:通勤衣橱一件多穿验证"
+        ],
+        "introduced_by_gate": [],
+        "blocking": true,
+        "carry": "REJECTED_KEEP_PREVIOUS",
+        "reasons": [
+          "模型本轮声明过的持续位 NEW:通勤衣橱一件多穿验证 在补齐环节之后消失了 —— 内容被静默丢掉，补齐不许删位（其中本轮新增位：NEW:通勤衣橱一件多穿验证）",
+          "必填项仍未落实：缺 5 项、指不回正文 0 项、空洞 0 项、装饰 0 项、引用重叠 0 项"
+        ]
+      },
+      "defect_now_caught": true
+    },
+    {
+      "step": "E12",
+      "what": "D-3 · 模型没写审计块，补齐节点替它写出 POS 行，unaccounted 由 1 变 0",
+      "reconstruction_matches_record": {
+        "declared_position_ids": true,
+        "positions_unaccounted": true,
+        "positions_fabricated": true,
+        "positions_duplicated": true,
+        "blocking": true
+      },
+      "reconstruction_faithful": true,
+      "recorded_v13": {
+        "declared": [
+          "NEW:选品判断支柱验证"
+        ],
+        "unaccounted": [],
+        "fabricated": [],
+        "blocking": false,
+        "carry": "ACCEPTABLE_AS_NEW_BASELINE"
+      },
+      "new_v14": {
+        "dropped_after_draft": [],
+        "dropped_new": [],
+        "introduced_by_gate": [
+          "NEW:选品判断支柱验证"
+        ],
+        "blocking": true,
+        "carry": "REJECTED_KEEP_PREVIOUS",
+        "reasons": [
+          "上一有效基线里的持续位 NEW:选品判断支柱验证 本轮既没继续也没被点名处置 —— 交付未对它们负责",
+          "补齐环节替模型写出了持续位 NEW:选品判断支柱验证 的机器行 —— 判据被闸门自己满足，已剥除后重新复算",
+          "必填项仍未落实：缺 1 项、指不回正文 0 项、空洞 0 项、装饰 0 项、引用重叠 0 项"
+        ]
+      },
+      "defect_now_caught": true
+    }
+  ],
+  "all_reconstructions_faithful": true,
+  "all_defects_caught": true
+}

@@ -1,0 +1,243 @@
+{
+  "ecc_id": "ECC-M3-LONGITUDINAL-001",
+  "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+  "bound_ac": [
+    "M3-AC-17",
+    "M3-AC-11",
+    "M3-AC-10"
+  ],
+  "frozen_before_execution": true,
+  "carrier": "dify_workflow candidate app b7fb5b1a-9278-426c-bb8a-f9f288639548",
+  "model": "deepseek-v4-flash",
+  "provider": "langgenius/deepseek/deepseek",
+  "temperature": 0.4,
+  "statelessness_note": "每一步都是一次独立、无会话记忆的 Dify workflow 调用。步与步之间唯一的载体是 account_context 中的 standing_cycle_baseline 字段。因此'状态经由投影承载而非会话记忆'在本 ECC 中是由构造保证的，不是由模型自述保证的。",
+  "chaining_rule": "第 N 步（N>1）的 standing_cycle_baseline = 第 N-1 步模型最终答复正文，逐字回填，执行侧不改写、不摘要、不挑选。仅剥离 Dify 内联的 <think>…</think> 推理块——推理过程不是交付物，真实系统也不会把它持久化为当前有效判断。剥离规则是机械的：删除第一个 <think> 到第一个 </think> 之间的内容（含标签），其余全部保留。",
+  "context_slot_order": [
+    "account_anchor",
+    "positioning",
+    "platform",
+    "current_task",
+    "stage_evidence",
+    "expected_publish_count",
+    "baseline_capacity",
+    "actual_capacity",
+    "facts_and_assets",
+    "market_observations",
+    "feedback",
+    "campaign_overlay",
+    "expression_permission",
+    "primary_objective",
+    "secondary_objectives",
+    "standing_cycle_baseline"
+  ],
+  "base_context": {
+    "account_anchor": "序里集 商品负责人「周宁」账号（已确认组织角色，见品牌夹具 §五）",
+    "positioning": "已确认 —— 商品选品、版型比较、供应商取舍的第一手讲述人",
+    "platform": "视频号",
+    "current_task": "\"初秋通勤衣橱\"第一阶段上新（四周）",
+    "stage_evidence": "未提供",
+    "expected_publish_count": "3 条/周",
+    "baseline_capacity": "3 条/周",
+    "actual_capacity": "3 条/周",
+    "facts_and_assets": "针织马甲，价格 899-1099 元，黑/藏青/燕麦三色现货，羊毛混纺（已登记面料事实）",
+    "market_observations": "未提供",
+    "feedback": "未提供",
+    "campaign_overlay": "无覆盖",
+    "expression_permission": "低风险互动 CTA 可自主提出；经营型 CTA 需目标+有效承接路径；高风险 CTA 需明确授权（本轮未授权）",
+    "primary_objective": "长期价值",
+    "secondary_objectives": "未提供",
+    "standing_cycle_baseline": "尚无 —— 本账号还没有被接受的周期基线"
+  },
+  "total_steps": 12,
+  "steps": [
+    {
+      "step_id": "E01",
+      "label": "运营状态诊断（序列起点）",
+      "event_kind": "diagnosis",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": false,
+      "context_overrides": {
+        "stage_evidence": "账号已发布过若干条商品讲解类内容，互动集中在'为什么选/为什么不选'类内容；具体数据用户未提供"
+      },
+      "user_request": "这个号我们刚接手，帮我先判断一下现在什么状态、机会和约束在哪。",
+      "oracle": {
+        "成功": "给出阶段解释（绑定账号+目标+平台+观察窗+关键条件）、机会、约束与未知；不使用固定粉丝量/播放量阈值；证据不足处给暂定解释加一条区分性观察。",
+        "不足": "给了状态但未绑定观察窗或关键条件。",
+        "失败": "从单一指标推阶段；或设定固定阈值。"
+      }
+    },
+    {
+      "step_id": "E02",
+      "label": "周期规划",
+      "event_kind": "cycle_planning",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {},
+      "user_request": "那就按你说的，帮我把下个周期规划出来。",
+      "oracle": {
+        "成功": "形成周期基线：目标层级、内容组合、节奏、产能取舍、验证计划、可派发任务；每条任务恰有一个 primary_job。",
+        "不足": "产出组合但任务之间可互换。",
+        "失败": "输出发布日历/排期表；或把全部目标塞进每条任务。"
+      }
+    },
+    {
+      "step_id": "E03",
+      "label": "产能下降",
+      "event_kind": "capacity_drop",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "actual_capacity": "1 条（本周实际，苏禾请假）"
+      },
+      "user_request": "计划有变——苏禾这周请假，实际只能做 1 条。这周怎么办？",
+      "oracle": {
+        "成功": "在既有周期基线上做局部调整，保住主目标和最高价值那一条，说明被让掉的收益与去向；不静默改写周期目标。",
+        "不足": "选了 1 条但未说明被让掉的收益。",
+        "失败": "三条一起降质；或把'这周'换算成别的时间单位；或整个周期重写。"
+      }
+    },
+    {
+      "step_id": "E04",
+      "label": "外部市场机会",
+      "event_kind": "market_opportunity",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "market_observations": "观察M1：'通勤衣橱一件多穿'类内容在视频号女装赛道近两周稳定获得中等以上互动（来源=用户本人在视频号后台与同类账号的比较观察，平台=视频号，观察时间=2026-08 近两周，范围=视频号女装赛道，有效期=四周内复验）"
+      },
+      "user_request": "刚看到一个方向，值得跟吗？",
+      "oracle": {
+        "成功": "按机会五要素判断（有范围的信号+账号适配+真实供给或承接+当前时间窗+可逆可观察的动作）；给出一次可逆验证含反证与到期条件；保留观察的来源/平台/时间/范围。",
+        "不足": "认定为机会但缺反证或到期条件。",
+        "失败": "仅凭热度授权生产；或把外部观察写成本账号因果。"
+      }
+    },
+    {
+      "step_id": "E05",
+      "label": "单条异常反馈",
+      "event_kind": "single_anomaly",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "feedback": "反馈L1：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-17，window_end=2026-08-24（已结束，n=1），source=视频号后台；内容：'为什么放弃某款'那条完播率低于本账号同类内容约三成。已知混杂因素：平台分发规则本周有改版"
+      },
+      "user_request": "上周那条的数据出来了，看着不太对，要不要改方向？",
+      "oracle": {
+        "成功": "先写观察后写原因；只改这条证据真正影响的判断；明确说明哪些判断保持不变；不据单条异常全面改向。",
+        "不足": "拒绝全面改向但未说明未受影响的判断保持。",
+        "失败": "据一条异常重写周期。"
+      }
+    },
+    {
+      "step_id": "E06",
+      "label": "多条一致反馈",
+      "event_kind": "multi_consistent",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "feedback": "反馈L2/L3/L4（三条，均 kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window 均已结束，source=视频号后台）：三次商品细节讲解类内容的评论区都集中出现'想看上身效果'的诉求"
+      },
+      "user_request": "又攒了三条反馈，都指向同一件事。这次该怎么处理？",
+      "oracle": {
+        "成功": "多条一致支持更大的调整，但范围仍限于证据覆盖处；与 E05 的单条处理**实质不同**。",
+        "不足": "处理方式与 E05 完全相同。",
+        "失败": "外推成账号级模板或全局改向。"
+      }
+    },
+    {
+      "step_id": "E07",
+      "label": "换会话重入 + 冲突反馈 + 观察窗未结束",
+      "event_kind": "reentry_conflict_openwindow",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "feedback": "反馈L5：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window 已结束，source=视频号后台；内容：'三色对比'互动高于同类。反馈L6：kind=人工经营结果，is_test=false，is_simulated=false，is_manual_entry=true，window 已结束，source=陈晚口头转述；内容：门店本周问针织马甲的顾客反而变少了。反馈L7：kind=真实发布观测，is_test=false，is_simulated=false，is_manual_entry=false，window_start=2026-08-25，window_end=2026-09-01（尚未结束），source=视频号后台；内容：昨日发布的'西装选品逻辑'目前仅 1 天数据，2 条评论提到'价格有点贵'"
+      },
+      "user_request": "接着上次的继续。新反馈进来了，你看怎么办。",
+      "oracle": {
+        "成功": "不要求用户重述历史，直接从投影恢复并延续既有判断；冲突反馈下有依据地保持不变；对观察窗未结束的那条明确说'窗口未结束、暂不改判'；两类不坍缩为同一处理。",
+        "不足": "恢复了但把冲突与未结束窗口当成同一件事处理。",
+        "失败": "要求用户重述之前发生了什么；或在冲突/未结束证据下强行改判。"
+      }
+    },
+    {
+      "step_id": "E08",
+      "label": "目标冲突",
+      "event_kind": "objective_conflict",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {},
+      "user_request": "老板临时说这周要冲一下线索，多接点咨询。但我们这个周期不是做长期价值吗？",
+      "oracle": {
+        "成功": "显式呈现两个目标的冲突与真实取舍（主次、代价、不可牺牲条件），不把二者压成一个综合分，也不静默改写周期主目标。",
+        "不足": "提到冲突但直接替用户改了主目标。",
+        "失败": "把线索目标改写成长期价值工作，或反过来；或假装两者无冲突。"
+      }
+    },
+    {
+      "step_id": "E09",
+      "label": "Campaign 覆盖生效",
+      "event_kind": "campaign_overlay_start",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "campaign_overlay": "Campaign C1：有效期 2026-08-27 → 2026-09-09（两周）；点名占用位置=本周期内容组合中的第 1 位与第 3 位；点名目标=到店预约；约束=不得使用站外导流与价格承诺；未点名位置不在覆盖范围内"
+      },
+      "user_request": "公司定了个两周的活动，帮我把这两周安排一下。",
+      "oracle": {
+        "成功": "只让 Campaign 占用它点名的两个内容位置；未覆盖位置仍由本能力按周期基线管理；两侧来源标识分开。",
+        "不足": "识别了覆盖但把整个周期都交给了 Campaign。",
+        "失败": "让 Campaign 改写账号定位或周期目标；或静默把 Campaign 当成新基线。"
+      }
+    },
+    {
+      "step_id": "E10",
+      "label": "活动期内合法变更未覆盖位置",
+      "event_kind": "baseline_change_during_campaign",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "campaign_overlay": "Campaign C1：有效期 2026-08-27 → 2026-09-09（两周）；点名占用位置=本周期内容组合中的第 1 位与第 3 位；点名目标=到店预约；约束=不得使用站外导流与价格承诺；未点名位置不在覆盖范围内"
+      },
+      "user_request": "活动期间没被占用的那个位置，我们想换成别的内容，你觉得换成什么合适？",
+      "oracle": {
+        "成功": "在未覆盖位置上形成新的、有依据的周期判断并更新当前基线；不动被 Campaign 占用的两个位置。",
+        "不足": "换了但没说明依据。",
+        "失败": "顺手改动了 Campaign 点名的位置；或把这次变更写成 Campaign 的一部分。"
+      }
+    },
+    {
+      "step_id": "E11",
+      "label": "Campaign 到期 + 沿用追问",
+      "event_kind": "campaign_expiry_and_reuse_probe",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "campaign_overlay": "Campaign C1 已于 2026-09-09 到期，覆盖解除"
+      },
+      "user_request": "活动结束了。效果还行，那就继续用活动那套吧？",
+      "oracle": {
+        "成功": "到期后恢复的是**当前**周期基线（含 E10 的合法变更），不是活动开始时的快照；'继续沿用活动策略'必须形成新的、有依据的周期判断并说明需要什么接受权限，不自动留下。",
+        "不足": "恢复了基线但未回应'继续沿用'这个请求。",
+        "失败": "静默保留 Campaign；或复活活动开始时被 E10 替换掉的旧任务；或因为'效果还行'就自动沿用。"
+      }
+    },
+    {
+      "step_id": "E12",
+      "label": "证据过期",
+      "event_kind": "evidence_expiry",
+      "include_fashion_ref": true,
+      "carry_previous_output_as_standing_baseline": true,
+      "context_overrides": {
+        "market_observations": "观察M1：'通勤衣橱一件多穿'类内容在视频号女装赛道获得中等以上互动（来源=用户本人在视频号后台的比较观察，平台=视频号，观察时间=2026-08 近两周，范围=视频号女装赛道，有效期=四周内复验；当前日期 2026-09-30，**已超过有效窗，未复验**）"
+      },
+      "user_request": "之前那个'一件多穿'的判断还作数吗？下个周期还按那个来？",
+      "oracle": {
+        "成功": "指出该观察已过其有效窗（四周内复验），当前不能继续支撑周期决定；说明需要什么复验；不受该观察影响的判断明确保持。",
+        "不足": "说了'比较旧'但仍据此给出下周期安排。",
+        "失败": "继续用过期观察支撑当前决定；或因这一条过期把整个周期判断作废（多算失效面）。"
+      }
+    }
+  ]
+}

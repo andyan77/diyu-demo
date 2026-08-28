@@ -1,0 +1,185 @@
+<think>
+<!--dify-deepseek-reasoning-->Need to fix audit anchor unanchored: items in audit block point to nonexistent text. But draft body has "这个周期做什么：不盲目试探，也不急着要成交，先把企业号“门店服务＋搭配判断”这个暂定立足点..." etc. Need locate sentences that carry each item. The audit block currently has anchors text not in body: "定位来自你本轮陈述的..., 只约束本周期..., 这个定位在矩阵确认前..., 当两周窗口出现真实咨询信号...". Need replace with actual quoted sentences from body that contain these statements.
+
+Let's inspect draft body for each:
+
+- 暂定锚点·来源: Body paragraph one: "先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。" That's source sentence? Also "定位是暂定的，没有发布记录和反馈..." Better choose exact sentence: "当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。" That gives source. Or "先把企业号“门店服务＋搭配判断”这个暂定立足点..." The phrase "门店服务＋搭配判断" appears in body. We'll quote.
+
+- 暂定锚点·范围: Need sentence saying only constrains this period, not changing long-term identity. Body: "先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。" Hmm no explicit "不改动账号长期身份". Another sentence: "按长期价值目标排一周三条内容" etc. Maybe "三类内容各承担一个主要业务工作" not. The audit anchor's claims are not in body: no mention "只约束本周期内容围绕这个方向组织，不改动账号长期身份". Need add to body? Wait rule: unanchored_items are required items whose audit block can't point back to body. Need fix by putting substantive answer in body natural position, then audit points to that sentence. Since missing/unachored items: We need add substantive answer to body. But also rule says only modify categories. unanchored_items indicates yes. So add sentences in body. However, user asked to preserve original body except for these modifications. We can insert a sentence carrying the "anchor" content. Need be careful not to add new business judgments? It is required item.
+
+Also "POS :: NEW:面料知识位" in audit skeleton currently has line. The draft audit block's POS line: `POS :: NEW:面料知识位 :: 新增·常规 :: 这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周`. Body contains "这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周" in item 3: "这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。" So anchor ok. Wait required skeleton outputs exactly that line, with right side quote. Need output line as per skeleton: `POS :: NEW:面料知识位 :: 新增·常规 :: &lt;正文里承载这一处置的那句原话&gt;`. We'll put actual body sentence.
+
+Also reference file loading state anchor: Body has final sentence in section five: "本轮附有服装经营相关的参考依据，另一份关于既有创作方法的参考没有附上，所以我不引用那部分方法细节。" So ok.
+
+Need inspect "internal_leaks": none in gate report. But draft contains "CTA" etc. No internal leaks. Good.
+
+Need check "positions": baseline_present false, input_position_ids [], declared_position_ids ["NEW:面料知识位"], new positions etc. Need include POS line in audit block. Required skeleton includes POS. Good.
+
+Need output audit block first then body? User says "先输出审计块，再输出正文，中间空一行" yes. Important: They said "**先输出审计块，再输出正文**". So final answer: audit block then blank line then body.
+
+Need include exact required_audit_skeleton except newline? Include &lt;&lt;AUDIT&gt;&gt; then lines. For each `::` right side exact sentence. Need trigger flags line exact. The skeleton has "探索提案=否;暂定锚点=是;冲突反馈=否;无内容任务=否". Use that exact. Then anchor lines.
+
+Need decide anchor quotes. Let's map.
+
+Body first paragraph:
+
+"这个周期做什么：不盲目试探，也不急着要成交，先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。当前任务是“初秋通勤衣橱”第一阶段上新；本周期按长期价值目标排一周三条内容，与实际产能一致。"
+
+This includes source, scope? "先把企业号“门店服务＋搭配判断”这个暂定立足点" gives source. "暂定立足点" indicates temporary. But no "不改动账号长期身份". Need maybe add a sentence after that: "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" But rule says if unanchored, we must fix by putting substantive answer in body. Since audit block has "范围" anchored to no body sentence. Need add. Where? Maybe in first paragraph or in section一. Original body section一: "当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。" This is source. We can add after: "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" But this changes body with additional sentence. Allowed because required item? I think yes. Need avoid fabricating? It's exactly the anchor's content. So okay.
+
+- 来源: quote "定位是暂定的" from section一. Or first paragraph "门店服务＋搭配判断". Use exact sentence: "先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。" This says source. Better.
+
+- 范围: after inserting "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" quote that.
+
+- 不确定性: Need existing body sentence about risk: "这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。" Not in original. Could add a sentence. Original has "当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。" This conveys uncertainty but not "风险是把它兑现成超出本轮可承接范围的服务承诺". Add sentence after "没有外部市场资料。" maybe "这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。" That is the anchor's exact statement. Then audit anchor uses it. But now we are adding three "anchor" sentences. Is that okay? Yes.
+
+- 复验触发: Original body has "如果窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长；如果没有这类信号，则维持方向验证，继续做验证。" This is strong. Also later "下一步：两周窗口里出现..." Use quote from section一: "如果窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长；" This carries "turn from temporary to confirmed". But anchor originally says "再把它从暂定转为已确认". Need maybe use exact body sentence: "如果在窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长；" This is an exact sentence in body. Use that.
+
+But note in draft body section一: "推翻信号写具体一点：如果窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长；" Good.
+
+- POS anchor: "这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。" Exact from section二 item 3. Good.
+
+Need ensure after modifications, audit block lines use exact substrings from final body. We need reconstruct final body with inserted sentences. Also must not alter other text. Need maintain "其余判断保持不变"? No continuity issue. But note section五 "连续性义务与探索" already says no historical baseline etc. Good.
+
+Let's craft final body. Need include inserted sentences in natural positions. Where exactly?
+
+First paragraph: after "先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。" We can insert "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" This might fit. But then original next sentence "当前任务是..." Keep.
+
+Section一: Current text:
+"一、阶段判断
+
+当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。因为缺少外部比较，我不能判断内容在平台上是否稀缺或同质化，也不做这种声称。这个判断绑定在...窗口上。推翻信号写具体一点：如果窗口内出现..."
+
+We can insert uncertain sentence after first sentence: "定位是暂定的，没有发布记录和反馈，也没有外部市场资料。这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。因为缺少外部比较..." This is an addition. It is not an "internal leak". It is allowed because item was unanchored. Need not alter first sentence. But "当前只能把它判作方向验证：" remains.
+
+Potential concern: "矩阵确认" is not explained. But that's in anchor text. Maybe okay. Better use natural body language? Need not use internal field names; "矩阵确认" isn't internal. Fine.
+
+Could instead add all three anchor content into section一 in one sentence? Let's think. Need include "来源", "范围", "不确定性", "复验触发". We already have source and trigger. Need add only two missing sentences. Actually "范围" could be in first paragraph after source. "不确定性" in section一. Do we need "范围" also maybe in first paragraph. Yes.
+
+Need be careful with punctuation and original text exact. We'll output complete final body including original plus inserted sentences. Since user said "其他原正文逐字保留", our insertions are okay but we must ensure original unchanged. We'll copy original draft exactly and insert at chosen positions. Need ensure no unintended changes.
+
+Let's copy draft from user.
+
+Original paragraph 1: "这个周期做什么：不盲目试探，也不急着要成交，先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。当前任务是“初秋通勤衣橱”第一阶段上新；本周期按长期价值目标排一周三条内容，与实际产能一致。"
+
+Insert after "立起来。" maybe: "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" Then current.
+
+Original section一:
+"一、阶段判断
+
+当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。因为缺少外部比较，我不能判断内容在平台上是否稀缺或同质化，也不做这种声称。这个判断绑定在“初秋通勤衣橱”第一阶段发布后的两周观察窗上。推翻信号写具体一点：如果窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长；如果没有这类信号，则维持方向验证，继续做验证。另外，初秋时机本身是假设，本轮没有季节或气候资料可以核实，我把它列为本周期最可能错的一环。"
+
+Insert after "也没有外部市场资料。" the uncertainty sentence. Let's insert "这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。" Then "因为缺少..." Good.
+
+Need ensure audit block quotes include "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" exactly. Good.
+
+Now check other items in gate report: `unanchored_items` includes four. We fixed by adding body sentences. Need maybe not add separate "暂定锚点·来源" sentence because existing. But audit will quote first paragraph. Good.
+
+Need output audit block with required skeleton. It says one line per item: 参考文件加载状态, then anchor items, then POS. Required skeleton order specifically: reference line first, then source, scope, uncertainty, retest, POS. Use that order. But "参考文件加载状态" is in original draft audit before anchors. Need whatever.
+
+Need use exact quote from body. For "参考文件加载状态": Body sentence: "本轮附有服装经营相关的参考依据，另一份关于既有创作方法的参考没有附上，所以我不引用那部分方法细节。" Note body maybe includes at end of section五: "本轮附有服装经营相关的参考依据，另一份关于既有创作方法的参考没有附上，所以我不引用那部分方法细节。" Yes.
+
+Need quote for POS: "这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。" Body exact. But required skeleton says `POS :: NEW:面料知识位 :: 新增·常规 :: &lt;正文里承载这一处置的那句原话&gt;`. We need include that line exactly with quote after last `::`. Example: `POS :: NEW:面料知识位 :: 新增·常规 :: 这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。` Good.
+
+Potential issue: In required skeleton, "探索提案=否;暂定锚点=是;冲突反馈=否;无内容任务=否" line; do not include spaces. Use as given.
+
+Need not include gate report. Fine.
+
+Need ensure final output only audit block and body, no extra. Since request says "先输出审计块，再输出正文，中间空一行." We'll do exactly.
+
+Need maybe mention in body not to use paths etc. Our inserted sentence has "矩阵确认" no path. Fine.
+
+Let's verify no internal leak in inserted sentence: "矩阵确认" maybe okay. Need not use `O-10` etc.
+
+Potential hidden issue: The gate report's `&lt;draft_audit&gt;` included anchors that were not in body. We replace them with actual quotes. Good.
+
+Need "positions" line in audit skeleton says "POS :: NEW:面料知识位 :: 新增·常规 :: &lt;正文里承载这一处置的那句原话&gt;". There's a new position. Original body has "计划按常规知识位先跑三周" and "先按常规栏目跑三周" in section五. For POS line, use item 3 sentence. It is in body. Good.
+
+Could use "先按常规栏目跑三周" in section五? It indicates disposition. But item already says "新增·常规". Better use the sentence "这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。" This is clear.
+
+Need ensure quote from body is single sentence. Good.
+
+Let's carefully assemble final body preserving original.
+
+Original punctuation: "这个周期做什么：不盲目试探，也不急着要成交，先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。" We insert after "立起来。" before "当前任务是". Add "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" But maybe the sentence "这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。" should come after "立起来。" and then "当前任务" continues. Fine.
+
+Will the inserted sentence create "这个立足点" antecedent? Yes.
+
+Section一: "当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。" Insert "这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。" after that. Then original "因为缺少外部比较..." Good.
+
+Need maybe quote "暂定锚点·来源" from first paragraph "先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。" It contains "门店服务＋搭配判断". Good.
+
+But original doesn't use word "来源"; audit anchor label is "暂定锚点·来源" okay.
+
+Need check "暂定锚点·范围" quote inserted. Good.
+
+"暂定锚点·不确定性" quote inserted. Good.
+
+"暂定锚点·复验触发" quote existing. Good.
+
+Potential issue: The "required_audit_skeleton" says "触发标志那一行原样照抄" and "一行不多、一行不少". It includes exactly 6 lines after flags? Let's count: reference line, source, scope, uncertainty, retest, POS. We'll output exactly that. No extra blank lines within audit block. We'll include `&lt;&lt;AUDIT&gt;&gt;` and `&lt;&lt;END_AUDIT&gt;&gt;`. Good.
+
+Need not include "正文" header. Just body text after blank line.
+
+Let's produce final.
+
+Double-check that the body's inserted text doesn't violate "不要增加新业务判断" but unanchored fix requires. Fine.
+
+Need maybe avoid adding "风险是把它兑现成超出本轮可承接范围的服务承诺" because it might be a new business judgment. But it's in audit anchor and is required item. Allowed.
+
+Need maybe verify that "这个定位在矩阵确认前可能被修正" is not inconsistent with "初秋时机本身是假设" etc. Fine.
+
+Need check gate report `anchor_spans`: [[1280, 1326], [654, 684]] Not relevant.
+
+Now final output.
+</think><<AUDIT>>
+探索提案=否;暂定锚点=是;冲突反馈=否;无内容任务=否
+参考文件加载状态 :: 本轮附有服装经营相关的参考依据，另一份关于既有创作方法的参考没有附上，所以我不引用那部分方法细节。
+暂定锚点·来源 :: 先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。
+暂定锚点·范围 :: 这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。
+暂定锚点·不确定性 :: 这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。
+暂定锚点·复验触发 :: 如果窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长。
+POS :: NEW:面料知识位 :: 新增·常规 :: 这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。
+<<END_AUDIT>>
+
+这个周期做什么：不盲目试探，也不急着要成交，先把企业号“门店服务＋搭配判断”这个暂定立足点，用一组可积累的内容立起来。这个立足点只约束本周期内容围绕这个方向组织，不改动账号长期身份。当前任务是“初秋通勤衣橱”第一阶段上新；本周期按长期价值目标排一周三条内容，与实际产能一致。
+
+一、阶段判断
+
+当前只能把它判作方向验证：定位是暂定的，没有发布记录和反馈，也没有外部市场资料。这个定位在矩阵确认前可能被修正，风险是把它兑现成超出本轮可承接范围的服务承诺。因为缺少外部比较，我不能判断内容在平台上是否稀缺或同质化，也不做这种声称。这个判断绑定在“初秋通勤衣橱”第一阶段发布后的两周观察窗上。推翻信号写具体一点：如果窗口内出现“因为看了某条内容，前来询问某件具体商品”的咨询式评论或私信，说明关注理由已经成立，阶段应从方向验证重判为增长；如果没有这类信号，则维持方向验证，继续做验证。另外，初秋时机本身是假设，本轮没有季节或气候资料可以核实，我把它列为本周期最可能错的一环。
+
+二、周期组合
+
+三条内容各承担一个主要业务工作，互相不重复。
+
+1. 价格决策支撑。回答“899-1099 元买的到底是什么”。商品事实里已登记的有羊毛混纺面料、黑/藏青/燕麦三色现货，这些都可以作为依据，把价格背后的判断讲清楚，而不是让商品显得划算。删掉它，这个周期就没有内容正面处理这个价位最核心的决策阻力，后面再谈价格就只能靠感觉。
+
+2. 搭配判断服务。围绕三种颜色给出适合不同通勤衣橱的初秋搭配判断，把“门店服务＋搭配判断”落到内容上。需要声明：本轮没有可用的试穿或上身证据，所以这条不主张版型、垂坠或体感，只做颜色与场合之间站得住的关联。删掉它，这个周期没有一条内容是真正把判断交给观众、让观众觉得有用的，服务定位就落不到内容上。
+
+3. 面料知识积累。讲羊毛混纺作为初秋通勤面料的合理性，以及它和纯羊毛在养护、体感预期上的差异。这是长期价值目标下最直接的可复用资产，计划按常规知识位先跑三周。删掉它，这个周期证明了价格、给出了判断，却没有留下任何可被未来周期继续引用的知识基线，品牌的事实深度就建立不起来。
+
+这三条的主要业务工作分别是价格决策支撑、搭配判断服务、面料知识积累；每一条删掉后失去的东西都不同，所以它们互相不可替代。
+
+三、产能与缺口
+
+每周三条的发布量、账号基线产能、当周实际产能一致，不需要让位取舍。对象产品有现货，价格与面料事实已登记。缺口是两处：没有试穿或上身证据，因此任何需要上身验证的主张都明确不做；没有外部市场资料，因此不做平台稀缺或同质化已避开的声称。这两个缺口不影响以上三条内容成立，只是压缩了声明边界；试穿证据一旦补上，下个周期再评估是否增加版型向任务。
+
+四、CTA 与权限
+
+本轮按长期价值目标推进，不设置购买、咨询、到店类经营型 CTA，因为本轮没有已确认的售卖或到店承接路径，也没有这个目标授权。可以自然提出的是低风险互动，比如关注、评论、收藏。评论区引导只表达“欢迎把通勤上下装困扰写出来”，不承诺具体回复时限或到店服务。
+
+五、连续性义务与探索
+
+账号没有历史基线，所以没有历史承诺需要延续。本轮新开的“面料事实”知识位先按常规栏目跑三周：三周内如果出现收藏与“想继续看下一期”一类反馈，下个周期固化为固定栏目；若没有信号，则按周期处置退出。本周期不做受控探索，因为目前可验证的方向都还没有可承接条件，现在试等于用不可逆的曝光换一个无法解释的结果。重新开探索的开关是一次具体事件：当站内出现“看了第几条内容来问某件商品”这一类咨询时，下一周期就围绕那类内容做一次最小抽样实验。
+
+本轮附有服装经营相关的参考依据，另一份关于既有创作方法的参考没有附上，所以我不引用那部分方法细节。
+
+六、观察与复盘
+
+发布后要区分平台观测与人工经营结果两类证据：播放、点赞、收藏是平台观测，咨询、到店是人工经营结果；不能把播放量当作购买意愿。每条内容的数据只属于该条内容的观察窗口，不足以单独推动全周期转向；同理，一条异常反馈也不能让整个周期改向。唯一要提前盯的是前面写的两周窗口信号。
+
+七、最可能错的一步
+
+本周期最经不起检验的是两个假设：一是初秋通勤这个时机的判断成立；二是在没有上身证据的前提下，颜色－场合与面料判断对目标观众仍然构成足够的价值。什么会证明它们错了：两周窗口内，三条内容发出后，如果收藏与“后续想看什么”一类反馈都没有出现，或者出现的反馈集中在版型与上身效果、而当前内容回应不了，就说明这个方向需要重做而不是继续加量。
+
+下一步：两周窗口里出现“看了某条内容来问某件商品”的咨询，就重判阶段并把对应题材列为下周期重点。当前不需要用户做额外决策；如果门店端能补试穿记录或上身素材，会在下个周期改变任务结构，但不影响本周期三条内容启动。

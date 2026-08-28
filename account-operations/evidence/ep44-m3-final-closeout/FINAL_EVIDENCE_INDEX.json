@@ -1,0 +1,126 @@
+{
+  "what": "M3 最终收口 · AC-00 / AC-20 重算与最终证据索引",
+  "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+  "entry_mode": "REBASE_TASK",
+  "contract": "M3_ENGINEERING_TASK_CONTRACT_v1.4_DIFY_RECOVERY_CLOSEOUT_REBASE.yaml",
+  "contract_sha256": "787243cf82d7246bb090d0a0c9ff6f64168c964ed1d9a2ab3ef163c75aee6220",
+  "prompt_sha256": "258d16b788f5ce053b0f3d669e6ff640cfce6a502d3ec51cebca420c75c5a573",
+  "generated_at": "2026-08-27T16:02:38-0700",
+  "recovery_path": "ORIGINAL_DATABASE_AND_APP",
+  "docker_desktop_restarts_performed": 0,
+  "reason_no_docker_desktop_restart": "阶段 A 冻结现场时发现宿主挂载已正确解析（宿主与容器目录元数据纳秒级相同，apps=50、setup=finished），重启的差异效果为零，按 A5 不执行；§6 授权的是「最多一次」，不是必须一次",
+  "M3-AC-00": {
+    "task_id_branch_remote_bound": {
+      "task_id": "DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001",
+      "branch": "task/m3-account-content-operator-v1",
+      "local_head": "26ca3601b8d2bdd83f9b2f405b112d7d706b6986",
+      "note": "远端完整哈希在推送后由 git ls-remote 复核并补记"
+    },
+    "live_persistent_app_exists": true,
+    "app_name": "M3 单账号持续运营候选 | DIYU-V1-M3-ACCOUNT-CONTENT-OPERATOR-001 | CANDIDATE TEST ONLY - DO NOT USE FOR PRODUCTION",
+    "app_marked_non_production": true,
+    "live_binding": {
+      "published_marked_name": "m3-cand-v1.5.2-live",
+      "published_version": "2026-08-27 22:50:25.321384",
+      "published_graph_byte_identical_to_frozen": true,
+      "draft_equals_published": true,
+      "nodes": 7,
+      "edges": 6,
+      "system_prompt_sha256": "3a3c657d82d45e96dfbf9abdcb88adf66c58bb74f69f1e1e0412591242898028",
+      "system_prompt_matches_frozen": true,
+      "skill_md_workspace_sha256": "90596da5170730b90bfa87089d456e7a2f4d670c46f98ea6ae60138e1f4d3c41",
+      "skill_md_git_head_sha256": "90596da5170730b90bfa87089d456e7a2f4d670c46f98ea6ae60138e1f4d3c41",
+      "skill_matches_frozen_and_git": true,
+      "model": {
+        "provider": "langgenius/deepseek/deepseek",
+        "name": "deepseek-v4-flash",
+        "mode": "chat",
+        "completion_params": {
+          "temperature": 0.4
+        }
+      },
+      "unauthorized_node_types": []
+    },
+    "survives_ordinary_compose_restart": true,
+    "no_identity_conflation": {
+      "recovery_path": "ORIGINAL_DATABASE_AND_APP",
+      "current_app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+      "historical_founder_run_app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+      "new_uuid_created": false,
+      "note": "原库与原 App 随宿主挂载一并恢复，未导入 ep37、未生成新 UUID，因此不存在历史 App 与恢复 App 的双重身份问题"
+    },
+    "pass": true
+  },
+  "M3-AC-20": {
+    "founder_seven_run_evidence_still_bound_to_historical_outputs": {
+      "official_runs": 7,
+      "disclosed_extra_submissions": 1,
+      "m3_app_run_rows_in_db": "641",
+      "seven_run_evidence_dir": "account-operations/evidence/ep39-founder-seven-run-extraction",
+      "per_scenario_results": "account-operations/founder-pack-v152/results/S1..S7"
+    },
+    "live_candidate_v152_recovery_evidence": {
+      "restore_report": "ep43/RESTORE_LIVE_CANDIDATE.json",
+      "ep37_dsl_imported": false,
+      "published_graph_byte_identical_to_frozen": true
+    },
+    "rollback_export_current_and_valid": {
+      "exported_after_restore_sha256": "bd676f291b8e108c906b606549da357f0dfc5153e3ccccb3ca15d97670811620",
+      "frozen_ep37_dsl_sha256": "bd676f291b8e108c906b606549da357f0dfc5153e3ccccb3ca15d97670811620",
+      "byte_identical": true,
+      "meaning": "活体 App 现在导出的 DSL 与冻结回滚件逐字节相同 —— 回滚入口当前有效且可再次生成"
+    },
+    "browser_canvas_verified": true,
+    "final_evidence_index": "ep44/FINAL_EVIDENCE_INDEX.json",
+    "main_pr_m5_production_untouched": {
+      "local_main": "eadaf747de249e9c4bde6feffb45b40644d3182b",
+      "remote_main": "a7b810109f43a4bf500acc285baab477d96796e3",
+      "pr_created": false,
+      "m5_started": false,
+      "production_dify_apps_touched": [],
+      "only_app_written": "b7fb5b1a-9278-426c-bb8a-f9f288639548"
+    },
+    "executor_model_calls_after_rebase": 0,
+    "workflow_runs_triggered_by_executor": 0,
+    "pass": true
+  },
+  "evidence_index": {
+    "ep34-candidate-v152-closure": {
+      "files": 1,
+      "bytes": 8161
+    },
+    "ep35-candidate-v152-freeze": {
+      "files": 2,
+      "bytes": 266014
+    },
+    "ep36-structural-and-ac16-v152": {
+      "files": 8,
+      "bytes": 847812
+    },
+    "ep37-rollback-drill-v152": {
+      "files": 3,
+      "bytes": 552319
+    },
+    "ep39-founder-seven-run-extraction": {
+      "files": 21,
+      "bytes": 6973172
+    },
+    "ep40-dify-recovery-v152": {
+      "files": 1,
+      "bytes": 5888
+    },
+    "ep41-founder-binding-decisions": {
+      "files": 1,
+      "bytes": 22305
+    },
+    "ep42-dify-host-mount-recovery": {
+      "files": 2,
+      "bytes": 120990
+    },
+    "ep43-dify-live-candidate-binding": {
+      "files": 18,
+      "bytes": 2492077
+    }
+  },
+  "all_pass": true
+}

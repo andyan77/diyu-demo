@@ -1,0 +1,288 @@
+{
+  "old_commit": "fc63add",
+  "Q1_false_positive": {
+    "bodies_checked": 266,
+    "v15_fire": 6,
+    "v151_fire": 4,
+    "removed": [
+      {
+        "case": "B15-DIR-02-topic-to-brief",
+        "tag": "draft",
+        "kind": "G4",
+        "hit": "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 1条/周 —— 「这条选题的任务是：把一个具体选品决定拆开给观众看，证明",
+        "ruling": "误报（DD-5：「本周期」被当成「本周」，选择性量词读成速率）"
+      },
+      {
+        "case": "B15-DIR-02-topic-to-brief",
+        "tag": "final",
+        "kind": "G4",
+        "hit": "expected_publish_count: 输入权威值 3条/周，正文却断言当前是 1条/周 —— 「这条选题的任务是：把一个具体选品决定拆开给观众看，证明",
+        "ruling": "误报（DD-5：「本周期」被当成「本周」，选择性量词读成速率）"
+      }
+    ],
+    "added": [],
+    "pass": true
+  },
+  "Q2_miss": {
+    "v15_caught": 295,
+    "v151_caught": 231,
+    "lost_total": 64,
+    "lost_explained_by_dd5": 64,
+    "genuine_losses": [],
+    "lost_cases": [
+      "B03-1-objective-01",
+      "B15-DIR-02-topic-to-brief"
+    ],
+    "sample_evidence": [
+      {
+        "family": "1-2 槽位伪造",
+        "case": "B03-1-objective-01",
+        "body": "draft",
+        "slot": "expected_publish_count",
+        "forged": "99 条/周",
+        "explained_by_dd5": true,
+        "evidence": [
+          {
+            "slot": "expected_publish_count",
+            "seg": "绑定条件是：周宁的商品号、长期价值目标、视频号、本周期观察窗（三条发布完成为止），以及「没有任何历史反馈」这个关键条件",
+            "n": 3,
+            "period_word": "本周",
+            "next_char": "期",
+            "dd5": true,
+            "why": "「…期」被当成周期词 —— 正是 DD-5 要修掉的那次误抓"
+          }
+        ]
+      },
+      {
+        "family": "1-2 槽位伪造",
+        "case": "B03-1-objective-01",
+        "body": "draft",
+        "slot": "expected_publish_count",
+        "forged": "98 条/天",
+        "explained_by_dd5": true,
+        "evidence": [
+          {
+            "slot": "expected_publish_count",
+            "seg": "绑定条件是：周宁的商品号、长期价值目标、视频号、本周期观察窗（三条发布完成为止），以及「没有任何历史反馈」这个关键条件",
+            "n": 3,
+            "period_word": "本周",
+            "next_char": "期",
+            "dd5": true,
+            "why": "「…期」被当成周期词 —— 正是 DD-5 要修掉的那次误抓"
+          }
+        ]
+      }
+    ],
+    "pass": true
+  },
+  "Q3_named_family": {
+    "negative": [
+      {
+        "text": "这是长期价值目标下，本周期最重要的一条",
+        "v15": [
+          {
+            "n": 1,
+            "unit": "周",
+            "period_source": "word",
+            "partitive": false,
+            "start": 17,
+            "end": 19
+          }
+        ],
+        "v151": [
+          {
+            "n": 1,
+            "unit": null,
+            "period_source": null,
+            "partitive": false,
+            "start": 17,
+            "end": 19
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "本周期内最值得做的一条",
+        "v15": [
+          {
+            "n": 1,
+            "unit": "周",
+            "period_source": "word",
+            "partitive": false,
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "v151": [
+          {
+            "n": 1,
+            "unit": null,
+            "period_source": null,
+            "partitive": false,
+            "start": 9,
+            "end": 11
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "本日期最靠前的一条",
+        "v15": [
+          {
+            "n": 1,
+            "unit": "天",
+            "period_source": "word",
+            "partitive": false,
+            "start": 7,
+            "end": 9
+          }
+        ],
+        "v151": [
+          {
+            "n": 1,
+            "unit": null,
+            "period_source": null,
+            "partitive": false,
+            "start": 7,
+            "end": 9
+          }
+        ],
+        "ok": true
+      }
+    ],
+    "positive": [
+      {
+        "text": "本周实际产能只有一条",
+        "want": [
+          1,
+          "周"
+        ],
+        "got": [
+          {
+            "n": 1,
+            "unit": "周",
+            "period_source": "word",
+            "partitive": false,
+            "start": 8,
+            "end": 10
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "每周 3 条",
+        "want": [
+          3,
+          "周"
+        ],
+        "got": [
+          {
+            "n": 3,
+            "unit": "周",
+            "period_source": "prefix",
+            "partitive": false,
+            "start": 3,
+            "end": 6
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "一周 2 条",
+        "want": [
+          2,
+          "周"
+        ],
+        "got": [
+          {
+            "n": 2,
+            "unit": "周",
+            "period_source": "word",
+            "partitive": false,
+            "start": 3,
+            "end": 6
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "该周 1 条",
+        "want": [
+          1,
+          "周"
+        ],
+        "got": [
+          {
+            "n": 1,
+            "unit": "周",
+            "period_source": "word",
+            "partitive": false,
+            "start": 3,
+            "end": 6
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "目标是 4 条/周",
+        "want": [
+          4,
+          "周"
+        ],
+        "got": [
+          {
+            "n": 4,
+            "unit": "周",
+            "period_source": "suffix",
+            "partitive": false,
+            "start": 4,
+            "end": 9
+          }
+        ],
+        "ok": true
+      },
+      {
+        "text": "本周期内每周 3 条",
+        "want": [
+          3,
+          "周"
+        ],
+        "got": [
+          {
+            "n": 3,
+            "unit": "周",
+            "period_source": "prefix",
+            "partitive": false,
+            "start": 7,
+            "end": 10
+          }
+        ],
+        "ok": true
+      }
+    ],
+    "pass": true
+  },
+  "Q4_ablation": {
+    "baseline_fire": 4,
+    "baseline_miss_caught": 231,
+    "units": [
+      {
+        "unit": "DD-5 `(?!期)`（「本周期」不是「本周」）",
+        "fire_when_disabled": 6,
+        "miss_when_disabled": 295,
+        "changed_on_fp_axis": true,
+        "changed_on_miss_axis": true,
+        "changed": true
+      }
+    ],
+    "pass": true
+  },
+  "Q5_true_rejection": {
+    "still_rejected": [
+      "E07",
+      "E08"
+    ],
+    "pass": true
+  },
+  "ALL_PASS": true
+}

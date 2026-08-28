@@ -1,0 +1,80 @@
+{
+  "what": "AC-16 缺口二 · 浏览器渲染画布实证",
+  "app_id": "b7fb5b1a-9278-426c-bb8a-f9f288639548",
+  "browser": "chromium-1234（playwright 缓存里的二进制），CDP over 自写 WebSocket",
+  "url": "http://localhost/app/b7fb5b1a-9278-426c-bb8a-f9f288639548/workflow",
+  "rendered": {
+    "nodes": 7,
+    "edges": 6,
+    "node_list": [
+      {
+        "id": "start",
+        "text": "START | 本轮投影输入"
+      },
+      {
+        "id": "operating_one_account_llm",
+        "text": "单账号持续运营决策 | deepseek-v4-flash"
+      },
+      {
+        "id": "required_item_gate",
+        "text": "必填项闸门（确定性检查） | 触发条件能从投影算的由代码算；最低实质产出、锚定实质、内部字段泄漏、输入槽位矛盾、参考清单矛盾、基线关键对象连续性，全部确定性判定。不判断内容好坏。"
+      },
+      {
+        "id": "gate_repair_llm",
+        "text": "按闸门报告补齐缺失项 | deepseek-v4-flash"
+      },
+      {
+        "id": "assemble",
+        "text": "确定性取稿 | 闸门无缺失时逐字返回原稿（由代码保证，不依赖模型照抄）；硬失败时直接返回原稿并标记不进补齐；有缺失时返回补齐稿与配套审计块"
+      },
+      {
+        "id": "post_gate",
+        "text": "闸门闭合复检与周期状态承载决定 | 对成稿独立重跑同一套检查（自己解析审计块，不复用第一道闸门的锚定行），并决定这份交付够不够格成为当前有效周期判断；不够格就显式说明，不静默继续"
+      },
+      {
+        "id": "end",
+        "text": "运营判断与内容任务候选 | 闸门闭合复检与周期状态承载决定"
+      }
+    ]
+  },
+  "canvas_reverse_search": {
+    "http_request 出现在画布上": false,
+    "tool 节点出现在画布上": false,
+    "画布 HTML 里出现工具节点类名": false
+  },
+  "titles_all_present": true,
+  "titles_expected": [
+    "本轮投影输入",
+    "单账号持续运营决策",
+    "必填项闸门（确定性检查）",
+    "按闸门报告补齐缺失项",
+    "确定性取稿",
+    "闸门闭合复检与周期状态承载决定",
+    "运营判断与内容任务候选"
+  ],
+  "screenshot": {
+    "file": "canvas_v14.png",
+    "bytes": 180905,
+    "sha256": "805fff4b8d134dca4917027d7636081fee045688a04767bda85835b912ad2bb2"
+  },
+  "llm_panel": {
+    "clicked": true,
+    "面板里出现 SKILL 的首行标识": true,
+    "面板里出现判断主链小节名": true,
+    "面板里出现本轮新增的判据": true,
+    "panel_chars": 25754
+  },
+  "screenshot_panel": {
+    "file": "canvas_v14_llm_panel.png",
+    "bytes": 338378,
+    "sha256": "4465029053b1c44a0cbc2e59e3085d7062a8e1a79a5108d4ab368e00718393f5"
+  },
+  "verdict": {
+    "画布渲染出 7 个节点": true,
+    "画布渲染出 6 条连线": true,
+    "七个节点标题全部出现": true,
+    "画布上无 http_request / tool 节点": true,
+    "LLM 节点面板上挂着 SKILL 正文": true
+  },
+  "all_pass": true
+}

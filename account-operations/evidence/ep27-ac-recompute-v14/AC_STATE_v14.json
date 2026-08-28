@@ -1,0 +1,215 @@
+{
+  "round": "第 8 轮（候选 M3 载体 v1.4.2）",
+  "checkpoint_file": "M3_CHECKPOINT_ROUND_8.md",
+  "progress": "IN_PROGRESS",
+  "terminal_state": null,
+  "terminal_state_note": "Founder PAUSE_NEW_MODEL_CALLS 第 7 条：进度保持 IN_PROGRESS，本轮不输出任何终态词。",
+  "how_derived": "逐条从**本轮实际存在的证据**推导。本轮三名 ECC 独立判定者与 36 名盲评者在 Founder 下达 PAUSE_NEW_MODEL_CALLS 时被执行侧主动中止，**一份判定书都没有产出**（verdicts 目录 0 份，仓库无任何 *_VERDICT_V14_*）。因此凡是冻结件要求『由未参与实现者按冻结清单判定』的验收项，本轮一律 NOT_VERIFIED。",
+  "hard_rule": "`workflow_status == \"succeeded\"` 只说明这一次 Dify 运行没有崩，它**不是**任何验收项的 PASS 依据。本文件里没有一条状态是从 succeeded 推出来的；凡以运行成功为唯一支撑的项，一律记 NOT_VERIFIED。",
+  "evidence_base": [
+    "account-operations/evidence/ep06-runtime-fidelity-dify-v14/（9 次运行，含 1 例保留的传输失败）",
+    "account-operations/evidence/ep06b-runtime-behavior-v14/（49 例运行）",
+    "account-operations/evidence/ep07-longitudinal-v14/（12 步运行）",
+    "account-operations/evidence/ep08-module-ab-v14/（12 份四臂输出 + 1 例保留的传输失败）",
+    "account-operations/evidence/ep22-rebind005-g4/（G-4 v2 双向计量、D-1/D-3 旧码新码对照、D-3 残留锚点审计）",
+    "account-operations/evidence/ep23-candidate-v14-freeze/CANDIDATE_FREEZE_v1.4.json",
+    "account-operations/evidence/ep24-ac16-canvas-and-prompt/（系统提示词全文 + 两张画布截图）",
+    "account-operations/evidence/ep25-structural-v14/（对 v1.4.2 已发布图的结构反搜）",
+    "account-operations/evidence/ep26-gate-v14-defects/GATE_V14_DEFECTS.json（本轮修法自身的四条缺陷与拒收归因）"
+  ],
+  "acs": [
+    {
+      "id": "M3-AC-00",
+      "state": "成立",
+      "basis": "绑定半成立且为实测非自述：候选 v1.4.2 的 SKILL/四份闸门源码/参考文件哈希由 CANDIDATE_FREEZE_v1.4 记录；系统提示词从 **publish 端点**读回全文并与 SKILL.md 逐字节相等（sha256 76d51208…）；Dify App、已发布版本名 m3-cand-v1.4.2、图哈希 3bc0950b… 落盘。任务身份、合同哈希、分支/worktree 全程未变，非 NEW_TASK。远端半本次收口后闭合：已推送，本地 HEAD == 远端 HEAD（`e95ed04`），可由 `evidence/ep10-closeout-v12/verify_remote_hash.sh` 零参数只读重验",
+      "gap": "—"
+    },
+    {
+      "id": "M3-AC-01",
+      "state": [
+        {
+          "binding": "①②责任边界（结构 + 反搜）",
+          "value": "成立"
+        },
+        {
+          "binding": "③消融门 B vs B′",
+          "value": "NOT_VERIFIED"
+        }
+      ],
+      "basis": "①② 责任反搜 12 条确定性测试通过；结构反搜对 **v1.4.2 已发布图**重跑，四类行为标签命中 0、落在结构位 0（ep25）。③ 需要盲评揭盲才能推导，本轮 36 名盲评者被中止、0 份判定，`unblind_v5.py` 未运行",
+      "gap": "③ 需要一次完整盲评 + 揭盲；判定者与揭盲脚本均已冻结待跑"
+    },
+    {
+      "id": "M3-AC-02",
+      "state": "NOT_VERIFIED",
+      "basis": "行为 ECC 本轮 49 例运行齐备（B02-1/2/2P/3/4 等在列），但**冻结件要求由未参与实现者判定**，本轮判定者被中止、无判定书。运行成功不等于验收通过",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-03",
+      "state": "NOT_VERIFIED",
+      "basis": "同上：B03-1…8 + N2 + N3 十例运行齐备，无独立判定",
+      "gap": "行为 ECC 独立判定（含八变体两两至少两轴实质差异的逐对核对）"
+    },
+    {
+      "id": "M3-AC-04",
+      "state": "NOT_VERIFIED",
+      "basis": "同上：B04-1/1P/N1/N7 四例运行齐备，无独立判定。另注：B04-1P 本轮被系统拒收，而拒收理由已机械判定为**误报**（DD-2/DD-3），这一点须进入判定者的输入而不是替代判定",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-05",
+      "state": [
+        {
+          "binding": "结构半（对 v1.4.2 已发布图反搜）",
+          "value": "成立"
+        },
+        {
+          "binding": "运行时半（B05-1/2）",
+          "value": "NOT_VERIFIED"
+        }
+      ],
+      "basis": "结构半确定性可复算：四类行为标签在 v1.4.2 图上命中 0，落在 enum／分支条件／必填字段 0（ep25）。运行时半的两例运行齐备但无独立判定",
+      "gap": "运行时半的行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-06",
+      "state": "NOT_VERIFIED",
+      "basis": "B06-1/P 两例运行齐备，Oracle v2.0 未再改动（哈希与第 7 轮相同，冻结在先）。但无独立判定。另注：B06-P 本轮被拒收，理由属 DD-1 误拒",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-07",
+      "state": "NOT_VERIFIED",
+      "basis": "B07-1/2/3/P 四例运行齐备，无独立判定。B07-1 与 B07-P 本轮被拒收，理由分别属 DD-4 与 DD-1 误拒",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-08",
+      "state": "NOT_VERIFIED",
+      "basis": "B08-1/P 两例运行齐备，无独立判定",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-09",
+      "state": "NOT_VERIFIED",
+      "basis": "第 7 轮此项为『不得 PASS』，触发例 B09-5-no-market-data 是一次零正文交付。本轮该例已重跑且产出正文，但**是否满足该例 Oracle 必须由独立判定者判**，执行侧不得代判。B09-N5 本轮被拒收，理由属 DD-1 误拒",
+      "gap": "行为 ECC 独立判定（B09 全族）"
+    },
+    {
+      "id": "M3-AC-10",
+      "state": "NOT_VERIFIED",
+      "basis": "B10-1/2/3/4/P 五例运行齐备，无独立判定。B10-3 本轮被拒收，理由属 DD-1 误拒",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-11",
+      "state": "NOT_VERIFIED",
+      "basis": "纵向 E09→E10→E11 三步运行齐备，投影记录完整。冻结件 §7 不给部分通过留出口，本项随纵向 ECC 整体判定，而纵向判定本轮未产出",
+      "gap": "纵向 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-12",
+      "state": [
+        {
+          "binding": "对钉死绑定 `main@df2c595`",
+          "value": "成立"
+        },
+        {
+          "binding": "对当前 `main@a7b8101`",
+          "value": "成立"
+        }
+      ],
+      "basis": "本轮**不重跑，按 A3 不多算**：M2 侧（`business-persistence/`）一字未动；M3 侧承载该项的 `projection_v13.py` sha256 6b9b3144… 与第 7 轮相同（CANDIDATE_FREEZE_v1.4 的 unchanged_vs_v13 列表里）。第 7 轮 9/9 定向复验的结论未被任何本轮变化触及",
+      "gap": "—"
+    },
+    {
+      "id": "M3-AC-13",
+      "state": [
+        {
+          "binding": "对钉死绑定 `main@df2c595`",
+          "value": "成立"
+        },
+        {
+          "binding": "对当前 `main@a7b8101`",
+          "value": "成立"
+        }
+      ],
+      "basis": "M2 侧未动；写回候选校验逻辑未动。结构半对 **v1.4.2 已发布图**重跑：无 http_request 节点、无 tool 节点、无环境变量与会话变量、提示词散文外写入标记命中 0（ep25）",
+      "gap": "—"
+    },
+    {
+      "id": "M3-AC-14",
+      "state": "NOT_VERIFIED",
+      "basis": "第 7 轮此项为『不得 PASS』（事实链无确认人且未显式写出该缺口）。本轮 SKILL.md 已加确认人条款并重跑 B14 全族，但**是否满足该例 Oracle 的『不足』条款必须由独立判定者逐字对照**，执行侧不得代判",
+      "gap": "行为 ECC 独立判定（B14 全族）"
+    },
+    {
+      "id": "M3-AC-15",
+      "state": "NOT_VERIFIED",
+      "basis": "B15-DIR-01/02/03 + CTA + N6 五例运行齐备，无独立判定",
+      "gap": "行为 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-16",
+      "state": [
+        {
+          "binding": "Workflow 图链路（≥7 组保真）",
+          "value": "NOT_VERIFIED"
+        },
+        {
+          "binding": "系统提示词全文入证据",
+          "value": "成立"
+        },
+        {
+          "binding": "浏览器渲染画布",
+          "value": "成立"
+        }
+      ],
+      "basis": "后两半本轮由确定性证据关闭：①系统提示词从 publish 端点（非草稿）读回**全文落盘** 23317 字符，与 `SKILL.md` + 图里那行参考占位符**逐字节相等**，`SKILL.md` 工作区哈希 == git HEAD 哈希；②浏览器画布用 chromium + 自写 CDP over WebSocket 打开真实登录态画布，从**渲染出来的 DOM** 数出 7 节点 6 边、七个节点标题全在、画布上无 http_request/tool 节点，并点开 LLM 节点确认面板上挂着本轮新加的判据原文，两张截图带 sha256。第一半的 ≥7 组保真判定需要独立判定者，本轮未产出",
+      "gap": "保真 ECC 独立判定（≥7 组）"
+    },
+    {
+      "id": "M3-AC-17",
+      "state": "NOT_VERIFIED",
+      "basis": "纵向 12/12 步运行齐备且投影链完整（本轮持续位链真正建立起来：E02 起 3 位、E03 起 1 位延续到 E10）。但整体判定需要独立判定者，本轮未产出。**已知会进入判定输入的机械事实**：E07/E08 两步被系统拒收，两例均为 D-3 真检测（补齐节点代写 POS 行），在 v1.3 下会被放行并承载为新基线",
+      "gap": "纵向 ECC 独立判定"
+    },
+    {
+      "id": "M3-AC-18",
+      "state": "NOT_VERIFIED",
+      "basis": "A/B 四臂 12 份输出齐备、零泄漏、盲评包已生成（12 个不透明单元、36 份提示词由单一模板生成并当场核验唯一 1 种形态、归一后 sha256 3e928d39…、落盘冻结）。36 名盲评者被中止、0 份判定，`unblind_v5.py`（含四道预冻结闸）未运行。**没有揭盲就没有 AC-18 的任何结论**——不得由执行侧读封存映射代替",
+      "gap": "36 份盲评 + 揭盲推导"
+    },
+    {
+      "id": "M3-AC-19",
+      "state": "NOT_VERIFIED",
+      "basis": "Qwen 半 NOT_APPLICABLE（Founder 指示，运行前判定，未变）。本轮判定者隔离核验未跑（无判定者执行记录可核）；独立收口审查未做",
+      "gap": "判定者隔离核验 + 独立收口审查（冻结 Rubric R-1…R-7 未改，可直接用）"
+    },
+    {
+      "id": "M3-AC-20",
+      "state": "NOT_VERIFIED",
+      "basis": "本轮**按 Founder PAUSE_NEW_MODEL_CALLS 第 8 条不生成新的 Founder 实测包、不请求产品接受**。远端已推送，本地 HEAD == 远端 HEAD（`e95ed04`）。回滚演练与证据索引沿用第 7 轮记录，未因本轮变化重做",
+      "gap": "Founder 产品接受（本轮按 PAUSE 第 8 条不请求）；其余各项待技术验收闭合"
+    }
+  ],
+  "tally_note": "按绑定计：成立 9、NOT_VERIFIED 18（共 27 个绑定，AC-01／AC-05／AC-12／AC-13／AC-16 五条按绑定分列）。NOT_VERIFIED 的绝大多数**不是证据缺失，而是证据齐备但独立判定被中止**——这两件事必须分开记，否则下一轮会误以为需要重跑取证。",
+  "what_is_ready_to_judge_without_new_runs": [
+    "行为 ECC：49 例运行记录 + Oracle v2.0（哈希未变）齐备，判定者 allow-list 与摘录已生成",
+    "纵向 ECC：12 步运行 + 逐步投影齐备",
+    "保真 ECC：9 次运行齐备（含 1 例传输失败重跑成功的记录）",
+    "A/B：12 份输出 + 12 个不透明单元 + 36 份冻结提示词 + 封存映射齐备，揭盲脚本 T-1 自校验可过",
+    "以上四项**都不需要再调用 DeepSeek**，只需要判定者读记录。Founder 若解除暂停，这一批可直接跑判定而不重跑取证"
+  ],
+  "tally": {
+    "按绑定计（分列的每个绑定各算一条）": {
+      "成立": 9,
+      "NOT_VERIFIED": 18
+    },
+    "按卡计": {
+      "21 条 AC 中分绑定呈现的": 5,
+      "单值的": 16
+    }
+  }
+}

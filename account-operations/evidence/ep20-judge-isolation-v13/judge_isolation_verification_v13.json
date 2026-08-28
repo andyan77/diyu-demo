@@ -1,0 +1,403 @@
+{
+  "round": "v1.3 / 第 7 轮",
+  "method": "机械核验第 7 轮全部独立判定者是否真的只读了被允许读的东西。\n\n方法沿用第 3–6 轮：解析判定者**自己的执行记录**，只扫会造成文件访问的参数\n（Read.file_path / Bash.command / Grep|Glob 的 pattern 与 path），\n不扫 Write/Edit 的正文，也不扫 Bash heredoc 的载荷 ——\n判定者在自己写的文件里提到某个文件名是\"提及\"，不是\"读取\"。\n这两个形态各在第 3、4 轮造成过一次假阳性，都已修掉并留在这里作回归。\n\n本轮与上一轮的两处差别：\n  1. 盲评者除自己那个单元目录外，还要读**属于自己的那份冻结提示词文件**\n     （prompts/unit_NN_jK.txt）—— 这是本轮把提示词落盘冻结带来的，\n     必须进白名单，否则 36 名全部会被误判越界。\n  2. 行为判定者有两份执行记录：第一次在写判定书时 API 连接中断，\n     第二次重新做了一遍。**两份都扫**，不只扫成功那一份 ——\n     只扫成功那份等于让中断掩盖越界。\n\n**本核验能证明什么、不能证明什么**：它能证明判定者没有读过去盲文件；\n它**不能**证明盲评有效 —— 第 4 轮的盲评正是被输出自身的结构指纹去盲的，\n那条通道不需要读任何文件。指纹本身由 _leak_scan_v3.json 单独机械扫描。",
+  "repo_judge_forbidden_markers": [
+    "M3_CHECKPOINT_",
+    "M3_ACCEPTANCE_CRITERIA_FROZEN",
+    "M3_ECC_REBIND_",
+    "M3_ECC_MODULE_AB_",
+    "M3_FOUNDER_",
+    "M3_INDEPENDENT_CLOSEOUT_REVIEW",
+    "GATE_DEFECTS_",
+    "_VERDICT_",
+    "collab-ledger",
+    "account-operations/tools",
+    "account-operations/tests",
+    "account-operations/fixtures",
+    "ep08-",
+    "ep10-",
+    "ep11-",
+    "ep12-",
+    "ep13-",
+    "ep15-",
+    "ep16-",
+    "ep19-",
+    "ep20-",
+    "git log",
+    "git show",
+    "git diff",
+    "git reflog"
+  ],
+  "blind_judge_forbidden_markers": [
+    "/home/faye/diyu-demo",
+    "_SEALED",
+    "_arms_and_holdouts",
+    "SKILL.md",
+    "M3_",
+    "git log",
+    "git show",
+    "git reflog",
+    "scratchpad/m3/",
+    "ep08-module-ab"
+  ],
+  "checker_false_positive_families_fixed": [
+    "StructuredOutput 的整份载荷是判定者自己写的判定内容，被当成文件访问参数扫描 —— 其中一名的自检句「未执行 git 命令」被读成执行了 git，把否认当成了违规",
+    "仓库标记 `diyu-demo` 打在子串上，而本会话目录名 `-home-faye-diyu-demo` 天然含它 —— 判定者读自己的 tool-results 落盘文件（在仓库之外、完全合法）会命中"
+  ],
+  "checker_note": "本核验器与前几轮一样，是被假阳性逐次打磨出来的。上面两类已写死为判据。它**只能**证明判定者没读过禁读的东西，不能证明判定内容正确。",
+  "blind_judge_note": "本核验只能证明盲评者没读过去盲文件；它**不能**证明盲评有效。输出自身的结构指纹是另一条通道，由 _leak_scan_v3.json 单独机械扫描。",
+  "judges": {
+    "fidelity-v13": {
+      "transcript_found": true,
+      "transcript": "ae4d11f678b0086ac.output",
+      "tool_use_count": 41,
+      "distinct_path_refs": 11,
+      "refs_outside_allowlist": [
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1",
+        "M3_ACCOUNT_CONTENT_OPERATOR_SEMANTIC_COMPILATION_v1.0.md",
+        "SKILL.md"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "behavior-002-v13-attempt1-interrupted": {
+      "transcript_found": true,
+      "transcript": "aa18e2e951d57cc42.output",
+      "tool_use_count": 43,
+      "distinct_path_refs": 15,
+      "refs_outside_allowlist": [
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/",
+        "account-operations/skills/"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "behavior-002-v13": {
+      "transcript_found": true,
+      "transcript": "af1e4b170c74ad77f.output",
+      "tool_use_count": 67,
+      "distinct_path_refs": 19,
+      "refs_outside_allowlist": [
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1",
+        "SKILL.md"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "longitudinal-v13": {
+      "transcript_found": true,
+      "transcript": "acd6bec767266a891.output",
+      "tool_use_count": 33,
+      "distinct_path_refs": 25,
+      "refs_outside_allowlist": [
+        "/home/faye/.claude/projects/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/tool-results/buh24zkvx.txt",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1",
+        "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E01.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E02.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E03.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E04.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E05.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E06.txt",
+        "/tmp/claude-1000/-home-faye-diyu-demo/2c670698-40ad-483e-b793-56ac12fb6aea/scratchpad/E07.txt"
+      ],
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_03-a0331f": {
+      "transcript_found": true,
+      "transcript": "agent-a0331f8001b7f72ec.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_03",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_03-a12b50": {
+      "transcript_found": true,
+      "transcript": "agent-a12b507cea65d3c9e.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_03",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_04-a1310d": {
+      "transcript_found": true,
+      "transcript": "agent-a1310de0f6122beb8.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_04",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_12-a14769": {
+      "transcript_found": true,
+      "transcript": "agent-a147698ce92a5e4e9.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_12",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_06-a28478": {
+      "transcript_found": true,
+      "transcript": "agent-a2847896bfb9abdba.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_06",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_04-a2995d": {
+      "transcript_found": true,
+      "transcript": "agent-a2995df1cc52b5950.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_04",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_06-a42aa3": {
+      "transcript_found": true,
+      "transcript": "agent-a42aa3bee9f03c8b1.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_06",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_09-a45656": {
+      "transcript_found": true,
+      "transcript": "agent-a45656d88134eb24b.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_09",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_05-a5c487": {
+      "transcript_found": true,
+      "transcript": "agent-a5c487ec7f53e5f9e.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_05",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_10-a72b3b": {
+      "transcript_found": true,
+      "transcript": "agent-a72b3b0de50972eee.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_10",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_08-a78d5a": {
+      "transcript_found": true,
+      "transcript": "agent-a78d5ae3c6deccf1f.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_08",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_07-a7c08f": {
+      "transcript_found": true,
+      "transcript": "agent-a7c08fc330852a191.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_07",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_07-a8187c": {
+      "transcript_found": true,
+      "transcript": "agent-a8187cc2481049220.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_07",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_02-a897a1": {
+      "transcript_found": true,
+      "transcript": "agent-a897a17e525bab0c1.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_02",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_06-a8ded4": {
+      "transcript_found": true,
+      "transcript": "agent-a8ded452529c724f8.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_06",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_12-a8f500": {
+      "transcript_found": true,
+      "transcript": "agent-a8f5001d1f0dc1301.jsonl",
+      "tool_use_count": 7,
+      "own_unit": "unit_12",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_10-a913f0": {
+      "transcript_found": true,
+      "transcript": "agent-a913f0de42694b1ed.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_10",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_11-a98b93": {
+      "transcript_found": true,
+      "transcript": "agent-a98b93985dce60c92.jsonl",
+      "tool_use_count": 7,
+      "own_unit": "unit_11",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_07-a9ebed": {
+      "transcript_found": true,
+      "transcript": "agent-a9ebed7d334e1659e.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_07",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_03-a9ed82": {
+      "transcript_found": true,
+      "transcript": "agent-a9ed82c7232a81783.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_03",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_08-aa0a0a": {
+      "transcript_found": true,
+      "transcript": "agent-aa0a0a3952b43cf53.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_08",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_11-aaf1b0": {
+      "transcript_found": true,
+      "transcript": "agent-aaf1b08db7d90c610.jsonl",
+      "tool_use_count": 9,
+      "own_unit": "unit_11",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_01-ab6d08": {
+      "transcript_found": true,
+      "transcript": "agent-ab6d08434c43388a6.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_01",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_04-abb313": {
+      "transcript_found": true,
+      "transcript": "agent-abb313b1d63f96904.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_04",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_01-abccd0": {
+      "transcript_found": true,
+      "transcript": "agent-abccd0804bc0c15be.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_01",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_05-ad431d": {
+      "transcript_found": true,
+      "transcript": "agent-ad431df9b3327573b.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_05",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_02-ad6b98": {
+      "transcript_found": true,
+      "transcript": "agent-ad6b98236666a6485.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_02",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_08-ad8099": {
+      "transcript_found": true,
+      "transcript": "agent-ad80995758313a292.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_08",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_11-ae0980": {
+      "transcript_found": true,
+      "transcript": "agent-ae098043d0f94c756.jsonl",
+      "tool_use_count": 9,
+      "own_unit": "unit_11",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_09-ae1b26": {
+      "transcript_found": true,
+      "transcript": "agent-ae1b266bf50a79e8e.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_09",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_02-ae882a": {
+      "transcript_found": true,
+      "transcript": "agent-ae882a322503bde2b.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_02",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_05-aebca1": {
+      "transcript_found": true,
+      "transcript": "agent-aebca152c915f0287.jsonl",
+      "tool_use_count": 7,
+      "own_unit": "unit_05",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_01-aee0ac": {
+      "transcript_found": true,
+      "transcript": "agent-aee0acdbd87a40b15.jsonl",
+      "tool_use_count": 6,
+      "own_unit": "unit_01",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_09-aef877": {
+      "transcript_found": true,
+      "transcript": "agent-aef877b8efb449229.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_09",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_10-af4a0d": {
+      "transcript_found": true,
+      "transcript": "agent-af4a0d4f51d3602a2.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_10",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    },
+    "ab-blind-unit_12-afad71": {
+      "transcript_found": true,
+      "transcript": "agent-afad71ab3d25ad3f0.jsonl",
+      "tool_use_count": 5,
+      "own_unit": "unit_12",
+      "forbidden_hits": [],
+      "isolation_verdict": "CLEAN"
+    }
+  },
+  "summary": {
+    "total": 40,
+    "violations": [],
+    "transcript_missing": []
+  }
+}

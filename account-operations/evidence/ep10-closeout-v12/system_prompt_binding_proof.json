@@ -1,0 +1,18 @@
+{
+  "why": "保真判定者指出：运行记录里没有系统提示词全文，'实际喂给 LLM 的就是 SKILL.md v1.2' 只到推断级。这份核验从**已部署的草稿图**取系统提示词原文，与仓库里的 SKILL.md 做逐字节比对，把该命题从推断级抬到已观察级——不需要重跑任何一次调用。",
+  "graph_source": "account-operations/evidence/ep10-closeout-v12/dify_draft_graph.json（从 Console API 实取）",
+  "llm_node": "operating_one_account_llm",
+  "system_prompt_chars": 18748,
+  "system_prompt_sha256": "e8eec05c46d379989d47056a9e480fcbab800d8acbab235291ea30cd93e9a531",
+  "skill_md_chars": 18713,
+  "skill_md_sha256": "343758f3c2da5694f669ad811a9b9a050f88bb6438146d197d00b15a4de981b7",
+  "expected_suffix": "\n\n---\n{{#start.loaded_references#}}",
+  "system_prompt_equals_skill_plus_suffix": true,
+  "residual_limit": "已补齐：已发布版本的系统提示词与草稿逐字节相同，整张图的规范化哈希也相同。运行走的是已发布版本，因此'实际喂给 LLM 的就是 SKILL.md v1.2'现在是已观察级，不是推断级。",
+  "published_version_id": "0d731921-762e-4370-8dce-c6739badf106",
+  "published_system_prompt_sha256": "e8eec05c46d379989d47056a9e480fcbab800d8acbab235291ea30cd93e9a531",
+  "published_equals_draft_system_prompt": true,
+  "published_graph_sha256": "47ea0a88141e45199fe547b9d9d6583938ea980d4f13ae4c3906123f5b149270",
+  "draft_graph_sha256": "47ea0a88141e45199fe547b9d9d6583938ea980d4f13ae4c3906123f5b149270",
+  "published_graph_equals_draft_graph": true
+}
