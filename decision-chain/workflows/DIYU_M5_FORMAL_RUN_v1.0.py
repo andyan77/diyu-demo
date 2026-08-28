@@ -213,8 +213,13 @@ def main():
         return 2
     print("前置检查通过。开始按 run_sequence 正式运行。\n")
 
+    # 子进程按环境变量取绑定与回归标签。显式设死，免得「跑的是哪套绑定」
+    # 要靠事后推断——本轮整个 F4 就是从「事后推断选了哪个文件」来的。
+    os.environ.setdefault("M5_BIND", "rb")
+    os.environ["REGRESSION_TAG"] = "F" + RUN_TAG
     log = {"started_at": facts.get("started_at"), "preflight": facts,
-           "run_tag": RUN_TAG, "steps": []}
+           "run_tag": RUN_TAG, "bind": os.environ["M5_BIND"],
+           "regression_tag": os.environ["REGRESSION_TAG"], "steps": []}
     only = set((os.environ.get("FORMAL_ONLY") or "").split(",")) - {""}
 
     def run(name, cmd):

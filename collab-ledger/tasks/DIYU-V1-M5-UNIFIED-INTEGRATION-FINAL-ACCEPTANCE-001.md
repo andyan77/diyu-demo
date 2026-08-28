@@ -228,3 +228,63 @@ Dify 九个相关应用各有 1 个 service API key => 测试调用权限具备�
 ## L4 · 已排除路线
 
 （本任务暂无）
+
+---
+
+# ============ REBASE：AC-07 阻断修复与最终收口 ============
+
+同一 `task_id`，`entry_mode = REBASE_TASK`。不新建任务身份，不重置 Attempt，
+不清空失败历史。以下只追加。
+
+## Rebase 激活
+
+| 项 | 值 |
+|---|---|
+| 激活事件 | Founder 于工程终端完整注入准确 Rebase Prompt 与 v1.1 合同 |
+| Prompt | `M5_AC07_BLOCKER_REMEDIATION_AND_EVIDENCE_REBASE_EXECUTION_PROMPT_v1.0.md` |
+| Prompt sha256 | `9b988027438f498b25421cecd73cd9d9d302bddcf15876c6b9833eaf624ddecb`（现场复算一致） |
+| Contract | `M5_ENGINEERING_TASK_CONTRACT_v1.1_AC07_REBASE.yaml` |
+| Contract sha256 | `a13b5651c2065eb8ffd70c1cdbf4bf1de09fbc39f7bb5693b31231f2da2ce7dc`（现场复算一致） |
+| 父 Root Prompt sha256 | `a18d3076146402afd77d7c8f11e43d48361270eb5f35671118a207aee002e75d`（一致） |
+| 父 Fixture/19D Index sha256 | `dba03d4839c5d14ea19bbee7ac7d650d77e8f10deef9ae03616d0978cd89ca7d`（一致） |
+| 交接点 | 分支 = 远端 = `9bf57246834a30f99f7a45abeea82ee5471a6fe8`；`origin/main` = `f6eb86c0` |
+| 原候选 | `86af9ecd5a313ff55aff1874d29eb342299d65ff`，只读留存，不删不改 |
+| 进度 | `IN_PROGRESS`（终态留空，不由执行侧写） |
+
+## RB-0 · 激活、刷新与新鲜留出保管
+
+- 四份绑定 SHA-256 全部现场复算一致，`task_id` 一致
+- 15 个 Dify graph md5 与冻结清单 15/15 匹配；运行中工作流 0
+- 相对 `main`：修改 0、删除 0、新增 501
+- 两份新鲜留出由上下文隔离 custodian 于 `2026-08-28T12:13:54Z` 封存，
+  **早于本轮任何实现改动**；施工侧只取到 identity / sha256 / 保管规则，未读正文与 oracle
+
+## RB-1 · 四项归因（详见 `decision-chain/docs/V1_M5_RB1_FAILURE_TRIAGE_v1.0.md`）
+
+| 项 | confirmed_origin | 与规划侧预判的差异 |
+|---|---|---|
+| F1 | **分裂**：幂等与失败证据 → M5 漏投影；全量重跑残余 1/4 → M3 行为 | 原报告「三条同一根因」不成立 |
+| F2 | `SYSTEM_UNDER_TEST`，六应用共用的 `_find_scalar` | 另发现转义引号静默截断、空字段跨行偷值两个缺陷 |
+| F3 | `INPUT_ENVIRONMENT_OR_TOOL`，M5 调用方 | 与预判一致；M3 闸门正确，不动 |
+| F4 | `CHECKER_OR_FIXTURE`，构建器与索引 | 不是选错一个文件，是系统性反选；`AC-04` 的 19/19 因此不成立 |
+
+## RB-2 · 最小实现
+
+- M5 投影补 `/tasks/{id}/run-state`：`account_context` 217 → 453 字符
+- `m3_operate` 加参考信封结构性闸门；三处裸夹具调用点统一走 canonical builder
+- 七个 M4 successor + 一个 M3 successor，均为任务命名、版本化、可回退
+- 证据绑定改为显式路径 + sha256，`glob` 选择全部删除
+
+## L5 · 外部副作用（Rebase 段，只追加）
+
+| # | 时间（UTC） | 副作用 | 可逆性 | 说明 |
+|---|---|---|---|---|
+| 7 | `2026-08-28T12:01Z` | 重启容器 `diyu-m2-app` | 可逆 | 随宿主 Docker 重启退出（Exited 255）。镜像 ID `sha256:f01357c2…` 与冻结清单逐字节一致，`/healthz` 200。**环境恢复，非被测对象变化** |
+| 8 | `2026-08-28T12:13Z` | 新建目录 `/home/faye/diyu-demo-holdout-custody/m5-rb/` 及三个封存文件 | 可逆 | 由上下文隔离 custodian 写入；施工侧未读正文 |
+| 9 | `2026-08-28T12:5xZ` | Dify **新建** 7 个应用（6 能力 successor + 1 接缝 successor） | 可逆 | 任务命名 `DIYU M5 RB · …`；**未覆盖、未删除任何已接受应用**；源应用 graph md5 复算后 7/7 仍等于冻结值 |
+| 10 | `2026-08-28T12:5xZ` | Dify **新建** 6 个 workflow 工具 provider（`diyu_m5rb_*`） | 可逆 | 参数配置照抄原 provider；原 `diyu_m4_*` provider 未改动 |
+| 11 | `2026-08-28T12:5xZ` | Dify **新建** 1 个应用（M3 恢复权威 successor） | 可逆 | 源 `b7fb5b1a` graph md5 保持 `e80f227e` |
+| 12 | `2026-08-28T12:2x–13:0xZ` | 任务域测试工作区写入（诊断用）：`run-state`、`feedback`、`publish-instance`、`content-version` | 可逆 | 全部 `is_test=true` 且 `is_simulated=true`；未触碰非测试数据；未做破坏性迁移 |
+
+> Rebase 段至此：零覆盖已接受应用、零改动六份 Skill 源文件、零改动用户未跟踪文件、
+> 零删除任何历史证据与失败记录、零真实外发。
