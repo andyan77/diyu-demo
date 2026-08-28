@@ -52,4 +52,16 @@ construction_owner_access: "IDENTITY_AND_HASH_ONLY_BODIES_PROHIBITED_UNTIL_CANDI
 
 unseal_event: "M5 Candidate Run Manifest 冻结后，由 custodian 向正式 runner 解封；解封前施工侧不得读取正文或 oracle"
 
-unseal_executed: false
+unseal_executed: true
+
+unseal_record:
+  unsealed_at: "2026-08-28T09:14:06Z 之后（候选清单冻结之后）"
+  frozen_candidate_commit: "86af9ecd5a313ff55aff1874d29eb342299d65ff"
+  precondition_verified: "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml status = FROZEN"
+  hash_reverification: "七个文件的 sha256 在解封当刻现场复算，与本清单逐条一致——
+    正文自建立以来一字未动，候选没有对着留出调过参"
+  execution_order: "**先跑、后读期望判据**。先读判据再跑，运行方式会被判据塑形，
+    跑出来的就不是「系统面对这段话会怎么做」，而是「我按判据摆出来的样子」。
+    运行器只存产出、不做任何判定；判定在读过封存 oracle 之后单独进行。"
+  routing_declared_openly: "每份留出进哪个专业能力由留出本身在说什么决定，
+    路由与理由写在运行器里可审计，不藏在代码路径中"
