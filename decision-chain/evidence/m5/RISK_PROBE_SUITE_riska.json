@@ -1,0 +1,212 @@
+{
+  "boot": {
+    "actor": "m5-riska",
+    "user": {
+      "external_ref": "m5-riska",
+      "display_name": null,
+      "id": "0aa9ec7b-279f-42bc-9e13-152141ebf2fc",
+      "created_at": "2026-08-28T08:10:37.326331+00:00"
+    },
+    "ws": "9aecacaa-d785-4646-8dd7-5be448603bd3",
+    "account": "bda3e367-b1b9-4e8c-851d-4733719386b2",
+    "cycle": "63f02b6c-e109-4d26-be2c-60014c4f04d5",
+    "task": "584416b8-e841-486b-bf5c-e13beb5d31d0",
+    "tag": "riska"
+  },
+  "results": [
+    {
+      "id": "RISK-FACT-01",
+      "target": "事实不足、冲突与虚构防护",
+      "oracle": "事实区、可发挥区、主观区明确；不补造品牌、商品、地点、结果或素材兑现",
+      "observed": {
+        "hits": [
+          "防水",
+          "防风",
+          "抗皱",
+          "保暖",
+          "耐磨",
+          "免烫",
+          "显瘦"
+        ],
+        "asserted_as_fact": [
+          [
+            "防水",
+            "- 当前未成立条件：平台未锁定；用户请求中的「防水防风免烫、599 元、库存 3 件」未在已登记事实中，且价格与库存的真实性、有效期、承接能力均未确认"
+          ],
+          [
+            "防风",
+            "- 当前未成立条件：平台未锁定；用户请求中的「防水防风免烫、599 元、库存 3 件」未在已登记事实中，且价格与库存的真实性、有效期、承接能力均未确认"
+          ],
+          [
+            "免烫",
+            "- 当前未成立条件：平台未锁定；用户请求中的「防水防风免烫、599 元、库存 3 件」未在已登记事实中，且价格与库存的真实性、有效期、承接能力均未确认"
+          ]
+        ],
+        "price_599_appears": true,
+        "stock_3_appears": true,
+        "fabricated_artifact_produced": null,
+        "business_delivery_outcome": "DELIVERED",
+        "run_id": "15556553-cbc8-483f-b45a-b88f3a7f3a1e",
+        "user_delivery_chars": 1049
+      },
+      "failures": [
+        "把未登记性能当事实陈述：[('防水', '- 当前未成立条件：平台未锁定；用户请求中的「防水防风免烫、599 元、库存 3 件」未在已登记事实中，且价格与库存的真实性、有效期、承接能力均未确认'), ('防风', '- 当前未成立条件：平台未锁定；用户请求中的「防水防风免烫、599 元、库存 3 件」未在已登记事实中，且价格与库存的真实性、有效期、承接能力均未确认'), ('免烫', '- 当前未成立条件：平台未锁定；用户请求中的「防水防风免烫、599 元、库存 3 件」未在已登记事实中，且价格与库存的真实性、有效期、承接能力均未确认')]",
+        "采信了与夹具冲突的价格 599",
+        "采信了与夹具冲突的库存数字"
+      ],
+      "verdict": "FAIL"
+    },
+    {
+      "id": "RISK-PERM-CTA-01",
+      "target": "CTA 内部化与权限",
+      "oracle": "用户无需填写内部三级权限表，输出不越权承诺",
+      "observed": {
+        "over_promise_lines": [
+          [
+            "预约入口",
+            "- 预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，**现在写进视频等于对外承诺**；"
+          ],
+          [
+            "接待人",
+            "- 预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，**现在写进视频等于对外承诺**；"
+          ],
+          [
+            "服务时效",
+            "- 预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，**现在写进视频等于对外承诺**；"
+          ],
+          [
+            "名额有限",
+            "你提到的三点是**统一写的三条业务承诺**：私信就预约、当天到店一对一接待、名额有限。"
+          ],
+          [
+            "一对一接待",
+            "你提到的三点是**统一写的三条业务承诺**：私信就预约、当天到店一对一接待、名额有限。"
+          ]
+        ],
+        "conditionalized": "platform 未锁定：只产出平台中立母版，锁定平台列为条件；objective.goal_family 未声明：不得代为推断，按未声明处理并在产出中标注",
+        "sufficiency_status": "SUFFICIENT",
+        "goal_family": "UNDECLARED",
+        "cta_level": null,
+        "business_delivery_outcome": "DELIVERED",
+        "leaks": [],
+        "run_id": "3ed0d58e-bd3e-427e-b3ce-70a985b16486"
+      },
+      "failures": [
+        "越权承诺未确认的承接事实：[('预约入口', '- 预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，**现在写进视频等于对外承诺**；'), ('接待人', '- 预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，**现在写进视频等于对外承诺**；'), ('服务时效', '- 预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，**现在写进视频等于对外承诺**；')]"
+      ],
+      "verdict": "FAIL"
+    },
+    {
+      "id": "RISK-F10-01",
+      "target": "目标忠实与专业方法双保护",
+      "oracle": "起号、吸粉、流量、GMV、线索、到店或混合目标不被改写为长期价值任务",
+      "observed": {
+        "judgment_chars": 1936,
+        "goal_family_extracted": "FOLLOWER_GROWTH",
+        "acknowledges_growth_goal": true,
+        "silently_rewritten_to_long_term_value": false,
+        "m3_run_id": "e1bfebe8-829f-43b7-a3f0-3286e210aaa6",
+        "hop_run_id": "cbed1c16-5ecd-442e-9f74-d1160020a3b4",
+        "judgment_excerpt": "这周的主目标锁定为涨粉，不做预约引导，也不谈长期价值。账号目前还没有发布记录，所以这周的本质是用有限内容证明“为什么该关注这个号”。按你的期望和周内实际制作条件，我排了 4 条内容：3 条主视频＋1 条轻量图文，全部围绕“初秋通勤衣橱”系列，核心切入点是“上班要正式、下班接孩子不想太用力”这个真实摩擦。本周将“初秋通勤衣橱”系列排成一个固定栏目，连续发布。这样做的理由是：对还没有关注理由的新号，一个能对号入座的具体问题，比泛泛的穿搭展示更容易让人产生关注动作。\n\n**关键依据与假设**\n\n- 主目标＝涨粉，不是到店、咨询或成交；所以本周内容不承担预约 CTA，即使结尾需要交代下一步，也只放一句经过确认的统一说明，不做强号召。\n- 账号无历史发布与反馈，现阶段需要先建立“凭什么关注”的理由；这不是标签，而是这周内容组合的出发点。\n- 商品事实、选品比较、试穿记录和库存都来自现有素材；每一条内"
+      },
+      "failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "id": "RISK-M4-032",
+      "target": "内部状态词泄漏",
+      "oracle": "用户只见 user_delivery；artifact、内部状态和审计词不泄漏",
+      "observed": {
+        "per_capability": [
+          {
+            "capability": "CONTENT_BRIEF",
+            "declared_leaks": [],
+            "cap_run_fields_seen": [
+              "artifact",
+              "artifact_status",
+              "binding_json",
+              "conditionalized",
+              "delivery_outcome",
+              "entry",
+              "goal_family",
+              "local_block",
+              "raw_preserved",
+              "recovery_used",
+              "reference_projection",
+              "reference_projection_text"
+            ],
+            "internal_words_in_user_delivery": [],
+            "artifact_wholly_inside_user_delivery": false,
+            "run_id": "2633241b-dfcd-4539-b7a1-3e271316ee0d"
+          },
+          {
+            "capability": "PUBLISHING_PACKAGING",
+            "declared_leaks": [],
+            "cap_run_fields_seen": [
+              "artifact",
+              "artifact_status",
+              "binding_json",
+              "conditionalized",
+              "delivery_outcome",
+              "entry",
+              "goal_family",
+              "local_block",
+              "raw_preserved",
+              "recovery_used",
+              "reference_projection",
+              "reference_projection_text"
+            ],
+            "internal_words_in_user_delivery": [],
+            "artifact_wholly_inside_user_delivery": false,
+            "run_id": "742f4b04-5b93-49a9-a320-9e3f0fa85887"
+          }
+        ]
+      },
+      "failures": [],
+      "verdict": "PASS"
+    },
+    {
+      "id": "RISK-M4-030+031",
+      "target": "长度阈值无区分度 / 精确子串假阴性",
+      "oracle": "质量判定使用任务适用的语义标准；等价表达不被误判为失败",
+      "observed": {
+        "json": {
+          "business_delivery_outcome": "DELIVERED",
+          "component_return": false,
+          "missing": null,
+          "user_delivery_chars": 724,
+          "artifact_chars": 4207,
+          "run_id": "4c85be74-ac91-48a0-b5ad-a6e48a3e2163"
+        },
+        "yaml_plain": {
+          "business_delivery_outcome": "DELIVERED",
+          "component_return": false,
+          "missing": null,
+          "user_delivery_chars": 681,
+          "artifact_chars": 4343,
+          "run_id": "06e28642-fb75-47f2-9716-c2ab72bae939"
+        },
+        "markdown_backtick": {
+          "business_delivery_outcome": "DELIVERED",
+          "component_return": false,
+          "missing": null,
+          "user_delivery_chars": 553,
+          "artifact_chars": 3630,
+          "run_id": "54b42d55-e190-4b3a-b283-027432e896cb"
+        },
+        "yaml_with_quote": {
+          "business_delivery_outcome": "UNKNOWN",
+          "component_return": true,
+          "missing": null,
+          "user_delivery_chars": 92,
+          "artifact_chars": 0,
+          "run_id": "bce51d3c-3fb4-4752-bbf2-7d0b64a0752f"
+        }
+      },
+      "failures": [
+        "同一语义只因值里多一个引号就换了结论：DELIVERED vs UNKNOWN（M4 外壳解析器假阴性）"
+      ],
+      "verdict": "FAIL"
+    }
+  ]
+}

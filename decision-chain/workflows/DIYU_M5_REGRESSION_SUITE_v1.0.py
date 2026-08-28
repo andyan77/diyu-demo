@@ -85,14 +85,51 @@ def reg_m4():
             "note": "走真实 Dify，用的是 M4 已发布的那八个应用，未做任何改动"}
 
 
+# 六个能力各自加载**两份**：原专业 Skill（v0.1 系列）+ M4 后继补充（_M4）。
+# 校验对象以**运行时实际加载的**为准，不以我以为的为准——这份清单是从真实运行的
+# binding_json 里 source_skill_path / successor_skill_path 读出来的。
 SKILL_FILES = [
+    "decision-chain/skills/Matrix_Architect_v0.1.2.md",
     "decision-chain/skills/Matrix_Architect_v0.2_M4.md",
+    "decision-chain/skills/Campaign_Orchestrator_v0.1.md",
     "decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md",
+    "decision-chain/skills/Content_Brief_Architect_v0.1.md",
     "decision-chain/skills/Content_Brief_Architect_v0.2_M4.md",
+    "content-production/skills/writing-creative-scripts/SKILL.md",
     "content-production/skills/writing-creative-scripts-m4/SKILL.md",
+    "content-production/skills/directing-content-production/SKILL.md",
     "content-production/skills/directing-content-production-m4/SKILL.md",
+    "content-production/skills/packaging-content-for-release/SKILL.md",
     "content-production/skills/packaging-content-for-release-m4/SKILL.md",
 ]
+
+
+def runtime_skill_hashes(since="2026-08-28 00:00"):
+    """把**运行中的应用自报的** Skill 哈希收上来。
+
+    这比 git diff 强一档：git diff 只能证明「候选树里的文件没变」，
+    而这个能证明「跑起来的应用读的就是候选树里那一份，且字节一致」。
+    两者对不上，说明应用读的不是这棵树——那才是真正要抓的情况。
+    """
+    q = ("SELECT DISTINCT outputs::jsonb->>'binding_json' FROM workflow_runs "
+         "WHERE status='succeeded' AND created_at > '%s' "
+         "AND outputs::jsonb ? 'binding_json';" % since)
+    rc, out = run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+                   "-d", "dify", "-t", "-A", "-c", q], timeout=120)
+    seen = {}
+    for line in out.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            b = json.loads(line)
+        except Exception:
+            continue
+        for pk, hk in (("source_skill_path", "source_skill_sha256"),
+                       ("successor_skill_path", "successor_skill_sha256")):
+            if b.get(pk):
+                seen[b[pk]] = b.get(hk)
+    return seen
 
 
 def reg_skills():
@@ -103,12 +140,31 @@ def reg_skills():
     rc, d = run(["git", "diff", "--name-status", "main", "--diff-filter=MD", "--"] + SKILL_FILES)
     out["skill_sources_modified_or_deleted_vs_main"] = d.strip() or "（空：零修改零删除）"
     out["sources_untouched"] = not d.strip()
-    out["skill_sha256"] = {}
+    out["skill_sha256_on_disk"] = {}
+    missing_files = []
     for f in SKILL_FILES:
         p = os.path.join(ROOT, f)
         if os.path.exists(p):
             rc2, h = run(["sha256sum", p])
-            out["skill_sha256"][os.path.basename(f)] = h.split()[0]
+            out["skill_sha256_on_disk"][f] = h.split()[0]
+        else:
+            missing_files.append(f)
+    out["skill_files_missing"] = missing_files
+
+    # (a2) 运行时自报哈希 vs 候选树里文件哈希，逐条比对
+    rt_hashes = runtime_skill_hashes()
+    cmp_rows, mismatched, unseen = {}, [], []
+    for f, disk in out["skill_sha256_on_disk"].items():
+        got = rt_hashes.get(f)
+        cmp_rows[f] = {"on_disk": disk[:16], "runtime_reported": (got or "")[:16],
+                       "match": (got == disk) if got else None}
+        if got and got != disk:
+            mismatched.append(f)
+        if not got:
+            unseen.append(f)
+    out["runtime_vs_disk"] = cmp_rows
+    out["runtime_hash_mismatch"] = mismatched
+    out["not_observed_in_any_run"] = unseen
 
     # (b) 从最近一次完整主故事里取「用到的」与「合法跳过的」
     runs = sorted(glob.glob(os.path.join(EV, "FULL_STORY_RUN_*.json")))
@@ -129,7 +185,12 @@ def reg_skills():
 
     fails = []
     if not out["sources_untouched"]:
-        fails.append("六份 Skill 源文件相对 main 出现修改或删除")
+        fails.append("Skill 源文件相对 main 出现修改或删除")
+    if out.get("skill_files_missing"):
+        fails.append("清单里的 Skill 文件在候选树里不存在：%s" % out["skill_files_missing"])
+    if out.get("runtime_hash_mismatch"):
+        fails.append("运行中的应用自报的 Skill 哈希与候选树里的文件不一致：%s"
+                     % out["runtime_hash_mismatch"])
     if not used:
         fails.append("没有任何能力真正交付，无法证明专业价值")
     if not out["not_all_six_forced"]:

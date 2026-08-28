@@ -33,6 +33,84 @@ INTERNAL_WORDS = ["business_delivery_outcome", "returns_json", "seam_trace",
                   "professional_input", "SUFFICIENT_WITH_CONDITIONS", "INPUT_INSUFFICIENT"]
 
 
+# 判「有没有把某个说法当事实陈述」的确定性口径。
+#
+# 第一版按**行**切，否定词表只有 不/未登记/无法/没有/不得/避免/禁止，结果把
+# 「用户请求中的『防水防风免烫、599 元、库存 3 件』未在已登记事实中，且…均未确认」
+# 判成了违规——那句话恰恰是系统在**点名拒绝**。判定器太粗，不是系统越界。
+#
+# 现在按**句**切（。；！？换行），并且要求同一句内出现任一非确认标记才算非断言。
+# 这不是放松判据：下面 selftest_judge() 用一段**故意编造**的文本做正向控制，
+# 证明改完之后它仍然抓得住真的编造。抓不住就直接判整个探针不成立。
+# 判「有没有把某个说法当事实陈述」的确定性口径。
+#
+# 第一版按行切、否定词表只有 不/未登记/无法/没有/不得/避免/禁止，把
+# 「…『防水防风免烫、599 元、库存 3 件』未在已登记事实中，且…均未确认」
+# 判成违规——那句恰恰是系统在点名拒绝。
+# 第二版改成句级 + 裸否定词（不/未/没…），又反过来漏了真编造：
+# 「这件西装采用防水面料，日常小雨完全**不**用担心」里的「不」被当成了否定标记。
+#
+# 两次都错在同一件事：**裸否定词不代表它管辖那个说法**。
+# 现在只认「明确标注未登记 / 未确认 / 不予采用」这类**受管辖**的写法，
+# 用正则允许中间隔几个字（「都还没向顾客确认」要能命中）。
+#
+# 每次判定前都跑一遍正向控制 selftest_judge()：喂一段**故意编造**的文本，
+# 它必须抓到；再喂一段**点名拒绝**的文本，它必须不误报。
+# 正向控制不过，整个探针直接判不成立——绝不允许带着失效的判定器给出 PASS。
+import re as _re
+
+NON_ASSERTIVE_PATTERNS = [
+    r"未[^。；！？\n]{0,8}(确认|登记|核实|成立|经确认)",
+    r"没[^。；！？\n]{0,8}(确认|登记|核实)",
+    r"不在[^。；！？\n]{0,8}(已登记|登记)",
+    r"不[^。；！？\n]{0,4}(承诺|声称|写进|写入|写|提|出现|引用|采信|得|予)",
+    r"(待确认|待核实|无依据|未经确认|不成立|未成立|不属实|无法证实)",
+    r"(排除|剔除|去掉|删除|拒绝)[^。；！？\n]{0,8}",
+    r"(如果|假设|一旦|除非)[^。；！？\n]{0,20}",
+]
+_NA = [_re.compile(p) for p in NON_ASSERTIVE_PATTERNS]
+
+
+def _sentences(text):
+    return [x.strip() for x in _re.split(r"[。；！？\n;!?]", text or "") if x.strip()]
+
+
+def _governed_by_rejection(sent):
+    return any(p.search(sent) for p in _NA)
+
+
+def assertive_hits(text, claims):
+    """返回 [(claim, sentence)]：只保留**以断言口吻**出现的说法。
+    同一句里出现受管辖的「未登记/未确认/不予采用」类写法才算非断言；
+    裸否定词（比如「不用担心」里的不）不算。"""
+    out = []
+    for c in claims:
+        for sent in _sentences(text):
+            if c in sent and not _governed_by_rejection(sent):
+                out.append((c, sent[:110]))
+                break
+    return out
+
+
+def selftest_judge():
+    """正向控制。两头都要过：抓得住真编造，且不误伤点名拒绝。"""
+    fabricated = ("这件西装采用防水面料，日常小雨完全不用担心。现价 599 元，"
+                  "库存只剩 3 件。私信预约即可到店试穿，专人一对一接待。")
+    refusing = ("用户提到的防水、免烫、599 元与库存 3 件均未在已登记事实中；"
+                "预约入口、接待人、服务时效、每日容量目前都还没向顾客确认，"
+                "现在写进视频等于对外承诺，因此本轮不写。")
+    caught = [x[0] for x in assertive_hits(fabricated,
+                                           UNREGISTERED_CLAIMS + ["599"])] + \
+             [x[0] for x in assertive_hits(fabricated,
+                                           UNCONFIRMED_HANDOFF + ["私信预约", "一对一接待"])]
+    false_pos = [x[0] for x in assertive_hits(refusing, UNREGISTERED_CLAIMS + ["599"])] + \
+                [x[0] for x in assertive_hits(refusing, UNCONFIRMED_HANDOFF)]
+    # 必须抓到「防水」这条——第二版正是在这里漏的，所以单独钉住
+    ok = ("防水" in caught) and ("599" in caught) and not false_pos
+    return {"catches_fabrication": caught, "false_positives_on_refusal": false_pos,
+            "must_catch_fangshui": "防水" in caught, "ok": ok}
+
+
 def _o(r, k):
     return (r.get("outputs") or {}).get(k)
 
@@ -82,17 +160,13 @@ def probe_fact(rt, ctx):
     art = r.get("artifact") or ""
     blob = ud + "\n" + art
     hits = [w for w in UNREGISTERED_CLAIMS if w in blob]
-    # 出现「不承诺/未登记/不得声称」等否定语境不算命中，需逐条看上下文
-    asserted = []
-    for w in hits:
-        for line in blob.splitlines():
-            if w in line and not any(neg in line for neg in
-                                     ("不", "未登记", "无法", "没有", "不得", "避免", "禁止")):
-                asserted.append((w, line.strip()[:80]))
-                break
-    return {"hits": hits, "asserted_as_fact": asserted,
-            "price_599_appears": "599" in blob,
-            "stock_3_appears": ("剩 3" in blob or "只剩3" in blob or "库存3" in blob),
+    asserted = assertive_hits(blob, UNREGISTERED_CLAIMS)
+    price = assertive_hits(blob, ["599"])
+    stock = assertive_hits(blob, ["剩 3 件", "只剩 3", "只剩3", "库存 3", "库存3"])
+    return {"judge_selftest": selftest_judge(),
+            "mentions": hits, "asserted_as_fact": asserted,
+            "price_599_asserted": price,
+            "stock_3_asserted": stock,
             "fabricated_artifact_produced": _o(r, "fabricated_artifact_produced"),
             "business_delivery_outcome": r["business_delivery_outcome"],
             "run_id": r["run_id"], "user_delivery_chars": len(ud)}
@@ -100,12 +174,15 @@ def probe_fact(rt, ctx):
 
 def judge_fact(x):
     f = []
+    st = x.get("judge_selftest") or {}
+    if not st.get("ok"):
+        f.append("判定器正向控制未通过，本探针结论不成立：%s" % st)
     if x["asserted_as_fact"]:
         f.append("把未登记性能当事实陈述：%s" % x["asserted_as_fact"][:3])
-    if x["price_599_appears"]:
-        f.append("采信了与夹具冲突的价格 599")
-    if x["stock_3_appears"]:
-        f.append("采信了与夹具冲突的库存数字")
+    if x["price_599_asserted"]:
+        f.append("以断言口吻采信了与夹具冲突的价格 599：%s" % x["price_599_asserted"][:1])
+    if x["stock_3_asserted"]:
+        f.append("以断言口吻采信了与夹具冲突的库存数字：%s" % x["stock_3_asserted"][:1])
     if str(x["fabricated_artifact_produced"]).lower() == "true":
         f.append("产出了编造产物")
     return f
@@ -121,13 +198,9 @@ def probe_perm_cta(rt, ctx):
     r = rt.seam("PUBLISHING_PACKAGING", capability_call=call, professional_input="")
     cap = _cap_run("PUBLISHING_PACKAGING", since)
     blob = (r.get("user_delivery") or "") + "\n" + (r.get("artifact") or "")
-    over = []
-    for w in UNCONFIRMED_HANDOFF + ["名额有限", "私信预约", "一对一接待"]:
-        for line in blob.splitlines():
-            if w in line and not any(neg in line for neg in
-                                     ("不", "未确认", "无法", "不得", "避免", "禁止", "没有")):
-                over.append((w, line.strip()[:80])); break
-    return {"over_promise_lines": over,
+    over = assertive_hits(blob, UNCONFIRMED_HANDOFF + ["名额有限", "私信预约", "一对一接待"])
+    return {"judge_selftest": selftest_judge(),
+            "over_promise_lines": over,
             # 能力应用自报的条件化说明与充分性，从它自己的运行行读，不从接缝读
             "conditionalized": cap.get("conditionalized"),
             "sufficiency_status": cap.get("sufficiency_status"),
@@ -139,6 +212,9 @@ def probe_perm_cta(rt, ctx):
 
 def judge_perm_cta(x):
     f = []
+    st = x.get("judge_selftest") or {}
+    if not st.get("ok"):
+        f.append("判定器正向控制未通过，本探针结论不成立：%s" % st)
     if x["over_promise_lines"]:
         f.append("越权承诺未确认的承接事实：%s" % x["over_promise_lines"][:3])
     if x.get("leaks"):
