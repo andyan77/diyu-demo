@@ -1470,3 +1470,86 @@ A1 明禁执行侧自行改判。
 执行侧不替 Founder 定，也不自行重建环境。
 
 **M5 未启动，也未取得交接资格**：`next_stage_allowed = false`，`m5_engineering_execution_authorized = false`。
+
+---
+
+## v1.0 恢复后完全收口（POST_RESTORE_FINAL_CLOSEOUT）· 后继状态事件
+
+> 本节为**追加**记录。上文 v1.5 段落的 `BLOCKED` 终态、全部历史技术结果与 M4-ENV-001 原始描述
+> 一律原样保留，不删不改。本节只写后继状态指针。
+
+- `task_id`：`V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001`（不变）
+- `task_entry_mode`：`REBASE_TASK`（同一 task_id 下第三次窄范围 REBASE）
+- `manifest_id`：`V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001-POST-RESTORE-FINAL-CLOSEOUT` `v1.0`
+- `previous_task_contract_hash`：`8d73b4f157883eb422e6ae17ececcf87a64d98c6a51f35537b8446155fa85070`
+- `current_task_contract_hash`：`82f25055eee4cb58a353d928c2de38a7c13cc9cd31bdc1f9ba3746d67ce650f1`
+  （`decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSEOUT_TASK_CONTRACT_v1.0.yaml`，
+  与规划侧 canonical 文件**逐字节相同**，11821 字节）
+- 后继回执：`decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSURE_RECEIPT_v1.0.md`
+- 父提交：`c77a7e5d424f8b2db6ff436a662d12699596b0cc`
+
+### 一、权威变化（Founder）
+
+Founder 在旧 `BLOCKED` 回执之后已明确：M4 产品输出通过、匿名盲评采用执行侧结论、
+无法判断项按**本次一次性**降级接受、历史技术结果不得改写成 `PASS`、最终目标收敛为
+恢复并验证 M4 已交付的 Dify 最终成果以交给 M5。
+
+这改变了完成口径与下一阶段权限，**没有改变 task_id**，也没有授权重做专业链。
+风险接受 `scope = THIS_M4_DELIVERY_ONLY`，`does_not_generalize = true`。
+
+### 二、本轮验收 M4-PCR-01…12
+
+| 判据 | 结果 |
+|---|---|
+| M4-PCR-01 同 task_id / REBASE / 旧 BLOCKED 保留 | PASS |
+| M4-PCR-02 分支绑定与工作区干净 | PASS |
+| M4-PCR-03 挂载指向宿主原库、目标系统身份可复核 | PASS |
+| M4-PCR-04 八应用原 ID、已发布、图 == 冻结候选 | PASS |
+| M4-PCR-05 六能力 / Seam / Canvas 运行与当前图精确绑定 | PASS |
+| M4-PCR-06 空正文 0、thinking 泄漏 0 | PASS |
+| M4-PCR-07 六 Skill / 六专业正文 / 六模型参数零变化 | PASS |
+| M4-PCR-08 注入对象不在正式链路可达图中 | PASS |
+| M4-PCR-09 M5 映射与当前身份与 IO 合同一致 | PASS |
+| M4-PCR-10 旧技术结果与旧 BLOCKED 回执逐字节保留 | PASS |
+| M4-PCR-11 回执与账本一致推导终态 | PASS |
+| M4-PCR-12 零工程资产 / 图 / main / PR / 生产副作用 | PASS |
+
+强制负向测试 9 项全过（含九个既有受保护应用在真实目标系统上零变化）。
+
+### 三、M4-ENV-001 更正（不删除原记录）
+
+原记录写「Dify 目标系统被整库重新初始化」。**现场只读核验证明该描述不准确**：
+
+- 容器内 `pgdata` inode = 34、`storage` inode = 19，宿主为 203539 / 203532 —— 容器未挂上 bind mount；
+- 宿主 `pgdata` 688.3 MB、数据库目录 `16384/16385/31985` 俱在，容器内 initdb 产物仅 76.3 MB；
+- 新容器只读挂载同一宿主路径可正常读到全部原始数据。
+
+即 21:38 是**整栈重启时 bind mount 未挂上**，postgres 对着容器自身镜像层的空目录 initdb，
+**不是**整库销毁。经 Founder 授权修复挂载后 `apps / workflows / workflow_runs / tenants / accounts` 全部回归。
+
+原描述作为当时的真实观察保留在 v1.5 段落，本节只做事实更正，不回改历史文本。
+
+### 四、外部副作用
+
+- 本轮零 Dify 写入（只读核验）。
+- 上一轮遗留的两个 EVAL 故障注入对象：tool provider 已删除，标记 `EVALUATION_ONLY_NOT_ROUTABLE`，
+  八个正式应用图对其零反向引用。
+- `origin/main` 现为 `f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e`（M3 并入），本轮未 rebase、未 merge、未改写。
+  定向影响判断：六源 Skill 与八份 M4 DSL 在 main 侧均未改动；M4 账本与回执不存在于 main。**零影响，无项置 STALE。**
+
+### 五、终态
+
+```text
+task_final_status = DONE
+next_stage_allowed = true:M5_INTEGRATION_HANDOFF
+m5_engineering_execution_started = false
+```
+
+**DONE 的准确含义**：M4 最终 Dify 成果已恢复、当前可运行、受保护专业链未变、
+用户空交付与 thinking 泄漏修复已由当前绑定证据建立、Founder 已接受本次交付与披露风险、
+正式任务状态与 M5 交接权限已形成后继权威记录。
+
+**不意味着**：历史技术判据全部变 PASS；M5 已施工或通过；已生产上线；
+已验证真实运营闭环；已证明经营提升。
+
+历史 `FAIL` / `NOT_VERIFIED` / `STALE` / `BLOCKED` 一条未改。

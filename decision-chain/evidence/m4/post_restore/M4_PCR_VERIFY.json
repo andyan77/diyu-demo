@@ -1,0 +1,538 @@
+{
+  "contract": "V1_M4_POST_RESTORE_FINAL_CLOSEOUT_TASK_CONTRACT_v1.0.yaml",
+  "core_criteria_all_pass": true,
+  "criteria": {
+    "M4-PCR-01": "PASS",
+    "M4-PCR-02": "PASS",
+    "M4-PCR-03": "PASS",
+    "M4-PCR-04": "PASS",
+    "M4-PCR-05": "PASS",
+    "M4-PCR-06": "PASS",
+    "M4-PCR-07": "PASS",
+    "M4-PCR-08": "PASS",
+    "M4-PCR-09": "PASS",
+    "M4-PCR-10": "PASS",
+    "M4-PCR-12": "PASS"
+  },
+  "current_task_contract_hash": "82f25055eee4cb58a353d928c2de38a7c13cc9cd31bdc1f9ba3746d67ce650f1",
+  "derived_terminal_state": "DONE",
+  "detail": {
+    "M4-PCR-01": {
+      "byte_identical_to_planning_canonical": true,
+      "contract_sha256": "82f25055eee4cb58a353d928c2de38a7c13cc9cd31bdc1f9ba3746d67ce650f1",
+      "new_task_forbidden": true,
+      "old_receipt_present": true,
+      "old_receipt_sha256": "df74c47f23fd614b9b35b342b7b76a66d237ef40df7ab1b96b22ed4cf416f11d",
+      "old_receipt_states_blocked": true,
+      "previous_task_contract_hash_matches": true,
+      "task_entry_mode": "REBASE_TASK",
+      "task_id": "V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001"
+    },
+    "M4-PCR-02": {
+      "branch": "codex/v1-m4-capability-seams-runtime-integration-001",
+      "dirty_files": [
+        "M collab-ledger/tasks/V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001.md",
+        "?? decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSEOUT_TASK_CONTRACT_v1.0.yaml",
+        "?? decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSURE_RECEIPT_v1.0.md",
+        "?? decision-chain/evidence/m4/post_restore/",
+        "?? decision-chain/workflows/DIYU_M4_PCR_NEGATIVE_v0.1.py",
+        "?? decision-chain/workflows/DIYU_M4_PCR_VERIFY_v0.1.py"
+      ],
+      "local_head": "c77a7e5d424f8b2db6ff436a662d12699596b0cc",
+      "note": "本项在最终推送后由收口复核确认；此处记录当前观察",
+      "origin_main": "f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e",
+      "remote_task_branch": "c77a7e5d424f8b2db6ff436a662d12699596b0cc"
+    },
+    "M4-PCR-03": {
+      "container_pgdata_inode": "203539",
+      "container_storage_inode": "203532",
+      "containers": [
+        "docker-nginx-1|Up 4 hours",
+        "docker-api-1|Up 4 hours (healthy)",
+        "docker-worker-1|Up 4 hours",
+        "docker-agent_backend-1|Up 4 hours",
+        "docker-api_websocket-1|Up 4 hours",
+        "docker-worker_beat-1|Up 4 hours",
+        "docker-plugin_daemon-1|Up 4 hours",
+        "docker-db_postgres-1|Up 4 hours (healthy)",
+        "docker-redis-1|Up 4 hours (healthy)",
+        "docker-web-1|Up 4 hours",
+        "docker-local_sandbox-1|Up 4 hours (healthy)",
+        "docker-sandbox-1|Up 4 hours (healthy)",
+        "docker-ssrf_proxy-1|Up 4 hours",
+        "docker-agent_ssrf_proxy-1|Up 4 hours",
+        "docker-weaviate-1|Up 4 hours"
+      ],
+      "counts": {
+        "accounts": 1,
+        "apps": 50,
+        "tenants": 1,
+        "workflow_runs": 2276,
+        "workflows": 280
+      },
+      "db_mount": "/home/faye/dify/docker/volumes/db/data->/var/lib/postgresql/data",
+      "host_pgdata_inode": "203539",
+      "host_storage_inode": "203532",
+      "pgdata_same_inode": true,
+      "storage_same_inode": true
+    },
+    "M4-PCR-04": {
+      "CAMPAIGN": {
+        "expected_app_id": "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
+        "found": true,
+        "frozen_candidate_graph_sha256": "21817761588b1efe09f30e89cf2372156a8885b66761f13d6fe271853b9d5097",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "21817761588b1efe09f30e89cf2372156a8885b66761f13d6fe271853b9d5097",
+        "name_matches": true,
+        "published_workflow_id": "2da44fc7-09f0-4ed3-a000-addc641e077a",
+        "status": "normal"
+      },
+      "CAPABILITY_SEAM": {
+        "expected_app_id": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+        "found": true,
+        "frozen_candidate_graph_sha256": "9aec7d10bebd3260475c45cd6408868642d05e9d19bae99a9af4919548e805bf",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "9aec7d10bebd3260475c45cd6408868642d05e9d19bae99a9af4919548e805bf",
+        "name_matches": true,
+        "published_workflow_id": "4c5e2bab-9a4b-47f0-8ab0-1b844df4bb9d",
+        "status": "normal"
+      },
+      "CONTENT_BRIEF": {
+        "expected_app_id": "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
+        "found": true,
+        "frozen_candidate_graph_sha256": "e8e4268d2692a74f8f8c90a32e78e5d75d7b53abf2ff1877e34d362ff7fcc863",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "e8e4268d2692a74f8f8c90a32e78e5d75d7b53abf2ff1877e34d362ff7fcc863",
+        "name_matches": true,
+        "published_workflow_id": "7f7fe5d1-3217-43e6-a3ed-7450b64b070b",
+        "status": "normal"
+      },
+      "CREATIVE_SCRIPT": {
+        "expected_app_id": "8d518554-bfbc-4be0-8a57-3b1f04983edf",
+        "found": true,
+        "frozen_candidate_graph_sha256": "a04c33276a7c833bff34df9c0165a2d352eb457e7c60bf7de797459f27a198a8",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "a04c33276a7c833bff34df9c0165a2d352eb457e7c60bf7de797459f27a198a8",
+        "name_matches": true,
+        "published_workflow_id": "3341b4de-e658-42a8-bc49-26fcf7e30bf7",
+        "status": "normal"
+      },
+      "FOUNDER_CANVAS": {
+        "expected_app_id": "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8",
+        "found": true,
+        "frozen_candidate_graph_sha256": "27f6aa48fce03c2e775727e417beec6ecc9c45f17a81a2de76f1c81a8bfed502",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "27f6aa48fce03c2e775727e417beec6ecc9c45f17a81a2de76f1c81a8bfed502",
+        "name_matches": true,
+        "published_workflow_id": "61c4ce01-8924-4330-90ef-d9d1dd78b5ff",
+        "status": "normal"
+      },
+      "MATRIX": {
+        "expected_app_id": "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
+        "found": true,
+        "frozen_candidate_graph_sha256": "9eded1bdc1dfe4d5b1013b640549557a53208de8f90d95bde25fbc669d1ec3dd",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "9eded1bdc1dfe4d5b1013b640549557a53208de8f90d95bde25fbc669d1ec3dd",
+        "name_matches": true,
+        "published_workflow_id": "3a9e0d8b-8151-4922-acd7-0926a6af49fd",
+        "status": "normal"
+      },
+      "PRODUCTION_DIRECTOR": {
+        "expected_app_id": "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
+        "found": true,
+        "frozen_candidate_graph_sha256": "89e7b6207e3aeebafd3b1d17b53aa041e821bfbee1afaa975f64aa3bf4256ef8",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "89e7b6207e3aeebafd3b1d17b53aa041e821bfbee1afaa975f64aa3bf4256ef8",
+        "name_matches": true,
+        "published_workflow_id": "9a81b5c9-3773-44a6-af19-6255f8f30dce",
+        "status": "normal"
+      },
+      "PUBLISHING_PACKAGING": {
+        "expected_app_id": "10056fcf-9237-4889-a3e3-81e3a695cae0",
+        "found": true,
+        "frozen_candidate_graph_sha256": "f3f0ed03e665be5738db6ce3acdcd31bad5ce347194537154b5779da6fff6f65",
+        "graph_matches_frozen_candidate": true,
+        "graph_sha256": "f3f0ed03e665be5738db6ce3acdcd31bad5ce347194537154b5779da6fff6f65",
+        "name_matches": true,
+        "published_workflow_id": "d838536b-6779-4d1e-951f-4cdabffa50d7",
+        "status": "normal"
+      }
+    },
+    "M4-PCR-05": {
+      "canvas": {
+        "answer_length": 110,
+        "bound_to_current_published_graph": true,
+        "e2e_reached_seam": true,
+        "seam_run_app_is_capability_seam": true,
+        "seam_run_found": true,
+        "seam_run_id_from_canvas": "547081e8-af5d-4e83-b9e5-f58519d59219"
+      },
+      "capabilities": [
+        {
+          "capability": "MATRIX",
+          "current_published_workflow_id": "3a9e0d8b-8151-4922-acd7-0926a6af49fd",
+          "delivery_outcome": "DELIVERED",
+          "found": true,
+          "graph_matches_frozen": true,
+          "run_bound_to_current_published_graph": true,
+          "run_graph_sha256": "9eded1bdc1dfe4d5b1013b640549557a53208de8f90d95bde25fbc669d1ec3dd",
+          "run_id": "b042ad51-686f-4ed5-8cad-170db50b80f8",
+          "run_workflow_id": "3a9e0d8b-8151-4922-acd7-0926a6af49fd",
+          "skill_llm_succeeded": 1,
+          "user_delivery_length": 378
+        },
+        {
+          "capability": "CAMPAIGN",
+          "current_published_workflow_id": "2da44fc7-09f0-4ed3-a000-addc641e077a",
+          "delivery_outcome": "DELIVERED",
+          "found": true,
+          "graph_matches_frozen": true,
+          "run_bound_to_current_published_graph": true,
+          "run_graph_sha256": "21817761588b1efe09f30e89cf2372156a8885b66761f13d6fe271853b9d5097",
+          "run_id": "f99add34-0d25-4e8e-8927-4719d59c1c6f",
+          "run_workflow_id": "2da44fc7-09f0-4ed3-a000-addc641e077a",
+          "skill_llm_succeeded": 1,
+          "user_delivery_length": 556
+        },
+        {
+          "capability": "CONTENT_BRIEF",
+          "current_published_workflow_id": "7f7fe5d1-3217-43e6-a3ed-7450b64b070b",
+          "delivery_outcome": "DELIVERED",
+          "found": true,
+          "graph_matches_frozen": true,
+          "run_bound_to_current_published_graph": true,
+          "run_graph_sha256": "e8e4268d2692a74f8f8c90a32e78e5d75d7b53abf2ff1877e34d362ff7fcc863",
+          "run_id": "40f73dac-05bf-44ed-a733-f0024b3c3f7e",
+          "run_workflow_id": "7f7fe5d1-3217-43e6-a3ed-7450b64b070b",
+          "skill_llm_succeeded": 1,
+          "user_delivery_length": 648
+        },
+        {
+          "capability": "CREATIVE_SCRIPT",
+          "current_published_workflow_id": "3341b4de-e658-42a8-bc49-26fcf7e30bf7",
+          "delivery_outcome": "DELIVERED",
+          "found": true,
+          "graph_matches_frozen": true,
+          "run_bound_to_current_published_graph": true,
+          "run_graph_sha256": "a04c33276a7c833bff34df9c0165a2d352eb457e7c60bf7de797459f27a198a8",
+          "run_id": "9ece7eda-39eb-4a27-b0bc-a2b8312bff97",
+          "run_workflow_id": "3341b4de-e658-42a8-bc49-26fcf7e30bf7",
+          "skill_llm_succeeded": 1,
+          "user_delivery_length": 1061
+        },
+        {
+          "capability": "PRODUCTION_DIRECTOR",
+          "current_published_workflow_id": "9a81b5c9-3773-44a6-af19-6255f8f30dce",
+          "delivery_outcome": "DELIVERED",
+          "found": true,
+          "graph_matches_frozen": true,
+          "run_bound_to_current_published_graph": true,
+          "run_graph_sha256": "89e7b6207e3aeebafd3b1d17b53aa041e821bfbee1afaa975f64aa3bf4256ef8",
+          "run_id": "056e6eb2-5485-465b-b7e8-5d13291b9316",
+          "run_workflow_id": "9a81b5c9-3773-44a6-af19-6255f8f30dce",
+          "skill_llm_succeeded": 1,
+          "user_delivery_length": 800
+        },
+        {
+          "capability": "PUBLISHING_PACKAGING",
+          "current_published_workflow_id": "d838536b-6779-4d1e-951f-4cdabffa50d7",
+          "delivery_outcome": "DELIVERED",
+          "found": true,
+          "graph_matches_frozen": true,
+          "run_bound_to_current_published_graph": true,
+          "run_graph_sha256": "f3f0ed03e665be5738db6ce3acdcd31bad5ce347194537154b5779da6fff6f65",
+          "run_id": "afcbc484-0a80-4669-b635-6321dc11b674",
+          "run_workflow_id": "d838536b-6779-4d1e-951f-4cdabffa50d7",
+          "skill_llm_succeeded": 1,
+          "user_delivery_length": 716
+        }
+      ],
+      "seam": {
+        "bound_to_current_published_graph": true,
+        "child_app_invoked": [
+          "6d5b8c12-76aa-48e0-9775-646c3c427650"
+        ],
+        "found": true,
+        "run_id": "29296b15-d63a-4364-a1a0-2649bd74b273",
+        "tool_nodes_executed": [
+          "tool_content_brief"
+        ],
+        "user_delivery_length": 636
+      }
+    },
+    "M4-PCR-06": {
+      "checked": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING",
+        "SEAM",
+        "CANVAS"
+      ],
+      "empty_user_delivery": [],
+      "empty_user_delivery_count": 0,
+      "lengths": {
+        "CAMPAIGN": 556,
+        "CANVAS": 110,
+        "CONTENT_BRIEF": 648,
+        "CREATIVE_SCRIPT": 1061,
+        "MATRIX": 378,
+        "PRODUCTION_DIRECTOR": 800,
+        "PUBLISHING_PACKAGING": 716,
+        "SEAM": 636
+      },
+      "think_leak_by_source": {},
+      "think_leak_count": 0
+    },
+    "M4-PCR-07": {
+      "model_params": {
+        "CAMPAIGN": {
+          "identical_to_candidate": true,
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          }
+        },
+        "CONTENT_BRIEF": {
+          "identical_to_candidate": true,
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          }
+        },
+        "CREATIVE_SCRIPT": {
+          "identical_to_candidate": true,
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          }
+        },
+        "MATRIX": {
+          "identical_to_candidate": true,
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          }
+        },
+        "PRODUCTION_DIRECTOR": {
+          "identical_to_candidate": true,
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          }
+        },
+        "PUBLISHING_PACKAGING": {
+          "identical_to_candidate": true,
+          "model": {
+            "completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "mode": "chat",
+            "name": "deepseek-v4-flash",
+            "provider": "langgenius/deepseek/deepseek"
+          }
+        }
+      },
+      "professional_prompts": {
+        "CAMPAIGN": {
+          "bytewise_identical_to_candidate": true,
+          "prompt_sha256": "a22a9e14403a33268f0d5fd7e89a490f217c705a98908cbf9d5987a27f5d12af"
+        },
+        "CONTENT_BRIEF": {
+          "bytewise_identical_to_candidate": true,
+          "prompt_sha256": "900d5eb968c0c5dd73e80b407e834c4c8f9b99ea6b243f8e65c964cfd8f18d9d"
+        },
+        "CREATIVE_SCRIPT": {
+          "bytewise_identical_to_candidate": true,
+          "prompt_sha256": "9ffc2e16840650a4594d6d3b7348aad30a18f302bd6a0fdf421fcde9f2b73a05"
+        },
+        "MATRIX": {
+          "bytewise_identical_to_candidate": true,
+          "prompt_sha256": "ec1dd9308a776f167edb1b7e6d616ad22b30466d66e6aa8861a6993fa8b73b0b"
+        },
+        "PRODUCTION_DIRECTOR": {
+          "bytewise_identical_to_candidate": true,
+          "prompt_sha256": "f12f3264de0d3aee525be551ddb2700ed7604d0b20d54b47efbb0f08e67a6eb7"
+        },
+        "PUBLISHING_PACKAGING": {
+          "bytewise_identical_to_candidate": true,
+          "prompt_sha256": "05f8db54d97551cc6477717500abb162b80ff60526ffded7b1777bd1e0c657d8"
+        }
+      },
+      "source_skills": {
+        "CAMPAIGN": {
+          "identical_to_candidate": true,
+          "path": "decision-chain/skills/Campaign_Orchestrator_v0.2_M4.md",
+          "sha256": "43b17ddbe66d9023059a452dccf0d91052b144f1d9d23201e0dedf3f362008c1"
+        },
+        "CONTENT_BRIEF": {
+          "identical_to_candidate": true,
+          "path": "decision-chain/skills/Content_Brief_Architect_v0.2_M4.md",
+          "sha256": "f66e1b637639c59ea59391bdcad66ea8f84a2755ee4669a301263e5e5d7b0182"
+        },
+        "CREATIVE_SCRIPT": {
+          "identical_to_candidate": true,
+          "path": "content-production/skills/writing-creative-scripts-m4/SKILL.md",
+          "sha256": "442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa"
+        },
+        "MATRIX": {
+          "identical_to_candidate": true,
+          "path": "decision-chain/skills/Matrix_Architect_v0.2_M4.md",
+          "sha256": "245bd2238f9dc37937c8dbbd270087fbf49e3e2911f4defb880e7f6b0db95bbf"
+        },
+        "PRODUCTION_DIRECTOR": {
+          "identical_to_candidate": true,
+          "path": "content-production/skills/directing-content-production-m4/SKILL.md",
+          "sha256": "b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02"
+        },
+        "PUBLISHING_PACKAGING": {
+          "identical_to_candidate": true,
+          "path": "content-production/skills/packaging-content-for-release-m4/SKILL.md",
+          "sha256": "c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574"
+        }
+      }
+    },
+    "M4-PCR-08": {
+      "injection_apps": [
+        "c733f426-6e54-4c09-8ad7-8192b426ac38",
+        "86ba24e1-ae01-4b29-af04-fbeffc499bb3"
+      ],
+      "injection_tool_providers_remaining": [],
+      "official_graph_reverse_references": [],
+      "official_graph_sizes": {
+        "CAMPAIGN": 155088,
+        "CAPABILITY_SEAM": 111083,
+        "CONTENT_BRIEF": 141686,
+        "CREATIVE_SCRIPT": 156910,
+        "FOUNDER_CANVAS": 90999,
+        "MATRIX": 125508,
+        "PRODUCTION_DIRECTOR": 155572,
+        "PUBLISHING_PACKAGING": 181617
+      },
+      "status": "EVALUATION_ONLY_NOT_ROUTABLE"
+    },
+    "M4-PCR-09": {
+      "checked": [
+        "MATRIX",
+        "CAMPAIGN",
+        "CONTENT_BRIEF",
+        "CREATIVE_SCRIPT",
+        "PRODUCTION_DIRECTOR",
+        "PUBLISHING_PACKAGING"
+      ],
+      "mismatches": []
+    },
+    "M4-PCR-10": {
+      "byte_preserved": {
+        "CL31_02_03_04_VERDICT_A1.json": {
+          "sha256": "7ed71b3f988a37eeadee42bd686df2777a2d62071036b8717795010ed8c21f78",
+          "unchanged_since_restore_commit": true
+        },
+        "CL31_POST_REVIEW_VERDICTS.json": {
+          "sha256": "eb17a8e32c8dcb413cdaf9ab14608ac97ed512f15fc8cc1ddb7b9af335c1fd4c",
+          "unchanged_since_restore_commit": true
+        },
+        "M4_POST_REVIEW_VERDICTS.json": {
+          "sha256": "0fd21300b5df3546b6749e000af922808b122bdf50007b19e3c629857337a20a",
+          "unchanged_since_restore_commit": true
+        },
+        "V1_M4_AC31_REBASE_CLOSING_RECEIPT_v0.1.md": {
+          "sha256": "56e7652e9d20ec78e29cabc795641329e345ad962e31e31e5538afe4e7986339",
+          "unchanged_since_restore_commit": true
+        },
+        "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.4.md": {
+          "sha256": "dd0edb1ed49b65ceecce0bcea53bb4fb68804f9c99f5923b1e736e4aad16942d",
+          "unchanged_since_restore_commit": true
+        },
+        "V1_M4_EVIDENCE_COLLECTION_CONTRACT_v0.5.md": {
+          "sha256": "5c45e8c732c8b88913ea423641f5f00efb5ce8adfb250cec9906e5723bce2c6f",
+          "unchanged_since_restore_commit": true
+        },
+        "V1_M4_FINAL_CLOSURE_RECEIPT_v0.1.md": {
+          "sha256": "df74c47f23fd614b9b35b342b7b76a66d237ef40df7ab1b96b22ed4cf416f11d",
+          "unchanged_since_restore_commit": true
+        },
+        "V1_M4_FINAL_CLOSURE_TASK_CONTRACT_v1.0.yaml": {
+          "sha256": "8d73b4f157883eb422e6ae17ececcf87a64d98c6a51f35537b8446155fa85070",
+          "unchanged_since_restore_commit": true
+        }
+      },
+      "founder_disposition_recorded_separately": true,
+      "historical_states": {
+        "AC31_④": "NOT_VERIFIED",
+        "CL31_verdicts": {
+          "M4-CL31-01": "PASS",
+          "M4-CL31-02": "NOT_VERIFIED",
+          "M4-CL31-03": "FAIL",
+          "M4-CL31-04": "FAIL",
+          "M4-CL31-05": "NOT_VERIFIED",
+          "M4-CL31-06": "PASS",
+          "M4-CL31-07": "FAIL",
+          "M4-CL31-08": "FAIL"
+        },
+        "RB31_03_v0_4": "NOT_VERIFIED",
+        "RB31_05_v0_4": "FAIL",
+        "previous_formal_status": "BLOCKED"
+      }
+    },
+    "M4-PCR-12": {
+      "changed_files_this_round": [
+        "collab-ledger/tasks/V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001.md",
+        "decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSEOUT_TASK_CONTRACT_v1.0.yaml",
+        "decision-chain/docs/V1_M4_POST_RESTORE_FINAL_CLOSURE_RECEIPT_v1.0.md",
+        "decision-chain/evidence/m4/post_restore/",
+        "decision-chain/workflows/DIYU_M4_PCR_NEGATIVE_v0.1.py",
+        "decision-chain/workflows/DIYU_M4_PCR_VERIFY_v0.1.py"
+      ],
+      "db_schema_tables": 136,
+      "engineering_asset_changes": [],
+      "main_changed_by_this_task": false,
+      "official_m4_graphs_unchanged": true,
+      "origin_main": "f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e",
+      "out_of_scope": [],
+      "pr_created": false
+    }
+  },
+  "note_PCR_02_11": "PCR-02 的远端一致性与 PCR-11 的回执/账本一致性在收口提交与推送后由 AW-07 复核",
+  "previous_task_contract_hash": "8d73b4f157883eb422e6ae17ececcf87a64d98c6a51f35537b8446155fa85070"
+}
