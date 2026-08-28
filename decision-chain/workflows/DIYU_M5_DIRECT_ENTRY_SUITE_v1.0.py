@@ -257,6 +257,29 @@ def _seam_field(r, key):
         return None
 
 
+def capability_run_outputs(capability, since):
+    """取**能力应用自己**那一次运行的输出。
+
+    这一条踩过三次坑，写死在这里：is_task_terminal_state /
+    fabricated_artifact_produced / downstream_invoked / user_delivery_leaks /
+    single_question / missing 这些字段挂在**能力应用**的运行上，
+    **不在接缝的返回里**。从接缝返回读会全部读到 null——
+    那不是「缺陷」，是观测读错了地方，会同时制造假 FAIL 和假 PASS。
+    """
+    app = RT.CAPABILITY_APPS.get(capability)
+    if not app:
+        return {}
+    q = ("SELECT outputs FROM workflow_runs WHERE app_id='%s' AND created_at > '%s' "
+         "ORDER BY created_at DESC LIMIT 1;" % (app, since))
+    p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+                        "-d", "dify", "-t", "-A", "-c", q],
+                       capture_output=True, text=True, timeout=60)
+    try:
+        return json.loads((p.stdout or "").strip())
+    except Exception:
+        return {}
+
+
 def _binding(r, key):
     try:
         return json.loads(r.get("binding_json") or "{}").get(key)
@@ -296,19 +319,25 @@ def run_case(rt, case, facts, m3_judgment_cache):
                     professional_input=ho.get("professional_input") or "")
         rec.update(_seam_record(r))
     elif case.get("two_phase"):
+        since1 = db_now()
         r1 = rt.seam(case["capability"], capability_call=case["call_phase1"],
                      professional_input="")
         rets = _returns(r1)
-        o1 = r1.get("outputs") or {}
+        # 这几个字段只有能力应用自己有，必须从它的运行行读
+        o1 = capability_run_outputs(case["capability"], since1)
         rec["phase1"] = {"business_delivery_outcome": r1["business_delivery_outcome"],
                          "component_return": RT.is_component_return(r1),
                          "is_task_terminal_state": o1.get("is_task_terminal_state"),
                          "fabricated_artifact_produced": o1.get("fabricated_artifact_produced"),
                          "downstream_invoked": o1.get("downstream_invoked"),
                          "triggers_downstream_invalidation": o1.get("triggers_downstream_invalidation"),
+                         "branch_result": o1.get("branch_result"),
+                         "missing": o1.get("missing"),
+                         "user_delivery_leaks": o1.get("user_delivery_leaks"),
                          "precise_gap": (rets[0].get("precise_gap") if rets else None),
                          "highest_damaged_layer": (rets[0].get("highest_damaged_layer") if rets else None),
                          "single_question": o1.get("single_question"),
+                         "capability_run_fields_seen": sorted(o1)[:14],
                          "run_id": r1["run_id"]}
         r2 = rt.seam(case["capability"], capability_call=case["call_phase2"],
                      professional_input="")
