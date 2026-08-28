@@ -84,8 +84,14 @@ def bootstrap(tag):
 
 
 def projection_text(boot):
-    """M2 最小当前投影 → M3 的 account_context。字段照抄，不代为解释。"""
-    p = RT.current_projection(boot["ws"], boot["actor"], boot["account"])
+    """M2 最小当前投影 → M3 的 account_context。字段照抄，不代为解释。
+
+    运行状态和周期状态一起投。**没有记录时显式写「没有」**，不是留空——
+    「M2 里查不到」和「这一侧没去查」是两件完全不同的事，混在一起，
+    恢复场景里就分不清系统是真不知道还是没问。
+    """
+    p = RT.current_projection(boot["ws"], boot["actor"], boot["account"],
+                              task_id=boot.get("task"))
     cyc = (p["cycle_current"] or {}).get("body") or {}
     dec = (p["decision_latest"] or {}).get("body") or {}
     lines = [
@@ -98,7 +104,30 @@ def projection_text(boot):
         "最近一次周期决策：%s" % (dec.get("decision") or "（本周期尚无决策记录）"),
         "已发布内容与反馈：%s" % (dec.get("based_on") or "（本周期尚无发布与反馈）"),
     ]
+    lines += run_state_lines(p, boot.get("task"))
     return "\n".join(str(x) for x in lines), p
+
+
+def run_state_lines(proj, task_id):
+    """把 M2 的运行状态照抄成行。只抄字段，不代为解释、不代为下结论。"""
+    rs = (proj or {}).get("run_state") or {}
+    body = rs.get("body") if isinstance(rs.get("body"), dict) else None
+    head = ["", "【上一轮运行状态 · 来源 M2 服务实时读取 /tasks/%s/run-state】" % task_id]
+    if rs.get("status") != 200 or not body:
+        return head + ["M2 没有本任务的上一轮运行状态记录（HTTP %s）。"
+                       "这表示查过而查不到，不表示没查。" % rs.get("status")]
+    se = body.get("side_effects") or {}
+    out = head + [
+        "最后成功步骤：%s" % (body.get("last_success_step") or "（无）"),
+        "失败步骤：%s" % (body.get("failed_step") or "（无）"),
+        "可恢复起点：%s" % (body.get("resumable_from") or "（无）"),
+    ]
+    if se:
+        out.append("已发生的写入副作用（M2 原样返回，未经改写）：%s"
+                   % json.dumps(se, ensure_ascii=False))
+    else:
+        out.append("已发生的写入副作用：M2 未记录任何副作用。")
+    return out
 
 
 def _artifact_sha(r):

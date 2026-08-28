@@ -13,12 +13,19 @@
 顺序按清单的 run_sequence 走。任何一步的判据文件在本次运行**之后**被改动，
 本次结论一律降级为探索——这条由 git 提交时间与运行时间的先后关系兜底，不靠自觉。
 """
-import glob, hashlib, json, os, subprocess, sys, time
+import glob, hashlib, importlib, importlib.util, json, os, subprocess, sys, time
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 DOCS = os.path.join(ROOT, "decision-chain", "docs")
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
-MANIFEST = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml")
+_eb_spec = importlib.util.spec_from_file_location(
+    "eb", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       "DIYU_M5_EVIDENCE_BINDING_v1.1.py"))
+EB = importlib.util.module_from_spec(_eb_spec)
+_eb_spec.loader.exec_module(EB)
+
+MANIFEST = os.path.join(DOCS, os.environ.get(
+    "M5_CANDIDATE_MANIFEST", "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1_AC07_REBASE.yaml"))
 
 # 三类文件，性质不同，处置也不同。都放在 decision-chain/workflows/ 下，
 # 但混为一谈会得出错误结论，所以显式分开：
@@ -31,6 +38,10 @@ CANDIDATE_RUNTIME = [
     "decision-chain/workflows/DIYU_M5_FULL_STORY_v0.1.py",
     "decision-chain/workflows/DIYU_M5_BUILD_HOP_ADAPTER_v0.2.py",
     "decision-chain/workflows/DIYU_M5_BUILD_ADAPTER_APP_v0.1.py",
+    # Rebase 新增：两个 successor 的构建器也是候选运行时的一部分——
+    # 它们决定跑的是哪一份 graph，改了就等于换了被测系统。
+    "decision-chain/workflows/DIYU_M5_BUILD_M4_PARSER_SUCCESSOR_v1.1.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_M3_RECOVERY_SUCCESSOR_v1.1.py",
     "decision-chain/workflows/m1_context_compiler_v0.1.py",
     "account-operations/", "business-persistence/", "content-production/skills/",
     "decision-chain/skills/", "m3-account-content-operator-semantic-v1.0/",
@@ -44,6 +55,8 @@ ORACLE_FILES = [
     "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py",
     "decision-chain/workflows/DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py",
     "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_FOUNDER_PACKAGE_v1.0.py",
+    "decision-chain/workflows/DIYU_M5_EVIDENCE_BINDING_v1.1.py",
 ]
 
 
@@ -151,14 +164,38 @@ def preflight():
     return fails, facts
 
 
-STEPS = [
-    ("P1 完整主故事", ["python3", "decision-chain/workflows/DIYU_M5_RUN_FULL_STORY_v0.1.py", "F1"]),
-    ("P2 合法短入口", ["python3", "decision-chain/workflows/DIYU_M5_DIRECT_ENTRY_SUITE_v1.0.py", "F"]),
-    ("P5a 生成侧风险探针", ["python3", "decision-chain/workflows/DIYU_M5_RISK_PROBE_SUITE_v1.0.py", "F"]),
-    ("P5b 持久化侧风险探针", ["python3", "decision-chain/workflows/DIYU_M5_M2_PROBE_SUITE_v1.0.py", "F"]),
-    ("P6 不退化与受影响回归", ["python3", "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py"]),
+# 本轮正式运行的标签。写死在这里，是为了让「哪个文件是本次正式产物」
+# 由运行器**声明**，而不是事后靠文件名排序去猜——猜的那一版稳定地猜到诊断件。
+RUN_TAG = os.environ.get("M5_RUN_TAG", "RB1")
+E = "decision-chain/evidence/m5/"
+
+# (步骤名, 命令, {证据键: 该步写出的相对路径})
+SUITE_STEPS = [
+    ("P1 完整主故事",
+     ["python3", "decision-chain/workflows/DIYU_M5_RUN_FULL_STORY_v0.1.py", "F%s" % RUN_TAG],
+     {"FULL_STORY": E + "FULL_STORY_RUN_full01F%s.json" % RUN_TAG}),
+    ("P2 合法短入口",
+     ["python3", "decision-chain/workflows/DIYU_M5_DIRECT_ENTRY_SUITE_v1.0.py", "F%s" % RUN_TAG],
+     {"DIRECT_ENTRY": E + "DIRECT_ENTRY_SUITE_deF%s.json" % RUN_TAG}),
+    ("P5a 生成侧风险探针",
+     ["python3", "decision-chain/workflows/DIYU_M5_RISK_PROBE_SUITE_v1.0.py", "F%s" % RUN_TAG],
+     {"RISK_PROBE": E + "RISK_PROBE_SUITE_riskF%s.json" % RUN_TAG}),
+    ("P5b 持久化侧风险探针",
+     ["python3", "decision-chain/workflows/DIYU_M5_M2_PROBE_SUITE_v1.0.py", "F%s" % RUN_TAG],
+     {"M2_PROBE": E + "M2_PROBE_SUITE_m2pF%s.json" % RUN_TAG}),
+    ("P6 不退化与受影响回归",
+     ["python3", "decision-chain/workflows/DIYU_M5_REGRESSION_SUITE_v1.0.py",
+      "--full-story", E + "FULL_STORY_RUN_full01F%s.json" % RUN_TAG],
+     {"REGRESSION": E + "REGRESSION_RESULTS_F%s.json" % RUN_TAG}),
     ("P4 两级 A/B（只产盲评包，不产分数）",
-     ["python3", "decision-chain/workflows/DIYU_M5_AB_SUITE_v1.0.py", "F"]),
+     ["python3", "decision-chain/workflows/DIYU_M5_AB_SUITE_v1.0.py", "F%s" % RUN_TAG],
+     {"AB_RAW": E + "AB_SUITE_RAW_abF%s.json" % RUN_TAG,
+      "AB_BLIND": E + "AB_BLIND_abF%s.json" % RUN_TAG,
+      "AB_SEALED": E + "AB_MAPPING_SEALED_abF%s.json" % RUN_TAG}),
+]
+
+# 出包步骤在证据清单生成之后才跑，且必须显式接清单。
+PACKAGE_STEPS = [
     ("P3 十九维覆盖回填", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py"]),
     ("盲评包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_BLIND_PACKAGE_v1.0.py"]),
     ("Founder 验收包", ["python3", "decision-chain/workflows/DIYU_M5_BUILD_FOUNDER_PACKAGE_v1.0.py"]),
@@ -176,24 +213,57 @@ def main():
         return 2
     print("前置检查通过。开始按 run_sequence 正式运行。\n")
 
-    log = {"started_at": facts.get("started_at"), "preflight": facts, "steps": []}
+    log = {"started_at": facts.get("started_at"), "preflight": facts,
+           "run_tag": RUN_TAG, "steps": []}
     only = set((os.environ.get("FORMAL_ONLY") or "").split(",")) - {""}
-    for name, cmd in STEPS:
-        if only and not any(o in name for o in only):
-            continue
+
+    def run(name, cmd):
         print(">>> %s" % name, flush=True)
         t0 = time.time()
         rc, out = sh(cmd, timeout=5400)
         tail = out.strip().splitlines()[-12:]
         log["steps"].append({"step": name, "rc": rc, "seconds": round(time.time() - t0),
-                             "tail": tail})
+                             "cmd": cmd, "tail": tail})
         for line in tail:
             print("    " + line, flush=True)
         if rc != 0:
             print("    !! 该步返回码 %s，继续后续步骤并如实记录" % rc, flush=True)
-    with open(os.path.join(EV, "FORMAL_RUN_LOG.json"), "w", encoding="utf-8") as f:
+        return rc
+
+    declared = {}
+    for name, cmd, outs in SUITE_STEPS:
+        if only and not any(o in name for o in only):
+            continue
+        run(name, cmd)
+        declared.update(outs)
+
+    # ---- 正式证据清单：把本次**声明产出并确实写出**的文件连同哈希固定下来 ----
+    man_path = os.path.join(EV, "FORMAL_EVIDENCE_MANIFEST_%s.json" % RUN_TAG)
+    present = {k: v for k, v in declared.items() if os.path.exists(os.path.join(ROOT, v))}
+    absent = {k: v for k, v in declared.items() if k not in present}
+    if absent:
+        print("\n!! 声明要产出但没写出来的证据（如实记录，不补、不替）：%s"
+              % json.dumps(absent, ensure_ascii=False), flush=True)
+    log["declared_outputs"] = declared
+    log["missing_outputs"] = absent
+    try:
+        EB.build(man_path, facts.get("manifest_candidate_commit"), facts.get("started_at"),
+                 present, run_tag=RUN_TAG,
+                 note="由 DIYU_M5_FORMAL_RUN_v1.0.py 在本次正式运行结束时生成")
+        log["formal_evidence_manifest"] = os.path.relpath(man_path, ROOT)
+        print("\nSAVED", man_path, flush=True)
+    except Exception as e:
+        log["formal_evidence_manifest_error"] = str(e)
+        print("\n!! 证据清单生成失败：%s" % e, flush=True)
+
+    for name, cmd in PACKAGE_STEPS:
+        if only and not any(o in name for o in only):
+            continue
+        run(name, cmd + ["--manifest", man_path])
+
+    with open(os.path.join(EV, "FORMAL_RUN_LOG_%s.json" % RUN_TAG), "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2)
-    print("\nSAVED", os.path.join(EV, "FORMAL_RUN_LOG.json"))
+    print("\nSAVED", os.path.join(EV, "FORMAL_RUN_LOG_%s.json" % RUN_TAG))
     return 0
 
 

@@ -36,10 +36,15 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 
 # ---------------------------------------------------------------- 冻结绑定
 # 全部来自 M4 → M5 交接映射 V1_M4_M5_HANDOFF_MAP_v0.1.yaml，并在 Node 2 现场复算一致。
-SEAM_APP = "de0cb1e9-2af8-415a-9762-31b6cf348c22"
-CANVAS_APP = "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8"
-M3_APP = "b7fb5b1a-9278-426c-bb8a-f9f288639548"
-CAPABILITY_APPS = {
+# ---------------------------------------------------------------- 应用绑定
+# 两套绑定并存，是为了能做**同一输入的新旧对照**，不是为了留后门。
+#   legacy = M4 已接受的八个应用，**一个字节都不动**，只读、只用于对照；
+#   rb     = M5 AC-07 Rebase 的 successor：只换 envelope_check 里那一份
+#            _find_scalar，接缝只把 6 个 tool 节点改指新能力，其余节点照搬。
+# 默认走 rb —— 它是本轮候选。要跑对照就 M5_BIND=legacy。
+LEGACY_BIND = {
+    "SEAM": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+    "M3":   "b7fb5b1a-9278-426c-bb8a-f9f288639548",
     "MATRIX":               "d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3",
     "CAMPAIGN":             "cfd48281-d2e6-4f77-b4a6-32f0fca98f2b",
     "CONTENT_BRIEF":        "a3264c95-9b30-4ac8-833a-dc96ea8b7ee1",
@@ -47,6 +52,25 @@ CAPABILITY_APPS = {
     "PRODUCTION_DIRECTOR":  "57ebc138-ed9e-4202-bce2-38e44da0ec1d",
     "PUBLISHING_PACKAGING": "10056fcf-9237-4889-a3e3-81e3a695cae0",
 }
+RB_BIND = {
+    "SEAM": "9e1b1fd8-f696-436d-9d42-54700a29a4dd",
+    "M3":   "ca4c28aa-e0fd-4c54-bde3-a0918dc4c884",
+    "MATRIX":               "47e52165-f6cb-48ff-93be-6c6a8ea5cecf",
+    "CAMPAIGN":             "7d10e28d-30e6-4c4a-950b-88dcbb5fd0fc",
+    "CONTENT_BRIEF":        "cbbeab61-a4de-4a21-a6be-7dc2385dd6f3",
+    "CREATIVE_SCRIPT":      "4fbcfea8-48a3-41b3-b2b5-cdb50276eeb2",
+    "PRODUCTION_DIRECTOR":  "07e99f7b-71a3-40af-85f3-fc43b68e774a",
+    "PUBLISHING_PACKAGING": "0fb7636a-55e8-49a9-92f7-3d11ad0a35fa",
+}
+BIND_NAME = os.environ.get("M5_BIND", "rb").lower()
+if BIND_NAME not in ("rb", "legacy"):
+    raise ValueError("M5_BIND 只接受 rb / legacy，实得 %r" % BIND_NAME)
+_BIND = RB_BIND if BIND_NAME == "rb" else LEGACY_BIND
+
+SEAM_APP = _BIND["SEAM"]
+CANVAS_APP = "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8"
+M3_APP = _BIND["M3"]
+CAPABILITY_APPS = {k: v for k, v in _BIND.items() if k not in ("SEAM", "M3")}
 CAPABILITIES = tuple(CAPABILITY_APPS)
 
 # M5 测试候选：M3 判断（散文）→ 能力外壳（扁平）的抽取适配器。
@@ -341,14 +365,26 @@ def record_feedback(ws, actor, publish_instance_id, payload, idempotency_key,
     return m2("POST", "/workspaces/%s/feedback" % ws, body, actor=actor)
 
 
-def current_projection(ws, actor, account_id):
-    """M2 最小当前投影 —— M3 的 account_context 由此而来，不靠人手抄。"""
+def current_projection(ws, actor, account_id, task_id=None):
+    """M2 最小当前投影 —— M3 的 account_context 由此而来，不靠人手抄。
+
+    **补上运行状态。** 旧版只投影周期与最近决策，投出来实测 217 字符，里面
+    没有一个字说明上一轮跑到哪、哪些写入已经发生过。于是恢复场景下用户问
+    「昨天那条反馈到底提交成没成」，M3 手上根本没有可查的依据——而 M3 的契约
+    明写它**不处理 M2 的并发、幂等、权限、版本晋升或恢复内部实现**，那是 M2 的事。
+    该拿的东西 M2 一直有（`/tasks/{id}/run-state` 的 last_success_step、failed_step、
+    resumable_from、side_effects），是这一侧没去拿。
+    """
     st, cyc = m2("GET", "/workspaces/%s/accounts/%s/cycles/current" % (ws, account_id),
                  actor=actor)
     st2, dec = m2("GET", "/workspaces/%s/accounts/%s/cycles/decisions/latest" % (ws, account_id),
                   actor=actor)
-    return {"cycle_current": {"status": st, "body": cyc},
-            "decision_latest": {"status": st2, "body": dec}}
+    out = {"cycle_current": {"status": st, "body": cyc},
+           "decision_latest": {"status": st2, "body": dec}}
+    if task_id:
+        st3, rs = m2("GET", "/workspaces/%s/tasks/%s/run-state" % (ws, task_id), actor=actor)
+        out["run_state"] = {"status": st3, "body": rs}
+    return out
 
 
 if __name__ == "__main__":
