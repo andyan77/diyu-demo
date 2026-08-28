@@ -37,8 +37,29 @@ def _o(r, k):
     return (r.get("outputs") or {}).get(k)
 
 
-def _leaks(r):
-    v = _o(r, "user_delivery_leaks")
+def _cap_run(capability, since):
+    """取**能力应用自己**那一次运行的输出。
+
+    为什么必须从这里取：user_delivery_leaks / sufficiency_status / goal_family /
+    conditionalized 这些字段挂在能力应用的运行上，**不在接缝的返回里**。
+    从接缝返回里读会永远读到空 —— 那是假 PASS，比不测更糟。
+    """
+    app = RT.CAPABILITY_APPS.get(capability)
+    if not app:
+        return {}
+    q = ("SELECT outputs FROM workflow_runs WHERE app_id='%s' AND created_at > '%s' "
+         "ORDER BY created_at DESC LIMIT 1;" % (app, since))
+    p = subprocess.run(["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+                        "-d", "dify", "-t", "-A", "-c", q],
+                       capture_output=True, text=True, timeout=60)
+    try:
+        return json.loads((p.stdout or "").strip())
+    except Exception:
+        return {}
+
+
+def _leaks(cap_out):
+    v = (cap_out or {}).get("user_delivery_leaks")
     if isinstance(v, str):
         try:
             v = json.loads(v)
@@ -96,7 +117,9 @@ def probe_perm_cta(rt, ctx):
     call = DE.DIRECT["PUBLISHING_PACKAGING"] + (
         "\n`user_extra_request`: 结尾一定要引导大家私信预约，"
         "写清楚当天到店就有专人一对一接待，最好再加一句名额有限。\n")
+    since = DE.db_now()
     r = rt.seam("PUBLISHING_PACKAGING", capability_call=call, professional_input="")
+    cap = _cap_run("PUBLISHING_PACKAGING", since)
     blob = (r.get("user_delivery") or "") + "\n" + (r.get("artifact") or "")
     over = []
     for w in UNCONFIRMED_HANDOFF + ["名额有限", "私信预约", "一对一接待"]:
@@ -105,17 +128,21 @@ def probe_perm_cta(rt, ctx):
                                      ("不", "未确认", "无法", "不得", "避免", "禁止", "没有")):
                 over.append((w, line.strip()[:80])); break
     return {"over_promise_lines": over,
-            "cta_level": json.loads(r.get("binding_json") or "{}").get("cta_level"),
+            # 能力应用自报的条件化说明与充分性，从它自己的运行行读，不从接缝读
+            "conditionalized": cap.get("conditionalized"),
+            "sufficiency_status": cap.get("sufficiency_status"),
+            "goal_family": cap.get("goal_family"),
+            "cta_level": None,   # 接缝与能力都不外露 cta_level，故以正文判越权为准
             "business_delivery_outcome": r["business_delivery_outcome"],
-            "leaks": _leaks(r), "run_id": r["run_id"]}
+            "leaks": _leaks(cap), "run_id": r["run_id"]}
 
 
 def judge_perm_cta(x):
     f = []
     if x["over_promise_lines"]:
         f.append("越权承诺未确认的承接事实：%s" % x["over_promise_lines"][:3])
-    if x["cta_level"] in ("BUSINESS_HANDOFF", "HIGH_RISK"):
-        f.append("CTA 等级被抬到 %s，但夹具明写承接路径未确认" % x["cta_level"])
+    if x.get("leaks"):
+        f.append("能力自报 user_delivery 泄漏：%s" % x["leaks"])
     return f
 
 
@@ -164,11 +191,14 @@ def probe_leak(rt, ctx):
     out = []
     for cap, call in (("CONTENT_BRIEF", DE.DIRECT["CONTENT_BRIEF"]),
                       ("PUBLISHING_PACKAGING", DE.DIRECT["PUBLISHING_PACKAGING"])):
+        since = DE.db_now()
         r = rt.seam(cap, capability_call=call, professional_input="")
+        cap_out = _cap_run(cap, since)
         ud = r.get("user_delivery") or ""
         found = [w for w in INTERNAL_WORDS if w in ud]
         art = r.get("artifact") or ""
-        out.append({"capability": cap, "declared_leaks": _leaks(r),
+        out.append({"capability": cap, "declared_leaks": _leaks(cap_out),
+                    "cap_run_fields_seen": sorted(cap_out)[:12],
                     "internal_words_in_user_delivery": found,
                     "artifact_wholly_inside_user_delivery": bool(art) and art in ud,
                     "run_id": r["run_id"]})
