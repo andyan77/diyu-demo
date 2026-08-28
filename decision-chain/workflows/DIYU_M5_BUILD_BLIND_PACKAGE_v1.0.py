@@ -193,7 +193,7 @@ def main():
     p = os.path.join(ROOT, "decision-chain", "docs",
                      "V1_M5_HUMAN_BLIND_REVIEW_PACKAGE_v1.0.md")
     open(p, "w", encoding="utf-8").write("".join(parts))
-    print("SAVED", p, "| 来源", os.path.basename(raws[-1]))
+    print("SAVED", p, "| 来源", EB.source_name(man, "AB_BLIND"))
     return 0
 
 

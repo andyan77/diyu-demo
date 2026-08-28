@@ -17,6 +17,11 @@ NL = ("我们序里集这一轮想弄清楚一件事：顾客到底能不能自�
 def main(tag_suffix="a"):
     rt = RT.Runtime()
     boot = FS.bootstrap("full01" + tag_suffix)
+    # 证据文件名用**完整**标签，不用 boot["tag"]。bootstrap 把标签截到 8 字符
+    # （M2 handle 的限制），"full01" 已占 6 位，只剩 2 位给标签：
+    # FRB2 和 FRB3 都会截成 "full01FR"，两次不同的正式运行会写进同一个文件，
+    # 后一次静默覆盖前一次。证据必须只增不覆盖，所以文件名不跟着截。
+    out_tag = "full01" + tag_suffix
     print("boot ws=%s account=%s" % (boot["ws"], boot["account"]), flush=True)
     rec, m3 = FS.full_story_01(rt, boot, NL)
     print(json.dumps({k: v for k, v in rec.items() if k not in ("deliveries", "final_text")},
@@ -30,9 +35,9 @@ def main(tag_suffix="a"):
         result["publish"] = pub
         result["full02"] = rec2
         result["m3_review"] = (m3b["outputs"] or {}).get("operating_judgment")
-    with open(os.path.join(OUT, "FULL_STORY_RUN_%s.json" % boot["tag"]), "w", encoding="utf-8") as f:
+    with open(os.path.join(OUT, "FULL_STORY_RUN_%s.json" % out_tag), "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    print("SAVED", os.path.join(OUT, "FULL_STORY_RUN_%s.json" % boot["tag"]), flush=True)
+    print("SAVED", os.path.join(OUT, "FULL_STORY_RUN_%s.json" % out_tag), flush=True)
 
 if __name__ == "__main__":
     try:
