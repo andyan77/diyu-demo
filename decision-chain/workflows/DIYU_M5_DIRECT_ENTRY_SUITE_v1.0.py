@@ -303,7 +303,7 @@ def run_case(rt, case, facts, m3_judgment_cache):
         m3 = rt.m3_operate(account_context=m3_judgment_cache["account_context"],
                            user_request="这周我们不做内容，只想让你判断这一轮该怎么走、"
                                         "以及要不要减量。给判断就行，不用给内容任务。",
-                           loaded_references=facts)
+                           loaded_references=m3_judgment_cache["refs"])
         rec["m3_run_id"] = m3["run_id"]
         rec["m3_gate_status"] = (m3["outputs"] or {}).get("gate_status")
         rec["judgment_chars"] = len((m3["outputs"] or {}).get("operating_judgment") or "")
@@ -422,12 +422,18 @@ def main():
     facts = FS.registered_facts()
     boot = FS.bootstrap("de" + (sys.argv[1] if len(sys.argv) > 1 else "a"))
     acct_text, _ = FS.projection_text(boot)
-    m3_judgment_cache = {"account_context": acct_text, "judgment": ""}
+    m3_judgment_cache = {"account_context": acct_text, "judgment": "", "refs": "",
+                         "refs_sha256": ""}
 
     # DE-04 需要一份真实的 M3 判断作上游。先跑一次并缓存，避免每个用例重复跑 M3。
+    # 参考资料信封走**唯一** canonical builder。以前这里传的是裸夹具正文，
+    # M3 因为没有清单而拒绝引用专业方法，短入口拿到的 M3 和完整主故事不是同一个。
+    refs = FS.m3_loaded_references(facts)
+    m3_judgment_cache["refs"] = refs
+    m3_judgment_cache["refs_sha256"] = FS.refs_sha256(refs)
     m3 = rt.m3_operate(account_context=acct_text,
                        user_request="这周想出一条内容，验证顾客能不能自己判断哪件衣服适合自己。",
-                       loaded_references=facts)
+                       loaded_references=refs)
     m3_judgment_cache["judgment"] = (m3["outputs"] or {}).get("operating_judgment") or ""
     print("m3 seed judgment chars=%d run=%s" % (len(m3_judgment_cache["judgment"]), m3["run_id"]),
           flush=True)

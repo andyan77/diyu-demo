@@ -9,7 +9,7 @@
 十九维与用例的映射来自规划侧冻结的
 `M5_ACCEPTANCE_FIXTURE_AND_19D_COVERAGE_INDEX_v1.0.yaml`，本文件照抄不改。
 """
-import glob, json, os, subprocess, sys
+import importlib.util, json, os, subprocess, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
@@ -39,16 +39,31 @@ DIMENSIONS = [
 ]
 
 
-def collect():
+# ---------------------------------------------------------------- 正式证据绑定
+# 只按 Formal Evidence Manifest 的显式路径与 sha256 取证据；没有清单就非零退出。
+_eb_spec = importlib.util.spec_from_file_location(
+    "eb", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       "DIYU_M5_EVIDENCE_BINDING_v1.1.py"))
+EB = importlib.util.module_from_spec(_eb_spec)
+_eb_spec.loader.exec_module(EB)
+
+
+def _require_manifest():
+    p = EB.cli_manifest(sys.argv)
+    try:
+        return EB.load(p)
+    except EB.EvidenceBindingError as e:
+        print("拒绝构建索引：%s" % e)
+        raise SystemExit(2)
+
+
+def collect(man):
     """扫描证据目录，把每个用例的最新结果收上来。只读文件，不重跑。"""
     cases = {}
 
-    # 完整主故事
-    for p in sorted(glob.glob(os.path.join(EV, "FULL_STORY_RUN_*.json"))):
-        try:
-            D = json.load(open(p, encoding="utf-8"))
-        except Exception:
-            continue
+    # 完整主故事（只认清单绑定的那一份）
+    for p in [EB.path_of(man, "FULL_STORY")]:
+        D = json.load(open(p, encoding="utf-8"))
         d = D.get("full01") or {}
         delivered = [s["step"].split(":", 1)[1] for s in d.get("steps", [])
                      if s.get("step", "").startswith(("seam:", "reentry_seam:"))
@@ -83,17 +98,17 @@ def collect():
             cases["FULL-02"]["publish_is_test"] = pub.get("publish_is_test")
             cases["FULL-02"]["feedback_idempotent"] = pub.get("idempotent_same_row")
 
-    # 短入口
-    for p in sorted(glob.glob(os.path.join(EV, "DIRECT_ENTRY_SUITE_*.json"))):
+    # 短入口（只认清单绑定的那一份）
+    for p in [EB.path_of(man, "DIRECT_ENTRY")]:
         D = json.load(open(p, encoding="utf-8"))
         for r in D.get("results", []):
             cases[r["id"]] = {"source": os.path.basename(p), "verdict": r["verdict"],
                               "failures": r.get("failures"),
                               "apps_actually_run": r.get("apps_actually_run")}
 
-    # 风险探针（生成侧 + 持久化侧）
-    for pat in ("RISK_PROBE_SUITE_*.json", "M2_PROBE_SUITE_*.json"):
-        for p in sorted(glob.glob(os.path.join(EV, pat))):
+    # 风险探针（生成侧 + 持久化侧，各只认清单绑定的那一份）
+    for _k in ("RISK_PROBE", "M2_PROBE"):
+        for p in [EB.path_of(man, _k)]:
             D = json.load(open(p, encoding="utf-8"))
             for r in D.get("results", []):
                 rec = {"source": os.path.basename(p), "verdict": r["verdict"],
@@ -106,11 +121,9 @@ def collect():
                     rec["contexts_handed_to_human"] = len(sp.get("contexts_for_human") or [])
                 cases[r["id"]] = rec
 
-    # 回归（由本文件的伴生脚本写入）
-    reg = os.path.join(EV, "REGRESSION_RESULTS.json")
-    if os.path.exists(reg):
-        for k, v in json.load(open(reg, encoding="utf-8")).items():
-            cases[k] = v
+    # 回归（只认清单绑定的那一份）
+    for k, v in EB.load_json(man, "REGRESSION").items():
+        cases[k] = v
     return cases
 
 
@@ -220,19 +233,26 @@ def build_ac(cases, dims):
 
 
 def main():
-    cases = collect()
+    man = _require_manifest()
+    cases = collect(man)
     dims = build(cases)
     covered = sum(1 for d in dims if d["status"] == "CURRENT")
     failed = [d["id"] for d in dims if d["status"] == "FAIL"]
     missing = [d["id"] for d in dims if d["status"] == "NOT_COVERED"]
 
     out = {
-        "index_id": "M5-FORMAL-ACCEPTANCE-EVIDENCE-INDEX-v1.0",
+        "index_id": "M5-FORMAL-ACCEPTANCE-EVIDENCE-INDEX-v1.1-AC07-REBASE",
         "task_id": "DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001",
+        "supersedes": "V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.0.yaml（保留不删；"
+                      "其绑定全部指向冻结前诊断件，已按 F4 归因作废）",
         "note": ("索引只索引，不判定。每一维的状态由它实际绑定的用例结果推出；"
                  "用例没跑就是 NOT_RUN，不允许「有证据文件所以算覆盖」。"),
-        "candidate_frozen": False,
-        "all_runs_are_diagnostic_until_manifest_freeze": True,
+        # 冻结事实与证据来源都从清单读，不再由本文件写死。写死过一次，
+        # 结果是候选早已冻结、索引顶部还写着 candidate_frozen: false。
+        "candidate_frozen": bool(man.get("candidate_commit")),
+        "candidate_commit": man.get("candidate_commit"),
+        "manifest_frozen_at": man.get("frozen_at"),
+        "evidence_binding": {k: v for k, v in (man.get("entries") or {}).items()},
         "summary": {"dimensions_total": len(dims), "current": covered,
                     "failed": failed, "not_covered": missing,
                     "dimensions_with_unverified_semantic_parts":
@@ -244,8 +264,9 @@ def main():
         "dimensions": dims,
         "cases": cases,
     }
+    # 只增版本，不覆盖 v1.0——v1.0 是已发生的历史，哪怕它绑错了也要留着。
     p = os.path.join(ROOT, "decision-chain", "docs",
-                     "V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.0.yaml")
+                     "V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.1_AC07_REBASE.yaml")
     import yaml
     with open(p, "w", encoding="utf-8") as f:
         yaml.safe_dump(out, f, allow_unicode=True, sort_keys=False, width=100)

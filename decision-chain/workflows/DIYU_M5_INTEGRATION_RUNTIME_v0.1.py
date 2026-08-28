@@ -136,7 +136,25 @@ class Runtime(object):
 
     # ------------------------------------------------------------ M3
     def m3_operate(self, account_context, user_request, loaded_references="", user="m5-runtime"):
-        """M3 周期判断与内容任务。account_context = M2→M3 最小当前投影。"""
+        """M3 周期判断与内容任务。account_context = M2→M3 最小当前投影。
+
+        **参考资料信封闸门。** M3 的契约要求 `loaded_references` 带
+        `<<REFERENCE_MANIFEST>>` 与逐项 LOADED/NOT_LOADED；没有清单时 M3 会照规范
+        写「本轮输入没有附参考资料清单，所以我不判断专业参考文件是否加载」并拒绝
+        引用参考内容——**它没做错，是调用方没给清单**。
+
+        这个错法实际发生过：完整主故事走 `m3_loaded_references()` 组了合法清单，
+        短入口和风险探针却把裸夹具正文直接塞进这个参数，于是同一套系统在两条路径上
+        拿到的不是同一个 M3。裸正文不会报错，只会安静地少掉整个专业方法层，
+        跑出来的证据看着正常但不成立。所以这里改成**结构性拒绝**：
+        要么给合法清单，要么显式传空表示本轮不提供参考；不接受「有正文、无清单」。
+        """
+        refs = loaded_references or ""
+        if refs.strip() and "<<REFERENCE_MANIFEST>>" not in refs:
+            raise ValueError(
+                "loaded_references 非空但没有 <<REFERENCE_MANIFEST>>：这会让 M3 拒绝"
+                "引用参考资料，而调用方却以为已加载。请用 FULL_STORY.m3_loaded_references() "
+                "组装，或显式传空字符串表示本轮不提供参考。")
         return _run_with_retry(self.key(M3_APP), {
             "account_context": account_context,
             "user_request": user_request,

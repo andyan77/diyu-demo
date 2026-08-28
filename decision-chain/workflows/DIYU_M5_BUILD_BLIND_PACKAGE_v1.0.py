@@ -5,7 +5,7 @@
 **Rubric 在看到结果之前冻结**，逐字取自 Task Contract 的 ab_contract，执行侧不改一个字。
 包里只有甲/乙，没有 A/B。映射在单独的封存文件里，评分完成前不打开。
 """
-import glob, json, os, re, sys
+import importlib.util, json, os, re, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
@@ -97,11 +97,30 @@ FORM = """
 """
 
 
+# ---------------------------------------------------------------- 正式证据绑定
+# 正式包只按 Formal Evidence Manifest 的显式路径与 sha256 取证据。
+# 旧版用 sorted(glob(...))[-1] 猜「最新」，而正式产物带大写 F 标签、排序在前，
+# 于是稳定地猜到冻结前的诊断件。猜的路已经堵死：没有清单就非零退出。
+_eb_spec = importlib.util.spec_from_file_location(
+    "eb", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       "DIYU_M5_EVIDENCE_BINDING_v1.1.py"))
+EB = importlib.util.module_from_spec(_eb_spec)
+_eb_spec.loader.exec_module(EB)
+
+
+def _require_manifest():
+    p = EB.cli_manifest(sys.argv)
+    try:
+        return EB.load(p)
+    except EB.EvidenceBindingError as e:
+        print("拒绝构包：%s" % e)
+        raise SystemExit(2)
+
+
 def main():
-    raws = sorted(glob.glob(os.path.join(EV, "AB_BLIND_*.json")))
-    if not raws:
-        print("尚无 A/B 盲评数据，先跑 DIYU_M5_AB_SUITE_v1.0.py"); return 1
-    D = json.load(open(raws[-1], encoding="utf-8"))
+    man = _require_manifest()
+    D = EB.load_json(man, "AB_BLIND")
+    print("盲评输入绑定：%s" % EB.source_name(man, "AB_BLIND"))
     parts = [HEAD]
     for item in D["blind"]:
         cid = item["case"]
@@ -119,10 +138,9 @@ def main():
             gain_rows="\n".join("| %s |  |  |" % g for g in r["gain"]),
             gain_rule="> %s" % r["gain_rule"]))
     # 附上执行侧**判不了**的那两段，连原文上下文一起交出来
-    risks = sorted(glob.glob(os.path.join(EV, "RISK_PROBE_SUITE_*.json")))
+    R = EB.load_json(man, "RISK_PROBE")
     pending = []
-    if risks:
-        R = json.load(open(risks[-1], encoding="utf-8"))
+    if True:
         for r in R.get("results", []):
             sp = r.get("semantic_part")
             if sp:

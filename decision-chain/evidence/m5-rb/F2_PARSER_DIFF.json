@@ -1,0 +1,169 @@
+{
+  "probe": "F2-PARSER-DIFF",
+  "shared_node": "envelope_check::_find_scalar",
+  "identical_across_capability_apps": 6,
+  "equivalence": [
+    {
+      "case": "A json 键值都带引号",
+      "old_present": true,
+      "old_value": "秋冬外套的面料与版型差别",
+      "new_present": true,
+      "new_value": "秋冬外套的面料与版型差别"
+    },
+    {
+      "case": "B yaml 裸键裸值",
+      "old_present": true,
+      "old_value": "秋冬外套的面料与版型差别",
+      "new_present": true,
+      "new_value": "秋冬外套的面料与版型差别"
+    },
+    {
+      "case": "C yaml 裸键+双引号值",
+      "old_present": true,
+      "old_value": "秋冬外套的面料与版型差别",
+      "new_present": true,
+      "new_value": "秋冬外套的面料与版型差别"
+    },
+    {
+      "case": "D yaml 裸键+单引号值",
+      "old_present": true,
+      "old_value": "秋冬外套的面料与版型差别",
+      "new_present": true,
+      "new_value": "秋冬外套的面料与版型差别"
+    },
+    {
+      "case": "E markdown 反引号键",
+      "old_present": true,
+      "old_value": "秋冬外套的面料与版型差别",
+      "new_present": true,
+      "new_value": "秋冬外套的面料与版型差别"
+    },
+    {
+      "case": "F yaml 块写法",
+      "old_present": true,
+      "old_value": "秋冬外套的面料与版型差别",
+      "new_present": true,
+      "new_value": "秋冬外套的面料与版型差别"
+    },
+    {
+      "case": "G 值内含 ASCII 双引号",
+      "old_present": false,
+      "old_value": "",
+      "new_present": true,
+      "new_value": "讲清\"梭织\"和\"针织\"的差别"
+    },
+    {
+      "case": "H 值内含 ASCII 单引号",
+      "old_present": false,
+      "old_value": "",
+      "new_present": true,
+      "new_value": "讲清 it's 的差别"
+    },
+    {
+      "case": "I json 值内含转义引号",
+      "old_present": true,
+      "old_value": "讲清\\",
+      "new_present": true,
+      "new_value": "讲清\"梭织\"的差别"
+    },
+    {
+      "case": "J 反引号键+值含引号",
+      "old_present": true,
+      "old_value": "讲清\"梭织\"的差别",
+      "new_present": true,
+      "new_value": "讲清\"梭织\"的差别"
+    },
+    {
+      "case": "K 引号键+双引号值含转义",
+      "old_present": true,
+      "old_value": "他说\\",
+      "new_present": true,
+      "new_value": "他说\"合身\"，我说要试"
+    }
+  ],
+  "negative": [
+    {
+      "case": "N1 真的缺字段",
+      "key": "objective",
+      "old_present": false,
+      "new_present": false,
+      "still_fails_in_new": true
+    },
+    {
+      "case": "N2 键在值为空",
+      "key": "objective",
+      "old_present": false,
+      "new_present": false,
+      "still_fails_in_new": true
+    },
+    {
+      "case": "N3 值是 null",
+      "key": "objective",
+      "old_present": false,
+      "new_present": false,
+      "still_fails_in_new": true
+    },
+    {
+      "case": "N4 值是 none",
+      "key": "objective",
+      "old_present": false,
+      "new_present": false,
+      "still_fails_in_new": true
+    },
+    {
+      "case": "N5 键是别的键的前缀",
+      "key": "expression_subject",
+      "old_present": false,
+      "new_present": false,
+      "still_fails_in_new": true
+    }
+  ],
+  "corpus": {
+    "MATRIX": {
+      "total": 400,
+      "identical": 381,
+      "looser_quoted_value_now_found": 16,
+      "stricter_empty_field_no_longer_steals_next_line": 3,
+      "unexplained": 0
+    },
+    "CAMPAIGN": {
+      "total": 400,
+      "identical": 380,
+      "looser_quoted_value_now_found": 17,
+      "stricter_empty_field_no_longer_steals_next_line": 3,
+      "unexplained": 0
+    },
+    "CONTENT_BRIEF": {
+      "total": 400,
+      "identical": 380,
+      "looser_quoted_value_now_found": 17,
+      "stricter_empty_field_no_longer_steals_next_line": 3,
+      "unexplained": 0
+    },
+    "CREATIVE_SCRIPT": {
+      "total": 400,
+      "identical": 381,
+      "looser_quoted_value_now_found": 16,
+      "stricter_empty_field_no_longer_steals_next_line": 3,
+      "unexplained": 0
+    },
+    "PRODUCTION_DIRECTOR": {
+      "total": 400,
+      "identical": 399,
+      "looser_quoted_value_now_found": 1,
+      "stricter_empty_field_no_longer_steals_next_line": 0,
+      "unexplained": 0
+    },
+    "PUBLISHING_PACKAGING": {
+      "total": 400,
+      "identical": 394,
+      "looser_quoted_value_now_found": 3,
+      "stricter_empty_field_no_longer_steals_next_line": 3,
+      "unexplained": 0
+    }
+  },
+  "equivalence_old_consistent": false,
+  "equivalence_new_consistent": true,
+  "negative_all_still_fail": true,
+  "corpus_source": "dify.workflow_node_executions node_id=envelope_check 最近 400 条真实输入"
+}

@@ -1,0 +1,84 @@
+{
+  "probe": "F4-BINDING-DIAGNOSIS",
+  "rule_that_failed": "sorted(glob(pattern))[-1]",
+  "why": "正式产物带大写 F 标签；ASCII 排序里大写在小写之前，故 [-1] 永远选不到正式件",
+  "patterns": {
+    "AB_BLIND_*.json": {
+      "all": [
+        "AB_BLIND_abF.json",
+        "AB_BLIND_aba.json"
+      ],
+      "selected_by_old_rule": "AB_BLIND_aba.json",
+      "formal_artifact": "AB_BLIND_abF.json",
+      "selected_formal": false
+    },
+    "AB_SUITE_RAW_*.json": {
+      "all": [
+        "AB_SUITE_RAW_abF.json",
+        "AB_SUITE_RAW_aba.json"
+      ],
+      "selected_by_old_rule": "AB_SUITE_RAW_aba.json",
+      "formal_artifact": "AB_SUITE_RAW_abF.json",
+      "selected_formal": false
+    },
+    "DIRECT_ENTRY_SUITE_*.json": {
+      "all": [
+        "DIRECT_ENTRY_SUITE_deF.json",
+        "DIRECT_ENTRY_SUITE_dea.json",
+        "DIRECT_ENTRY_SUITE_deb.json"
+      ],
+      "selected_by_old_rule": "DIRECT_ENTRY_SUITE_deb.json",
+      "formal_artifact": "DIRECT_ENTRY_SUITE_deF.json",
+      "selected_formal": false
+    },
+    "RISK_PROBE_SUITE_*.json": {
+      "all": [
+        "RISK_PROBE_SUITE_riskF.json",
+        "RISK_PROBE_SUITE_riska.json",
+        "RISK_PROBE_SUITE_riskb.json",
+        "RISK_PROBE_SUITE_riskc.json",
+        "RISK_PROBE_SUITE_riskd.json"
+      ],
+      "selected_by_old_rule": "RISK_PROBE_SUITE_riskd.json",
+      "formal_artifact": "RISK_PROBE_SUITE_riskF.json",
+      "selected_formal": false
+    },
+    "M2_PROBE_SUITE_*.json": {
+      "all": [
+        "M2_PROBE_SUITE_m2pF.json",
+        "M2_PROBE_SUITE_m2pa.json",
+        "M2_PROBE_SUITE_m2pb.json"
+      ],
+      "selected_by_old_rule": "M2_PROBE_SUITE_m2pb.json",
+      "formal_artifact": "M2_PROBE_SUITE_m2pF.json",
+      "selected_formal": false
+    },
+    "FULL_STORY_RUN_*.json": {
+      "all": [
+        "FULL_STORY_RUN_full01F1.json",
+        "FULL_STORY_RUN_full01a.json",
+        "FULL_STORY_RUN_full01b.json",
+        "FULL_STORY_RUN_full01c.json",
+        "FULL_STORY_RUN_full01d.json",
+        "FULL_STORY_RUN_full01e.json",
+        "FULL_STORY_RUN_full01f.json",
+        "FULL_STORY_RUN_full01g.json",
+        "FULL_STORY_RUN_full01h.json",
+        "FULL_STORY_RUN_full01i.json"
+      ],
+      "selected_by_old_rule": "FULL_STORY_RUN_full01i.json",
+      "formal_artifact": "FULL_STORY_RUN_full01F1.json",
+      "selected_formal": false
+    }
+  },
+  "v1_0_index_referenced_files": {
+    "FULL_STORY_RUN_full01i.json": 18,
+    "RISK_PROBE_SUITE_riska.json": 4,
+    "DIRECT_ENTRY_SUITE_dea.json": 20,
+    "M2_PROBE_SUITE_m2pb.json": 9,
+    "RISK_PROBE_SUITE_riskd.json": 4,
+    "DIRECT_ENTRY_SUITE_deb.json": 3
+  },
+  "v1_0_index_references_any_formal_file": false,
+  "v1_0_index_header_candidate_frozen": true
+}

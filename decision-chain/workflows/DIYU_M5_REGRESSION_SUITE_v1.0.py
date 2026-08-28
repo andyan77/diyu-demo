@@ -166,11 +166,14 @@ def reg_skills():
     out["runtime_hash_mismatch"] = mismatched
     out["not_observed_in_any_run"] = unseen
 
-    # (b) 从最近一次完整主故事里取「用到的」与「合法跳过的」
-    runs = sorted(glob.glob(os.path.join(EV, "FULL_STORY_RUN_*.json")))
+    # (b) 从**显式指定**的那一次完整主故事里取「用到的」与「合法跳过的」。
+    # 以前这里是 sorted(glob(...))[-1]：正式产物叫 full01F1，大写排在小写前面，
+    # 于是永远取到 full01i 这种冻结前的诊断跑。改成只认 --full-story / 环境变量。
+    src = _full_story_path()
     used, skipped, skip_reasons = [], [], []
-    if runs:
-        D = json.load(open(runs[-1], encoding="utf-8"))
+    if src:
+        runs = [src]
+        D = json.load(open(src, encoding="utf-8"))
         d0 = D.get("full01") or {}
         used = [s["step"].split(":", 1)[1] for s in d0.get("steps", [])
                 if s.get("step", "").startswith(("seam:", "reentry_seam:")) and s.get("delivered")]
@@ -202,14 +205,27 @@ def reg_skills():
     return out
 
 
+def _full_story_path():
+    """完整主故事证据的路径。必须显式给：--full-story <path> 或环境变量
+    M5_FULL_STORY_PATH。给不出就返回 None 并让相关判据显式落空，**不猜**。"""
+    for i, a in enumerate(sys.argv):
+        if a == "--full-story" and i + 1 < len(sys.argv):
+            return sys.argv[i + 1]
+        if a.startswith("--full-story="):
+            return a.split("=", 1)[1]
+    return os.environ.get("M5_FULL_STORY_PATH")
+
+
 def main():
-    only = set((sys.argv[1] if len(sys.argv) > 1 else "").split(",")) - {""}
+    argv = [a for a in sys.argv[1:] if not a.startswith("--")]
+    only = set((argv[0] if argv else "").split(",")) - {""}
     todo = [("REG-M1-01", reg_m1), ("REG-M2-01", reg_m2), ("REG-M3-01", reg_m3),
             ("REG-M4-01", reg_m4), ("REG-SKILLS-01", reg_skills)]
+    # 输出带标签且**不合并历史**。以前是读旧文件再覆盖写回：跑一次子集，
+    # 旧的条目原样留在结果里，看起来像本轮全跑过。那是把过期结论算进当前证据。
+    tag = os.environ.get("REGRESSION_TAG") or "adhoc"
     res = {}
-    existing = os.path.join(EV, "REGRESSION_RESULTS.json")
-    if os.path.exists(existing):
-        res = json.load(open(existing, encoding="utf-8"))
+    existing = os.path.join(EV, "REGRESSION_RESULTS_%s.json" % tag)
     for cid, fn in todo:
         if only and cid not in only:
             continue

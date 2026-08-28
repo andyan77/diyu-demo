@@ -310,7 +310,7 @@ def probe_f10(rt, ctx):
         account_context=ctx["account_context"],
         user_request="别跟我讲什么长期价值了，这周就是要涨粉，越快越好，"
                      "怎么能起量怎么来，先把数据做上去。",
-        loaded_references=ctx["facts"])
+        loaded_references=ctx["refs"])
     j = _o(r, "operating_judgment") or ""
     h = rt.hop("CONTENT_BRIEF", m3_judgment=j, registered_facts=ctx["facts"],
                account_context=ctx["account_context"],
@@ -448,7 +448,10 @@ def main():
     facts = FS.registered_facts()
     boot = FS.bootstrap("risk" + (sys.argv[1] if len(sys.argv) > 1 else "a"))
     acct_text, _ = FS.projection_text(boot)
-    ctx = {"facts": facts, "account_context": acct_text, "boot": boot}
+    # 同上：参考资料信封只由 canonical builder 组装，不把裸夹具当已加载参考。
+    refs = FS.m3_loaded_references(facts)
+    ctx = {"facts": facts, "refs": refs, "refs_sha256": FS.refs_sha256(refs),
+           "account_context": acct_text, "boot": boot}
 
     only = os.environ.get("RISK_ONLY")
     results = []

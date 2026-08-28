@@ -23,6 +23,7 @@ FULL-02  测试/模拟反馈采集 → M2 按版本幂等写入 → M3 复盘更
 
 运行本文件默认是**诊断**；正式运行由 Candidate Run Manifest 冻结后的 runner 驱动。
 """
+import hashlib
 import importlib.util
 import json
 import os
@@ -150,6 +151,40 @@ FIXTURE_MANIFEST_PATHS = {
     "序里集_Campaign最小承接条件夹具_v0.1.md": "fixtures/序里集_Campaign最小承接条件夹具_v0.1.md",
     "一页纸夹具品牌事实 v0.1.md": "fixtures/一页纸夹具品牌事实_v0.1.md",
 }
+
+
+def refs_sha256(refs):
+    """整份参考信封的可复算哈希。证据里记它，正式结论才能回指到当时**那一份**输入。"""
+    return hashlib.sha256((refs or "").encode("utf-8")).hexdigest()
+
+
+def m3_reference_digests():
+    """逐项参考资料的 path / status / sha256 / bytes。
+
+    清单正文本身保持 M3 契约认得的写法（`path.md: LOADED`），哈希不塞进提示词——
+    塞进去要冒改变被测输入的风险，而可回指性放在证据侧一样成立。
+    """
+    out = []
+    for manifest_path, fname, load in M3_REFERENCES:
+        fp = os.path.join(M3_REF_DIR, fname)
+        item = {"path": manifest_path, "status": "LOADED" if load else "NOT_LOADED",
+                "kind": "m3_method_reference"}
+        if os.path.exists(fp):
+            b = open(fp, "rb").read()
+            item["sha256"] = hashlib.sha256(b).hexdigest()
+            item["bytes"] = len(b)
+        else:
+            item["sha256"] = None
+            item["bytes"] = None
+            item["note"] = "文件不在场"
+        out.append(item)
+    for name in FIXTURES:
+        fp = os.path.join(ROOT, "decision-chain", "fixtures", name)
+        b = open(fp, "rb").read()
+        out.append({"path": FIXTURE_MANIFEST_PATHS[name], "status": "LOADED",
+                    "kind": "registered_fact_fixture",
+                    "sha256": hashlib.sha256(b).hexdigest(), "bytes": len(b)})
+    return out
 
 
 def m3_loaded_references(facts=None):

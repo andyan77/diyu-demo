@@ -12,34 +12,52 @@
 
 **执行侧不给结论。** 这份包只呈现事实与选择，AC-09 的判定只能由 Founder 作出。
 """
-import glob, json, os, sys
+import importlib.util, json, os, sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
 
 
-def latest(pattern):
-    fs = sorted(glob.glob(os.path.join(EV, pattern)))
-    return json.load(open(fs[-1], encoding="utf-8")) if fs else None
+
+# ---------------------------------------------------------------- 正式证据绑定
+# 正式包只按 Formal Evidence Manifest 的显式路径与 sha256 取证据。
+# 旧版用 sorted(glob(...))[-1] 猜「最新」，而正式产物带大写 F 标签、排序在前，
+# 于是稳定地猜到冻结前的诊断件。猜的路已经堵死：没有清单就非零退出。
+_eb_spec = importlib.util.spec_from_file_location(
+    "eb", os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       "DIYU_M5_EVIDENCE_BINDING_v1.1.py"))
+EB = importlib.util.module_from_spec(_eb_spec)
+_eb_spec.loader.exec_module(EB)
 
 
-def best_full_story():
-    """挑一次**四个能力全部交付**的完整跑；没有就挑走得最远的那次，并如实说明。"""
-    best, best_score, best_name = None, -1, None
-    for f in sorted(glob.glob(os.path.join(EV, "FULL_STORY_RUN_*.json"))):
-        D = json.load(open(f, encoding="utf-8"))
-        d = D.get("full01") or {}
-        n = len([s for s in d.get("steps", [])
-                 if s.get("step", "").startswith(("seam:", "reentry_seam:")) and s.get("delivered")])
-        if n > best_score:
-            best, best_score, best_name = D, n, os.path.basename(f)
-    return best, best_score, best_name
+def _require_manifest():
+    p = EB.cli_manifest(sys.argv)
+    try:
+        return EB.load(p)
+    except EB.EvidenceBindingError as e:
+        print("拒绝构包：%s" % e)
+        raise SystemExit(2)
+
+
+def bound_full_story(man):
+    """取**本次正式运行**那一份完整主故事。
+
+    旧版在所有历史 FULL_STORY_RUN_*.json 里「挑交付能力最多的一次」——那是
+    择优保留：跑十次挑最好的一次进 Founder 包，等于用挑样本代替证据。
+    现在只认清单绑定的那一份，交付几个就报几个。
+    """
+    D = EB.load_json(man, "FULL_STORY")
+    d = D.get("full01") or {}
+    n = len([s for s in d.get("steps", [])
+             if s.get("step", "").startswith(("seam:", "reentry_seam:")) and s.get("delivered")])
+    return D, n, EB.source_name(man, "FULL_STORY")
 
 
 def main():
-    D, n_delivered, src = best_full_story()
+    man = _require_manifest()
+    D, n_delivered, src = bound_full_story(man)
     if not D:
-        print("尚无完整主故事证据"); return 1
+        print("清单绑定的完整主故事文件里没有 full01"); return 2
     d = D["full01"]
     steps = d["steps"]
 
