@@ -1,0 +1,53 @@
+{
+  "full01": {
+    "case": "FULL-01",
+    "steps": [
+      {
+        "step": "M1_context",
+        "ok": true,
+        "account_anchor_source": null
+      },
+      {
+        "step": "M2_projection",
+        "cycle_http": 200,
+        "decision_http": 200,
+        "account_context_chars": 221
+      },
+      {
+        "step": "M3_operate",
+        "platform_status": "failed",
+        "run_id": "3fb0287c-f56e-4171-b852-b7ce8451db7f",
+        "elapsed": 2.47,
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "failed",
+            "run_id": "3fb0287c-f56e-4171-b852-b7ce8451db7f",
+            "error": "req_id: b518ad918e PluginInvokeError: {\"args\":{\"description\":\"[models] Error: API request failed with status code 402: {\\\"error\\\":{\\\"message\\\":\\\"Insufficient Balance\\\",\\\"type\\\":\\\"unknown_error\\\",\\\"par"
+          }
+        ],
+        "gate_status": null,
+        "judgment_chars": 0
+      }
+    ],
+    "skipped": [],
+    "boot": {
+      "actor": "m5-full01g",
+      "user": {
+        "external_ref": "m5-full01g",
+        "display_name": null,
+        "id": "4d8a2902-fef3-464a-97ef-7aaa2da590a9",
+        "created_at": "2026-08-28T07:01:22.693232+00:00"
+      },
+      "ws": "6762d792-4cf8-4585-801f-e9a20e91c759",
+      "account": "377a455b-c2e2-408a-96ec-8ae44d9c3d82",
+      "cycle": "1a094923-73bf-40d5-886b-e856ca018fc9",
+      "task": "7a2dc83a-125a-489f-8b9a-c9ee1d39e2a1",
+      "tag": "full01g"
+    },
+    "registered_facts_chars": 11071,
+    "loaded_references_chars": 33522,
+    "blocked_at": "M3_operate produced empty operating_judgment"
+  },
+  "m3_judgment": null
+}

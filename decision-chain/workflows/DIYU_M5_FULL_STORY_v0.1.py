@@ -119,13 +119,59 @@ FIXTURES = [
 
 
 def registered_facts():
-    """读取已登记事实夹具原文。照抄，不摘要、不改写、不代为解释。"""
+    """读取已登记**业务事实**夹具原文。照抄，不摘要、不改写、不代为解释。
+
+    这是给跨能力接缝适配器用的 [FACT] 来源：商品、素材、出镜授权、人员产能。
+    M3 的**方法参考**不在这里——那是另一类东西，见 m3_loaded_references()。
+    """
     parts = []
     for name in FIXTURES:
         path = os.path.join(ROOT, "decision-chain", "fixtures", name)
         with open(path, encoding="utf-8") as fh:
             parts.append("===== 夹具：%s =====\n%s" % (name, fh.read()))
     return "\n\n".join(parts)
+
+
+# M3 自己的方法参考。路径与 loaded 状态按 M3 已发布应用的**真实契约**声明。
+M3_REF_DIR = os.path.join(ROOT, "m3-account-content-operator-semantic-v1.0",
+                          "skill-source", "references")
+M3_REFERENCES = [
+    ("references/fashion-and-market.md", "fashion-and-market.md", True),
+    ("references/six-skill-methods.md", "six-skill-methods.md", True),
+    ("references/operations.md", "operations.md", True),
+    # 不加载：这是 M3 自己的验收夹具，含期望答案，进正式运行会污染取证。
+    # 如实声明 NOT_LOADED —— M3 的规范明写清单标未加载时照常产出并说明不引用哪部分。
+    ("references/acceptance-fixtures.md", "acceptance-fixtures.md", False),
+]
+# 清单里的路径写法去掉空格，因为 M3 闸门的清单正则是 [\w./-]+\.md，空格会打断匹配。
+# 这是路径**书写形式**的规范化，不改变加载与否这一事实本身。
+FIXTURE_MANIFEST_PATHS = {
+    "序里集_Campaign当前素材与资源夹具_v0.1.md": "fixtures/序里集_Campaign当前素材与资源夹具_v0.1.md",
+    "序里集_Campaign最小承接条件夹具_v0.1.md": "fixtures/序里集_Campaign最小承接条件夹具_v0.1.md",
+    "一页纸夹具品牌事实 v0.1.md": "fixtures/一页纸夹具品牌事实_v0.1.md",
+}
+
+
+def m3_loaded_references(facts=None):
+    """按 M3 已发布应用的真实契约组装 loaded_references。
+
+    M3 的闸门要求清单带 `<<REFERENCE_MANIFEST>>` 标记、条目形如 `path.md: LOADED`。
+    **不带清单时 M3 会照规范写「本轮输入没有附参考资料清单，所以我不判断参考文件
+    是否加载」并拒绝引用参考内容**——实测就是这样，它没做错，是调用方没给清单。
+    这条接缝以前没人接过：M4 的正式运行直接向 Seam 注入扁平夹具，绕过了 M3。
+    """
+    facts = registered_facts() if facts is None else facts
+    lines = ["<<REFERENCE_MANIFEST>>"]
+    bodies = []
+    for manifest_path, fname, load in M3_REFERENCES:
+        lines.append("%s: %s" % (manifest_path, "LOADED" if load else "NOT_LOADED"))
+        if load:
+            with open(os.path.join(M3_REF_DIR, fname), encoding="utf-8") as fh:
+                bodies.append("===== %s =====\n%s" % (manifest_path, fh.read()))
+    for name in FIXTURES:
+        lines.append("%s: LOADED" % FIXTURE_MANIFEST_PATHS[name])
+    lines.append("<<END_REFERENCE_MANIFEST>>")
+    return "\n".join(lines) + "\n\n" + "\n\n".join(bodies) + "\n\n" + facts
 
 
 # ---------------------------------------------------------------- FULL-01
@@ -160,8 +206,10 @@ def full_story_01(rt, boot, nl_request, applicable=("CONTENT_BRIEF", "CREATIVE_S
                          "account_context_chars": len(acct_text)})
 
     # 3. M3 周期判断与内容任务（夹具作为可加载参考进入，不由本文件代抄事实）
+    refs = m3_loaded_references(facts)
+    rec["loaded_references_chars"] = len(refs)
     m3 = rt.m3_operate(account_context=acct_text, user_request=nl_request,
-                       loaded_references=facts)
+                       loaded_references=refs)
     rec["steps"].append({"step": "M3_operate", "platform_status": m3["platform_status"],
                          "run_id": m3["run_id"], "elapsed": m3["elapsed_seconds"],
                          "attempts": m3.get("attempts"),

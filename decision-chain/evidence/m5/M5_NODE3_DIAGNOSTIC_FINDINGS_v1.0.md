@@ -303,3 +303,73 @@ Content Brief 那跳没抽到，导致复合字段 `expression_subject_and_bound
 
 这是格式化不是编造：没有引入任何新事实，且合成事实可审计。
 复合字段的定义本身就是「出镜者＋表达边界」。
+
+---
+
+## M5-DIAG-009 · 每个模块都对，系统仍然不工作：没人接过 M3 的参考加载接缝（本次最高价值发现）
+
+**症状**：完整主故事把三份已登记事实夹具（11071 字）作为 `loaded_references` 送进 M3，
+M3 的运营判断里却写着：
+
+> 本轮输入没有附参考资料清单，所以我不判断参考文件是否加载；以下判断只基于账号
+> 投影和品牌已有信息，不引用参考资料里的方法细节。
+> 外部市场资料本轮为空，所以我不去说这个方向在平台上稀缺或已经避开了同质化。
+
+于是这一轮 M3 的判断里**没有任何商品级事实**，并且明写「事实确认人：本轮没有确认人」。
+接着四个专业能力全部返回 `INPUT_INSUFFICIENT`：Content Brief 缺
+`expression_subject_and_boundary`，Creative Script 缺 `content_origin_mode`，
+Production Director 缺 `script_or_equivalent_beats`，Publishing 缺 `content_body_or_beats`。
+
+**先排除了随机性**：用同一份 M3 判断连跑抽取 4 次，4/4 结果完全一致——
+`expression_boundary` 抽到，`expression_subject` 抽不到。不是模型波动，是源头就没有。
+
+**根因**：查 Dify 运行台账，夹具**确实进去了**（`loaded_references` len=11071）。
+问题在格式。M3 已发布应用的确定性闸门 `check_manifest` 要求：
+
+```python
+loaded    = re.findall(r"([\w./-]+\.md)\s*:\s*LOADED", man)
+notloaded = re.findall(r"([\w./-]+\.md)\s*:\s*NOT_LOADED", man)
+man_present = "<<REFERENCE_MANIFEST>>" in man
+```
+
+而 M3 的 Skill 正文明写：
+
+> **没有清单**时，正文写「本轮输入没有附参考资料清单，所以我不判断参考文件是否加载」，
+> **不得推测**任何一边。
+
+**M3 没有做错任何事。它完全按自己的规范行事。** 错的是调用方——我只给了正文，没给清单。
+
+**为什么以前没人发现**：M4 的正式运行是**直接向 Capability Seam 注入扁平夹具**的，
+根本不经过 M3；M3 的正式运行又是**单独**跑的，用它自己的参考清单。
+`M3 → 参考加载 → M4` 这条接缝，M1–M4 四个模块的验收**没有任何一个覆盖到**。
+
+这正是 M5 存在的理由：**四个模块各自 DONE，系统仍然不工作**，因为接缝没人负责。
+这类缺陷单模块验收结构上看不见——不是没测到，是它不在任何单模块的验收面内。
+
+**处置**：按 M3 的真实契约组装 `loaded_references`：
+
+```text
+<<REFERENCE_MANIFEST>>
+references/fashion-and-market.md: LOADED
+references/six-skill-methods.md: LOADED
+references/operations.md: LOADED
+references/acceptance-fixtures.md: NOT_LOADED
+fixtures/序里集_Campaign当前素材与资源夹具_v0.1.md: LOADED
+fixtures/序里集_Campaign最小承接条件夹具_v0.1.md: LOADED
+fixtures/一页纸夹具品牌事实_v0.1.md: LOADED
+<<END_REFERENCE_MANIFEST>>
+
+（随后是各份已加载文件的全文）
+```
+
+两个刻意的决定，都记录在案：
+
+1. `acceptance-fixtures.md` **如实声明 NOT_LOADED 且确实不加载**——那是 M3 自己的
+   验收夹具，含期望答案，进正式运行会污染取证。M3 的规范明写清单标未加载时照常
+   产出并说明不引用哪部分，因此这是它支持的合法状态，不是缺陷。
+2. 清单里 `一页纸夹具品牌事实 v0.1.md` 写作 `一页纸夹具品牌事实_v0.1.md`，因为
+   M3 闸门的清单正则 `[\w./-]+\.md` 会被空格打断。这是路径**书写形式**的规范化，
+   不改变「这份文件加载了」这一事实本身。
+
+**冻结口径**：`loaded_references` 的组装方式属于候选绑定，写入 Candidate Run Manifest；
+冻结后改动即触发 STALE 与定向复验。

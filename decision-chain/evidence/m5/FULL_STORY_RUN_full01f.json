@@ -1,0 +1,347 @@
+{
+  "full01": {
+    "case": "FULL-01",
+    "steps": [
+      {
+        "step": "M1_context",
+        "ok": true,
+        "account_anchor_source": null
+      },
+      {
+        "step": "M2_projection",
+        "cycle_http": 200,
+        "decision_http": 200,
+        "account_context_chars": 221
+      },
+      {
+        "step": "M3_operate",
+        "platform_status": "succeeded",
+        "run_id": "65c5b443-60f5-46a9-ac38-1ad98185deef",
+        "elapsed": 218.39,
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "failed",
+            "run_id": "143c6ce1-f56f-4011-918d-bda37b9f6f03",
+            "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHI"
+          },
+          {
+            "attempt": 2,
+            "platform_status": "succeeded",
+            "run_id": "65c5b443-60f5-46a9-ac38-1ad98185deef",
+            "error": null
+          }
+        ],
+        "gate_status": "NEEDS_FIX",
+        "judgment_chars": 1800
+      },
+      {
+        "step": "hop:CONTENT_BRIEF",
+        "platform_status": "succeeded",
+        "run_id": "19428d60-abb4-422d-9601-ad82126d8afa",
+        "elapsed": 6.0,
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "19428d60-abb4-422d-9601-ad82126d8afa",
+            "error": null
+          }
+        ],
+        "extraction_gaps": "expression_subject_and_boundary",
+        "extraction_gaps_count": 1,
+        "source_map": "{\"primary_goal\": \"M3\", \"goal_family\": \"M3\", \"applicability_reason\": \"M3\", \"subject_and_account_scope\": \"ASK\", \"audience_problem\": \"M3\", \"expected_change\": \"M3\", \"content_promise\": \"M3\", \"facts_registered\": \"M3\", \"expression_boundary\": \"M3\", \"explicit_non_promise\": \"M3\", \"time_window\": \"ASK\", \"deadline_or_stage_boundary\": \"M3\", \"cta_contract\": \"M3\", \"cta_level\": \"M3\"}",
+        "envelope_chars": 890
+      },
+      {
+        "step": "seam:CONTENT_BRIEF",
+        "platform_status": "succeeded",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "fadde471-bf1c-4a71-a446-1b99250697f0",
+            "error": null
+          }
+        ],
+        "business_delivery_outcome": "UNKNOWN",
+        "delivered": false,
+        "component_return": true,
+        "run_id": "fadde471-bf1c-4a71-a446-1b99250697f0",
+        "elapsed": 0.6,
+        "user_delivery_chars": 96,
+        "artifact_chars": 0,
+        "capabilities_skipped_by_seam": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "artifact_sha256": null
+      },
+      {
+        "step": "reentry_hop:CONTENT_BRIEF",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "c81d001f-43e3-46a6-867d-b5edf2e5690e",
+            "error": null
+          }
+        ],
+        "asked_for": "expression_subject_and_boundary",
+        "single_question": null,
+        "remaining_gaps_after_focus": "expression_subject_and_boundary",
+        "run_id": "c81d001f-43e3-46a6-867d-b5edf2e5690e"
+      },
+      {
+        "step": "hop:CREATIVE_SCRIPT",
+        "platform_status": "succeeded",
+        "run_id": "91d0e4aa-f153-4aa8-aa1f-45ef599e85cb",
+        "elapsed": 9.49,
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "91d0e4aa-f153-4aa8-aa1f-45ef599e85cb",
+            "error": null
+          }
+        ],
+        "extraction_gaps": "content_origin_mode",
+        "extraction_gaps_count": 1,
+        "source_map": "{\"primary_goal\": \"M3\", \"goal_family\": \"M3\", \"applicability_reason\": \"M3\", \"subject_and_account_scope\": \"ASK\", \"audience_problem\": \"M3\", \"expected_change\": \"M3\", \"content_promise\": \"M3\", \"facts_registered\": \"FACT\", \"expression_subject\": \"FACT\", \"expression_boundary\": \"M3\", \"explicit_non_promise\": \"FACT\", \"production_profile\": \"FACT\", \"time_window\": \"ASK\", \"capacity_or_owner\": \"FACT\", \"deadline_or_stage_boundary\": \"M3\", \"cta_contract\": \"M3\", \"cta_level\": \"M3\", \"asset_publish_permission\": \"FACT\", \"expression_subject_and_boundary\": \"DERIVED(expression_subject+expression_boundary)\"}",
+        "envelope_chars": 1637
+      },
+      {
+        "step": "seam:CREATIVE_SCRIPT",
+        "platform_status": "succeeded",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "1243e400-607b-4962-8d33-d07afbbb7629",
+            "error": null
+          }
+        ],
+        "business_delivery_outcome": "UNKNOWN",
+        "delivered": false,
+        "component_return": true,
+        "run_id": "1243e400-607b-4962-8d33-d07afbbb7629",
+        "elapsed": 0.71,
+        "user_delivery_chars": 117,
+        "artifact_chars": 0,
+        "capabilities_skipped_by_seam": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "artifact_sha256": null
+      },
+      {
+        "step": "reentry_hop:CREATIVE_SCRIPT",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "b2df4303-35f0-48c3-a04f-840215b28e8f",
+            "error": null
+          }
+        ],
+        "asked_for": "content_origin_mode",
+        "single_question": null,
+        "remaining_gaps_after_focus": "expression_subject；content_origin_mode",
+        "run_id": "b2df4303-35f0-48c3-a04f-840215b28e8f"
+      },
+      {
+        "step": "hop:PRODUCTION_DIRECTOR",
+        "platform_status": "succeeded",
+        "run_id": "519bc943-5172-457b-87ae-ad622e39623b",
+        "elapsed": 7.71,
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "519bc943-5172-457b-87ae-ad622e39623b",
+            "error": null
+          }
+        ],
+        "extraction_gaps": "script_or_equivalent_beats；content_origin_mode",
+        "extraction_gaps_count": 2,
+        "source_map": "{\"primary_goal\": \"M3\", \"goal_family\": \"M3\", \"applicability_reason\": \"M3\", \"subject_and_account_scope\": \"ASK\", \"audience_problem\": \"M3\", \"expected_change\": \"M3\", \"content_promise\": \"M3\", \"facts_registered\": \"M3\", \"expression_subject\": \"UNDECLARED\", \"expression_boundary\": \"M3\", \"expression_subject_and_boundary\": \"M3\", \"explicit_non_promise\": \"M3\", \"production_profile\": \"FACT\", \"time_window\": \"M3\", \"capacity_or_owner\": \"FACT\", \"deadline_or_stage_boundary\": \"M3\", \"cta_contract\": \"M3\", \"cta_level\": \"M3\", \"asset_publish_permission\": \"FACT\"}",
+        "envelope_chars": 889
+      },
+      {
+        "step": "seam:PRODUCTION_DIRECTOR",
+        "platform_status": "succeeded",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "8674f7a6-9aed-4a57-8fd3-2852adf0f1c6",
+            "error": null
+          }
+        ],
+        "business_delivery_outcome": "UNKNOWN",
+        "delivered": false,
+        "component_return": true,
+        "run_id": "8674f7a6-9aed-4a57-8fd3-2852adf0f1c6",
+        "elapsed": 0.74,
+        "user_delivery_chars": 108,
+        "artifact_chars": 0,
+        "capabilities_skipped_by_seam": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PUBLISHING_PACKAGING"
+        ],
+        "artifact_sha256": null
+      },
+      {
+        "step": "reentry_hop:PRODUCTION_DIRECTOR",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "6c2f67a5-6b89-4794-a911-b473dc386b97",
+            "error": null
+          }
+        ],
+        "asked_for": "script_or_equivalent_beats；content_origin_mode",
+        "single_question": null,
+        "remaining_gaps_after_focus": "script_or_equivalent_beats；content_origin_mode",
+        "run_id": "6c2f67a5-6b89-4794-a911-b473dc386b97"
+      },
+      {
+        "step": "hop:PUBLISHING_PACKAGING",
+        "platform_status": "succeeded",
+        "run_id": "e12d2a6b-728d-4b10-b3d3-88fba87137b1",
+        "elapsed": 9.47,
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "e12d2a6b-728d-4b10-b3d3-88fba87137b1",
+            "error": null
+          }
+        ],
+        "extraction_gaps": "content_body_or_beats",
+        "extraction_gaps_count": 1,
+        "source_map": "{\"primary_goal\": \"M3\", \"goal_family\": \"M3\", \"applicability_reason\": \"M3\", \"subject_and_account_scope\": \"ASK\", \"audience_problem\": \"M3\", \"expected_change\": \"M3\", \"content_promise\": \"M3\", \"facts_registered\": \"FACT\", \"expression_boundary\": \"M3\", \"explicit_non_promise\": \"FACT\", \"content_origin_mode\": \"FACT\", \"production_profile\": \"FACT\", \"time_window\": \"M3\", \"capacity_or_owner\": \"FACT\", \"deadline_or_stage_boundary\": \"M3\", \"cta_contract\": \"M3\", \"cta_level\": \"M3\", \"asset_publish_permission\": \"FACT\"}",
+        "envelope_chars": 1153
+      },
+      {
+        "step": "seam:PUBLISHING_PACKAGING",
+        "platform_status": "succeeded",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "d427c74a-1fb6-46ab-a65f-fcf16e284315",
+            "error": null
+          }
+        ],
+        "business_delivery_outcome": "UNKNOWN",
+        "delivered": false,
+        "component_return": true,
+        "run_id": "d427c74a-1fb6-46ab-a65f-fcf16e284315",
+        "elapsed": 0.59,
+        "user_delivery_chars": 98,
+        "artifact_chars": 0,
+        "capabilities_skipped_by_seam": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR"
+        ],
+        "artifact_sha256": null
+      },
+      {
+        "step": "reentry_hop:PUBLISHING_PACKAGING",
+        "attempts": [
+          {
+            "attempt": 1,
+            "platform_status": "succeeded",
+            "run_id": "373a6f33-e3de-4153-8f1e-6eabcd9096bb",
+            "error": null
+          }
+        ],
+        "asked_for": "content_body_or_beats",
+        "single_question": null,
+        "remaining_gaps_after_focus": "content_body_or_beats",
+        "run_id": "373a6f33-e3de-4153-8f1e-6eabcd9096bb"
+      }
+    ],
+    "skipped": [
+      {
+        "capability": "MATRIX",
+        "reason": "本轮任务不适用；合法跳过，不暗跑"
+      },
+      {
+        "capability": "CAMPAIGN",
+        "reason": "本轮任务不适用；合法跳过，不暗跑"
+      }
+    ],
+    "boot": {
+      "actor": "m5-full01f",
+      "user": {
+        "external_ref": "m5-full01f",
+        "display_name": null,
+        "id": "218ec4d9-236d-4fd2-aff8-f2d48c2a4861",
+        "created_at": "2026-08-28T06:49:05.449552+00:00"
+      },
+      "ws": "390ed3c4-36ef-4bea-802b-aab4e4d76d07",
+      "account": "6de4ebd4-aa0a-4301-adf2-84c0a22fd619",
+      "cycle": "64dd4604-a6dd-422b-9249-e1bb8aeb861f",
+      "task": "b10c10ca-999f-44db-9d82-fd905e1cd8fe",
+      "tag": "full01f"
+    },
+    "registered_facts_chars": 11071,
+    "open_questions": [
+      {
+        "capability": "CONTENT_BRIEF",
+        "question": null,
+        "precise_gap": "expression_subject_and_boundary",
+        "why_not_auto_answered": "四类已登记来源里都没有写，不代答不编造",
+        "downstream_stale": [
+          "仅真实依赖本次 CONTENT_BRIEF 结论的下游项"
+        ]
+      },
+      {
+        "capability": "CREATIVE_SCRIPT",
+        "question": null,
+        "precise_gap": "content_origin_mode",
+        "why_not_auto_answered": "四类已登记来源里都没有写，不代答不编造",
+        "downstream_stale": [
+          "仅真实依赖本次 CREATIVE_SCRIPT 结论的下游项"
+        ]
+      },
+      {
+        "capability": "PRODUCTION_DIRECTOR",
+        "question": null,
+        "precise_gap": "script_or_equivalent_beats；content_origin_mode",
+        "why_not_auto_answered": "四类已登记来源里都没有写，不代答不编造",
+        "downstream_stale": [
+          "仅真实依赖本次 PRODUCTION_DIRECTOR 结论的下游项"
+        ]
+      },
+      {
+        "capability": "PUBLISHING_PACKAGING",
+        "question": null,
+        "precise_gap": "content_body_or_beats",
+        "why_not_auto_answered": "四类已登记来源里都没有写，不代答不编造",
+        "downstream_stale": [
+          "仅真实依赖本次 PUBLISHING_PACKAGING 结论的下游项"
+        ]
+      }
+    ],
+    "last_delivered_step": null,
+    "final_text": "",
+    "final_user_delivery": null
+  },
+  "m3_judgment": "结论：这一轮按“起号”来排：先不追流量、不带到店，只验证“顾客能不能自己判断哪件衣服适合自己”这个方向。只出这一条内容，不把每周四条排满，也不新增固定栏目或预约型行动引导。\n\n账号目前暂定处在方向验证阶段：它还没有可信的关注理由，也没有任何发布和反馈记录，所以不能靠数量堆出方向，只能靠一条能被观察到的内容来试。暂定的依据是账号投影里没有历史反馈，最近一次周期决策也没有记录，所以没有上一轮留下的任务位需要延续；以当前测试账号、起号这个目标、测试平台、本周期为观察窗，如果本周期评论里出现观众用自己标准来接话，或有人追问“我这种情况怎么判断”，这个暂定就从“待验证”变成“有第一次回应支撑”，否则继续按验证看待。\n\n关键依据与假设：\n\n- 基线产能和预期发布量都是四条，但你明确这周只出这一条，我按一条排；当期实际可用条件没有额外说明，这条内容就是本周周期唯一的内容位。\n- 最可能错的一步：把评论区热闹当成方向成立。一条内容的热度可能只是偶然，真正要看的，是观众有没有接住“判断标准”这件事。\n- 本轮输入没有附参考资料清单，所以我不判断参考文件是否加载；以下判断只基于账号投影和品牌已有信息，不引用参考资料里的方法细节。\n- 外部市场资料本轮为空，所以我不去说这个方向在平台上稀缺或已经避开了同质化；这不影响下面这条内容安排。\n- 当前周期没有活动覆盖层在跑，所以这条内容按普通周期基线安排。\n\n这次探索怎么算成功：\n\n- 要解决的不确定性：观众会不会对这个问题产生真实回应——是接住了“判断标准”，还是没听懂、无所谓。\n- 最小可逆动作：只发这一条内容，不改定位、不承诺系列、不上固定栏目；发完就等观察，不再追加同类第二条。\n- 支持继续的观察：评论里出现观众用自己标准来接话，或有人追问“我这种情况怎么判断”，或私信、评论要求继续讲判断步骤。\n- 看到什么就停：到本周期结束，评论区没有任何一条接住“判断标准”的话；或所有回应都集中在价格、上身效果、购买链接等与假设无关的内容——看到这种情况就停，说明问题没被听懂或切入不对，要重新设计而不是再多发。\n- 到期与复验：本周期发布后固定观察窗结束（以周期末为准）重新评估；若届时没有出现支持信号，探索到期，不再自动延续。\n- 让位的稳定义务：本周不排固定栏目和其他三条内容位，单变量验证优先。\n\n内容任务：\n\n- 受众问题是：很多人面对一件衣服时只能靠感觉或导购说，缺少自己的判断条件。希望观众从“不知道按什么标准判断”变成“开始说出自己的判断条件”。\n- 这一条要承担一个主要工作：让观众开始说出他们自己判断一件衣服适不适合时用的标准，而不是问他们喜不喜欢。次要贡献是给品牌“试穿、选择和排除”的专业形象留一个自然入口，不承担到店或成交。\n- 删掉它会丢什么：本周期就没有任何内容在验证“顾客能不能形成自己的穿着判断标准”，下周期判断方向时仍然只能靠猜；其余三条内容位本来就不承担这个验证，不能替代它。\n- 内容承诺或待验证假设：顾客能理解并回应“判断适合需要条件，而不是靠感觉”。如果回应成立，下周期可以继续沿着“给出判断条件”做系列；如果不成立，重新设计表达，而不是加量。\n- 事实范围：只使用品牌已有定位（面向30—45岁城市女性的中高端女装集合店、以试穿和搭配服务为核心）；不引用任何具体面料、价格、库存、门店预约或服务承诺。\n- 事实确认人：当前只有账号投影和品牌已有信息，没有指名商品或事实负责人，所以这条事实链本轮没有确认人；内容不能出现商品级事实，出现任何具体商品信息都要标记为待确认，否则就等相应负责人确认后再发。\n- 边界与权限：不启用预约型行动引导，不做站外导流，不承诺系列，也不承诺能给出每个人适合的答案；下游仍然可以自由决定钩子、叙事、镜头、标题、封面，只要不改变这个主要工作。\n- 观察目标：按上面六条来判；尤其看评论区是否出现“原来可以这样判断”或“我通常会看……”这类接话，而不是只看点赞播放。\n\n主要取舍与代价：为单变量验证让掉了另外三条内容位；它们对应的学习机会本周不发生，也不会积累固定栏目资产。换来的是结果容易归因——如果这条内容成立或不成立，都能说清楚是哪一步造成的。\n\n下一步：你只需确认一点：这一轮的主目标我按“起号”来排。如果你心里其实是想靠这条内容带动到店或成交，验证重点会变，告诉我再调整。"
+}
