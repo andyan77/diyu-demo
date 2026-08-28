@@ -20,6 +20,22 @@ DOCS = os.path.join(ROOT, "decision-chain", "docs")
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5")
 MANIFEST = os.path.join(DOCS, "V1_M5_CANDIDATE_RUN_MANIFEST_v1.0.yaml")
 
+# 三类文件，性质不同，处置也不同。都放在 decision-chain/workflows/ 下，
+# 但混为一谈会得出错误结论，所以显式分开：
+#
+# 1) 候选运行时 —— 系统本身。冻结后改动 = 跑的不再是清单说的那个候选，**硬阻断**。
+# 2) 判据 —— 决定什么算通过。冻结后改动 = 看到结果之后改判据，**该套件降级为探索**。
+# 3) 脚手架 —— 只负责编排、汇总、出包，不决定通过与否，也不属于被测系统。可改。
+CANDIDATE_RUNTIME = [
+    "decision-chain/workflows/DIYU_M5_INTEGRATION_RUNTIME_v0.1.py",
+    "decision-chain/workflows/DIYU_M5_FULL_STORY_v0.1.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_HOP_ADAPTER_v0.2.py",
+    "decision-chain/workflows/DIYU_M5_BUILD_ADAPTER_APP_v0.1.py",
+    "decision-chain/workflows/m1_context_compiler_v0.1.py",
+    "account-operations/", "business-persistence/", "content-production/skills/",
+    "decision-chain/skills/", "m3-account-content-operator-semantic-v1.0/",
+]
+
 # 判据文件：这些文件的最后提交时间必须**早于**本次运行开始时间。
 ORACLE_FILES = [
     "decision-chain/workflows/DIYU_M5_DIRECT_ENTRY_SUITE_v1.0.py",
@@ -65,14 +81,22 @@ def preflight():
             fails.append("清单登记的候选 %s 不是 HEAD %s 的祖先" % (want[:12], head[:12]))
         rc2, diff = sh(["git", "diff", "--name-only", want, head])
         changed = [x for x in diff.splitlines() if x.strip()]
-        RECORD_ONLY = ("decision-chain/docs/", "decision-chain/evidence/",
-                       "collab-ledger/", ".md")
-        code_changed = [x for x in changed
-                        if not any(x.startswith(r) or x.endswith(r) for r in RECORD_ONLY)]
+        runtime_changed = [x for x in changed
+                           if any(x.startswith(r) for r in CANDIDATE_RUNTIME)]
+        oracle_changed = [x for x in changed if x in ORACLE_FILES]
         facts["files_changed_since_candidate"] = changed
-        facts["runtime_code_changed_since_candidate"] = code_changed
-        if code_changed:
-            fails.append("候选之后动过运行代码，冻结失效：%s" % code_changed[:8])
+        facts["candidate_runtime_changed"] = runtime_changed
+        facts["oracle_changed_since_freeze"] = oracle_changed
+        if runtime_changed:
+            fails.append("候选之后动过**候选运行时**，跑的已不是清单说的那个候选：%s"
+                         % runtime_changed[:8])
+        if oracle_changed:
+            # 不硬阻断，但必须记账并把相应套件降级——这正是 A2 说的
+            # 「判据在看到结果后才改，本次运行只算探索」
+            facts["suites_downgraded_to_exploratory"] = oracle_changed
+            print("！判据文件在冻结之后被改动，以下套件本次只能记探索，不产生正式 PASS：")
+            for x in oracle_changed:
+                print("   -", x)
 
     rc, st = sh(["git", "status", "--porcelain"])
     facts["worktree_clean"] = not st.strip()
