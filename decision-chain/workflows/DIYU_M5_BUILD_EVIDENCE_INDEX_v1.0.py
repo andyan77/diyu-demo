@@ -143,6 +143,82 @@ def build(cases):
     return dims
 
 
+# AC-00..10 与证据的绑定。状态由证据推出，**不由我声明**；
+# 执行侧无权自裁的三项（AC-05/06 盲评、AC-09 Founder 验收）一律固定为
+# NOT_VERIFIED，不管证据看起来多好——那是判据本身规定的，不是谦虚。
+AC_BINDING = [
+    ("M5-AC-00", "激活、实时基线与保护面",
+     {"kind": "static", "note": "现场预检与保护面复算；相对 main 零修改零删除；"
+                                "12 份 Skill 运行时哈希与候选树逐字节一致"}),
+    ("M5-AC-01", "集成候选与最终 Manifest",
+     {"kind": "static", "note": "Candidate Run Manifest 已 FROZEN；正式运行前置"
+                                "现场复算 15 个应用 graph 哈希逐条一致"}),
+    ("M5-AC-02", "扩展完整主故事", {"kind": "cases", "cases": ["FULL-01", "FULL-02"]}),
+    ("M5-AC-03", "要求的合法短入口",
+     {"kind": "cases", "cases": ["DE-0%d" % i for i in range(1, 10)] + ["DE-10"]}),
+    ("M5-AC-04", "十九维轻量全覆盖", {"kind": "dimensions"}),
+    ("M5-AC-05", "M3 A/B", {"kind": "human_only",
+                            "note": "模型自评无效；实现者知道映射的评分无效。"
+                                    "盲评包已出，映射封存未开。"}),
+    ("M5-AC-06", "最终成品 A/B", {"kind": "human_only",
+                                  "note": "同上。"}),
+    ("M5-AC-07", "留出与高风险探针",
+     {"kind": "cases", "cases": ["RISK-FACT-01", "RISK-PERM-CTA-01", "RISK-F10-01",
+                                 "RISK-PUBLISH-ID-01", "RISK-RECOVERY-01",
+                                 "RISK-M4-032", "RISK-M4-030+031"],
+      "holdouts": True}),
+    ("M5-AC-08", "不退化与受影响回归",
+     {"kind": "cases", "cases": ["REG-M1-01", "REG-M2-01", "REG-M3-01",
+                                 "REG-M4-01", "REG-SKILLS-01"]}),
+    ("M5-AC-09", "Founder 产品验收",
+     {"kind": "human_only", "note": "只能由 Founder 给；该接受不替代技术硬门。"}),
+    ("M5-AC-10", "Git、远端与最终回执",
+     {"kind": "static", "note": "待收口时填写；main 合并为条件化授权。"}),
+]
+
+# 留出判定照抄 V1_M5_HOLDOUT_VERDICTS_v1.0.md，逐条对着封存 oracle 判出。
+HOLDOUT_VERDICTS = {
+    "HOLDOUT-M5-01": "PASS_WITH_NOT_VERIFIED_SUBITEM",
+    "HOLDOUT-M5-02": "PASS",
+    "HOLDOUT-M5-03": "PASS_ON_GOAL_AND_METHOD_DELIVERY_FORM_NOT_VERIFIED",
+    "HOLDOUT-M5-04": "PASS_WITH_NOT_VERIFIED_SUBITEM",
+    "HOLDOUT-M5-05": "FAIL_P0",
+    "HOLDOUT-M5-06": "PASS",
+}
+
+
+def build_ac(cases, dims):
+    rows = []
+    for cid, name, spec in AC_BINDING:
+        row = {"id": cid, "name": name, "kind": spec["kind"]}
+        if spec.get("note"):
+            row["note"] = spec["note"]
+        if spec["kind"] == "human_only":
+            row["status"] = "NOT_VERIFIED"
+            row["reason"] = "EXECUTION_SIDE_MAY_NOT_DECIDE"
+        elif spec["kind"] == "dimensions":
+            bad = [d["id"] for d in dims if d["status"] != "CURRENT"]
+            row["status"] = "CURRENT" if not bad else "FAIL"
+            row["dimensions_not_current"] = bad
+            row["dimensions_with_unverified_semantic_parts"] = \
+                [d["id"] for d in dims if d.get("semantic_parts_not_verified")]
+        elif spec["kind"] == "cases":
+            vs = {c: cases.get(c, {}).get("verdict", "NOT_RUN") for c in spec["cases"]}
+            row["case_verdicts"] = vs
+            fails = [c for c, v in vs.items() if v == "FAIL"]
+            notrun = [c for c, v in vs.items() if v == "NOT_RUN"]
+            if spec.get("holdouts"):
+                row["holdout_verdicts"] = HOLDOUT_VERDICTS
+                fails += [h for h, v in HOLDOUT_VERDICTS.items() if v.startswith("FAIL")]
+            row["blocking"] = fails
+            row["not_run"] = notrun
+            row["status"] = "FAIL" if fails else ("NOT_VERIFIED" if notrun else "PASS")
+        else:
+            row["status"] = "SEE_NOTE"
+        rows.append(row)
+    return rows
+
+
 def main():
     cases = collect()
     dims = build(cases)
@@ -161,6 +237,10 @@ def main():
                     "failed": failed, "not_covered": missing,
                     "dimensions_with_unverified_semantic_parts":
                         [d["id"] for d in dims if d.get("semantic_parts_not_verified")]},
+        "acceptance_criteria": build_ac(cases, dims),
+        "done_formula_note": ("M5-AC-00..10 全部 PASS/CURRENT AND Founder 产品验收接受 "
+                              "AND 无适用 P0 硬门失败 AND Git/远端收口完成。"
+                              "任一项不成立即不得 DONE；不得以「多数通过」掩盖。"),
         "dimensions": dims,
         "cases": cases,
     }
@@ -171,6 +251,14 @@ def main():
         yaml.safe_dump(out, f, allow_unicode=True, sort_keys=False, width=100)
     print("十九维：CURRENT %d / FAIL %d / NOT_COVERED %d"
           % (covered, len(failed), len(missing)))
+    print("--- 验收项 ---")
+    for r in out["acceptance_criteria"]:
+        extra = ""
+        if r.get("blocking"):
+            extra = "  阻断：" + ", ".join(r["blocking"])
+        if r.get("reason"):
+            extra = "  " + r["reason"]
+        print("  %-11s %-22s %s%s" % (r["id"], r["name"], r["status"], extra))
     if failed:
         print("  FAIL:", ", ".join(failed))
     if missing:

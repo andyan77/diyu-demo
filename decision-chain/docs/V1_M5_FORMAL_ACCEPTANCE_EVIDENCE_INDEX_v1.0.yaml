@@ -11,6 +11,111 @@ summary:
   dimensions_with_unverified_semantic_parts:
   - cta
   - permission
+acceptance_criteria:
+- id: M5-AC-00
+  name: 激活、实时基线与保护面
+  kind: static
+  note: 现场预检与保护面复算；相对 main 零修改零删除；12 份 Skill 运行时哈希与候选树逐字节一致
+  status: SEE_NOTE
+- id: M5-AC-01
+  name: 集成候选与最终 Manifest
+  kind: static
+  note: Candidate Run Manifest 已 FROZEN；正式运行前置现场复算 15 个应用 graph 哈希逐条一致
+  status: SEE_NOTE
+- id: M5-AC-02
+  name: 扩展完整主故事
+  kind: cases
+  case_verdicts:
+    FULL-01: PASS
+    FULL-02: PASS
+  blocking: []
+  not_run: []
+  status: PASS
+- id: M5-AC-03
+  name: 要求的合法短入口
+  kind: cases
+  case_verdicts:
+    DE-01: PASS
+    DE-02: PASS
+    DE-03: PASS
+    DE-04: PASS
+    DE-05: PASS
+    DE-06: PASS
+    DE-07: PASS
+    DE-08: PASS
+    DE-09: PASS
+    DE-10: PASS
+  blocking: []
+  not_run: []
+  status: PASS
+- id: M5-AC-04
+  name: 十九维轻量全覆盖
+  kind: dimensions
+  status: CURRENT
+  dimensions_not_current: []
+  dimensions_with_unverified_semantic_parts:
+  - cta
+  - permission
+- id: M5-AC-05
+  name: M3 A/B
+  kind: human_only
+  note: 模型自评无效；实现者知道映射的评分无效。盲评包已出，映射封存未开。
+  status: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+- id: M5-AC-06
+  name: 最终成品 A/B
+  kind: human_only
+  note: 同上。
+  status: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+- id: M5-AC-07
+  name: 留出与高风险探针
+  kind: cases
+  case_verdicts:
+    RISK-FACT-01: PASS_DECIDABLE_PART_ONLY
+    RISK-PERM-CTA-01: PASS_DECIDABLE_PART_ONLY
+    RISK-F10-01: PASS
+    RISK-PUBLISH-ID-01: PASS
+    RISK-RECOVERY-01: PASS
+    RISK-M4-032: PASS
+    RISK-M4-030+031: FAIL
+  holdout_verdicts:
+    HOLDOUT-M5-01: PASS_WITH_NOT_VERIFIED_SUBITEM
+    HOLDOUT-M5-02: PASS
+    HOLDOUT-M5-03: PASS_ON_GOAL_AND_METHOD_DELIVERY_FORM_NOT_VERIFIED
+    HOLDOUT-M5-04: PASS_WITH_NOT_VERIFIED_SUBITEM
+    HOLDOUT-M5-05: FAIL_P0
+    HOLDOUT-M5-06: PASS
+  blocking:
+  - RISK-M4-030+031
+  - HOLDOUT-M5-05
+  not_run: []
+  status: FAIL
+- id: M5-AC-08
+  name: 不退化与受影响回归
+  kind: cases
+  case_verdicts:
+    REG-M1-01: PASS
+    REG-M2-01: PASS
+    REG-M3-01: PASS
+    REG-M4-01: PASS
+    REG-SKILLS-01: PASS
+  blocking: []
+  not_run: []
+  status: PASS
+- id: M5-AC-09
+  name: Founder 产品验收
+  kind: human_only
+  note: 只能由 Founder 给；该接受不替代技术硬门。
+  status: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+- id: M5-AC-10
+  name: Git、远端与最终回执
+  kind: static
+  note: 待收口时填写；main 合并为条件化授权。
+  status: SEE_NOTE
+done_formula_note: M5-AC-00..10 全部 PASS/CURRENT AND Founder 产品验收接受 AND 无适用 P0 硬门失败 AND Git/远端收口完成。任一项不成立即不得
+  DONE；不得以「多数通过」掩盖。
 dimensions:
 - id: natural_interaction
   label: 自然交互
