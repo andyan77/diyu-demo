@@ -156,3 +156,66 @@ capability_call = json.dumps(envelope, ensure_ascii=False, indent=2)
 取不到的字段如实留空并计入 `projection_gaps`，**不代为推断、不编造**。
 
 M4 的八个已发布应用零改动（`overwrite_or_delete_existing_m1_m4_apps = PROHIBITED`）。
+
+---
+
+## M5-DIAG-005 · 修复成立：完整链路首次真正交付（诊断）
+
+记录时间（UTC）：`2026-08-28T05:58:53Z`
+
+**做法**：按 Founder 裁定「M5 候选加抽取适配」，新建 M5 测试候选应用
+`DIYU M5 TEST CANDIDATE · M3 判断 → 统一能力外壳（抽取适配）`，
+`app_id = e1013ce2-69c5-44c1-ad83-26534f3c5e4c`，published `marked_name = m5-adapter-v0.1`。
+M4 八个已发布应用、M3 已发布应用、六份 Skill 源文件**零改动**。
+
+**链路与结果**
+
+```text
+M3 真实运行判断（run a5cc38dc，1275 字散文）
+  → M5 抽取适配（扁平外壳，抽取耗时随模型）
+  → Capability Seam（CONTENT_BRIEF）
+  → Content Brief Architect
+  → business_delivery_outcome = DELIVERED
+    run_id 00e428b5-8869-4619-b497-d12243238a58，57.84s，user_delivery 677 字
+```
+
+对照修复前同一条链路：`business_delivery_outcome = UNKNOWN`、`artifact` 空、六项必填全缺。
+
+**抽取忠实性（本次实测，非声明）**
+
+抽到的五项都能在 M3 判断原文里逐句回指：
+
+| 字段 | 抽取值 | 是否原文已有 |
+|---|---|---|
+| `audience_problem` | 门店试穿反馈里最常问的是肩宽和通勤场景 | 是 |
+| `expected_change` | 从「担心显壮」变成「想进一步了解版型和尺码」，并愿意在评论区说出自己的肩宽和困惑 | 是 |
+| `content_promise` | 这是真实试穿记录，不是模特图 | 是 |
+| `facts_registered` | 苏禾手上有三组真实试穿记录；门店试穿反馈… | 是 |
+| `explicit_non_promise` | 不承诺所有肩宽都不显壮（只有三组记录），不虚构价格、库存、优惠 | 是 |
+
+`goal_family` 抽取为空并计入 `extraction_gaps` —— M3 判断确实没声明目标族，
+适配器**没有代为推断**。这正是要求的行为。
+`expression_subject_and_boundary` 只抽到「苏禾」没抽到边界，因为「不制造身材焦虑」
+出现在用户对 Canvas 的原话里、不在 M3 判断正文里 —— 如实反映，不跨源补全。
+
+**下游产出的质量特征（对 AC-02 与多个风险探针有直接意义）**
+
+Content Brief 的 `user_delivery` 表现出下列行为，均可回指：
+
+- **不编造**：明确「不报价格、不碰库存、不提优惠」——与夹具未提供这些事实一致。
+- **目标忠实（F-10 方向）**：坚持「验证方向」而非改写成到店/成交，与 M3 判断一致。
+- **主动让掉已被让掉的东西**：明确不回答「能不能上班穿到接孩子」，理由是本轮 M3
+  已把该场景机会让掉 —— 取舍结论穿过三个组件没有走样。
+- **CTA 不越权**：停在 `LOW_RISK_INTERACTION`，明确「不引导咨询、到店或购买
+  （本轮没有确认承接路径）」。
+- **缺口如实上报**：要求补「三组试穿记录细节」与「锁定发布平台」，不假装已有。
+- **给出不发布条件**：记录无法公开或数据撑不起真实呈现就取消。
+
+**状态更新**
+
+- `M5-AC-02` 的 Content Brief 这一段：诊断阶段**已跑通**；正式结论仍待
+  Candidate Run Manifest 冻结后重跑。
+- 缺口 B（Brief §3.2 仍要求 Campaign 决策包）**未消除也未涂绿**：本次是用
+  `source_kind: M3_OPERATION` 通过能力侧的**确定性外壳校验**，没有把
+  `upstream_kind` 改标成 `campaign`。下游消费测试 9 条仍全过，
+  冻结断言「五条里恰好一条 ABSENT」保持不变。
