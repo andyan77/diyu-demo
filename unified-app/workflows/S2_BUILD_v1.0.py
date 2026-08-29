@@ -68,45 +68,58 @@ def assigner(title, desc, items):
 # 本层唯一新增的产品行为：M2 投影已读到，但做判断的 M3 还没接。
 # 关键约束在这里：读到什么说什么，**查不到就说查不到**，不把空响应说成"目前一切正常"。
 S2_PENDING_SRC = r'''
+import json
 import re
+
+# 实测事实（S2 attempt01 证据 seed.before）：M2 在「这个周期还没有决策」时
+# **不返回 404**，而是返回 200 {"decision": "none_recorded"}。
+# 所以「有没有记录」必须看载荷，不能看状态码。attempt01 就是只看状态码，
+# 于是在一条记录都没有的域里说「已经把记录在案的情况读出来了」——
+# 正是本层判据 3 禁止的「把空响应升级成已知事实」。
+_NO_RECORD = ("", "none", "null", "none_recorded", "not_recorded", "no_record", "unknown")
 
 
 def _codes(note):
-    """m2_note 形如 'cycles/current=200 decisions/latest=404 run-state=200'。
-
-    这里解析真实状态码，而不是用 uapp_ctx 的 m2_reachable —— 那个值是
-    (cycle 200 AND decision 200)，把「M2 打不通」和「查得到但还没有决策记录」
-    压成了同一个 false。本层判据 3 要求的正是区分这两件事，所以在这里各算各的。
-    uapp_ctx 本身没有错（它的 account_context 文本一直分得清），不改它。
-    """
+    """m2_note 形如 'cycles/current=200 decisions/latest=404 run-state=200'。"""
     out = {}
     for k, v in re.findall(r"([a-z\-/]+)=(\d+)", note or ""):
         out[k] = int(v)
     return out
 
 
-def main(route_mode, triage_failed, m2_reachable, m2_note, registered_facts):
+def _decision_of(raw):
+    try:
+        b = json.loads(raw) if isinstance(raw, str) else (raw or {})
+    except Exception:
+        b = {}
+    if not isinstance(b, dict):
+        return ""
+    return str(b.get("decision") or "").strip()
+
+
+def main(route_mode, triage_failed, m2_note, dec_raw, registered_facts):
     if str(triage_failed).strip().lower() == "true":
         return {"pending_text": ("你这个问题我先记下了。这一版我还没能把它归到该走的那条线上，"
                                  "你把想解决的事再说具体一点，比如是哪个号、想让它有什么变化。"),
                 "pending_kind": "triage_failed", "m2_state": "not_evaluated",
-                "facts_present": "false"}
+                "decision_seen": "", "facts_present": "false"}
 
     c = _codes(m2_note)
-    cyc, dec = c.get("cycles/current", 0), c.get("decisions/latest", 0)
+    cyc = c.get("cycles/current", 0)
+    dec_code = c.get("decisions/latest", 0)
     # 状态码 0 = http 节点的 default_value，代表根本没连上（传输层失败）。
-    transport_down = (cyc == 0)
-    answered = [v for v in (cyc, dec) if v != 0]
-    # M2 答了「没有」（404）与 M2 答了内容（200）都算读到了；只有连不上才是读不到。
-    has_decision = (dec == 200)
-    facts = (registered_facts or "").strip()
+    transport_down = (cyc == 0 and dec_code == 0)
+
+    decision = _decision_of(dec_raw)
+    # 三态各自独立，不许两两合并：连不上 / 连上了但没有记录 / 连上了且确有记录。
+    has_record = bool(decision) and decision.lower() not in _NO_RECORD
 
     head = "你说的这件事我已经归到该走的那条线上了。\n\n"
     if transport_down:
         mid = ("不过实话说，我这会儿根本没连上记录系统——不是它里面是空的，是我没读到，"
                "这两件事不一样，我不替它打包票。\n\n")
         state = "unreachable"
-    elif not has_decision:
+    elif not has_record:
         mid = ("我查过了：这个号目前在系统里还没有可用的经营记录。不是我没查，是确实还没有。"
                "所以后面任何判断都不该建立在「它其实还不错」这种假设上。\n\n")
         state = "reachable_no_record"
@@ -121,8 +134,10 @@ def main(route_mode, triage_failed, m2_reachable, m2_note, registered_facts):
     return {"pending_text": head + mid + tail,
             "pending_kind": "routed_not_wired",
             "m2_state": state,
-            "facts_present": "true" if (has_decision or facts) else "false"}
+            "decision_seen": decision,
+            "facts_present": "true" if has_record else "false"}
 '''
+
 
 
 
@@ -295,10 +310,11 @@ def build_graph():
         S2_PENDING_SRC,
         [V("route_mode", ["uapp_route", "route_mode"]),
          V("triage_failed", ["uapp_route", "triage_failed"]),
-         V("m2_reachable", ["uapp_ctx", "m2_reachable"]),
          V("m2_note", ["uapp_ctx", "m2_note"]),
+         V("dec_raw", ["uapp_m2_dec", "body"]),
          V("registered_facts", ["uapp_ctx", "registered_facts"])],
-        ["pending_text", "pending_kind", "m2_state", "facts_present"]), 280, 110))
+        ["pending_text", "pending_kind", "m2_state", "decision_seen",
+         "facts_present"]), 280, 110))
     nodes.append(N("uapp_answer_pending", X + 4920, Y + 200,
                    answer("回复｜投影已读", "{{#uapp_s2_pending.pending_text#}}")))
     edges.append(E("uapp_ctx", "uapp_s2_pending"))

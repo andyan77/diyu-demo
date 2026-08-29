@@ -11,7 +11,7 @@ import os
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-GATE = os.path.join(HERE, "..", "stages", "S2_STAGE_GATE_v1.0.json")
+GATE = os.path.join(HERE, "..", "stages", "S2_STAGE_GATE_v1.1.json")
 EV = os.path.join(HERE, "..", "evidence", "stages")
 
 BOOT = ["boot_user", "boot_ws", "boot_acct", "boot_cycle", "boot_task", "boot_assign"]
@@ -71,7 +71,7 @@ def main():
         return d
 
     # ---------------- S2-POS-01 ----------------
-    d = load("S2-POS-01")
+    d = load("S2-POS-01_a2")
     t1, t2 = d["turns"][0], d["turns"][1]
     seed = d.get("seed") or {}
     c = []
@@ -98,10 +98,18 @@ def main():
     c.append(("T2 读到记录：m2_state = reachable_with_record",
               p2.get("m2_state") == "reachable_with_record", p2.get("m2_state")))
     ctx2 = out(t2, "uapp_ctx")
-    seeded_text = "收敛到一条主线"
-    c.append(("T2 投影正文含 SEED 写入的决策内容",
-              seeded_text in (ctx2.get("account_context") or ""),
-              {"found": seeded_text in (ctx2.get("account_context") or "")}))
+    # 期望值不硬编码：直接取 SEED 实际写进 M2 的 decision 值，再回查投影正文。
+    # 这样判据无法被「改期望去迁就结果」凑过去——期望由被写入的事实自己决定。
+    seeded = str(((seed.get("write") or {}).get("request_body") or {}).get("decision") or "")
+    dec_line = [l for l in (ctx2.get("account_context") or "").splitlines()
+                if "最近一次周期决策" in l]
+    c.append(("T2 投影正文含 SEED 实际写入的决策值",
+              bool(seeded) and any(seeded in l for l in dec_line),
+              {"seeded_decision": seeded, "projection_line": dec_line}))
+    p2b = out(t2, "uapp_s2_pending")
+    c.append(("T2 pending 读到的 decision 与 SEED 写入值一致（载荷判定，非状态码判定）",
+              bool(seeded) and p2b.get("decision_seen") == seeded,
+              {"decision_seen": p2b.get("decision_seen"), "seeded": seeded}))
     lk = leaks(t1.get("answer"), LEAK) + leaks(t2.get("answer"), LEAK)
     c.append(("两轮零内部字段泄漏", not lk, lk))
     res["cases"]["S2-POS-01"] = {
@@ -111,7 +119,7 @@ def main():
         "workflow_run_ids": [t1.get("workflow_run_id"), t2.get("workflow_run_id")]}
 
     # ---------------- S2-NEG-01 ----------------
-    d = load("S2-NEG-01")
+    d = load("S2-NEG-01_a2")
     n1, n2 = d["turns"][0], d["turns"][1]
     r1, r2 = out(n1, "uapp_route"), out(n2, "uapp_route")
     q1 = out(n1, "uapp_s2_pending")
@@ -121,8 +129,14 @@ def main():
     c.append(("N1 正文明确说明还没有可用的经营记录",
               "还没有" in (n1.get("answer") or "") and "确实还没有" in (n1.get("answer") or ""),
               (n1.get("answer") or "")[:120]))
-    c.append(("N1 未把「读不到」与「没有记录」混同（状态取自真实状态码）",
-              q1.get("m2_state") != "unreachable", q1.get("m2_state")))
+    c.append(("N1 未把「读不到」与「没有记录」混同", q1.get("m2_state") != "unreachable",
+              q1.get("m2_state")))
+    c.append(("N1 的无记录判定来自载荷而非状态码：decisions/latest 是 200，但 decision 为哨兵值",
+              "decisions/latest=200" in (out(n1, "uapp_ctx").get("m2_note") or "")
+              and str(q1.get("decision_seen") or "").lower() in
+              ("", "none", "null", "none_recorded", "not_recorded", "no_record", "unknown"),
+              {"m2_note": out(n1, "uapp_ctx").get("m2_note"),
+               "decision_seen": q1.get("decision_seen")}))
     c.append(("回归 S1-POS-01·route_mode ∈ {CAPABILITY, OPERATION_ONLY}",
               r1.get("route_mode") in ("CAPABILITY", "OPERATION_ONLY"), r1.get("route_mode")))
     c.append(("回归 S1-POS-01·落点 ∈ {MATRIX, SINGLE_ACCOUNT_OPERATION}",
@@ -148,7 +162,7 @@ def main():
         "workflow_run_ids": [n1.get("workflow_run_id"), n2.get("workflow_run_id")]}
 
     # ---------------- S2-REG-ASK-01 ----------------
-    d = load("S2-REG-ASK-01")
+    d = load("S2-REG-ASK-01_a2")
     a = d["turns"][0]
     ra = out(a, "uapp_route")
     m2hit = [n for n in ids(a) if n in M2ANY]
@@ -176,7 +190,7 @@ def main():
         for ck in x["checks"]:
             print("   [%s] %s | observed=%s" % (ck["result"], ck["desc"],
                                                 json.dumps(ck["observed"], ensure_ascii=False)[:150]))
-    with io.open(os.path.join(HERE, "..", "evidence", "S2_ADJUDICATION.json"), "w",
+    with io.open(os.path.join(HERE, "..", "evidence", "S2_ADJUDICATION_a2.json"), "w",
                  encoding="utf-8") as fh:
         fh.write(json.dumps(res, ensure_ascii=False, indent=2) + "\n")
 

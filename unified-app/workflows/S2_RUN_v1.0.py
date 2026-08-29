@@ -18,7 +18,7 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 ENV = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env"
-GATE = os.path.join(HERE, "..", "stages", "S2_STAGE_GATE_v1.0.json")
+GATE = os.path.join(HERE, "..", "stages", "S2_STAGE_GATE_v1.1.json")
 EV = os.path.join(HERE, "..", "evidence", "stages")
 M2 = "http://diyu-m2-app:8000"
 
@@ -183,10 +183,13 @@ def do_seed(turn):
                 {"ws": ws, "account": acct, "cycle": cyc, "actor": actor}}
     before = m2_call("GET", "/workspaces/%s/accounts/%s/cycles/decisions/latest" % (ws, acct),
                      actor=actor)
+    # decision 是枚举，只接受 adjusted / kept_unchanged（attempt01 实测 422 原文：
+    # "decision must be 'adjusted' or 'kept_unchanged'"）。散文放 rationale。
     body = {"idempotency_key": "s2-seed-" + cyc[:12], "cycle_id": cyc,
-            "decision": "本周期先把这个号的内容方向收敛到一条主线，停止同时铺三个方向。",
+            "decision": "adjusted",
             "source": "S2_STAGE_GATE_FIXTURE",
-            "rationale": "S2 正例夹具：证明 M2 里确有记录时投影能真实读到。任务域测试数据。",
+            "rationale": "本周期先把这个号的内容方向收敛到一条主线，停止同时铺三个方向。"
+                         "（S2 正例夹具：证明 M2 里确有记录时投影能真实读到。任务域测试数据。）",
             "based_on": {"fixture": "S2-POS-01", "note": "非真实经营数据"}}
     write = m2_call("POST", "/workspaces/%s/accounts/%s/cycles/decisions" % (ws, acct),
                     body=body, actor=actor)
@@ -207,14 +210,14 @@ def main():
     key = console.app_api_key(g["identity"]["successor_app_id"])
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     if which in ("all", "pos"):
-        run_case(key, g, "S2-POS-01",
+        run_case(key, g, "S2-POS-01_a2",
                  [("T1", "有个账号一直没流量，怎么办"), ("T2", "这个号现在的情况怎么样")],
                  "pos01", seed_after="T1")
     if which in ("all", "neg"):
-        run_case(key, g, "S2-NEG-01",
+        run_case(key, g, "S2-NEG-01_a2",
                  [("N1", "有个账号一直没流量，怎么办"), ("N2", "用对应的专业能力来分析")], "neg01")
     if which in ("all", "reg"):
-        run_case(key, g, "S2-REG-ASK-01", [("R1", "这条我想再打磨一下")], "reg01")
+        run_case(key, g, "S2-REG-ASK-01_a2", [("R1", "这条我想再打磨一下")], "reg01")
 
 
 if __name__ == "__main__":

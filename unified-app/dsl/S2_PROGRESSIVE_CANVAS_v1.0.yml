@@ -3528,38 +3528,45 @@ workflow:
       width: 300
       zIndex: 0
     - data:
-        code: "\nimport re\n\n\ndef _codes(note):\n    \"\"\"m2_note 形如 'cycles/current=200\
-          \ decisions/latest=404 run-state=200'。\n\n    这里解析真实状态码，而不是用 uapp_ctx 的\
-          \ m2_reachable —— 那个值是\n    (cycle 200 AND decision 200)，把「M2 打不通」和「查得到但还没有决策记录」\n\
-          \    压成了同一个 false。本层判据 3 要求的正是区分这两件事，所以在这里各算各的。\n    uapp_ctx 本身没有错（它的 account_context\
-          \ 文本一直分得清），不改它。\n    \"\"\"\n    out = {}\n    for k, v in re.findall(r\"\
-          ([a-z\\-/]+)=(\\d+)\", note or \"\"):\n        out[k] = int(v)\n    return\
-          \ out\n\n\ndef main(route_mode, triage_failed, m2_reachable, m2_note, registered_facts):\n\
-          \    if str(triage_failed).strip().lower() == \"true\":\n        return\
-          \ {\"pending_text\": (\"你这个问题我先记下了。这一版我还没能把它归到该走的那条线上，\"\n             \
-          \                    \"你把想解决的事再说具体一点，比如是哪个号、想让它有什么变化。\"),\n            \
-          \    \"pending_kind\": \"triage_failed\", \"m2_state\": \"not_evaluated\"\
-          ,\n                \"facts_present\": \"false\"}\n\n    c = _codes(m2_note)\n\
-          \    cyc, dec = c.get(\"cycles/current\", 0), c.get(\"decisions/latest\"\
-          , 0)\n    # 状态码 0 = http 节点的 default_value，代表根本没连上（传输层失败）。\n    transport_down\
-          \ = (cyc == 0)\n    answered = [v for v in (cyc, dec) if v != 0]\n    #\
-          \ M2 答了「没有」（404）与 M2 答了内容（200）都算读到了；只有连不上才是读不到。\n    has_decision = (dec\
-          \ == 200)\n    facts = (registered_facts or \"\").strip()\n\n    head =\
-          \ \"你说的这件事我已经归到该走的那条线上了。\\n\\n\"\n    if transport_down:\n        mid =\
-          \ (\"不过实话说，我这会儿根本没连上记录系统——不是它里面是空的，是我没读到，\"\n               \"这两件事不一样，我不替它打包票。\\\
-          n\\n\")\n        state = \"unreachable\"\n    elif not has_decision:\n \
-          \       mid = (\"我查过了：这个号目前在系统里还没有可用的经营记录。不是我没查，是确实还没有。\"\n            \
-          \   \"所以后面任何判断都不该建立在「它其实还不错」这种假设上。\\n\\n\")\n        state = \"reachable_no_record\"\
-          \n    else:\n        mid = (\"我已经把这个号目前在系统里记录在案的情况读出来了，后面做判断会以这些为准，\"\n\
-          \               \"不会替它补没发生过的事。\\n\\n\")\n        state = \"reachable_with_record\"\
+        code: "\nimport json\nimport re\n\n# 实测事实（S2 attempt01 证据 seed.before）：M2\
+          \ 在「这个周期还没有决策」时\n# **不返回 404**，而是返回 200 {\"decision\": \"none_recorded\"\
+          }。\n# 所以「有没有记录」必须看载荷，不能看状态码。attempt01 就是只看状态码，\n# 于是在一条记录都没有的域里说「已经把记录在案的情况读出来了」——\n\
+          # 正是本层判据 3 禁止的「把空响应升级成已知事实」。\n_NO_RECORD = (\"\", \"none\", \"null\", \"\
+          none_recorded\", \"not_recorded\", \"no_record\", \"unknown\")\n\n\ndef\
+          \ _codes(note):\n    \"\"\"m2_note 形如 'cycles/current=200 decisions/latest=404\
+          \ run-state=200'。\"\"\"\n    out = {}\n    for k, v in re.findall(r\"([a-z\\\
+          -/]+)=(\\d+)\", note or \"\"):\n        out[k] = int(v)\n    return out\n\
+          \n\ndef _decision_of(raw):\n    try:\n        b = json.loads(raw) if isinstance(raw,\
+          \ str) else (raw or {})\n    except Exception:\n        b = {}\n    if not\
+          \ isinstance(b, dict):\n        return \"\"\n    return str(b.get(\"decision\"\
+          ) or \"\").strip()\n\n\ndef main(route_mode, triage_failed, m2_note, dec_raw,\
+          \ registered_facts):\n    if str(triage_failed).strip().lower() == \"true\"\
+          :\n        return {\"pending_text\": (\"你这个问题我先记下了。这一版我还没能把它归到该走的那条线上，\"\
+          \n                                 \"你把想解决的事再说具体一点，比如是哪个号、想让它有什么变化。\"),\n\
+          \                \"pending_kind\": \"triage_failed\", \"m2_state\": \"not_evaluated\"\
+          ,\n                \"decision_seen\": \"\", \"facts_present\": \"false\"\
+          }\n\n    c = _codes(m2_note)\n    cyc = c.get(\"cycles/current\", 0)\n \
+          \   dec_code = c.get(\"decisions/latest\", 0)\n    # 状态码 0 = http 节点的 default_value，代表根本没连上（传输层失败）。\n\
+          \    transport_down = (cyc == 0 and dec_code == 0)\n\n    decision = _decision_of(dec_raw)\n\
+          \    # 三态各自独立，不许两两合并：连不上 / 连上了但没有记录 / 连上了且确有记录。\n    has_record = bool(decision)\
+          \ and decision.lower() not in _NO_RECORD\n\n    head = \"你说的这件事我已经归到该走的那条线上了。\\\
+          n\\n\"\n    if transport_down:\n        mid = (\"不过实话说，我这会儿根本没连上记录系统——不是它里面是空的，是我没读到，\"\
+          \n               \"这两件事不一样，我不替它打包票。\\n\\n\")\n        state = \"unreachable\"\
+          \n    elif not has_record:\n        mid = (\"我查过了：这个号目前在系统里还没有可用的经营记录。不是我没查，是确实还没有。\"\
+          \n               \"所以后面任何判断都不该建立在「它其实还不错」这种假设上。\\n\\n\")\n        state\
+          \ = \"reachable_no_record\"\n    else:\n        mid = (\"我已经把这个号目前在系统里记录在案的情况读出来了，后面做判断会以这些为准，\"\
+          \n               \"不会替它补没发生过的事。\\n\\n\")\n        state = \"reachable_with_record\"\
           \n\n    tail = (\"但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。\"\n            \"我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\\\
           n\\n\"\n            \"等下一步接上，同样这句话就能直接出结果。\")\n    return {\"pending_text\"\
           : head + mid + tail,\n            \"pending_kind\": \"routed_not_wired\"\
-          ,\n            \"m2_state\": state,\n            \"facts_present\": \"true\"\
-          \ if (has_decision or facts) else \"false\"}\n"
+          ,\n            \"m2_state\": state,\n            \"decision_seen\": decision,\n\
+          \            \"facts_present\": \"true\" if has_record else \"false\"}\n"
         code_language: python3
         desc: Rebase Prompt §6：查不到就说查不到；§5：不承诺异步结果
         outputs:
+          decision_seen:
+            children: null
+            type: string
           facts_present:
             children: null
             type: string
@@ -3586,12 +3593,12 @@ workflow:
           variable: triage_failed
         - value_selector:
           - uapp_ctx
-          - m2_reachable
-          variable: m2_reachable
-        - value_selector:
-          - uapp_ctx
           - m2_note
           variable: m2_note
+        - value_selector:
+          - uapp_m2_dec
+          - body
+          variable: dec_raw
         - value_selector:
           - uapp_ctx
           - registered_facts

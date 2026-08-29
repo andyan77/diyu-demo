@@ -1,0 +1,154 @@
+{
+  "stage": "S2",
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "graph_sha256": "780503f5d2d745650eafad7b420338287ea354a680fbf535f0aade547ad59044",
+  "node_count": 32,
+  "edge_count": 32,
+  "model_calls": 0,
+  "checks": [
+    {
+      "id": "D-S2-01",
+      "desc": "仍是同一个 successor 应用、advanced-chat，且已发布新版本",
+      "result": "PASS",
+      "detail": {
+        "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+        "mode": "advanced-chat",
+        "latest_published": "459c3822-b707-4d55-ad57-77da88dac708|s2-m2-projection"
+      }
+    },
+    {
+      "id": "D-S2-02",
+      "desc": "本层新增的 M2 建域链与只读投影节点齐备",
+      "result": "PASS",
+      "detail": {
+        "missing": [],
+        "node_count": 32,
+        "edge_count": 32
+      }
+    },
+    {
+      "id": "D-S2-03",
+      "desc": "回归·M1 六个复用节点仍与 M1 源应用逐字节一致",
+      "result": "PASS",
+      "detail": {
+        "compared": [
+          "m1_extract",
+          "m1_join",
+          "m1_shadow",
+          "m1_compiler",
+          "m1_save_snapshot",
+          "m1_chat_llm"
+        ],
+        "diffs": []
+      }
+    },
+    {
+      "id": "D-S2-04",
+      "desc": "回归·start 节点仍零用户输入变量",
+      "result": "PASS",
+      "detail": {
+        "variables": []
+      }
+    },
+    {
+      "id": "D-S2-05",
+      "desc": "S2 层仍不含任何 M3/Hop/Seam/能力调用节点",
+      "result": "PASS",
+      "detail": {
+        "tool_nodes": {}
+      }
+    },
+    {
+      "id": "D-S2-06",
+      "desc": "全部 http 节点只指向 M2 容器地址，无外部网络",
+      "result": "PASS",
+      "detail": {
+        "http_nodes": 8,
+        "offenders": {}
+      }
+    },
+    {
+      "id": "D-S2-07",
+      "desc": "只问一个与闲聊两条出口都不经过任何 M2 节点（省链且不产生副作用）",
+      "result": "PASS",
+      "detail": {
+        "branch": {
+          "case_ask": "uapp_ask_one",
+          "case_business": "uapp_boot_gate",
+          "false": "m1_chat_llm"
+        },
+        "ask_reaches_m2": false,
+        "chat_reaches_m2": false
+      }
+    },
+    {
+      "id": "D-S2-08",
+      "desc": "建域链由 needs_bootstrap 把门；已建域的轮次直连 M2 只读，天然幂等",
+      "result": "PASS",
+      "detail": {
+        "gate_condition": {
+          "comparison_operator": "is",
+          "value": "true",
+          "variable_selector": [
+            "uapp_route",
+            "needs_bootstrap"
+          ]
+        },
+        "boot_gate_out": [
+          [
+            "boot",
+            "boot_user"
+          ],
+          [
+            "false",
+            "uapp_m2_cycle"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "D-S2-09",
+      "desc": "三个 M2 投影节点全部是 GET，只读不写",
+      "result": "PASS",
+      "detail": {
+        "methods": {
+          "uapp_m2_cycle": "get",
+          "uapp_m2_dec": "get",
+          "uapp_m2_run": "get"
+        }
+      }
+    },
+    {
+      "id": "D-S2-10",
+      "desc": "本层投影节点的参考资料信封显式为空，未装载任何 M3 方法参考",
+      "result": "PASS",
+      "detail": {
+        "refs_empty": true,
+        "manifest_empty": true
+      }
+    },
+    {
+      "id": "D-S2-11",
+      "desc": "11 个受保护应用 graph 相对 R0 基线零漂移",
+      "result": "PASS",
+      "detail": {
+        "checked": 11,
+        "drift": []
+      }
+    },
+    {
+      "id": "D-S2-12",
+      "desc": "旧候选 app 2448e4f9 零改动",
+      "result": "PASS",
+      "detail": {
+        "baseline": "e67147abde10a3fdd0c2043c10cbe266",
+        "now": "e67147abde10a3fdd0c2043c10cbe266"
+      }
+    }
+  ],
+  "summary": {
+    "pass": 12,
+    "fail": 0,
+    "total": 12
+  }
+}
