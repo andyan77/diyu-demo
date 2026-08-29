@@ -71,7 +71,7 @@ def main():
         return d
 
     # ---------------- S2-POS-01 ----------------
-    d = load("S2-POS-01_a2")
+    d = load("S2-POS-01_a3")
     t1, t2 = d["turns"][0], d["turns"][1]
     seed = d.get("seed") or {}
     c = []

@@ -1,0 +1,77 @@
+{
+  "stage": "S2",
+  "result": "PASS",
+  "flag": "CURRENT",
+  "stage_gate": "S2_STAGE_GATE_v1.1 (sha256 82fc067162d48cb0ba8053e011d0aacf6ed367368fbd2357cb74255f1bb63515)",
+  "criteria_unchanged_from_v1_0": "cases / leak_forbidden_tokens / gate_rule / applicability_rulings 四块与 v1.0 逐字节相同（哈希已验）",
+  "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "graph_sha256": "780503f5d2d745650eafad7b420338287ea354a680fbf535f0aade547ad59044",
+  "node_count": 32,
+  "edge_count": 32,
+  "verdicts": {
+    "S2-POS-01": "PASS",
+    "S2-NEG-01": "PASS",
+    "S2-REG-ASK-01": "PASS"
+  },
+  "evidence_binding": {
+    "S2-POS-01": "_a3（夹具修好后重跑）",
+    "S2-NEG-01": "_a2",
+    "S2-REG-ASK-01": "_a2",
+    "note": "夹具修复只改运行器不改图，graph 在 a2/a3 之间未变，故负例与回归例不重跑，其 a2 结论保持 CURRENT"
+  },
+  "deterministic_checks": {
+    "v1.1_prerun": "12/12 PASS",
+    "postrun": "12/12 PASS",
+    "model_calls": 0
+  },
+  "proven_this_layer": [
+    "Dify 容器网络内直连 M2，不依赖用户 relay、不依赖手工 Python",
+    "M1 的 task/account context 形成 M2 查询，返回进入本轮最小投影",
+    "关键记录不存在时如实返回缺口——且该判定来自载荷（decision 哨兵值），不是状态码",
+    "同会话不重复建域：T2/N2 均未再跑建域链，幂等成立",
+    "M2 服务端幂等另有独立证据：同一 idempotency_key 写两次返回同一 id，数据库 1 行（离线探针，零模型调用）",
+    "只问一个与闲聊两条出口零 M2 副作用",
+    "S1 三例在加入 M2 后全部回归通过"
+  ],
+  "applicability_ruling_carried": "is_test/is_simulated 本层 NOT_APPLICABLE（M2 OpenAPI 事实），顺延至 S5 转 APPLICABLE",
+  "cost_including_failed_attempts": {
+    "total_workflow_runs": 12,
+    "total_deepseek_llm_node_attempts": 24,
+    "dedup_rule": "按 workflow_run_id 去重；attempt01/ 目录是同一批运行的归档副本，不重复计数",
+    "per_case": {
+      "S2-NEG-01": {
+        "runs": 2,
+        "llm": 4
+      },
+      "S2-NEG-01_a2": {
+        "runs": 2,
+        "llm": 4
+      },
+      "S2-POS-01": {
+        "runs": 2,
+        "llm": 4
+      },
+      "S2-POS-01_a2": {
+        "runs": 2,
+        "llm": 4
+      },
+      "S2-POS-01_a3": {
+        "runs": 2,
+        "llm": 4
+      },
+      "S2-REG-ASK-01": {
+        "runs": 1,
+        "llm": 2
+      },
+      "S2-REG-ASK-01_a2": {
+        "runs": 1,
+        "llm": 2
+      }
+    },
+    "failed_attempt_runs_included": true,
+    "retries_used": 0,
+    "note": "attempt01 的 5 次运行为失败运行，证据原样保留不删除，成本照实计入"
+  },
+  "layer_scope_disclaimer": "本层 PASS 只证明 M1→M2 接缝成立。M3/Hop/Seam/六能力未接，相关 UAPP-AC 对 successor 仍 NOT_VERIFIED。",
+  "next_stage_allowed": true
+}

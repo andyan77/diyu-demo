@@ -186,7 +186,11 @@ def do_seed(turn):
     # decision 是枚举，只接受 adjusted / kept_unchanged（attempt01 实测 422 原文：
     # "decision must be 'adjusted' or 'kept_unchanged'"）。散文放 rationale。
     body = {"idempotency_key": "s2-seed-" + cyc[:12], "cycle_id": cyc,
-            "decision": "adjusted",
+            # 第二次 422 原文：decision='adjusted' requires resulting_cycle_id。
+            # 本夹具不产生新周期，所以正确取值是 kept_unchanged。
+            # 该请求体已在画布之外用一次性探针域验证通过（200 + 数据库 1 行 + 重复写入同 id），
+            # 零模型调用，见 docs/S2_FAILURE_TRIAGE_001.md 附录。
+            "decision": "kept_unchanged",
             "source": "S2_STAGE_GATE_FIXTURE",
             "rationale": "本周期先把这个号的内容方向收敛到一条主线，停止同时铺三个方向。"
                          "（S2 正例夹具：证明 M2 里确有记录时投影能真实读到。任务域测试数据。）",
@@ -210,7 +214,7 @@ def main():
     key = console.app_api_key(g["identity"]["successor_app_id"])
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     if which in ("all", "pos"):
-        run_case(key, g, "S2-POS-01_a2",
+        run_case(key, g, "S2-POS-01_a3",
                  [("T1", "有个账号一直没流量，怎么办"), ("T2", "这个号现在的情况怎么样")],
                  "pos01", seed_after="T1")
     if which in ("all", "neg"):

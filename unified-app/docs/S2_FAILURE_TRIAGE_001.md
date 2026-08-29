@@ -105,3 +105,32 @@ Rebase Prompt §6 判据 3：**查不到就如实返回缺口，不把空响应�
 - 受保护面零漂移，11 个应用 `graph_md5` 与 R0 基线一致（D-S2-11 复算）。
 
 attempt01 的原始证据保留在 `evidence/stages/attempt01/`，**不删除、不覆盖、不改绿**。
+
+---
+
+## 附录 · 夹具修复的两轮迭代与离线验证
+
+夹具的正确请求体是分两次从 M2 的权威报错中学到的，两次都由 M2 自己指名约束：
+
+| 轮次 | 传入 `decision` | M2 回应 | 学到的约束 |
+|---|---|---|---|
+| attempt01 | 一段散文 | `422 decision must be 'adjusted' or 'kept_unchanged'` | 该字段是枚举 |
+| attempt02 | `adjusted` | `422 decision='adjusted' requires resulting_cycle_id` | `adjusted` 表示「调整并开出新周期」，需给出结果周期 |
+| 离线探针 | `kept_unchanged` | `200` | 本夹具不产生新周期，正确取值是 `kept_unchanged` |
+
+**第三轮不再消耗模型轮次。** 在画布之外用一次性探针任务域
+（`ws-uapp-fixtureprobe…`，与任何正式用例的域不相干）直接调 M2 验证，零模型调用：
+
+- 写入返回 `200`，`diyu_business.cycle_decisions` 落 1 行；
+- `decisions/latest` 读回同一条；
+- **同一 `idempotency_key` 再写一次，返回同一个 `id` `e662e780-7902-4146-8a9c-1ab173292aaf`，
+  数据库仍为 1 行** —— M2 的幂等由此获得独立于画布的直接证据。
+
+### 本次修复的影响面（A3）
+
+夹具修复**只改运行器，不改画布图**。graph 仍为 `780503f5…`，因此：
+
+- `S2-NEG-01_a2` 与 `S2-REG-ASK-01_a2` 的结论**保持 `CURRENT`，不置 `STALE`**，
+  不重跑——它们绑定的图没有变，重跑只会重复采样，没有判别价值；
+- 只有 `S2-POS-01` 需要在修好的夹具上重跑，记为 `_a3`；
+- `S2_STAGE_GATE_v1.1` 继续有效，判据一字未改，仅正例的 evidence 路径由 `_a2` 改为 `_a3`。

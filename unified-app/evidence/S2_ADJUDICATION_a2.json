@@ -1,0 +1,292 @@
+{
+  "stage": "S2",
+  "stage_gate_sha256": "82fc067162d48cb0ba8053e011d0aacf6ed367368fbd2357cb74255f1bb63515",
+  "model_calls_by_adjudicator": 0,
+  "cases": {
+    "S2-POS-01": {
+      "checks": [
+        {
+          "desc": "T1 建域链五个写入节点全部 succeeded",
+          "result": "PASS",
+          "observed": {
+            "boot_user": true,
+            "boot_ws": true,
+            "boot_acct": true,
+            "boot_cycle": true,
+            "boot_task": true,
+            "boot_assign": true
+          }
+        },
+        {
+          "desc": "T1 三个 M2 只读投影节点全部 succeeded",
+          "result": "PASS",
+          "observed": {
+            "uapp_m2_cycle": true,
+            "uapp_m2_dec": true,
+            "uapp_m2_run": true
+          }
+        },
+        {
+          "desc": "T1 如实报告尚无经营记录（未把空响应升级成已知事实）",
+          "result": "PASS",
+          "observed": "reachable_no_record"
+        },
+        {
+          "desc": "SEED 写入 M2 成功",
+          "result": "PASS",
+          "observed": {
+            "status": "DONE",
+            "write_http": 200
+          }
+        },
+        {
+          "desc": "SEED 在 M2 数据库中可查到真实行",
+          "result": "PASS",
+          "observed": "1"
+        },
+        {
+          "desc": "T2 建域链未再执行（同会话不重复建域，幂等成立）",
+          "result": "PASS",
+          "observed": {
+            "boot_nodes_in_T2": []
+          }
+        },
+        {
+          "desc": "T2 三个 M2 只读投影节点全部 succeeded",
+          "result": "PASS",
+          "observed": {
+            "uapp_m2_cycle": true,
+            "uapp_m2_dec": true,
+            "uapp_m2_run": true
+          }
+        },
+        {
+          "desc": "T2 读到记录：m2_state = reachable_with_record",
+          "result": "PASS",
+          "observed": "reachable_with_record"
+        },
+        {
+          "desc": "T2 投影正文含 SEED 实际写入的决策值",
+          "result": "PASS",
+          "observed": {
+            "seeded_decision": "kept_unchanged",
+            "projection_line": [
+              "最近一次周期决策：kept_unchanged"
+            ]
+          }
+        },
+        {
+          "desc": "T2 pending 读到的 decision 与 SEED 写入值一致（载荷判定，非状态码判定）",
+          "result": "PASS",
+          "observed": {
+            "decision_seen": "kept_unchanged",
+            "seeded": "kept_unchanged"
+          }
+        },
+        {
+          "desc": "两轮零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS",
+      "T1_answer": "你说的这件事我已经归到该走的那条线上了。\n\n我查过了：这个号目前在系统里还没有可用的经营记录。不是我没查，是确实还没有。所以后面任何判断都不该建立在「它其实还不错」这种假设上。\n\n但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "T2_answer": "你说的这件事我已经归到该走的那条线上了。\n\n我已经把这个号目前在系统里记录在案的情况读出来了，后面做判断会以这些为准，不会替它补没发生过的事。\n\n但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "workflow_run_ids": [
+        "f8afbe64-866d-496b-8738-9939d18fab31",
+        "1df480fd-d770-4fd3-bcab-e26d7c87a874"
+      ]
+    },
+    "S2-NEG-01": {
+      "checks": [
+        {
+          "desc": "N1 决策查询未返回记录，m2_state = reachable_no_record",
+          "result": "PASS",
+          "observed": "reachable_no_record"
+        },
+        {
+          "desc": "N1 正文明确说明还没有可用的经营记录",
+          "result": "PASS",
+          "observed": "你说的这件事我已经归到该走的那条线上了。\n\n我查过了：这个号目前在系统里还没有可用的经营记录。不是我没查，是确实还没有。所以后面任何判断都不该建立在「它其实还不错」这种假设上。\n\n但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。"
+        },
+        {
+          "desc": "N1 未把「读不到」与「没有记录」混同",
+          "result": "PASS",
+          "observed": "reachable_no_record"
+        },
+        {
+          "desc": "N1 的无记录判定来自载荷而非状态码：decisions/latest 是 200，但 decision 为哨兵值",
+          "result": "PASS",
+          "observed": {
+            "m2_note": "cycles/current=200 decisions/latest=200 run-state=200",
+            "decision_seen": "none_recorded"
+          }
+        },
+        {
+          "desc": "回归 S1-POS-01·route_mode ∈ {CAPABILITY, OPERATION_ONLY}",
+          "result": "PASS",
+          "observed": "CAPABILITY"
+        },
+        {
+          "desc": "回归 S1-POS-01·落点 ∈ {MATRIX, SINGLE_ACCOUNT_OPERATION}",
+          "result": "PASS",
+          "observed": {
+            "target": "MATRIX",
+            "intent": "MATRIX"
+          }
+        },
+        {
+          "desc": "回归 S1-POS-01·intent_source = canvas_triage",
+          "result": "PASS",
+          "observed": "canvas_triage"
+        },
+        {
+          "desc": "回归 S1-FOLLOW-01·N2 未退回 DIALOGUE",
+          "result": "PASS",
+          "observed": "CAPABILITY"
+        },
+        {
+          "desc": "N2 未重复建域",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "两轮均无异步承诺",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "两轮零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS",
+      "N1_route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "false",
+        "decisive_question": "",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "true",
+        "intent": "MATRIX",
+        "intent_reason": "用户问'有个账号一直没流量，怎么办'，属于账号层面的诊断问题，按例对应MATRIX。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "CAPABILITY",
+        "route_note": "capability=MATRIX；action=NONE；能力来源=canvas_triage；模式=CAPABILITY。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "true",
+        "tag": "d727cb7c91d0",
+        "target_capability": "MATRIX",
+        "triage_failed": "false",
+        "user_request": "有个账号一直没流量，怎么办",
+        "withdraw_target_text": ""
+      },
+      "N2_route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "false",
+        "decisive_question": "",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "true",
+        "intent": "MATRIX",
+        "intent_reason": "上下文核心是“有个账号一直没流量”，属于账号层面诊断，沿用上一轮已确定的 MATRIX。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "false",
+        "platform_text": "",
+        "route_mode": "CAPABILITY",
+        "route_note": "capability=MATRIX；action=NONE；能力来源=canvas_triage；模式=CAPABILITY。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "true",
+        "tag": "d727cb7c91d0",
+        "target_capability": "MATRIX",
+        "triage_failed": "false",
+        "user_request": "用对应的专业能力来分析",
+        "withdraw_target_text": ""
+      },
+      "N1_answer": "你说的这件事我已经归到该走的那条线上了。\n\n我查过了：这个号目前在系统里还没有可用的经营记录。不是我没查，是确实还没有。所以后面任何判断都不该建立在「它其实还不错」这种假设上。\n\n但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "workflow_run_ids": [
+        "1a03861f-7c45-4239-a758-94da67ad20a0",
+        "ae0f1694-eb3b-46e2-9342-540c992c9414"
+      ]
+    },
+    "S2-REG-ASK-01": {
+      "checks": [
+        {
+          "desc": "route_mode = ASK_ONE",
+          "result": "PASS",
+          "observed": "ASK_ONE"
+        },
+        {
+          "desc": "uapp_ask_one 实际执行",
+          "result": "PASS",
+          "observed": true
+        },
+        {
+          "desc": "问号计数为 1",
+          "result": "PASS",
+          "observed": 1
+        },
+        {
+          "desc": "未猜任何能力",
+          "result": "PASS",
+          "observed": ""
+        },
+        {
+          "desc": "本轮零 M2 节点执行（只问一个不产生任何持久化副作用）",
+          "result": "PASS",
+          "observed": {
+            "m2_nodes_hit": []
+          }
+        },
+        {
+          "desc": "零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "true",
+        "decisive_question": "这条你想打磨的是哪一面？",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "false",
+        "intent": "AMBIGUOUS",
+        "intent_reason": "修改类请求缺少“改哪一面”的说明，且上文没有确定过具体产物，可能指向文案、拍法、封面等多个不同能力，需澄清",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "ASK_ONE",
+        "route_note": "capability=（本轮无）；action=NONE；能力来源=canvas_triage；模式=ASK_ONE。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "false",
+        "tag": "a98441588aae",
+        "target_capability": "",
+        "triage_failed": "false",
+        "user_request": "这条我想再打磨一下",
+        "withdraw_target_text": ""
+      },
+      "answer": "这一步我先确认一件事，确认完直接往下做：\n\n这条你想打磨的是哪一面？",
+      "workflow_run_id": "f04f6a03-c767-4074-9207-50e7f15a0d01"
+    }
+  },
+  "summary": {
+    "verdicts": {
+      "S2-POS-01": "PASS",
+      "S2-NEG-01": "PASS",
+      "S2-REG-ASK-01": "PASS"
+    },
+    "all_pass": true,
+    "next_stage_allowed": true
+  }
+}
