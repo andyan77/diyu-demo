@@ -1,0 +1,115 @@
+{
+  "stage": "S1",
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "graph_sha256": "d36cc01dd016a24749280b819a60e2b9c5944510b6e40027be1a9c77f705518a",
+  "node_count": 16,
+  "edge_count": 15,
+  "model_calls": 0,
+  "checks": [
+    {
+      "id": "D-S1-01",
+      "desc": "successor 是 advanced-chat 且独立于旧候选",
+      "result": "PASS",
+      "detail": {
+        "mode": "advanced-chat",
+        "name": "DIYU V1 · Unified Founder Canvas · Progressive Candidate",
+        "app_id": "85c01f85-a081-43e9-ab09-9993289cc200"
+      }
+    },
+    {
+      "id": "D-S1-02",
+      "desc": "successor 已发布出一个非 draft 版本",
+      "result": "PASS",
+      "detail": {
+        "published": "7fb66e6a-20e0-4a06-b90b-26ad47861633|2026-08-29 14:50:59.182469|s1-m1-routing"
+      }
+    },
+    {
+      "id": "D-S1-03",
+      "desc": "successor 存在 Site 入口（用户可直接打开）",
+      "result": "PASS",
+      "detail": {
+        "site_rows": "1"
+      }
+    },
+    {
+      "id": "D-S1-04",
+      "desc": "start 节点零用户输入变量：用户只说自然语言",
+      "result": "PASS",
+      "detail": {
+        "variables": []
+      }
+    },
+    {
+      "id": "D-S1-05",
+      "desc": "M1 六个复用节点与 M1 源应用逐字节一致（节点 id 亦保留）",
+      "result": "PASS",
+      "detail": {
+        "compared": [
+          "m1_extract",
+          "m1_join",
+          "m1_shadow",
+          "m1_compiler",
+          "m1_save_snapshot",
+          "m1_chat_llm"
+        ],
+        "diffs": {}
+      }
+    },
+    {
+      "id": "D-S1-06",
+      "desc": "S1 层不含任何 M2/M3/Seam/能力调用节点（分层门禁）",
+      "result": "PASS",
+      "detail": {
+        "found": [],
+        "node_count": 16
+      }
+    },
+    {
+      "id": "D-S1-07",
+      "desc": "分流三出口：只问一个 / 路线已定未接 / 闲聊，各自到达独立回复节点",
+      "result": "PASS",
+      "detail": {
+        "branch_targets": {
+          "case_ask": "uapp_ask_one",
+          "case_routed": "uapp_s1_pending",
+          "false": "m1_chat_llm"
+        }
+      }
+    },
+    {
+      "id": "D-S1-08",
+      "desc": "11 个受保护应用 graph 相对 R0 基线零漂移",
+      "result": "PASS",
+      "detail": {
+        "checked": 11,
+        "drift": []
+      }
+    },
+    {
+      "id": "D-S1-09",
+      "desc": "旧候选 app 2448e4f9 自 R0 起零改动（只作诊断参考）",
+      "result": "PASS",
+      "detail": {
+        "baseline": "e67147abde10a3fdd0c2043c10cbe266",
+        "now": "e67147abde10a3fdd0c2043c10cbe266"
+      }
+    },
+    {
+      "id": "D-S1-10",
+      "desc": "原 ACTION 提示词一字未改，补充规则以追加方式生效",
+      "result": "PASS",
+      "detail": {
+        "original_preserved": true,
+        "supplement_present": true,
+        "orig_len": 2289,
+        "now_len": 2770
+      }
+    }
+  ],
+  "summary": {
+    "pass": 10,
+    "fail": 0,
+    "total": 10
+  }
+}

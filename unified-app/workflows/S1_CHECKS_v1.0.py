@@ -144,6 +144,6 @@ out = {
                 "fail": sum(1 for r in R if r["result"] == "FAIL"), "total": len(R)},
 }
 print(json.dumps(out, ensure_ascii=False, indent=2))
-p = os.path.join(HERE, "..", "evidence", "S1_DETERMINISTIC_CHECKS.json")
+p = os.path.join(HERE, "..", "evidence", os.environ.get("S1_CHECK_OUT", "S1_DETERMINISTIC_CHECKS.json"))
 with io.open(p, "w", encoding="utf-8") as fh:
     fh.write(json.dumps(out, ensure_ascii=False, indent=2) + "\n")

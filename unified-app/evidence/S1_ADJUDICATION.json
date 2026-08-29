@@ -1,0 +1,210 @@
+{
+  "stage": "S1",
+  "stage_gate_sha256": "6c50e2311380ddc7f45dd1562c8ca232bedbaba2422e8ab69a31adec59328aaf",
+  "cases": {
+    "S1-POS-01": {
+      "input": "有个账号一直没流量，怎么办",
+      "workflow_run_id": "cbfced1f-4c40-4e26-98e5-97e3524ccfbd",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "false",
+        "decisive_question": "",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "true",
+        "intent": "MATRIX",
+        "intent_reason": "用户问'有个账号一直没流量'，属于账号层面流量诊断问题，正是 MATRIX 的典型入口。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "CAPABILITY",
+        "route_note": "capability=MATRIX；action=NONE；能力来源=canvas_triage；模式=CAPABILITY。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "true",
+        "tag": "d4f97f0c006b",
+        "target_capability": "MATRIX",
+        "triage_failed": "false",
+        "user_request": "有个账号一直没流量，怎么办",
+        "withdraw_target_text": ""
+      },
+      "answer": "你说的这件事我已经归到该走的那条线上了。\n\n不过实话说，这一版只装到了「听懂你要什么」这一步，真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "checks": [
+        {
+          "desc": "route_mode 落在 CAPABILITY/OPERATION_ONLY",
+          "result": "PASS",
+          "observed": "CAPABILITY"
+        },
+        {
+          "desc": "落点是 MATRIX 或 SINGLE_ACCOUNT_OPERATION",
+          "result": "PASS",
+          "observed": {
+            "target_capability": "MATRIX",
+            "intent": "MATRIX"
+          }
+        },
+        {
+          "desc": "intent_source = canvas_triage（系统自己识别）",
+          "result": "PASS",
+          "observed": "canvas_triage"
+        },
+        {
+          "desc": "triage 未失败",
+          "result": "PASS",
+          "observed": "false"
+        },
+        {
+          "desc": "未走只问一个分支",
+          "result": "PASS",
+          "observed": false
+        },
+        {
+          "desc": "如实交代本层尚未接通专业分析",
+          "result": "PASS",
+          "observed": "routed_not_wired"
+        },
+        {
+          "desc": "无异步承诺",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS"
+    },
+    "S1-FOLLOW-01": {
+      "input": "用对应的专业能力来分析",
+      "workflow_run_id": "b26058eb-a7a3-4de0-b560-caae38ef5caf",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "false",
+        "decisive_question": "",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "true",
+        "intent": "MATRIX",
+        "intent_reason": "用户上一轮说“有个账号一直没流量，怎么办”，是账号层面的流量问题；本轮“用对应的专业能力来分析”是延续上文的追问，故沿用 MATRIX",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "CAPABILITY",
+        "route_note": "capability=MATRIX；action=NONE；能力来源=canvas_triage；模式=CAPABILITY。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "true",
+        "tag": "d4f97f0c006b",
+        "target_capability": "MATRIX",
+        "triage_failed": "false",
+        "user_request": "用对应的专业能力来分析\n\n【本任务已登记的诉求】有个账号一直没流量，怎么办",
+        "withdraw_target_text": ""
+      },
+      "answer": "你说的这件事我已经归到该走的那条线上了。\n\n不过实话说，这一版只装到了「听懂你要什么」这一步，真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "checks": [
+        {
+          "desc": "route_mode 仍落在 CAPABILITY/OPERATION_ONLY",
+          "result": "PASS",
+          "observed": "CAPABILITY"
+        },
+        {
+          "desc": "未退回 DIALOGUE",
+          "result": "PASS",
+          "observed": "CAPABILITY"
+        },
+        {
+          "desc": "零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS"
+    },
+    "S1-NEG-01": {
+      "input": "这条我想再打磨一下",
+      "workflow_run_id": "6a6f9355-feee-4d2d-9013-12d1f80e38b9",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "true",
+        "decisive_question": "您想打磨的是哪一面？",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "false",
+        "intent": "AMBIGUOUS",
+        "intent_reason": "修改类请求未说明要改哪一面，且上下文快照中无已确定的产物，无法判断该进文案、拍法还是包装能力。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "ASK_ONE",
+        "route_note": "capability=（本轮无）；action=NONE；能力来源=canvas_triage；模式=ASK_ONE。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "false",
+        "tag": "ca3f8933b5d9",
+        "target_capability": "",
+        "triage_failed": "false",
+        "user_request": "这条我想再打磨一下",
+        "withdraw_target_text": ""
+      },
+      "ask_one": {
+        "ask_note": "只问一个；问题由分诊台给出，本节点只做单问收口",
+        "one_question": "这一步我先确认一件事，确认完直接往下做：\n\n您想打磨的是哪一面？",
+        "question_count": "1"
+      },
+      "answer": "这一步我先确认一件事，确认完直接往下做：\n\n您想打磨的是哪一面？",
+      "checks": [
+        {
+          "desc": "route_mode = ASK_ONE",
+          "result": "PASS",
+          "observed": "ASK_ONE"
+        },
+        {
+          "desc": "asks_one = true",
+          "result": "PASS",
+          "observed": "true"
+        },
+        {
+          "desc": "uapp_ask_one 节点实际执行",
+          "result": "PASS",
+          "observed": true
+        },
+        {
+          "desc": "回复正文问号计数为 1",
+          "result": "PASS",
+          "observed": 1
+        },
+        {
+          "desc": "未硬猜任何能力",
+          "result": "PASS",
+          "observed": ""
+        },
+        {
+          "desc": "未走能力/未接线分支",
+          "result": "PASS",
+          "observed": false
+        },
+        {
+          "desc": "零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS"
+    }
+  },
+  "model_calls_by_adjudicator": 0,
+  "summary": {
+    "verdicts": {
+      "S1-POS-01": "PASS",
+      "S1-FOLLOW-01": "PASS",
+      "S1-NEG-01": "PASS"
+    },
+    "all_pass": true,
+    "next_stage_allowed": true
+  }
+}

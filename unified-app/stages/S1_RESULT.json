@@ -1,0 +1,71 @@
+{
+  "stage": "S1",
+  "result": "PASS",
+  "flag": "CURRENT",
+  "stage_gate_sha256": "6c50e2311380ddc7f45dd1562c8ca232bedbaba2422e8ab69a31adec59328aaf",
+  "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "graph_sha256_at_freeze": "d36cc01dd016a24749280b819a60e2b9c5944510b6e40027be1a9c77f705518a",
+  "graph_sha256_after_run": "d36cc01dd016a24749280b819a60e2b9c5944510b6e40027be1a9c77f705518a",
+  "graph_unchanged_across_run": true,
+  "verdicts": {
+    "S1-POS-01": "PASS",
+    "S1-FOLLOW-01": "PASS",
+    "S1-NEG-01": "PASS"
+  },
+  "deterministic_checks": {
+    "prerun": "10/10 PASS",
+    "postrun": "10/10 PASS",
+    "model_calls": 0
+  },
+  "validator_discrimination": "PASS（两个真实已知坏例判 FAIL，合成好例判 PASS）",
+  "cost": {
+    "workflow_runs": 3,
+    "deepseek_llm_node_attempts": 6,
+    "failed_attempts": 0,
+    "retries_used": 0
+  },
+  "runs": [
+    {
+      "case": "S1-POS-01",
+      "turn": "T1",
+      "workflow_run_id": "cbfced1f-4c40-4e26-98e5-97e3524ccfbd",
+      "llm_nodes": [
+        "m1_shadow",
+        "uapp_action"
+      ],
+      "all_succeeded": true,
+      "elapsed_s": 33.06,
+      "attempts": 1
+    },
+    {
+      "case": "S1-POS-01",
+      "turn": "T2",
+      "workflow_run_id": "b26058eb-a7a3-4de0-b560-caae38ef5caf",
+      "llm_nodes": [
+        "m1_shadow",
+        "uapp_action"
+      ],
+      "all_succeeded": true,
+      "elapsed_s": 72.24,
+      "attempts": 1
+    },
+    {
+      "case": "S1-NEG-01",
+      "turn": "N1",
+      "workflow_run_id": "6a6f9355-feee-4d2d-9013-12d1f80e38b9",
+      "llm_nodes": [
+        "m1_shadow",
+        "uapp_action"
+      ],
+      "all_succeeded": true,
+      "elapsed_s": 25.72,
+      "attempts": 1
+    }
+  ],
+  "resolved_from_R0": {
+    "R0-F1": "RESOLVED —— AMBIGUOUS→uapp_ask_one 首次真正触发：intent=AMBIGUOUS、route_mode=ASK_ONE、uapp_ask_one 实际执行、问号计数 1、未猜能力",
+    "R0-F2": "NOT_APPLICABLE_THIS_LAYER —— 本层三例均未走闲聊分支，空头支票守卫未被执行；其运行验证顺延至出现闲聊轮的层"
+  },
+  "layer_scope_disclaimer": "本层 PASS 只证明 M1 与路由契约成立。M2/M3/Hop/Seam/六能力本层未接，其相关 UAPP-AC 对 successor 仍为 NOT_VERIFIED。",
+  "next_stage_allowed": true
+}

@@ -1,0 +1,54 @@
+{
+  "test": "S1_VALIDATOR_DISCRIMINATION",
+  "model_calls": 0,
+  "stage_gate_sha256": "6c50e2311380ddc7f45dd1562c8ca232bedbaba2422e8ab69a31adec59328aaf",
+  "legacy_evidence_dir": "/home/faye/diyu-demo-worktrees/v1-unified-dify-application/unified-app/evidence/formal",
+  "legacy_access": "READ_ONLY",
+  "results": [
+    {
+      "fixture": "UAPP-INTENT-02N_attempt40e45858.json",
+      "label": "已知坏例·硬猜能力并真跑",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "discriminates": true,
+      "observed_route_mode": "CAPABILITY",
+      "observed_target": "CREATIVE_SCRIPT",
+      "observed_question_count": 1,
+      "capability_nodes_ran": true,
+      "failed_checks": [
+        "route_mode = ASK_ONE",
+        "asks_one = true",
+        "uapp_ask_one 实际执行",
+        "未硬猜任何能力",
+        "未走能力/未接线分支"
+      ]
+    },
+    {
+      "fixture": "UAPP-INTENT-02N_attempt00d9dcdd.json",
+      "label": "已知坏例·落对话且多问题",
+      "expected": "FAIL",
+      "got": "FAIL",
+      "discriminates": true,
+      "observed_route_mode": "DIALOGUE",
+      "observed_target": "",
+      "observed_question_count": 2,
+      "capability_nodes_ran": false,
+      "failed_checks": [
+        "route_mode = ASK_ONE",
+        "asks_one = true",
+        "uapp_ask_one 实际执行",
+        "问号计数为 1"
+      ]
+    },
+    {
+      "fixture": "synthetic_good",
+      "label": "合成好例·只问一个未猜能力",
+      "expected": "PASS",
+      "got": "PASS",
+      "discriminates": true,
+      "observed_question_count": 1,
+      "failed_checks": []
+    }
+  ],
+  "verdict": "PASS"
+}
