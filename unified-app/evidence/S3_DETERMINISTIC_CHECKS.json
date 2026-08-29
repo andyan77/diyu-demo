@@ -1,0 +1,208 @@
+{
+  "stage": "S3",
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "model_calls": 0,
+  "graph_sha256": "8629996f6b9fc0e4df185462fc069f808b4ef6fe37543329d3a4513cab7c580a",
+  "node_count": 38,
+  "edge_count": 38,
+  "m3_reference_digests": [
+    {
+      "file": "fashion-and-market.md",
+      "repo_sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+      "in_graph_sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+      "declared": "LOADED",
+      "identical": true
+    },
+    {
+      "file": "six-skill-methods.md",
+      "repo_sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+      "in_graph_sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+      "declared": "LOADED",
+      "identical": true
+    },
+    {
+      "file": "operations.md",
+      "repo_sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+      "in_graph_sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+      "declared": "LOADED",
+      "identical": true
+    },
+    {
+      "file": "acceptance-fixtures.md",
+      "repo_sha256": "b6e4420a1f3351391ea8b4882016aaa852625fdf0af165633babf3c322452122",
+      "in_graph_sha256": null,
+      "declared": "NOT_LOADED",
+      "identical": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "D-S3-01",
+      "desc": "仍是同一个 successor 应用且已发布新版本",
+      "result": "PASS",
+      "detail": {
+        "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+        "latest_published": "b748d53a-b4b3-467f-b544-264492bc1828|s3-m3-wired"
+      }
+    },
+    {
+      "id": "D-S3-02",
+      "desc": "M3 provider 目标现场复算 = 合同 final_fp_bindings.M3",
+      "result": "PASS",
+      "detail": {
+        "provider": "9ea86217-8791-489c-9a96-b880ae558ac5",
+        "target_now": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+        "contract": "a4c3b19b-243f-490b-9aca-3aa19767d6a5"
+      }
+    },
+    {
+      "id": "D-S3-03",
+      "desc": "图内唯一的 tool 节点是 M3，且指向该 provider（本层未接 Hop/Seam）",
+      "result": "PASS",
+      "detail": {
+        "tool_nodes": [
+          "uapp_m3"
+        ],
+        "provider_id": "9ea86217-8791-489c-9a96-b880ae558ac5",
+        "tool_name": "diyu_uapp_m3"
+      }
+    },
+    {
+      "id": "D-S3-04",
+      "desc": "最终 FP M3 的 graph 零改动（只调用不修改）",
+      "result": "PASS",
+      "detail": {
+        "baseline": "cd93757bcf8ad322f3b32fc43b2da3ff",
+        "now": "cd93757bcf8ad322f3b32fc43b2da3ff"
+      }
+    },
+    {
+      "id": "D-S3-05",
+      "desc": "三份方法参考按 sha256 与仓库逐份一致（图内载体解码后比对，非子串匹配）",
+      "result": "PASS",
+      "detail": {
+        "mismatched": [],
+        "digests": [
+          {
+            "file": "fashion-and-market.md",
+            "repo_sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+            "in_graph_sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+            "declared": "LOADED",
+            "identical": true
+          },
+          {
+            "file": "six-skill-methods.md",
+            "repo_sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+            "in_graph_sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+            "declared": "LOADED",
+            "identical": true
+          },
+          {
+            "file": "operations.md",
+            "repo_sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+            "in_graph_sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+            "declared": "LOADED",
+            "identical": true
+          },
+          {
+            "file": "acceptance-fixtures.md",
+            "repo_sha256": "b6e4420a1f3351391ea8b4882016aaa852625fdf0af165633babf3c322452122",
+            "in_graph_sha256": null,
+            "declared": "NOT_LOADED",
+            "identical": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "D-S3-06",
+      "desc": "M3 验收夹具（含期望答案）未进入图任何位置，且清单声明 NOT_LOADED",
+      "result": "PASS",
+      "detail": {
+        "leaked": [],
+        "manifest_declares_not_loaded": true
+      }
+    },
+    {
+      "id": "D-S3-07",
+      "desc": "M3 调用失败走局部 Return，不让整轮失败",
+      "result": "PASS",
+      "detail": {
+        "error_strategy": "fail-branch",
+        "m3_out_edges": [
+          [
+            "source",
+            "uapp_s3_deliver"
+          ],
+          [
+            "fail-branch",
+            "uapp_m3_fail"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "D-S3-08",
+      "desc": "回归·M1 六节点仍逐字节一致，且 start 零用户输入变量",
+      "result": "PASS",
+      "detail": {
+        "diffs": [],
+        "start_vars": []
+      }
+    },
+    {
+      "id": "D-S3-09",
+      "desc": "回归·全部 http 节点仍只指向 M2，无外部网络",
+      "result": "PASS",
+      "detail": {
+        "http_nodes": 8,
+        "offenders": {}
+      }
+    },
+    {
+      "id": "D-S3-10",
+      "desc": "只问一个与闲聊两条出口仍不触碰任何 M2 或 M3 节点",
+      "result": "PASS",
+      "detail": {
+        "branch": {
+          "case_ask": "uapp_ask_one",
+          "case_business": "uapp_boot_gate",
+          "false": "m1_chat_llm"
+        },
+        "ask_hits": false,
+        "chat_hits": false
+      }
+    },
+    {
+      "id": "D-S3-11",
+      "desc": "本层交付节点的泄漏清洗复用 DELIVERY_SRC 前言，未另抄一套词表",
+      "result": "PASS",
+      "detail": {
+        "has_state_words": true,
+        "has_scrub": true
+      }
+    },
+    {
+      "id": "D-S3-12",
+      "desc": "11 个受保护应用 graph 相对 R0 基线零漂移",
+      "result": "PASS",
+      "detail": {
+        "checked": 11,
+        "drift": []
+      }
+    },
+    {
+      "id": "D-S3-13",
+      "desc": "旧候选 app 2448e4f9 零改动",
+      "result": "PASS",
+      "detail": {
+        "now": "e67147abde10a3fdd0c2043c10cbe266"
+      }
+    }
+  ],
+  "summary": {
+    "pass": 13,
+    "fail": 0,
+    "total": 13
+  }
+}

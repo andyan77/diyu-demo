@@ -1,0 +1,100 @@
+{
+  "document": {
+    "id": "S3_STAGE_GATE_v1.0", "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001", "stage": "S3",
+    "purpose": "接入最终 FP M3 并验证 M2→M3→用户返回（Rebase Prompt §7）",
+    "frozen_before_any_model_run": true,
+    "supersedes": "无。S1/S2 Stage Gate 继续有效且一字未改。"
+  },
+  "identity": {
+    "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200", "mode": "advanced-chat",
+    "published_workflow_id": "b748d53a-b4b3-467f-b544-264492bc1828",
+    "graph_sha256": "8629996f6b9fc0e4df185462fc069f808b4ef6fe37543329d3a4513cab7c580a",
+    "dsl_sha256": "3d613e694299233c45a26490b2f7a9c1e506242e5722848a504cb0e6725020d9",
+    "node_count": 38, "edge_count": 38, "git_commit_at_freeze": "657004c",
+    "model_provider": "langgenius/deepseek/deepseek", "model_name": "deepseek-v4-flash"
+  },
+  "m3_binding_recomputed_on_site": {
+    "provider_id": "9ea86217-8791-489c-9a96-b880ae558ac5",
+    "tool_name": "diyu_uapp_m3",
+    "target_app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+    "matches_contract_final_fp_bindings_M3": true,
+    "m3_published_workflow_id": "366e6f4c-1645-421a-ae15-f30463155ee3",
+    "m3_graph_md5": "cd93757bcf8ad322f3b32fc43b2da3ff",
+    "modification_policy": "只调用，不修改 M3 的 graph / model / prompt / Skill"
+  },
+  "m3_references_frozen": [
+    {"path": "references/fashion-and-market.md", "sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b", "status": "LOADED"},
+    {"path": "references/six-skill-methods.md", "sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18", "status": "LOADED"},
+    {"path": "references/operations.md", "sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493", "status": "LOADED"},
+    {"path": "references/acceptance-fixtures.md", "sha256": "b6e4420a1f3351391ea8b4882016aaa852625fdf0af165633babf3c322452122", "status": "NOT_LOADED",
+     "reason": "含期望答案，加载进正式运行会污染取证；D-S3-06 已证其正文不在图内任何位置"}
+  ],
+  "discipline": {
+    "sampling": "每个正式输入只跑一次；纯传输失败且无任何模型输出时最多重试一次；禁止同输入重复采样求 PASS",
+    "evidence_source": "只认 Dify workflow_node_executions 与 M2 数据库真实行；模型自述、平台 succeeded、对话正文承诺一律不构成证据",
+    "layer_scope": "本层 PASS 只证明 M2→M3→用户返回成立，不证明 Hop/Seam/六能力已集成",
+    "m3_output_scope": "M3 只负责运营判断；本层不要求提前生成 Brief、脚本、镜头或包装"
+  },
+  "leak_forbidden_tokens": ["READY","PASS","FAIL","STALE","NOT_VERIFIED","route_mode","target_capability","intent_source","canvas_triage","MATRIX","CAMPAIGN","CONTENT_BRIEF","CREATIVE_SCRIPT","PRODUCTION_DIRECTOR","PUBLISHING_PACKAGING","SINGLE_ACCOUNT_OPERATION","AMBIGUOUS","CHITCHAT","uapp_","m1_","boot_","85c01f85","a4c3b19b","gate_status","operating_judgment","workspace_id","idempotency","http://","status_code"],
+  "cases": {
+    "S3-MAIN-01": {
+      "applicability": "APPLICABLE", "kind": "positive_main_story",
+      "purpose": "Rebase Prompt §7 的本层主场景：同一 successor App 内真实跑通 M1→M2→M3→用户返回",
+      "mode": "one_conversation_two_turns_with_mid_case_seed",
+      "turns": [
+        {"id": "T1", "input": "有个账号一直没流量，怎么办"},
+        {"id": "SEED", "kind": "fixture_write_not_a_model_turn",
+         "action": "向 T1 建出的任务域写入一条周期决策（decision=kept_unchanged），使 T2 的投影确有记录"},
+        {"id": "T2", "input": "用对应的专业能力来分析"}
+      ],
+      "pass": [
+        "T1：M1 与路由层形成账号经营诊断方向 —— route_mode ∈ {CAPABILITY, OPERATION_ONLY} 且落点 ∈ {MATRIX, SINGLE_ACCOUNT_OPERATION}",
+        "T1：uapp_m3 节点实际执行且 succeeded（只认节点执行记录）",
+        "T1：M2 当前投影真实进入 M3 —— uapp_m3 的入参 account_context 与 uapp_ctx 的输出逐字节一致，且含『来源 M2 服务实时读取』字样",
+        "T1：M3 返回有内容的账号经营诊断，或只返回真正阻塞诊断的缺口；两者都算成立，但空白或占位不算",
+        "T1：不要求用户选择专业能力，不声称未发生的调用或写入",
+        "T2：同会话追问不退回普通对话 —— uapp_m3 再次实际执行",
+        "T2：投影中含 SEED 写入的决策值，证明 M2 记录确实进入了 M3 这一轮",
+        "两轮 leak_hit_count 均为 0"
+      ],
+      "fail": [
+        "任一轮 uapp_m3 未执行，或只跑到闲聊分支",
+        "回复正文要求用户点名模块、选择能力或确认是否调用",
+        "回复正文声称已转交/正在推进/稍后给结果，而 M3 并未执行",
+        "M3 执行了但交付正文为空或只有占位话术",
+        "出现内部字段泄漏"
+      ]
+    },
+    "S3-REG-ASK-01": {
+      "applicability": "APPLICABLE", "kind": "upstream_regression",
+      "purpose": "回归 S1-NEG-01 / S2-REG-ASK-01：接了 M3 之后，确有歧义仍只问一个，且该轮零 M2 零 M3 副作用",
+      "mode": "fresh_conversation_one_turn",
+      "turns": [{"id": "R1", "input": "这条我想再打磨一下"}],
+      "pass": [
+        "route_mode = ASK_ONE，uapp_ask_one 实际执行，问号计数为 1，未猜能力",
+        "本轮零 M2 节点、零 M3 节点执行",
+        "零内部字段泄漏"
+      ],
+      "fail": ["路由到某个具体能力", "执行了任何 M2 或 M3 节点", "问了两个及以上问题", "出现内部字段泄漏"]
+    }
+  },
+  "regression_scope": {
+    "S1_S2_cases_covered": {
+      "S1-POS-01": "由 S3-MAIN-01/T1 同轮回归（同一输入）",
+      "S1-FOLLOW-01": "由 S3-MAIN-01/T2 同轮回归（同一输入）",
+      "S1-NEG-01 与 S2-REG-ASK-01": "由 S3-REG-ASK-01/R1 回归（同一输入）",
+      "S2-POS-01 幂等": "由 S3-MAIN-01/T2 未重复建域回归",
+      "S2-NEG-01 无记录不虚构": "由 S3-MAIN-01/T1 的空域投影回归"
+    },
+    "deterministic_checks": "S3_DETERMINISTIC_CHECKS.json，13/13 PASS，零模型调用，已于本冻结前完成"
+  },
+  "expected_cost": {"canvas_workflow_runs": 3, "canvas_llm_node_attempts": 6,
+                    "m3_app_workflow_runs": 2,
+                    "note": "M3 应用内部另有自己的 LLM 节点，最终回报分开统计"},
+  "evidence_paths": {
+    "S3-MAIN-01": "unified-app/evidence/stages/S3-MAIN-01.json",
+    "S3-REG-ASK-01": "unified-app/evidence/stages/S3-REG-ASK-01.json",
+    "deterministic": "unified-app/evidence/S3_DETERMINISTIC_CHECKS.json"
+  },
+  "gate_rule": "两例全部满足其 pass 且无 fail 命中，且确定性检查零 FAIL，才允许进入 S4。任一硬门 FAIL 立即输出 FAILURE TRIAGE，只修确认的最高失效节点。"
+}
