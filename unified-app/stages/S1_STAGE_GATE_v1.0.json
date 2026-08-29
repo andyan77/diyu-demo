@@ -1,0 +1,137 @@
+{
+  "document": {
+    "id": "S1_STAGE_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "stage": "S1",
+    "purpose": "在空白 successor 画布上部署 M1 与自然语言路由契约（Rebase Prompt §5）",
+    "frozen_before_any_model_run": true,
+    "authority_note": "Stage Gate 不是新的 Task Contract，不新增产品语义；只绑定本层身份、输入、预期与证据路径",
+    "hash_rule": "外部引用绑定本文件完整 UTF-8 字节的 SHA-256；本文件不自含 hash"
+  },
+  "identity": {
+    "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+    "app_name": "DIYU V1 · Unified Founder Canvas · Progressive Candidate",
+    "mode": "advanced-chat",
+    "published_workflow_id": "7fb66e6a-20e0-4a06-b90b-26ad47861633",
+    "graph_sha256": "d36cc01dd016a24749280b819a60e2b9c5944510b6e40027be1a9c77f705518a",
+    "dsl_sha256": "3a2eafca4e1ab4777c79e8c6dd9b5e014bb4c21106381347d0d4551ba7e02a3f",
+    "node_count": 16,
+    "edge_count": 15,
+    "git_commit": "c2f5ae5",
+    "git_branch": "codex/v1-uapp-progressive-canvas-001",
+    "git_dirty_at_freeze": false,
+    "model_provider": "langgenius/deepseek/deepseek",
+    "model_name": "deepseek-v4-flash",
+    "completion_params": {"max_tokens": 4000, "top_p": 0.8}
+  },
+  "upstream_bindings": {
+    "m1_source_app": "dd638b91-d39f-4e92-a984-6ad1ab809119",
+    "m1_nodes_reused_verbatim": ["m1_extract", "m1_join", "m1_shadow", "m1_compiler", "m1_save_snapshot", "m1_chat_llm"],
+    "m2_wired": false, "m3_wired": false, "hop_wired": false, "seam_wired": false, "capabilities_wired": false
+  },
+  "discipline": {
+    "sampling": "每个正式输入只跑一次；纯传输失败且无任何模型输出时最多重试一次，两个 Attempt 都保留；禁止同输入重复采样求 PASS",
+    "evidence_source": "路由与执行结论只认 Dify workflow_node_executions 的节点执行记录；模型自述、平台 succeeded、对话正文承诺一律不构成证据",
+    "append_only": "证据文件已存在即拒绝覆盖",
+    "layer_scope": "本层 PASS 只证明 M1 与路由契约成立，不证明 M3 或六能力已集成"
+  },
+  "leak_forbidden_tokens": [
+    "READY", "PASS", "FAIL", "STALE", "NOT_VERIFIED", "route_mode", "target_capability",
+    "intent_source", "canvas_triage", "MATRIX", "CAMPAIGN", "CONTENT_BRIEF", "CREATIVE_SCRIPT",
+    "PRODUCTION_DIRECTOR", "PUBLISHING_PACKAGING", "SINGLE_ACCOUNT_OPERATION", "AMBIGUOUS",
+    "CHITCHAT", "uapp_", "m1_", "85c01f85", "ENTRY-", "snapshot_json", "call_intent_json"
+  ],
+  "cases": {
+    "S1-POS-01": {
+      "applicability": "APPLICABLE",
+      "kind": "positive",
+      "mode": "one_conversation_turn_1",
+      "input": "有个账号一直没流量，怎么办",
+      "expect": {
+        "route_mode_in": ["CAPABILITY", "OPERATION_ONLY"],
+        "target_or_intent_in": ["MATRIX", "SINGLE_ACCOUNT_OPERATION"],
+        "intent_source": "canvas_triage",
+        "triage_failed": "false",
+        "ask_one_executed": false,
+        "answer_must_state_not_yet_wired": true,
+        "answer_must_not_promise_async": true,
+        "leak_hits": 0
+      },
+      "pass": [
+        "uapp_route 输出 route_mode 落在 CAPABILITY 或 OPERATION_ONLY",
+        "落点是账号层面的诊断/定位或该号如何持续做，即 MATRIX 或 SINGLE_ACCOUNT_OPERATION",
+        "intent_source = canvas_triage —— 系统自己识别，不是用户点名",
+        "回复正文如实说明本层尚未接通专业分析",
+        "回复正文不出现『已转交』『正在推进』『等结果』类异步承诺",
+        "回复正文零内部字段泄漏"
+      ],
+      "fail": [
+        "route_mode = DIALOGUE（自然语言没能桥到能力，即 Founder 裁定要消灭的失败面）",
+        "要求用户点名模块、选择能力或确认是否调用",
+        "声称已经转交或稍后给结果",
+        "出现内部字段泄漏"
+      ]
+    },
+    "S1-FOLLOW-01": {
+      "applicability": "APPLICABLE",
+      "kind": "positive_continuity",
+      "mode": "same_conversation_turn_2",
+      "input": "用对应的专业能力来分析",
+      "expect": {
+        "route_mode_in": ["CAPABILITY", "OPERATION_ONLY"],
+        "must_not_fall_back_to_dialogue": true,
+        "leak_hits": 0
+      },
+      "pass": [
+        "继承上一轮待执行目标，route_mode 仍落在 CAPABILITY 或 OPERATION_ONLY",
+        "不因本轮字数短、本身无主题而丢失主题",
+        "回复正文零内部字段泄漏"
+      ],
+      "fail": [
+        "退回 DIALOGUE",
+        "要求用户重新说明要做什么或点名模块",
+        "出现内部字段泄漏"
+      ]
+    },
+    "S1-NEG-01": {
+      "applicability": "APPLICABLE",
+      "kind": "negative_control",
+      "mode": "fresh_conversation_one_turn",
+      "input": "这条我想再打磨一下",
+      "ambiguity_reason": "『打磨』在本系统里对应三种实质不同的产物：改口播稿、改拍法、改标题封面。会话为新建，上文没有任何已确定产物，因此无法定路线。选错让用户白做一遍。",
+      "expect": {
+        "route_mode": "ASK_ONE",
+        "asks_one": "true",
+        "ask_one_node_executed": true,
+        "question_count": 1,
+        "no_capability_guess": true,
+        "leak_hits": 0
+      },
+      "pass": [
+        "route_mode = ASK_ONE 且 uapp_ask_one 节点实际执行",
+        "回复正文问号计数为 1",
+        "该问题问的是能定下落点的那一件事（要改哪一面），不是背景补充",
+        "本轮不硬猜任何一个能力就往下走",
+        "回复正文零内部字段泄漏"
+      ],
+      "fail": [
+        "路由到某个具体能力（硬猜一个就跑 = 替用户选）",
+        "落 DIALOGUE 且回复里问了两个及以上问题",
+        "一次问了两个及以上问题",
+        "既不问也不定路线，只回一段空泛的场面话",
+        "出现内部字段泄漏"
+      ],
+      "criterion_authorship_disclosure": "本负例的『这条我想再打磨一下属于确有歧义』由 Rebase Prompt §5 直接冻结（S1-NEG-01），并与 UAPP_FROZEN_SCENARIOS_v2.0 一致。执行侧未自行改写该产品语义判断。"
+    }
+  },
+  "regression_scope": {
+    "upstream_layers": "无。S1 是首层，无上游层可回归。",
+    "deterministic_checks": "S1_DETERMINISTIC_CHECKS.json，10/10 PASS，零模型调用，已于本冻结前完成"
+  },
+  "evidence_paths": {
+    "S1-POS-01_and_FOLLOW": "unified-app/evidence/stages/S1-POS-01.json",
+    "S1-NEG-01": "unified-app/evidence/stages/S1-NEG-01.json",
+    "deterministic": "unified-app/evidence/S1_DETERMINISTIC_CHECKS.json"
+  },
+  "gate_rule": "三例全部满足其 pass 且无 fail 命中，且确定性检查零 FAIL，才允许进入 S2。任一硬门 FAIL 立即输出 FAILURE TRIAGE，只修确认的最高失效节点，不得继续堆下一模块。"
+}
