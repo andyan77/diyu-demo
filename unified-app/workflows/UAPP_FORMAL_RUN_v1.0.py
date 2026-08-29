@@ -105,7 +105,11 @@ def main():
     conv = sys.argv[2] if len(sys.argv) > 2 else ""
     doc = frozen()
 
-    out = os.path.join(EV, "%s.json" % case_id)
+    # 冻结取样规则允许对纯传输失败补一次 Attempt。补跑写**新文件**，
+    # 原 Attempt 一个字节都不动——历史 Attempt 只追加。
+    attempt = os.environ.get("UAPP_ATTEMPT", "")
+    suffix = ("_attempt%s" % attempt) if attempt else ""
+    out = os.path.join(EV, "%s%s.json" % (case_id, suffix))
     if os.path.exists(out):
         raise SystemExit("拒绝覆盖已有正式证据：" + out)
 
@@ -152,7 +156,7 @@ def main():
             rec["elapsed_seconds"]))
 
     doc_out = {
-        "case_id": case_id, "purpose": purpose, "binds": binds,
+        "case_id": case_id, "attempt": attempt or "1", "purpose": purpose, "binds": binds,
         "frozen_criteria": {"path": os.path.basename(doc["_path"]), "sha256": doc["_sha256"],
                             "pass": passc, "fail": failc,
                             "expected_capability": expected_cap},
