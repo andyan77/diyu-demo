@@ -1,0 +1,341 @@
+manifest_id: M5-CANDIDATE-RUN-MANIFEST-v1.1.4-FINAL-P0
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+entry_mode: REBASE_TASK
+step: STEP_4_FREEZE_FINAL_CANDIDATE
+status: FROZEN
+frozen_at: '2026-08-29T03:39:52Z'
+supersedes: V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml（保留不删，只读留存；其证据与判定不回改）
+authority:
+  final_p0_prompt:
+    path: /mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/M5_FINAL_MINIMAL_P0_REMEDIATION_AND_NEXT_STAGE_EXECUTION_PROMPT_v1.0.md
+    sha256: 94b73c096e726d3ab8edd5a0331a175dc1f477dd933f30f0e6adb81e5c736558
+  parent_prompt:
+    path: /mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/M5_AC07_BLOCKER_REMEDIATION_AND_EVIDENCE_REBASE_EXECUTION_PROMPT_v1.0.md
+    sha256: 9b988027438f498b25421cecd73cd9d9d302bddcf15876c6b9833eaf624ddecb
+  parent_contract:
+    path: /mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/M5_ENGINEERING_TASK_CONTRACT_v1.1_AC07_REBASE.yaml
+    sha256: a13b5651c2065eb8ffd70c1cdbf4bf1de09fbc39f7bb5693b31231f2da2ce7dc
+handoff_evidence:
+  V1_M5_RB3_DIRECTED_REVERIFICATION_v1.0.md:
+    path: decision-chain/docs/V1_M5_RB3_DIRECTED_REVERIFICATION_v1.0.md
+    sha256: dd2d49d9814c275c8f63a4fd7a16fdf636e192a78c4133c310312eda4a023c7b
+  V1_M5_RB_HOLDOUT_VERDICT_v1.0.md:
+    path: decision-chain/docs/V1_M5_RB_HOLDOUT_VERDICT_v1.0.md
+    sha256: cc6460168654ba09b78279de0927923380b713074660154b5513c9bf8270188b
+  V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml:
+    path: decision-chain/docs/V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml
+    sha256: 2dba81e9d16d9085dc8720edb859091f5296558ec950e4bdec1fdaa8a27cd7f0
+repo_binding:
+  V1_M5_FINAL_P0_FAILURE_TRIAGE_v1.0.md:
+    path: decision-chain/docs/V1_M5_FINAL_P0_FAILURE_TRIAGE_v1.0.md
+    sha256: 55271e8716a284dc744f71d16ef439813fa01fee9b39072758c963f806d47e58
+  FINAL_P0_TRIAGE_NODE_BINDING.json:
+    path: decision-chain/evidence/m5/FINAL_P0_TRIAGE_NODE_BINDING.json
+    sha256: db544ec7d7a8577c6b2d2d5dc184a6a7acb4ac5764e8ebf1453c1d1e528ab8d8
+  V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.2_FINAL_P0.yaml:
+    path: decision-chain/fixtures/V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.2_FINAL_P0.yaml
+    sha256: 46626ba307bd35b5b19f2b0c48fc7460946248e6453fe57e612225fa7a758bb4
+  DIYU_M5_BUILD_M3_FINAL_P0_SUCCESSOR_v1.2.py:
+    path: decision-chain/workflows/DIYU_M5_BUILD_M3_FINAL_P0_SUCCESSOR_v1.2.py
+    sha256: 2876cccfae422c6cdc850b0017b462f12aea5beeefc5ac8b85f476ab9c26146c
+  DIYU_M5_BUILD_CAPABILITY_FINAL_P0_SUCCESSOR_v1.2.py:
+    path: decision-chain/workflows/DIYU_M5_BUILD_CAPABILITY_FINAL_P0_SUCCESSOR_v1.2.py
+    sha256: a6816cf06a734756957bc50a5bf40a6e9129b74d0f8faaaf1b7b4e8e136f11e1
+  DIYU_M5_INTEGRATION_RUNTIME_v0.1.py:
+    path: decision-chain/workflows/DIYU_M5_INTEGRATION_RUNTIME_v0.1.py
+    sha256: 833d4f68625ef37244743196d10511d33fc1547d86c264272fad32f54b54ee45
+git:
+  branch: codex/v1-m5-unified-integration-final-acceptance-001
+  candidate_commit: 5f84d94d542693f143faab0444525618ab21a4e9
+  candidate_commit_subject: 'DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001: Step 4 冻结脚本'
+  worktree_clean: true
+  origin_main: f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e
+  remote_reachable: true
+  remote_note: 远端不可达时只记 NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)，不伪造状态。
+runtime_binding:
+  env: M5_BIND
+  default: fp
+  accepted_values:
+  - fp
+  - rb
+  - legacy
+  fp_note: 本轮候选。rb 与 legacy 一个字节都不动，继续可用于同输入新旧对照。
+  apps:
+    CAMPAIGN: 1f9d65ea-8af5-45f0-a1d0-a80223d354e2
+    CONTENT_BRIEF: b1dcf784-540e-4b3f-8ba2-3812f477f3ce
+    CREATIVE_SCRIPT: 44b55f9d-3792-40c3-b095-f2696464b4ec
+    M3: a4c3b19b-243f-490b-9aca-3aa19767d6a5
+    MATRIX: fd25ebfa-db67-40c3-82e5-202e1254facf
+    PRODUCTION_DIRECTOR: 13cfabd5-f592-4354-a304-47098b765697
+    PUBLISHING_PACKAGING: c9cdea24-9df3-400b-9ecd-1d740e8c96df
+    SEAM: 5fca0162-e26b-4545-a00b-66b1a2a2a077
+modified_successors:
+  CAMPAIGN:
+    app_id: 1f9d65ea-8af5-45f0-a1d0-a80223d354e2
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Campaign Orchestrator
+    graph_md5: 4876dacc43a73741b41c5a3083796347
+    node_count: 15
+    llm_models:
+    - node: skill_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+    - node: recovery_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+  CONTENT_BRIEF:
+    app_id: b1dcf784-540e-4b3f-8ba2-3812f477f3ce
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Content Brief Architect
+    graph_md5: 0c841642a71feedfb327ffb76aec0ddd
+    node_count: 15
+    llm_models:
+    - node: skill_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+    - node: recovery_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+  CREATIVE_SCRIPT:
+    app_id: 44b55f9d-3792-40c3-b095-f2696464b4ec
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)
+    graph_md5: a1cd859d5b88d0d025f336665ca94e51
+    node_count: 15
+    llm_models:
+    - node: skill_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+    - node: recovery_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+  M3:
+    app_id: a4c3b19b-243f-490b-9aca-3aa19767d6a5
+    app_name: DIYU M5 FP · M3 单账号持续运营（撤回影响面与在场判断）
+    graph_md5: cd93757bcf8ad322f3b32fc43b2da3ff
+    node_count: 7
+    llm_models:
+    - node: operating_one_account_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        temperature: 0.4
+    - node: gate_repair_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        temperature: 0.4
+  MATRIX:
+    app_id: fd25ebfa-db67-40c3-82e5-202e1254facf
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Matrix Architect
+    graph_md5: 6cdaeac9cacf69fbeea4bd25e1536ace
+    node_count: 15
+    llm_models:
+    - node: skill_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+    - node: recovery_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+  PRODUCTION_DIRECTOR:
+    app_id: 13cfabd5-f592-4354-a304-47098b765697
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Production Director
+    graph_md5: 964e9a947dc9790d1de82496469689ad
+    node_count: 15
+    llm_models:
+    - node: skill_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+    - node: recovery_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+  PUBLISHING_PACKAGING:
+    app_id: c9cdea24-9df3-400b-9ecd-1d740e8c96df
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Publishing & Packaging
+    graph_md5: 788c8555aca09e6fa6d979f237f70157
+    node_count: 15
+    llm_models:
+    - node: skill_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+    - node: recovery_llm
+      provider: langgenius/deepseek/deepseek
+      name: deepseek-v4-flash
+      mode: chat
+      completion_params:
+        max_tokens: 384000
+        reasoning_effort: low
+        thinking: true
+        top_p: 0.8
+  SEAM:
+    app_id: 5fca0162-e26b-4545-a00b-66b1a2a2a077
+    app_name: DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Capability Seam
+    graph_md5: db49a3da8973d4fdcbe9ecf63bdf7e2a
+    node_count: 25
+    llm_models: []
+protected_source_apps:
+  rb_CAMPAIGN:
+    app_id: 7d10e28d-30e6-4c4a-950b-88dcbb5fd0fc
+    graph_md5: d3f0f904e094a9a273c969560c8fcb01
+  rb_CONTENT_BRIEF:
+    app_id: cbbeab61-a4de-4a21-a6be-7dc2385dd6f3
+    graph_md5: 18fe62af78c952963ba49c51a1c9b681
+  rb_CREATIVE_SCRIPT:
+    app_id: 4fbcfea8-48a3-41b3-b2b5-cdb50276eeb2
+    graph_md5: 8ffd62290c86590aa6585944977a9fe2
+  rb_M3:
+    app_id: ca4c28aa-e0fd-4c54-bde3-a0918dc4c884
+    graph_md5: 66102a967097d2eb6fda07df140007c6
+  rb_MATRIX:
+    app_id: 47e52165-f6cb-48ff-93be-6c6a8ea5cecf
+    graph_md5: 91704faf63c0628fee7cb3f6450bc9b5
+  rb_PRODUCTION_DIRECTOR:
+    app_id: 07e99f7b-71a3-40af-85f3-fc43b68e774a
+    graph_md5: 2cde3915f2d1ecdc7e14ec1fa3586e18
+  rb_PUBLISHING_PACKAGING:
+    app_id: 0fb7636a-55e8-49a9-92f7-3d11ad0a35fa
+    graph_md5: 16c81a2283843a4ef04e009361024318
+  rb_SEAM:
+    app_id: 9e1b1fd8-f696-436d-9d42-54700a29a4dd
+    graph_md5: d89f5086425880af04692264777fa805
+  legacy_CAMPAIGN:
+    app_id: cfd48281-d2e6-4f77-b4a6-32f0fca98f2b
+    graph_md5: 446133525104e297ff4e07ce6d871180
+  legacy_CONTENT_BRIEF:
+    app_id: a3264c95-9b30-4ac8-833a-dc96ea8b7ee1
+    graph_md5: 248df0afbd44be58ec553c1566205ef8
+  legacy_CREATIVE_SCRIPT:
+    app_id: 8d518554-bfbc-4be0-8a57-3b1f04983edf
+    graph_md5: 4b5986b665d228c20998e69bb7444148
+  legacy_M3:
+    app_id: b7fb5b1a-9278-426c-bb8a-f9f288639548
+    graph_md5: e80f227eb30f95132a7c7ef41e157cc8
+  legacy_MATRIX:
+    app_id: d7c2cc11-9a59-47eb-93d7-a25ebc0b8cc3
+    graph_md5: 40281a7ee7fa42c4e2ccf5e67bc89e80
+  legacy_PRODUCTION_DIRECTOR:
+    app_id: 57ebc138-ed9e-4202-bce2-38e44da0ec1d
+    graph_md5: 695cb2d5e3224e50d72e103e22aadf98
+  legacy_PUBLISHING_PACKAGING:
+    app_id: 10056fcf-9237-4889-a3e3-81e3a695cae0
+    graph_md5: 5c03afae6fe7450cc42f9f58f97c53be
+  legacy_SEAM:
+    app_id: de0cb1e9-2af8-415a-9762-31b6cf348c22
+    graph_md5: 71a99dbcad9c40115291afa57368c4ea
+fresh_holdouts:
+  custody_manifest: decision-chain/fixtures/V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.2_FINAL_P0.yaml
+  custody_manifest_sha256: 46626ba307bd35b5b19f2b0c48fc7460946248e6453fe57e612225fa7a758bb4
+  custodian: context-isolated holdout custodian (subagent), M5 最后一轮最小修复
+  items:
+  - id: FINAL-P0-HOLDOUT-01
+    body_sha256: 8309b1624b516350b8b70aa3cb8571e2ae0e1fc59aa84eef15b5542a5d6d1033
+    body_bytes: 1935
+    scope: 撤回影响面与副作用真实性
+  - id: FINAL-P0-HOLDOUT-02
+    body_sha256: aa781edca1bcf3b98ef1e04eef66a3e3914edc2871a93d4a7fdcdad82b7c5b69
+    body_bytes: 1274
+    scope: 缺关键输入时的停口与自选替代
+  sealed_oracles_sha256: 19b164abf5ffda24e45ee65f7d3c02746921542d5ea1ee5cc2465ec5e920bffc
+  bodies_included_here: false
+  construction_owner_access: IDENTITY_AND_HASH_ONLY_BODIES_PROHIBITED_UNTIL_NEW_CANDIDATE_FREEZE
+  unseal_condition: 本清单 status=FROZEN 且 worktree clean 之后方可解封；解封时现场复算三个文件 sha256 与保管清单逐条一致。
+allowed_reverification_only:
+- R1 Group A/B 最小单元的正例、负例与原失败回归（确定性，已在 Step 3 完成一轮）
+- R2 HOLDOUT-M5-RB-01 / HOLDOUT-M5-RB-02 / HOLDOUT-M5-05 重跑
+- R3 候选冻结后解封并各运行一次 FINAL-P0-HOLDOUT-01 / 02
+- R4 RISK-M4-030+031 按新判据运行一次四形式检查
+- R5 一条完整输入的 M3→M4 正常主路径（证明没有把正常业务误挡）
+- R6 被修改文件/图的直接确定性测试与必要回归
+- R7 机械重算十九维索引与 AC 状态（不新增十九维案例）
+reuse_without_rerun:
+- FULL-02、纯 M1/M2、十类短入口中无依赖项、M2 3/3、REG-M4-01 8/8
+- 理由：这些不经过本轮被改的 M3 successor 与六能力/接缝 successor，依赖边不成立。
+ab_dependency_judgment:
+  conclusion: AFFECTED_MUST_REBUILD
+  reason: AB-M3-01 的 B 组直接调用 M3_APP；AB-FINAL-01 的 B 组走完整链路，经过接缝与能力应用。三者在本轮全部被替换为 fp successor，评分文本因此受影响。
+  action: 只重建受影响的 A/B 案例并生成新 sealed mapping；旧盲评包 AB_BLIND_abFRB3.json 与 AB_MAPPING_SEALED_abFRB3.json
+    原样保留并标 STALE / INVALID_FOR_FINAL_SCORING，不删除、不覆盖。
+  sealed_mapping_rule: 评分完成前不得打开任何 sealed mapping。
+no_overwrite_rules:
+- 历史运行、原留出、原判定、原 Manifest、原盲评包与全部失败记录只增不覆盖
+- 证据文件名必须带 run_tag；不带标签的复验会覆盖正式证据（已发生过一次事故）
+- rb 与 legacy 绑定的应用一个字节都不动
+- 六份受保护 Skill、M1–M4 已发布应用、M3 已冻结闸门不得修改
+prohibited:
+  force_push: PROHIBITED
+  remote_branch_delete: PROHIBITED
+  real_external_publish: NOT_AUTHORIZED
+  destructive_migration: PROHIBITED
+  non_test_data_mutation: PROHIBITED
+  silent_model_substitution: false
+  new_full_formal_round: NOT_AUTHORIZED
+  main_merge: NOT_ALLOWED_UNTIL_ALL_HARD_GATES_PASS_AND_FOUNDER_ACCEPTS
+task_state:
+  task_progress: IN_PROGRESS
+  terminal_state: null
+  partial_is_not_legal_terminal_for_m5: true
