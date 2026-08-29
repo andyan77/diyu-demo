@@ -62,10 +62,24 @@ RB_BIND = {
     "PRODUCTION_DIRECTOR":  "07e99f7b-71a3-40af-85f3-fc43b68e774a",
     "PUBLISHING_PACKAGING": "0fb7636a-55e8-49a9-92f7-3d11ad0a35fa",
 }
-BIND_NAME = os.environ.get("M5_BIND", "rb").lower()
-if BIND_NAME not in ("rb", "legacy"):
-    raise ValueError("M5_BIND 只接受 rb / legacy，实得 %r" % BIND_NAME)
-_BIND = RB_BIND if BIND_NAME == "rb" else LEGACY_BIND
+# fp = M5 最后一轮最小修复的 successor（N1 M3 ＋ N2/N3 六能力＋接缝）。
+# rb 与 legacy 一个字节都不动，继续可用于同输入新旧对照。
+FP_BIND = {
+    "SEAM": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+    "M3":   "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+    "MATRIX":               "fd25ebfa-db67-40c3-82e5-202e1254facf",
+    "CAMPAIGN":             "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+    "CONTENT_BRIEF":        "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+    "CREATIVE_SCRIPT":      "44b55f9d-3792-40c3-b095-f2696464b4ec",
+    "PRODUCTION_DIRECTOR":  "13cfabd5-f592-4354-a304-47098b765697",
+    "PUBLISHING_PACKAGING": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+}
+_BINDS = {"fp": FP_BIND, "rb": RB_BIND, "legacy": LEGACY_BIND}
+# 默认走 fp —— 它是本轮候选。要跑对照就 M5_BIND=rb 或 legacy。
+BIND_NAME = os.environ.get("M5_BIND", "fp").lower()
+if BIND_NAME not in _BINDS:
+    raise ValueError("M5_BIND 只接受 fp / rb / legacy，实得 %r" % BIND_NAME)
+_BIND = _BINDS[BIND_NAME]
 
 SEAM_APP = _BIND["SEAM"]
 CANVAS_APP = "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8"
