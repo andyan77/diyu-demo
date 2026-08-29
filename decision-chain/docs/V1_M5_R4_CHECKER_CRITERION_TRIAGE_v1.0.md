@@ -163,3 +163,20 @@ new_sampling_this_step: 0
 sut_modifications_this_step: 0
 criteria_modifications_this_step: 0
 ```
+
+---
+
+## 三、后继裁决指针（2026-08-29 追加，本文件以上正文一字未改）
+
+本文件 §二把「判据原文与检查器实现冲突时以谁为准」留给 Founder，并据此维持
+`RISK-M4-030+031 = FAIL`、`M5-AC-07 = FAIL`。**该状态为当时的正确记录，原文保留。**
+
+Founder 裁决 002（2026-08-29）已定：`authority: FROZEN_ORACLE_AND_ROOT_PROMPT`，
+`judge_m4_030_031` 为 `CHECKER_OR_FIXTURE`，不具改写产品判据的权威。
+随后按裁决 002 §四执行的一次定向负控制判 `PASS`。
+
+当前状态：`RISK-M4-030+031 = PASS / CURRENT`；`M5-AC-07 = NOT_VERIFIED`
+（不再因 `riskfp1` 保持 `FAIL`，但 R3 四项非 P0 人判未决，故不得记 `PASS`）。
+`riska` / `riskF` 的历史 `FAIL` 按裁决保留，不追溯修改。
+
+全文见 `V1_M5_FINAL_P0_FOUNDER_ADJUDICATION_002_AND_NEGATIVE_CONTROL_VERDICT_v1.0.md`。

@@ -423,3 +423,29 @@ Founder 已裁 1（`H01-A3` = `PASS`），**剩余未决 4，其中 P0 级 0**�
 所以"解析器是否还会因引号漏判"严格说仍 `NOT_VERIFIED`，不能因三次都交付就断定已修好。
 
 `task_progress: IN_PROGRESS`；`terminal_state`: 留空；`main_merge: NOT_ALLOWED`。
+
+**2026-08-29 追加（Founder 裁决 002 + 定向负控制，Checkpoint 仍为非终态）**：
+
+Founder 裁定 `RISK-M4-030+031` 的权威判据为冻结 `oracle` 原文与根 Prompt §3、`FINAL-AC-05`，
+`judge_m4_030_031` 为 `CHECKER_OR_FIXTURE`，不具改写产品判据的权威。
+`riska`／`riskF` 历史 `FAIL` 保留不追溯；`FRB2`／`FRB3`／`fp1` 正向等价检查判 `PASS / CURRENT`，
+原始 evidence 与原 verdict 均不覆盖。
+
+按裁决 002 §四执行**一次**定向负控制（授权上限 1，实跑 1，无重试、无重复采样）：
+输入与预期先冻结（`V1_M5_R4_NEGATIVE_CONTROL_FROZEN_SPEC_v1.0.md`，sha256 `d62ad5d0…`，
+提交 `47dfa4c` 早于调用；运行器启动时现场复算哈希，不符即拒跑）。
+负例保留带引号书写形式，整项抽掉 `audience_problem`，场景与正例不同、事实取自既有夹具。
+
+结果 `run_id = eb2364a5…`：`outcome=UNKNOWN`、`component_return=true`、`artifact=0 字`，
+组件级 Return 的 `precise_gap` 精确等于 **`audience_problem`**，`parse_status: "OK"`；
+用户可见输出 92 字只问缺的那一项，零泄漏。冻结书五条判据全部成立 → **负控制 `PASS`**。
+
+判别力双向证成：同一带引号书写形式，语义充分时交付（产物 4695 字），
+缺一项时不交付（产物 0 字）并精确点名缺项。
+
+状态：`RISK-M4-030+031 = PASS / CURRENT`；`negative_discrimination_check = PASS`；
+**`M5-AC-07 = NOT_VERIFIED`**——负控制这条阻断解除，但 R3 四项非 P0 人判
+（`H01-A1`／`H01-A4`／`H02-A3`／`H02-C2`）未决，故不得记 `PASS`。
+
+未改 M4、未改冻结判据、未原地改检查器 v1.0、未启动完整正式轮、未合并 main。
+`task_progress: IN_PROGRESS`；`terminal_state`: 留空。

@@ -1,0 +1,23 @@
+{
+  "record_id": "R4_NEGATIVE_CONTROL_RETURNS_SUPPLEMENT",
+  "task_id": "DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001",
+  "run_id": "eb2364a5-e740-4679-ad07-02909663965c",
+  "why_this_file_exists": "R4_NEGATIVE_CONTROL_RUN.json 里 returns_json 记成了 null——运行器读的是结果顶层键，而该字段实际在 outputs 下（is_component_return 读的就是 outputs.returns_json，所以 component_return=true 是对的）。这是运行器的取值路径写错，不是 Return 不存在。原证据文件不覆盖；本文件补记同一次运行的真实 outputs，零新增调用。",
+  "extraction": "docker exec docker-db_postgres-1 psql -d dify —— 只读既有 run 记录，未重新调用模型",
+  "new_model_calls": 0,
+  "outputs": {
+    "user_delivery": "这一步我还差一样东西才能往下判断：\n\n你想说给谁听？她现在具体卡在哪一步？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+    "business_delivery_outcome": "UNKNOWN",
+    "artifact": "",
+    "returns_json": "[{\"return_id\": \"M4-RET-CONTENT_BRIEF-16167be7\", \"source\": \"CONTENT_BRIEF\", \"highest_damaged_layer\": \"CONTENT_BRIEF_INPUT_SUFFICIENCY\", \"precise_gap\": \"audience_problem\", \"affected_objects\": [\"仅本次 CONTENT_BRIEF 调用及其真实依赖分支\"], \"proposed_disposition\": \"ESCALATE\", \"needs_user_decision\": true, \"downstream_stale\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"parse_status\": \"OK\"}]",
+    "binding_json": "{}",
+    "seam_trace_json": "{\"call_hash\": \"0747bc59fd9541d1f3d6f61c6e3f90bc4a38e8fa689e4ae6477b646c8a83ac96\", \"capabilities_skipped_because_not_applicable_or_equivalent_input_satisfied\": [\"MATRIX\", \"CAMPAIGN\", \"CREATIVE_SCRIPT\", \"PRODUCTION_DIRECTOR\", \"PUBLISHING_PACKAGING\"], \"capability_invoked\": [\"CONTENT_BRIEF\"], \"completeness_guard\": {\"artifact_status\": null, \"business_delivery_outcome\": \"UNKNOWN\", \"checked\": true, \"tool_local_block\": null, \"user_delivery_status\": null, \"user_projection_used\": \"false\"}, \"entry\": \"ENTRY-03\", \"entry_derivation\": \"该能力只有一个直接入口，按能力确定性映射\", \"run_mode\": \"DEFAULT\", \"stale_rule\": \"只使直接依赖、传递依赖与影响关系未知项 STALE；有证据不受影响的项继续复用\", \"stale_set\": [\"仅真实依赖本次 CONTENT_BRIEF 结论的下游项\"], \"upstream_auto_invoked\": [], \"upstream_auto_invoked_note\": \"M4 六个能力应用之间零 tool 调用边；组合只由本接缝按显式 plan 编排。本次未暗跑任何上游能力。\"}",
+    "capabilities_skipped": [
+      "MATRIX",
+      "CAMPAIGN",
+      "CREATIVE_SCRIPT",
+      "PRODUCTION_DIRECTOR",
+      "PUBLISHING_PACKAGING"
+    ]
+  }
+}
