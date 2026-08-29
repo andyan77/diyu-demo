@@ -1,0 +1,61 @@
+{
+  "boot": {
+    "actor": "m5-riskfp1",
+    "user": {
+      "external_ref": "m5-riskfp1",
+      "display_name": null,
+      "id": "83ab992d-d525-4399-8486-71679d5703cd",
+      "created_at": "2026-08-29T06:01:10.099760+00:00"
+    },
+    "ws": "cd3ca69f-f4f7-438e-8f01-0d320e122b57",
+    "account": "e0ffd307-f2d3-47b7-a5fb-1b34a8fc172d",
+    "cycle": "65fe67f2-de86-4750-a894-1ce8893f70a7",
+    "task": "4c179d2d-1f80-4b71-81b1-e387e76c2178",
+    "tag": "riskfp1"
+  },
+  "results": [
+    {
+      "id": "RISK-M4-030+031",
+      "target": "长度阈值无区分度 / 精确子串假阴性",
+      "oracle": "质量判定使用任务适用的语义标准；等价表达不被误判为失败",
+      "observed": {
+        "json": {
+          "business_delivery_outcome": "DELIVERED",
+          "component_return": false,
+          "missing": null,
+          "user_delivery_chars": 685,
+          "artifact_chars": 4494,
+          "run_id": "a3b3d10e-152d-40ac-b49c-762784213666"
+        },
+        "yaml_plain": {
+          "business_delivery_outcome": "DELIVERED",
+          "component_return": false,
+          "missing": null,
+          "user_delivery_chars": 665,
+          "artifact_chars": 3781,
+          "run_id": "dc99398b-218a-4df4-9d7f-12209f2110f1"
+        },
+        "markdown_backtick": {
+          "business_delivery_outcome": "DELIVERED",
+          "component_return": false,
+          "missing": null,
+          "user_delivery_chars": 945,
+          "artifact_chars": 3150,
+          "run_id": "18d42b53-2da0-4a7a-b7f7-7443da4d048e"
+        },
+        "yaml_with_quote": {
+          "business_delivery_outcome": "DELIVERED_AFTER_RECOVERY",
+          "component_return": true,
+          "missing": null,
+          "user_delivery_chars": 1098,
+          "artifact_chars": 4695,
+          "run_id": "f098a888-52c4-4a19-86e0-581c7f157e96"
+        }
+      },
+      "failures": [
+        "同一语义只因值里多一个引号就换了结论：DELIVERED vs DELIVERED_AFTER_RECOVERY（M4 外壳解析器假阴性）"
+      ],
+      "verdict": "FAIL"
+    }
+  ]
+}
