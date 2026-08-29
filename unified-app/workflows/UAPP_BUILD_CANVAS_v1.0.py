@@ -204,12 +204,15 @@ def build_graph():
                  ("m1_compiler", "m1_save_snapshot")):
         edges.append(E(a, b))
 
-    # ---- 路由（只读 M1 已算出的 call_intent）----
+    # ---- 分诊与路由（用户点名优先；未点名时由分诊台桥接）----
     nodes.append(N("uapp_action", X + 1920, Y - 200, {
-        "type": "llm", "title": "分类｜本轮要做哪一类经营动作",
-        "desc": "只分类持久化动作；不产出任务上下文、不做专业判断、不写业务事实",
+        "type": "llm", "title": "分诊｜本轮该进哪个能力、要登记哪类事",
+        "desc": "把自然语言桥接到能力，并分类持久化动作；不产出任务上下文、不做专业判断、不写业务事实",
+        # 4000 不是拍脑袋：实测 800 时本节点 finish_reason=length、completion_tokens 打满，
+        # 推理把预算烧光，JSON 一个字没输出，structured_output 全 null，路由因此静默落到
+        # DIALOGUE——正是 Founder 裁定要消灭的那个失败面。分诊台现在要判两件事，预算得够。
         "model": {"provider": "langgenius/deepseek/deepseek", "name": "deepseek-v4-flash",
-                  "mode": "chat", "completion_params": {"max_tokens": 800, "top_p": 0.8}},
+                  "mode": "chat", "completion_params": {"max_tokens": 4000, "top_p": 0.8}},
         "prompt_template": [
             {"role": "system", "text": NODES.ACTION_SYSTEM_PROMPT, "id": "uapp-act-sys"},
             {"role": "user", "text": NODES.ACTION_USER_PROMPT, "id": "uapp-act-usr"}],
@@ -227,8 +230,8 @@ def build_graph():
     edges.append(E("m1_save_snapshot", "uapp_action"))
 
     nodes.append(N("uapp_route", X + 2240, Y, code(
-        "路由｜取 M1 已给出的能力调用意图",
-        "只读 call_intent.needed_capabilities 挑一个能力；不做意图识别、不替用户选能力",
+        "路由｜把意图桥接到该进的那一个能力",
+        "用户点名优先；未点名时用分诊台 intent 兜底。依据 Founder 裁定 UAPP-INTENT-ROUTING-001",
         NODES.ROUTE_SRC,
         [V("call_intent_json", ["m1_compiler", "call_intent_json"]),
          V("snapshot_json", ["m1_compiler", "snapshot_json"]),
@@ -239,7 +242,9 @@ def build_graph():
          V("action_text", ["uapp_action", "text"])],
         ["tag", "action_source", "route_mode", "action", "has_capability", "runs_business", "runs_m3",
          "target_capability", "entry", "user_request", "needs_bootstrap", "route_note",
-         "platform_text", "external_ref_text", "feedback_text", "withdraw_target_text"])))
+         "platform_text", "external_ref_text", "feedback_text", "withdraw_target_text",
+         "intent", "intent_source", "intent_reason", "decisive_question", "asks_one",
+         "triage_failed"])))
     edges.append(E("uapp_action", "uapp_route"))
 
     # ---- 主闸门：要不要动业务链 ----
@@ -248,14 +253,45 @@ def build_graph():
         ("business", ["uapp_route", "runs_business"], "true"))))
     edges.append(E("uapp_route", "uapp_gate"))
 
-    # ---- 自然对话分支 ----
+    # ---- 非业务链分支：先分「确有歧义只问一个」与「纯闲聊」----
+    nodes.append(N("uapp_ask_gate", X + 2880, Y + 320, ifelse(
+        "本轮是确有能力歧义吗", "确有歧义就只问一个决定性问题；否则走自然对话。",
+        ("askone", ["uapp_route", "asks_one"], "true"))))
+    edges.append(E("uapp_gate", "uapp_ask_gate", "false"))
+
+    # 只问一个问题：这一句由本层给出，**不经 M1 对话节点**。
+    # M1 的对话节点实测会把「如实说明当前状态」自行扩写成一次问三件事（TD-UAPP-03）；
+    # 那是 M1 自己的产品语义，归 Founder 裁决，本层绕开即可，不去改它。
+    nodes.append(N("uapp_ask_one", X + 3200, Y + 200, code(
+        "缺口｜只问一个决定性问题",
+        "分诊台已判歧义并给出问题；本节点只做单问收口，不代拟、不追加",
+        NODES.ASK_ONE_SRC,
+        [V("question", ["uapp_route", "decisive_question"]),
+         V("user_query", ["sys", "query"])],
+        ["one_question", "question_count", "ask_note"])))
+    nodes.append(N("uapp_ask_answer", X + 3520, Y + 200,
+                   answer("回复｜只问一个", "{{#uapp_ask_one.one_question#}}")))
+    edges.append(E("uapp_ask_gate", "uapp_ask_one", "askone"))
+    edges.append(E("uapp_ask_one", "uapp_ask_answer"))
+
+    # 自然对话分支
     chat = json.loads(json.dumps(m1nodes["m1_chat_llm"]["data"]))
     chat["title"] = "回复｜自然对话"
-    nodes.append(N("uapp_chat_llm", X + 2880, Y + 320, chat))
-    nodes.append(N("uapp_chat_answer", X + 3200, Y + 320,
-                   answer("回复｜对话", "{{#uapp_chat_llm.text#}}")))
-    edges.append(E("uapp_gate", "uapp_chat_llm", "false"))
-    edges.append(E("uapp_chat_llm", "uapp_chat_answer"))
+    nodes.append(N("uapp_chat_llm", X + 3200, Y + 440, chat))
+    # 本轮没真调能力就不许说得像调了或马上要调（Founder 裁定 UAPP-INTENT-ROUTING-001）。
+    nodes.append(N("uapp_chat_guard", X + 3520, Y + 440, code(
+        "守卫｜没调用就不许说已转交",
+        "本轮无能力执行时，删掉正文里的空头支票；有能力执行时不适用",
+        NODES.CHAT_GUARD_SRC,
+        [V("text", ["uapp_chat_llm", "text"]),
+         V("capability_ran", ["uapp_route", "has_capability"]),
+         V("target_capability", ["uapp_route", "target_capability"])],
+        ["guarded_text", "promise_hits", "guard_note"])))
+    nodes.append(N("uapp_chat_answer", X + 3840, Y + 440,
+                   answer("回复｜对话", "{{#uapp_chat_guard.guarded_text#}}")))
+    edges.append(E("uapp_ask_gate", "uapp_chat_llm", "false"))
+    edges.append(E("uapp_chat_llm", "uapp_chat_guard"))
+    edges.append(E("uapp_chat_guard", "uapp_chat_answer"))
 
     # ---- 测试域建域（只在本会话尚未建域时执行）----
     nodes.append(N("uapp_boot_gate", X + 2880, Y - 320, ifelse(

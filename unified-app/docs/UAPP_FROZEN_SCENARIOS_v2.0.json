@@ -1,0 +1,67 @@
+{
+  "document": {
+    "id": "UAPP_FROZEN_SCENARIOS_v2.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority_event": "FOUNDER_ADJUDICATION_UAPP_INTENT_ROUTING_001（2026-08-29，RETURN）",
+    "supersedes": "无。v1.0 继续有效且一字未改；本文件只新增裁定指名的三条定向用例。",
+    "frozen_before_any_run": true,
+    "hash_rule": "外部引用绑定本文件完整 UTF-8 字节的 SHA-256；本文件不自含 hash"
+  },
+  "discipline": {
+    "sampling": "每个正式输入只跑一次；纯传输失败且没有任何模型输出时最多重试一次，两个 Attempt 都保留；禁止同输入重复采样求 PASS",
+    "platform_vs_business": "平台 succeeded 不等于业务交付；能力是否真的执行只认 Dify workflow_node_executions 的节点执行记录",
+    "model_self_report": "模型说『将调用』『已转交』一律不构成能力执行；普通对话节点的任何承诺都不算 PASS",
+    "leak_criterion": "uapp_delivery.leak_hit_count == 0 且人工复核回复正文中不出现内部状态词、字段名、节点名、app_id、ENTRY-xx、能力枚举",
+    "evidence": "只追加；运行证据文件已存在即拒绝覆盖"
+  },
+  "criteria_authorship_disclosure": "本文件的三条用例输入与判据由执行侧按 Founder 裁定原文编译。其中『哪几个能力算正确落点』（UAPP-INTENT-01 的 accepted_capabilities）与『哪条输入算确有歧义』（UAPP-INTENT-02N 的输入选择）带有产品语义判断成分，执行侧已写明理由，Founder 可推翻；推翻即另出判据版本，不在本版原地改。",
+  "scenarios": {
+    "UAPP-INTENT-01": {
+      "purpose": "自然语言意图能被系统自己识别并真实调用专业能力，且同会话追问能沿用上文",
+      "binds": ["UAPP-AC-02", "UAPP-AC-05", "UAPP-AC-12"],
+      "mode": "one_conversation_two_turns",
+      "turns": [
+        {"id": "T1", "input": "有个账号一直没流量，怎么办"},
+        {"id": "T2", "input": "用对应的专业能力来分析"}
+      ],
+      "accepted_capabilities_T1": ["MATRIX", "SINGLE_ACCOUNT_OPERATION"],
+      "accepted_capabilities_reason": "『某个账号一直没流量该怎么办』落在账号层面的诊断/定位（MATRIX）或这个号接下来怎么持续做（SINGLE_ACCOUNT_OPERATION）。用户没有点名任何一条具体内容，因此路由到 CONTENT_BRIEF / CREATIVE_SCRIPT / PRODUCTION_DIRECTOR / PUBLISHING_PACKAGING 属误路由。",
+      "pass": [
+        "T1 与 T2 都有专业能力真实执行：Dify 节点执行记录里 uapp_seam 或 uapp_m3 实际出现且 succeeded",
+        "T1 落点在 accepted_capabilities_T1 之内",
+        "T1 的路由来源为 canvas_triage —— 即系统自己识别，不是用户点名，也不是 M1 已登记",
+        "T2 同样进入能力执行，不因为『用对应的专业能力来分析』这句话本身没有主题就退回对话",
+        "两轮回复正文都是真实分析或精确缺口",
+        "两轮均零内部字段泄漏"
+      ],
+      "fail": [
+        "任一轮只跑到 uapp_chat_llm / uapp_chat_answer 而没有任何能力执行",
+        "回复正文要求用户点名模块、选择 capability，或再次确认是否调用",
+        "回复正文声称『已经转交』『正在推进』『等结果出来』而实际没有能力执行",
+        "T1 落到 accepted_capabilities_T1 之外",
+        "任一轮出现内部字段泄漏"
+      ]
+    },
+    "UAPP-INTENT-02N": {
+      "purpose": "确有能力歧义时只问一个最高影响问题，且不硬猜一个能力就跑",
+      "binds": ["UAPP-AC-06"],
+      "mode": "one_conversation_one_turn",
+      "turns": [
+        {"id": "N1", "input": "这条我想再打磨一下"}
+      ],
+      "ambiguity_reason": "『打磨』在本系统里对应三种实质不同的产物：改口播稿（CREATIVE_SCRIPT）、改拍法（PRODUCTION_DIRECTOR）、改标题封面（PUBLISHING_PACKAGING）。选错会让用户白做一遍，属 Founder 裁定所说的『确实存在能力歧义』。",
+      "pass": [
+        "只问一个问题：回复正文中问号计数为 1",
+        "该问题问的是能定下落点的那一件事，不是背景补充",
+        "本轮不调用任何专业能力 —— 确有歧义时硬猜一个就跑，等于替用户选",
+        "零内部字段泄漏"
+      ],
+      "fail": [
+        "一次问了两个及以上问题",
+        "没问就硬猜一个能力跑了",
+        "既不问也不跑，只回一段空泛的场面话",
+        "出现内部字段泄漏"
+      ]
+    }
+  }
+}

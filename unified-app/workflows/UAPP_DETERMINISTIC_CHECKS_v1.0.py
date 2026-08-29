@@ -335,6 +335,37 @@ def main():
     # M2 的合法枚举，抄自它自己的校验错误原文，不靠记忆。
     M2_FEEDBACK_KINDS = ("observation", "interpretation", "decision")
     fb_kind = json.loads(tpl["feedback_body_template"]).get("kind")
+    # 键名对上不等于类型对上。Dify 会在运行时校验：声明 string 却返回 int，
+    # 整轮直接 HTTP 400。D-19 只比键名放行过一次这种缺陷，这里把类型面补上。
+    type_bad = []
+    for nid, n in nodes.items():
+        d = n["data"]
+        if d.get("type") != "code":
+            continue
+        declared = d.get("outputs") or {}
+        ns_t = {}
+        try:
+            exec(compile(d["code"], "<%s>" % nid, "exec"), ns_t)
+        except Exception:
+            continue
+        import inspect as _insp
+        fn = ns_t.get("main")
+        if not fn:
+            continue
+        try:
+            args = {k: "" for k in _insp.signature(fn).parameters}
+            got = fn(**args)
+        except Exception:
+            continue
+        if not isinstance(got, dict):
+            continue
+        for k, v in got.items():
+            want = (declared.get(k) or {}).get("type")
+            if want == "string" and not isinstance(v, str):
+                type_bad.append("%s.%s -> %s" % (nid, k, type(v).__name__))
+    check("D-30", "代码节点实际返回的类型与声明的 outputs 类型一致（string 就得是 str）",
+          not type_bad, {"mismatches": type_bad})
+
     check("D-21", "反馈 kind 落在 M2 接受的枚举内", fb_kind in M2_FEEDBACK_KINDS,
           {"kind": fb_kind, "allowed": list(M2_FEEDBACK_KINDS)})
 
@@ -367,6 +398,96 @@ def main():
                              "false", "")["side_effect_text"]
     check("D-24", "被跳过的写入会被明确告诉用户，不沉默",
           "没法登记成发布记录" in skip_note, {"note": skip_note})
+
+    # ---- 意图路由桥接（Founder 裁定 UAPP-INTENT-ROUTING-001）----
+    # 全部判在**已发布图里那一份**源码上，判据与运行时同源。
+    ns_r = {}
+    exec(compile(nodes["uapp_route"]["data"]["code"], "<route>", "exec"), ns_r)
+    R = ns_r["main"]
+    CI_EMPTY = json.dumps({"needed_capabilities": []})
+    CI_NAMED = json.dumps({"needed_capabilities": ["CONTENT_BRIEF"]})
+    SNAP = json.dumps({"current_task": {"text": "有个账号一直没流量，怎么办"}})
+
+    bare = R(CI_EMPTY, SNAP, "有个账号一直没流量，怎么办", "ws", "c1",
+             {"intent": "MATRIX", "action": "NONE"}, "")
+    named = R(CI_NAMED, SNAP, "帮我把这条的制作依据定下来", "ws", "c1",
+              {"intent": "MATRIX", "action": "NONE"}, "")
+    chit = R(CI_EMPTY, SNAP, "你好", "ws", "c1", {"intent": "CHITCHAT", "action": "NONE"}, "")
+    check("D-25", "裸自然语言能桥到能力，且用户点名时不被分诊台覆盖",
+          bare["route_mode"] == "CAPABILITY" and bare["target_capability"] == "MATRIX"
+          and bare["intent_source"] == "canvas_triage"
+          and named["target_capability"] == "CONTENT_BRIEF"
+          and named["intent_source"] == "m1_named"
+          and chit["route_mode"] == "DIALOGUE",
+          {"bare": bare["target_capability"], "named": named["target_capability"],
+           "named_source": named["intent_source"], "chitchat": chit["route_mode"]})
+
+    # 已发生的事必须压过意图：用户说"我已经发出去了"时不能被路由抢去跑能力。
+    wb = R(CI_EMPTY, SNAP, "这条我已经发出去了", "ws", "c1",
+           {"intent": "MATRIX", "action": "RECORD_PUBLISH"}, "")
+    check("D-26", "已发生的事压过意图：要登记发布时不被抢去跑能力",
+          wb["route_mode"] == "WRITEBACK" and wb["target_capability"] == "",
+          {"mode": wb["route_mode"], "capability": wb["target_capability"]})
+
+    ns_a = {}
+    exec(compile(nodes["uapp_ask_one"]["data"]["code"], "<ask>", "exec"), ns_a)
+    A = ns_a["main"]
+    one = A("你想打磨的是文案本身，还是拍法，还是标题封面？", "")
+    three = A("你要做哪个平台？另外这条是图文还是视频？还有主题方向定了吗？", "")
+    empty = A("", "")
+    amb = R(CI_EMPTY, SNAP, "这条我想再打磨一下", "ws", "c1",
+            {"intent": "AMBIGUOUS", "action": "NONE",
+             "decisive_question_text": "你想打磨的是文案本身，还是拍法，还是标题封面？"}, "")
+    amb_noq = R(CI_EMPTY, SNAP, "这条我想再打磨一下", "ws", "c1",
+                {"intent": "AMBIGUOUS", "action": "NONE"}, "")
+    check("D-27", "确有歧义时只问一个：多问被收成一个，没问题时不代拟",
+          int(one["question_count"]) == 1 and int(three["question_count"]) == 1
+          and empty["one_question"] == "" and amb["route_mode"] == "ASK_ONE"
+          and amb_noq["route_mode"] != "ASK_ONE",
+          {"one": one["question_count"], "three_collapsed_to": three["question_count"],
+           "empty_not_fabricated": empty["one_question"] == "",
+           "ambiguous_routes_to": amb["route_mode"],
+           "no_question_falls_back_to": amb_noq["route_mode"]})
+
+    ns_g = {}
+    exec(compile(nodes["uapp_chat_guard"]["data"]["code"], "<cg>", "exec"), ns_g)
+    G = ns_g["main"]
+    dirty = ("这个情况我明白。\n你希望现在就调用相应的专业能力来做判断吗？\n"
+             "我这边已经转交给对应模块，等结果出来告诉你。")
+    clean = "你好，我在。有什么经营上的事都可以直接说。"
+    gd = G(dirty, "false", "")
+    gc = G(clean, "false", "")
+    gr = G(dirty, "true", "MATRIX")
+    check("D-28", "没调用就不许说已转交：脏正文被删、干净正文零改动、有调用时不适用",
+          int(gd["promise_hits"]) >= 2 and "转交" not in gd["guarded_text"]
+          and "等结果出来" not in gd["guarded_text"]
+          and gc["guarded_text"] == clean and int(gc["promise_hits"]) == 0
+          and gr["guarded_text"] == dirty.strip(),
+          {"dirty_hits": gd["promise_hits"], "clean_untouched": gc["guarded_text"] == clean,
+           "not_applicable_when_ran": gr["guarded_text"] == dirty.strip()})
+
+    # 结构面：闲聊分支必须经过守卫才能到 answer，不能有绕过守卫的直达边。
+    bypass = [e for e in graph["edges"]
+              if e["source"] == "uapp_chat_llm" and e["target"] != "uapp_chat_guard"]
+    check("D-29", "闲聊分支不存在绕过空头支票守卫的直达路径",
+          not bypass and any(e["source"] == "uapp_chat_guard"
+                             and e["target"] == "uapp_chat_answer" for e in graph["edges"]),
+          {"bypass_edges": [e["id"] for e in bypass]})
+
+    # 分诊台被截断过一次：finish_reason=length、completion_tokens 打满 800，
+    # JSON 一个字没输出，structured_output 全 null，路由静默落到 DIALOGUE。
+    # 那次失败在证据里长得和"判了闲聊"一模一样。两条防线：预算下限 + 失败可见。
+    act_max = ((nodes["uapp_action"]["data"].get("model") or {})
+               .get("completion_params") or {}).get("max_tokens")
+    check("D-31", "分诊台的输出预算不低于 2000，避免推理烧光预算后静默不分类",
+          isinstance(act_max, int) and act_max >= 2000, {"max_tokens": act_max})
+
+    tf_none = R(CI_EMPTY, SNAP, "这条我想再打磨一下", "ws", "c1", {}, "")
+    tf_chit = R(CI_EMPTY, SNAP, "你好", "ws", "c1", {"intent": "CHITCHAT", "action": "NONE"}, "")
+    check("D-32", "「分诊台没给出东西」与「分诊台判了闲聊」在证据里可区分",
+          tf_none.get("triage_failed") == "true" and tf_chit.get("triage_failed") == "false",
+          {"nothing_returned": tf_none.get("triage_failed"),
+           "classified_chitchat": tf_chit.get("triage_failed")})
 
     failed = [r for r in RESULTS if r["result"] != "PASS"]
     out = {"app_id": APP_ID, "graph_md5": gmd5, "graph_sha256": sha(json.dumps(

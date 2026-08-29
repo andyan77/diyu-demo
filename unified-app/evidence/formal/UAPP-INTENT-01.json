@@ -1,0 +1,93 @@
+{
+  "case_id": "UAPP-INTENT-01",
+  "attempt": "1",
+  "purpose": "自然语言意图能被系统自己识别并真实调用专业能力，且同会话追问能沿用上文",
+  "binds": [
+    "UAPP-AC-02",
+    "UAPP-AC-05",
+    "UAPP-AC-12"
+  ],
+  "frozen_criteria": {
+    "path": "UAPP_FROZEN_SCENARIOS_v2.0.json",
+    "sha256": "518eac0378d9157ab44aa9b3e6cd5916454e8f58d842afdae1f80cdd160671e6",
+    "pass": [
+      "T1 与 T2 都有专业能力真实执行：Dify 节点执行记录里 uapp_seam 或 uapp_m3 实际出现且 succeeded",
+      "T1 落点在 accepted_capabilities_T1 之内",
+      "T1 的路由来源为 canvas_triage —— 即系统自己识别，不是用户点名，也不是 M1 已登记",
+      "T2 同样进入能力执行，不因为『用对应的专业能力来分析』这句话本身没有主题就退回对话",
+      "两轮回复正文都是真实分析或精确缺口",
+      "两轮均零内部字段泄漏"
+    ],
+    "fail": [
+      "任一轮只跑到 uapp_chat_llm / uapp_chat_answer 而没有任何能力执行",
+      "回复正文要求用户点名模块、选择 capability，或再次确认是否调用",
+      "回复正文声称『已经转交』『正在推进』『等结果出来』而实际没有能力执行",
+      "T1 落到 accepted_capabilities_T1 之外",
+      "任一轮出现内部字段泄漏"
+    ],
+    "expected_capability": null
+  },
+  "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
+  "end_user": "uapp-formal-uapp-intent-01",
+  "conversation_id": "",
+  "graph_sha256_at_run": "881673598dd5257fc30bf188289180ec73c683e7a3d338cbd1bfc51c09460904",
+  "turns": [
+    {
+      "query": "有个账号一直没流量，怎么办",
+      "uploaded_file": null,
+      "attempts": 1,
+      "attempt_records": [
+        {
+          "http_status": 400,
+          "elapsed_seconds": 31.42,
+          "body": {
+            "code": "invalid_param",
+            "message": "Run failed: Output promise_hits must be a string, got int instead.",
+            "status": 400
+          }
+        }
+      ],
+      "http_status": 400,
+      "elapsed_seconds": 31.42,
+      "message_id": "",
+      "conversation_id": "",
+      "workflow_run_id": "",
+      "answer": null,
+      "nodes_executed": [],
+      "node_detail": [],
+      "turn_id": "T1"
+    },
+    {
+      "query": "用对应的专业能力来分析",
+      "uploaded_file": null,
+      "attempts": 1,
+      "attempt_records": [
+        {
+          "http_status": 400,
+          "elapsed_seconds": 30.37,
+          "body": {
+            "code": "invalid_param",
+            "message": "Run failed: Output promise_hits must be a string, got int instead.",
+            "status": 400
+          }
+        }
+      ],
+      "http_status": 400,
+      "elapsed_seconds": 30.37,
+      "message_id": "",
+      "conversation_id": "",
+      "workflow_run_id": "",
+      "answer": null,
+      "nodes_executed": [],
+      "node_detail": [],
+      "turn_id": "T2"
+    }
+  ],
+  "m2_snapshot": {
+    "artifacts": "2163",
+    "content_versions": "2451",
+    "publish_instances": "1590",
+    "feedback": "136"
+  },
+  "note": "本文件只记录发生了什么，不在这里下 PASS/FAIL 判定；判定按冻结判据另行落盘。"
+}

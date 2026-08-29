@@ -1,0 +1,63 @@
+{
+  "case_id": "UAPP-INTENT-02N",
+  "attempt": "1",
+  "purpose": "确有能力歧义时只问一个最高影响问题，且不硬猜一个能力就跑",
+  "binds": [
+    "UAPP-AC-06"
+  ],
+  "frozen_criteria": {
+    "path": "UAPP_FROZEN_SCENARIOS_v2.0.json",
+    "sha256": "518eac0378d9157ab44aa9b3e6cd5916454e8f58d842afdae1f80cdd160671e6",
+    "pass": [
+      "只问一个问题：回复正文中问号计数为 1",
+      "该问题问的是能定下落点的那一件事，不是背景补充",
+      "本轮不调用任何专业能力 —— 确有歧义时硬猜一个就跑，等于替用户选",
+      "零内部字段泄漏"
+    ],
+    "fail": [
+      "一次问了两个及以上问题",
+      "没问就硬猜一个能力跑了",
+      "既不问也不跑，只回一段空泛的场面话",
+      "出现内部字段泄漏"
+    ],
+    "expected_capability": null
+  },
+  "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
+  "end_user": "uapp-formal-uapp-intent-02n",
+  "conversation_id": "",
+  "graph_sha256_at_run": "881673598dd5257fc30bf188289180ec73c683e7a3d338cbd1bfc51c09460904",
+  "turns": [
+    {
+      "query": "这条我想再打磨一下",
+      "uploaded_file": null,
+      "attempts": 1,
+      "attempt_records": [
+        {
+          "http_status": 400,
+          "elapsed_seconds": 38.42,
+          "body": {
+            "code": "invalid_param",
+            "message": "Run failed: Output promise_hits must be a string, got int instead.",
+            "status": 400
+          }
+        }
+      ],
+      "http_status": 400,
+      "elapsed_seconds": 38.42,
+      "message_id": "",
+      "conversation_id": "",
+      "workflow_run_id": "",
+      "answer": null,
+      "nodes_executed": [],
+      "node_detail": [],
+      "turn_id": "N1"
+    }
+  ],
+  "m2_snapshot": {
+    "artifacts": "2163",
+    "content_versions": "2451",
+    "publish_instances": "1590",
+    "feedback": "136"
+  },
+  "note": "本文件只记录发生了什么，不在这里下 PASS/FAIL 判定；判定按冻结判据另行落盘。"
+}

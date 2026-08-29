@@ -95,7 +95,14 @@ def adjudicate(case_id):
                 "reason": "ABSENT：没有这一例的正式证据"}
     ev = json.load(io.open(path, encoding="utf-8"))
 
-    frozen_sha = hashlib.sha256(io.open(SCEN, "rb").read()).hexdigest()
+    # 判据文件跟着证据自己记的那一份走。写死 v1.0 会把 v2.0 的证据误判成 STALE：
+    # 那不是"判据变了"，是"这份证据本来就绑另一份判据"。
+    scen_path = os.path.join(DOCS, ev["frozen_criteria"].get("path")
+                             or os.path.basename(SCEN))
+    if not os.path.exists(scen_path):
+        return {"case_id": case_id, "verdict": "NOT_VERIFIED",
+                "reason": "证据绑定的判据文件不在仓库里：" + os.path.basename(scen_path)}
+    frozen_sha = hashlib.sha256(io.open(scen_path, "rb").read()).hexdigest()
     if ev["frozen_criteria"]["sha256"] != frozen_sha:
         return {"case_id": case_id, "verdict": "NOT_VERIFIED", "freshness": "STALE",
                 "reason": "证据绑定的判据哈希与当前判据文件不一致，需定向复验",
@@ -236,6 +243,70 @@ def adjudicate(case_id):
         C("WD-02", "本例工作区内确实存在已撤回的素材行", wd != "0",
           {"workspace_id": ws, "withdrawn_rows_in_this_workspace": wd,
            "note": "限定本例工作区；库内其余撤回行属既有数据"})
+
+    # ---- 意图路由（Founder 裁定 UAPP-INTENT-ROUTING-001）----
+    # 全部判在**真实答复正文**与**Dify 节点执行记录**上。模型说"将调用"一律不算。
+    _EMPTY_PROMISE = ("已经转交", "已转交", "正在推进", "等结果出来", "等它出来",
+                      "将为你调用", "会为你调用", "马上调用", "稍后调用")
+    _ASKS_USER_TO_PICK = ("要不要调用", "需不需要调用", "你希望现在就调用",
+                          "调用哪个专业能力", "选择哪个模块", "确认下一步要调用")
+
+    def _cap_ran(t):
+        """能力真的跑了没有——只认节点执行记录，不认正文。"""
+        got = []
+        for n in t.get("nodes_executed") or []:
+            if n.get("node_id") in ("uapp_seam", "uapp_m3") and n.get("status") == "succeeded":
+                got.append(n["node_id"])
+        return got
+
+    if case_id.startswith("UAPP-INTENT-01"):
+        blk = json.load(io.open(scen_path, encoding="utf-8"))["scenarios"]["UAPP-INTENT-01"]
+        accepted = blk["accepted_capabilities_T1"]
+        t1, t2 = turns[0], (turns[1] if len(turns) > 1 else {})
+        r1 = node_out(t1, "uapp_route") or {}
+
+        C("IR-01", "T1 有专业能力真实执行（节点执行记录）", bool(_cap_ran(t1)),
+          {"ran": _cap_ran(t1), "route_mode": r1.get("route_mode")})
+        landed = r1.get("target_capability") or (
+            "SINGLE_ACCOUNT_OPERATION" if r1.get("route_mode") == "OPERATION_ONLY" else "")
+        C("IR-02", "T1 落点在冻结判据接受的能力之内", landed in accepted,
+          {"landed": landed, "accepted": accepted})
+        C("IR-03", "T1 的落点由系统自己识别，不是用户点名",
+          r1.get("intent_source") == "canvas_triage",
+          {"intent_source": r1.get("intent_source"), "intent": r1.get("intent"),
+           "reason": (r1.get("intent_reason") or "")[:200]})
+        C("IR-04", "T2 追问同样进入能力执行，不退回对话",
+          bool(_cap_ran(t2)) if t2 else False,
+          {"ran": _cap_ran(t2) if t2 else [],
+           "route_mode": (node_out(t2, "uapp_route") or {}).get("route_mode") if t2 else None})
+
+        scrub = _scrubber()
+        bad_promise, bad_pick, leaked = [], [], []
+        for t in (t1, t2):
+            if not t:
+                continue
+            ans = t.get("answer") or ""
+            if any(w in ans for w in _EMPTY_PROMISE) and not _cap_ran(t):
+                bad_promise.append(t.get("turn_id"))
+            if any(w in ans for w in _ASKS_USER_TO_PICK):
+                bad_pick.append(t.get("turn_id"))
+            if scrub(ans)[1]:
+                leaked.append({"turn": t.get("turn_id"), "patterns": scrub(ans)[1]})
+        C("IR-05", "没有能力执行时不许声称已转交/正在推进/等结果", not bad_promise,
+          {"turns_hit": bad_promise})
+        C("IR-06", "不要求用户点名模块或确认是否调用", not bad_pick, {"turns_hit": bad_pick})
+        C("IR-07", "两轮回复正文零内部字段泄漏", not leaked, {"turns_hit": leaked})
+
+    if case_id.startswith("UAPP-INTENT-02N"):
+        t1 = turns[0]
+        ans = t1.get("answer") or ""
+        qn = ans.count("?") + ans.count("？")
+        C("AM-01", "只问一个问题", qn == 1, {"question_marks": qn, "answer": ans[:300]})
+        C("AM-02", "确有歧义时不硬猜一个能力就跑", not _cap_ran(t1),
+          {"ran": _cap_ran(t1),
+           "route_mode": (node_out(t1, "uapp_route") or {}).get("route_mode")})
+        scrub = _scrubber()
+        C("AM-03", "零内部字段泄漏", not scrub(ans)[1], {"patterns": scrub(ans)[1]})
 
     if case_id == "UAPP-RECOVERY-01":
         keys = m2("select idempotency_key, count(*) from feedback_records "

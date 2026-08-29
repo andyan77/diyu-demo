@@ -503,7 +503,7 @@ next_stage_default: false
 
 ---
 
-### `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` Checkpoint（2026-08-29，任务分支收口，**非终态**）
+### `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` Checkpoint（2026-08-29，意图路由复验轮，**非终态**）
 
 分区账本（状态、下一动作、L1/L3/L4/L5 全部细节都在里面，本文件不复制）：
 [`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)
@@ -511,22 +511,31 @@ next_stage_default: false
 ```yaml
 task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
 task_progress: IN_PROGRESS
-terminal_state: UNSET            # 合同 no_terminal_state_before_formula=true，公式不成立
-checkpoint: 任务分支收口完成，停在 Founder 裁决门
-ac_pass_current: [AC-01, AC-02, AC-04, AC-05, AC-10, AC-11]
-ac_fail:         [AC-03, AC-06, AC-07]
-ac_not_verified: [AC-08, AC-09, AC-12]
-open_technical_debt: 10          # TD-UAPP-01..10
+terminal_state: UNSET
+checkpoint: 意图路由桥接已修并复验；歧义负例未成立，停在 Founder 裁决门
+founder_adjudication: FOUNDER_ADJUDICATION_UAPP_INTENT_ROUTING_001 = RETURN（2026-08-29）
+graph: 40e4585825bb7d211f357d89136cb2294936ca54287333fef49b6f74e5b64f2b  # 69 节点 / 81 边
+deterministic_checks: 32 PASS / 0 FAIL
+ac_pass_current: [AC-01, AC-10, AC-11]
+ac_fail:         [AC-02, AC-03, AC-05, AC-06, AC-07]
+ac_return:       [AC-12]
+ac_not_verified: [AC-04, AC-08, AC-09]
+open_technical_debt: 16          # TD-UAPP-01..16
 main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2          # 未动
 origin_main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2    # 未动
 force_push: NONE
 ```
 
-**`main` 未合并的原因是合同条件不成立**，不是遗漏：
-`main_merge_and_push: CONDITIONALLY_AUTHORIZED_AFTER_UAPP_AC_01_TO_12`，
-当前六项成立、三项 `FAIL`、两项从未运行、`AC-12` 未实测。
-**`AC-12` 没有被代判**——Founder 的指令是「在已披露技术债之下继续收口」，不是「我实测过并接受」。
+**本轮真正验证成立的只有一件事**：自然语言意图能被系统自己识别并真实调用专业能力，
+同会话追问能沿用上文。证据是两张不同的图上各跑一次、结论一致的 `UAPP-INTENT-01`，
+判在 Dify 节点执行记录上，不认模型自述。
 
-**下一动作**：取得 Founder 对 TD-UAPP-03（是否改 M1 已接受的对话语义）与
-TD-UAPP-01（冻结判据 T1 输入是否本就缺「内容承诺」）的裁定；两项都在 Founder 裁决域内，
-执行侧不得代选。判定信号见分区账本 L2 表。
+**Founder 裁定的解禁条件未成立**：裁定点名三条用例，过了两条，
+能力歧义负例 `UAPP-INTENT-02N` `FAIL`。`AC-02`/`05`/`06`/`12` 照旧保持 `FAIL`/`RETURN`，
+**执行侧不因为主路通了就把它们提上去**。`main` 合并继续禁止。
+
+**下一动作**：取得 Founder 对 TD-UAPP-16 的裁决——「这条我想再打磨一下」到底算不算
+「确实存在能力歧义」。判据侧与被测对象侧两种可能，证据不足以定案，执行侧无权自选。
+判定信号见分区账本 L2 表。
+
+---

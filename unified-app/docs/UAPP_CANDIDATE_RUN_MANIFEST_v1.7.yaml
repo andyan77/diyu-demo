@@ -1,0 +1,135 @@
+{
+  "document": {
+    "id": "UAPP_CANDIDATE_RUN_MANIFEST_v1.7",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "frozen_before_formal_runs": true,
+    "hash_rule": "外部引用绑定本文件完整 UTF-8 字节的 SHA-256；本文件不自含 hash"
+  },
+  "application": {
+    "name": "DIYU V1 · Unified Founder Canvas",
+    "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
+    "workflow_id": "33d83b75-9d4a-4a54-b67f-a73343a315cd",
+    "mode": "advanced-chat",
+    "app_status": "normal",
+    "published_version": "2026-08-29 14:03:28.168902",
+    "published_version_name": "uapp-thin-slice-v1.0",
+    "graph_sha256": "00d9dcddfc38950ce013d0296eb456a0523a4e7afd35de6140a2bc47106e94ea",
+    "graph_md5": "de90a063d1276db9fb45637d20db3f14",
+    "node_count": 69,
+    "edge_count": 81
+  },
+  "models": {
+    "m1_shadow": {
+      "provider": "langgenius/deepseek/deepseek",
+      "name": "deepseek-v4-flash",
+      "completion_params": {
+        "max_tokens": 10000,
+        "top_p": 0.8
+      }
+    },
+    "uapp_action": {
+      "provider": "langgenius/deepseek/deepseek",
+      "name": "deepseek-v4-flash",
+      "completion_params": {
+        "max_tokens": 800,
+        "top_p": 0.8
+      }
+    },
+    "uapp_chat_llm": {
+      "provider": "langgenius/deepseek/deepseek",
+      "name": "deepseek-v4-flash",
+      "completion_params": {
+        "max_tokens": 1200,
+        "temperature": 0.6,
+        "top_p": 0.9
+      }
+    }
+  },
+  "task_providers": {
+    "diyu_uapp_m3": {
+      "provider_id": "9ea86217-8791-489c-9a96-b880ae558ac5",
+      "bound_app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+      "pinned_version": "2026-08-29 03:29:56.878929"
+    },
+    "diyu_uapp_seam": {
+      "provider_id": "f8d63527-8c45-4823-8159-443cef37240d",
+      "bound_app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+      "pinned_version": "2026-08-29 03:34:59.916878"
+    },
+    "diyu_uapp_hop": {
+      "provider_id": "fd3f6f29-237f-4bbe-a820-5d38076ab52e",
+      "bound_app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+      "pinned_version": "2026-08-28 07:28:55.139349"
+    }
+  },
+  "final_fp_bindings": {
+    "M3": {
+      "app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+      "graph_md5": "cd93757bcf8ad322f3b32fc43b2da3ff"
+    },
+    "SEAM": {
+      "app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+      "graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+    },
+    "HOP_ADAPTER": {
+      "app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+      "graph_md5": "d230b62fc9ebea1c7ee2426f13f9d279"
+    },
+    "MATRIX": {
+      "app_id": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+      "graph_md5": "6cdaeac9cacf69fbeea4bd25e1536ace"
+    },
+    "CAMPAIGN": {
+      "app_id": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+      "graph_md5": "4876dacc43a73741b41c5a3083796347"
+    },
+    "CONTENT_BRIEF": {
+      "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+      "graph_md5": "0c841642a71feedfb327ffb76aec0ddd"
+    },
+    "CREATIVE_SCRIPT": {
+      "app_id": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+      "graph_md5": "a1cd859d5b88d0d025f336665ca94e51"
+    },
+    "PRODUCTION_DIRECTOR": {
+      "app_id": "13cfabd5-f592-4354-a304-47098b765697",
+      "graph_md5": "964e9a947dc9790d1de82496469689ad"
+    },
+    "PUBLISHING_PACKAGING": {
+      "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+      "graph_md5": "788c8555aca09e6fa6d979f237f70157"
+    }
+  },
+  "m1_source": {
+    "repo_path": "decision-chain/workflows/m1_context_compiler_v0.1.py",
+    "repo_sha256": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b",
+    "in_graph_sha256": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b",
+    "verbatim": true
+  },
+  "m3_method_references_sha256": {
+    "fashion-and-market.md": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+    "six-skill-methods.md": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+    "operations.md": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+    "acceptance-fixtures.md": "b6e4420a1f3351391ea8b4882016aaa852625fdf0af165633babf3c322452122"
+  },
+  "canvas_own_node_sources_sha256": {
+    "uapp_route": "ccf47f73945c31c0673fd302c233ec07df28ba9d01dc5c5c980d45ad20128ee5",
+    "uapp_ctx": "5efb4adc7b8ec4afc8ac706f253c5734c007fae19774a04c3a5ddd08118ec508",
+    "uapp_delivery": "8856fe9d1726fe0f200d149a0380fce432e8e55768ab9ded4e3c94831561382f",
+    "uapp_wb_prep": "8d2d3e2b5aa479a25b258b1ce830cf1d244a081b7f4e81b0e0a52b308618055d",
+    "uapp_side": "551e7426ee6f3b5f83eaf9882b0131dc9ce3ec06027bdc86e59a776af5374db7",
+    "m1_compiler": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b"
+  },
+  "m2_service": {
+    "base_url": "http://diyu-m2-app:8000",
+    "reached_from": "Dify HTTP 节点经 ssrf_proxy:3128",
+    "test_domain_policy": "会话级 workspace/account/cycle/task；publish/feedback 恒 is_test=true 且 is_simulated=true"
+  },
+  "git": {
+    "commit": "fdc8cff807d930be52be1568fb0f1c9695a256e5",
+    "branch": "codex/v1-unified-dify-application-001",
+    "tracked_clean": false
+  },
+  "sampling_rule": "每个正式输入一次；纯传输失败且无模型输出时最多重试一次并保留两个 Attempt；不得重复采样追求 PASS",
+  "evidence_policy": "只追加。运行证据文件名一旦存在即拒绝覆盖（见 UAPP_RUN_v1.0.py）。"
+}

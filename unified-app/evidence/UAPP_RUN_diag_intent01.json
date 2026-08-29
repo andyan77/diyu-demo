@@ -1,0 +1,239 @@
+{
+  "tag": "diag_intent01",
+  "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
+  "user": "uapp-diag-intent",
+  "query": "有个账号一直没流量，怎么办",
+  "conversation_id_in": "",
+  "uploaded_file": null,
+  "http_status": 200,
+  "elapsed_seconds": 27.97,
+  "message_id": "1c646602-2ecd-432a-85b2-caafbc119988",
+  "conversation_id": "1b5d3e4f-80d7-46a4-b4ac-18e4e3bce2a8",
+  "workflow_run_id": "977cf396-22dd-4097-bec9-61b19b81186e",
+  "answer": "这个情况我明白，不过账号为什么没流量、具体该怎么调整，属于内容策略方面的专业判断，我现在这个环节没法直接给结论。我能做的就是先帮你把问题记下来，确认下一步要调用哪个专业能力来处理。你希望现在就调用相应的专业能力来做判断吗？或者可以先补充点背景信息，比如这个账号主要发什么内容、大概发了多少条了？",
+  "error": null,
+  "nodes_executed": [
+    {
+      "idx": 1,
+      "node_id": "uapp_start",
+      "title": "开始",
+      "type": "start",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.000105
+    },
+    {
+      "idx": 2,
+      "node_id": "m1_extract",
+      "title": "资料抽取｜上传文件转文本",
+      "type": "document-extractor",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 6.4e-05
+    },
+    {
+      "idx": 3,
+      "node_id": "m1_join",
+      "title": "资料抽取｜拼接为文本",
+      "type": "code",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.046683
+    },
+    {
+      "idx": 4,
+      "node_id": "m1_shadow",
+      "title": "影子节点｜只提候选信号补丁",
+      "type": "llm",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 20.194306
+    },
+    {
+      "idx": 5,
+      "node_id": "m1_compiler",
+      "title": "状态机｜任务上下文编译与调用意图判定",
+      "type": "code",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.063966
+    },
+    {
+      "idx": 6,
+      "node_id": "m1_save_snapshot",
+      "title": "写回｜任务上下文快照",
+      "type": "assigner",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.000641
+    },
+    {
+      "idx": 7,
+      "node_id": "uapp_action",
+      "title": "分类｜本轮要做哪一类经营动作",
+      "type": "llm",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 2.720939
+    },
+    {
+      "idx": 8,
+      "node_id": "uapp_route",
+      "title": "路由｜取 M1 已给出的能力调用意图",
+      "type": "code",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.046257
+    },
+    {
+      "idx": 9,
+      "node_id": "uapp_gate",
+      "title": "本轮要动业务链吗",
+      "type": "if-else",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.000101
+    },
+    {
+      "idx": 10,
+      "node_id": "uapp_chat_llm",
+      "title": "回复｜自然对话",
+      "type": "llm",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 4.482257
+    },
+    {
+      "idx": 11,
+      "node_id": "uapp_chat_answer",
+      "title": "回复｜对话",
+      "type": "answer",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 8.4e-05
+    }
+  ],
+  "node_detail": [
+    {
+      "idx": 1,
+      "node_id": "uapp_start",
+      "title": "开始",
+      "type": "start",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.000105,
+      "inputs": "{}",
+      "outputs": "{}"
+    },
+    {
+      "idx": 2,
+      "node_id": "m1_extract",
+      "title": "资料抽取｜上传文件转文本",
+      "type": "document-extractor",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 6.4e-05,
+      "inputs": "{\"variable_selector\": [\"sys\", \"files\"]}",
+      "outputs": "{\"text\": []}"
+    },
+    {
+      "idx": 3,
+      "node_id": "m1_join",
+      "title": "资料抽取｜拼接为文本",
+      "type": "code",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.046683,
+      "inputs": "{\"file_texts\": []}",
+      "outputs": "{\"material_text\": \"\"}"
+    },
+    {
+      "idx": 4,
+      "node_id": "m1_shadow",
+      "title": "影子节点｜只提候选信号补丁",
+      "type": "llm",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 20.194306,
+      "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+      "outputs": "{\"text\": \"{\\\"route_intent\\\": \\\"DISCUSS\\\", \\\"current_task_text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"primary_goal_text\\\": \\\"\\\", \\\"secondary_goal_text\\\": \\\"\\\", \\\"priority_order_text\\\": \\\"\\\", \\\"non_sacrifice_constraint_text\\\": \\\"\\\", \\\"business_goal_category\\\": \\\"TRAFFIC\\\", \\\"requested_capabilities_text\\\": \\\"\\\", \\\"confirmation_signal\\\": \\\"NONE\\\", \\\"side_question\\\": \\\"\\\", \\\"user_message_summary\\\": \\\"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u95ee\\u600e\\u4e48\\u529e\\\", \\\"account_stage_text\\\": \\\"\\\", \\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\", \\\"desired_output_text\\\": \\\"\\\", \\\"cycle_available_text\\\": \\\"\\\", \\\"baseline_text\\\": \\\"\\\", \\\"evidence_text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"evidence_nature\\\": \\\"FACT\\\", \\\"evidence_scope\\\": \\\"UNSTATED\\\", \\\"evidence_provenance\\\": \\\"USER_DIRECT\\\", \\\"handled_thread_id\\\": \\\"\\\", \\\"cancel_target\\\": \\\"NONE\\\", \\\"account_anchor_text\\\": \\\"\\\", \\\"cta_target_text\\\": \\\"\\\", \\\"cta_risk_tier\\\": \\\"UNSTATED\\\", \\\"cta_conversion_goal_text\\\": \\\"\\\", \\\"cta_access_path_text\\\": \\\"\\\", \\\"cta_authorization_signal\\\": \\\"NONE\\\", \\\"cta_preference_signal\\\": \\\"NONE\\\"}\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->We need answer JSON only. Need parse user: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" Means \\\"There is an account that keeps having no traffic, what to do?\\\" Asked question. Route intent: DISCUSS likely (\\u5728\\u95ee\\u600e\\u4e48\\u529e). current_task_text: maybe \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" or \\\"\\u95ee\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u600e\\u4e48\\u529e\\\". But current_task_text is user said task description. They are asking. Maybe \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" directly. primary_goal_text: They express business goal? No, not clear. They mention account has no traffic; maybe traffic goal? But phrase \\\"\\u6ca1\\u6d41\\u91cf\\\" is describing problem, not expressing category? Could be TRAFFIC? Need careful. business_goal_category: user this round expresses operation goal category. \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" = wants traffic? But they are asking what to do. Could be UNSTATED? The category is maybe TRAFFIC (\\u6d41\\u91cf). The field description says user expressed business goal category; one each round. They mention no traffic, so they're concerned about traffic. I'd choose TRAFFIC. Yet maybe they didn't explicitly say \\\"\\u6211\\u8981\\u6d41\\u91cf\\\" but \\\"\\u6ca1\\u6d41\\u91cf\\\" implies traffic. Need choose. The system is a shadow parser and should not infer? It says don't infer if not said. But \\\"\\u6ca1\\u6d41\\u91cf\\\" is direct expression of traffic issue. Could mark TRAFFIC. Hmm.\\n\\nNeed output all 33 fields. Let's review schema keys exactly:\\naccount_anchor_text\\naccount_stage_text\\nbaseline_text\\nbusiness_goal_category\\ncancel_target\\nconfirmation_signal\\nconflict_allowed\\ncontroversy_allowed\\ncta_access_path_text\\ncta_authorization_signal\\ncta_conversion_goal_text\\ncta_preference_signal\\ncta_risk_tier\\ncta_target_text\\ncurrent_task_text\\ncycle_available_text\\ndesired_output_text\\nevidence_nature\\nevidence_provenance\\nevidence_scope\\nevidence_text\\nhandled_thread_id\\nnon_sacrifice_constraint_text\\nplot_allowed\\nprimary_goal_text\\npriority_order_text\\nremix_allowed\\nrequested_capabilities_text\\nroute_intent\\nsecondary_goal_text\\nside_question\\ntemporal_scope\\nuser_message_summary\\n\\nNeed all.\\n\\nDetermine each:\\nroute_intent: DISCUSS. They ask \\\"\\u600e\\u4e48\\u529e\\\" = discussing/asking. Not EXECUTE_REQUEST because asking question.\\n\\ncurrent_task_text: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" maybe as is.\\n\\ntemporal_scope: \\\"\\u4e00\\u76f4\\\" suggests long-term? But task unclear. User didn't specify. Could be UNSTATED. \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" means persistent concern; but no explicit timeframe. Maybe UNSTATED. Hmm. TEMPORAL_SCOPE enum: UNSTATED, ONE_ITEM, CYCLE, LONG_TERM. \\\"\\u4e00\\u76f4\\\" could indicate long-term issue. But task temporal scope? Not defined. I'd put UNSTATED to avoid inference.\\n\\nprimary_goal_text: Did user express primary goal? \\\"\\u600e\\u4e48\\u529e\\\" is a question, not a goal statement. The underlying goal of getting traffic is implicit. Field says user expressed main goal; \\\"\\u8dd1\\u4e00\\u4e0b\\\" are commands then blank. Here user didn't say \\\"\\u6211\\u8981\\u6d41\\u91cf\\\"; only says account no traffic. Maybe primary goal can be \\\"\\u89e3\\u51b3\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u7684\\u95ee\\u9898\\\"? But it's not an operating goal? Hmm. The field designated primary business goal. Better leave empty because user only described problem and asked. But maybe \\\"\\u8ba9\\u8d26\\u53f7\\u6709\\u6d41\\u91cf\\\" is a business goal underlying. However instruction says \\\"\\u4e0d\\u8981\\u66ff\\u7528\\u6237\\u63a8\\u65ad\\\". Since they said \\\"\\u6ca1\\u6d41\\u91cf\\\" maybe this is expressing traffic goal? They didn't say \\\"\\u60f3\\u8981\\u6d41\\u91cf\\\" but \\\"\\u6ca1\\u6d41\\u91cf\\\" naturally implies they want traffic. Need decide. Perhaps primary_goal_text: \\\"\\\".\\n\\nsecondary_goal_text: \\\"\\\".\\npriority_order_text: \\\"\\\".\\nnon_sacrifice_constraint_text: \\\"\\\".\\nbusiness_goal_category: Possibly TRAFFIC or UNSTATED. The user explicitly says \\\"\\u6ca1\\u6d41\\u91cf\\\" \\u2014 that's about traffic. Hmm. The field \\\"\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\" and \\\"\\u7528\\u6237\\u672c\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\" not necessarily explicit keyword. \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is a problem about traffic, likely TRAFFIC. We can set TRAFFIC. But need not infer? Let's think of candidate environment: It's a shadow parser, a patch. Should reflect signals. \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" The user wants advice on an account with no traffic. The goal category is traffic (\\u6d41\\u91cf). It might be useful. I'd pick TRAFFIC.\\n\\nrequested_capabilities_text: no capability named. \\\"\\u600e\\u4e48\\u529e\\\" is asking general, no specific capability. Empty.\\n\\nconfirmation_signal: NONE. They aren't responding to confirmation.\\n\\nside_question: \\\"\\\".\\n\\nuser_message_summary: \\\"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u95ee\\u600e\\u4e48\\u529e\\\" or paraphrase. One sentence.\\n\\naccount_stage_text: They didn't say stage, just account no traffic. Could be \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" not stage. Since field asks current stage. I'd leave empty. Maybe \\\"\\u6ca1\\u6d41\\u91cf\\\" could count as stage? It says like \\\"\\u521a\\u8d77\\u53f7\\\" etc. No, not explicit. Leave empty.\\n\\nplot_allowed/remix_allowed/conflict_allowed/controversy_allowed: UNSTATED all.\\n\\ndesired_output_text: no publication quantity. Empty.\\ncycle_available_text: empty.\\nbaseline_text: empty.\\n\\nevidence_text: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is a fact statement, could be evidence. Need one. This is central. Evidence_text = \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\". nature FACT? It's a stated fact about account. provenance USER_DIRECT. scope UNSTATED because user didn't say applies to this account? Actually they said \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" - an account, maybe THIS_ACCOUNT? But \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" not identified and maybe general. User didn't state scope. Need choose UNSTATED. Hmm. But evidence_scope should indicate if user explained applicability. They didn't. UNSTATED.\\n\\nhandled_thread_id: no open_threads. Empty.\\n\\ncancel_target: NONE.\\n\\naccount_anchor_text: They mention \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" but no identity. Empty.\\n\\ncta_target_text: no CTA. Empty.\\ncta_risk_tier: UNSTATED.\\ncta_conversion_goal_text: empty.\\ncta_access_path_text: empty.\\ncta_authorization_signal: NONE.\\ncta_preference_signal: NONE.\\n\\nNeed ensure output JSON only. Good.\\n\\nBut wait: There is \\\"account_anchor_text\\\" perhaps \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" is an account but not identifiable, so empty.\\n\\nLet's craft final JSON. Must exactly 33 fields, no extra.\\n\\nNeed maybe choose \\\"business_goal_category\\\": \\\"TRAFFIC\\\" or \\\"UNSTATED\\\"? Let's reason again. The enum options include \\\"UNSTATED\\uff08\\u8fd9\\u4e00\\u8f6e\\u6ca1\\u6709\\u8868\\u8fbe\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\uff09\\\". User said \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" \\u2014 they expressed the problem \\\"\\u6ca1\\u6709\\u6d41\\u91cf\\\", which is literally traffic. In the context of business goals, \\\"\\u6d41\\u91cf\\\" is a category. But is it a goal they want? \\\"\\u600e\\u4e48\\u529e\\\" implies wanting to solve. I think TRAFFIC is the closest literal. It is not \\\"\\u63a8\\u65ad\\\" but direct mention. I'll set TRAFFIC.\\n\\nWhat about primary_goal_text? Could we set \\\"\\u89e3\\u51b3\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u7684\\u95ee\\u9898\\\"? The instruction: primary_goal_text is \\\"\\u7528\\u6237\\u8868\\u8fbe\\u7684\\u4e3b\\u8981\\u7ecf\\u8425\\u76ee\\u6807\\uff0c\\u4e0d\\u662f\\u6267\\u884c\\u547d\\u4ee4\\\". Here user says \\\"\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" \\u2014 main goal is maybe to get traffic. But it's more an issue statement. I'd leave empty because they didn't express a concrete goal like \\\"\\u8981\\u6d41\\u91cf\\\" or \\\"\\u60f3\\u6da8\\u64ad\\u653e\\\". However, \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is expression of the issue; an implicit desired outcome. The field is \\\"\\u4e3b\\u8981\\u7ecf\\u8425\\u76ee\\u6807\\\" not \\\"\\u95ee\\u9898\\\". To avoid hallucination, empty. But then business_goal_category TRAFFIC? That seems contradictory. Hmm.\\n\\nMaybe business_goal_category should be UNSTATED too, because they didn't say \\\"\\u6211\\u8981\\u6d41\\u91cf\\\" or \\\"\\u76ee\\u6807\\u662f\\u83b7\\u53d6\\u6d41\\u91cf.\\\" But they said \\\"\\u6ca1\\u6d41\\u91cf\\\"; the category is about traffic, not necessarily goal. The category field \\\"\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\" based on expression. \\\"\\u6ca1\\u6d41\\u91cf\\\" is a negative observation, not necessarily a goal category. Yet in Chinese business context asking \\\"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u600e\\u4e48\\u529e\\\" is effectively traffic goal. But the allowed enum includes TRAFFIC (\\\"\\u6d41\\u91cf\\\") \\u2014 could be from problem statement. Since the parser is to capture \\\"\\u7528\\u6237\\u672c\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\". They may have expressed a pain point (traffic). Pain point maps to goal. Hmm.\\n\\nRead \\\"business_goal_category\\\": \\\"\\u7528\\u6237\\u672c\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\uff0c\\u6ca1\\u8868\\u8fbe\\u4e3a UNSTATED\\uff1b\\u5feb\\u7167\\u4fa7\\u662f\\u53ef\\u6df7\\u5408\\u7684\\u96c6\\u5408\\uff0c\\u672c\\u5b57\\u6bb5\\u6bcf\\u8f6e\\u53ea\\u51fa\\u4e00\\u4e2a\\\". If user says \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", this is a direct business statement about traffic. I think picking TRAFFIC is reasonable and arguably not infer. Let's consider if \\\"\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" could be interpreted as \\\"\\u8fd9\\u4e2a\\u8d26\\u53f7\\u7f3a\\u4e4f\\u6d41\\u91cf\\\" \\u2014 yes, they want traffic. I'd set TRAFFIC.\\n\\nCould there be \\\"account_stage_text\\\": \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" \\u2014 is that stage? No, account stage is like \\\"\\u521a\\u8d77\\u53f7\\\". No.\\n\\nPotential issue: current_task_text should not be question? It says \\\"\\u7528\\u6237\\u8fd9\\u4e00\\u8f6e\\u771f\\u5b9e\\u8bf4\\u51fa\\u53e3\\u7684\\u4efb\\u52a1\\u63cf\\u8ff0\\\". They said \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" \\u2014 perhaps the task is \\\"\\u8bca\\u65ad/\\u89e3\\u51b3\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u95ee\\u9898\\\". They didn't say \\\"\\u5e2e\\u6211\\u770b\\\". Use original \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" as task description? Could set \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\". In JSON, string literal.\\n\\nNow output only JSON. Ensure no markdown.\", \"usage\": {\"prompt_tokens\": 4823, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 2361, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 7184, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 20.191, \"time_to_first_token\": 2.254, \"time_to_generate\": 17.937}, \"finish_reason\": \"stop\", \"structured_output\": {\"route_intent\": \"DISCUSS\", \"current_task_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"temporal_scope\": \"UNSTATED\", \"primary_goal_text\": \"\", \"secondary_goal_text\": \"\", \"priority_order_text\": \"\", \"non_sacrifice_constraint_text\": \"\", \"business_goal_category\": \"TRAFFIC\", \"requested_capabilities_text\": \"\", \"confirmation_signal\": \"NONE\", \"side_question\": \"\", \"user_message_summary\": \"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u95ee\\u600e\\u4e48\\u529e\", \"account_stage_text\": \"\", \"plot_allowed\": \"UNSTATED\", \"remix_allowed\": \"UNSTATED\", \"conflict_allowed\": \"UNSTATED\", \"controversy_allowed\": \"UNSTATED\", \"desired_output_text\": \"\", \"cycle_available_text\": \"\", \"baseline_text\": \"\", \"evidence_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"evidence_nature\": \"FACT\", \"evidence_scope\": \"UNSTATED\", \"evidence_provenance\": \"USER_DIRECT\", \"handled_thread_id\": \"\", \"cancel_target\": \"NONE\", \"account_anchor_text\": \"\", \"cta_target_text\": \"\", \"cta_risk_tier\": \"UNSTATED\", \"cta_conversion_goal_text\": \"\", \"cta_access_path_text\": \"\", \"cta_authorization_signal\": \"NONE\", \"cta_preference_signal\": \"NONE\"}}"
+    },
+    {
+      "idx": 5,
+      "node_id": "m1_compiler",
+      "title": "状态机｜任务上下文编译与调用意图判定",
+      "type": "code",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.063966,
+      "inputs": "{\"user_query\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 0, \\\"current_task\\\": {\\\"text\\\": null, \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [], \\\"market_observations\\\": [], \\\"gaps\\\": [], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": null}\", \"shadow_patch\": {\"route_intent\": \"DISCUSS\", \"current_task_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"temporal_scope\": \"UNSTATED\", \"primary_goal_text\": \"\", \"secondary_goal_text\": \"\", \"priority_order_text\": \"\", \"non_sacrifice_constraint_text\": \"\", \"business_goal_category\": \"TRAFFIC\", \"requested_capabilities_text\": \"\", \"confirmation_signal\": \"NONE\", \"side_question\": \"\", \"user_message_summary\": \"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u95ee\\u600e\\u4e48\\u529e\", \"account_stage_text\": \"\", \"plot_allowed\": \"UNSTATED\", \"remix_allowed\": \"UNSTATED\", \"conflict_allowed\": \"UNSTATED\", \"controversy_allowed\": \"UNSTATED\", \"desired_output_text\": \"\", \"cycle_available_text\": \"\", \"baseline_text\": \"\", \"evidence_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"evidence_nature\": \"FACT\", \"evidence_scope\": \"UNSTATED\", \"evidence_provenance\": \"USER_DIRECT\", \"handled_thread_id\": \"\", \"cancel_target\": \"NONE\", \"account_anchor_text\": \"\", \"cta_target_text\": \"\", \"cta_risk_tier\": \"UNSTATED\", \"cta_conversion_goal_text\": \"\", \"cta_access_path_text\": \"\", \"cta_authorization_signal\": \"NONE\", \"cta_preference_signal\": \"NONE\"}, \"material_text\": \"\"}",
+      "outputs": "{\"call_intent_json\": \"{\\\"needed_capabilities\\\": [], \\\"per_capability\\\": {\\\"MATRIX\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"CAMPAIGN\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CONTENT_BRIEF\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CREATIVE_SCRIPT\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PRODUCTION_DIRECTOR\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PUBLISHING_PACKAGING\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"SINGLE_ACCOUNT_OPERATION\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}, \\\"CREATIVE_TOURNAMENT\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}}, \\\"continuation\\\": {\\\"open_threads_to_surface\\\": [], \\\"non_blocking_gaps\\\": [\\\"current_task.temporal_scope\\\", \\\"goal_structure.primary_goal\\\", \\\"account_stage.text\\\", \\\"capacity_triad.desired_output\\\", \\\"capacity_triad.cycle_available\\\", \\\"capacity_triad.baseline\\\", \\\"expression_discretion.plot_allowed\\\", \\\"expression_discretion.remix_allowed\\\", \\\"expression_discretion.conflict_allowed\\\", \\\"expression_discretion.controversy_allowed\\\", \\\"evidence_bundle[].scope\\\"]}}\", \"dialogue_directive\": \"\\u5f53\\u524d\\u4efb\\u52a1\\uff1a\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"patch_ok\": \"true\", \"reject_reason\": \"\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"UNSTATED\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"evidence_bundle[].scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"state_changed\": \"true\", \"turn_report_json\": \"{\\\"patch_ok\\\": true, \\\"reject_reason\\\": \\\"\\\", \\\"revision\\\": 1, \\\"requested_capabilities\\\": [], \\\"needed_capabilities\\\": [], \\\"open_threads_open_count\\\": 0, \\\"evidence_dropped_incomplete\\\": false, \\\"evidence_provenance_downgraded\\\": false}\"}"
+    },
+    {
+      "idx": 6,
+      "node_id": "m1_save_snapshot",
+      "title": "写回｜任务上下文快照",
+      "type": "assigner",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.000641,
+      "inputs": "{\"type\": \"assigner\", \"title\": \"\\u5199\\u56de\\uff5c\\u4efb\\u52a1\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\", \"desc\": \"\\u628a\\u7f16\\u8bd1\\u5668\\u7b97\\u51fa\\u7684\\u6700\\u65b0\\u5feb\\u7167\\u5199\\u56de\\u4f1a\\u8bdd\\u53d8\\u91cf\", \"version\": \"2\", \"error_strategy\": null, \"default_value\": null, \"retry_config\": {\"max_retries\": 0, \"retry_interval\": 0, \"retry_enabled\": false}, \"items\": [{\"variable_selector\": [\"conversation\", \"snapshot_json\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"m1_compiler\", \"snapshot_json\"]}], \"selected\": false}",
+      "outputs": "{}"
+    },
+    {
+      "idx": 7,
+      "node_id": "uapp_action",
+      "title": "分类｜本轮要做哪一类经营动作",
+      "type": "llm",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 2.720939,
+      "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+      "outputs": "{\"text\": \"{\\\"action\\\": \\\"NONE\\\", \\\"platform_text\\\": \\\"\\\", \\\"external_ref_text\\\": \\\"\\\", \\\"feedback_text\\\": \\\"\\\", \\\"withdraw_target_text\\\": \\\"\\\", \\\"reason_text\\\": \\\"\\u7528\\u6237\\u8bf4\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u5bfb\\u6c42\\u5efa\\u8bae\\uff0c\\u6ca1\\u6709\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u53d1\\u5e03\\u3001\\u53cd\\u9988\\u3001\\u64a4\\u56de\\u6216\\u5468\\u671f\\u52a8\\u4f5c\\u3002\\\"}\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->We need to output JSON only. We have to classify action. User says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" - describing a problem, asking for advice. Not recording a publish, feedback, withdraw, next cycle, or asking status. So action NONE. Other fields empty strings. reason_text should quote key part: \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" indicating asking for help, not recording.\", \"usage\": {\"prompt_tokens\": 1832, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 150, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 1982, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 2.715, \"time_to_first_token\": 1.608, \"time_to_generate\": 1.108}, \"finish_reason\": \"stop\", \"structured_output\": {\"action\": \"NONE\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\", \"reason_text\": \"\\u7528\\u6237\\u8bf4\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u5bfb\\u6c42\\u5efa\\u8bae\\uff0c\\u6ca1\\u6709\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u53d1\\u5e03\\u3001\\u53cd\\u9988\\u3001\\u64a4\\u56de\\u6216\\u5468\\u671f\\u52a8\\u4f5c\\u3002\"}}"
+    },
+    {
+      "idx": 8,
+      "node_id": "uapp_route",
+      "title": "路由｜取 M1 已给出的能力调用意图",
+      "type": "code",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.046257,
+      "inputs": "{\"call_intent_json\": \"{\\\"needed_capabilities\\\": [], \\\"per_capability\\\": {\\\"MATRIX\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"CAMPAIGN\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CONTENT_BRIEF\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CREATIVE_SCRIPT\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PRODUCTION_DIRECTOR\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PUBLISHING_PACKAGING\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"SINGLE_ACCOUNT_OPERATION\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}, \\\"CREATIVE_TOURNAMENT\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}}, \\\"continuation\\\": {\\\"open_threads_to_surface\\\": [], \\\"non_blocking_gaps\\\": [\\\"current_task.temporal_scope\\\", \\\"goal_structure.primary_goal\\\", \\\"account_stage.text\\\", \\\"capacity_triad.desired_output\\\", \\\"capacity_triad.cycle_available\\\", \\\"capacity_triad.baseline\\\", \\\"expression_discretion.plot_allowed\\\", \\\"expression_discretion.remix_allowed\\\", \\\"expression_discretion.conflict_allowed\\\", \\\"expression_discretion.controversy_allowed\\\", \\\"evidence_bundle[].scope\\\"]}}\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"UNSTATED\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"evidence_bundle[].scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"user_query\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"ws_id\": \"\", \"conv_id\": \"1b5d3e4f-80d7-46a4-b4ac-18e4e3bce2a8\", \"action_patch\": {\"action\": \"NONE\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\", \"reason_text\": \"\\u7528\\u6237\\u8bf4\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u5bfb\\u6c42\\u5efa\\u8bae\\uff0c\\u6ca1\\u6709\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u53d1\\u5e03\\u3001\\u53cd\\u9988\\u3001\\u64a4\\u56de\\u6216\\u5468\\u671f\\u52a8\\u4f5c\\u3002\"}, \"action_text\": \"{\\\"action\\\": \\\"NONE\\\", \\\"platform_text\\\": \\\"\\\", \\\"external_ref_text\\\": \\\"\\\", \\\"feedback_text\\\": \\\"\\\", \\\"withdraw_target_text\\\": \\\"\\\", \\\"reason_text\\\": \\\"\\u7528\\u6237\\u8bf4\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u5bfb\\u6c42\\u5efa\\u8bae\\uff0c\\u6ca1\\u6709\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u53d1\\u5e03\\u3001\\u53cd\\u9988\\u3001\\u64a4\\u56de\\u6216\\u5468\\u671f\\u52a8\\u4f5c\\u3002\\\"}\"}",
+      "outputs": "{\"tag\": \"1b5d3e4f80d7\", \"action_source\": \"structured_output\", \"route_mode\": \"DIALOGUE\", \"action\": \"NONE\", \"has_capability\": \"false\", \"runs_business\": \"false\", \"runs_m3\": \"false\", \"target_capability\": \"\", \"entry\": \"\", \"user_request\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"needs_bootstrap\": \"true\", \"route_note\": \"capability=\\uff08\\u672c\\u8f6e\\u65e0\\uff09\\uff1baction=NONE\\uff1b\\u80fd\\u529b\\u6765\\u6e90=M1.call_intent.needed_capabilities\\uff0c\\u52a8\\u4f5c\\u6765\\u6e90=uapp_action \\u5206\\u7c7b\\uff1b\\u672c\\u8282\\u70b9\\u672a\\u505a\\u610f\\u56fe\\u8bc6\\u522b\\u3001\\u672a\\u66ff\\u7528\\u6237\\u9009\\u62e9\\u80fd\\u529b\\u3002\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\"}"
+    },
+    {
+      "idx": 9,
+      "node_id": "uapp_gate",
+      "title": "本轮要动业务链吗",
+      "type": "if-else",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 0.000101,
+      "inputs": "{\"conditions\": [{\"actual_value\": \"false\", \"expected_value\": \"true\", \"comparison_operator\": \"is\"}]}",
+      "outputs": "{\"result\": false, \"selected_case_id\": \"false\"}"
+    },
+    {
+      "idx": 10,
+      "node_id": "uapp_chat_llm",
+      "title": "回复｜自然对话",
+      "type": "llm",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 4.482257,
+      "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+      "outputs": "{\"text\": \"\\u8fd9\\u4e2a\\u60c5\\u51b5\\u6211\\u660e\\u767d\\uff0c\\u4e0d\\u8fc7\\u8d26\\u53f7\\u4e3a\\u4ec0\\u4e48\\u6ca1\\u6d41\\u91cf\\u3001\\u5177\\u4f53\\u8be5\\u600e\\u4e48\\u8c03\\u6574\\uff0c\\u5c5e\\u4e8e\\u5185\\u5bb9\\u7b56\\u7565\\u65b9\\u9762\\u7684\\u4e13\\u4e1a\\u5224\\u65ad\\uff0c\\u6211\\u73b0\\u5728\\u8fd9\\u4e2a\\u73af\\u8282\\u6ca1\\u6cd5\\u76f4\\u63a5\\u7ed9\\u7ed3\\u8bba\\u3002\\u6211\\u80fd\\u505a\\u7684\\u5c31\\u662f\\u5148\\u5e2e\\u4f60\\u628a\\u95ee\\u9898\\u8bb0\\u4e0b\\u6765\\uff0c\\u786e\\u8ba4\\u4e0b\\u4e00\\u6b65\\u8981\\u8c03\\u7528\\u54ea\\u4e2a\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u5904\\u7406\\u3002\\u4f60\\u5e0c\\u671b\\u73b0\\u5728\\u5c31\\u8c03\\u7528\\u76f8\\u5e94\\u7684\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u505a\\u5224\\u65ad\\u5417\\uff1f\\u6216\\u8005\\u53ef\\u4ee5\\u5148\\u8865\\u5145\\u70b9\\u80cc\\u666f\\u4fe1\\u606f\\uff0c\\u6bd4\\u5982\\u8fd9\\u4e2a\\u8d26\\u53f7\\u4e3b\\u8981\\u53d1\\u4ec0\\u4e48\\u5185\\u5bb9\\u3001\\u5927\\u6982\\u53d1\\u4e86\\u591a\\u5c11\\u6761\\u4e86\\uff1f\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->\\u6211\\u4eec\\u6839\\u636e\\u6307\\u4ee4\\uff0c\\u9700\\u8981\\u81ea\\u7136\\u53e3\\u8bed\\u5316\\u56de\\u590d\\u3002\\u7528\\u6237\\u95ee\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u600e\\u4e48\\u529e\\u3002\\u6ce8\\u610f\\u8fb9\\u754c\\uff1a\\u6211\\u4eec\\u4e0d\\u662f\\u5185\\u5bb9\\u7b56\\u7565\\u4e13\\u5bb6\\uff0c\\u4e0d\\u505a\\u8d26\\u53f7\\u5b9a\\u4f4d\\u3001\\u9009\\u9898\\u3001\\u8d77\\u91cf\\u65b9\\u6cd5\\u7b49\\u4e13\\u4e1a\\u5224\\u65ad\\u3002\\u6240\\u4ee5\\u4e0d\\u80fd\\u7ed9\\u5177\\u4f53\\u7b56\\u7565\\u5efa\\u8bae\\u3002\\u5e94\\u8be5\\u8bf4\\u660e\\u8fd9\\u9700\\u8981\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u7ed9\\u7ed3\\u8bba\\uff0c\\u76ee\\u524d\\u662f\\u5728\\u6536\\u96c6\\u4fe1\\u606f\\u5224\\u65ad\\u8c03\\u7528\\u54ea\\u4e2a\\u80fd\\u529b\\u3002\\u53ef\\u4ee5\\u95ee\\u662f\\u5426\\u5e0c\\u671b\\u73b0\\u5728\\u8c03\\u7528\\u76f8\\u5e94\\u80fd\\u529b\\u3002\\u6ce8\\u610f\\u4e0d\\u8981\\u7f16\\u9020\\u539f\\u56e0\\u3002\\u8981\\u4fdd\\u6301\\u81ea\\u7136\\u53e3\\u8bed\\u5316\\u3002\\n\\n\\u56de\\u590d\\u793a\\u4f8b\\uff1a\\u8fd9\\u4e2a\\u60c5\\u51b5\\u6211\\u660e\\u767d\\u4e86\\uff0c\\u4e0d\\u8fc7\\u5173\\u4e8e\\u8d26\\u53f7\\u6d41\\u91cf\\u600e\\u4e48\\u63d0\\u5347\\uff0c\\u5177\\u4f53\\u8be5\\u600e\\u4e48\\u505a\\uff0c\\u90a3\\u662f\\u5185\\u5bb9\\u7b56\\u7565\\u65b9\\u9762\\u7684\\u4e13\\u4e1a\\u5224\\u65ad\\uff0c\\u6211\\u8fd9\\u4e2a\\u73af\\u8282\\u6ca1\\u6cd5\\u76f4\\u63a5\\u7ed9\\u7ed3\\u8bba\\u3002\\u73b0\\u5728\\u53ef\\u4ee5\\u5148\\u5e2e\\u4f60\\u628a\\u95ee\\u9898\\u8bb0\\u4e0b\\u6765\\uff0c\\u786e\\u8ba4\\u4e0b\\u4e00\\u6b65\\u8981\\u8c03\\u7528\\u54ea\\u4e2a\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u5904\\u7406\\u3002\\u4f60\\u5e0c\\u671b\\u73b0\\u5728\\u5c31\\u8c03\\u7528\\u76f8\\u5e94\\u7684\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u505a\\u5224\\u65ad\\u5417\\uff1f\\u6216\\u8005\\u4f60\\u53ef\\u4ee5\\u5148\\u8865\\u5145\\u4e00\\u4e9b\\u80cc\\u666f\\u4fe1\\u606f\\uff0c\\u6bd4\\u5982\\u8fd9\\u4e2a\\u8d26\\u53f7\\u662f\\u505a\\u4ec0\\u4e48\\u5185\\u5bb9\\u7684\\u3001\\u76ee\\u524d\\u53d1\\u4e86\\u591a\\u5c11\\u6761\\u4e4b\\u7c7b\\u7684\\u3002\\n\\n\\u8981\\u786e\\u4fdd\\u975e\\u7a7a\\u3002\", \"usage\": {\"prompt_tokens\": 400, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 253, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 653, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 4.477, \"time_to_first_token\": 1.242, \"time_to_generate\": 3.235}, \"finish_reason\": \"stop\"}"
+    },
+    {
+      "idx": 11,
+      "node_id": "uapp_chat_answer",
+      "title": "回复｜对话",
+      "type": "answer",
+      "status": "succeeded",
+      "error": null,
+      "elapsed": 8.4e-05,
+      "inputs": "{}",
+      "outputs": "{\"answer\": \"\\u8fd9\\u4e2a\\u60c5\\u51b5\\u6211\\u660e\\u767d\\uff0c\\u4e0d\\u8fc7\\u8d26\\u53f7\\u4e3a\\u4ec0\\u4e48\\u6ca1\\u6d41\\u91cf\\u3001\\u5177\\u4f53\\u8be5\\u600e\\u4e48\\u8c03\\u6574\\uff0c\\u5c5e\\u4e8e\\u5185\\u5bb9\\u7b56\\u7565\\u65b9\\u9762\\u7684\\u4e13\\u4e1a\\u5224\\u65ad\\uff0c\\u6211\\u73b0\\u5728\\u8fd9\\u4e2a\\u73af\\u8282\\u6ca1\\u6cd5\\u76f4\\u63a5\\u7ed9\\u7ed3\\u8bba\\u3002\\u6211\\u80fd\\u505a\\u7684\\u5c31\\u662f\\u5148\\u5e2e\\u4f60\\u628a\\u95ee\\u9898\\u8bb0\\u4e0b\\u6765\\uff0c\\u786e\\u8ba4\\u4e0b\\u4e00\\u6b65\\u8981\\u8c03\\u7528\\u54ea\\u4e2a\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u5904\\u7406\\u3002\\u4f60\\u5e0c\\u671b\\u73b0\\u5728\\u5c31\\u8c03\\u7528\\u76f8\\u5e94\\u7684\\u4e13\\u4e1a\\u80fd\\u529b\\u6765\\u505a\\u5224\\u65ad\\u5417\\uff1f\\u6216\\u8005\\u53ef\\u4ee5\\u5148\\u8865\\u5145\\u70b9\\u80cc\\u666f\\u4fe1\\u606f\\uff0c\\u6bd4\\u5982\\u8fd9\\u4e2a\\u8d26\\u53f7\\u4e3b\\u8981\\u53d1\\u4ec0\\u4e48\\u5185\\u5bb9\\u3001\\u5927\\u6982\\u53d1\\u4e86\\u591a\\u5c11\\u6761\\u4e86\\uff1f\", \"files\": []}"
+    }
+  ]
+}

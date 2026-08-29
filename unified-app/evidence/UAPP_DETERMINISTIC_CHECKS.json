@@ -1,7 +1,7 @@
 {
   "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
-  "graph_md5": "d1ce4107f901613bbba7f70a0a5cd716",
-  "graph_sha256": "c95ffbe4b8a80c4a7c38ba3a7b229a58831d4f7b402a1e3b2e82af5ae44e09bd",
+  "graph_md5": "e67147abde10a3fdd0c2043c10cbe266",
+  "graph_sha256": "40e4585825bb7d211f357d89136cb2294936ca54287333fef49b6f74e5b64f2b",
   "checks": [
     {
       "id": "D-01",
@@ -12,8 +12,8 @@
         "status": "normal",
         "enable_site": "true",
         "enable_api": "true",
-        "graph_md5": "d1ce4107f901613bbba7f70a0a5cd716",
-        "published_version_name": "uapp-v1.9-final"
+        "graph_md5": "e67147abde10a3fdd0c2043c10cbe266",
+        "published_version_name": "uapp-thin-slice-v1.0"
       }
     },
     {
@@ -21,8 +21,8 @@
       "desc": "图结构自洽：无悬空边、无不可达节点",
       "result": "PASS",
       "detail": {
-        "nodes": 65,
-        "edges": 77,
+        "nodes": 69,
+        "edges": 81,
         "dangling": [],
         "unreachable": []
       }
@@ -153,6 +153,7 @@
       "detail": {
         "if_else_nodes": [
           "uapp_gate",
+          "uapp_ask_gate",
           "uapp_boot_gate",
           "uapp_mat_gate",
           "uapp_m3_gate",
@@ -201,7 +202,7 @@
           "idempotency_key": "pub-tg-2d711642b726b044",
           "account_id": "acc",
           "platform": "test-platform",
-          "published_at": "2026-08-29T13:12:31+00:00",
+          "published_at": "2026-08-29T14:18:31+00:00",
           "is_test": true,
           "is_simulated": true,
           "content_version_id": "ver-1"
@@ -210,7 +211,7 @@
           "idempotency_key": "fb-tg-03bce10fbe9da41e",
           "kind": "observation",
           "source": "user_reported",
-          "observed_at": "2026-08-29T13:12:31+00:00",
+          "observed_at": "2026-08-29T14:18:31+00:00",
           "is_test": true,
           "is_simulated": true,
           "is_manual_entry": true
@@ -271,6 +272,14 @@
       "detail": []
     },
     {
+      "id": "D-30",
+      "desc": "代码节点实际返回的类型与声明的 outputs 类型一致（string 就得是 str）",
+      "result": "PASS",
+      "detail": {
+        "mismatches": []
+      }
+    },
+    {
       "id": "D-21",
       "desc": "反馈 kind 落在 M2 接受的枚举内",
       "result": "PASS",
@@ -310,8 +319,75 @@
       "detail": {
         "note": "这一条我没法登记成发布记录：系统里还没有它对应的内容版本。先把内容做出来、我把版本记下来之后，再说发布这件事。"
       }
+    },
+    {
+      "id": "D-25",
+      "desc": "裸自然语言能桥到能力，且用户点名时不被分诊台覆盖",
+      "result": "PASS",
+      "detail": {
+        "bare": "MATRIX",
+        "named": "CONTENT_BRIEF",
+        "named_source": "m1_named",
+        "chitchat": "DIALOGUE"
+      }
+    },
+    {
+      "id": "D-26",
+      "desc": "已发生的事压过意图：要登记发布时不被抢去跑能力",
+      "result": "PASS",
+      "detail": {
+        "mode": "WRITEBACK",
+        "capability": ""
+      }
+    },
+    {
+      "id": "D-27",
+      "desc": "确有歧义时只问一个：多问被收成一个，没问题时不代拟",
+      "result": "PASS",
+      "detail": {
+        "one": "1",
+        "three_collapsed_to": "1",
+        "empty_not_fabricated": true,
+        "ambiguous_routes_to": "ASK_ONE",
+        "no_question_falls_back_to": "DIALOGUE"
+      }
+    },
+    {
+      "id": "D-28",
+      "desc": "没调用就不许说已转交：脏正文被删、干净正文零改动、有调用时不适用",
+      "result": "PASS",
+      "detail": {
+        "dirty_hits": "2",
+        "clean_untouched": true,
+        "not_applicable_when_ran": true
+      }
+    },
+    {
+      "id": "D-29",
+      "desc": "闲聊分支不存在绕过空头支票守卫的直达路径",
+      "result": "PASS",
+      "detail": {
+        "bypass_edges": []
+      }
+    },
+    {
+      "id": "D-31",
+      "desc": "分诊台的输出预算不低于 2000，避免推理烧光预算后静默不分类",
+      "result": "PASS",
+      "detail": {
+        "max_tokens": 4000
+      }
+    },
+    {
+      "id": "D-32",
+      "desc": "「分诊台没给出东西」与「分诊台判了闲聊」在证据里可区分",
+      "result": "PASS",
+      "detail": {
+        "nothing_returned": "true",
+        "classified_chitchat": "false"
+      }
     }
   ],
-  "passed": 24,
+  "passed": 32,
   "failed": 0
 }

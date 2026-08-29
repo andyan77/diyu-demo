@@ -201,3 +201,34 @@ sha256 `57f035c46477fcb75a539d79f72341e43bce1d28bb0e2ccec8d8f34aae7bae0e`。
 - **输入或基线**：分支 `codex/v1-unified-dify-application-001` 本次提交；冻结判据 `c45c4668…`；Manifest v1.5 `7d6b2efd…`
 - **什么信号算做完**：AC-01..12 全部 `PASS/CURRENT` 且 Founder `ACCEPT`，
   此时 `main_merge_and_push` 的条件才成立，done 公式才成立
+
+---
+
+## 更正说明（2026-08-29 意图路由轮追加，正文以上一字未改）
+
+Founder 于本文件写成后给出裁定
+`FOUNDER_ADJUDICATION_UAPP_INTENT_ROUTING_001` = **`RETURN`**。
+本文件多处**已被超越**，当前真相以后继文件为准：
+
+| 本文件内容 | 已变成 | 当前真源 |
+|---|---|---|
+| 图 `c95ffbe4…`，65 节点 / 77 边 | 图 `40e45858…`，**69 节点 / 81 边** | `UAPP_CANDIDATE_RUN_MANIFEST_v1.8.yaml` |
+| 确定性面 24 条 | **32 条** | `evidence/UAPP_DETERMINISTIC_CHECKS.json` |
+| `AC-02` / `AC-05` 记为 `PASS / CURRENT` | **Founder 裁定下调为 `FAIL`** | 技术债主表 v1.2 第一节 |
+| `AC-12` 记为 `NOT_VERIFIED` | **`RETURN`**（Founder 已实测并退回） | 同上 |
+| `AC-04` 记为 `PASS / CURRENT` | **`NOT_VERIFIED (STALE)`**（本轮改图后重新失效） | 同上 |
+| 技术债 10 条 | **16 条** | `UAPP_TECHNICAL_DEBT_REGISTER_v1.2.md` |
+| DSL sha256 `57f035c4…` | `a63d6675a6c8c965d0dac0109e921746e84b37acb076f4243174cf5a15a2218b` | `dsl/UAPP_UNIFIED_FOUNDER_CANVAS_v1.0.yml` |
+
+**没有变化的**（本节不推翻这几条）：
+
+- **`main` 与 `origin/main` 仍停在 `01a42b0`，一个字节未动。** 合并条件依旧不成立，
+  且 Founder 裁定明确重申「`main` 合并继续禁止」。
+- **仍不落终态**：`task_progress = IN_PROGRESS`，`terminal_state` 留空。
+- **`AC-12` 仍未被代判。**
+- 第五节「边界遵守情况」逐条仍然成立；本轮另加一条：
+  **M1 编译器、M2、最终 M3、Seam、六能力应用一个字未改**（D-03/04/06/07/08）。
+
+**本文件第二节「交付了什么」的模块清单仍然准确**，只是节点数从 65 增到 69——
+新增的四个节点全部是本轮桥接层自己的（`uapp_ask_gate`／`uapp_ask_one`／
+`uapp_ask_answer`／`uapp_chat_guard`），没有引入第二应用或第二运行时。
