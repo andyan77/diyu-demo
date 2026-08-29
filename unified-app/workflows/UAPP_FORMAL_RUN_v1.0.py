@@ -161,6 +161,13 @@ def main():
                             "pass": passc, "fail": failc,
                             "expected_capability": expected_cap},
         "app_id": APP_ID, "end_user": user, "conversation_id": conv,
+        # 记下本轮实际跑的那张图。图变了，绑定这张图的结论就该置 STALE，不靠记忆判断。
+        "graph_sha256_at_run": hashlib.sha256(subprocess.run(
+            ["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres",
+             "-d", "dify", "-tA", "-c",
+             "select w.graph from workflows w join apps a on a.workflow_id=w.id "
+             "where a.id='%s';" % APP_ID],
+            capture_output=True, text=True).stdout.strip().encode("utf-8")).hexdigest(),
         "turns": records,
         "m2_snapshot": {
             "artifacts": m2_rows("select count(*) from artifacts;"),

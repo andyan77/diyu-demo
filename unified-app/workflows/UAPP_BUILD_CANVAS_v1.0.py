@@ -235,8 +235,9 @@ def build_graph():
          V("user_query", ["sys", "query"]),
          V("ws_id", ["conversation", "uapp_ws"]),
          V("conv_id", ["sys", "conversation_id"]),
-         V("action_patch", ["uapp_action", "structured_output"])],
-        ["tag", "route_mode", "action", "has_capability", "runs_business", "runs_m3",
+         V("action_patch", ["uapp_action", "structured_output"]),
+         V("action_text", ["uapp_action", "text"])],
+        ["tag", "action_source", "route_mode", "action", "has_capability", "runs_business", "runs_m3",
          "target_capability", "entry", "user_request", "needs_bootstrap", "route_note",
          "platform_text", "external_ref_text", "feedback_text", "withdraw_target_text"])))
     edges.append(E("uapp_action", "uapp_route"))
@@ -411,11 +412,11 @@ def build_graph():
     edges.append(E("uapp_hop", "uapp_seam"))
 
     # ---- 写回 M2：先算请求体，再按分支实际写 ----
-    nodes.append(N("uapp_wb_prep", X + 7040, Y, code(
+    nodes.append(N("uapp_wb_prep", X + 7360, Y, code(
         "组装｜本轮该写回 M2 的东西", "幂等键由内容派生；没有真实产物就不登记产物",
         NODES.WRITEBACK_SRC,
         [V("action", ["uapp_route", "action"]),
-         V("artifact", ["uapp_seam", "artifact"]),
+         V("artifact", ["uapp_seam_merge", "artifact", "output"]),
          V("capability", ["uapp_route", "target_capability"]),
          V("platform_text", ["uapp_route", "platform_text"]),
          V("external_ref_text", ["uapp_route", "external_ref_text"]),
@@ -424,14 +425,42 @@ def build_graph():
          V("account_id", ["conversation", "uapp_account"]),
          V("tag", ["uapp_route", "tag"]),
          V("cycle_id", ["conversation", "uapp_cycle"]),
-         V("delivered_flag", ["uapp_seam", "business_delivery_outcome"])],
+         V("delivered_flag", ["uapp_seam_merge", "outcome", "output"])],
         ["should_persist_artifact", "content_hash", "artifact_body", "version_body",
          "publish_body_template", "feedback_body_template", "next_cycle_body",
          "run_state_body", "note"])))
-    edges.append(E("uapp_seam", "uapp_wb_prep"))
-    edges.append(E("uapp_op_gate", "uapp_wb_prep", "false"))
+    # 不进能力这一支时 uapp_seam / uapp_hop 根本不执行，下游再直接引用它们的输出，
+    # Dify 会整轮报 Variable not found（FULL-01 的 T2/T4 实测就是这样炸的）。
+    # 用 variable-aggregator 做分支汇合：哪一支跑了就取哪一支，两支都没有就取空。
+    nodes.append(N("uapp_noseam", X + 6720, Y + 320, code(
+        "未进能力｜给出空占位", "本轮没有进专业能力，用空值占位，供分支汇合",
+        NODES.NOSEAM_SRC, [V("route_mode", ["uapp_route", "route_mode"])],
+        ["empty", "empty_arr", "note"])))
+    edges.append(E("uapp_op_gate", "uapp_noseam", "false"))
 
-    nodes.append(N("uapp_persist_gate", X + 7360, Y, ifelse(
+    groups = [
+        ("artifact", ["uapp_seam", "artifact"], ["uapp_noseam", "empty"]),
+        ("user_delivery", ["uapp_seam", "user_delivery"], ["uapp_noseam", "empty"]),
+        ("outcome", ["uapp_seam", "business_delivery_outcome"], ["uapp_noseam", "empty"]),
+        ("returns_json", ["uapp_seam", "returns_json"], ["uapp_noseam", "empty_arr"]),
+        ("hop_gaps", ["uapp_hop", "extraction_gaps_text"], ["uapp_noseam", "empty"]),
+        # M3 在 STATUS 分支同样不执行，理由相同。
+        ("m3_judgment", ["uapp_m3", "operating_judgment"], ["uapp_noseam", "empty"]),
+        ("m3_gate", ["uapp_m3", "gate_status"], ["uapp_noseam", "empty"]),
+    ]
+    nodes.append(N("uapp_seam_merge", X + 7040, Y, {
+        "type": "variable-aggregator", "title": "汇合｜能力分支与非能力分支",
+        "desc": "哪一支跑了就取哪一支；两支都没有就是空。不代替判断，只做取值。",
+        "selected": False, "output_type": "string",
+        "variables": [["uapp_seam", "user_delivery"], ["uapp_noseam", "empty"]],
+        "advanced_settings": {"group_enabled": True, "groups": [
+            {"group_name": g, "output_type": "string", "variables": [a, b]}
+            for g, a, b in groups]}}))
+    edges.append(E("uapp_seam", "uapp_seam_merge"))
+    edges.append(E("uapp_noseam", "uapp_seam_merge"))
+    edges.append(E("uapp_seam_merge", "uapp_wb_prep"))
+
+    nodes.append(N("uapp_persist_gate", X + 7680, Y, ifelse(
         "本轮有真实产物要登记吗", "只有真的交付了产物才登记版本。登记空产物等于制造假事实。",
         ("persist", ["uapp_wb_prep", "should_persist_artifact"], "true"))))
     edges.append(E("uapp_wb_prep", "uapp_persist_gate"))
@@ -532,14 +561,14 @@ def build_graph():
         "投影｜只交自然语言，挡内部泄漏", "只呈现 user_delivery；状态词/字段/ID/节点名一律不出对话",
         NODES.DELIVERY_SRC,
         [V("capability", ["uapp_route", "target_capability"]),
-         V("seam_user_delivery", ["uapp_seam", "user_delivery"]),
-         V("seam_outcome", ["uapp_seam", "business_delivery_outcome"]),
-         V("seam_returns_json", ["uapp_seam", "returns_json"]),
-         V("m3_judgment", ["uapp_m3", "operating_judgment"]),
-         V("m3_gate_status", ["uapp_m3", "gate_status"]),
+         V("seam_user_delivery", ["uapp_seam_merge", "user_delivery", "output"]),
+         V("seam_outcome", ["uapp_seam_merge", "outcome", "output"]),
+         V("seam_returns_json", ["uapp_seam_merge", "returns_json", "output"]),
+         V("m3_judgment", ["uapp_seam_merge", "m3_judgment", "output"]),
+         V("m3_gate_status", ["uapp_seam_merge", "m3_gate", "output"]),
          V("route_mode", ["uapp_route", "route_mode"]),
          V("m2_note", ["uapp_ctx", "m2_note"]),
-         V("hop_gaps_text", ["uapp_hop", "extraction_gaps_text"]),
+         V("hop_gaps_text", ["uapp_seam_merge", "hop_gaps", "output"]),
          V("account_context", ["uapp_ctx", "account_context"]),
          V("side_effect_text", ["uapp_side", "side_effect_text"])],
         ["final_text", "delivered_flag", "modules_actually_run", "leak_hits_json",
@@ -548,7 +577,7 @@ def build_graph():
 
     nodes.append(N("uapp_save", X + 11200, Y, assigner(
         "记住｜本轮产物与能力", "供下一跳作为上游产出使用；业务真源在 M2，不在会话里",
-        [("variable", ["uapp_seam", "artifact"], "uapp_last_artifact"),
+        [("variable", ["uapp_seam_merge", "artifact", "output"], "uapp_last_artifact"),
          ("variable", ["uapp_route", "target_capability"], "uapp_last_capability")])))
     edges.append(E("uapp_delivery", "uapp_save"))
     nodes.append(N("uapp_answer", X + 11520, Y,

@@ -36,7 +36,48 @@ OPERATION = "SINGLE_ACCOUNT_OPERATION"
 WRITE_ACTIONS = ("RECORD_PUBLISH", "RECORD_FEEDBACK", "NEXT_CYCLE", "WITHDRAW_MATERIAL")
 
 
-def main(call_intent_json, snapshot_json, user_query, ws_id, conv_id, action_patch=None):
+def _salvage_action(text):
+    """结构化输出被 <think> 之类的前言打断时，从原文里把那一个 JSON 对象捞回来。
+
+    这不是"再判断一次"——判断已经由模型做完了，只是载体被污染。捞不回来就返回空，
+    由调用方按 NONE 处理：宁可漏记，不可记下没发生的事。
+    """
+    t = text or ""
+    if "</think>" in t:
+        t = t.split("</think>")[-1]
+    i = t.find("{")
+    while i != -1:
+        depth, j, instr, esc = 0, i, False, False
+        while j < len(t):
+            ch = t[j]
+            if instr:
+                if esc:
+                    esc = False
+                elif ch == "\\":
+                    esc = True
+                elif ch == '"':
+                    instr = False
+            elif ch == '"':
+                instr = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        got = json.loads(t[i:j + 1])
+                        if isinstance(got, dict) and "action" in got:
+                            return got
+                    except Exception:
+                        pass
+                    break
+            j += 1
+        i = t.find("{", i + 1)
+    return {}
+
+
+def main(call_intent_json, snapshot_json, user_query, ws_id, conv_id, action_patch=None,
+         action_text=""):
     try:
         ci = json.loads(call_intent_json or "{}")
     except Exception:
@@ -66,6 +107,10 @@ def main(call_intent_json, snapshot_json, user_query, ws_id, conv_id, action_pat
         user_request = user_request + "\n\n【本任务已登记的诉求】" + task_text
 
     ap = action_patch if isinstance(action_patch, dict) else {}
+    action_source = "structured_output"
+    if not ap.get("action"):
+        ap = _salvage_action(action_text) or ap
+        action_source = "salvaged_from_text" if ap.get("action") else "none"
     action = ap.get("action") or "NONE"
     if action not in ("NONE", "ASK_STATUS") + WRITE_ACTIONS:
         action = "NONE"          # 未知取值一律退回 NONE：宁可漏记，不可记下没发生的事
@@ -92,6 +137,7 @@ def main(call_intent_json, snapshot_json, user_query, ws_id, conv_id, action_pat
 
     return {
         "tag": tag,
+        "action_source": action_source,
         "route_mode": mode,
         "action": action,
         "has_capability": "true" if mode == "CAPABILITY" else "false",
@@ -634,4 +680,14 @@ def main(action, persist_status, version_status, publish_status, feedback_status
         "write_ledger_json": json.dumps(
             {"happened": happened, "failed": failed, "action": action}, ensure_ascii=False),
     }
+'''
+
+
+# ---------------------------------------------------------------- 10. 非能力分支占位
+# 存在的唯一理由：给 variable-aggregator 一个"这一支没跑"的合法取值来源。
+# 没有它，接缝没跑时下游引用会让整轮直接失败，而不是安静地拿到空。
+NOSEAM_SRC = r'''
+def main(route_mode):
+    return {"empty": "", "empty_arr": "[]",
+            "note": "本轮未进入专业能力（route_mode=%s）" % (route_mode or "")}
 '''
