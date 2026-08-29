@@ -1955,3 +1955,35 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 #### 十四 · ATT-001 结论
 
 `DONE`。任务已经过 Founder 权威 ACCEPT 收口，并经 `DIYU-V1-M1-MODULE-LANDING-001`（父任务即本任务）把该任务分支 `b3ac43f0d1752051b24860092c2e668ce2de139a` 正常合并进 `main`，见本文件下方新增章节与 `decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md`。
+
+---
+
+## `ATT-M5-FP` · `FINAL-P0` 最小修复轮（2026-08-28／29）
+
+`task_id`: `DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001`；候选 `5f84d94d…`；绑定 `fp`。
+
+| 提交 | 内容 |
+|---|---|
+| `2edcd0e` | Step 1 归因：三个节点而非两组，附节点绑定证据 |
+| `234ba53` | Step 2 两份留出与判据由隔离 custodian 冻结，仓库只存身份与哈希 |
+| `5033465` | Step 3 最小实现（N1／N2／N3），`rb`／`legacy` 零改动 |
+| `3e0fb9d` | Step 4 候选冻结 `v1.1.4` |
+| `bdcc4ac` | R6 确定性测试 11/11 |
+| `bccfe95` | R2 原留出重跑 |
+| `cb40026` | R3 新鲜留出解封判定 |
+| `6bc9c45` | R4 `FAIL` / R5 通过 |
+| `39d390f` | R7 十九维与 AC 重算 |
+| `adb67a7` | A/B 重建与旧包标 `STALE` |
+
+### 失败与自纠记录（只增不改）
+
+- **重复运行一次新鲜留出。** 执行侧凭"沙箱内 `ps` 查不到进程"与 harness 报的
+  `exit code 0`，误判第一次 R3 运行已死并重启。第一次其实仍在运行并自行落盘。
+  第二次的五个 Run 在保存阶段被运行器自带防覆盖闸拒绝，未污染评分证据；
+  原始产出已按判据 §0.2-4 从 Dify 取回，登记为
+  `HOLDOUT_FINAL_P0_ATTEMPT2_NOT_SCORED.json`（`status: NOT_SCORED`）。
+  **教训**：沙箱内的 `ps` 不能用于判断沙箱外后台进程的存活，管道退出码也不是产物证据；
+  只按产物与日志末行判。
+- **`reuse_without_rerun` 的一条与证据不符**：清单称十类短入口中有"无依赖项"可复用，
+  逐条查 `apps_actually_run` 后为空集，十条全部穿过被改应用，一律 `STALE`。如实登记，不改清单。
+- **A/B 盲评的结构性缺陷**（见 L2 第 3 条）：非本轮引入，此前每轮同一脚本均如此。

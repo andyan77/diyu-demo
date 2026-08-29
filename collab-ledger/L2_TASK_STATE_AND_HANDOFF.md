@@ -345,3 +345,55 @@ next_stage_allowed: false  # M1 本身 DONE ≠ M2/M3/M4/M5 自动获得施工�
 | **v0.2 快照扩展（代码+单测+live 全部完成）** | 新增 `account_stage`／`expression_discretion`（剧情/二创/冲突/争议四项裁量）／`capacity_triad`（期望发布量/周期可用/基线三分）三组字段，均为扁平字符串/枚举、刻意回避嵌套结构风险；新增向前兼容的快照顶层键补齐逻辑（旧会话快照缺新字段时不丢数据、不崩溃）；`content_task` 投影同步消解三项 `NOT_CAPTURED_IN_P0_SNAPSHOT` 缺口；DSL 生成脚本同步更新（影子节点系统提示词、17 字段结构化输出 schema、默认快照 JSON）；单测从 29 个扩到 35 个全绿。**导入/发布**：执行侧控制台会话因本机 Docker 容器重启失效、未持有明文密码不重新索取，改为把 DSL 文件交给 Founder，**Founder 本人 2026-08-25 在浏览器控制台完成导入与发布（v0.4）**；执行侧随后用既有 App API Key 跑真实回归 CE-v0.2-01（两轮），`m1_shadow` 推理轨迹逐字复述出第一轮持久化的三组新字段值，证明真实持久化正确、跨轮不丢失，详见 [`V1_M1_CANDIDATE_RUN_001.md` §十](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) |
 | **v0.3 快照扩展（本轮新增，代码+单测完成，live 未做）** | `evidence_bundle[]`（#9，用户原话+代码组装五维度）与 `gaps[]`（#11，零新增 LLM 字段、纯代码推导）**实现**；`market_observations[]`（#10）／`runtime_evidence[]`（#14）判定 M1 候选环境无真实产出通道，**如实 DEFER**（空数组+gaps 恒定登记降级原因，非只留空数组）。实现前先跑设计→对抗审查两步产出方案，对抗审查纠正原方案两处会违反冻结硬约束/仓库红线的问题；实现完成后三路独立复核（重跑单测/对抗式合规审查/DSL 同步）又抓到两处真实硬伤——8 条恒定缺口条目被逐轮冗余持久化（占某次快照 73% 字节）、为 P0 不可达状态建了 45 行零调用方守卫函数（违反"不为未来想象增加无必要结构"）——以及一处治理越界（执行侧在代码注释里给验收判据 AU-05 写解释未同步设计文档），三处均已修复。单测 35→88→83（修复后净增 48）全绿。详见 [`V1_M1_CANDIDATE_RUN_001.md` §十一](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md)。**导入/发布**：Founder 本人完成 `m1_candidate_dsl_v0.5.yml` 导入与发布（覆盖 v0.4）；执行侧用 App API Key 跑真实回归 CE-v0.3-01（两轮），`m1_shadow` 推理轨迹逐字复述第一轮持久化的证据条目及 `SYSTEM_TENTATIVE` 状态，`evidence_nature` FACT/REFERENCE 两分支均真实触发，`evidence_scope` 一次被模型主动推断为 `THIS_ACCOUNT`（合法但更主动，待 Reviewer 判断是否收紧），候选 App 当前运行版本 v0.5 |
 | Checkpoint 触发原因 | 正常阶段性收口（对话上下文即将压缩），非任务失败或外部中断；已提交的代码、证据、账本记录均已落盘，可凭本 Checkpoint 与 Git 历史直接续作 |
+
+---
+
+### `DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001` Checkpoint（2026-08-28／29，`FINAL-P0` 最小修复轮，**非终态**）
+
+```yaml
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+task_entry_mode: CONTINUE                 # 同一 task_id，合同哈希不变
+active_prompt: M5_FINAL_MINIMAL_P0_REMEDIATION_AND_NEXT_STAGE_EXECUTION_PROMPT_v1.0
+task_progress: IN_PROGRESS
+terminal_state:                           # 留空。终态不由执行侧填写。
+candidate_commit: 5f84d94d542693f143faab0444525618ab21a4e9
+candidate_manifest: V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.4_FINAL_P0.yaml
+bind: fp
+branch_head: adb67a7
+main_merge: NOT_ALLOWED
+new_formal_round: NOT_AUTHORIZED
+```
+
+**做了什么**：按冻结的最小修复面（N1 = M3 successor；N2 = 六能力共享 `returns_adapter`；
+N3 = 六能力 `USER_DELIVERY` 模板）改，`rb` 与 `legacy` 绑定的应用一个字节没动。
+R1–R7 全部跑完，A/B 受影响案例已重建。
+
+**验证结论（只说证据支持的）**：
+
+| 项 | 结果 |
+|---|---|
+| R2 三份原留出重跑 | 三处 P0／残留**均不复现**；机器绑定现场查库一致 |
+| R3 两份新鲜留出 | 执行侧可判 P0 面**零命中**；4 项 `SEMANTIC_HUMAN_ONLY` 未决 → `NOT_VERIFIED` |
+| R4 `RISK-M4-030+031` | **`FAIL`**（按冻结判据；偏离格在轮间漂移，判据不改） |
+| R5 正常主路径 | 四能力全交付、零泄漏、幂等成立——收紧未误挡正常业务 |
+| R6 确定性测试 | 11/11 `PASS`，含负控制与假阳性控制；保护面零漂移 |
+| R7 十九维与 AC | `M5-AC-07` = `FAIL`；`AC-03`／`04`／`08` = `STALE`；四项人判 = `NOT_VERIFIED` |
+
+**必须传给下一手的四件事**：
+
+1. **`M5-AC-07` 是 `FAIL`**，候选整体不可验收。这轮的任务是修三处行为，不是让 M5 通过。
+2. **`STALE` 是按授权没跑，不是漏跑。** `allowed_reverification_only` 只给了 R1–R7，
+   `new_formal_round: NOT_AUTHORIZED`。要转 `CURRENT` 需要新的正式轮授权。
+3. **盲评在本仓库内不成立**：`AB_SUITE_RAW_*` 带显式 `A`／`B` 键、与盲评包同目录，
+   封存 mapping 挡不住比对。盲评包必须**脱离仓库**单独交给独立评审人。
+   执行侧已因运行器日志打印字数而知道 `AB-M3-01` 的映射，**对该案例的任何评分意见无效**。
+4. **冻结映射有一处 id 不匹配**：十九维把「质量」绑到 `RISK-M4-030`，实际用例 id 是
+   `RISK-M4-030+031`，导致本轮唯一一条当期 `FAIL` 在该维不可见。属合同层，执行侧无权改。
+
+**下一动作（需要 Founder）**：
+① 裁定 R3 的 4 项人判子项，其中 `H01-A3` 是 P0；
+② 决定 `RISK-M4-030+031` 的判据是否出下一版（本轮不改）；
+③ 决定是否授权新的正式轮以消除 `STALE`；
+④ 安排隔离交付的独立人类盲评。
+
+**Checkpoint 触发原因**：Prompt 规定 Step 6 完成后停在 `CHECKPOINT` 交裁决，非失败、非中断。
