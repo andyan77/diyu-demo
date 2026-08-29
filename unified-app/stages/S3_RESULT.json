@@ -1,0 +1,49 @@
+{
+  "stage": "S3",
+  "result": "PASS",
+  "flag": "CURRENT",
+  "stage_gate": "S3_STAGE_GATE_v1.0 (sha256 1ac06c6bed6c54ffc342a061d39b3bb8e47a84fc89f08f9c51c5245b557b017b)",
+  "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "graph_sha256": "8629996f6b9fc0e4df185462fc069f808b4ef6fe37543329d3a4513cab7c580a",
+  "node_count": 38,
+  "edge_count": 38,
+  "verdicts": {
+    "S3-MAIN-01": "PASS",
+    "S3-REG-ASK-01": "PASS"
+  },
+  "deterministic_checks": {
+    "prerun": "13/13 PASS",
+    "postrun": "13/13 PASS",
+    "model_calls": 0
+  },
+  "proven_this_layer": [
+    "同一 successor App 内真实跑通 M1→M2→M3→用户返回，M3 节点实际执行且 succeeded",
+    "M2 当前投影逐字节进入 M3 入参（252 字符 identical，含『来源 M2 服务实时读取』标记）",
+    "M3 返回 1643 字有内容的账号经营诊断，非空白非占位，以恰好一个决定性问题收尾",
+    "同会话追问『用对应的专业能力来分析』未退回普通对话，M3 再次实际执行",
+    "SEED 写入 M2 的决策值确实进入 M3 该轮投影（kept_unchanged 出现在 M3 入参内）",
+    "M3 主动声明未引用验收夹具，与 D-S3-06『夹具正文图中 ABSENT』互相印证",
+    "M3 识破 SEED 的 based_on 标注为非真实经营数据，拒绝据此下真实经营结论",
+    "两轮 leak_hit_count = 0，判定侧独立复算禁词同样零命中",
+    "回归：只问一个的轮次零 M2 零 M3 节点执行"
+  ],
+  "m3_modification": "零。M3 graph md5 与 R0 基线一致（D-S3-04），只调用不修改",
+  "cost": {
+    "canvas_workflow_runs": 3,
+    "canvas_llm_node_attempts": 6,
+    "per_case": {
+      "S3-MAIN-01": {
+        "runs": 2,
+        "canvas_llm": 4
+      },
+      "S3-REG-ASK-01": {
+        "runs": 1,
+        "canvas_llm": 2
+      }
+    },
+    "m3_app_runs_last_40min_by_status": "failed|1\nsucceeded|2",
+    "note": "M3 应用内部另有自己的 LLM 节点，其运行在 M3 app 名下单独统计；一次 failed 由 tool 节点 retry 覆盖"
+  },
+  "layer_scope_disclaimer": "本层 PASS 只证明 M2→M3→用户返回成立。Hop/Seam/六能力未接，相关 UAPP-AC 对 successor 仍 NOT_VERIFIED。",
+  "next_stage_allowed": true
+}
