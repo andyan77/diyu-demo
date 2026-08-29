@@ -1,0 +1,192 @@
+{
+  "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
+  "graph_md5": "d8026d2d065b4f9a2111bd1d32366172",
+  "graph_sha256": "c60dc41121de4986abc8a1944f4330fbbc60030047104ebd188cb884a638f05c",
+  "checks": [
+    {
+      "id": "D-01",
+      "desc": "新应用 mode=advanced-chat、已发布、Site/API 可用",
+      "result": "PASS",
+      "detail": {
+        "mode": "advanced-chat",
+        "status": "normal",
+        "enable_site": "true",
+        "enable_api": "true",
+        "graph_md5": "d8026d2d065b4f9a2111bd1d32366172",
+        "published_version_name": "uapp-v1.1-triage001"
+      }
+    },
+    {
+      "id": "D-02",
+      "desc": "图结构自洽：无悬空边、无不可达节点",
+      "result": "PASS",
+      "detail": {
+        "nodes": 35,
+        "edges": 38,
+        "dangling": [],
+        "unreachable": []
+      }
+    },
+    {
+      "id": "D-03",
+      "desc": "图内 M1 编译器与仓库源码逐字节一致",
+      "result": "PASS",
+      "detail": {
+        "repo_sha256": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b",
+        "graph_sha256": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b",
+        "repo_bytes": 112004,
+        "graph_bytes": 112004
+      }
+    },
+    {
+      "id": "D-04",
+      "desc": "图内 M3 方法参考与仓库文件逐字节一致",
+      "result": "PASS",
+      "detail": [
+        {
+          "path": "references/fashion-and-market.md",
+          "repo_sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+          "graph_sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+          "same": true
+        },
+        {
+          "path": "references/six-skill-methods.md",
+          "repo_sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+          "graph_sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+          "same": true
+        },
+        {
+          "path": "references/operations.md",
+          "repo_sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+          "graph_sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+          "same": true
+        }
+      ]
+    },
+    {
+      "id": "D-05",
+      "desc": "M3 验收夹具如实声明未加载，且正文确实没有被嵌进输入",
+      "result": "PASS",
+      "detail": {
+        "manifest_declares_not_loaded": true,
+        "acceptance_fixture_body_absent": true,
+        "embedded_bodies": [
+          "references/fashion-and-market.md",
+          "references/six-skill-methods.md",
+          "references/operations.md"
+        ]
+      }
+    },
+    {
+      "id": "D-06",
+      "desc": "三个任务 provider 仍绑定准确目标且版本与目标当前发布版一致",
+      "result": "PASS",
+      "detail": [
+        {
+          "provider": "diyu_uapp_m3",
+          "id": "9ea86217-8791-489c-9a96-b880ae558ac5",
+          "bound_app": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+          "provider_version": "2026-08-29 03:29:56.878929",
+          "target_published_version": "2026-08-29 03:29:56.878929",
+          "ok": true
+        },
+        {
+          "provider": "diyu_uapp_seam",
+          "id": "f8d63527-8c45-4823-8159-443cef37240d",
+          "bound_app": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+          "provider_version": "2026-08-29 03:34:59.916878",
+          "target_published_version": "2026-08-29 03:34:59.916878",
+          "ok": true
+        },
+        {
+          "provider": "diyu_uapp_hop",
+          "id": "fd3f6f29-237f-4bbe-a820-5d38076ab52e",
+          "bound_app": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+          "provider_version": "2026-08-28 07:28:55.139349",
+          "target_published_version": "2026-08-28 07:28:55.139349",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "id": "D-07",
+      "desc": "新画布的三个工具节点使用的正是这三个任务 provider",
+      "result": "PASS",
+      "detail": {
+        "uapp_m3": "9ea86217-8791-489c-9a96-b880ae558ac5",
+        "uapp_hop": "fd3f6f29-237f-4bbe-a820-5d38076ab52e",
+        "uapp_seam": "f8d63527-8c45-4823-8159-443cef37240d"
+      }
+    },
+    {
+      "id": "D-08",
+      "desc": "旧 Canvas、旧 provider、最终 FP 八应用与 hop 适配器零漂移",
+      "result": "PASS",
+      "detail": {
+        "old_canvas_md5": "67b717d1365c2fb75a3b8e761b0527da",
+        "old_provider_app": "de0cb1e9-2af8-415a-9762-31b6cf348c22",
+        "old_provider_version": "2026-08-27 20:36:22.268824",
+        "fp_drift": {}
+      }
+    },
+    {
+      "id": "D-09",
+      "desc": "六项能力都在统一路由的可达集合内，且 capability 来自路由输出",
+      "result": "PASS",
+      "detail": {
+        "routable": [
+          "MATRIX",
+          "CAMPAIGN",
+          "CONTENT_BRIEF",
+          "CREATIVE_SCRIPT",
+          "PRODUCTION_DIRECTOR",
+          "PUBLISHING_PACKAGING"
+        ],
+        "seam_capability_binding": "{{#uapp_route.target_capability#}}",
+        "seam_entry_binding": "{{#uapp_route.entry#}}"
+      }
+    },
+    {
+      "id": "D-10",
+      "desc": "画布不固定全链：能力调用挂在条件分支后，不是无条件串行",
+      "result": "PASS",
+      "detail": {
+        "if_else_nodes": [
+          "uapp_gate",
+          "uapp_boot_gate",
+          "uapp_op_gate"
+        ]
+      }
+    },
+    {
+      "id": "D-11",
+      "desc": "start 节点零用户输入变量；用户只说自然语言",
+      "result": "PASS",
+      "detail": {
+        "start_variables": []
+      }
+    },
+    {
+      "id": "D-12",
+      "desc": "泄漏防线双向可区分：脏输入被清干净，干净正文零改动",
+      "result": "PASS",
+      "detail": {
+        "negative_control_leftovers": [],
+        "negative_control_hits": 8,
+        "positive_control_unchanged": true,
+        "positive_control_hits": [],
+        "scrubbed_sample": "状态 （可以往下走了），=（已完成），capability=，见 ，节点 ，app ， 为空，内部"
+      }
+    },
+    {
+      "id": "D-13",
+      "desc": "图内不引用任何外部手工编排运行时",
+      "result": "PASS",
+      "detail": {
+        "hits": []
+      }
+    }
+  ],
+  "passed": 13,
+  "failed": 0
+}
