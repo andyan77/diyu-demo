@@ -475,3 +475,28 @@ Founder 裁决 `M5-FOUNDER-ADJUDICATION-003`：「我认为两项P0收口后，�
 两处修改均为共享账本只追加（删除行 0）；live main 十个未跟踪文件在位，与 594 条待合并路径
 交集 **0**；候选 8 个 Dify 应用 graph/node/model 与 v1.1.4 冻结值逐条一致，**漂移 none**，
 收口阶段 Workflow/LLM 调用 **0**。
+
+**2026-08-29 终态（M5 收口完成）**：
+
+```yaml
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+task_progress: COMPLETED
+terminal_state: DONE
+delivery_disposition: ACCEPTED_WITH_DISCLOSED_TECHNICAL_DEBT
+all_original_m5_ac_pass: false
+applicable_p0_failures: 0
+open_technical_debt: 8            # TD-M5-01..08，其中 P0 级 0
+closeout_commit: bc660498af24afe1cc3e800459246cc1f954003b
+main: bc660498af24afe1cc3e800459246cc1f954003b
+origin_main: bc660498af24afe1cc3e800459246cc1f954003b
+task_branch: bc660498af24afe1cc3e800459246cc1f954003b
+force_push: NONE
+next_stage_default: false
+```
+
+**`DONE` 的准确含义**：只表示 v1.2「可用候选 ＋ 已披露技术债 ＋ Git／远端收口」合同完成。
+**不**表示原 `M5-AC-00..10` 全绿、生产就绪、真实运营闭环或经营提升。
+`M5-AC-03`／`04`／`08` 仍 `STALE`，`M5-AC-05`／`06`／`07` 仍 `NOT_VERIFIED`。
+
+技术债后续处理只能由新的优先级与新任务授权打开，不得在本 M5 任务内继续修复或复验。
+主表：[`V1_M5_ACCEPTED_TECHNICAL_DEBT_REGISTER_v1.0.md`](../decision-chain/docs/V1_M5_ACCEPTED_TECHNICAL_DEBT_REGISTER_v1.0.md)。

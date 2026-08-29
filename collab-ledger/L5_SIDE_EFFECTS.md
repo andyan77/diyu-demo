@@ -700,3 +700,19 @@ live_main_untracked_files_touched: NONE
 由 Founder 裁决 002 §四单独授权，1 次，无重试、无重复采样，已单独登记。
 
 Git 推送在本条目之后按事件顺序追加，不预写。
+
+### `SE-M5-CLOSEOUT` 推送记录（事件之后追加）
+
+```yaml
+push_1:
+  ref: refs/heads/codex/v1-m5-unified-integration-final-acceptance-001
+  from: 9bf57246834a30f99f7a45abeea82ee5471a6fe8
+  to: bc660498af24afe1cc3e800459246cc1f954003b
+  method: fast-forward, non-force
+push_2:
+  ref: refs/heads/main
+  from: f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e
+  to: bc660498af24afe1cc3e800459246cc1f954003b
+  method: git merge --ff-only + non-force push
+verification: git ls-remote + git fetch；origin/main 与本地 main、任务分支三方一致
+```

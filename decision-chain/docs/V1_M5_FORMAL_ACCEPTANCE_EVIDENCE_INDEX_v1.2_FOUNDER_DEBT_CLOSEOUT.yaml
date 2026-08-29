@@ -283,3 +283,22 @@ prohibited_claims:
 - PRODUCTION_READY
 - REAL_OPERATION_LOOP_VERIFIED
 - OPERATIONAL_UPLIFT_PROVEN
+
+closeout_update:
+  note: Git/远端真实收口之后追加，不预填。M5-AC-10 与 CLOSE-AC-07 在此更新。
+  closeout_commit: bc660498af24afe1cc3e800459246cc1f954003b
+  origin_main: bc660498af24afe1cc3e800459246cc1f954003b
+  origin_task_branch: bc660498af24afe1cc3e800459246cc1f954003b
+  local_main: bc660498af24afe1cc3e800459246cc1f954003b
+  three_way_identical: true
+  force_push: NONE
+  M5-AC-10:
+    result: PASS
+    freshness: CURRENT
+    evidence: 任务分支与 main 均以非 force 方式收口；ls-remote 与 fetch 复核三方一致；最终回执已落盘
+  CLOSE-AC-07:
+    pass: true
+  done_formula_v1_2_first_holds: true
+  terminal_state: DONE
+  delivery_disposition: ACCEPTED_WITH_DISCLOSED_TECHNICAL_DEBT
+  all_original_ac_pass: false

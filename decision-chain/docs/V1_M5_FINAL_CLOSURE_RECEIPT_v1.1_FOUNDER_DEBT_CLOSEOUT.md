@@ -102,9 +102,9 @@ modified_paths_are_append_only: true      # 两份共享账本，删除行 0
 live_main_untracked_files: 10
 live_main_untracked_collision_with_merge_paths: 0
 enclosing_receipt_commit: SELF_RESOLVED_BY_GIT
-task_branch_push: PENDING
-main_closeout: PENDING
-remote_verification: PENDING
+task_branch_push: DONE
+main_closeout: DONE
+remote_verification: DONE
 ```
 
 ---
@@ -164,6 +164,79 @@ live_main_untracked_files_touched: NONE
 > 按 `stop_rule`，`DONE` 公式首次成立后立即停止。本节在 Git／远端收口真实完成后追加。
 
 ```yaml
-task_progress: IN_PROGRESS      # 待收口完成后更新
-terminal_state:                 # 留空，待收口完成后更新
+task_progress: COMPLETED
+terminal_state: DONE
+delivery_disposition: ACCEPTED_WITH_DISCLOSED_TECHNICAL_DEBT
+all_original_m5_ac_pass: false
+applicable_p0_failures: 0
+next_stage_default: false
+```
+
+---
+
+## 九、Git／远端收口实际发生的事实（事件之后追加）
+
+```yaml
+closeout_commit: bc660498af24afe1cc3e800459246cc1f954003b
+task_branch_push:
+  ref: refs/heads/codex/v1-m5-unified-integration-final-acceptance-001
+  before: 9bf57246834a30f99f7a45abeea82ee5471a6fe8
+  after: bc660498af24afe1cc3e800459246cc1f954003b
+  method: fast-forward, non-force
+main_closeout:
+  ref: refs/heads/main
+  before: f6eb86c076c47bd9f7c9323caac6c0ba1fc5098e
+  after: bc660498af24afe1cc3e800459246cc1f954003b
+  method: git merge --ff-only, then non-force push
+remote_verification:
+  method: git ls-remote + git fetch
+  origin_main: bc660498af24afe1cc3e800459246cc1f954003b
+  origin_task_branch: bc660498af24afe1cc3e800459246cc1f954003b
+  local_main: bc660498af24afe1cc3e800459246cc1f954003b
+  three_way_identical: true
+live_main_untracked_files_after: 10
+live_main_tracked_dirty_after: none
+force_push: NONE
+enclosing_receipt_commit: SELF_RESOLVED_BY_GIT
+```
+
+本节全部为**已发生并经 `ls-remote` / `fetch` 复核**的事实，无预填。
+本文件自身的后继提交哈希由 Git 解析，实际 40 位提交在终端最终回报中给出。
+
+## 十、`CLOSE-AC-07`
+
+```yaml
+CLOSE-AC-07:
+  pass: true
+  evidence: 任务分支非 force fast-forward push；main 以 --ff-only 收口后非 force push；
+            origin/main 与本地 main、任务分支三方一致；Final Receipt 与 COMPLETION CHECK 已落盘
+```
+
+`done_formula_v1_2` 首次成立。
+
+## 十一、COMPLETION CHECK
+
+```yaml
+real_behavior_verified:
+  - 两项原 P0 在旧例重跑与新鲜留出中均已关闭（applicable_p0_failures = 0）
+  - R4 同一带引号形式：正例四格真实交付（3150–4695 字），负例精确阻断（artifact 0，precise_gap = audience_problem）
+  - R5 正常主路径四能力全交付、零泄漏、幂等成立，未被最小修复误挡
+validator_discrimination_verified:
+  - R4 单次冻结负控制 PASS；判据与输入冻结提交 47dfa4c 早于调用
+  - R6 11/11 含负控制（旧检查器漏检）与假阳性控制（干净正文零命中）
+core_problem_solved:
+  - 当前候选达到 v1.2 的可用技术集成交付目标
+  - 原始 M5 全绿目标未宣称成立；all_original_m5_ac_pass = false
+protected_targets_unchanged_or_authorized:
+  - 候选 8 应用 graph/node/model 零漂移（只读刷新 8/8）
+  - live main 十个未跟踪文件零触碰；与 594 条待合并路径交集 0
+  - 相对 origin/main 592 新增 / 2 修改 / 0 删除，两处修改均为账本只追加
+evidence_refs:
+  - 逐项文件 sha256 见证据索引 v1.2
+  - Dify 绑定：CLOSEOUT_READONLY_BINDING_REFRESH.json（drift none）
+  - 负控制 run_id: eb2364a5-e740-4679-ad07-02909663965c
+  - Git: bc660498af24afe1cc3e800459246cc1f954003b（分支 = main = origin/main）
+unnecessary_complexity_remaining:
+  - 本任务不再增加测试轮、人判、盲评、检查器修复或治理文档
+  - 技术债 8 项已登记，后续只能由新任务/新授权打开
 ```
