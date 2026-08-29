@@ -716,3 +716,11 @@ push_2:
   method: git merge --ff-only + non-force push
 verification: git ls-remote + git fetch；origin/main 与本地 main、任务分支三方一致
 ```
+
+
+---
+
+## 任务分区定位 · `DIYU-V1-UNIFIED-DIFY-APPLICATION-001`
+
+本任务按 canonical §一 建了自己的分区，本文件只留这一行定位，不复制其正文：
+[`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)。

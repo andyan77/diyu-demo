@@ -1576,3 +1576,11 @@ Founder 就 T-011.9 执行侧三项存疑逐一说明，并以第一手见证补
 | `M2-PDR-01～15` | 全部 `PASS` |
 | 终态（正式 `DONE`，不登记 `execution_disposition`——该字段专用于非终态 Checkpoint，与已进入的正式终态同时出现属无效组合，不重复 T-011.7 已纠偏过的失误） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`；`main_merge_authorized = true`（Founder 条件授权：任务分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`M2-PDR-01～15` 均完成；执行侧合并前逐项现场核验，见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)） |
 | Git 收口 | 任务分支收口 commit `4f57a32e61e2612f7f3de3699f5f5253fe270d5c` 推送后，核验通过，以真实二亲合并（`git merge --no-ff`，无冲突）合并 commit `17ca3f70212f38048b37f739edffba8bf7cf8f85` 进 `main` 并推送 `origin/main`；详见 [L5 SE-027～SE-029](L5_SIDE_EFFECTS.md) |
+
+
+---
+
+## 任务分区定位 · `DIYU-V1-UNIFIED-DIFY-APPLICATION-001`
+
+本任务按 canonical §一 建了自己的分区，本文件只留这一行定位，不复制其正文：
+[`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)。

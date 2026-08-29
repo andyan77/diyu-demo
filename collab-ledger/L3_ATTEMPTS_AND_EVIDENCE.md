@@ -1997,3 +1997,11 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 
 `CLOSE-AC-01..06` 逐条成立（依据见证据索引 v1.2 的 `v1_2_hard_gates`）；
 `CLOSE-AC-07` 待 Git／远端真实收口后更新。
+
+
+---
+
+## 任务分区定位 · `DIYU-V1-UNIFIED-DIFY-APPLICATION-001`
+
+本任务按 canonical §一 建了自己的分区，本文件只留这一行定位，不复制其正文：
+[`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)。

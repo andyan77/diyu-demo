@@ -57,13 +57,31 @@ def _is_transport(err):
     return any(t in e for t in _TRANSPORT)
 
 
+APP_ID = "2448e4f9-818f-4b88-9311-d18546e97da9"
+_GRAPH_CACHE = {}
+
+
+def _live_graph():
+    """当前已发布图的原文与哈希。运行器记的 graph_sha256_at_run 就是按这同一段字节算的。"""
+    if "raw" not in _GRAPH_CACHE:
+        raw = subprocess.run(
+            ["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres", "-d",
+             "dify", "-tA", "-c",
+             "select w.graph from workflows w join apps a on a.workflow_id=w.id "
+             "where a.id='%s';" % APP_ID],
+            capture_output=True, text=True).stdout.strip()
+        _GRAPH_CACHE["raw"] = raw
+        _GRAPH_CACHE["sha"] = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+        # Manifest 记的是构建脚本那套序列化口径。同一张图两个哈希，两边都写出来，
+        # 免得对照文档的人把"口径不同"读成"图漂移了"。
+        _GRAPH_CACHE["sha_manifest"] = hashlib.sha256(json.dumps(
+            json.loads(raw), ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+    return _GRAPH_CACHE
+
+
 def _scrubber():
     """用**已发布图里那一份**投影节点源码的清洗函数来扫，判据与运行时同源。"""
-    g = json.loads(subprocess.run(
-        ["docker", "exec", "-i", "docker-db_postgres-1", "psql", "-U", "postgres", "-d", "dify",
-         "-tA", "-c", "select w.graph from workflows w join apps a on a.workflow_id=w.id "
-         "where a.id='2448e4f9-818f-4b88-9311-d18546e97da9';"],
-        capture_output=True, text=True).stdout)
+    g = json.loads(_live_graph()["raw"])
     src = [n for n in g["nodes"] if n["id"] == "uapp_delivery"][0]["data"]["code"]
     ns = {}
     exec(compile(src, "<delivery>", "exec"), ns)
@@ -82,6 +100,15 @@ def adjudicate(case_id):
         return {"case_id": case_id, "verdict": "NOT_VERIFIED", "freshness": "STALE",
                 "reason": "证据绑定的判据哈希与当前判据文件不一致，需定向复验",
                 "evidence_bound": ev["frozen_criteria"]["sha256"], "current": frozen_sha}
+
+    # 判据没变不等于被测对象没变。证据里记着它跑的是哪张图；图改了，这份证据就只
+    # 证明旧图，不证明现在这个应用。以前这里没查，绑在旧图上的 PASS 会被读成 CURRENT。
+    live_sha = _live_graph()["sha"]
+    ran_sha = ev.get("graph_sha256_at_run") or ""
+    if ran_sha != live_sha:
+        return {"case_id": case_id, "verdict": "NOT_VERIFIED", "freshness": "STALE",
+                "reason": "证据绑定的图与当前已发布图不一致，结论只对旧图成立，需定向复验",
+                "graph_at_run": ran_sha, "graph_now": live_sha}
 
     checks = []
 
@@ -231,7 +258,8 @@ def adjudicate(case_id):
     else:
         verdict = "PASS"
     return {"case_id": case_id, "verdict": verdict, "freshness": "CURRENT",
-            "frozen_criteria_sha256": frozen_sha, "checks": checks,
+            "frozen_criteria_sha256": frozen_sha, "graph_sha256_psql": live_sha,
+            "graph_sha256_manifest": _live_graph()["sha_manifest"], "checks": checks,
             "conversation_id": ev.get("conversation_id"), "turns": len(turns)}
 
 

@@ -500,3 +500,33 @@ next_stage_default: false
 
 技术债后续处理只能由新的优先级与新任务授权打开，不得在本 M5 任务内继续修复或复验。
 主表：[`V1_M5_ACCEPTED_TECHNICAL_DEBT_REGISTER_v1.0.md`](../decision-chain/docs/V1_M5_ACCEPTED_TECHNICAL_DEBT_REGISTER_v1.0.md)。
+
+---
+
+### `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` Checkpoint（2026-08-29，任务分支收口，**非终态**）
+
+分区账本（状态、下一动作、L1/L3/L4/L5 全部细节都在里面，本文件不复制）：
+[`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: UNSET            # 合同 no_terminal_state_before_formula=true，公式不成立
+checkpoint: 任务分支收口完成，停在 Founder 裁决门
+ac_pass_current: [AC-01, AC-02, AC-04, AC-05, AC-10, AC-11]
+ac_fail:         [AC-03, AC-06, AC-07]
+ac_not_verified: [AC-08, AC-09, AC-12]
+open_technical_debt: 10          # TD-UAPP-01..10
+main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2          # 未动
+origin_main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2    # 未动
+force_push: NONE
+```
+
+**`main` 未合并的原因是合同条件不成立**，不是遗漏：
+`main_merge_and_push: CONDITIONALLY_AUTHORIZED_AFTER_UAPP_AC_01_TO_12`，
+当前六项成立、三项 `FAIL`、两项从未运行、`AC-12` 未实测。
+**`AC-12` 没有被代判**——Founder 的指令是「在已披露技术债之下继续收口」，不是「我实测过并接受」。
+
+**下一动作**：取得 Founder 对 TD-UAPP-03（是否改 M1 已接受的对话语义）与
+TD-UAPP-01（冻结判据 T1 输入是否本就缺「内容承诺」）的裁定；两项都在 Founder 裁决域内，
+执行侧不得代选。判定信号见分区账本 L2 表。

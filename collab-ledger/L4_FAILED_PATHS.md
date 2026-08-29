@@ -76,3 +76,17 @@
 `NONE_VERIFIED_SINCE_BASELINE` —— 自 `6ae78ab` 起，除 **§二 索引表所列**之外没有其他被证据判死的路线。**本行不维护条目总数**（以 §二 索引表为准，避免计数漂移）。
 
 > **更正（D-014）**：本行此前写「除上述**两条**外」，加入 FP-003 时漏改计数。由 A2 第 4 轮隔离单元查出。
+
+> **更正（2026-08-29）**：上行「没有其他被证据判死的路线」在
+> `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` 收口后**不再准确**。该任务判死了八条路线，
+> 按 canonical §一 写在自己的分区里，不进 §二 索引表：
+> [`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) L4 节。
+> 上行原文按「只加不改」保留。
+
+
+---
+
+## 任务分区定位 · `DIYU-V1-UNIFIED-DIFY-APPLICATION-001`
+
+本任务按 canonical §一 建了自己的分区，本文件只留这一行定位，不复制其正文：
+[`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)。
