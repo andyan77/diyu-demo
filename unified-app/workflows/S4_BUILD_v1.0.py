@@ -116,15 +116,19 @@ def build_graph():
         "投影｜组件 Return → 自然用户交付",
         "user_delivery 非空就用它；能力没写正文才由本节点按缺口兜底。内部字段一律清洗",
         NODES.DELIVERY_SRC,
+        # 分组变量聚合器的每个 group 输出带一层 output 包装，选择器必须写三段。
+        # 写两段拿到的是 {"output": ...} 这个 dict，下游 .strip() 当场抛
+        # AttributeError（attempt01 实测）。m3_* 不走聚合器：uapp_delivery 只可能在
+        # uapp_m3 之后到达（两条分支都在它下游），直接绑更准，也少一组聚合。
         [V("capability", ["uapp_route", "target_capability"]),
-         V("seam_user_delivery", ["uapp_seam_merge", "user_delivery"]),
-         V("seam_outcome", ["uapp_seam_merge", "outcome"]),
-         V("seam_returns_json", ["uapp_seam_merge", "returns_json"]),
+         V("seam_user_delivery", ["uapp_seam_merge", "user_delivery", "output"]),
+         V("seam_outcome", ["uapp_seam_merge", "outcome", "output"]),
+         V("seam_returns_json", ["uapp_seam_merge", "returns_json", "output"]),
          V("m3_judgment", ["uapp_m3", "operating_judgment"]),
          V("m3_gate_status", ["uapp_m3", "gate_status"]),
          V("route_mode", ["uapp_route", "route_mode"]),
          V("m2_note", ["uapp_ctx", "m2_note"]),
-         V("hop_gaps_text", ["uapp_seam_merge", "hop_gaps"]),
+         V("hop_gaps_text", ["uapp_seam_merge", "hop_gaps", "output"]),
          V("account_context", ["uapp_ctx", "account_context"]),
          V("side_effect_text", ["uapp_noseam", "empty"])],
         ["final_text", "delivered_flag", "modules_actually_run", "leak_hits_json",

@@ -1,0 +1,153 @@
+{
+  "case_id": "S4-CAP-MATRIX-01",
+  "stage": "S4",
+  "stage_gate_sha256": "837182599e662e5d0299db895717a26659a1a2f02d6b2b14edfff1fafc9f49f4",
+  "nested_app_runs": {
+    "M3": {
+      "app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+      "runs": [
+        {
+          "id": "027458be-86f6-4706-8a8e-89a7c07f5b78",
+          "status": "succeeded",
+          "created_at": "2026-08-29T16:02:36.382478"
+        },
+        {
+          "id": "4141fbc1-3f7f-42f9-ba95-b866cb031ed9",
+          "status": "succeeded",
+          "created_at": "2026-08-29T15:47:35.864384"
+        },
+        {
+          "id": "c4cad61d-4285-4579-84c4-1f276c04867c",
+          "status": "succeeded",
+          "created_at": "2026-08-29T15:42:33.652759"
+        },
+        {
+          "id": "79e7143c-64fe-4cc3-b2e4-d4afa31cab66",
+          "status": "failed",
+          "created_at": "2026-08-29T15:42:30.807926"
+        }
+      ]
+    },
+    "HOP": {
+      "app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+      "runs": [
+        {
+          "id": "e00e5243-137b-4a34-b6e9-06e697c9e245",
+          "status": "succeeded",
+          "created_at": "2026-08-29T16:07:47.127442"
+        }
+      ]
+    },
+    "SEAM": {
+      "app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+      "runs": [
+        {
+          "id": "bd8adb50-eee7-4351-bf8e-ab24c05e0422",
+          "status": "succeeded",
+          "created_at": "2026-08-29T16:07:50.964498"
+        }
+      ],
+      "latest_run_nodes": [
+        {
+          "idx": 1,
+          "node_id": "1788000000001",
+          "title": "能力调用意图",
+          "type": "start",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 2,
+          "node_id": "entry_resolver",
+          "title": "入口解析（确定性）",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 3,
+          "node_id": "seam_dispatch",
+          "title": "能力分派",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 4,
+          "node_id": "tool_matrix",
+          "title": "调用 DIYU M4 v1.3 TEST · Matrix Architect",
+          "type": "tool",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 5,
+          "node_id": "fin_matrix",
+          "title": "接缝收口｜MATRIX",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 6,
+          "node_id": "end_matrix",
+          "title": "结束｜MATRIX",
+          "type": "end",
+          "status": "succeeded",
+          "error": null
+        }
+      ]
+    },
+    "MATRIX": {
+      "app_id": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+      "runs": [
+        {
+          "id": "eca22e1f-cb3e-40ee-b260-9440e61ca936",
+          "status": "succeeded",
+          "created_at": "2026-08-29T16:07:51.113602"
+        }
+      ]
+    },
+    "CAMPAIGN": {
+      "app_id": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+      "runs": []
+    },
+    "CONTENT_BRIEF": {
+      "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+      "runs": []
+    },
+    "CREATIVE_SCRIPT": {
+      "app_id": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+      "runs": []
+    },
+    "PRODUCTION_DIRECTOR": {
+      "app_id": "13cfabd5-f592-4354-a304-47098b765697",
+      "runs": []
+    },
+    "PUBLISHING_PACKAGING": {
+      "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+      "runs": []
+    }
+  },
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "end_user": "s4-matrix01",
+  "conversation_id": "",
+  "seed": null,
+  "run_started_utc": "2026-08-29T16:07:52Z",
+  "turns": [
+    {
+      "turn_id": "C1",
+      "query": "有个账号一直没流量，怎么办",
+      "attempts": 1,
+      "http_status": 400,
+      "elapsed_seconds": 341.79,
+      "message_id": "",
+      "conversation_id": "",
+      "workflow_run_id": "",
+      "answer": null,
+      "nodes_executed": [],
+      "node_detail": []
+    }
+  ],
+  "note": "运行器只发起与记录，不判定。判定由 S4_ADJUDICATE 按冻结判据独立执行。"
+}

@@ -1,0 +1,167 @@
+{
+  "document": {
+    "id": "S4_1_STAGE_GATE_v1.1",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "stage": "S4.1",
+    "purpose": "Rebase Prompt §8.1：先只开放一个代表性能力，验证 M3 决策→Hop/Seam→目标能力真实执行→组件 Return→自然语言交付",
+    "frozen_before_any_model_run": true,
+    "supersedes": "无。S1/S2/S3 Stage Gate 继续有效且一字未改。",
+    "supersedes_identity_of": "S4_1_STAGE_GATE_v1.0（sha256 837182599e662e5d0299db895717a26659a1a2f02d6b2b14edfff1fafc9f49f4）",
+    "criteria_change": "NONE —— cases / leak_forbidden_tokens / gate_rule / representative_capability 四块与 v1.0 逐字节一致。判据在看到 attempt01 结果之后没有被放宽。",
+    "why_new_version": "attempt01 确认 uapp_delivery 入参绑定缺少聚合器的 output 段，修复后图改变；按 §10.1 建立新版本，不覆盖旧版。"
+  },
+  "identity": {
+    "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+    "mode": "advanced-chat",
+    "published_workflow_id": "0166b3bb-d600-49d3-8735-42d97fce513b",
+    "graph_sha256": "6f3d3e531b0b4c0cc355b72c55a1534221163cb1c7003d020ee1d1b2fdd26770",
+    "dsl_sha256": "1ead4423d575d7f22c455e1690175b7ecfbb54b16d9f7729594ffca607eab648",
+    "node_count": 45,
+    "edge_count": 47,
+    "git_commit_at_freeze": "98af24d"
+  },
+  "bindings_recomputed_on_site": {
+    "m3": {
+      "provider": "9ea86217-8791-489c-9a96-b880ae558ac5",
+      "target_app": "a4c3b19b-243f-490b-9aca-3aa19767d6a5"
+    },
+    "hop": {
+      "provider": "fd3f6f29-237f-4bbe-a820-5d38076ab52e",
+      "target_app": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+      "published": "0b772bda-3d0f-47d7-97d3-5b09a21e408c"
+    },
+    "seam": {
+      "provider": "f8d63527-8c45-4823-8159-443cef37240d",
+      "target_app": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+      "published": "e886dfe8-2c5b-4522-a885-cb410006a318"
+    },
+    "six_capability_apps": {
+      "MATRIX": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+      "CAMPAIGN": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+      "CONTENT_BRIEF": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+      "CREATIVE_SCRIPT": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+      "PRODUCTION_DIRECTOR": "13cfabd5-f592-4354-a304-47098b765697",
+      "PUBLISHING_PACKAGING": "c9cdea24-9df3-400b-9ecd-1d740e8c96df"
+    },
+    "dispatch_location": "六能力的分派在 Seam 内部（seam_dispatch），画布只传 capability，不直连任何能力应用（D-S4-03c 已证）",
+    "modification_policy": "Hop / Seam / 六能力应用的 graph / model / prompt / Skill 一律只读"
+  },
+  "representative_capability": {
+    "chosen": "MATRIX",
+    "why": "§8.1 要求「能由 S3 结果自然进入」。S3-MAIN-01 两轮的路由落点实测都是 MATRIX，因此它是自然后继，不是挑一个容易过的。",
+    "not_a_shortcut": "本层不放宽任何判据；MATRIX 通过后仍需按 §8.2 逐项开放其余五项，各自一正例一负例加回归。"
+  },
+  "discipline": {
+    "sampling": "每个正式输入只跑一次；纯传输失败且无任何模型输出时最多重试一次；禁止同输入重复采样求 PASS",
+    "evidence_source": "能力是否真的执行，只认 Seam 应用自己的 workflow_node_executions 里 tool_matrix 的执行记录。画布侧 succeeded、模型自述、交付正文的任何说法都不构成证据。",
+    "layer_scope": "本层 PASS 只证明一条能力链成立，不证明其余五项能力可达，也不证明 M5 写回与闭环"
+  },
+  "leak_forbidden_tokens": [
+    "READY",
+    "PASS",
+    "FAIL",
+    "STALE",
+    "NOT_VERIFIED",
+    "route_mode",
+    "target_capability",
+    "intent_source",
+    "canvas_triage",
+    "MATRIX",
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CREATIVE_SCRIPT",
+    "PRODUCTION_DIRECTOR",
+    "PUBLISHING_PACKAGING",
+    "SINGLE_ACCOUNT_OPERATION",
+    "AMBIGUOUS",
+    "CHITCHAT",
+    "uapp_",
+    "m1_",
+    "boot_",
+    "seam_",
+    "tool_matrix",
+    "85c01f85",
+    "a4c3b19b",
+    "5fca0162",
+    "gate_status",
+    "operating_judgment",
+    "capability_call",
+    "professional_input",
+    "returns_json",
+    "precise_gap",
+    "workspace_id",
+    "idempotency",
+    "http://",
+    "status_code"
+  ],
+  "cases": {
+    "S4-CAP-MATRIX-01": {
+      "applicability": "APPLICABLE",
+      "kind": "positive_representative_capability",
+      "mode": "fresh_conversation_one_turn",
+      "input": "有个账号一直没流量，怎么办",
+      "pass": [
+        "画布侧 uapp_m3 → uapp_hop → uapp_seam 三个节点依次实际执行且 succeeded",
+        "Seam 应用自身的运行记录中 tool_matrix 实际执行且 succeeded —— 目标能力真跑了",
+        "六能力中只有 MATRIX 对应的节点被执行，其余五个能力节点均未执行（不暗跑）",
+        "组件 Return 回到画布：uapp_seam 的 user_delivery 或 returns_json 非空",
+        "交付正文非空、非占位，且是自然语言，不是字段名或 JSON",
+        "跨跳不丢不改：uapp_hop 的入参 m3_judgment 与 uapp_m3 的 operating_judgment 逐字节一致；uapp_seam 的入参 capability 与路由的 target_capability 一致",
+        "leak_hit_count = 0",
+        "modules_actually_run 与实际执行的节点一致，不多报也不少报"
+      ],
+      "fail": [
+        "uapp_hop 或 uapp_seam 未执行，或执行了但 Seam 内部未进入任何能力节点",
+        "Seam 内部执行了 MATRIX 之外的能力节点（暗跑）",
+        "画布 workflow succeeded 但目标能力节点没跑",
+        "交付正文为空、占位、或泄漏内部字段",
+        "跨跳 payload 被丢失或改写"
+      ]
+    },
+    "S4-REG-ASK-01": {
+      "applicability": "APPLICABLE",
+      "kind": "upstream_regression",
+      "purpose": "回归 S1/S2/S3 的负例：接了 Hop/Seam 之后，确有歧义仍只问一个，且该轮零 M2 零 M3 零能力副作用",
+      "mode": "fresh_conversation_one_turn",
+      "input": "这条我想再打磨一下",
+      "pass": [
+        "route_mode = ASK_ONE，uapp_ask_one 实际执行，问号计数为 1，未猜能力",
+        "本轮零 M2、零 M3、零 Hop、零 Seam 节点执行",
+        "零内部字段泄漏"
+      ],
+      "fail": [
+        "路由到某个具体能力",
+        "执行了任何 M2 / M3 / Hop / Seam 节点",
+        "问了两个及以上问题",
+        "出现内部字段泄漏"
+      ]
+    }
+  },
+  "regression_scope": {
+    "covered": {
+      "S1-NEG-01 / S2-REG-ASK-01 / S3-REG-ASK-01": "由 S4-REG-ASK-01 同输入回归",
+      "S1-POS-01 / S3-MAIN-01 主路": "由 S4-CAP-MATRIX-01 同输入回归（同一句自然语言）"
+    },
+    "deterministic_checks": "S4_DETERMINISTIC_CHECKS.json，17/17 PASS，零模型调用，已于本冻结前完成"
+  },
+  "expected_cost": {
+    "canvas_workflow_runs": 2,
+    "canvas_llm_node_attempts": 4,
+    "nested_app_runs": "M3 / Hop / Seam / MATRIX 各自另计"
+  },
+  "evidence_paths": {
+    "S4-CAP-MATRIX-01": "unified-app/evidence/stages/S4-CAP-MATRIX-01_a2.json",
+    "S4-REG-ASK-01": "unified-app/evidence/stages/S4-REG-ASK-01_a2.json",
+    "deterministic": "unified-app/evidence/S4_DETERMINISTIC_CHECKS_v1.1.json"
+  },
+  "gate_rule": "两例全部满足其 pass 且无 fail 命中，才允许进入 §8.2 逐项开放其余五项能力。任一硬门 FAIL 立即输出 FAILURE TRIAGE。",
+  "supersedes_results": {
+    "attempt01": "STALE —— 绑定 graph 149c593f，该图已被修复取代；证据原样保留在 evidence/stages/s4_attempt01/",
+    "S4-REG-ASK-01_attempt01": "该例 attempt01 判 PASS，但绑定图已变，按 A3 一并置 STALE 并在本版重跑"
+  },
+  "carried_facts_from_attempt01": {
+    "note": "以下两条在 attempt01 已由 Seam 与各能力应用的运行记录独立成立，与本次修复无关；复验时应继续成立，不作为本版的既得结论。",
+    "no_silent_capability_runs": "Seam 内其余五个能力节点未执行，五个能力应用 runs=0",
+    "matrix_returns_precise_gap_not_fabrication": "MATRIX 在输入不足时返回 precise_gap: applicability_reason；expression_boundary，needs_user_decision: true"
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "stage": "S4.1",
+  "stage_gate_sha256": "837182599e662e5d0299db895717a26659a1a2f02d6b2b14edfff1fafc9f49f4",
+  "model_calls_by_adjudicator": 0,
+  "cases": {
+    "S4-CAP-MATRIX-01": {
+      "checks": [
+        {
+          "desc": "画布侧 uapp_m3 / uapp_hop / uapp_seam 依次实际执行且 succeeded",
+          "result": "FAIL",
+          "observed": {
+            "uapp_m3": false,
+            "uapp_hop": false,
+            "uapp_seam": false
+          }
+        },
+        {
+          "desc": "Seam 自身运行记录中目标能力节点实际执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "target": "MATRIX",
+            "seam_node": "tool_matrix",
+            "status": "succeeded",
+            "seam_nodes_ran": [
+              "1788000000001",
+              "entry_resolver",
+              "seam_dispatch",
+              "tool_matrix",
+              "fin_matrix",
+              "end_matrix"
+            ]
+          }
+        },
+        {
+          "desc": "Seam 内其余五个能力节点均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others_ran": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "FAIL",
+          "observed": {
+            "user_delivery_len": 0,
+            "returns_json_len": 0,
+            "outcome": null
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "FAIL",
+          "observed": {
+            "answer_len": 0,
+            "is_placeholder": false
+          }
+        },
+        {
+          "desc": "跨跳不丢不改·M3 判断逐字节进入 Hop 入参",
+          "result": "FAIL",
+          "observed": {
+            "m3_len": 0,
+            "hop_in_len": 0,
+            "identical": true
+          }
+        },
+        {
+          "desc": "跨跳不丢不改·Seam 入参 capability = 路由确定的目标能力",
+          "result": "FAIL",
+          "observed": {
+            "seam_in": "",
+            "route_target": null
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "FAIL",
+          "observed": {
+            "count": null,
+            "hits": null
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "modules_actually_run 报告了 M4 能力接缝这一跳，与实际执行一致",
+          "result": "FAIL",
+          "observed": {
+            "modules": ""
+          }
+        }
+      ],
+      "verdict": "FAIL",
+      "route": {},
+      "answer": "",
+      "seam_nodes_ran": {
+        "1788000000001": "succeeded",
+        "entry_resolver": "succeeded",
+        "seam_dispatch": "succeeded",
+        "tool_matrix": "succeeded",
+        "fin_matrix": "succeeded",
+        "end_matrix": "succeeded"
+      },
+      "workflow_run_id": "",
+      "nested_run_counts": {
+        "M3": 4,
+        "HOP": 1,
+        "SEAM": 1,
+        "MATRIX": 1,
+        "CAMPAIGN": 0,
+        "CONTENT_BRIEF": 0,
+        "CREATIVE_SCRIPT": 0,
+        "PRODUCTION_DIRECTOR": 0,
+        "PUBLISHING_PACKAGING": 0
+      }
+    },
+    "S4-REG-ASK-01": {
+      "checks": [
+        {
+          "desc": "route_mode = ASK_ONE",
+          "result": "PASS",
+          "observed": "ASK_ONE"
+        },
+        {
+          "desc": "uapp_ask_one 实际执行",
+          "result": "PASS",
+          "observed": true
+        },
+        {
+          "desc": "问号计数为 1",
+          "result": "PASS",
+          "observed": 1
+        },
+        {
+          "desc": "未猜任何能力",
+          "result": "PASS",
+          "observed": ""
+        },
+        {
+          "desc": "本轮零 M2 / 零 M3 / 零 Hop / 零 Seam 节点执行",
+          "result": "PASS",
+          "observed": {
+            "hits": []
+          }
+        },
+        {
+          "desc": "零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "true",
+        "decisive_question": "你想打磨的是哪一面？",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "false",
+        "intent": "AMBIGUOUS",
+        "intent_reason": "用户只说了“这条我想再打磨一下”，未指明打磨哪一面，上下文中也没有确定过具体产物，按补充规则第5条判为AMBIGUOUS。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "ASK_ONE",
+        "route_note": "capability=（本轮无）；action=NONE；能力来源=canvas_triage；模式=ASK_ONE。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "false",
+        "tag": "d28cd1eea923",
+        "target_capability": "",
+        "triage_failed": "false",
+        "user_request": "这条我想再打磨一下",
+        "withdraw_target_text": ""
+      },
+      "answer": "这一步我先确认一件事，确认完直接往下做：\n\n你想打磨的是哪一面？",
+      "workflow_run_id": "89022d1d-d169-42d8-a36e-b82fd4a9ab0e"
+    }
+  },
+  "summary": {
+    "verdicts": {
+      "S4-CAP-MATRIX-01": "FAIL",
+      "S4-REG-ASK-01": "PASS"
+    },
+    "all_pass": false,
+    "next_step_allowed": false
+  }
+}
