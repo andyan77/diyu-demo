@@ -340,7 +340,8 @@ def build_graph():
          V("material_text", ["m1_join", "material_text"]),
          V("snapshot_json", ["m1_compiler", "snapshot_json"]),
          V("account_handle", ["uapp_route", "tag"])],
-        ["account_context", "loaded_references", "registered_facts", "m2_reachable", "m2_note"])))
+        ["account_context", "loaded_references", "registered_facts", "has_material",
+         "m2_reachable", "m2_note"])))
     edges.append(E("uapp_m2_run", "uapp_ctx"))
 
     # ---- 上传资料登记为 M2 素材（撤回要有可撤的对象）----

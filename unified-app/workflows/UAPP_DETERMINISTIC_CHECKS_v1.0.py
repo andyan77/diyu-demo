@@ -8,6 +8,7 @@
 import hashlib
 import importlib.util
 import io
+import ast
 import json
 import os
 import re
@@ -287,6 +288,29 @@ def main():
                         "没有对平台做任何操作")),
           {"text": se("WITHDRAW_MATERIAL", "", "", "", "", "", "200", "", "",
                       "")["side_effect_text"]})
+
+    # Dify 会因为「返回了没声明的键」或「声明了没返回的键」整节点判失败，
+    # 而这类错只有跑到那一步才炸。静态比对一次，省掉一整轮模型调用。
+    mismatch = []
+    for nid, n in nodes.items():
+        d = n["data"]
+        if d.get("type") != "code":
+            continue
+        declared = set((d.get("outputs") or {}).keys())
+        tree = ast.parse(d["code"])
+        returned = set()
+        for fn in ast.walk(tree):
+            if isinstance(fn, ast.FunctionDef) and fn.name == "main":
+                for st_ in ast.walk(fn):
+                    if isinstance(st_, ast.Return) and isinstance(st_.value, ast.Dict):
+                        for k in st_.value.keys:
+                            if isinstance(k, ast.Constant):
+                                returned.add(k.value)
+        if returned and returned != declared:
+            mismatch.append({"node": nid, "declared_only": sorted(declared - returned),
+                             "returned_only": sorted(returned - declared)})
+    check("D-19", "每个代码节点声明的 outputs 与 main() 实际返回的键完全一致",
+          not mismatch, mismatch)
 
     failed = [r for r in RESULTS if r["result"] != "PASS"]
     out = {"app_id": APP_ID, "graph_md5": gmd5, "graph_sha256": sha(json.dumps(
