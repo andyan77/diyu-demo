@@ -22,7 +22,7 @@ import uuid as _uuid
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 ENV = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env"
-GATE = os.path.join(HERE, "..", "stages", "S4_2_STAGE_GATE_v1.0.json")
+GATE = os.path.join(HERE, "..", "stages", "S4_2_STAGE_GATE_v1.1.json")
 EV = os.path.join(HERE, "..", "evidence", "stages")
 FIXTURE = os.path.join(ROOT, "decision-chain", "fixtures", "一页纸夹具品牌事实 v0.1.md")
 
@@ -71,17 +71,23 @@ def upload(key, path, user):
     """按 Dify 的用户上传通道传一份资料。这是用户可见的正常产品动作。"""
     boundary = "----uapp" + _uuid.uuid4().hex
     name = os.path.basename(path)
-    body = io.open(path, "rb").read()
-    parts = [("--%s\r\nContent-Disposition: form-data; name=\"user\"\r\n\r\n%s\r\n"
-              % (boundary, user)).encode("utf-8"),
-             ("--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
-              "Content-Type: text/markdown\r\n\r\n" % (boundary, name)).encode("utf-8"),
-             body, ("\r\n--%s--\r\n" % boundary).encode("utf-8")]
-    raw = b"".join(parts)
+    # 整个多部分体全程按 str 组装。dify_client._direct 会对 data 做一次
+    # data.encode("utf-8")，那一次就是唯一的编码。
+    # 曾经的写法是把文件字节 .decode("latin-1") 塞进同一个通道，
+    # 于是原始 UTF-8 字节先被逐字节映射成 U+0080–U+00FF、再整体编码一次——
+    # 夹具以双倍体积的乱码落库（11780 vs 6119），从未以可读形式进入系统。
+    # 见 S4_2_FAILURE_TRIAGE_001.md R1。
+    text = io.open(path, encoding="utf-8").read()
+    raw = ("--%s\r\nContent-Disposition: form-data; name=\"user\"\r\n\r\n%s\r\n"
+           % (boundary, user)
+           + "--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
+             "Content-Type: text/markdown; charset=utf-8\r\n\r\n" % (boundary, name)
+           + text
+           + "\r\n--%s--\r\n" % boundary)
     r = DC.http_json("POST", "/v1/files/upload",
                      headers={"Authorization": "Bearer " + key,
                               "Content-Type": "multipart/form-data; boundary=" + boundary},
-                     raw_body=raw.decode("latin-1"), timeout=180)
+                     raw_body=raw, timeout=180)
     try:
         b = json.loads(r["body"])
     except Exception:

@@ -1,0 +1,172 @@
+{
+  "document": {
+    "id": "S4_2_STAGE_GATE_v1.1",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "stage": "S4.2",
+    "purpose": "Rebase Prompt §8.2：按自然语言任务逐项开放并测试其余五项专业能力",
+    "frozen_before_any_model_run": true,
+    "supersedes": "S4_2_STAGE_GATE_v1.0（sha256 28157073d7c6012ae5b8236c0053a5f503101050491ae9d44f59e76a0fd8fac2）",
+    "why_reissued": "v1.0 的 pass_per_capability[0] 冻结了一条未经验证的、关于 M1 行为的假设：断言这五句自然语言会让 M1 的 needed_capabilities 返回空表、从而必然由画布分诊台桥接。ROUTE_SRC（受保护的既有资产）自身定义 intent_source = \"m1_named\" if picked else \"none\"，其中 picked 取自 M1 的 needed_capabilities——canvas_triage 只在 M1 返回空表时才可能出现。实测十例 M1 自己解析出了能力，ROUTE_SRC 按其自身定义正确地标为 m1_named。断错的是判据，不是系统。见 S4_2_FAILURE_TRIAGE_001.md R2。",
+    "a2_consequence": "判据在看到结果之后改动，按 A2 本次已发生的十次运行只算探索，不产生正式 PASS。v1.0 的十份证据已归档至 evidence/stages/s4_2_attempt01/，不删除、不覆盖、不重判成绿。本判据冻结于任何重跑之前，十例全部重跑后由本判据独立判定。",
+    "changed_blocks": [
+      "pass_per_capability",
+      "forbidden_input_tokens（新增）"
+    ],
+    "unchanged_blocks_proven_by_hash": "见 block_hashes：除 document 与 pass_per_capability 外，全部块与 v1.0 逐块哈希相等，且本文件由 v1.0 原文重建，同一性由构造保证"
+  },
+  "identity": {
+    "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+    "graph_sha256": "6f3d3e531b0b4c0cc355b72c55a1534221163cb1c7003d020ee1d1b2fdd26770",
+    "node_count": 45,
+    "edge_count": 47,
+    "note": "本层不改图。§8.2 是对 S4.1 已通过的同一套接线做逐项验证——六能力由 Seam 内部 seam_dispatch 分派，画布侧接线只有一条。"
+  },
+  "sufficiency_source": {
+    "fixture": "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+    "sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+    "authority": "《笛语项目基线》真相源优先级第 3 位：序里集夹具事实源，只用于测试、回归、演示与验收，不是生产真源",
+    "why": "执行侧不得补写夹具未提供的商品、库存、价格、面料、顾客或经营事实。充分正例所需的业务事实一律取自本夹具，经用户正常上传通道进入，不写进提示词、不塞进代码。",
+    "upload_channel": "Dify /v1/files/upload —— 这是用户可见的正常产品动作（Founder 上传自己的品牌资料），不是内部字段；AC-02 禁止的是填内部字段，不是禁止上传资料"
+  },
+  "discipline": {
+    "sampling": "每个正式输入只跑一次；纯传输失败且无任何模型输出时最多重试一次；禁止同输入重复采样求 PASS",
+    "evidence_source": "能力是否真跑只认 Seam 应用自身 workflow_node_executions 的对应 tool_* 节点；画布 succeeded、模型自述、交付正文的说法一律不算",
+    "no_cartesian_product": "每项能力一正一负，不做能力 × 入口 × 表达的笛卡尔积",
+    "user_never_names_modules": "全部输入为自然语言，不出现 capability 名、entry、模块名或任何内部字段"
+  },
+  "pair_design": {
+    "positive": "上传夹具 + 自然语言任务 → 该能力真实执行，且交付有实质内容",
+    "negative": "同一句自然语言、不上传任何资料 → 该能力仍应真实执行（路由不受资料有无影响），但必须停在精确缺口，不得编造商品、价格、面料、顾客或经营事实",
+    "why_this_pair_discriminates": "两例只差「事实是否在场」这一个变量。若负例也产出了具体商品或数字，就是编造；若正例也只能给缺口，就说明夹具没能进入能力。任一侧塌陷都会被看见。"
+  },
+  "ambiguity_rule_reverse_boundary": {
+    "claim": "S1 追加的歧义规则不得过度触发",
+    "how_tested": "CONTENT_BRIEF / CREATIVE_SCRIPT / PRODUCTION_DIRECTOR / PUBLISHING_PACKAGING 四例输入都含「这条」，但各自点明了要改哪一面（制作依据 / 口播稿 / 怎么拍 / 标题封面）。按该规则的反向边界，这四例必须直接判对应能力，**不得反问**。任一例落入 ASK_ONE 即为该规则过度触发，判 FAIL。"
+  },
+  "leak_forbidden_tokens": [
+    "READY",
+    "PASS",
+    "FAIL",
+    "STALE",
+    "NOT_VERIFIED",
+    "route_mode",
+    "target_capability",
+    "intent_source",
+    "canvas_triage",
+    "MATRIX",
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CREATIVE_SCRIPT",
+    "PRODUCTION_DIRECTOR",
+    "PUBLISHING_PACKAGING",
+    "SINGLE_ACCOUNT_OPERATION",
+    "AMBIGUOUS",
+    "CHITCHAT",
+    "uapp_",
+    "m1_",
+    "boot_",
+    "seam_",
+    "tool_matrix",
+    "85c01f85",
+    "a4c3b19b",
+    "5fca0162",
+    "gate_status",
+    "operating_judgment",
+    "capability_call",
+    "professional_input",
+    "returns_json",
+    "precise_gap",
+    "workspace_id",
+    "idempotency",
+    "http://",
+    "status_code"
+  ],
+  "capabilities": {
+    "CAMPAIGN": {
+      "seam_node": "tool_campaign",
+      "app_id": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+      "input": "下个月想做一波春季新品的整体安排，帮我把节奏和重点排一下"
+    },
+    "CONTENT_BRIEF": {
+      "seam_node": "tool_content_brief",
+      "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+      "input": "这条内容开拍之前，先把制作依据定下来"
+    },
+    "CREATIVE_SCRIPT": {
+      "seam_node": "tool_creative_script",
+      "app_id": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+      "input": "帮我把这条的口播稿写出来"
+    },
+    "PRODUCTION_DIRECTOR": {
+      "seam_node": "tool_production_director",
+      "app_id": "13cfabd5-f592-4354-a304-47098b765697",
+      "input": "这条该怎么拍？场地、机位和要准备的东西给我列一下"
+    },
+    "PUBLISHING_PACKAGING": {
+      "seam_node": "tool_publishing_packaging",
+      "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+      "input": "标题和封面帮我定一下"
+    }
+  },
+  "pass_per_capability": [
+    "路由落到该能力：uapp_route.target_capability = 该能力，且 route_mode = CAPABILITY，来源 intent_source ∈ {m1_named, canvas_triage}。由哪一段内部机制完成自然语言到能力的桥接属于 HOW，不进判据；原判据想防的「用例被输入里的能力名喂成送分题」改由 [8] 直接检验输入本身，比断言内部标签更强且可确定性复算。",
+    "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+    "Seam 自身记录中该能力对应的 tool_* 节点实际执行且 succeeded",
+    "其余五个能力的 tool_* 节点在该轮均未执行（不暗跑）",
+    "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+    "交付正文非空、非占位、零内部字段泄漏",
+    "正例：交付含实质内容（不是纯缺口）；负例：停在精确缺口且不出现任何夹具未提供的商品、价格或经营事实",
+    "含「这条」的四例不得落入 ASK_ONE（歧义规则反向边界）",
+    "输入串中不含任何 capability 名、模块名、entry 名或内部字段名（逐例对 forbidden_input_tokens 做确定性匹配，大小写不敏感）"
+  ],
+  "fail_per_capability": [
+    "路由落到别的能力或 DIALOGUE",
+    "Seam 内对应 tool_* 未执行，或执行了别的能力节点",
+    "负例编造了夹具未提供的商品、价格、面料、顾客或经营事实",
+    "正例只能给出缺口（说明夹具没有真正进入能力）",
+    "含「这条」的用例被反问（歧义规则过度触发）",
+    "出现内部字段泄漏"
+  ],
+  "regression_scope": {
+    "shared_chain": "每一例都完整走一遍 M1→M2→M3→Hop→Seam，因此每一例同时是上游各层的回归",
+    "ask_one": "由 S4.1 的 S4-REG-ASK-01 承担，本层不重复采样",
+    "matrix": "S4.1 已通过，本层不重跑"
+  },
+  "expected_cost": {
+    "canvas_workflow_runs": 10,
+    "canvas_llm_node_attempts": 20,
+    "nested_app_runs": "M3 / Hop / Seam / 各能力应用另计"
+  },
+  "gate_rule": "五项能力各自的正例与负例全部满足 pass 且无 fail 命中，才允许进入 S5。任一能力 FAIL 立即输出 FAILURE TRIAGE，只修确认的最高失效节点，不得靠增加样本量掩盖根因。",
+  "forbidden_input_tokens": [
+    "MATRIX",
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CONTENT BRIEF",
+    "CREATIVE_SCRIPT",
+    "CREATIVE SCRIPT",
+    "PRODUCTION_DIRECTOR",
+    "PRODUCTION DIRECTOR",
+    "PUBLISHING_PACKAGING",
+    "PUBLISHING",
+    "SINGLE_ACCOUNT_OPERATION",
+    "Matrix Architect",
+    "Campaign",
+    "Brief",
+    "Script",
+    "Production Director",
+    "Publishing",
+    "entry",
+    "route_mode",
+    "target_capability",
+    "intent_source",
+    "capability",
+    "tool_",
+    "uapp_",
+    "m1_",
+    "m2_",
+    "m3_",
+    "m4_",
+    "seam"
+  ]
+}
