@@ -1,0 +1,62 @@
+{
+  "record_id": "UAPP_R0_PROTECTED_BASELINE",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "entry_mode": "REBASE_TASK",
+  "captured_at": "2026-08-29T07:30:00-07:00",
+  "captured_by": "new execution terminal, after old writers exited at 07:29:12 PDT",
+  "purpose": "successor 渐进建图前的受保护面基线。每个 Stage Gate 与之比对，任一 md5 变化即为未授权改动。",
+  "authority": "只读观察；本记录不授予任何修改权",
+  "protected_dify_apps": [
+    {"key": "FP_M3",                 "app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5", "mode": "workflow",      "graph_md5": "cd93757bcf8ad322f3b32fc43b2da3ff", "nodes": 7,  "edges": 6},
+    {"key": "FP_SEAM",               "app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077", "mode": "workflow",      "graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a", "nodes": 25, "edges": 29},
+    {"key": "FP_MATRIX",             "app_id": "fd25ebfa-db67-40c3-82e5-202e1254facf", "mode": "workflow",      "graph_md5": "6cdaeac9cacf69fbeea4bd25e1536ace", "nodes": 15, "edges": 15},
+    {"key": "FP_CAMPAIGN",           "app_id": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2", "mode": "workflow",      "graph_md5": "4876dacc43a73741b41c5a3083796347", "nodes": 15, "edges": 15},
+    {"key": "FP_CONTENT_BRIEF",      "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce", "mode": "workflow",      "graph_md5": "0c841642a71feedfb327ffb76aec0ddd", "nodes": 15, "edges": 15},
+    {"key": "FP_CREATIVE_SCRIPT",    "app_id": "44b55f9d-3792-40c3-b095-f2696464b4ec", "mode": "workflow",      "graph_md5": "a1cd859d5b88d0d025f336665ca94e51", "nodes": 15, "edges": 15},
+    {"key": "FP_PRODUCTION_DIRECTOR","app_id": "13cfabd5-f592-4354-a304-47098b765697", "mode": "workflow",      "graph_md5": "964e9a947dc9790d1de82496469689ad", "nodes": 15, "edges": 15},
+    {"key": "FP_PUBLISHING",         "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df", "mode": "workflow",      "graph_md5": "788c8555aca09e6fa6d979f237f70157", "nodes": 15, "edges": 15},
+    {"key": "HOP",                   "app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4", "mode": "workflow",      "graph_md5": "d230b62fc9ebea1c7ee2426f13f9d279", "nodes": 4,  "edges": 3},
+    {"key": "OLD_FOUNDER_CANVAS",    "app_id": "f0b1c5f5-afc5-43e9-9ea4-ae36e25f33c8", "mode": "advanced-chat", "graph_md5": "67b717d1365c2fb75a3b8e761b0527da", "nodes": 14, "edges": 13,
+     "note": "受保护旧 Canvas。与 UAPP_PROVIDERS_CREATED.json 登记的 old_canvas_graph_md5 一致，零漂移。"},
+    {"key": "M1_SOURCE_APP",         "app_id": "dd638b91-d39f-4e92-a984-6ad1ab809119", "mode": "advanced-chat", "graph_md5": "f6f4525d5cae8dbba3a6f04796854777", "nodes": 9,  "edges": 8,
+     "note": "M1 候选应用。successor 从这里逐字节取 m1_extract/m1_join/m1_shadow/m1_compiler/m1_save_snapshot，只读不写。"}
+  ],
+  "legacy_diagnostic_candidate": {
+    "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
+    "name": "DIYU V1 · Unified Founder Canvas",
+    "mode": "advanced-chat",
+    "draft_graph_md5": "e67147abde10a3fdd0c2043c10cbe266",
+    "nodes": 69,
+    "edges": 81,
+    "latest_published_workflow_id": "b342cde3-c821-4d1d-941b-f668a4efc16f",
+    "latest_published_at_utc": "2026-08-29T14:18:29.576743Z",
+    "disposition": "LEGACY_DIAGNOSTIC_CANDIDATE_NOT_ACCEPTED",
+    "handling": "原样保留，不删除、不覆盖、不继续作为最终候选施工面"
+  },
+  "task_workflow_providers_reusable": {
+    "M3":   {"provider_id": "9ea86217-8791-489c-9a96-b880ae558ac5", "tool": "diyu_uapp_m3",   "targets_app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5", "matches_contract_binding": true},
+    "SEAM": {"provider_id": "f8d63527-8c45-4823-8159-443cef37240d", "tool": "diyu_uapp_seam", "targets_app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077", "matches_contract_binding": true},
+    "HOP":  {"provider_id": "fd3f6f29-237f-4bbe-a820-5d38076ab52e", "tool": "diyu_uapp_hop",  "targets_app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4", "matches_contract_binding": true}
+  },
+  "old_candidate_formal_runs_preserved": {
+    "attempt_00d9dcdd": {
+      "graph_sha256_at_run": "5888f71b7c3215abae6345a342080536462ed8d9d17f034c88d6f9ef56b7a9fb",
+      "UAPP-INTENT-01": {"conversation_id": "e2ea6800-4a1a-46fd-8a0a-359789453a89",
+        "T1": {"workflow_run_id": "1d0370d6-64b0-401c-a509-e1e01f78af69", "elapsed_s": 193.55},
+        "T2": {"workflow_run_id": "b89dc661-97af-4cd8-897e-e7896076985f", "elapsed_s": 260.11}},
+      "UAPP-INTENT-02N": {"conversation_id": "ee89d1d6-8d56-42d3-8129-fbfad58ed596",
+        "N1": {"workflow_run_id": "35d95595-a435-44eb-99f9-1722323966a9", "elapsed_s": 33.18}}
+    },
+    "attempt_40e45858": {
+      "graph_sha256_at_run": "2e608e4d2f94e4ec047bd08cc98dab91b482585ecb2622a8bc9a9fe1c0e6734d",
+      "note": "由旧执行终端发起于 07:19:37，落盘于 07:24:27 与 07:29:02；新终端只读观察，未介入、未 kill、未重试",
+      "UAPP-INTENT-01": {"conversation_id": "20b8331c-6ce3-494e-b7c4-515331d59fed",
+        "T1": {"workflow_run_id": "8b49ff99-7b2e-403d-836f-8971f760017b", "elapsed_s": 306.75},
+        "T2": {"workflow_run_id": "83b36bb4-1e61-4020-9ff8-28f78c7c051e", "elapsed_s": 258.8}},
+      "UAPP-INTENT-02N": {"conversation_id": "f149dc5e-efc6-44bd-81cf-879c15fb5b32",
+        "N1": {"workflow_run_id": "c10751c9-a9fa-44d0-bf3f-7a8487a50a4a", "elapsed_s": 283.16}}
+    }
+  },
+  "deepseek_llm_attempts_initiated_this_terminal": 0,
+  "workflow_runs_initiated_this_terminal": 0
+}
