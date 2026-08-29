@@ -1,0 +1,135 @@
+{
+  "document": {
+    "id": "S2_STAGE_GATE_v1.0", "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001", "stage": "S2",
+    "purpose": "接入 M2 并验证 M1→M2 接缝（Rebase Prompt §6）",
+    "frozen_before_any_model_run": true,
+    "supersedes": "无。S1_STAGE_GATE_v1.0 继续有效且一字未改。"
+  },
+  "identity": {
+    "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+    "mode": "advanced-chat",
+    "published_workflow_id": "8fcc12e4-eaf1-4f58-b6f1-6ba387b83ba7",
+    "graph_sha256": "f099ac7a01ad252482aa13af90c54adf5b9f064fb2d0a30331fc30e666fd3349",
+    "dsl_sha256": "267c32a8edee1b2d715af310307e5b59fbec14bfe54762843d4a6375bbb23efb",
+    "node_count": 32, "edge_count": 32,
+    "git_commit_at_freeze": "47531a4",
+    "model_provider": "langgenius/deepseek/deepseek", "model_name": "deepseek-v4-flash",
+    "completion_params": {"max_tokens": 4000, "top_p": 0.8}
+  },
+  "new_this_layer": {
+    "module": "M2 business-persistence（FastAPI + PostgreSQL diyu_business）",
+    "seam": "M1 task/account context → M2 查询 → 当前任务最小投影",
+    "nodes": ["uapp_boot_gate","boot_user","boot_p1","boot_ws","boot_p2","boot_acct","boot_p3","boot_cycle","boot_p4","boot_task","boot_p5","boot_assign","uapp_m2_cycle","uapp_m2_dec","uapp_m2_run","uapp_ctx","uapp_s2_pending"],
+    "m2_base": "http://diyu-m2-app:8000",
+    "network_path": "Dify 容器网络内直连；不依赖用户 relay，不依赖手工 Python"
+  },
+  "applicability_rulings_frozen_before_run": [
+    {
+      "item": "仅使用任务域 is_test=true / is_simulated=true 数据（Rebase Prompt §6 判据 4）",
+      "ruling": "NOT_APPLICABLE",
+      "authority": "M2 OpenAPI 事实：22 个 schema 中只有 RegisterPublishRequest 与 RegisterFeedbackRequest 带 is_test/is_simulated（均默认 false）。本层写入的 users/workspaces/accounts/cycles/tasks 五类对象根本没有这两个字段，无从置真。",
+      "equivalent_discipline_this_layer": "任务域命名隔离：工作区 name=ws-uapp-<会话tag>、账号 platform=test-platform、handle=uapp-<会话tag>；每个会话一个独立域，绝不触碰任何既有非任务数据。",
+      "deferred_to": "S5（测试发布与反馈写回层），届时 is_test/is_simulated 转 APPLICABLE"
+    }
+  ],
+  "discipline": {
+    "sampling": "每个正式输入只跑一次；纯传输失败且无任何模型输出时最多重试一次；禁止同输入重复采样求 PASS",
+    "evidence_source": "只认 Dify workflow_node_executions 与 M2 数据库真实行；不认模型自述、不认平台 succeeded",
+    "append_only": "证据文件已存在即拒绝覆盖",
+    "layer_scope": "本层 PASS 只证明 M1→M2 接缝成立，不证明 M3 或六能力已集成；不以 M3 输出替代 M2 读写证据"
+  },
+  "leak_forbidden_tokens": ["READY","PASS","FAIL","STALE","NOT_VERIFIED","route_mode","target_capability","intent_source","canvas_triage","MATRIX","CAMPAIGN","CONTENT_BRIEF","CREATIVE_SCRIPT","PRODUCTION_DIRECTOR","PUBLISHING_PACKAGING","SINGLE_ACCOUNT_OPERATION","AMBIGUOUS","CHITCHAT","uapp_","m1_","boot_","85c01f85","workspace_id","idempotency","http://","status_code"],
+  "cases": {
+    "S2-POS-01": {
+      "applicability": "APPLICABLE", "kind": "positive",
+      "purpose": "证明「有匹配投影可读取」：M2 里确有记录时，投影真实进入本轮",
+      "mode": "one_conversation_two_turns_with_mid_case_seed",
+      "turns": [
+        {"id": "T1", "input": "有个账号一直没流量，怎么办",
+         "expect": {"boot_chain_ran": true, "m2_read_nodes_ran": true,
+                    "m2_state": "reachable_no_record",
+                    "note": "首轮建域，此时尚无周期决策，投影应如实为无记录"}},
+        {"id": "SEED", "kind": "fixture_write_not_a_model_turn",
+         "action": "以 T1 建出的 workspace/account/cycle 为目标，经 M2 API 写入一条周期决策（任务域测试数据），并原样记录请求与响应",
+         "endpoint": "POST /workspaces/{ws}/accounts/{acct}/cycles/decisions"},
+        {"id": "T2", "input": "这个号现在的情况怎么样",
+         "expect": {"boot_chain_ran": false, "m2_read_nodes_ran": true,
+                    "m2_state": "reachable_with_record",
+                    "decision_visible_in_projection": true}}
+      ],
+      "pass": [
+        "T1 建域链实际执行，五个 M2 写入节点全部 succeeded，会话变量被写回",
+        "T1 投影如实报告尚无经营记录，未把空响应升级成已知事实",
+        "SEED 写入在 M2 数据库中可查到真实行",
+        "T2 建域链**未再执行**（needs_bootstrap 为假）—— 同会话不重复建域，幂等成立",
+        "T2 的 decisions/latest 返回 200，投影正文含 SEED 写入的决策内容",
+        "T2 的 m2_state = reachable_with_record",
+        "两轮均零内部字段泄漏"
+      ],
+      "fail": [
+        "T2 重新跑了建域链（同一会话重复建域 = 幂等失败）",
+        "T1 在没有记录时说出「目前一切正常」之类的已知事实",
+        "T2 读不到 SEED 写入的决策",
+        "任一轮出现内部字段泄漏"
+      ]
+    },
+    "S2-NEG-01": {
+      "applicability": "APPLICABLE", "kind": "negative_control",
+      "purpose": "证明「关键记录不存在时不虚构」；同时回归 S1-POS-01 与 S1-FOLLOW-01 的原判据",
+      "mode": "fresh_conversation_two_turns",
+      "turns": [
+        {"id": "N1", "input": "有个账号一直没流量，怎么办"},
+        {"id": "N2", "input": "用对应的专业能力来分析"}
+      ],
+      "pass": [
+        "N1 的 decisions/latest 未返回 200，m2_state = reachable_no_record",
+        "N1 回复正文明确说明系统里还没有可用的经营记录，且不出现任何具体经营数字或结论",
+        "回归 S1-POS-01：N1 的 route_mode ∈ {CAPABILITY, OPERATION_ONLY}，落点 ∈ {MATRIX, SINGLE_ACCOUNT_OPERATION}，intent_source = canvas_triage",
+        "回归 S1-FOLLOW-01：N2 的 route_mode 仍 ∈ {CAPABILITY, OPERATION_ONLY, STATUS}，未退回 DIALOGUE",
+        "N2 未重复建域",
+        "两轮均无异步承诺，均零内部字段泄漏"
+      ],
+      "fail": [
+        "在没有记录时编造经营事实或给出具体数字",
+        "把 M2 的空响应说成「读不到」，或把读不到说成「没有记录」（两者必须分清）",
+        "N1 落 DIALOGUE，或 N2 退回 DIALOGUE",
+        "出现内部字段泄漏"
+      ]
+    },
+    "S2-REG-ASK-01": {
+      "applicability": "APPLICABLE", "kind": "upstream_regression",
+      "purpose": "回归 S1-NEG-01：加了 M2 之后，确有歧义仍只问一个，且该轮不产生任何 M2 副作用",
+      "mode": "fresh_conversation_one_turn",
+      "turns": [{"id": "R1", "input": "这条我想再打磨一下"}],
+      "pass": [
+        "route_mode = ASK_ONE，uapp_ask_one 实际执行，问号计数为 1，未猜能力",
+        "本轮**零 M2 节点执行** —— 只问一个不该产生任何持久化副作用",
+        "零内部字段泄漏"
+      ],
+      "fail": [
+        "路由到某个具体能力",
+        "本轮执行了任何 M2 节点（建域或读取）",
+        "问了两个及以上问题",
+        "出现内部字段泄漏"
+      ]
+    }
+  },
+  "regression_scope": {
+    "S1_cases_covered": {
+      "S1-POS-01": "由 S2-NEG-01/N1 同轮回归（同一输入）",
+      "S1-FOLLOW-01": "由 S2-NEG-01/N2 同轮回归（同一输入）",
+      "S1-NEG-01": "由 S2-REG-ASK-01/R1 回归（同一输入）"
+    },
+    "rationale": "S1 三例的输入与 S2 所需用例天然重合，一次运行同时承担两层判据，避免同输入重复采样（Rebase Prompt §10.2 最小充分证据）",
+    "deterministic_checks": "S2_DETERMINISTIC_CHECKS.json，12/12 PASS，零模型调用，已于本冻结前完成"
+  },
+  "expected_cost": {"workflow_runs": 5, "deepseek_llm_node_attempts": 10,
+                    "note": "5 轮 × (m1_shadow + uapp_action)；SEED 不经模型"},
+  "evidence_paths": {
+    "S2-POS-01": "unified-app/evidence/stages/S2-POS-01.json",
+    "S2-NEG-01": "unified-app/evidence/stages/S2-NEG-01.json",
+    "S2-REG-ASK-01": "unified-app/evidence/stages/S2-REG-ASK-01.json",
+    "deterministic": "unified-app/evidence/S2_DETERMINISTIC_CHECKS.json"
+  },
+  "gate_rule": "三例全部满足其 pass 且无 fail 命中，且确定性检查零 FAIL，才允许进入 S3。任一硬门 FAIL 立即输出 FAILURE TRIAGE，只修确认的最高失效节点，不得继续堆下一模块。"
+}
