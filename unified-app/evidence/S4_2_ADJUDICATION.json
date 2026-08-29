@@ -1,0 +1,1038 @@
+{
+  "stage": "S4.2",
+  "stage_gate_sha256": "81d9126742281b47333ae668be7cd9a3b4df60d104f147a435e4d830ef9e63d5",
+  "model_calls_by_adjudicator": 0,
+  "cases": {
+    "S4-CAP-CAMPAIGN-POS": {
+      "capability": "CAMPAIGN",
+      "kind": "POS",
+      "verdict": "FAIL",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "CAMPAIGN",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "下个月想做一波春季新品的整体安排，帮我把节奏和重点排一下",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_campaign",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_campaign"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 99,
+            "rj_len": 341,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 99
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "正例：夹具事实真的进入了能力（交付中出现只可能来自夹具的标记，或已判交付）",
+          "result": "FAIL",
+          "observed": {
+            "fixture_marks": [],
+            "price_band_present": false,
+            "outcome": "UNKNOWN"
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n这一轮谁能出镜、谁能确认事实、大概能投入多少时间？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "197528e0-a359-4a34-a372-c5b67c87fa30",
+      "elapsed_seconds": 244.01
+    },
+    "S4-CAP-CAMPAIGN-NEG": {
+      "capability": "CAMPAIGN",
+      "kind": "NEG",
+      "verdict": "PASS",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "CAMPAIGN",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "下个月想做一波春季新品的整体安排，帮我把节奏和重点排一下",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_campaign",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_campaign"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 98,
+            "rj_len": 385,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 98
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "负例：未编造任何夹具未提供的经营事实（品牌名/人物名/价格带一个都不出现）",
+          "result": "PASS",
+          "observed": {
+            "fabricated_marks": [],
+            "price_band_present": false
+          }
+        },
+        {
+          "desc": "负例：停在缺口而非给出成品",
+          "result": "PASS",
+          "observed": {
+            "outcome": "UNKNOWN",
+            "has_precise_gap": true
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n这件事有明确的时间或阶段边界吗？到什么时候为止？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "edb211a3-899b-4496-9d40-53570bb9ad1f",
+      "elapsed_seconds": 302.13
+    },
+    "S4-CAP-CONTENT_BRIEF-POS": {
+      "capability": "CONTENT_BRIEF",
+      "kind": "POS",
+      "verdict": "FAIL",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "CONTENT_BRIEF",
+            "source": "canvas_triage",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "这条内容开拍之前，先把制作依据定下来",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_content_brief",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_content_brief"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 92,
+            "rj_len": 429,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 92
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "正例：夹具事实真的进入了能力（交付中出现只可能来自夹具的标记，或已判交付）",
+          "result": "FAIL",
+          "observed": {
+            "fixture_marks": [],
+            "price_band_present": false,
+            "outcome": "UNKNOWN"
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n你想说给谁听？她现在具体卡在哪一步？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "31acb65b-45a4-4b1a-84e9-c677f8bb5f91",
+      "elapsed_seconds": 297.38
+    },
+    "S4-CAP-CONTENT_BRIEF-NEG": {
+      "capability": "CONTENT_BRIEF",
+      "kind": "NEG",
+      "verdict": "PASS",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "CONTENT_BRIEF",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "这条内容开拍之前，先把制作依据定下来",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_content_brief",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_content_brief"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 92,
+            "rj_len": 446,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 92
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "负例：未编造任何夹具未提供的经营事实（品牌名/人物名/价格带一个都不出现）",
+          "result": "PASS",
+          "observed": {
+            "fabricated_marks": [],
+            "price_band_present": false
+          }
+        },
+        {
+          "desc": "负例：停在缺口而非给出成品",
+          "result": "PASS",
+          "observed": {
+            "outcome": "UNKNOWN",
+            "has_precise_gap": true
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n你想说给谁听？她现在具体卡在哪一步？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "92268df7-74bd-4ad4-aea8-f2ffa98c2959",
+      "elapsed_seconds": 201.61
+    },
+    "S4-CAP-CREATIVE_SCRIPT-POS": {
+      "capability": "CREATIVE_SCRIPT",
+      "kind": "POS",
+      "verdict": "FAIL",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "CREATIVE_SCRIPT",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "帮我把这条的口播稿写出来",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_creative_script",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_creative_script"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 98,
+            "rj_len": 429,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 98
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "正例：夹具事实真的进入了能力（交付中出现只可能来自夹具的标记，或已判交付）",
+          "result": "FAIL",
+          "observed": {
+            "fixture_marks": [],
+            "price_band_present": false,
+            "outcome": "UNKNOWN"
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n看完之后，你希望她多知道什么、或者能做什么决定？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "f9a33fe9-cd29-4c8e-aa2b-d417d41b8c37",
+      "elapsed_seconds": 246.77
+    },
+    "S4-CAP-CREATIVE_SCRIPT-NEG": {
+      "capability": "CREATIVE_SCRIPT",
+      "kind": "NEG",
+      "verdict": "PASS",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "CREATIVE_SCRIPT",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "帮我把这条的口播稿写出来",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_creative_script",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_creative_script"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 98,
+            "rj_len": 446,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 98
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "负例：未编造任何夹具未提供的经营事实（品牌名/人物名/价格带一个都不出现）",
+          "result": "PASS",
+          "observed": {
+            "fabricated_marks": [],
+            "price_band_present": false
+          }
+        },
+        {
+          "desc": "负例：停在缺口而非给出成品",
+          "result": "PASS",
+          "observed": {
+            "outcome": "UNKNOWN",
+            "has_precise_gap": true
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n看完之后，你希望她多知道什么、或者能做什么决定？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "024beb5b-be5e-4604-8879-d2cf38dfeb4c",
+      "elapsed_seconds": 118.12
+    },
+    "S4-CAP-PRODUCTION_DIRECTOR-POS": {
+      "capability": "PRODUCTION_DIRECTOR",
+      "kind": "POS",
+      "verdict": "FAIL",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "PRODUCTION_DIRECTOR",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "这条该怎么拍？场地、机位和要准备的东西给我列一下",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_production_director",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_production_director"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 108,
+            "rj_len": 472,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 108
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "正例：夹具事实真的进入了能力（交付中出现只可能来自夹具的标记，或已判交付）",
+          "result": "FAIL",
+          "observed": {
+            "fixture_marks": [],
+            "price_band_present": false,
+            "outcome": "UNKNOWN"
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n把脚本或等价的内容方案给我：每一段讲什么、事实有没有、素材到位没有。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "23954dcb-1047-4962-b2f5-0aaaa0e71f9f",
+      "elapsed_seconds": 482.32
+    },
+    "S4-CAP-PRODUCTION_DIRECTOR-NEG": {
+      "capability": "PRODUCTION_DIRECTOR",
+      "kind": "NEG",
+      "verdict": "PASS",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "PRODUCTION_DIRECTOR",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "这条该怎么拍？场地、机位和要准备的东西给我列一下",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_production_director",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_production_director"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 108,
+            "rj_len": 460,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 108
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "负例：未编造任何夹具未提供的经营事实（品牌名/人物名/价格带一个都不出现）",
+          "result": "PASS",
+          "observed": {
+            "fabricated_marks": [],
+            "price_band_present": false
+          }
+        },
+        {
+          "desc": "负例：停在缺口而非给出成品",
+          "result": "PASS",
+          "observed": {
+            "outcome": "UNKNOWN",
+            "has_precise_gap": true
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n把脚本或等价的内容方案给我：每一段讲什么、事实有没有、素材到位没有。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "83d9cf36-b58d-41b8-a511-72f1244bbcf6",
+      "elapsed_seconds": 188.86
+    },
+    "S4-CAP-PUBLISHING_PACKAGING-POS": {
+      "capability": "PUBLISHING_PACKAGING",
+      "kind": "POS",
+      "verdict": "FAIL",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "PUBLISHING_PACKAGING",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "标题和封面帮我定一下",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_publishing_packaging",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_publishing_packaging"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 98,
+            "rj_len": 480,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 98
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "正例：夹具事实真的进入了能力（交付中出现只可能来自夹具的标记，或已判交付）",
+          "result": "FAIL",
+          "observed": {
+            "fixture_marks": [],
+            "price_band_present": false,
+            "outcome": "UNKNOWN"
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n把成片内容或逐段说明给我：每一段实际拍到了什么。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "e12cd3da-7ff5-45c8-b233-984706698363",
+      "elapsed_seconds": 182.59
+    },
+    "S4-CAP-PUBLISHING_PACKAGING-NEG": {
+      "capability": "PUBLISHING_PACKAGING",
+      "kind": "NEG",
+      "verdict": "PASS",
+      "checks": [
+        {
+          "desc": "路由落到该能力，模式为 CAPABILITY，来源 ∈ {m1_named, canvas_triage}",
+          "result": "PASS",
+          "observed": {
+            "target": "PUBLISHING_PACKAGING",
+            "source": "m1_named",
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "输入串中不含任何能力名/模块名/内部字段名（确定性匹配）",
+          "result": "PASS",
+          "observed": {
+            "query": "标题和封面帮我定一下",
+            "hits": []
+          }
+        },
+        {
+          "desc": "未落入只问一个（歧义规则未过度触发）",
+          "result": "PASS",
+          "observed": {
+            "route_mode": "CAPABILITY"
+          }
+        },
+        {
+          "desc": "画布 uapp_hop 与 uapp_seam 实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "hop": true,
+            "seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身记录中该能力节点执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "want": "tool_publishing_packaging",
+            "status": "succeeded",
+            "seam_tools_ran": [
+              "tool_publishing_packaging"
+            ]
+          }
+        },
+        {
+          "desc": "其余五个能力节点该轮均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "ud_len": 98,
+            "rj_len": 497,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "len": 98
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "负例：未编造任何夹具未提供的经营事实（品牌名/人物名/价格带一个都不出现）",
+          "result": "PASS",
+          "observed": {
+            "fabricated_marks": [],
+            "price_band_present": false
+          }
+        },
+        {
+          "desc": "负例：停在缺口而非给出成品",
+          "result": "PASS",
+          "observed": {
+            "outcome": "UNKNOWN",
+            "has_precise_gap": true
+          }
+        }
+      ],
+      "answer_head": "这一步我还差一样东西才能往下判断：\n\n把成片内容或逐段说明给我：每一段实际拍到了什么。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "workflow_run_id": "441d8431-9675-4ce9-a772-2a6dc42a4231",
+      "elapsed_seconds": 174.25
+    }
+  },
+  "summary": {
+    "verdicts": {
+      "S4-CAP-CAMPAIGN-POS": "FAIL",
+      "S4-CAP-CAMPAIGN-NEG": "PASS",
+      "S4-CAP-CONTENT_BRIEF-POS": "FAIL",
+      "S4-CAP-CONTENT_BRIEF-NEG": "PASS",
+      "S4-CAP-CREATIVE_SCRIPT-POS": "FAIL",
+      "S4-CAP-CREATIVE_SCRIPT-NEG": "PASS",
+      "S4-CAP-PRODUCTION_DIRECTOR-POS": "FAIL",
+      "S4-CAP-PRODUCTION_DIRECTOR-NEG": "PASS",
+      "S4-CAP-PUBLISHING_PACKAGING-POS": "FAIL",
+      "S4-CAP-PUBLISHING_PACKAGING-NEG": "PASS"
+    },
+    "all_pass": false,
+    "not_run": []
+  }
+}
