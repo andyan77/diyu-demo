@@ -1,7 +1,7 @@
 {
   "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
-  "graph_md5": "f8c23043e5f6d3f46f6e84ef6f4e43d4",
-  "graph_sha256": "e8819f5b67552645ed4c18657a3fa7648b069a77b3250d36d21460580e421bbf",
+  "graph_md5": "bec7b303c8a0f6294f3bab1bec8ac398",
+  "graph_sha256": "6675e6a82b800ff8ccecf6f115fef0b14cda9b140de9df2e70a2f91df34a0214",
   "checks": [
     {
       "id": "D-01",
@@ -12,8 +12,8 @@
         "status": "normal",
         "enable_site": "true",
         "enable_api": "true",
-        "graph_md5": "f8c23043e5f6d3f46f6e84ef6f4e43d4",
-        "published_version_name": "uapp-v1.5-merge"
+        "graph_md5": "bec7b303c8a0f6294f3bab1bec8ac398",
+        "published_version_name": "uapp-v1.7-fbkind"
       }
     },
     {
@@ -21,8 +21,8 @@
       "desc": "图结构自洽：无悬空边、无不可达节点",
       "result": "PASS",
       "detail": {
-        "nodes": 61,
-        "edges": 71,
+        "nodes": 63,
+        "edges": 73,
         "dangling": [],
         "unreachable": []
       }
@@ -192,12 +192,36 @@
     },
     {
       "id": "D-14",
-      "desc": "测试发布与反馈显式写死 is_test / is_simulated 为真，不靠 M2 默认值",
+      "desc": "发布与反馈的最终请求体里 is_test / is_simulated 均为真，不靠 M2 默认值",
       "result": "PASS",
       "detail": {
-        "prep_declares_test_flags": true,
-        "feedback_node_declares_test_flags": true,
-        "feedback_body": "{\"idempotency_key\": \"fb-{{#uapp_route.tag#}}-{{#uapp_wb_prep.content_hash#}}\", \"kind\": \"observed\", \"source\": \"user_reported\", \"is_test\": true, \"is_simulated\": true, \"is_manual_entry\": true, \"publish_instance_id\": \"{{#conversation.uapp_last_publish#}}\"}"
+        "publish_body_final": {
+          "idempotency_key": "pub-tg-2d711642b726b044",
+          "account_id": "acc",
+          "platform": "test-platform",
+          "published_at": "2026-08-29T12:01:02+00:00",
+          "is_test": true,
+          "is_simulated": true,
+          "content_version_id": "ver-1"
+        },
+        "feedback_body_final": {
+          "idempotency_key": "fb-tg-03bce10fbe9da41e",
+          "kind": "observation",
+          "source": "user_reported",
+          "observed_at": "2026-08-29T12:01:02+00:00",
+          "is_test": true,
+          "is_simulated": true,
+          "is_manual_entry": true
+        }
+      }
+    },
+    {
+      "id": "D-20",
+      "desc": "取不到跨轮 id 时字段被整个去掉，不填空串骗 M2",
+      "result": "PASS",
+      "detail": {
+        "dropped_when_absent": true,
+        "carried_when_present": "pub-9"
       }
     },
     {
@@ -243,8 +267,30 @@
       "desc": "每个代码节点声明的 outputs 与 main() 实际返回的键完全一致",
       "result": "PASS",
       "detail": []
+    },
+    {
+      "id": "D-21",
+      "desc": "反馈 kind 落在 M2 接受的枚举内",
+      "result": "PASS",
+      "detail": {
+        "kind": "observation",
+        "allowed": [
+          "observation",
+          "interpretation",
+          "decision"
+        ]
+      }
+    },
+    {
+      "id": "D-22",
+      "desc": "「跑了但失败」不会被当成「本轮没走」而藏起来",
+      "result": "PASS",
+      "detail": {
+        "http_failed_status_0": "{\"happened\": [], \"failed\": [\"反馈记录\"], \"action\": \"RECORD_FEEDBACK\"}",
+        "never_ran_text_empty": true
+      }
     }
   ],
-  "passed": 19,
+  "passed": 22,
   "failed": 0
 }

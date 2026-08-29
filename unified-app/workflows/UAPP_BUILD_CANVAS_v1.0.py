@@ -428,7 +428,8 @@ def build_graph():
          V("delivered_flag", ["uapp_seam_merge", "outcome", "output"])],
         ["should_persist_artifact", "content_hash", "artifact_body", "version_body",
          "publish_body_template", "feedback_body_template", "next_cycle_body",
-         "run_state_body", "note"])))
+         "run_state_body", "field_content_version", "field_publish_instance",
+         "drop_true", "drop_false", "note"])))
     # 不进能力这一支时 uapp_seam / uapp_hop 根本不执行，下游再直接引用它们的输出，
     # Dify 会整轮报 Variable not found（FULL-01 的 T2/T4 实测就是这样炸的）。
     # 用 variable-aggregator 做分支汇合：哪一支跑了就取哪一支，两支都没有就取空。
@@ -506,14 +507,11 @@ def build_graph():
         ("publish", "wb_publish", "wb_p3", "写 M2｜登记测试发布",
          "is_test / is_simulated 恒为 true 且显式写出，不靠默认值",
          M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/publish-instances",
-         "{{#wb_p2.publish_body#}}", -480),
+         "{{#uapp_pub_body.body#}}", -480),
         ("feedback", "wb_feedback", "wb_p4", "写 M2｜登记反馈",
          "按版本幂等写回；重复提交不制造双份事实",
          M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/feedback",
-         '{"idempotency_key": "fb-{{#uapp_route.tag#}}-{{#uapp_wb_prep.content_hash#}}", '
-         '"kind": "observed", "source": "user_reported", "is_test": true, '
-         '"is_simulated": true, "is_manual_entry": true, '
-         '"publish_instance_id": "{{#conversation.uapp_last_publish#}}"}', -160),
+         "{{#uapp_fb_body.body#}}", -160),
         ("cycle", "wb_cycle", "wb_p5", "写 M2｜开下一个周期",
          "周期推进是 M2 的事实，不是会话状态",
          M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/cycles",
@@ -523,22 +521,49 @@ def build_graph():
          M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/materials/"
          "{{#conversation.uapp_last_material#}}/withdraw", None, 480),
     ]
+    # 发布与反馈的请求体要补跨轮 id，先过一个组装节点再发。
+    nodes.append(N("uapp_pub_body", X + 9600, Y - 480, code(
+        "组装｜发布请求体（补跨轮版本 id）", "本轮没重新产出产物时，版本 id 取会话里记着的上一轮",
+        NODES.WB_BODY_SRC,
+        [V("template", ["uapp_wb_prep", "publish_body_template"]),
+         V("this_turn_id", ["wb_p2", "id"]),
+         V("carried_id", ["conversation", "uapp_last_version"]),
+         V("field", ["uapp_wb_prep", "field_content_version"]),
+         V("drop_if_empty", ["uapp_wb_prep", "drop_false"])],
+        ["body", "resolved_id", "id_source"])))
+    nodes.append(N("uapp_fb_body", X + 9600, Y - 160, code(
+        "组装｜反馈请求体（补跨轮发布 id）", "取不到发布 id 时整个字段去掉，不填空串骗 M2",
+        NODES.WB_BODY_SRC,
+        [V("template", ["uapp_wb_prep", "feedback_body_template"]),
+         V("this_turn_id", ["wb_p3", "id"]),
+         V("carried_id", ["conversation", "uapp_last_publish"]),
+         V("field", ["uapp_wb_prep", "field_publish_instance"]),
+         V("drop_if_empty", ["uapp_wb_prep", "drop_true"])],
+        ["body", "resolved_id", "id_source"])))
+
     for case_id, hid, pid, title, desc, url, body_tpl, dy in acts:
-        nodes.append(N(hid, X + 9600, Y + dy, http(title, desc, "post", url, body_tpl)))
-        nodes.append(N(pid, X + 9920, Y + dy, code(
+        nodes.append(N(hid, X + 9920, Y + dy, http(title, desc, "post", url, body_tpl)))
+        nodes.append(N(pid, X + 10240, Y + dy, code(
             "解析｜写入结果", "没有 2xx 就是没写成，如实交出失败详情", NODES.WB_PARSE_SRC,
             [V("raw", [hid, "body"]), V("status", [hid, "status_code"])],
             ["id", "ok", "status", "detail", "publish_body", "feedback_body"])))
-        edges.append(E("uapp_act_gate", hid, case_id))
+        if case_id == "publish":
+            edges.append(E("uapp_act_gate", "uapp_pub_body", case_id))
+            edges.append(E("uapp_pub_body", hid))
+        elif case_id == "feedback":
+            edges.append(E("uapp_act_gate", "uapp_fb_body", case_id))
+            edges.append(E("uapp_fb_body", hid))
+        else:
+            edges.append(E("uapp_act_gate", hid, case_id))
         edges.append(E(hid, pid))
 
-    nodes.append(N("uapp_pub_assign", X + 10240, Y - 480, assigner(
+    nodes.append(N("uapp_pub_assign", X + 10560, Y - 480, assigner(
         "记住｜本轮发布记录", "供下一轮反馈按版本幂等写回",
         [("variable", ["wb_p3", "id"], "uapp_last_publish")])))
     edges.append(E("wb_p3", "uapp_pub_assign"))
 
     # ---- 副作用如实陈述：四件事分开说 ----
-    nodes.append(N("uapp_side", X + 10560, Y, code(
+    nodes.append(N("uapp_side", X + 10880, Y, code(
         "陈述｜本轮真实发生的写入", "撤回/已发布内容/未来复用资格/实际写入四件事分开",
         NODES.SIDE_EFFECT_SRC,
         [V("action", ["uapp_route", "action"]),
@@ -557,7 +582,7 @@ def build_graph():
     edges.append(E("uapp_act_gate", "uapp_side", "false"))
 
     # ---- 用户投影 ----
-    nodes.append(N("uapp_delivery", X + 10880, Y, code(
+    nodes.append(N("uapp_delivery", X + 11200, Y, code(
         "投影｜只交自然语言，挡内部泄漏", "只呈现 user_delivery；状态词/字段/ID/节点名一律不出对话",
         NODES.DELIVERY_SRC,
         [V("capability", ["uapp_route", "target_capability"]),
@@ -575,12 +600,12 @@ def build_graph():
          "leak_hit_count", "m2_note"])))
     edges.append(E("uapp_side", "uapp_delivery"))
 
-    nodes.append(N("uapp_save", X + 11200, Y, assigner(
+    nodes.append(N("uapp_save", X + 11520, Y, assigner(
         "记住｜本轮产物与能力", "供下一跳作为上游产出使用；业务真源在 M2，不在会话里",
         [("variable", ["uapp_seam_merge", "artifact", "output"], "uapp_last_artifact"),
          ("variable", ["uapp_route", "target_capability"], "uapp_last_capability")])))
     edges.append(E("uapp_delivery", "uapp_save"))
-    nodes.append(N("uapp_answer", X + 11520, Y,
+    nodes.append(N("uapp_answer", X + 11840, Y,
                    answer("回复｜业务交付", "{{#uapp_delivery.final_text#}}")))
     edges.append(E("uapp_save", "uapp_answer"))
 

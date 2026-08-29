@@ -574,7 +574,9 @@ def main(action, artifact, capability, platform_text, external_ref_text, feedbac
         }, ensure_ascii=False),
         "feedback_body_template": json.dumps({
             "idempotency_key": "fb-%s-%s" % (tag, fb_hash or short),
-            "kind": "observed", "source": "user_reported", "observed_at": now,
+            # M2 只接受 observation / interpretation / decision 三个值。
+            # 用户报的是"我观察到了什么"，落 observation。
+            "kind": "observation", "source": "user_reported", "observed_at": now,
             "is_test": True, "is_simulated": True, "is_manual_entry": True,
         }, ensure_ascii=False),
         "next_cycle_body": json.dumps({
@@ -585,6 +587,12 @@ def main(action, artifact, capability, platform_text, external_ref_text, feedbac
             "last_success_step": (capability or "dialogue"),
             "side_effects": ["artifact_version" if should_persist == "true" else "none"],
         }, ensure_ascii=False),
+        # 给请求体组装节点用的常量。Dify 代码节点的入参只能来自节点输出，
+        # 不能直接写常量，所以由这里发出去。
+        "field_content_version": "content_version_id",
+        "field_publish_instance": "publish_instance_id",
+        "drop_true": "true",
+        "drop_false": "false",
         "note": "action=%s；产物字节=%d；本轮是否登记产物=%s" % (
             action, len(art.encode("utf-8")), should_persist),
     }
@@ -656,8 +664,11 @@ def main(action, persist_status, version_status, publish_status, feedback_status
         ("素材撤回", withdraw_status),
     ]
     for label, code in rows:
-        if code in ("", None, "skipped", "0"):
-            continue            # 这一步本轮根本没走，既不算成功也不算失败
+        # 只有"本轮压根没走这一步"才跳过——那时上游节点没执行，这里拿到的是空。
+        # HTTP 节点执行失败时给出的是 status_code=0，那是**跑了并且失败了**，
+        # 必须记成失败。把它跳过就等于把失败藏起来，而这个节点存在的理由正是别藏。
+        if code in ("", None, "skipped"):
+            continue
         (happened if st(code) else failed).append(label)
 
     lines = []
@@ -690,4 +701,40 @@ NOSEAM_SRC = r'''
 def main(route_mode):
     return {"empty": "", "empty_arr": "[]",
             "note": "本轮未进入专业能力（route_mode=%s）" % (route_mode or "")}
+'''
+
+
+# ---------------------------------------------------------------- 11. 跨轮请求体组装
+# 为什么需要它（TRIAGE-003）：用户说「这条我发出去了」的那一轮**不会重新产出产物**，
+# 所以本轮的登记分支根本不执行，`wb_p2` 没有输出。把发布请求体直接绑到 `wb_p2.publish_body`
+# 就会拿到空串，HTTP 节点报 "Failed to parse JSON"。
+# 跨轮的 id 必须从会话变量取——那才是「上一轮真的写成了什么」的所在地。
+WB_BODY_SRC = r'''
+import json
+
+
+def main(template, this_turn_id="", carried_id="", field="", drop_if_empty="true"):
+    """把模板补上一个跨轮 id。本轮有就用本轮的，没有就用会话里记着的上一轮的。
+
+    两个都没有时**把这个字段整个去掉**，而不是填空串——
+    空串会让 M2 收到一个非法 uuid 并报 422，那是把「没有」伪装成「有但是空的」。
+    """
+    try:
+        d = json.loads(template or "{}")
+    except Exception:
+        d = {}
+    if not isinstance(d, dict):
+        d = {}
+    val = (this_turn_id or "").strip() or (carried_id or "").strip()
+    if field:
+        if val:
+            d[field] = val
+        elif drop_if_empty == "true":
+            d.pop(field, None)
+    return {
+        "body": json.dumps(d, ensure_ascii=False),
+        "resolved_id": val,
+        "id_source": ("this_turn" if (this_turn_id or "").strip()
+                      else ("carried_from_session" if (carried_id or "").strip() else "none")),
+    }
 '''

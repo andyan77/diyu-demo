@@ -229,12 +229,32 @@ def main():
     prep = nodes["uapp_wb_prep"]["data"]["code"]
     # 取原始 body 模板串本身；json.dumps 过的整节点会把内层引号转义掉，比对必然假阴。
     fb_body = nodes["wb_feedback"]["data"]["body"]["data"][0]["value"]
-    check("D-14", "测试发布与反馈显式写死 is_test / is_simulated 为真，不靠 M2 默认值",
-          '"is_test": True' in prep and '"is_simulated": True' in prep
-          and '"is_test": true' in fb_body and '"is_simulated": true' in fb_body,
-          {"prep_declares_test_flags": '"is_test": True' in prep,
-           "feedback_node_declares_test_flags": '"is_test": true' in fb_body,
-           "feedback_body": fb_body})
+    # 功能性验证：请求体现在由组装节点产出，光比字符串会假阴。直接把模板喂进组装函数，
+    # 看 is_test / is_simulated 是否真的活到最终请求体里。
+    ns_b = {}
+    exec(compile(nodes["uapp_pub_body"]["data"]["code"], "<body>", "exec"), ns_b)
+    ns_p = {}
+    exec(compile(prep, "<prep>", "exec"), ns_p)
+    tpl = ns_p["main"]("NONE", "x", "CONTENT_BRIEF", "", "", "观察到的反馈", "t", "acc",
+                       "tg", "cyc", "DELIVERED")
+    pub_final = json.loads(ns_b["main"](tpl["publish_body_template"], "ver-1", "",
+                                        "content_version_id", "false")["body"])
+    fb_final = json.loads(ns_b["main"](tpl["feedback_body_template"], "", "",
+                                       "publish_instance_id", "true")["body"])
+    check("D-14", "发布与反馈的最终请求体里 is_test / is_simulated 均为真，不靠 M2 默认值",
+          pub_final.get("is_test") is True and pub_final.get("is_simulated") is True
+          and fb_final.get("is_test") is True and fb_final.get("is_simulated") is True,
+          {"publish_body_final": pub_final, "feedback_body_final": fb_final})
+
+    check("D-20", "取不到跨轮 id 时字段被整个去掉，不填空串骗 M2",
+          "publish_instance_id" not in fb_final
+          and json.loads(ns_b["main"](tpl["feedback_body_template"], "", "pub-9",
+                                      "publish_instance_id", "true")["body"]
+                         ).get("publish_instance_id") == "pub-9",
+          {"dropped_when_absent": "publish_instance_id" not in fb_final,
+           "carried_when_present": json.loads(ns_b["main"](
+               tpl["feedback_body_template"], "", "pub-9", "publish_instance_id",
+               "true")["body"]).get("publish_instance_id")})
 
     ns2 = {}
     exec(compile(nodes["uapp_wb_prep"]["data"]["code"], "<wb>", "exec"), ns2)
@@ -311,6 +331,22 @@ def main():
                              "returned_only": sorted(returned - declared)})
     check("D-19", "每个代码节点声明的 outputs 与 main() 实际返回的键完全一致",
           not mismatch, mismatch)
+
+    # M2 的合法枚举，抄自它自己的校验错误原文，不靠记忆。
+    M2_FEEDBACK_KINDS = ("observation", "interpretation", "decision")
+    fb_kind = json.loads(tpl["feedback_body_template"]).get("kind")
+    check("D-21", "反馈 kind 落在 M2 接受的枚举内", fb_kind in M2_FEEDBACK_KINDS,
+          {"kind": fb_kind, "allowed": list(M2_FEEDBACK_KINDS)})
+
+    ns_s = {}
+    exec(compile(nodes["uapp_side"]["data"]["code"], "<se2>", "exec"), ns_s)
+    ran_failed = ns_s["main"]("RECORD_FEEDBACK", "", "", "", "0", "", "", "", "", "")
+    never_ran = ns_s["main"]("RECORD_FEEDBACK", "", "", "", "", "", "", "", "", "")
+    check("D-22", "「跑了但失败」不会被当成「本轮没走」而藏起来",
+          ran_failed["any_write_failed"] == "true"
+          and never_ran["side_effect_text"] == "",
+          {"http_failed_status_0": ran_failed["write_ledger_json"],
+           "never_ran_text_empty": never_ran["side_effect_text"] == ""})
 
     failed = [r for r in RESULTS if r["result"] != "PASS"]
     out = {"app_id": APP_ID, "graph_md5": gmd5, "graph_sha256": sha(json.dumps(

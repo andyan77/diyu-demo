@@ -1,7 +1,7 @@
 [
   {
-    "case_id": "UAPP-CAP-01",
-    "verdict": "PASS",
+    "case_id": "UAPP-FULL-01",
+    "verdict": "FAIL",
     "freshness": "CURRENT",
     "frozen_criteria_sha256": "c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6",
     "checks": [
@@ -11,7 +11,19 @@
         "result": "PASS",
         "detail": [
           {
-            "turn": "UAPP-CAP-01",
+            "turn": "T1",
+            "http": 200
+          },
+          {
+            "turn": "T2",
+            "http": 200
+          },
+          {
+            "turn": "T3",
+            "http": 200
+          },
+          {
+            "turn": "T4",
             "http": 200
           }
         ]
@@ -22,395 +34,87 @@
         "result": "PASS",
         "detail": [
           {
-            "turn": "UAPP-CAP-01",
+            "turn": "T1",
             "node_reported_count": "0",
             "answer_scanned_hits": [],
-            "answer_len": 90
+            "answer_len": 2615
+          },
+          {
+            "turn": "T2",
+            "node_reported_count": "1",
+            "answer_scanned_hits": [],
+            "answer_len": 1536
+          },
+          {
+            "turn": "T3",
+            "node_reported_count": "1",
+            "answer_scanned_hits": [],
+            "answer_len": 1283
+          },
+          {
+            "turn": "T4",
+            "node_reported_count": "0",
+            "answer_scanned_hits": [],
+            "answer_len": 1094
           }
         ]
       },
       {
         "id": "X-02",
         "desc": "没有节点因业务原因失败",
-        "result": "PASS",
-        "detail": []
+        "result": "FAIL",
+        "detail": [
+          {
+            "turn": "T3",
+            "node": "wb_feedback",
+            "status": "exception",
+            "error": "Request failed with status code 422"
+          }
+        ]
       },
       {
-        "id": "CAP-01",
-        "desc": "路由到冻结判据预期的那一个能力",
+        "id": "FULL-01",
+        "desc": "T1 真实交付且产物被登记进 M2",
         "result": "PASS",
         "detail": {
-          "expected": "MATRIX",
-          "got": "MATRIX",
-          "route_note": "capability=MATRIX；action=NONE；能力来源=M1.call_intent.needed_capabilities，动作来源=uapp_action 分类；本节点未做意图识别、未替用户选择能力。"
+          "should_persist": "true",
+          "content_hash": "043f80799e3dadd3",
+          "artifact_rows": "1",
+          "version_rows": "1"
         }
       },
       {
-        "id": "CAP-02",
-        "desc": "统一能力接缝实际执行",
+        "id": "FULL-02",
+        "desc": "本例登记了测试发布，且本例工作区内没有任何非测试发布",
         "result": "PASS",
         "detail": {
-          "seam_executed": true,
-          "upstream_transport_failure": false
+          "workspace_id": "0a83d337-1212-48c6-8828-5ddbfde5a86a",
+          "test_publish_rows": "1",
+          "non_test_publish_rows_in_this_workspace": "0",
+          "note": "限定本例工作区；库内其余非测试行属 M0-M5 既有数据，与本例无关"
         }
       },
       {
-        "id": "CAP-03",
-        "desc": "同一例里没有跑其余五个能力（无暗跑、无固定全链）",
+        "id": "FULL-03",
+        "desc": "本例的反馈已写回 M2",
+        "result": "FAIL",
+        "detail": {
+          "workspace_id": "0a83d337-1212-48c6-8828-5ddbfde5a86a",
+          "feedback_rows_in_this_workspace": "0"
+        }
+      },
+      {
+        "id": "FULL-04",
+        "desc": "本例工作区内出现了第二个周期（下一个周期已开）",
         "result": "PASS",
         "detail": {
-          "modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 账号架构与诊断\"]",
-          "other_capabilities_seen": [],
-          "note": ""
+          "workspace_id": "0a83d337-1212-48c6-8828-5ddbfde5a86a",
+          "cycle_rows_in_this_workspace": "2",
+          "note": "建域时建了第 1 个周期；T4 之后应当出现第 2 个"
         }
       }
     ],
-    "conversation_id": "a91f50f0-09f3-496c-9933-ce20f0d4beb9",
-    "turns": 1
-  },
-  {
-    "case_id": "UAPP-CAP-02",
-    "verdict": "PASS",
-    "freshness": "CURRENT",
-    "frozen_criteria_sha256": "c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6",
-    "checks": [
-      {
-        "id": "X-00",
-        "desc": "全部轮次平台层返回 200",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-02",
-            "http": 200
-          }
-        ]
-      },
-      {
-        "id": "X-01",
-        "desc": "回给用户的正文经同一套判据扫描后零命中",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-02",
-            "node_reported_count": "0",
-            "answer_scanned_hits": [],
-            "answer_len": 98
-          }
-        ]
-      },
-      {
-        "id": "X-02",
-        "desc": "没有节点因业务原因失败",
-        "result": "PASS",
-        "detail": []
-      },
-      {
-        "id": "CAP-01",
-        "desc": "路由到冻结判据预期的那一个能力",
-        "result": "PASS",
-        "detail": {
-          "expected": "CAMPAIGN",
-          "got": "CAMPAIGN",
-          "route_note": "capability=CAMPAIGN；action=NONE；能力来源=M1.call_intent.needed_capabilities，动作来源=uapp_action 分类；本节点未做意图识别、未替用户选择能力。"
-        }
-      },
-      {
-        "id": "CAP-02",
-        "desc": "统一能力接缝实际执行",
-        "result": "PASS",
-        "detail": {
-          "seam_executed": true,
-          "upstream_transport_failure": false
-        }
-      },
-      {
-        "id": "CAP-03",
-        "desc": "同一例里没有跑其余五个能力（无暗跑、无固定全链）",
-        "result": "PASS",
-        "detail": {
-          "modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 单次经营任务策划\"]",
-          "other_capabilities_seen": [],
-          "note": ""
-        }
-      }
-    ],
-    "conversation_id": "6d268f5f-488f-43be-b0e5-b4e0b8718586",
-    "turns": 1
-  },
-  {
-    "case_id": "UAPP-CAP-03",
-    "verdict": "PASS",
-    "freshness": "CURRENT",
-    "frozen_criteria_sha256": "c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6",
-    "checks": [
-      {
-        "id": "X-00",
-        "desc": "全部轮次平台层返回 200",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-03",
-            "http": 200
-          }
-        ]
-      },
-      {
-        "id": "X-01",
-        "desc": "回给用户的正文经同一套判据扫描后零命中",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-03",
-            "node_reported_count": "0",
-            "answer_scanned_hits": [],
-            "answer_len": 92
-          }
-        ]
-      },
-      {
-        "id": "X-02",
-        "desc": "没有节点因业务原因失败",
-        "result": "PASS",
-        "detail": []
-      },
-      {
-        "id": "CAP-01",
-        "desc": "路由到冻结判据预期的那一个能力",
-        "result": "PASS",
-        "detail": {
-          "expected": "CONTENT_BRIEF",
-          "got": "CONTENT_BRIEF",
-          "route_note": "capability=CONTENT_BRIEF；action=NONE；能力来源=M1.call_intent.needed_capabilities，动作来源=uapp_action 分类；本节点未做意图识别、未替用户选择能力。"
-        }
-      },
-      {
-        "id": "CAP-02",
-        "desc": "统一能力接缝实际执行",
-        "result": "PASS",
-        "detail": {
-          "seam_executed": true,
-          "upstream_transport_failure": false
-        }
-      },
-      {
-        "id": "CAP-03",
-        "desc": "同一例里没有跑其余五个能力（无暗跑、无固定全链）",
-        "result": "PASS",
-        "detail": {
-          "modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 内容契约（Content Brief）\"]",
-          "other_capabilities_seen": [],
-          "note": ""
-        }
-      }
-    ],
-    "conversation_id": "cafe8fe1-f719-4494-8a24-349da738208e",
-    "turns": 1
-  },
-  {
-    "case_id": "UAPP-CAP-04",
-    "verdict": "PASS",
-    "freshness": "CURRENT",
-    "frozen_criteria_sha256": "c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6",
-    "checks": [
-      {
-        "id": "X-00",
-        "desc": "全部轮次平台层返回 200",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-04",
-            "http": 200
-          }
-        ]
-      },
-      {
-        "id": "X-01",
-        "desc": "回给用户的正文经同一套判据扫描后零命中",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-04",
-            "node_reported_count": "0",
-            "answer_scanned_hits": [],
-            "answer_len": 98
-          }
-        ]
-      },
-      {
-        "id": "X-02",
-        "desc": "没有节点因业务原因失败",
-        "result": "PASS",
-        "detail": []
-      },
-      {
-        "id": "CAP-01",
-        "desc": "路由到冻结判据预期的那一个能力",
-        "result": "PASS",
-        "detail": {
-          "expected": "CREATIVE_SCRIPT",
-          "got": "CREATIVE_SCRIPT",
-          "route_note": "capability=CREATIVE_SCRIPT；action=NONE；能力来源=M1.call_intent.needed_capabilities，动作来源=uapp_action 分类；本节点未做意图识别、未替用户选择能力。"
-        }
-      },
-      {
-        "id": "CAP-02",
-        "desc": "统一能力接缝实际执行",
-        "result": "PASS",
-        "detail": {
-          "seam_executed": true,
-          "upstream_transport_failure": true
-        }
-      },
-      {
-        "id": "CAP-03",
-        "desc": "同一例里没有跑其余五个能力（无暗跑、无固定全链）",
-        "result": "PASS",
-        "detail": {
-          "modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 创意与脚本\"]",
-          "other_capabilities_seen": [],
-          "note": ""
-        }
-      }
-    ],
-    "conversation_id": "f626bc63-7008-4866-a0cd-5630b3eb3df5",
-    "turns": 1
-  },
-  {
-    "case_id": "UAPP-CAP-05",
-    "verdict": "PASS",
-    "freshness": "CURRENT",
-    "frozen_criteria_sha256": "c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6",
-    "checks": [
-      {
-        "id": "X-00",
-        "desc": "全部轮次平台层返回 200",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-05",
-            "http": 200
-          }
-        ]
-      },
-      {
-        "id": "X-01",
-        "desc": "回给用户的正文经同一套判据扫描后零命中",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-05",
-            "node_reported_count": "0",
-            "answer_scanned_hits": [],
-            "answer_len": 108
-          }
-        ]
-      },
-      {
-        "id": "X-02",
-        "desc": "没有节点因业务原因失败",
-        "result": "PASS",
-        "detail": []
-      },
-      {
-        "id": "CAP-01",
-        "desc": "路由到冻结判据预期的那一个能力",
-        "result": "PASS",
-        "detail": {
-          "expected": "PRODUCTION_DIRECTOR",
-          "got": "PRODUCTION_DIRECTOR",
-          "route_note": "capability=PRODUCTION_DIRECTOR；action=NONE；能力来源=M1.call_intent.needed_capabilities，动作来源=uapp_action 分类；本节点未做意图识别、未替用户选择能力。"
-        }
-      },
-      {
-        "id": "CAP-02",
-        "desc": "统一能力接缝实际执行",
-        "result": "PASS",
-        "detail": {
-          "seam_executed": true,
-          "upstream_transport_failure": false
-        }
-      },
-      {
-        "id": "CAP-03",
-        "desc": "同一例里没有跑其余五个能力（无暗跑、无固定全链）",
-        "result": "PASS",
-        "detail": {
-          "modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 拍摄与制作方案\"]",
-          "other_capabilities_seen": [],
-          "note": ""
-        }
-      }
-    ],
-    "conversation_id": "f096919a-dea1-4fe5-bd3d-08e46e0841fa",
-    "turns": 1
-  },
-  {
-    "case_id": "UAPP-CAP-06",
-    "verdict": "PASS",
-    "freshness": "CURRENT",
-    "frozen_criteria_sha256": "c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6",
-    "checks": [
-      {
-        "id": "X-00",
-        "desc": "全部轮次平台层返回 200",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-06",
-            "http": 200
-          }
-        ]
-      },
-      {
-        "id": "X-01",
-        "desc": "回给用户的正文经同一套判据扫描后零命中",
-        "result": "PASS",
-        "detail": [
-          {
-            "turn": "UAPP-CAP-06",
-            "node_reported_count": "0",
-            "answer_scanned_hits": [],
-            "answer_len": 98
-          }
-        ]
-      },
-      {
-        "id": "X-02",
-        "desc": "没有节点因业务原因失败",
-        "result": "PASS",
-        "detail": []
-      },
-      {
-        "id": "CAP-01",
-        "desc": "路由到冻结判据预期的那一个能力",
-        "result": "PASS",
-        "detail": {
-          "expected": "PUBLISHING_PACKAGING",
-          "got": "PUBLISHING_PACKAGING",
-          "route_note": "capability=PUBLISHING_PACKAGING；action=NONE；能力来源=M1.call_intent.needed_capabilities，动作来源=uapp_action 分类；本节点未做意图识别、未替用户选择能力。"
-        }
-      },
-      {
-        "id": "CAP-02",
-        "desc": "统一能力接缝实际执行",
-        "result": "PASS",
-        "detail": {
-          "seam_executed": true,
-          "upstream_transport_failure": false
-        }
-      },
-      {
-        "id": "CAP-03",
-        "desc": "同一例里没有跑其余五个能力（无暗跑、无固定全链）",
-        "result": "PASS",
-        "detail": {
-          "modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 发布包装\"]",
-          "other_capabilities_seen": [],
-          "note": ""
-        }
-      }
-    ],
-    "conversation_id": "35586d05-6e22-4c80-96e1-7d841db2829c",
-    "turns": 1
+    "conversation_id": "81777db3-0047-4b51-91b4-b41996607ebd",
+    "turns": 4
   }
 ]
