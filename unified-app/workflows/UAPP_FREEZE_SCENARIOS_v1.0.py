@@ -128,8 +128,15 @@ SCENARIOS = {
     "UAPP-WITHDRAW-01": {
         "purpose": "撤回影响面与副作用真实性",
         "binds": ["UAPP-AC-07"],
-        "mode": "continues_full_01_conversation",
-        "turns": [{"id": "W1", "input": "刚才那份素材撤回吧，以后别再用了。"}],
+        # 自带上传：撤回必须有可撤的对象。FULL-01 的 T1 是纯文本叙述，不产生素材行，
+        # 拿它当前置会让本例测的是"没有对象时会不会乱说"，那是另一个问题。
+        "mode": "own_conversation_with_upload",
+        "upload": "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+        "turns": [
+            {"id": "W0", "input": "这是我们的品牌资料，先存着。基于这份资料，"
+                                  "这周想把内容制作依据定下来。"},
+            {"id": "W1", "input": "刚才那份素材撤回吧，以后别再用了。"},
+        ],
         "pass": ["回复把四件事分开说：未来复用资格 / 已发布内容不受影响 / 未对真实平台操作 / 本轮实际写入",
                  "M2 中该素材确实进入撤回态",
                  "无 2xx 时不得声称撤回已完成"],

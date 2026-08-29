@@ -38,6 +38,29 @@ def psql(sql, db="dify"):
     return p.stdout.strip()
 
 
+def upload(key, path, user):
+    """把一份本地文件按 Dify 的用户上传通道传上去。这是**用户可见的正常产品动作**
+    （Founder 上传自己的品牌资料），不是内部字段——AC-02 说的是不填内部字段，
+    不是不许上传资料。"""
+    import uuid as _uuid
+    boundary = "----uapp" + _uuid.uuid4().hex
+    name = os.path.basename(path)
+    body = io.open(path, "rb").read()
+    parts = []
+    parts.append(("--%s\r\nContent-Disposition: form-data; name=\"user\"\r\n\r\n%s\r\n"
+                  % (boundary, user)).encode("utf-8"))
+    parts.append(("--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
+                  "Content-Type: text/markdown\r\n\r\n" % (boundary, name)).encode("utf-8"))
+    parts.append(body)
+    parts.append(("\r\n--%s--\r\n" % boundary).encode("utf-8"))
+    raw = b"".join(parts)
+    r = DC.http_json("POST", "/v1/files/upload",
+                     headers={"Authorization": "Bearer " + key,
+                              "Content-Type": "multipart/form-data; boundary=" + boundary},
+                     raw_body=raw.decode("latin-1"), timeout=120)
+    return r["status"], json.loads(r["body"]) if r["body"].strip().startswith("{") else r["body"]
+
+
 def chat(key, query, user, conversation_id="", files=None, timeout=1800):
     body = {"inputs": {}, "query": query, "response_mode": "blocking", "user": user}
     if conversation_id:
@@ -85,7 +108,20 @@ def main():
     # 换 user 会拿到 "Conversation Not Exists"。续跑时用 UAPP_USER 显式指定。
     user = os.environ.get("UAPP_USER") or ("uapp-exec-" + tag)
 
-    res = chat(key, query, user, conv)
+    files = None
+    up_path = os.environ.get("UAPP_UPLOAD", "")
+    up_info = None
+    if up_path:
+        st_u, up = upload(key, up_path, user)
+        up_info = {"status": st_u, "id": (up or {}).get("id") if isinstance(up, dict) else None,
+                   "name": os.path.basename(up_path)}
+        if st_u in (200, 201) and isinstance(up, dict):
+            files = [{"type": "document", "transfer_method": "local_file",
+                      "upload_file_id": up["id"]}]
+        else:
+            raise SystemExit("上传失败，不继续跑：%s %s" % (st_u, str(up)[:300]))
+
+    res = chat(key, query, user, conv, files=files)
     body = res["body"]
     mid = body.get("message_id") or ""
     cid = body.get("conversation_id") or ""
@@ -93,7 +129,7 @@ def main():
 
     rec = {
         "tag": tag, "app_id": APP_ID, "user": user,
-        "query": query, "conversation_id_in": conv,
+        "query": query, "conversation_id_in": conv, "uploaded_file": up_info,
         "http_status": res["http_status"], "elapsed_seconds": res["elapsed_seconds"],
         "message_id": mid, "conversation_id": cid, "workflow_run_id": run_id,
         "answer": body.get("answer"),
