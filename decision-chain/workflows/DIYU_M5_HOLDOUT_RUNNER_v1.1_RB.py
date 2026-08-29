@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """M5 AC-07 Rebase 新鲜留出运行器 · HOLDOUT-M5-RB-01 / RB-02。
 
-**只在 V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.1_AC07_REBASE.yaml 冻结之后运行。**
+**只在 V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.4_FINAL_P0.yaml 冻结之后运行。**
 
 和 v1.0 同一条纪律，且这次写死成代码：
   - **先跑、后读判据。** 本文件只把留出原文送进系统、把产出原样存下来，
@@ -30,7 +30,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 CUSTODY_MANIFEST = os.path.join(ROOT, "decision-chain", "fixtures",
                                 "V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.1_RB.yaml")
 CANDIDATE = os.path.join(ROOT, "decision-chain", "docs",
-                         "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.3_AC07_REBASE.yaml")
+                         "V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.4_FINAL_P0.yaml")
 EV = os.path.join(ROOT, "decision-chain", "evidence", "m5-rb")
 
 
