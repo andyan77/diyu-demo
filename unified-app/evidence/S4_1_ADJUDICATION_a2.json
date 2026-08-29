@@ -1,0 +1,215 @@
+{
+  "stage": "S4.1",
+  "stage_gate_sha256": "11c3a0e2fa7de2fb6e1dd9c3ef639d5277d7d16474c142db3413d21a5e956c43",
+  "model_calls_by_adjudicator": 0,
+  "cases": {
+    "S4-CAP-MATRIX-01": {
+      "checks": [
+        {
+          "desc": "画布侧 uapp_m3 / uapp_hop / uapp_seam 依次实际执行且 succeeded",
+          "result": "PASS",
+          "observed": {
+            "uapp_m3": true,
+            "uapp_hop": true,
+            "uapp_seam": true
+          }
+        },
+        {
+          "desc": "Seam 自身运行记录中目标能力节点实际执行且 succeeded（唯一权威证据）",
+          "result": "PASS",
+          "observed": {
+            "target": "MATRIX",
+            "seam_node": "tool_matrix",
+            "status": "succeeded",
+            "seam_nodes_ran": [
+              "1788000000001",
+              "entry_resolver",
+              "seam_dispatch",
+              "tool_matrix",
+              "fin_matrix",
+              "end_matrix"
+            ]
+          }
+        },
+        {
+          "desc": "Seam 内其余五个能力节点均未执行（不暗跑）",
+          "result": "PASS",
+          "observed": {
+            "others_ran": []
+          }
+        },
+        {
+          "desc": "组件 Return 回到画布：user_delivery 或 returns_json 非空",
+          "result": "PASS",
+          "observed": {
+            "user_delivery_len": 116,
+            "returns_json_len": 354,
+            "outcome": "UNKNOWN"
+          }
+        },
+        {
+          "desc": "交付正文非空、非占位",
+          "result": "PASS",
+          "observed": {
+            "answer_len": 116,
+            "is_placeholder": false
+          }
+        },
+        {
+          "desc": "跨跳不丢不改·M3 判断逐字节进入 Hop 入参",
+          "result": "PASS",
+          "observed": {
+            "m3_len": 1375,
+            "hop_in_len": 1375,
+            "identical": true
+          }
+        },
+        {
+          "desc": "跨跳不丢不改·Seam 入参 capability = 路由确定的目标能力",
+          "result": "PASS",
+          "observed": {
+            "seam_in": "MATRIX",
+            "route_target": "MATRIX"
+          }
+        },
+        {
+          "desc": "leak_hit_count = 0",
+          "result": "PASS",
+          "observed": {
+            "count": "0",
+            "hits": "[]"
+          }
+        },
+        {
+          "desc": "交付正文零禁词命中（判定侧独立复算）",
+          "result": "PASS",
+          "observed": []
+        },
+        {
+          "desc": "modules_actually_run 报告了 M4 能力接缝这一跳，与实际执行一致",
+          "result": "PASS",
+          "observed": {
+            "modules": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 账号架构与诊断\"]"
+          }
+        }
+      ],
+      "verdict": "PASS",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "false",
+        "decisive_question": "",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "true",
+        "intent": "MATRIX",
+        "intent_reason": "用户问的是账号层面『没流量怎么办』，属于账号诊断/定位问题。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "CAPABILITY",
+        "route_note": "capability=MATRIX；action=NONE；能力来源=canvas_triage；模式=CAPABILITY。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "true",
+        "tag": "a557ec0fd4cb",
+        "target_capability": "MATRIX",
+        "triage_failed": "false",
+        "user_request": "有个账号一直没流量，怎么办",
+        "withdraw_target_text": ""
+      },
+      "answer": "这一步我还差一样东西才能往下判断：\n\n这次是要新建或实质改动账号的长期定位、人设或职责分工吗？还是只想解决眼下这一条内容？\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+      "seam_nodes_ran": {
+        "1788000000001": "succeeded",
+        "entry_resolver": "succeeded",
+        "seam_dispatch": "succeeded",
+        "tool_matrix": "succeeded",
+        "fin_matrix": "succeeded",
+        "end_matrix": "succeeded"
+      },
+      "workflow_run_id": "265189ec-ed35-4593-a969-abfe97cced9f",
+      "nested_run_counts": {
+        "M3": 5,
+        "HOP": 2,
+        "SEAM": 2,
+        "MATRIX": 2,
+        "CAMPAIGN": 0,
+        "CONTENT_BRIEF": 0,
+        "CREATIVE_SCRIPT": 0,
+        "PRODUCTION_DIRECTOR": 0,
+        "PUBLISHING_PACKAGING": 0
+      }
+    },
+    "S4-REG-ASK-01": {
+      "checks": [
+        {
+          "desc": "route_mode = ASK_ONE",
+          "result": "PASS",
+          "observed": "ASK_ONE"
+        },
+        {
+          "desc": "uapp_ask_one 实际执行",
+          "result": "PASS",
+          "observed": true
+        },
+        {
+          "desc": "问号计数为 1",
+          "result": "PASS",
+          "observed": 1
+        },
+        {
+          "desc": "未猜任何能力",
+          "result": "PASS",
+          "observed": ""
+        },
+        {
+          "desc": "本轮零 M2 / 零 M3 / 零 Hop / 零 Seam 节点执行",
+          "result": "PASS",
+          "observed": {
+            "hits": []
+          }
+        },
+        {
+          "desc": "零内部字段泄漏",
+          "result": "PASS",
+          "observed": []
+        }
+      ],
+      "verdict": "PASS",
+      "route": {
+        "action": "NONE",
+        "action_source": "structured_output",
+        "asks_one": "true",
+        "decisive_question": "您想打磨的是哪一面：文案、拍法，还是标题封面？",
+        "entry": "",
+        "external_ref_text": "",
+        "feedback_text": "",
+        "has_capability": "false",
+        "intent": "AMBIGUOUS",
+        "intent_reason": "修改类请求只说了“打磨”却没有指明要改哪一面，且上文未确定过具体产物，按规则判 AMBIGUOUS。",
+        "intent_source": "canvas_triage",
+        "needs_bootstrap": "true",
+        "platform_text": "",
+        "route_mode": "ASK_ONE",
+        "route_note": "capability=（本轮无）；action=NONE；能力来源=canvas_triage；模式=ASK_ONE。用户点名优先；未点名时由本层分诊台把自然语言桥接到能力，依据 Founder 裁定 UAPP-INTENT-ROUTING-001。",
+        "runs_business": "true",
+        "runs_m3": "false",
+        "tag": "c227a0838603",
+        "target_capability": "",
+        "triage_failed": "false",
+        "user_request": "这条我想再打磨一下",
+        "withdraw_target_text": ""
+      },
+      "answer": "这一步我先确认一件事，确认完直接往下做：\n\n您想打磨的是哪一面：文案、拍法，还是标题封面？",
+      "workflow_run_id": "b96c1902-fc6f-4ae2-84f8-2933c30ccde0"
+    }
+  },
+  "summary": {
+    "verdicts": {
+      "S4-CAP-MATRIX-01": "PASS",
+      "S4-REG-ASK-01": "PASS"
+    },
+    "all_pass": true,
+    "next_step_allowed": true
+  }
+}

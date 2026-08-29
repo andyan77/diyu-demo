@@ -1,0 +1,39 @@
+{
+  "stage": "S4.1",
+  "result": "PASS",
+  "flag": "CURRENT",
+  "stage_gate": "S4_1_STAGE_GATE_v1.1 (sha256 11c3a0e2fa7de2fb6e1dd9c3ef639d5277d7d16474c142db3413d21a5e956c43)",
+  "criteria_unchanged_from_v1_0": "cases / leak_forbidden_tokens / gate_rule / representative_capability 四块与 v1.0 逐字节相同（哈希已验）",
+  "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "graph_sha256": "6f3d3e531b0b4c0cc355b72c55a1534221163cb1c7003d020ee1d1b2fdd26770",
+  "node_count": 45,
+  "edge_count": 47,
+  "verdicts": {
+    "S4-CAP-MATRIX-01": "PASS",
+    "S4-REG-ASK-01": "PASS"
+  },
+  "deterministic_checks": {
+    "v1.1_prerun": "17/17 PASS",
+    "postrun": "17/17 PASS",
+    "model_calls": 0
+  },
+  "proven_this_layer": [
+    "M3 决策 → Hop → Seam → 目标能力真实执行 → 组件 Return → 自然语言交付，整条链在同一 App 内跑通",
+    "目标能力真跑的唯一权威证据成立：Seam 自身记录 tool_matrix succeeded；MATRIX 应用独立运行 succeeded",
+    "不暗跑：Seam 内其余五个能力节点未执行，五个能力应用 runs=0",
+    "跨跳不丢不改：M3 判断 1375 字逐字节进入 Hop 入参；Seam 入参 capability = 路由 target_capability",
+    "组件 Return 真实回到画布：user_delivery 116 字 + returns_json 354 字（precise_gap 非编造产物）",
+    "画布原样交付能力已组织好的自然语言，不改写、不加第二份缺口说明",
+    "leak_hit_count = 0，判定侧独立复算禁词同样零命中",
+    "回归：只问一个的轮次零 M2 零 M3 零 Hop 零 Seam 节点执行"
+  ],
+  "protected_zero_drift": "11 个受保护应用 graph 相对 R0 基线零漂移；Hop / Seam / 六能力 / M3 均只调用不修改",
+  "cost_including_failed_attempt": {
+    "canvas_workflow_runs": 3,
+    "canvas_llm_node_attempts": 6,
+    "note": "含 attempt01 的失败运行；一次 KeyError 在发起模型调用之前就失败，零成本"
+  },
+  "layer_scope_disclaimer": "本层 PASS 只证明一条能力链（MATRIX）成立。其余五项能力可达性未证，M5 写回与闭环未接。",
+  "next_step": "§8.2 逐项开放其余五项能力",
+  "next_stage_allowed": true
+}

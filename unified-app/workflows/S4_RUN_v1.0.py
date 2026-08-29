@@ -254,10 +254,10 @@ def main():
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     if which in ("all", "cap"):
         run_case(key, g, "S4-CAP-MATRIX-01_a2",
-                 [("C1", g["cases"]["S4-CAP-MATRIX-01_a2"]["input"])], "matrix01")
+                 [("C1", g["cases"]["S4-CAP-MATRIX-01"]["input"])], "matrix01")
     if which in ("all", "reg"):
         run_case(key, g, "S4-REG-ASK-01_a2",
-                 [("R1", g["cases"]["S4-REG-ASK-01_a2"]["input"])], "reg01")
+                 [("R1", g["cases"]["S4-REG-ASK-01"]["input"])], "reg01")
 
 
 if __name__ == "__main__":
