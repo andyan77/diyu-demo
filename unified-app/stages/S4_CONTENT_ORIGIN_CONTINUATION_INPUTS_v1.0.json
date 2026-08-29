@@ -1,0 +1,74 @@
+{
+  "document": {
+    "id": "S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "frozen_before_any_model_run": true,
+    "authority": "六轮话术逐字取自 DIYU_V1_UAPP_S4_CONTENT_ORIGIN_CONTINUATION_EXECUTION_PROMPT_v1.0.md §4，执行侧一字未改、未增、未删",
+    "criteria_ref": "S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json",
+    "does_not_supersede": "不取代 S4_2_POS_INPUT_PLAN_v1.1.json（d75e92ba…），后者的历史证据原样保留",
+    "no_executor_authored_business_decision": "T4 是 Founder 在裁定 UAPP-FOUNDER-ADJUDICATION-002 中明确提供的用户决定，不是执行侧代拟。本计划不含任何执行侧代用户做的经营决定。"
+  },
+  "conversation": {
+    "name": "S4_CONTENT_ORIGIN_CONTINUATION",
+    "fresh_conversation": true,
+    "side": "POS_ONLY",
+    "fixture_uploaded_every_turn": true,
+    "turns": [
+      {
+        "idx": 1,
+        "case_id": "S4-CO-T1",
+        "expect_capability": "CONTENT_BRIEF",
+        "text": "这条内容开拍之前，先把制作依据定下来。"
+      },
+      {
+        "idx": 2,
+        "case_id": "S4-CO-T2",
+        "expect_capability": "CONTENT_BRIEF",
+        "role": "回答系统在 T1 提出的缺口",
+        "text": "说给常来店里试穿、拿不准一件衣服到底适不适合自己的熟客听。她卡在的是「这件跟我衣橱里已经有的搭不搭」。看完之后她能自己判断搭不搭、要不要添，而不是又多买一件。就按你手上资料里写的那次上新来做，出镜的人用最懂搭配试穿的那位，事实由负责选品的那位确认。",
+        "fixture_provenance": [
+          "『拿不准适不适合』← 夹具三「商品存在适合与不适合，不应把所有衣服都描述成人人可穿」",
+          "『搭不搭、不是又多买一件』← 夹具三「搭配不是增加购买数量，而是提高已有衣服的使用率」",
+          "『来店里试穿的熟客』← 夹具六「顾客提出的真实穿衣问题」「同一件商品在不同身材上的试穿差异」",
+          "『那次上新』← 夹具七，不点名，由夹具告诉系统",
+          "『最懂搭配试穿的那位』『负责选品的那位』← 夹具五角色描述，不点名"
+        ]
+      },
+      {
+        "idx": 3,
+        "case_id": "S4-CO-T3",
+        "expect_capability": "CREATIVE_SCRIPT",
+        "text": "接着把这条的口播稿写出来。"
+      },
+      {
+        "idx": 4,
+        "case_id": "S4-CO-T4",
+        "expect_capability": "CREATIVE_SCRIPT",
+        "role": "回答 content_origin_mode 缺口",
+        "authority": "FOUNDER｜UAPP-FOUNDER-ADJUDICATION-002",
+        "scenario_value": "EXISTING_MATERIAL_EDIT",
+        "text": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布。",
+        "scope": "仅本次冻结测试场景与当前内容任务；不是系统默认值，不是长期品牌事实，不等于任何具体素材已获授权"
+      },
+      {
+        "idx": 5,
+        "case_id": "S4-CO-T5",
+        "expect_capability": "PRODUCTION_DIRECTOR",
+        "text": "这条该怎么拍？场地、机位和要准备的东西给我列一下。"
+      },
+      {
+        "idx": 6,
+        "case_id": "S4-CO-T6",
+        "expect_capability": "PUBLISHING_PACKAGING",
+        "text": "标题和封面帮我定一下。"
+      }
+    ]
+  },
+  "run_discipline": {
+    "samples_per_turn": 1,
+    "unplanned_followups": 0,
+    "no_chasing_pass": "若 T4 之后仍出现新的缺口，保留原文与最高失效节点，立即停止；不追加话术、不重采样。",
+    "runner": "unified-app/workflows/S4_CONTINUATION_RUN_v1.0.py（只发起、只记录，不判定）",
+    "adjudicator": "unified-app/workflows/S4_CONTINUATION_ADJUDICATE_v1.0.py（只按冻结 Gate 重算）"
+  }
+}

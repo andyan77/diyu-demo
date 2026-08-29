@@ -1,0 +1,254 @@
+{
+  "document": {
+    "id": "S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "stage": "S4 后继窄验证：素材来源裁决后的连续链",
+    "frozen_before_any_model_run": true,
+    "authority": "DIYU_V1_UAPP_S4_CONTENT_ORIGIN_CONTINUATION_EXECUTION_PROMPT_v1.0.md §4；Founder 裁定 UAPP-FOUNDER-ADJUDICATION-002",
+    "relation_to_stage_gate_v1_2": "本判据是 S4_2_STAGE_GATE_v1.2.json（sha256 c6d9d859f1a0d520adae2513ec46b18482e0d0c6d14c27e4e9b88b55147339ff）的**后继补充**，不是对它的原地修改。v1.2 一个字节都不动，Gate 4 的历史 1 PASS / 3 FAIL 记录原样保留，不覆盖、不追溯改绿。",
+    "narrow_question": "用户补充 Creative Script 唯一精确缺口 content_origin_mode 之后，统一应用是否保留既有任务语义并继续完成脚本、制作指导与发布包装，而不是重启、丢上下文或继续空转。",
+    "what_pass_does_not_imply": "PASS 只关闭上述窄问题。不宣告 S4 DONE，不宣告 UAPP DONE，不宣告 M5 DONE，不改变任何既有 AC 状态，不使 v1.2 下的历史 FAIL 失效。"
+  },
+  "identity": {
+    "successor_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+    "graph_sha256": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+    "node_count": 46,
+    "edge_count": 48,
+    "graph_mutation_this_stage": "FORBIDDEN",
+    "git_branch": "codex/v1-uapp-progressive-canvas-001",
+    "git_commit_at_freeze": "f0ae900ce6ac77f2efd3c788f266e30f1687159a",
+    "git_commit_note": "冻结时的 HEAD。本 Gate、冻结输入与裁定登记一并构成其子提交；该子提交的 hash 在运行结束后记入判定书，运行期间图与判据均不得变。"
+  },
+  "sufficiency_source": {
+    "fixture": "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+    "sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+    "upload_channel": "Dify /v1/files/upload —— 用户可见的正常产品动作",
+    "attach_policy": "每一轮都附同一份夹具（上传是轮次作用域，见 S4_2_FAILURE_TRIAGE_003.md）",
+    "no_other_files": "不得附加任何其它文件、内部字段、能力名、模块名或执行侧代写的专业产物"
+  },
+  "conversation_discipline": {
+    "new_conversations": 1,
+    "frozen_user_turns": 6,
+    "samples_per_turn": 1,
+    "unplanned_followups": 0,
+    "retry": {
+      "allowed": "仅纯传输失败且无任何模型输出时最多一次",
+      "evidence": "原 Attempt 与重试 Attempt 均保留"
+    },
+    "on_new_gap_after_T4": "保留原文与最高失效节点，立即停止。不得因为出现新缺口就追加一句话继续追 PASS。",
+    "evidence_source": "能力是否真跑只认 Seam 应用自身 workflow_node_executions 的 tool_* 节点；画布 succeeded、模型自述、交付正文的说法一律不算"
+  },
+  "frozen_turns": [
+    {
+      "idx": 1,
+      "expect_capability": "CONTENT_BRIEF",
+      "text": "这条内容开拍之前，先把制作依据定下来。"
+    },
+    {
+      "idx": 2,
+      "expect_capability": "CONTENT_BRIEF",
+      "role": "回答系统提出的缺口",
+      "text": "说给常来店里试穿、拿不准一件衣服到底适不适合自己的熟客听。她卡在的是「这件跟我衣橱里已经有的搭不搭」。看完之后她能自己判断搭不搭、要不要添，而不是又多买一件。就按你手上资料里写的那次上新来做，出镜的人用最懂搭配试穿的那位，事实由负责选品的那位确认。"
+    },
+    {
+      "idx": 3,
+      "expect_capability": "CREATIVE_SCRIPT",
+      "text": "接着把这条的口播稿写出来。"
+    },
+    {
+      "idx": 4,
+      "expect_capability": "CREATIVE_SCRIPT",
+      "role": "Founder 裁定提供的 content_origin_mode 决定",
+      "text": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布。",
+      "authority": "UAPP-FOUNDER-ADJUDICATION-002；不是执行侧代拟，不得改写成「素材已获授权」"
+    },
+    {
+      "idx": 5,
+      "expect_capability": "PRODUCTION_DIRECTOR",
+      "text": "这条该怎么拍？场地、机位和要准备的东西给我列一下。"
+    },
+    {
+      "idx": 6,
+      "expect_capability": "PUBLISHING_PACKAGING",
+      "text": "标题和封面帮我定一下。"
+    }
+  ],
+  "pass_conditions": [
+    {
+      "id": "C01",
+      "text": "T1/T2 真实进入 Content Brief，产生非空专业 artifact",
+      "how": "Seam 记录含 tool_content_brief 且 succeeded；uapp_seam_merge.artifact.output 非空"
+    },
+    {
+      "id": "C02",
+      "text": "T3 真实进入 Creative Script，并精确提出 content_origin_mode 缺口，不新增无关缺口",
+      "how": "Seam 记录含 tool_creative_script 且 succeeded；该轮 precise_gap 集合 == {content_origin_mode}"
+    },
+    {
+      "id": "C03",
+      "text": "T4 继承同一待办与 Content Brief，真实再次进入 Creative Script，不重做 Content Brief",
+      "how": "T4 的 Seam 记录含 tool_creative_script 且不含 tool_content_brief；且 T4 的 uapp_hop.extracted_json 中 primary_goal 与 audience_problem 与 T3 逐字相同（同一待办与同一 Content Brief 仍在，不是重新起题）",
+      "how_not": "不断言由哪条内部通道（upstream_delivery / snapshot / registered_facts）承载——那是 HOW，不进判据"
+    },
+    {
+      "id": "C04",
+      "text": "T4 后 content_origin_mode 不再是缺口，Creative Script 产生非空、非占位的脚本 artifact",
+      "how": "T4 的 precise_gap 不含 content_origin_mode；artifact.output 非空且非占位"
+    },
+    {
+      "id": "C05",
+      "text": "T5 的 upstream_capability=CREATIVE_SCRIPT 且 upstream_delivery 非空，真实执行 Production Director，产生制作 artifact",
+      "how": "T5 canvas 节点入参 + Seam tool_production_director succeeded + artifact 非空"
+    },
+    {
+      "id": "C06",
+      "text": "T6 的 upstream_capability=PRODUCTION_DIRECTOR 且 upstream_delivery 非空，真实执行 Publishing & Packaging，产生包装 artifact",
+      "how": "T6 canvas 节点入参 + Seam tool_publishing_packaging succeeded + artifact 非空"
+    },
+    {
+      "id": "C07",
+      "text": "每轮只运行目标能力，其余能力不暗跑；只认 Seam 内部节点执行记录，不认模型自述",
+      "how": "每轮 Seam latest_run_nodes 中 tool_* 恰为目标能力一个"
+    },
+    {
+      "id": "C08",
+      "text": "已完成的 Content Brief 不重新生成，已确认事实不丢失、不被改写",
+      "how": "T3–T6 的 Seam 记录均不出现 tool_content_brief；且 T2 已确认的事实字段（primary_goal / audience_problem / expression_subject）在 T3–T6 的 uapp_hop.extracted_json 中持续存在且未被改写"
+    },
+    {
+      "id": "C09",
+      "text": "不声称任何具体素材已获授权；未获授权素材不得被选择或发布",
+      "how": "对全部交付正文做确定性词表匹配，命中 authorization_overclaim_tokens 即 FAIL"
+    },
+    {
+      "id": "C10",
+      "text": "用户交付零内部状态词、字段名、节点名、app_id、堆栈和测试术语泄漏",
+      "how": "对全部交付正文做 leak_forbidden_tokens 确定性匹配"
+    },
+    {
+      "id": "C11",
+      "text": "M1/M2/M3/Hop/Seam/六能力、旧 Canvas/provider 和非测试数据零未授权漂移",
+      "how": "对 UAPP_R0_PROTECTED_BASELINE.json 中 11 个受保护应用取 md5(graph) 与基线比对；旧候选 app 2448e4f9 一并比对；仓库 git status 只允许出现本 Prompt 授权的新增文件"
+    },
+    {
+      "id": "C12",
+      "text": "同一幂等行为不产生重复业务写入",
+      "how": "boot_* 建域节点只在本会话首轮执行（后续轮次 uapp_boot_gate 不再进建域分支）；本次会话窗口内 M2 的 workspace / account / cycle / task 各只新增一行"
+    }
+  ],
+  "undecidable_rule": "任一项无法由确定性记录判断时写 NOT_VERIFIED，不得靠阅读流畅文本补成 PASS。",
+  "gate_rule": "12 项全部成立才判 S4_CONTENT_ORIGIN_CONTINUATION = PASS / CURRENT，且只关闭 narrow_question。任一硬门失败则判 FAIL 或 NOT_VERIFIED，输出 FAILURE TRIAGE，不得修改图、输入、Checker、Fixture 或能力，不得启动第二轮。",
+  "authorization_overclaim_tokens": [
+    "已获授权",
+    "已取得授权",
+    "已授权使用",
+    "授权已确认",
+    "版权已获",
+    "已获得肖像授权",
+    "可直接发布",
+    "无需再确认授权"
+  ],
+  "leak_forbidden_tokens": [
+    "READY",
+    "PASS",
+    "FAIL",
+    "STALE",
+    "NOT_VERIFIED",
+    "route_mode",
+    "target_capability",
+    "intent_source",
+    "canvas_triage",
+    "MATRIX",
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CREATIVE_SCRIPT",
+    "PRODUCTION_DIRECTOR",
+    "PUBLISHING_PACKAGING",
+    "SINGLE_ACCOUNT_OPERATION",
+    "AMBIGUOUS",
+    "CHITCHAT",
+    "uapp_",
+    "m1_",
+    "boot_",
+    "seam_",
+    "tool_matrix",
+    "85c01f85",
+    "a4c3b19b",
+    "5fca0162",
+    "gate_status",
+    "operating_judgment",
+    "capability_call",
+    "professional_input",
+    "returns_json",
+    "precise_gap",
+    "workspace_id",
+    "idempotency",
+    "http://",
+    "status_code",
+    "content_origin_mode"
+  ],
+  "forbidden_input_tokens": [
+    "MATRIX",
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CONTENT BRIEF",
+    "CREATIVE_SCRIPT",
+    "CREATIVE SCRIPT",
+    "PRODUCTION_DIRECTOR",
+    "PRODUCTION DIRECTOR",
+    "PUBLISHING_PACKAGING",
+    "PUBLISHING",
+    "SINGLE_ACCOUNT_OPERATION",
+    "Matrix Architect",
+    "Campaign",
+    "Brief",
+    "Script",
+    "Production Director",
+    "Publishing",
+    "entry",
+    "route_mode",
+    "target_capability",
+    "intent_source",
+    "capability",
+    "tool_",
+    "uapp_",
+    "m1_",
+    "m2_",
+    "m3_",
+    "m4_",
+    "seam",
+    "content_origin_mode"
+  ],
+  "protected_apps_zero_drift": {
+    "M1_HOST": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+    "HOP": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+    "SEAM": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+    "MATRIX": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+    "CAMPAIGN": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+    "CONTENT_BRIEF": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+    "CREATIVE_SCRIPT": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+    "PRODUCTION_DIRECTOR": "13cfabd5-f592-4354-a304-47098b765697",
+    "PUBLISHING_PACKAGING": "c9cdea24-9df3-400b-9ecd-1d740e8c96df"
+  },
+  "evidence_paths": {
+    "dir": "unified-app/evidence/stages/s4_continuation01/",
+    "per_turn": "S4-CO-T1.json … S4-CO-T6.json",
+    "adjudication": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_RESULT_v1.0.json",
+    "no_overwrite": "运行器拒绝覆盖任何已存在的证据文件"
+  },
+  "expected_cost": {
+    "canvas_workflow_runs": 6,
+    "note": "只跑一个会话六轮；不重跑十例全套、不补 CAMPAIGN、不做 v1.2 负例身份对齐"
+  },
+  "not_authorized_by_this_gate": [
+    "full_s4_suite_rerun",
+    "campaign_rerun",
+    "negative_suite_version_alignment",
+    "second_repair_iteration",
+    "graph_mutation",
+    "checker_or_fixture_mutation_after_run",
+    "old_evidence_overwrite",
+    "enter_s5",
+    "main_merge"
+  ]
+}

@@ -80,6 +80,57 @@ TD-UAPP-03（是否改 M1 已接受的对话语义）。**TD-UAPP-03 本轮是�
 
 ---
 
+### 2026-08-29 · 渐进候选 S4 后继窄验证前登记（当前投影，取代上一块；上一块原文保留不改）
+
+> 上一块投影绑定的是**旧候选** `2448e4f9`／图 `40e45858…`。自 `657004c` 起本任务转入
+> **REBASE 渐进候选**，在新建空白画布上逐层部署 M1→M5，账本此前未跟上——本次补齐。
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_entry_mode: CONTINUE_TASK
+task_contract_hash: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+checkpoint: S4 Gate 4 定向链 1 PASS / 3 FAIL，停在 content_origin_mode 缺口；Founder 裁定 002 已登记，授权一次六轮连续验证
+founder_adjudication: UAPP-FOUNDER-ADJUDICATION-002 = content_origin_mode 精确追问判 PASS（2026-08-29）
+successor_app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+graph_sha256: f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927
+graph_nodes: 46
+graph_edges: 48
+branch: codex/v1-uapp-progressive-canvas-001
+branch_pushed: NEVER
+main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2          # 未动
+main_merge: NOT_ALLOWED
+stage_status:
+  S1: PASS / CURRENT
+  S2: PASS / CURRENT
+  S3: PASS / CURRENT
+  S4.1: PASS / CURRENT
+  S4.2: FAIL（v1.2 判据下 CONTENT_BRIEF-POS PASS，CS/PD/PP-POS 各 FAIL 10/11；五负例与 CAMPAIGN-POS 绑 v1.1，判定器标 OUT_OF_SCOPE_GATE_MISMATCH）
+  S4_CONTENT_ORIGIN_CONTINUATION: NOT_RUN（本次授权范围）
+  S5: NOT_STARTED / NOT_AUTHORIZED
+```
+
+**Founder 裁定 002 改变了什么、没改变什么。**
+改变：`content_origin_mode` 的精确追问本身判 `PASS`，并给出本次场景的用户回答。
+没改变：Gate 4 的历史 `FAIL` 一条不改绿，`S4_2_STAGE_GATE_v1.2.json` 一个字节不动，
+S4／UAPP／M5 一律不上行。登记见
+[`unified-app/docs/UAPP_FOUNDER_ADJUDICATION_002_CONTENT_ORIGIN_MODE.md`](../../unified-app/docs/UAPP_FOUNDER_ADJUDICATION_002_CONTENT_ORIGIN_MODE.md)。
+
+**下一动作**（四样齐全）：
+
+| 项 | 值 |
+|---|---|
+| 做什么 | 跑**一个全新会话、六轮冻结输入**，验证补齐 `content_origin_mode` 之后 CS→PD→PP 能否沿同一会话继续产出 |
+| 对哪个对象 | `app_id = 85c01f85-a081-43e9-ab09-9993289cc200`，图 `f75555c0…`（本阶段禁止改图） |
+| 输入／基线 | 判据 `S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json`、冻结输入 `..._INPUTS_v1.0.json`，均冻结并提交于**首次调用之前** |
+| 什么信号算做完 | 12 项条件全部成立 → `S4_CONTENT_ORIGIN_CONTINUATION = PASS / CURRENT`，**只**关闭「回答素材来源后是否续跑」这一窄问题；任一硬门失败 → 输出 FAILURE TRIAGE 并停，不启动第二轮 |
+
+**明确未授权**：十例全套重跑、CAMPAIGN 重跑、v1.2 负例身份对齐回归、第二次接缝修复、
+改图／Checker／Fixture、进入 S5、合并 `main`。
+
+---
+
 ## L3 · 正式尝试与验收证据（历史留痕，只加不改）
 
 判据 `UAPP_FROZEN_SCENARIOS_v1.0.json` sha256 `c45c46686aedc7f4c5971653496aa8038460147ae097f8bc335a26cfd1b1b7f6`，
@@ -114,6 +165,43 @@ TD-UAPP-03（是否改 M1 已接受的对话语义）。**TD-UAPP-03 本轮是�
 **A5 不是重复采样**：它是 A3（失效传播）要求的定向复验——绑定对象（图）变了，
 旧结论按律置 `STALE`，须在新对象上重算。同一输入在同一张图上仍然只跑一次。
 `blind_resampling_allowed = false` 未被违反。
+
+
+### `ATT-S4-CO-01` · 素材来源裁决后的连续链（**预登记，调用之前**）
+
+| 项 | 值 |
+|---|---|
+| 授权 | `DIYU_V1_UAPP_S4_CONTENT_ORIGIN_CONTINUATION_EXECUTION_PROMPT_v1.0.md` + `UAPP-FOUNDER-ADJUDICATION-002` |
+| 判据 | `unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json` |
+| 冻结输入 | `unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json`（六轮逐字取自 Prompt §4，已确定性比对一致） |
+| 运行器 | `unified-app/workflows/S4_CONTINUATION_RUN_v1.0.py`（只发起、只记录） |
+| 判定器 | `unified-app/workflows/S4_CONTINUATION_ADJUDICATE_v1.0.py`（零模型调用） |
+| 证据路径 | `unified-app/evidence/stages/s4_continuation01/S4-CO-T1..T6.json` |
+| 调用上限 | 新会话 1 个、冻结轮次 6 轮、每轮 1 次；计划外追问 0；仅纯传输失败且无任何模型输出时最多重试一次 |
+| 结果 | **待填**——本行在任何调用之前写入，不预写成功 |
+
+**判定器判别力（运行之前，零模型调用）**：合成正控制 11/12 `PASS`
+（`C12` 依赖真实 M2 行数，合成证据无法伪造，属已知覆盖缺口）；
+11 个单点变异负控制**逐条触发对应条件**，`C03`/`C08` 与 `C07`/`C08` 的连带命中是语义重叠，不是误判。
+控制件只存在于 scratchpad，从不进入仓库证据目录，也从不参与真实判定。
+
+### S1–S4 渐进候选历次 Attempt（补登，只加不改）
+
+| Attempt | 范围 | 图 | 结果 | 证据 |
+|---|---|---|---|---|
+| S1 | 空白画布 + M1 逐字节复用 | — | `PASS / CURRENT` | `unified-app/stages/S1_RESULT.json` |
+| S2 | M1→M2 接缝 | — | `PASS / CURRENT`（判据 v1.1） | `S2_RESULT.json` |
+| S3 | M2→M3→用户返回 | — | `PASS / CURRENT` | `S3_RESULT.json` |
+| S4.1 | 一条完整能力链 | — | attempt01 `FAIL` → 定向修复后 `PASS / CURRENT`（判据 v1.1，零放宽） | `S4_1_RESULT.json` |
+| S4.2 attempt01 | 十例逐能力 | `6f3d3e53…` | **十例全 `FAIL`** → 归因 `CHECKER_OR_FIXTURE`：夹具上传双重编码 | `evidence/stages/s4_2_attempt01/`、`docs/S4_2_FAILURE_TRIAGE_001.md` |
+| S4.2 attempt02 | 十例逐能力 | `6f3d3e53…` | `FAIL` → 归因 `ORACLE_OR_CRITERION`（判据断言了未验证的 M1 内部机制）与「下游能力冷启动无『这条』」 | `s4_2_attempt02/`、`TRIAGE_002` |
+| S4.2 attempt03 | 多轮链 + CAMPAIGN | `6f3d3e53…` | `FAIL` → 归因 `INPUT_ENVIRONMENT_OR_TOOL`：上传是轮次作用域，被测轮次实际未带夹具 | `s4_2_attempt03/`、`TRIAGE_003` |
+| S4.2 attempt04（Gate 4） | 定向链 POS | `f75555c0…` | **1 `PASS` / 3 `FAIL`**：CONTENT_BRIEF-POS 11/11 通过；CS/PD/PP-POS 各 10/11，唯一未过项是「正例交付含实质内容」 | `s4_2_attempt04/`、`TRIAGE_004`、`S4_2_CHECKPOINT_001.md` |
+
+**跨轮状态接缝最小修复（授权一次，已完成）**：画布缺 `uapp_save` 写入节点，
+读方已接、写方未建，`uapp_last_artifact` 每轮为空。修复后 Gate 1 会话变量读写闭包 16/16 `PASS`、
+Gate 2 跨轮载体检查通过、Gate 4 实测 `upstream_delivery` 由 0 变 5593、CREATIVE_SCRIPT 缺口由 7 项塌缩到 1 项。
+影响面与**次序偏差的如实披露**见 `unified-app/docs/S4_ASSIGNER_REPAIR_IMPACT_v1.0.md` §0。
 
 ---
 

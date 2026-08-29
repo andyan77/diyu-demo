@@ -539,3 +539,24 @@ force_push: NONE
 判定信号见分区账本 L2 表。
 
 ---
+
+### `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` Checkpoint（2026-08-29，渐进候选 S4 后继窄验证前登记，**非终态**）
+
+分区账本（状态、下一动作与全部细节都在里面，本文件按 canonical §一 只留定位，不复制正文）：
+[`tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md)
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_entry_mode: CONTINUE_TASK
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+checkpoint: Founder 裁定 002 已登记；判据与六轮冻结输入已在首次调用之前冻结提交；待跑一次连续验证
+successor_app_id: 85c01f85-a081-43e9-ab09-9993289cc200   # 渐进候选，非旧 app 2448e4f9
+graph: f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927   # 46 节点 / 48 边
+branch: codex/v1-uapp-progressive-canvas-001
+main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2          # 未动
+main_merge: NOT_ALLOWED
+```
+
+**这条 Checkpoint 不上行任何状态。** Founder 裁定 002 只把「`content_origin_mode` 精确追问」
+这一项行为判 `PASS`，Gate 4 的历史 `FAIL` 一条不改绿，S4／UAPP／M5 一律不动。
