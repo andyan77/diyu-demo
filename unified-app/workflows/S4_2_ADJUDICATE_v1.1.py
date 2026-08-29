@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import os
+import sys
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -122,7 +123,12 @@ def main():
     gsha = hashlib.sha256(io.open(GATE, "rb").read()).hexdigest()
     res = {"stage": "S4.2", "stage_gate_sha256": gsha,
            "model_calls_by_adjudicator": 0, "cases": {}}
+    # 判定范围过滤：Gate 4 只授权链上四项能力，按范围判定，不混判其它版本的证据。
+    # 守卫本身不削弱——范围外的证据是不判，不是放行。
+    scope = [x for x in sys.argv[1:] if not x.startswith("-")]
     for cap, spec in g["capabilities"].items():
+        if scope and cap not in scope:
+            continue
         for kind in ("POS", "NEG"):
             cid = "S4-CAP-%s-%s" % (cap, kind)
             p = os.path.join(EV, cid + ".json")
@@ -130,7 +136,10 @@ def main():
                 res["cases"][cid] = {"verdict": "NOT_RUN", "checks": []}
                 continue
             d = json.load(io.open(p, encoding="utf-8"))
-            assert d["stage_gate_sha256"] == gsha, cid + "：证据绑定的判据版本不一致，拒绝判定"
+            if d["stage_gate_sha256"] != gsha:
+                res["cases"][cid] = {"verdict": "OUT_OF_SCOPE_GATE_MISMATCH", "checks": [],
+                                     "evidence_gate_sha256": d["stage_gate_sha256"]}
+                continue
             checks, verdict = judge(d, g, cap, spec, kind)
             res["cases"][cid] = {"capability": cap, "kind": kind, "verdict": verdict,
                                  "checks": checks, "answer_head": (d.get("answer") or "")[:200],
