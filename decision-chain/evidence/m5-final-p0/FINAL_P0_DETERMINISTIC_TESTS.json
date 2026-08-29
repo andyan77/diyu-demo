@@ -1,0 +1,54 @@
+{
+ "suite": "FINAL_P0_DETERMINISTIC_TESTS_v1.0",
+ "model_calls": 0,
+ "candidate_commit": "5f84d94d542693f143faab0444525618ab21a4e9",
+ "bind": "fp",
+ "results": {
+  "T1a 负控制：旧检查器对原失败正文漏检": {
+   "pass": true,
+   "detail": "旧 leaks=[]"
+  },
+  "T1b 正控制：新检查器拦下原失败正文": {
+   "pass": true,
+   "detail": "新 leaks=['STATE_FIELD_LINE', 'STATE_WORD:READY']"
+  },
+  "T1c 正控制：命中状态词与结构行两类": {
+   "pass": true,
+   "detail": "['STATE_FIELD_LINE', 'STATE_WORD:READY']"
+  },
+  "T1d 假阳性：干净中文交付正文零命中": {
+   "pass": true,
+   "detail": "leaks=[]"
+  },
+  "T1e 旧检查器没有状态词检查": {
+   "pass": true,
+   "detail": "旧代码无 _STATE_TOKEN"
+  },
+  "T2a 六能力模板 status 行已全部移除": {
+   "pass": true,
+   "detail": "{'CAMPAIGN': 0, 'CONTENT_BRIEF': 0, 'CREATIVE_SCRIPT': 0, 'MATRIX': 0, 'PRODUCTION_DIRECTOR': 0, 'PUBLISHING_PACKAGING': 0}"
+  },
+  "T2b 六能力保真条款各存在一次": {
+   "pass": true,
+   "detail": "{'CAMPAIGN': 1, 'CONTENT_BRIEF': 1, 'CREATIVE_SCRIPT': 1, 'MATRIX': 1, 'PRODUCTION_DIRECTOR': 1, 'PUBLISHING_PACKAGING': 1}"
+  },
+  "T2c 六能力 delivery_finalize 已补状态词全集": {
+   "pass": true,
+   "detail": "{'CAMPAIGN': True, 'CONTENT_BRIEF': True, 'CREATIVE_SCRIPT': True, 'MATRIX': True, 'PRODUCTION_DIRECTOR': True, 'PUBLISHING_PACKAGING': True}"
+  },
+  "T3 M3 successor 两段四条各存在一次": {
+   "pass": true,
+   "detail": "{'素材撤回的影响面止于依赖它的未发布产出': 1, '没有发生的写入不能说成已经发生': 1, '关键业务输入缺席时，停在缺口，不替用户选': 1, '不得从已登记商品表、上一周期、历史上下文或素材库里挑一个或几个具体商品来顶替': 1}"
+  },
+  "T4 rb 与 legacy 源应用 graph 与冻结值一致": {
+   "pass": true,
+   "detail": "漂移=无"
+  },
+  "T5 fp 候选 graph 与冻结清单一致": {
+   "pass": true,
+   "detail": "漂移=无"
+  }
+ },
+ "verdict": "PASS",
+ "failed": []
+}
