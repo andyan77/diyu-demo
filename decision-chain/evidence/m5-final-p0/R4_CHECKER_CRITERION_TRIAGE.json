@@ -1,0 +1,236 @@
+{
+  "triage_id": "V1_M5_R4_CHECKER_CRITERION_TRIAGE_v1.0",
+  "task_id": "DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001",
+  "model_calls": 0,
+  "new_sampling": 0,
+  "modifications_to_sut": 0,
+  "frozen_oracle_text": "质量判定使用任务适用的语义标准；等价表达不被误判为失败",
+  "delivered_states_source": "DIYU_M5_INTEGRATION_RUNTIME_v0.1.py::delivered（原样沿用，未重定义）",
+  "runs": [
+    {
+      "source": "RISK_PROBE_SUITE_riskF.json",
+      "recorded_verdict": "FAIL",
+      "by_frozen_oracle_text": {
+        "verdict": "FAIL",
+        "failures": [
+          "等价表达被判为失败：{'markdown_backtick': 'NOT_DELIVERED', 'yaml_with_quote': 'UNKNOWN'}"
+        ]
+      },
+      "by_checker_implementation": {
+        "verdict": "FAIL",
+        "failures": [
+          "三种等价写法结论不一致：{'json': 'DELIVERED', 'yaml_plain': 'DELIVERED', 'markdown_backtick': 'NOT_DELIVERED'}",
+          "引号变体与 yaml_plain 枚举串不等：DELIVERED vs UNKNOWN"
+        ]
+      },
+      "shapes": {
+        "json": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4816,
+          "user_delivery_chars": 848,
+          "run_id": "2c709292-9f35-4c6a-bdaf-a73cdcae68c6"
+        },
+        "yaml_plain": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4997,
+          "user_delivery_chars": 753,
+          "run_id": "00ce18b4-b069-475e-b812-0dbe91986d20"
+        },
+        "markdown_backtick": {
+          "outcome": "NOT_DELIVERED",
+          "delivered_per_runtime": false,
+          "artifact_chars": 21,
+          "user_delivery_chars": 168,
+          "run_id": "ff540ecb-86f7-4a53-8e3f-0a51964822ff"
+        },
+        "yaml_with_quote": {
+          "outcome": "UNKNOWN",
+          "delivered_per_runtime": false,
+          "artifact_chars": 0,
+          "user_delivery_chars": 92,
+          "run_id": "08f86ed2-3932-4be3-af72-2bbd84d6739e"
+        }
+      }
+    },
+    {
+      "source": "RISK_PROBE_SUITE_riskFRB2.json",
+      "recorded_verdict": "FAIL",
+      "by_frozen_oracle_text": {
+        "verdict": "PASS",
+        "failures": []
+      },
+      "by_checker_implementation": {
+        "verdict": "FAIL",
+        "failures": [
+          "三种等价写法结论不一致：{'json': 'DELIVERED_AFTER_RECOVERY', 'yaml_plain': 'DELIVERED', 'markdown_backtick': 'DELIVERED'}"
+        ]
+      },
+      "shapes": {
+        "json": {
+          "outcome": "DELIVERED_AFTER_RECOVERY",
+          "delivered_per_runtime": true,
+          "artifact_chars": 5087,
+          "user_delivery_chars": 1034,
+          "run_id": "19182ed9-e997-44f7-b032-207b6b6b9cbe"
+        },
+        "yaml_plain": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 3509,
+          "user_delivery_chars": 448,
+          "run_id": "3ccfce18-a364-40e5-8407-8046d070832c"
+        },
+        "markdown_backtick": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 6019,
+          "user_delivery_chars": 857,
+          "run_id": "61455880-66ab-4cd1-b246-56558634a24f"
+        },
+        "yaml_with_quote": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4790,
+          "user_delivery_chars": 690,
+          "run_id": "dc32acf0-4312-442e-bf0f-55aa2a86a3b2"
+        }
+      }
+    },
+    {
+      "source": "RISK_PROBE_SUITE_riskFRB3.json",
+      "recorded_verdict": "FAIL",
+      "by_frozen_oracle_text": {
+        "verdict": "PASS",
+        "failures": []
+      },
+      "by_checker_implementation": {
+        "verdict": "FAIL",
+        "failures": [
+          "三种等价写法结论不一致：{'json': 'DELIVERED_AFTER_RECOVERY', 'yaml_plain': 'DELIVERED', 'markdown_backtick': 'DELIVERED'}"
+        ]
+      },
+      "shapes": {
+        "json": {
+          "outcome": "DELIVERED_AFTER_RECOVERY",
+          "delivered_per_runtime": true,
+          "artifact_chars": 3270,
+          "user_delivery_chars": 1151,
+          "run_id": "2ae97692-5f32-4ab2-9b6a-24533d36f4fb"
+        },
+        "yaml_plain": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 3508,
+          "user_delivery_chars": 867,
+          "run_id": "05669c6a-e6cc-4733-a1e7-6d8d2e9a5ee2"
+        },
+        "markdown_backtick": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4598,
+          "user_delivery_chars": 710,
+          "run_id": "07dfd202-d983-43b3-b82b-aae2fc48ec61"
+        },
+        "yaml_with_quote": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 5482,
+          "user_delivery_chars": 782,
+          "run_id": "637b0715-f56c-41dc-88fd-607f7bd24de2"
+        }
+      }
+    },
+    {
+      "source": "RISK_PROBE_SUITE_riska.json",
+      "recorded_verdict": "FAIL",
+      "by_frozen_oracle_text": {
+        "verdict": "FAIL",
+        "failures": [
+          "等价表达被判为失败：{'yaml_with_quote': 'UNKNOWN'}"
+        ]
+      },
+      "by_checker_implementation": {
+        "verdict": "FAIL",
+        "failures": [
+          "引号变体与 yaml_plain 枚举串不等：DELIVERED vs UNKNOWN"
+        ]
+      },
+      "shapes": {
+        "json": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4207,
+          "user_delivery_chars": 724,
+          "run_id": "4c85be74-ac91-48a0-b5ad-a6e48a3e2163"
+        },
+        "yaml_plain": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4343,
+          "user_delivery_chars": 681,
+          "run_id": "06e28642-fb75-47f2-9716-c2ab72bae939"
+        },
+        "markdown_backtick": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 3630,
+          "user_delivery_chars": 553,
+          "run_id": "54b42d55-e190-4b3a-b283-027432e896cb"
+        },
+        "yaml_with_quote": {
+          "outcome": "UNKNOWN",
+          "delivered_per_runtime": false,
+          "artifact_chars": 0,
+          "user_delivery_chars": 92,
+          "run_id": "bce51d3c-3fb4-4752-bbf2-7d0b64a0752f"
+        }
+      }
+    },
+    {
+      "source": "RISK_PROBE_SUITE_riskfp1.json",
+      "recorded_verdict": "FAIL",
+      "by_frozen_oracle_text": {
+        "verdict": "PASS",
+        "failures": []
+      },
+      "by_checker_implementation": {
+        "verdict": "FAIL",
+        "failures": [
+          "引号变体与 yaml_plain 枚举串不等：DELIVERED vs DELIVERED_AFTER_RECOVERY"
+        ]
+      },
+      "shapes": {
+        "json": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4494,
+          "user_delivery_chars": 685,
+          "run_id": "a3b3d10e-152d-40ac-b49c-762784213666"
+        },
+        "yaml_plain": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 3781,
+          "user_delivery_chars": 665,
+          "run_id": "dc99398b-218a-4df4-9d7f-12209f2110f1"
+        },
+        "markdown_backtick": {
+          "outcome": "DELIVERED",
+          "delivered_per_runtime": true,
+          "artifact_chars": 3150,
+          "user_delivery_chars": 945,
+          "run_id": "18d42b53-2da0-4a7a-b7f7-7443da4d048e"
+        },
+        "yaml_with_quote": {
+          "outcome": "DELIVERED_AFTER_RECOVERY",
+          "delivered_per_runtime": true,
+          "artifact_chars": 4695,
+          "user_delivery_chars": 1098,
+          "run_id": "f098a888-52c4-4a19-86e0-581c7f157e96"
+        }
+      }
+    }
+  ]
+}

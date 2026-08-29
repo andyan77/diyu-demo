@@ -397,3 +397,29 @@ R1–R7 全部跑完，A/B 受影响案例已重建。
 ④ 安排隔离交付的独立人类盲评。
 
 **Checkpoint 触发原因**：Prompt 规定 Step 6 完成后停在 `CHECKPOINT` 交裁决，非失败、非中断。
+
+**2026-08-29 追加（Founder 裁决 001 + R4 归因，Checkpoint 仍为非终态）**：
+
+Founder 裁决 `H01-A3 = PASS` / `freshness = CURRENT`，据此关闭 `HOLDOUT-M5-RB-01`、
+`HOLDOUT-M5-RB-02` 两个原 P0，`applicable_p0_failures = 0`。裁决全文与被裁决产物原文见
+[`V1_M5_FINAL_P0_FOUNDER_ADJUDICATION_001.md`](../decision-chain/docs/V1_M5_FINAL_P0_FOUNDER_ADJUDICATION_001.md)；
+R3 判定书 `NOT_VERIFIED` 原文保留未覆盖，仅在其尾部追加后继裁决指针。
+
+人判计数：总数 5（`H01-A1`／`H01-A3`／`H01-A4`／`H02-A3`／`H02-C2`），
+Founder 已裁 1（`H01-A3` = `PASS`），**剩余未决 4，其中 P0 级 0**。
+三份留出仍 `NOT_VERIFIED（PENDING_HUMAN）`——未决面已不含 P0。
+
+`R4` 归因完成（零模型调用、零采样、零修改）：`confirmed_origin = CHECKER_OR_FIXTURE`。
+检查器测的是枚举字符串逐格相等，判据原文说的是"等价表达不被误判为失败"，两者不等价；
+按运行时 `delivered()`，`DELIVERED_AFTER_RECOVERY` 属已交付。五次既有运行重裁：
+`riska`／`riskF` 两个权威一致 `FAIL`（真实假阴性，产物 0 字与 21 字，不翻案）；
+`FRB2`／`FRB3`／`fp1` 判据原文 `PASS`、检查器 `FAIL`。分界线是 M4 解析 successor
+（commit `4d03367`，08-28 06:00），落在 `riskF` 之后、`FRB2` 之前。
+详见 [`V1_M5_R4_CHECKER_CRITERION_TRIAGE_v1.0.md`](../decision-chain/docs/V1_M5_R4_CHECKER_CRITERION_TRIAGE_v1.0.md)。
+
+**执行侧未改任何状态**：`RISK-M4-030+031` 记录仍 `FAIL`，`M5-AC-07` 仍 `FAIL`。
+"判据原文与检查器实现冲突时以谁为准"属验收判据域，待 Founder 裁决。
+另需注意：现有五次运行只有正控制侧，**引号变体的负控制缺失**，
+所以"解析器是否还会因引号漏判"严格说仍 `NOT_VERIFIED`，不能因三次都交付就断定已修好。
+
+`task_progress: IN_PROGRESS`；`terminal_state`: 留空；`main_merge: NOT_ALLOWED`。

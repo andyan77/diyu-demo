@@ -230,3 +230,19 @@ workspace `5705cb91…`，库 `diyu_business`：
 也不能替代 A/B 盲评、受影响面回归与 Founder 的产品接受。
 执行侧在此明确：本判定书只说明**在这两份新鲜输入上，执行侧可判的 P0 面未被命中**，
 其余交人。
+
+---
+
+## 五、后继裁决指针（2026-08-29 追加，本文件以上正文一字未改）
+
+本文件 §1.4 与 §1.5 记 `H01-A3 = NOT_VERIFIED（PENDING_HUMAN）`，为当时执行侧的正确状态，
+**原文保留**。Founder 已于 2026-08-29 就该项作出裁决：`H01-A3 = PASS`，`freshness = CURRENT`。
+
+裁决全文、被裁决产物原文、状态变更与人判计数见
+`V1_M5_FINAL_P0_FOUNDER_ADJUDICATION_001.md`。
+
+该裁决**只**关闭 `H01-A3` 与两个原 P0（`HOLDOUT-M5-RB-01`、`HOLDOUT-M5-RB-02`），
+**不**上调本文件三份留出的留出级状态，**不**上调 `M5-AC-07`。
+本文件 §三汇总表中 `FINAL-P0-HOLDOUT-01` 的人判项由 `A1、A3(P0)、A4` 变为
+`A1、A4`（`A3` 已裁 `PASS`）；三份留出仍为 `NOT_VERIFIED（PENDING_HUMAN）`，
+但未决面已不含 P0。
