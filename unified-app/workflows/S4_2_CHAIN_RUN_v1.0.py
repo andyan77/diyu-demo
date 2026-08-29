@@ -11,10 +11,11 @@ import importlib.util
 import io
 import json
 import os
+import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PLAN = os.path.join(HERE, "..", "stages", "S4_2_POS_INPUT_PLAN_v1.0.json")
+PLAN = os.path.join(HERE, "..", "stages", "S4_2_POS_INPUT_PLAN_v1.1.json")
 
 spec = importlib.util.spec_from_file_location("s42run", os.path.join(HERE, "S4_2_RUN_v1.0.py"))
 R = importlib.util.module_from_spec(spec)
@@ -71,7 +72,10 @@ def main():
     key = console.app_api_key(g["identity"]["successor_app_id"])
     fx_sha = hashlib.sha256(io.open(R.FIXTURE, "rb").read()).hexdigest()
 
+    only_side = sys.argv[1] if len(sys.argv) > 1 else ""
     for side in ("POS", "NEG"):
+        if only_side and side != only_side:
+            continue
         for conv_spec in plan["conversations"]:
             name = conv_spec["name"]
             user = "s42c-%s-%s" % (name.lower(), side.lower())
@@ -90,7 +94,9 @@ def main():
                 is_case = (t["idx"] == last_turn[cap])
                 if is_case and os.path.exists(out):
                     print("[skip 已有证据] %s" % cid)
-                if t["idx"] == conv_spec["fixture_uploaded_on_turn"] and side == "POS":
+                # 上传素材是轮次作用域（见 TRIAGE 003）：只挂第一轮会让被测轮次
+                # 实际不带夹具，正负两侧因此逐字相同。正例每一轮都附。
+                if side == "POS":
                     st, b = R.upload(key, R.FIXTURE, user)
                     fid = (b or {}).get("id")
                     if st not in (200, 201) or not fid:

@@ -1,0 +1,85 @@
+{
+  "document": {
+    "id": "S4_2_POS_INPUT_PLAN_v1.1",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "stage": "S4.2 第三次取证（正负例同步重做）",
+    "frozen_before_any_model_run": true,
+    "criteria_unchanged": "判据仍为 S4_2_STAGE_GATE_v1.1.json，sha256 81d9126742281b47333ae668be7cd9a3b4df60d104f147a435e4d830ef9e63d5，逐块一字不动。本计划只改实验输入，不改尺子。",
+    "why": "见 S4_2_FAILURE_TRIAGE_002.md：PRODUCTION_DIRECTOR 与 PUBLISHING_PACKAGING 是结构上的下游能力，冷启动单轮问『这条该怎么拍』时根本不存在『这条』。系统拒绝为不存在的脚本编分镜是正确行为，不是缺陷。",
+    "supersedes": "S4_2_POS_INPUT_PLAN_v1.0（sha256 15cad183528db8c227155bdcb760d20e22567402f0cb6bf1a96f41702b098b76）",
+    "why_reissued": "见 S4_2_FAILURE_TRIAGE_003.md：上传素材是轮次作用域，只挂 T1 导致 T2–T5 的被测轮次实际未带夹具，正例与负例交付逐字相同。只改一处——正例每一轮都附夹具；用户话术逐字不动，轮次不增不减。",
+    "negative_side_not_rerun": "负例侧本就是一次都不传，与新正例仍构成单变量配对，attempt03 的 5/5 PASS 证据保留，不重复采样。"
+  },
+  "single_variable_preserved": {
+    "rule": "正负两侧使用**逐字相同**的用户话术，唯一差别是正例上传夹具、负例不上传任何资料。",
+    "no_proper_nouns_in_turns": "用户话术中不出现任何夹具专有名词（序里集/林序/周宁/苏禾/陈晚/具体商品名/价格）。谁是『最懂搭配试穿的那位』、上新是哪一次、有哪些商品，只能由夹具告诉系统。这既保住单变量，也保住负例编造检测器的判别力——负例若说出这些名字，就是编造。"
+  },
+  "chain_rationale": "同一会话内顺序推进，下游能力拿到的上游产物由系统自己上一轮产出，执行侧不代写脚本、不代写成片。",
+  "conversations": [
+    {
+      "name": "CHAIN",
+      "turns": [
+        {
+          "idx": 1,
+          "expect_capability": "CONTENT_BRIEF",
+          "text": "这条内容开拍之前，先把制作依据定下来。"
+        },
+        {
+          "idx": 2,
+          "expect_capability": "CONTENT_BRIEF",
+          "role": "回答系统提出的缺口",
+          "text": "说给常来店里试穿、拿不准一件衣服到底适不适合自己的熟客听。她卡在的是「这件跟我衣橱里已经有的搭不搭」。看完之后她能自己判断搭不搭、要不要添，而不是又多买一件。就按你手上资料里写的那次上新来做，出镜的人用最懂搭配试穿的那位，事实由负责选品的那位确认。",
+          "fixture_provenance": [
+            "『拿不准适不适合』← 夹具三「商品存在适合与不适合，不应把所有衣服都描述成人人可穿」",
+            "『搭不搭、不是又多买一件』← 夹具三「搭配不是增加购买数量，而是提高已有衣服的使用率」",
+            "『来店里试穿的熟客』← 夹具六「顾客提出的真实穿衣问题」「同一件商品在不同身材上的试穿差异」",
+            "『那次上新』← 夹具七「初秋通勤衣橱第一阶段上新」——不点名，由夹具告诉系统",
+            "『最懂搭配试穿的那位』『负责选品的那位』← 夹具五角色描述——不点名"
+          ]
+        },
+        {
+          "idx": 3,
+          "expect_capability": "CREATIVE_SCRIPT",
+          "text": "接着把这条的口播稿写出来。"
+        },
+        {
+          "idx": 4,
+          "expect_capability": "PRODUCTION_DIRECTOR",
+          "text": "这条该怎么拍？场地、机位和要准备的东西给我列一下。"
+        },
+        {
+          "idx": 5,
+          "expect_capability": "PUBLISHING_PACKAGING",
+          "text": "标题和封面帮我定一下。"
+        }
+      ],
+      "fixture_uploaded_every_turn_on_positive_side": true
+    },
+    {
+      "name": "CAMPAIGN",
+      "turns": [
+        {
+          "idx": 1,
+          "expect_capability": "CAMPAIGN",
+          "text": "下个月想做一波春季新品的整体安排，帮我把节奏和重点排一下。"
+        },
+        {
+          "idx": 2,
+          "expect_capability": "CAMPAIGN",
+          "role": "回答 capacity_or_owner 缺口",
+          "text": "这一轮出镜的用负责门店搭配试穿的那位，事实由负责选品的那位确认；时间就按门店日常节奏来，不额外加人加预算。",
+          "fixture_provenance": [
+            "『负责门店搭配试穿的那位』『负责选品的那位』← 夹具五角色描述——不点名"
+          ],
+          "executor_authored_decision": "『时间就按门店日常节奏来，不额外加人加预算』是执行侧代拟的**用户决策**，夹具没有本轮时间预算，也不可能有——这不是补写夹具事实，但确属执行侧代用户做的决定，在此显式披露，Founder 可否决。"
+        }
+      ],
+      "fixture_uploaded_every_turn_on_positive_side": true
+    }
+  ],
+  "no_chasing_pass": "只跑上述冻结的 7 轮 × 2 侧。任一能力仍停在缺口，如实记录并归因，不追加轮次去凑 PASS——判据 gate_rule 明令『不得靠增加样本量掩盖根因』。",
+  "expected_cost": {
+    "canvas_workflow_runs": 7,
+    "note": "只重跑正例侧"
+  }
+}
