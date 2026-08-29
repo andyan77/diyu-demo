@@ -203,6 +203,39 @@ S4／UAPP／M5 一律不上行。登记见
 Gate 2 跨轮载体检查通过、Gate 4 实测 `upstream_delivery` 由 0 变 5593、CREATIVE_SCRIPT 缺口由 7 项塌缩到 1 项。
 影响面与**次序偏差的如实披露**见 `unified-app/docs/S4_ASSIGNER_REPAIR_IMPACT_v1.0.md` §0。
 
+
+### `ATT-S4-CO-01` · 实际结果（追加，不改上面的预登记行）
+
+```text
+S4_CONTENT_ORIGIN_CONTINUATION = FAIL    6 PASS / 6 FAIL / 0 NOT_VERIFIED
+```
+
+判定书：[`unified-app/docs/S4_CONTENT_ORIGIN_CONTINUATION_ADJUDICATION_001.md`](../../unified-app/docs/S4_CONTENT_ORIGIN_CONTINUATION_ADJUDICATION_001.md)
+（sha256 `c374b819…`）｜机器判定原文 `unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_RESULT_v1.0.json`（`a987eeed…`）
+｜六轮证据 `unified-app/evidence/stages/s4_continuation01/S4-CO-T1..T6.json`
+
+| 项 | 值 |
+|---|---|
+| 成立 | C07 不暗跑、C08 Brief 不重做且事实不漂移、C09 无越权授权声明、C10 零泄漏、C11 受保护面零漂移、C12 幂等 |
+| 不成立 | C01–C06，全部是**同一个根因的级联**：T2 的 Content Brief 没产出 artifact，下游逐层拿不到上游产物 |
+| 窄问题 | **没测到**。链条没走到「补齐 `content_origin_mode` 之后能否续跑」那一步——T3 问的不是这一项 |
+| 归因 | `SYSTEM_UNDER_TEST`：同一冻结话术、同一图 `f75555c0…`、同一夹具 `8c21d41d…`，attempt04 的 hop 缺口为「无」并产出 5593 字，本次缺口为 `facts_registered` 并产出 0 字。抽取层对「事实登记了没有」给出两种相反判断 |
+| 具体失效节点 | `INSUFFICIENT_EVIDENCE`——两次运行不足以锁到具体节点，按内核只继续诊断、不扩大修改范围 |
+| 实际成本 | 画布运行 6 次（与冻结六轮一一对应）／嵌套 24 次／DeepSeek LLM 节点成功 30 次、失败 0 次／计划外追问 0／重试 0 |
+| 未动 | 图、Gate、冻结输入、判定器、夹具、M1/M2/M3/Hop/Seam/六能力、旧 Canvas 与 provider |
+
+**运行中的一次执行侧故障（非被测对象）**：首跑在 T1 `http=200` 之后崩于运行器
+`conv_vars()` 的错误 SQL（表上无 `name` 列）。归因 `CHECKER_OR_FIXTURE`。
+**T1 未重跑**——已真实执行完毕，重跑会让同一冻结输入跑两次；改为从 Dify 真源只读取回
+（`S4_CONTINUATION_RECOVER_T1_v1.0.py`，零模型调用，文件内标 `reconstructed_from_db: true`）。
+只修运行器两处（SQL、断点续跑），该字段不被任何 pass_condition 读取，不改变任何判定。
+
+**新增技术债 TD-UAPP-17**：判定器 `gaps()` 未按全角分号切分 `precise_gap` 复合串。
+不改变本次任何判定（即使完美切分 C02 仍 `FAIL`），按 `checker_or_fixture_mutation_after_run: FORBIDDEN` 本轮不修。
+
+**新增技术债 TD-UAPP-18**：Hop 抽取判定不稳定——同一份材料两次被判成「事实已登记」与
+「事实未登记」。这是本轮 `FAIL` 的根因，处置需规划侧裁定，执行侧不自选。
+
 ---
 
 ## L4 · 已排除路线（历史留痕，只加不改）
@@ -236,3 +269,51 @@ Gate 2 跨轮载体检查通过、Gate 4 实测 `upstream_delivery` 由 0 变 55
 | 真实内容平台 | **从未连接、从未发布** | —— | 合同 `real_external_publish: PROHIBITED` |
 | `main` / `origin/main` | **未动** | 停在 `01a42b0` | `main_merge_and_push` 条件不成立 |
 | 凭据 | 未落盘、未打印、未提交 | —— | DSL 按 `include_secret=false` 导出并做过凭据扫描，零命中 |
+
+### `ATT-S4-CO-01` 的真实外部副作用（2026-08-29，追加）
+
+| 目标 | 操作 | 状态 | 怎么核 |
+|---|---|---|---|
+| Dify 候选 `85c01f85` | 6 次 chat-messages 调用（冻结六轮，每轮一次） | 全部 `http=200` | `workflow_runs` 窗口内该 app 恰好 6 行 |
+| Dify 嵌套应用 | M3／Hop／Seam／各能力 24 次运行 | 真实发生 | 同上，窗口内非候选 app 24 行 |
+| DeepSeek | LLM 节点尝试 30 次成功、0 次失败 | 真实发生 | `workflow_node_executions` 窗口内 `node_type='llm'` |
+| Dify 文件上传 | 同一份夹具上传 6 次（每轮一次，用户上传通道） | 已上传 | `upload_files`，size 6119，文件名正常 |
+| M2 `diyu_business` | 测试域：workspace／account／cycle／task 各新增 1 行 | 已写入 | 窗口内计数各为 1；`task_snapshots`／`artifacts`／`publish_instances` 各 0 |
+| 受保护 11 应用 + 旧候选 `2448e4f9` | **零改动** | —— | C11 逐条 md5 比对 R0 基线，漂移 none |
+| 候选图 | **零改动** | 仍为 `f75555c0…` | C11 运行后复算一致 |
+| 真实内容平台 | **从未连接、从未发布** | —— | `publish_instances` 窗口内 0 行 |
+| `main` / `origin/main` | **未动** | 停在 `01a42b0` | `main_merge = NOT_ALLOWED` |
+| 任务分支 | 首次 push 到 `origin`（非 force，未建 PR） | 已 push | `origin/codex/v1-uapp-progressive-canvas-001` |
+| 凭据 | 未落盘、未打印、未提交 | —— | 提交前扫描零命中 |
+
+---
+
+## L2 追加 · `ATT-S4-CO-01` 之后的 CHECKPOINT（2026-08-29，非终态）
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+next_state: CHECKPOINT
+S4_CONTENT_ORIGIN_CONTINUATION: FAIL          # 6 PASS / 6 FAIL
+narrow_question: NOT_REACHED                  # 链条没走到「补齐 content_origin_mode 之后能否续跑」
+successor_app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+graph_sha256: f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927   # 运行前后一致
+registration_commit: cea08c9ddb5d83952593dcf774aa4fa2a37cb582
+main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2          # 未动
+main_merge: NOT_ALLOWED
+second_repair_iteration: NOT_AUTHORIZED
+enter_s5: NOT_AUTHORIZED
+```
+
+**唯一下一动作：等规划侧裁定 TD-UAPP-18（Hop 抽取判定不稳定）怎么处置。**
+执行侧不自选——三条路各自改变后续工作，且都超出本 Prompt 授权：
+
+| 路 | 内容 | 为什么需要裁定 |
+|---|---|---|
+| ① 先定性再修 | 用同一冻结输入做 n 次重复运行，测抽取判定的稳定率 | 需要新增运行授权与新的取证判据；本 Prompt 明令不重跑、不加样本 |
+| ② 认为「追问事实登记」是正确行为，改冻结场景 | 六轮脚本改成能覆盖系统可能提出的全部缺口 | 改的是验收设计，属规划侧权威，执行侧不得改判据 |
+| ③ 先修 Hop 抽取的判定稳定性 | 定位并修改抽取层 | `graph_mutation: FORBIDDEN`、`second_repair_iteration: NOT_AUTHORIZED` |
+
+**本轮不上行任何状态。** Gate 4 的历史记录、S4.2 判据 v1.2、五个负例与 CAMPAIGN-POS 的
+`OUT_OF_SCOPE_GATE_MISMATCH`、S5 的 `NOT_AUTHORIZED` 全部原样保留。

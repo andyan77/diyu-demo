@@ -42,8 +42,13 @@ def conv_vars(conversation_id):
     """跨轮状态载体的真源：workflow_conversation_variables。不认模型自述。"""
     if not conversation_id:
         return {}
-    raw = R.psql("select json_agg(json_build_object('name',v.name,'len',length(v.data),"
-                 "'head',left(v.data,240))) from workflow_conversation_variables v "
+    # 变量名与取值都在 data 的 JSON 里，表上没有 name 列——首跑因此崩在这一句。
+    # 该字段不被任何一条 pass_condition 读取，只作跨轮状态的旁证。
+    raw = R.psql("select json_agg(json_build_object("
+                 "'name', v.data::jsonb->>'name', "
+                 "'len', length(coalesce(v.data::jsonb->>'value','')), "
+                 "'head', left(coalesce(v.data::jsonb->>'value',''),240))) "
+                 "from workflow_conversation_variables v "
                  "where v.conversation_id='%s';" % conversation_id)
     try:
         rows = json.loads(raw or "[]") or []
@@ -90,11 +95,17 @@ def main():
 
     os.makedirs(EV, exist_ok=True)
     # 全新 conversation：新的 end_user，绝不复用任何既往会话。
-    user = "s4co-" + time.strftime("%Y%m%d%H%M%S")
-    conv = ""
-    print("end_user =", user)
+    # 例外只有一种：记录器自身崩溃导致中断时，用 S4CO_RESUME_* 在**同一个**会话里接着走剩下的轮次。
+    # 这不是重采样——每个冻结输入依然只发起一次，已发起过的轮次不再发起。
+    user = os.environ.get("S4CO_RESUME_USER") or ("s4co-" + time.strftime("%Y%m%d%H%M%S"))
+    conv = os.environ.get("S4CO_RESUME_CONV") or ""
+    start = int(os.environ.get("S4CO_START_TURN") or 1)
+    print("end_user =", user, "| resume_conv =", conv or "(none)", "| start_turn =", start)
 
     for t in plan["conversation"]["turns"]:
+        if t["idx"] < start:
+            print("[T%d 已发起过，不重跑]" % t["idx"])
+            continue
         cid = t["case_id"]
         out = os.path.join(EV, cid + ".json")
         if os.path.exists(out):

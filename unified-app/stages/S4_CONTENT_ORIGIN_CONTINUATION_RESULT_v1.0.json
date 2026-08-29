@@ -1,0 +1,226 @@
+{
+  "stage": "S4_CONTENT_ORIGIN_CONTINUATION",
+  "gate_sha256": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d",
+  "inputs_sha256": "371381cf8b1d531115731bef40738e5579f53c69b5056ebae5b8541b073d1b5d",
+  "model_calls_by_adjudicator": 0,
+  "turns_present": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "turns_missing": [],
+  "conditions": [
+    {
+      "id": "C01",
+      "text": "T1/T2 真实进入 Content Brief，产生非空专业 artifact",
+      "result": "FAIL",
+      "observed": {
+        "T1_seam": {
+          "tool_content_brief": "succeeded"
+        },
+        "T2_seam": {
+          "tool_content_brief": "succeeded"
+        },
+        "T2_artifact_len": 0,
+        "T1_gaps": [
+          "expression_subject_and_boundary"
+        ],
+        "T2_gaps": [
+          "facts_registered"
+        ]
+      }
+    },
+    {
+      "id": "C02",
+      "text": "T3 真实进入 Creative Script，并精确提出 content_origin_mode 缺口，不新增无关缺口",
+      "result": "FAIL",
+      "observed": {
+        "seam": {
+          "tool_creative_script": "succeeded"
+        },
+        "gaps": [
+          "content_origin_mode",
+          "content_promise",
+          "expected_change",
+          "expected_change；content_promise；expression_subject；content_origin_mode；facts_registered",
+          "expression_subject",
+          "facts_registered",
+          "objective.goal_family(未声明，不代为推断)",
+          "objective.primary_goal"
+        ]
+      }
+    },
+    {
+      "id": "C03",
+      "text": "T4 继承同一待办与 Content Brief，真实再次进入 Creative Script，不重做 Content Brief",
+      "result": "FAIL",
+      "observed": {
+        "T4_seam": {
+          "tool_creative_script": "succeeded"
+        },
+        "inherited_fields_identical": {
+          "primary_goal": false,
+          "audience_problem": false
+        },
+        "T4_primary_goal_head": "把这条的口播稿写出来",
+        "T4_audience_problem_head": ""
+      }
+    },
+    {
+      "id": "C04",
+      "text": "T4 后 content_origin_mode 不再是缺口，Creative Script 产生非空、非占位的脚本 artifact",
+      "result": "FAIL",
+      "observed": {
+        "gaps": [
+          "content_promise",
+          "expected_change",
+          "expected_change；content_promise",
+          "objective.goal_family(未声明，不代为推断)"
+        ],
+        "artifact_len": 0,
+        "artifact_head": "",
+        "outcome": "UNKNOWN"
+      }
+    },
+    {
+      "id": "C05",
+      "text": "T5 的 upstream_capability=CREATIVE_SCRIPT 且 upstream_delivery 非空，真实执行 Production Director，产生制作 artifact",
+      "result": "FAIL",
+      "observed": {
+        "upstream_capability": "CREATIVE_SCRIPT",
+        "upstream_delivery_len": 0,
+        "seam": {
+          "tool_production_director": "succeeded"
+        },
+        "artifact_len": 0,
+        "gaps": [
+          "content_promise",
+          "script_or_equivalent_beats",
+          "script_or_equivalent_beats；content_promise"
+        ]
+      }
+    },
+    {
+      "id": "C06",
+      "text": "T6 的 upstream_capability=PRODUCTION_DIRECTOR 且 upstream_delivery 非空，真实执行 Publishing & Packaging，产生包装 artifact",
+      "result": "FAIL",
+      "observed": {
+        "upstream_capability": "PRODUCTION_DIRECTOR",
+        "upstream_delivery_len": 0,
+        "seam": {
+          "tool_publishing_packaging": "succeeded"
+        },
+        "artifact_len": 0,
+        "gaps": [
+          "content_body_or_beats",
+          "content_body_or_beats；content_promise；explicit_non_promise；cta_contract",
+          "content_promise",
+          "cta_contract",
+          "explicit_non_promise"
+        ]
+      }
+    },
+    {
+      "id": "C07",
+      "text": "每轮只运行目标能力，其余能力不暗跑；只认 Seam 内部节点执行记录，不认模型自述",
+      "result": "PASS",
+      "observed": {
+        "per_turn": {
+          "T1": {
+            "tool_content_brief": "succeeded"
+          },
+          "T2": {
+            "tool_content_brief": "succeeded"
+          },
+          "T3": {
+            "tool_creative_script": "succeeded"
+          },
+          "T4": {
+            "tool_creative_script": "succeeded"
+          },
+          "T5": {
+            "tool_production_director": "succeeded"
+          },
+          "T6": {
+            "tool_publishing_packaging": "succeeded"
+          }
+        },
+        "violations": []
+      }
+    },
+    {
+      "id": "C08",
+      "text": "已完成的 Content Brief 不重新生成，已确认事实不丢失、不被改写",
+      "result": "PASS",
+      "observed": {
+        "content_brief_rerun_turns": [],
+        "confirmed_fact_drift": []
+      }
+    },
+    {
+      "id": "C09",
+      "text": "不声称任何具体素材已获授权；未获授权素材不得被选择或发布",
+      "result": "PASS",
+      "observed": {
+        "hits": []
+      }
+    },
+    {
+      "id": "C10",
+      "text": "用户交付零内部状态词、字段名、节点名、app_id、堆栈和测试术语泄漏",
+      "result": "PASS",
+      "observed": {
+        "independent_recompute_hits": [],
+        "canvas_leak_hit_count": {
+          "T1": "0",
+          "T2": "0",
+          "T3": "0",
+          "T4": "0",
+          "T5": "0",
+          "T6": "0"
+        }
+      }
+    },
+    {
+      "id": "C11",
+      "text": "M1/M2/M3/Hop/Seam/六能力、旧 Canvas/provider 和非测试数据零未授权漂移",
+      "result": "PASS",
+      "observed": {
+        "protected_checked": 11,
+        "drift": [],
+        "legacy_unchanged": true,
+        "candidate_graph_sha256_now": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+        "candidate_graph_unchanged": true
+      }
+    },
+    {
+      "id": "C12",
+      "text": "同一幂等行为不产生重复业务写入",
+      "result": "PASS",
+      "observed": {
+        "boot_nodes_ran_in_turns": [
+          1
+        ],
+        "m2_rows_created_in_window": {
+          "workspaces": 1,
+          "accounts": 1,
+          "cycles": 1,
+          "tasks": 1
+        },
+        "duplicate_idempotency_keys": [],
+        "window_start": "2026-08-29 20:15:27"
+      }
+    }
+  ],
+  "verdict": "FAIL",
+  "summary": {
+    "pass": 6,
+    "fail": 6,
+    "not_verified": 0,
+    "total": 12
+  },
+  "scope_note": "PASS 只关闭上述窄问题。不宣告 S4 DONE，不宣告 UAPP DONE，不宣告 M5 DONE，不改变任何既有 AC 状态，不使 v1.2 下的历史 FAIL 失效。"
+}
