@@ -1,0 +1,131 @@
+document:
+  id: "V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.2_FINAL_P0"
+  type: "HOLDOUT_CUSTODY_MANIFEST"
+  version: "v1.2-FINAL-P0"
+  frozen_at: "2026-08-28T20:12Z"           # 正文；判据补治理节后于同一冻结事件内定稿
+
+task_id: "DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001"
+entry_mode: "REBASE_TASK"
+step: "STEP_2_FREEZE_TWO_FRESH_MICRO_HOLDOUTS"
+
+custodian: "context-isolated holdout custodian (subagent), M5 最后一轮最小修复"
+custodian_isolation_evidence: |
+  正文与判据由上下文隔离 subagent 独立撰写并直接写入仓库外保管目录；
+  施工侧从未读取两份正文与判据正文，全部核验只用哈希、计数与布尔，
+  核验脚本不打印任何正文片段。
+
+parent_manifests:
+  - id: "V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.0"
+    path: "decision-chain/fixtures/V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.0.yaml"
+    sha256: "a4d9a10a612d80eec7ed71d63077a2dadd6bba5253ece8f1fae77a9c90d3bcee"
+  - id: "V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.1_RB"
+    path: "decision-chain/fixtures/V1_M5_HOLDOUT_CUSTODY_MANIFEST_v1.1_RB.yaml"
+    sha256: "2c5c4a2e65eba753d6f04ebeb5231ef50733358a73f3918c20c8ad615714ed23"
+relation: |
+  本清单增补，不取代。v1.0 的六份留出与 v1.1_RB 的两份留出及其判据继续按原文有效，
+  其解封记录不受本清单影响。本轮只新增两份，不新增第三个。
+
+holdouts:
+  - id: "FINAL-P0-HOLDOUT-01"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5-final-p0/FINAL-P0-HOLDOUT-01.md"
+    body_sha256: "8309b1624b516350b8b70aa3cb8571e2ae0e1fc59aa84eef15b5542a5d6d1033"
+    body_bytes: 1935
+    turns: 3
+    scope: "撤回影响面与副作用真实性"
+    risk_families:
+      - "RISK-SCOPE-PUBLISHED-01"
+      - "RISK-SIDEEFFECT-TRUTH-01"
+      - "RISK-AUTHORITY-DOMAIN-RB-01"
+    targets_prompt_section: "§3.A 撤回、已发布内容与副作用真实性；FINAL-AC-01"
+    freshness: "FRESH_NEW_SCENARIO_NOT_A_REWRITE_OF_M5-01..06_RB-01_RB-02"
+
+  - id: "FINAL-P0-HOLDOUT-02"
+    body_path: "/home/faye/diyu-demo-holdout-custody/m5-final-p0/FINAL-P0-HOLDOUT-02.md"
+    body_sha256: "aa781edca1bcf3b98ef1e04eef66a3e3914edc2871a93d4a7fdcdad82b7c5b69"
+    body_bytes: 1274
+    variants: 2
+    variant_isolation_required: true
+    variant_isolation_rule: "两个变体各用一个全新独立会话，各只发一次；
+      任何一段的上下文泄漏进另一段，本份留出整体记 NOT_VERIFIED，不判 PASS 也不判 FAIL。"
+    scope: "缺关键输入时的停口与自选替代"
+    risk_families:
+      - "RISK-INPUT-GAP-02"
+      - "RISK-SELF-SUBSTITUTION-01"
+      - "RISK-DOWNSTREAM-LEAK-01"
+    targets_prompt_section: "§3.B 关键输入在场判断；FINAL-AC-02"
+    freshness: "FRESH_NEW_SCENARIO_NOT_A_REWRITE_OF_M5-01..06_RB-01_RB-02"
+
+sealed_oracles_path: "/home/faye/diyu-demo-holdout-custody/m5-final-p0/SEALED_ORACLES_FINAL_P0_v1.0.md"
+sealed_oracles_sha256: "19b164abf5ffda24e45ee65f7d3c02746921542d5ea1ee5cc2465ec5e920bffc"
+sealed_oracles_bytes: 29959
+
+# 施工侧独立复算，只用哈希/计数/布尔，全程不读正文。
+construction_side_verification:
+  performed_at_head: "2edcd0edf2b0bd525085e2bf963f700e961a5cd5"
+  bodies_read_by_construction_side: false
+  oracle_read_by_construction_side: false
+  max_8gram_containment_vs_existing_8_holdouts:
+    FINAL-P0-HOLDOUT-01: "0.0% "
+    FINAL-P0-HOLDOUT-02: "12.6% (对 HOLDOUT-M5-RB-02；同夹具世界的品牌词共用，非改写)"
+  banned_string_hits: 0        # 「也一并标记失效」「你就按我们一贯的那个来」RISK-M4-030 / 031
+  state_word_or_test_speak_hits_in_bodies: 0
+  existing_eight_holdouts_byte_identical: true
+  oracle_clause_checks:
+    over_refusal_clause_present: true          # 「过度拒绝也是失败」
+    side_effect_truth_clause_present: true     # 含 content_versions.invalidated_at 查证口径
+    m2_connected_and_disconnected_branches: true
+    run_order_run_first_read_oracle_after: true
+    frozen_before_declared: true
+    unseal_condition_declared: true
+    unseal_executed_false: true
+    claim_ceiling_declared: true
+  oracle_counts_recomputed:
+    tag_p0_occurrences: 13
+    tag_non_p0_occurrences: 18
+    semantic_human_only_occurrences: 9
+    lines_carrying_any_tag: 30
+    custodian_reported_item_counts: "p0=12 / non_p0=17 / semantic_human_only=5"
+    reconciliation: |
+      两组口径不同，非错数：施工侧数的是标记字符串出现次数，custodian 报的是
+      带标记的判据条目行数。差值来自章节说明句、标题与表头，它们带标记但不是判据条目。
+      两组口径与可复算的 grep 模式均已写入判据文件的计数表。
+  state_word_handling:
+    ready_occurrences: 3
+    ready_in_leak_context: 3
+    ready_defined_as_formal_state_word: false
+    new_state_words_introduced: 0
+    rule: "READY / PASS / FAIL / STALE 仅作为『禁止出现在用户可见输出』的泄漏标记，
+      不新增任何状态词本体。宪法 §4 的统一状态词集合不变。"
+
+construction_owner_access: "IDENTITY_AND_HASH_ONLY_BODIES_PROHIBITED_UNTIL_NEW_CANDIDATE_FREEZE"
+
+unseal_condition:
+  precondition: "Step 4 的新候选清单冻结之后（status: FROZEN、working tree clean、
+    candidate_commit 已记录）才可解封。"
+  before_freeze_prohibited:
+    - "读取两份留出正文"
+    - "读取 SEALED_ORACLES_FINAL_P0_v1.0.md"
+    - "任何针对留出内容的调参、提示词修改或路由预设"
+  at_unseal_required:
+    - "现场复算三个文件 sha256，与本清单逐条一致后方可继续；任一不一致即中止，
+      按判据被污染登记，本轮不产生正式 PASS。"
+    - "先跑、后读判据。运行器只存产出、不做任何判定。"
+    - "两个变体的会话隔离现场留证。"
+
+unseal_executed: false
+unseal_record: null
+
+freeze_ordering_proof:
+  head_at_freeze: "2edcd0edf2b0bd525085e2bf963f700e961a5cd5"
+  head_content: "Step 1 归因产物：归因文档、节点绑定证据 JSON、归因绑定脚本。
+    不含对被测系统（M3 / M4 / 六能力应用 / Dify graph）的任何实现改动。"
+  implementation_changes_at_freeze: 0
+  model_calls_in_step_2: 0
+  dify_apps_modified_in_step_2: []
+  conclusion: "判据与保管证据先于 Step 3 的任何实现变化落盘。"
+
+acceptance_binding:
+  target: "FINAL-AC-01 / FINAL-AC-02 / FINAL-AC-04 的新鲜举证"
+  claim_ceiling: "两份留出全部 PASS 只能建立：本批新鲜、风险驱动输入上的期望处置成立。
+    不能建立真实经营增益、普遍优越性或全维覆盖，也不能替代 A/B 盲评、
+    受影响回归与 Founder 产品接受。"
