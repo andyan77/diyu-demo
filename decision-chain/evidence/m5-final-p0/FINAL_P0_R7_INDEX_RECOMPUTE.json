@@ -1,0 +1,1003 @@
+{
+  "recompute_id": "V1_M5_FINAL_P0_R7_INDEX_RECOMPUTE_v1.0",
+  "task_id": "DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001",
+  "candidate_commit": "5f84d94d542693f143faab0444525618ab21a4e9",
+  "bind": "fp",
+  "dimension_mapping_source": "DIYU_M5_BUILD_EVIDENCE_INDEX_v1.0.py（原样 import，未改）",
+  "changed_apps_this_round": [
+    "CAMPAIGN",
+    "CONTENT_BRIEF",
+    "CREATIVE_SCRIPT",
+    "M3",
+    "M5_HOP_ADAPTER",
+    "MATRIX",
+    "PRODUCTION_DIRECTOR",
+    "PUBLISHING_PACKAGING",
+    "SEAM"
+  ],
+  "evidence_bindings": {
+    "FULL_STORY_FP": {
+      "path": "decision-chain/evidence/m5/FULL_STORY_RUN_full01fp1.json",
+      "sha256": "3369abfb434f1e48bc4acdabde9cd54cbf985a06b3017afec23361e26e0e4910"
+    },
+    "RISK_FP": {
+      "path": "decision-chain/evidence/m5/RISK_PROBE_SUITE_riskfp1.json",
+      "sha256": "dfbc06e2e6d433f30677ad0d4707af9203fda576d9be7115f589898e651d2082"
+    },
+    "DIRECT_ENTRY": {
+      "path": "decision-chain/evidence/m5/DIRECT_ENTRY_SUITE_deFRB3.json",
+      "sha256": "af990c134f3a5ac1feaa6aa086c0110d674b5b0f665e325fc39a5e928fc3214c"
+    },
+    "RISK_RB": {
+      "path": "decision-chain/evidence/m5/RISK_PROBE_SUITE_riskFRB3.json",
+      "sha256": "02e24159a584227c7283a8aab9e89fd64ec4d3c4d5e7f10c06c41f0ddc0bd2f3"
+    },
+    "M2_PROBE": {
+      "path": "decision-chain/evidence/m5/M2_PROBE_SUITE_m2pFRB3.json",
+      "sha256": "a73ea11973d35041b5028548cd4bfd81cc6758ff56b7b630b2258e4df6e33159"
+    },
+    "REGRESSION": {
+      "path": "decision-chain/evidence/m5/REGRESSION_RESULTS_FRB3.json",
+      "sha256": "ea3e51863b6f15be0bd4a7a3a7e6d558e6afccd761d235f4931c21fe48c93d3a"
+    },
+    "REGRESSION_RV": {
+      "path": "decision-chain/evidence/m5/REGRESSION_RESULTS_FRB3rv1.json",
+      "sha256": "0e7a87efe31fb8333370cbe19f4f211556ebb15c40a92908d23a4ae34b6ac6fc"
+    }
+  },
+  "ab_package": "本轮重建中；A/B 结论只能由独立人类盲评给出，机器侧不产生 verdict",
+  "cases": {
+    "FULL-01": {
+      "verdict": "PASS",
+      "source": "FULL_STORY_RUN_full01fp1.json",
+      "bind": "fp",
+      "last_delivered_step": "PUBLISHING_PACKAGING",
+      "freshness": "CURRENT"
+    },
+    "FULL-02": {
+      "verdict": "PASS",
+      "source": "FULL_STORY_RUN_full01fp1.json",
+      "bind": "fp",
+      "freshness": "CURRENT"
+    },
+    "RISK-M4-030+031": {
+      "verdict": "FAIL",
+      "source": "RISK_PROBE_SUITE_riskfp1.json",
+      "bind": "fp",
+      "failures": [
+        "同一语义只因值里多一个引号就换了结论：DELIVERED vs DELIVERED_AFTER_RECOVERY（M4 外壳解析器假阴性）"
+      ],
+      "freshness": "CURRENT"
+    },
+    "DE-01": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "MATRIX": 1,
+        "SEAM": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['MATRIX', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-02": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "CAMPAIGN": 1,
+        "SEAM": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['CAMPAIGN', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-03": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [
+        "M3 未产出运营判断"
+      ],
+      "apps_actually_run": {
+        "M3": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['M3']",
+      "verdict_before_stale": "FAIL"
+    },
+    "DE-04": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "M5_HOP_ADAPTER": 1,
+        "SEAM": 1,
+        "CONTENT_BRIEF": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['CONTENT_BRIEF', 'M5_HOP_ADAPTER', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-05": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "SEAM": 1,
+        "CONTENT_BRIEF": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['CONTENT_BRIEF', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-06": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "CREATIVE_SCRIPT": 1,
+        "SEAM": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['CREATIVE_SCRIPT', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-07": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "CREATIVE_SCRIPT": 1,
+        "SEAM": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['CREATIVE_SCRIPT', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-08": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "PRODUCTION_DIRECTOR": 1,
+        "SEAM": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['PRODUCTION_DIRECTOR', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-09": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "PUBLISHING_PACKAGING": 1,
+        "SEAM": 1
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['PUBLISHING_PACKAGING', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "DE-10": {
+      "verdict": "NOT_VERIFIED",
+      "source": "DIRECT_ENTRY_SUITE_deFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": {
+        "PUBLISHING_PACKAGING": 2,
+        "SEAM": 2
+      },
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['PUBLISHING_PACKAGING', 'SEAM']",
+      "verdict_before_stale": "PASS"
+    },
+    "RISK-FACT-01": {
+      "verdict": "NOT_VERIFIED",
+      "source": "RISK_PROBE_SUITE_riskFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": null,
+      "semantic_part_status": "NOT_VERIFIED(INCONCLUSIVE)",
+      "freshness": "STALE",
+      "stale_reason": "依赖关系无法从证据判断，按 A3 置 STALE 待定向复验",
+      "verdict_before_stale": "PASS_DECIDABLE_PART_ONLY"
+    },
+    "RISK-PERM-CTA-01": {
+      "verdict": "NOT_VERIFIED",
+      "source": "RISK_PROBE_SUITE_riskFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": null,
+      "semantic_part_status": "NOT_VERIFIED(INCONCLUSIVE)",
+      "freshness": "STALE",
+      "stale_reason": "依赖关系无法从证据判断，按 A3 置 STALE 待定向复验",
+      "verdict_before_stale": "PASS_DECIDABLE_PART_ONLY"
+    },
+    "RISK-F10-01": {
+      "verdict": "NOT_VERIFIED",
+      "source": "RISK_PROBE_SUITE_riskFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": null,
+      "freshness": "STALE",
+      "stale_reason": "依赖关系无法从证据判断，按 A3 置 STALE 待定向复验",
+      "verdict_before_stale": "PASS"
+    },
+    "RISK-M4-032": {
+      "verdict": "NOT_VERIFIED",
+      "source": "RISK_PROBE_SUITE_riskFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": null,
+      "freshness": "STALE",
+      "stale_reason": "依赖关系无法从证据判断，按 A3 置 STALE 待定向复验",
+      "verdict_before_stale": "PASS"
+    },
+    "RISK-PUBLISH-ID-01": {
+      "verdict": "PASS",
+      "source": "M2_PROBE_SUITE_m2pFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": null,
+      "freshness": "CURRENT",
+      "current_reason": "不穿过本轮被替换的任何应用"
+    },
+    "RISK-RECOVERY-01": {
+      "verdict": "PASS",
+      "source": "M2_PROBE_SUITE_m2pFRB3.json",
+      "bind": "pre-round",
+      "failures": [],
+      "apps_actually_run": null,
+      "freshness": "CURRENT",
+      "current_reason": "不穿过本轮被替换的任何应用"
+    },
+    "REG-M2-01": {
+      "verdict": "PASS",
+      "source": "REGRESSION_RESULTS_FRB3.json",
+      "bind": "pre-round",
+      "freshness": "CURRENT",
+      "current_reason": "不穿过本轮被替换的任何应用"
+    },
+    "REG-M1-01": {
+      "verdict": "PASS",
+      "source": "REGRESSION_RESULTS_FRB3.json",
+      "bind": "pre-round",
+      "freshness": "CURRENT",
+      "current_reason": "不穿过本轮被替换的任何应用"
+    },
+    "REG-M3-01": {
+      "verdict": "NOT_VERIFIED",
+      "source": "REGRESSION_RESULTS_FRB3.json",
+      "bind": "pre-round",
+      "freshness": "STALE",
+      "stale_reason": "穿过本轮被替换的应用：['M3']",
+      "verdict_before_stale": "PASS"
+    },
+    "REG-M4-01": {
+      "verdict": "PASS",
+      "source": "REGRESSION_RESULTS_FRB3rv1.json",
+      "bind": "pre-round",
+      "note": "定向复验结果，取代同名旧判",
+      "freshness": "CURRENT",
+      "current_reason": "不穿过本轮被替换的任何应用"
+    },
+    "REG-SKILLS-01": {
+      "verdict": "PASS",
+      "source": "REGRESSION_RESULTS_FRB3.json",
+      "bind": "pre-round",
+      "freshness": "CURRENT",
+      "current_reason": "不穿过本轮被替换的任何应用"
+    }
+  },
+  "dimensions": [
+    {
+      "id": "natural_interaction",
+      "label": "自然交互",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "REG-M1-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "objective",
+      "label": "目标",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "RISK-F10-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "RISK_PROBE_SUITE_riskFRB3.json"
+        },
+        {
+          "case": "AB-M3-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        },
+        {
+          "case": "AB-FINAL-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "platform",
+      "label": "平台",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "DE-09",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "RISK-PUBLISH-ID-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "account",
+      "label": "账号",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "DE-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "RISK-PUBLISH-ID-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "persistence",
+      "label": "持久化",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-02",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "REG-M2-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "version",
+      "label": "版本",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-02",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "RISK-PUBLISH-ID-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        },
+        {
+          "case": "RISK-RECOVERY-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "publish_feedback",
+      "label": "发布反馈",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-02",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "RISK-PUBLISH-ID-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "homogenization",
+      "label": "同质化",
+      "status": "STALE",
+      "evidence": [
+        {
+          "case": "DE-06",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "AB-FINAL-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "quality",
+      "label": "质量",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "AB-FINAL-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        },
+        {
+          "case": "RISK-M4-030",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "dramatization_derivative_creation",
+      "label": "演绎/二创",
+      "status": "STALE",
+      "evidence": [
+        {
+          "case": "DE-06",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "DE-07",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "AB-FINAL-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "capacity",
+      "label": "产能",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "AB-M3-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        },
+        {
+          "case": "DE-08",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "external_market",
+      "label": "外部市场",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "DE-06",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "AB-M3-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "cta",
+      "label": "CTA",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "DE-09",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "RISK-PERM-CTA-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "RISK_PROBE_SUITE_riskFRB3.json"
+        }
+      ],
+      "semantic_parts_not_verified": [
+        {
+          "case": "RISK-PERM-CTA-01",
+          "semantic": "NOT_VERIFIED(INCONCLUSIVE)"
+        }
+      ]
+    },
+    {
+      "id": "user_discretion",
+      "label": "用户裁量",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "DE-06",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "DE-10",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "AB-FINAL-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        }
+      ]
+    },
+    {
+      "id": "production",
+      "label": "生产",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "DE-08",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "DE-09",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "permission",
+      "label": "权限",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "RISK-PERM-CTA-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "RISK_PROBE_SUITE_riskFRB3.json"
+        },
+        {
+          "case": "RISK-PUBLISH-ID-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        }
+      ],
+      "semantic_parts_not_verified": [
+        {
+          "case": "RISK-PERM-CTA-01",
+          "semantic": "NOT_VERIFIED(INCONCLUSIVE)"
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "label": "恢复",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "DE-10",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "DIRECT_ENTRY_SUITE_deFRB3.json"
+        },
+        {
+          "case": "RISK-RECOVERY-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "M2_PROBE_SUITE_m2pFRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "no_degradation",
+      "label": "不退化",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "AB-M3-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        },
+        {
+          "case": "AB-FINAL-01",
+          "verdict": "NOT_RUN",
+          "freshness": "NOT_RUN",
+          "source": null
+        },
+        {
+          "case": "REG-M1-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        },
+        {
+          "case": "REG-M2-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        },
+        {
+          "case": "REG-M3-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        },
+        {
+          "case": "REG-M4-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3rv1.json"
+        },
+        {
+          "case": "REG-SKILLS-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        }
+      ]
+    },
+    {
+      "id": "cross_cycle",
+      "label": "跨周期",
+      "status": "CURRENT",
+      "evidence": [
+        {
+          "case": "FULL-02",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "FULL_STORY_RUN_full01fp1.json"
+        },
+        {
+          "case": "REG-M2-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        },
+        {
+          "case": "REG-M3-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE",
+          "source": "REGRESSION_RESULTS_FRB3.json"
+        }
+      ]
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "M5-AC-00",
+      "label": "激活、实时基线与保护面",
+      "status": "NOT_RECOMPUTED_HERE",
+      "note": "现场预检与保护面复算；相对 main 零修改零删除；12 份 Skill 运行时哈希与候选树逐字节一致（R7 只重算用例推出的状态，不重算静态项）"
+    },
+    {
+      "id": "M5-AC-01",
+      "label": "集成候选与最终 Manifest",
+      "status": "NOT_RECOMPUTED_HERE",
+      "note": "Candidate Run Manifest 已 FROZEN；正式运行前置现场复算 15 个应用 graph 哈希逐条一致（R7 只重算用例推出的状态，不重算静态项）"
+    },
+    {
+      "id": "M5-AC-02",
+      "label": "扩展完整主故事",
+      "status": "CURRENT",
+      "cases": [
+        {
+          "case": "FULL-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        },
+        {
+          "case": "FULL-02",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        }
+      ]
+    },
+    {
+      "id": "M5-AC-03",
+      "label": "要求的合法短入口",
+      "status": "STALE",
+      "cases": [
+        {
+          "case": "DE-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-02",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-03",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-04",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-05",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-06",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-07",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-08",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-09",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "DE-10",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        }
+      ]
+    },
+    {
+      "id": "M5-AC-04",
+      "label": "十九维轻量全覆盖",
+      "status": "STALE",
+      "failing_dimensions": [],
+      "stale_dimensions": [
+        "homogenization",
+        "dramatization_derivative_creation"
+      ],
+      "not_covered_dimensions": []
+    },
+    {
+      "id": "M5-AC-05",
+      "label": "M3 A/B",
+      "status": "NOT_VERIFIED",
+      "note": "模型自评无效；实现者知道映射的评分无效。盲评包已出，映射封存未开。"
+    },
+    {
+      "id": "M5-AC-06",
+      "label": "最终成品 A/B",
+      "status": "NOT_VERIFIED",
+      "note": "同上。"
+    },
+    {
+      "id": "M5-AC-07",
+      "label": "留出与高风险探针",
+      "status": "FAIL",
+      "cases": [
+        {
+          "case": "RISK-FACT-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "RISK-PERM-CTA-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "RISK-F10-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "RISK-PUBLISH-ID-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        },
+        {
+          "case": "RISK-RECOVERY-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        },
+        {
+          "case": "RISK-M4-032",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "RISK-M4-030+031",
+          "verdict": "FAIL",
+          "freshness": "CURRENT"
+        }
+      ],
+      "holdouts_this_round": {
+        "HOLDOUT-M5-RB-01": "R2 重跑：原 P0 不复现（见 R2 判定）",
+        "HOLDOUT-M5-RB-02": "R2 重跑：原 P0 不复现",
+        "HOLDOUT-M5-05": "R2 重跑：两项残留不复现",
+        "FINAL-P0-HOLDOUT-01": "R3：执行侧可判 P0 零命中；含一项未决 P0 人判子项 → NOT_VERIFIED",
+        "FINAL-P0-HOLDOUT-02-A": "R3：NOT_VERIFIED（人判子项未决）",
+        "FINAL-P0-HOLDOUT-02-B": "R3：NOT_VERIFIED（人判子项未决）"
+      },
+      "status_reason": "RISK-M4-030+031 本轮 CURRENT 且 FAIL；同时三份留出均含未决人判子项。两者都不允许记 PASS。"
+    },
+    {
+      "id": "M5-AC-08",
+      "label": "不退化与受影响回归",
+      "status": "STALE",
+      "cases": [
+        {
+          "case": "REG-M1-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        },
+        {
+          "case": "REG-M2-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        },
+        {
+          "case": "REG-M3-01",
+          "verdict": "NOT_VERIFIED",
+          "freshness": "STALE"
+        },
+        {
+          "case": "REG-M4-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        },
+        {
+          "case": "REG-SKILLS-01",
+          "verdict": "PASS",
+          "freshness": "CURRENT"
+        }
+      ]
+    },
+    {
+      "id": "M5-AC-09",
+      "label": "Founder 产品验收",
+      "status": "NOT_VERIFIED",
+      "note": "只能由 Founder 给；该接受不替代技术硬门。"
+    },
+    {
+      "id": "M5-AC-10",
+      "label": "Git、远端与最终回执",
+      "status": "NOT_RECOMPUTED_HERE",
+      "note": "待收口时填写；main 合并为条件化授权。（R7 只重算用例推出的状态，不重算静态项）"
+    }
+  ]
+}
