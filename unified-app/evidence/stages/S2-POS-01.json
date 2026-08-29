@@ -1,0 +1,863 @@
+{
+  "case_id": "S2-POS-01",
+  "stage": "S2",
+  "stage_gate_sha256": "2a10cd975fa1734b4a09f59c9a0ab82c155dd6c656443f2ab070dfd27e3fa951",
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "end_user": "s2-pos01",
+  "conversation_id": "30496f84-bc4f-4885-88c2-54f0c2da0f57",
+  "seed": {
+    "status": "DONE",
+    "targets": {
+      "ws": "233411bc-e59a-4c64-9af8-adab614abebb",
+      "account": "b968458f-5676-446a-93a8-db8c0701f854",
+      "cycle": "d2dee64d-ab27-4913-bb2b-f52eb67cf768",
+      "actor": "uapp-30496f84bc4f"
+    },
+    "before": {
+      "method": "GET",
+      "path": "/workspaces/233411bc-e59a-4c64-9af8-adab614abebb/accounts/b968458f-5676-446a-93a8-db8c0701f854/cycles/decisions/latest",
+      "request_body": null,
+      "http_status": 200,
+      "response": {
+        "decision": "none_recorded"
+      }
+    },
+    "write": {
+      "method": "POST",
+      "path": "/workspaces/233411bc-e59a-4c64-9af8-adab614abebb/accounts/b968458f-5676-446a-93a8-db8c0701f854/cycles/decisions",
+      "request_body": {
+        "idempotency_key": "s2-seed-d2dee64d-ab2",
+        "cycle_id": "d2dee64d-ab27-4913-bb2b-f52eb67cf768",
+        "decision": "本周期先把这个号的内容方向收敛到一条主线，停止同时铺三个方向。",
+        "source": "S2_STAGE_GATE_FIXTURE",
+        "rationale": "S2 正例夹具：证明 M2 里确有记录时投影能真实读到。任务域测试数据。",
+        "based_on": {
+          "fixture": "S2-POS-01",
+          "note": "非真实经营数据"
+        }
+      },
+      "http_status": 422,
+      "response": {
+        "detail": "decision must be 'adjusted' or 'kept_unchanged'"
+      }
+    },
+    "after": {
+      "method": "GET",
+      "path": "/workspaces/233411bc-e59a-4c64-9af8-adab614abebb/accounts/b968458f-5676-446a-93a8-db8c0701f854/cycles/decisions/latest",
+      "request_body": null,
+      "http_status": 200,
+      "response": {
+        "decision": "none_recorded"
+      }
+    },
+    "db_rows_with_idempotency_key": "0"
+  },
+  "run_started_utc": "2026-08-29T15:13:35Z",
+  "turns": [
+    {
+      "turn_id": "T1",
+      "query": "有个账号一直没流量，怎么办",
+      "attempts": 1,
+      "http_status": 200,
+      "elapsed_seconds": 40.08,
+      "message_id": "bf17d91f-f41c-44a8-8dd6-6ccb4f6c52b5",
+      "conversation_id": "30496f84-bc4f-4885-88c2-54f0c2da0f57",
+      "workflow_run_id": "76ccf070-d73a-4838-8aea-e8a59fc45382",
+      "answer": "你说的这件事我已经归到该走的那条线上了。\n\n我已经把这个号目前在系统里记录在案的情况读出来了，后面做判断会以这些为准，不会替它补没发生过的事。\n\n但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "nodes_executed": [
+        {
+          "idx": 1,
+          "node_id": "uapp_start",
+          "type": "start",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 2,
+          "node_id": "m1_extract",
+          "type": "document-extractor",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 3,
+          "node_id": "m1_join",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 4,
+          "node_id": "m1_shadow",
+          "type": "llm",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 5,
+          "node_id": "m1_compiler",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 6,
+          "node_id": "m1_save_snapshot",
+          "type": "assigner",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 7,
+          "node_id": "uapp_action",
+          "type": "llm",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 8,
+          "node_id": "uapp_route",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 9,
+          "node_id": "uapp_s2_branch",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 10,
+          "node_id": "uapp_boot_gate",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 11,
+          "node_id": "boot_user",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 12,
+          "node_id": "boot_p1",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 13,
+          "node_id": "boot_ws",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 14,
+          "node_id": "boot_p2",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 15,
+          "node_id": "boot_acct",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 16,
+          "node_id": "boot_p3",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 17,
+          "node_id": "boot_cycle",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 18,
+          "node_id": "boot_p4",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 19,
+          "node_id": "boot_task",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 20,
+          "node_id": "boot_p5",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 21,
+          "node_id": "boot_assign",
+          "type": "assigner",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 22,
+          "node_id": "uapp_m2_cycle",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 23,
+          "node_id": "uapp_m2_dec",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 24,
+          "node_id": "uapp_m2_run",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 25,
+          "node_id": "uapp_ctx",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 26,
+          "node_id": "uapp_s2_pending",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 27,
+          "node_id": "uapp_answer_pending",
+          "type": "answer",
+          "status": "succeeded",
+          "error": null
+        }
+      ],
+      "node_detail": [
+        {
+          "idx": 1,
+          "node_id": "uapp_start",
+          "title": "开始",
+          "type": "start",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.000106,
+          "inputs": "{}",
+          "outputs": "{}"
+        },
+        {
+          "idx": 2,
+          "node_id": "m1_extract",
+          "title": "资料抽取｜上传文件转文本",
+          "type": "document-extractor",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 7.4e-05,
+          "inputs": "{\"variable_selector\": [\"sys\", \"files\"]}",
+          "outputs": "{\"text\": []}"
+        },
+        {
+          "idx": 3,
+          "node_id": "m1_join",
+          "title": "资料抽取｜拼接为文本",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.045398,
+          "inputs": "{\"file_texts\": []}",
+          "outputs": "{\"material_text\": \"\"}"
+        },
+        {
+          "idx": 4,
+          "node_id": "m1_shadow",
+          "title": "影子节点｜只提候选信号补丁",
+          "type": "llm",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 34.427261,
+          "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+          "outputs": "{\"text\": \"{\\\"route_intent\\\":\\\"DISCUSS\\\",\\\"current_task_text\\\":\\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\",\\\"temporal_scope\\\":\\\"UNSTATED\\\",\\\"primary_goal_text\\\":\\\"\\\",\\\"secondary_goal_text\\\":\\\"\\\",\\\"priority_order_text\\\":\\\"\\\",\\\"non_sacrifice_constraint_text\\\":\\\"\\\",\\\"business_goal_category\\\":\\\"TRAFFIC\\\",\\\"requested_capabilities_text\\\":\\\"\\\",\\\"confirmation_signal\\\":\\\"NONE\\\",\\\"side_question\\\":\\\"\\\",\\\"user_message_summary\\\":\\\"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u8be2\\u95ee\\u600e\\u4e48\\u529e\\\",\\\"account_stage_text\\\":\\\"\\\",\\\"plot_allowed\\\":\\\"UNSTATED\\\",\\\"remix_allowed\\\":\\\"UNSTATED\\\",\\\"conflict_allowed\\\":\\\"UNSTATED\\\",\\\"controversy_allowed\\\":\\\"UNSTATED\\\",\\\"desired_output_text\\\":\\\"\\\",\\\"cycle_available_text\\\":\\\"\\\",\\\"baseline_text\\\":\\\"\\\",\\\"evidence_text\\\":\\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\",\\\"evidence_nature\\\":\\\"FACT\\\",\\\"evidence_scope\\\":\\\"THIS_ACCOUNT\\\",\\\"evidence_provenance\\\":\\\"USER_DIRECT\\\",\\\"handled_thread_id\\\":\\\"\\\",\\\"cancel_target\\\":\\\"NONE\\\",\\\"account_anchor_text\\\":\\\"\\\",\\\"cta_target_text\\\":\\\"\\\",\\\"cta_risk_tier\\\":\\\"UNSTATED\\\",\\\"cta_conversion_goal_text\\\":\\\"\\\",\\\"cta_access_path_text\\\":\\\"\\\",\\\"cta_authorization_signal\\\":\\\"NONE\\\",\\\"cta_preference_signal\\\":\\\"NONE\\\"}\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->We need output JSON only. Need parse user input: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" repeated twice likely same. Need fill 33 fields.\\n\\nWe need understand: User says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" (\\\"There's an account that keeps having no traffic, what to do?\\\"). This is asking question/discussing, not executing. route_intent likely DISCUSS (\\u5728\\u804a/\\u5728\\u95ee). current_task_text: user says task? \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" - maybe current task is diagnosing account no traffic. Could be \\\"\\u4e00\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" as task description. But it's a question. Maybe current_task_text = \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" (\\u8d34\\u8fd1\\u539f\\u8bdd). temporal_scope: UNSTATED? It says an account, long-term? Not clear. Could be LONG_TERM? \\\"\\u4e00\\u76f4\\\" suggests ongoing, but task not clear. Probably UNSTATED. primary_goal_text: user expresses problem not goal. The goal might be \\\"\\u89e3\\u51b3\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\\" but that's implied. We should not infer. Since user asks \\\"\\u600e\\u4e48\\u529e\\\", maybe primary goal? The instruction: primary goal is business problem not execution command. \\\"\\u8dd1\\u4e00\\u4e0b\\\" commands leave empty. Here user says there is an account with no traffic, what to do. That's a concern/question, not a clearly stated goal. Could write \\\"\\u8ba9\\u8d26\\u53f7\\u6709\\u6d41\\u91cf\\\" but that's inference. Better leave empty? Let's consider. business_goal_category: user mentions \\\"\\u6ca1\\u6d41\\u91cf\\\" (traffic). Does that express a business goal category? They mention account has no traffic, implies wants traffic. But \\\"\\u7528\\u6237\\u672c\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\" - they didn't explicitly say goal, but \\\"\\u6ca1\\u6d41\\u91cf\\\" suggests traffic. However, user is asking for help, might not have expressed goal. Could classify as TRAFFIC? Hmm. The user says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" \\u2013 \\\"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\\" is a statement of problem. The implied goal is to get traffic. But instruction: \\\"\\u7528\\u6237\\u672c\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\" - if user says \\\"\\u6ca1\\u6d41\\u91cf\\\" that's arguably expressing a traffic issue. I'd lean TRAFFIC? But careful: user didn't explicitly say \\\"\\u6211\\u60f3\\u8981\\u6d41\\u91cf\\\". However, the phrase \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" implies they care about traffic. As a shadow parser, maybe mark business_goal_category = TRAFFIC. But \\\"\\u4e0d\\u8981\\u66ff\\u7528\\u6237\\u63a8\\u65ad\\\" for some fields, but business_goal_category likely can be inferred from explicit statement. \\\"\\u6ca1\\u6d41\\u91cf\\\" directly references traffic, so TRAFFIC seems reasonable.\\n\\nrequested_capabilities_text: user didn't name any capability. But \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" might be single account operation? The optional codes include SINGLE_ACCOUNT_OPERATION for \\u5355\\u8d26\\u53f7\\u6301\\u7eed\\u8fd0\\u8425/\\u65e5\\u5e38\\u8fd0\\u8425\\u8282\\u594f. User says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" - not necessarily asking for single account operation. No point naming. Leave empty.\\n\\nconfirmation_signal: NONE. side_question: none. user_message_summary: \\\"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u60f3\\u77e5\\u9053\\u600e\\u4e48\\u529e\\\" (one sentence). account_stage_text: user says \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" but not \\\"\\u521a\\u8d77\\u53f7\\\" or stage; maybe could be \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" as stage? The field examples: \\\"\\u521a\\u8d77\\u53f7\\\", \\\"\\u5df2\\u7ecf\\u6709\\u7a33\\u5b9a\\u7c89\\u4e1d\\u4f46\\u6ca1\\u8f6c\\u5316\\\". User says account has no traffic. That is an account situation, maybe not a stage. But could say \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is stage description? We can fill \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" or leave empty? The field is \\\"\\u7528\\u6237\\u672c\\u8f6e\\u63cf\\u8ff0\\u7684\\u8d26\\u53f7\\u6240\\u5904\\u9636\\u6bb5\\uff08\\u6bd4\\u5982\\\"\\u521a\\u8d77\\u53f7\\\"\\\"\\u5df2\\u7ecf\\u6709\\u7a33\\u5b9a\\u7c89\\u4e1d\\u4f46\\u6ca1\\u8f6c\\u5316\\\"\\uff09\\uff0c\\u6ca1\\u8bf4\\u5c31\\u7559\\u7a7a\\uff0c\\u4e0d\\u8981\\u66ff\\u7528\\u6237\\u5224\\u65ad\\u9636\\u6bb5\\u3002\\\" User described \\\"\\u6ca1\\u6d41\\u91cf\\\" - that is not exactly a stage but can be a stage description (early stage with no traffic). Hmm. I'd maybe leave empty because \\\"\\u6ca1\\u6d41\\u91cf\\\" is not a stage, it's a symptom. But \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" describes the account's current state. The instruction says don't judge stage; if user said it, record. User did say \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\". Could fill \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" as account stage text. But field is \\\"account_stage_text\\\" example. Let's consider whether to fill. It says \\\"\\u8d26\\u53f7\\u6240\\u5904\\u9636\\u6bb5\\uff08\\u6bd4\\u5982...\\uff09\\\" - \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is the situation but not \\\"stage\\\". The phrase \\\"\\u6ca1\\u8bf4\\u5c31\\u7559\\u7a7a\\\" - user didn't say a stage, just a problem. I'd leave empty. But maybe \\\"\\u6ca1\\u6d41\\u91cf\\\" is the account stage? Hmm.\\n\\nExpression discretion fields: all UNSTATED.\\n\\ndesired_output_text: none. cycle_available_text: none. baseline_text: none.\\n\\nevidence_text: User's statement \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is a fact? It's an account situation. Could be FACT. But is it a \\\"\\u4fe1\\u606f\\u53ef\\u4f5c\\u4e3a\\u540e\\u7eed\\u5224\\u65ad\\u4f9d\\u636e\\\" - yes. Need pick one evidence. \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is a fact about account performance. evidence_nature = FACT. evidence_scope: User didn't say scope, so UNSTATED. evidence_provenance = USER_DIRECT.\\n\\nhandled_thread_id: no open threads, empty.\\n\\ncancel_target: NONE.\\n\\naccount_anchor_text: user says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" without identity. leave empty.\\n\\ncta_target_text: none. cta_risk_tier: UNSTATED. cta_conversion_goal_text: empty. cta_access_path_text: empty. cta_authorization_signal: NONE. cta_preference_signal: NONE.\\n\\nNeed 33 required fields. Let's list all required and fill.\\n\\nThe required array:\\n\\\"route_intent\\\", \\\"current_task_text\\\", \\\"temporal_scope\\\", \\\"primary_goal_text\\\", \\\"secondary_goal_text\\\", \\\"priority_order_text\\\", \\\"non_sacrifice_constraint_text\\\", \\\"business_goal_category\\\", \\\"requested_capabilities_text\\\", \\\"confirmation_signal\\\", \\\"side_question\\\", \\\"user_message_summary\\\", \\\"account_stage_text\\\", \\\"plot_allowed\\\", \\\"remix_allowed\\\", \\\"conflict_allowed\\\", \\\"controversy_allowed\\\", \\\"desired_output_text\\\", \\\"cycle_available_text\\\", \\\"baseline_text\\\", \\\"evidence_text\\\", \\\"evidence_nature\\\", \\\"evidence_scope\\\", \\\"evidence_provenance\\\", \\\"handled_thread_id\\\", \\\"cancel_target\\\", \\\"account_anchor_text\\\", \\\"cta_target_text\\\", \\\"cta_risk_tier\\\", \\\"cta_conversion_goal_text\\\", \\\"cta_access_path_text\\\", \\\"cta_authorization_signal\\\", \\\"cta_preference_signal\\\"\\n\\nNeed provide all.\\n\\nNeed maybe additional properties? no. Only those 33.\\n\\nLet's decide each.\\n\\nroute_intent: User asks \\\"\\u600e\\u4e48\\u529e\\\", it's a discussion/question. DISCUSS.\\n\\ncurrent_task_text: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" maybe the task described. The user is not asking to execute, just asking. We can set current_task_text = \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" (the thing being discussed). That is closest original. Or maybe \\\"\\u5206\\u6790\\u67d0\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\u7684\\u539f\\u56e0\\\" but we shouldn't polish. Use original phrase as close. Let's write \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\".\\n\\ntemporal_scope: User didn't specify whether this is one-item/cycle/long-term. \\\"\\u4e00\\u76f4\\\" suggests long-term, but that's not temporal scope of task. It's about an ongoing account issue. Is temporal_scope LONG_TERM? The instruction: \\\"\\u8fd9\\u4e2a\\u4efb\\u52a1\\u662f\\u672c\\u6761\\u5185\\u5bb9(ONE_ITEM)\\u3001\\u672c\\u5468\\u671f(CYCLE)\\u3001\\u957f\\u671f(LONG_TERM)\\uff0c\\u8fd8\\u662f\\u7528\\u6237\\u6ca1\\u8bf4\\u6e05\\u695a(UNSTATED).\\\" The user says an account has no traffic, \\\"\\u4e00\\u76f4\\\" indicates ongoing, maybe LONG_TERM. But the task is to solve no traffic; not clear. I'd set UNSTATED to avoid inference. Yet \\\"\\u4e00\\u76f4\\\" is explicitly long-term. Let's think: \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" could be a long-term issue. But temporal_scope describes task scope, not symptom duration. Since user hasn't specified task scope, UNSTATED is safer.\\n\\nprimary_goal_text: Could be \\\"\\u8ba9\\u8fd9\\u4e2a\\u8d26\\u53f7\\u6709\\u6d41\\u91cf\\\" but that's inference. User says \\\"\\u600e\\u4e48\\u529e\\\" meaning they want solution, but not stating a goal. Leave empty? The instruction: primary_goal_text: \\u7528\\u6237\\u8868\\u8fbe\\u7684\\u4e3b\\u8981\\u7ecf\\u8425\\u76ee\\u6807\\uff0c\\u4e0d\\u662f\\u6267\\u884c\\u547d\\u4ee4\\u3002 \\\"\\u600e\\u4e48\\u529e\\\" is a question not command. The implied goal is to get traffic. But it's not explicitly expressed. Maybe user's primary goal is \\\"\\u89e3\\u51b3\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u95ee\\u9898\\\" which is a paraphrase. However, we should not add. I'd leave empty. Alternatively, since business_goal_category = TRAFFIC, primary_goal could be \\\"\\u7ed9\\u8d26\\u53f7\\u505a\\u6d41\\u91cf\\\" but that's adding. Let's leave empty. But if primary_goal empty, is that okay? Yes if not expressed.\\n\\nsecondary_goal_text: empty.\\n\\npriority_order_text: empty.\\n\\nnon_sacrifice_constraint_text: empty.\\n\\nbusiness_goal_category: TRAFFIC because user explicitly mentions \\\"\\u6ca1\\u6d41\\u91cf\\\" and wants help. But is that \\\"\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\"? They didn't say \\\"\\u6211\\u8981\\u6d41\\u91cf\\\". However, asking \\\"\\u600e\\u4e48\\u529e\\\" about no traffic implies desire for traffic. I think TRAFFIC is acceptable. Let's consider enum also includes ACCOUNT_GROWTH (\\u8d77\\u53f7), FOLLOWER_GROWTH, etc. \\\"\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" could be account growth issue. But most direct is TRAFFIC. We'll choose TRAFFIC.\\n\\nrequested_capabilities_text: empty.\\n\\nconfirmation_signal: NONE.\\n\\nside_question: empty.\\n\\nuser_message_summary: \\\"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u60f3\\u77e5\\u9053\\u600e\\u4e48\\u529e\\u3002\\\" maybe \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u7528\\u6237\\u8be2\\u95ee\\u8be5\\u600e\\u4e48\\u529e\\\". Need one sentence.\\n\\naccount_stage_text: Should we fill? Hmm. The field says user described account stage. \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is not \\\"\\u9636\\u6bb5\\\" but more like a problem state. I might leave empty. But let's think about the intent of the field: it tracks account lifecycle stage (startup, stable, mature). The user didn't say \\\"\\u521a\\u8d77\\u53f7\\\" etc. So empty.\\n\\nplot_allowed, remix_allowed, conflict_allowed, controversy_allowed: UNSTATED.\\n\\ndesired_output_text: empty.\\n\\ncycle_available_text: empty.\\n\\nbaseline_text: empty.\\n\\nevidence_text: Could be \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\". This is user's direct statement. It is a fact about account. Use as evidence. But note: There is also \\\"\\u600e\\u4e48\\u529e\\\" which isn't evidence. We can set evidence_text = \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\". Or maybe more precisely \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is the core. Good.\\n\\nevidence_nature: FACT. Is it a fact or preference? It's a statement of situation. FACT.\\n\\nevidence_scope: UNSTATED. User didn't say whether this applies only one item/cycle/account/long-term. It's about an account, but not explicitly \\\"this account long term\\\". Could be THIS_ACCOUNT? Wait, field says \\\"THIS_ACCOUNT\\uff08\\u8fd9\\u4e2a\\u8d26\\u53f7\\uff09\\\" - user says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\", so this account. But \\\"\\u7528\\u6237\\u672c\\u8f6e\\u6709\\u6ca1\\u6709\\u8bf4\\u660e\\u8fd9\\u6761\\u4fe1\\u606f\\u9002\\u7528\\u5230\\u54ea\\u4e00\\u5c42\\\" - they didn't \\\"explain\\\" but they say it's an account. Hmm. If user says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", the information applies to that account, so THIS_ACCOUNT? The instruction says \\\"\\u7528\\u6237\\u6ca1\\u8bf4\\u5c31\\u662f UNSTATED\\uff0c\\u4e0d\\u8981\\u66ff\\u7528\\u6237\\u63a8\\u65ad\\u2014\\u2014\\u5c24\\u5176\\u4e0d\\u8981\\u628a\\\"\\u8fd9\\u6761\\u4e0d\\u8981\\u5267\\u60c5\\\"\\u5347\\u7ea7\\u6210\\u957f\\u671f\\u89c4\\u5219.\\\" Here user says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" - it's an account-specific statement. But did they say \\\"this account\\\"? \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" refers to a particular account. I'd argue evidence_scope = THIS_ACCOUNT is directly stated (the account). But the field is about scope of the evidence, not about the subject. The evidence \\\"\\u4e00\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" applies to that account. Since user explicitly says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\", it's about a specific account. Is that \\\"THIS_ACCOUNT\\\"? Yes. But caution: \\\"THIS_ACCOUNT\\\" means the rule/information applies to this account (as opposed to this item/cycle/long-term). The user is saying an account has no traffic; that is specific to that account, so THIS_ACCOUNT seems right. But \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" could be a hypothetical or generic? Usually means a specific account. Later context may clarify. However, the field instructions: \\\"\\u7528\\u6237\\u672c\\u8f6e\\u6709\\u6ca1\\u6709\\u8bf4\\u660e\\u8fd9\\u6761\\u4fe1\\u606f\\u9002\\u7528\\u5230\\u54ea\\u4e00\\u5c42\\\" - user didn't explicitly state scope. They just said an account has no traffic. It's not clear whether the evidence is about one item, cycle, account, or long-term. I'd lean THIS_ACCOUNT? Let's examine examples. The evidence_scope is for the evidence information. If user says \\\"\\u8fd9\\u4e2a\\u8d26\\u53f7\\u7684\\u5185\\u5bb9\\u4e0d\\u8981\\u7528\\u5267\\u60c5\\\", scope could be THIS_ITEM_ONLY or THIS_ACCOUNT. Here, \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is about the account's performance. The most natural scope is THIS_ACCOUNT. But instruction says don't infer. \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" explicitly identifies an account, so THIS_ACCOUNT could be considered directly stated. However, \\\"\\u4e00\\u76f4\\\" might suggest long-term, but the evidence scope is not about duration; it's about applicability. Actually, the \\\"\\u4e00\\u76f4\\\" is in the evidence: the duration fact. Hmm.\\n\\nLet's think more carefully about the purpose: evidence_scope tells downstream whether the evidence is a one-off statement, session-specific, account-wide, or long-term rule. User says \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" - this is a fact about a specific account's ongoing situation. If we record scope as THIS_ACCOUNT, we're saying this fact applies to this account, not necessarily long-term. If we record LONG_TERM_SUBJECT, we'd be saying the account has always no traffic, but that's included in \\\"\\u4e00\\u76f4\\\". But \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" means it's been without traffic for a while, so maybe LONG_TERM_SUBJECT. But \\\"\\u4e00\\u76f4\\\" is part of the evidence, not scope. Hmm.\\n\\nI think safer to use UNSTATED because user didn't explicitly say \\\"this account\\\" vs \\\"these items\\\" etc. But they did say \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" (a/an account). That indicates the subject is account-level. Let's decide. The instruction: \\\"\\u7528\\u6237\\u6ca1\\u8bf4\\u5c31\\u662f UNSTATED\\uff0c\\u4e0d\\u8981\\u66ff\\u7528\\u6237\\u63a8\\u65ad\\\". Did the user say the evidence applies to this account? They didn't use the wording \\\"\\u8fd9\\u4e2a\\u8d26\\u53f7\\\" but \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\". It's still an account. I'd maybe choose THIS_ACCOUNT because the statement is about an account, not about one content item. But the evidence \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is about the account's overall performance, so THIS_ACCOUNT makes sense. We can write THIS_ACCOUNT.\\n\\nWait, there's a nuance: evidence_scope enum includes THIS_ITEM_ONLY (\\u53ea\\u8fd9\\u4e00\\u6761\\u5185\\u5bb9), THIS_CYCLE_ONLY (\\u53ea\\u8fd9\\u4e2a\\u5468\\u671f), THIS_ACCOUNT (\\u8fd9\\u4e2a\\u8d26\\u53f7), LONG_TERM_SUBJECT (\\u957f\\u671f\\u4e00\\u76f4\\u5982\\u6b64), UNSTATED. User hasn't said whether it's one item/cycle/account/long-term. The content \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" points to an account, so \\\"THIS_ACCOUNT\\\" maybe directly indicated. But \\\"\\u4e00\\u76f4\\\" points to long-term. Hmm. Which is more appropriate? The \\\"scope\\\" describes the domain of the statement, not the duration. The statement concerns an account (not an item or cycle). So THIS_ACCOUNT is reasonable. Let's choose THIS_ACCOUNT? Let's double-check with instruction: \\\"\\u7528\\u6237\\u672c\\u8f6e\\u6709\\u6ca1\\u6709\\u8bf4\\u660e\\u8fd9\\u6761\\u4fe1\\u606f\\u9002\\u7528\\u5230\\u54ea\\u4e00\\u5c42\\\" - \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\\" = an account, so yes they indicated the account layer. I'd choose THIS_ACCOUNT. But the strict phrase \\\"\\u7528\\u6237\\u6ca1\\u8bf4\\u5c31\\u662f UNSTATED\\\" \\u2014 they didn't say \\\"\\u9002\\u7528\\u4e8e\\u8fd9\\u4e2a\\u8d26\\u53f7\\\" but the subject itself is an account. It's a fact about the account, so scope is account. I think this is fine.\\n\\nHowever, there's another interpretation: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" could be a generic case, \\\"I have an account that gets no traffic\\\" - the information is about this account's current state. So THIS_ACCOUNT is good.\\n\\nevidence_provenance: USER_DIRECT (no uploaded material).\\n\\nhandled_thread_id: empty.\\n\\ncancel_target: NONE.\\n\\naccount_anchor_text: empty.\\n\\ncta_target_text: empty.\\n\\ncta_risk_tier: UNSTATED.\\n\\ncta_conversion_goal_text: empty.\\n\\ncta_access_path_text: empty.\\n\\ncta_authorization_signal: NONE.\\n\\ncta_preference_signal: NONE.\\n\\nNeed output JSON only, no code block. Ensure all fields present.\\n\\nLet's craft JSON.\\n\\n{\\n  \\\"route_intent\\\": \\\"DISCUSS\\\",\\n  \\\"current_task_text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\",\\n  \\\"temporal_scope\\\": \\\"UNSTATED\\\",\\n  \\\"primary_goal_text\\\": \\\"\\\",\\n  \\\"secondary_goal_text\\\": \\\"\\\",\\n  \\\"priority_order_text\\\": \\\"\\\",\\n  \\\"non_sacrifice_constraint_text\\\": \\\"\\\",\\n  \\\"business_goal_category\\\": \\\"TRAFFIC\\\",\\n  \\\"requested_capabilities_text\\\": \\\"\\\",\\n  \\\"confirmation_signal\\\": \\\"NONE\\\",\\n  \\\"side_question\\\": \\\"\\\",\\n  \\\"user_message_summary\\\": \\\"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u8be2\\u95ee\\u600e\\u4e48\\u529e\\\",\\n  \\\"account_stage_text\\\": \\\"\\\",\\n  \\\"plot_allowed\\\": \\\"UNSTATED\\\",\\n  \\\"remix_allowed\\\": \\\"UNSTATED\\\",\\n  \\\"conflict_allowed\\\": \\\"UNSTATED\\\",\\n  \\\"controversy_allowed\\\": \\\"UNSTATED\\\",\\n  \\\"desired_output_text\\\": \\\"\\\",\\n  \\\"cycle_available_text\\\": \\\"\\\",\\n  \\\"baseline_text\\\": \\\"\\\",\\n  \\\"evidence_text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\",\\n  \\\"evidence_nature\\\": \\\"FACT\\\",\\n  \\\"evidence_scope\\\": \\\"THIS_ACCOUNT\\\",\\n  \\\"evidence_provenance\\\": \\\"USER_DIRECT\\\",\\n  \\\"handled_thread_id\\\": \\\"\\\",\\n  \\\"cancel_target\\\": \\\"NONE\\\",\\n  \\\"account_anchor_text\\\": \\\"\\\",\\n  \\\"cta_target_text\\\": \\\"\\\",\\n  \\\"cta_risk_tier\\\": \\\"UNSTATED\\\",\\n  \\\"cta_conversion_goal_text\\\": \\\"\\\",\\n  \\\"cta_access_path_text\\\": \\\"\\\",\\n  \\\"cta_authorization_signal\\\": \\\"NONE\\\",\\n  \\\"cta_preference_signal\\\": \\\"NONE\\\"\\n}\\n\\nNeed double-check current_task_text: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" - user input repeated twice same. We can use \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" or maybe \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" but current_task_text should be task description not question. \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is the problem/task. Good.\\n\\nIs primary_goal_text empty okay? Yes.\\n\\nIs business_goal_category TRAFFIC acceptable? The user didn't explicitly say \\\"\\u6211\\u8981\\u6d41\\u91cf\\\" but \\\"\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" expresses a traffic concern. I think it's fine. If we are too conservative, could be UNSTATED. Let's reconsider. The guidance: \\\"business_goal_category\\uff1a\\u7528\\u6237\\u672c\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\" - \\\"\\u6ca1\\u6d41\\u91cf\\\" is not a goal, it's a problem. But \\\"\\u600e\\u4e48\\u529e\\\" suggests the desired outcome is to have traffic. However, maybe they haven't expressed a goal category but a pain. The options include TRAFFIC (\\u6d41\\u91cf). If someone says \\\"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\\", it's natural to map to TRAFFIC. I'll keep TRAFFIC.\\n\\nCould current_task be considered \\\"FOCUS\\\" instead of DISCUSS? The user is asking a question \\\"\\u600e\\u4e48\\u529e\\\" looking for advice, not requesting execution. DISCUSS is \\\"\\u5728\\u804a/\\u5728\\u95ee\\\". So DISCUSS.\\n\\nNow output only JSON. Ensure no markdown.\", \"usage\": {\"prompt_tokens\": 4823, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 4400, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 9223, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 34.425, \"time_to_first_token\": 2.766, \"time_to_generate\": 31.659}, \"finish_reason\": \"stop\", \"structured_output\": {\"route_intent\": \"DISCUSS\", \"current_task_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"temporal_scope\": \"UNSTATED\", \"primary_goal_text\": \"\", \"secondary_goal_text\": \"\", \"priority_order_text\": \"\", \"non_sacrifice_constraint_text\": \"\", \"business_goal_category\": \"TRAFFIC\", \"requested_capabilities_text\": \"\", \"confirmation_signal\": \"NONE\", \"side_question\": \"\", \"user_message_summary\": \"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u8be2\\u95ee\\u600e\\u4e48\\u529e\", \"account_stage_text\": \"\", \"plot_allowed\": \"UNSTATED\", \"remix_allowed\": \"UNSTATED\", \"conflict_allowed\": \"UNSTATED\", \"controversy_allowed\": \"UNSTATED\", \"desired_output_text\": \"\", \"cycle_available_text\": \"\", \"baseline_text\": \"\", \"evidence_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"evidence_nature\": \"FACT\", \"evidence_scope\": \"THIS_ACCOUNT\", \"evidence_provenance\": \"USER_DIRECT\", \"handled_thread_id\": \"\", \"cancel_target\": \"NONE\", \"account_anchor_text\": \"\", \"cta_target_text\": \"\", \"cta_risk_tier\": \"UNSTATED\", \"cta_conversion_goal_text\": \"\", \"cta_access_path_text\": \"\", \"cta_authorization_signal\": \"NONE\", \"cta_preference_signal\": \"NONE\"}}"
+        },
+        {
+          "idx": 5,
+          "node_id": "m1_compiler",
+          "title": "状态机｜任务上下文编译与调用意图判定",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.058566,
+          "inputs": "{\"user_query\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 0, \\\"current_task\\\": {\\\"text\\\": null, \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [], \\\"market_observations\\\": [], \\\"gaps\\\": [], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": null}\", \"shadow_patch\": {\"route_intent\": \"DISCUSS\", \"current_task_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"temporal_scope\": \"UNSTATED\", \"primary_goal_text\": \"\", \"secondary_goal_text\": \"\", \"priority_order_text\": \"\", \"non_sacrifice_constraint_text\": \"\", \"business_goal_category\": \"TRAFFIC\", \"requested_capabilities_text\": \"\", \"confirmation_signal\": \"NONE\", \"side_question\": \"\", \"user_message_summary\": \"\\u7528\\u6237\\u8bf4\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u8be2\\u95ee\\u600e\\u4e48\\u529e\", \"account_stage_text\": \"\", \"plot_allowed\": \"UNSTATED\", \"remix_allowed\": \"UNSTATED\", \"conflict_allowed\": \"UNSTATED\", \"controversy_allowed\": \"UNSTATED\", \"desired_output_text\": \"\", \"cycle_available_text\": \"\", \"baseline_text\": \"\", \"evidence_text\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"evidence_nature\": \"FACT\", \"evidence_scope\": \"THIS_ACCOUNT\", \"evidence_provenance\": \"USER_DIRECT\", \"handled_thread_id\": \"\", \"cancel_target\": \"NONE\", \"account_anchor_text\": \"\", \"cta_target_text\": \"\", \"cta_risk_tier\": \"UNSTATED\", \"cta_conversion_goal_text\": \"\", \"cta_access_path_text\": \"\", \"cta_authorization_signal\": \"NONE\", \"cta_preference_signal\": \"NONE\"}, \"material_text\": \"\"}",
+          "outputs": "{\"call_intent_json\": \"{\\\"needed_capabilities\\\": [], \\\"per_capability\\\": {\\\"MATRIX\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"CAMPAIGN\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CONTENT_BRIEF\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CREATIVE_SCRIPT\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PRODUCTION_DIRECTOR\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PUBLISHING_PACKAGING\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"SINGLE_ACCOUNT_OPERATION\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}, \\\"CREATIVE_TOURNAMENT\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}}, \\\"continuation\\\": {\\\"open_threads_to_surface\\\": [], \\\"non_blocking_gaps\\\": [\\\"current_task.temporal_scope\\\", \\\"goal_structure.primary_goal\\\", \\\"account_stage.text\\\", \\\"capacity_triad.desired_output\\\", \\\"capacity_triad.cycle_available\\\", \\\"capacity_triad.baseline\\\", \\\"expression_discretion.plot_allowed\\\", \\\"expression_discretion.remix_allowed\\\", \\\"expression_discretion.conflict_allowed\\\", \\\"expression_discretion.controversy_allowed\\\"]}}\", \"dialogue_directive\": \"\\u5f53\\u524d\\u4efb\\u52a1\\uff1a\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"patch_ok\": \"true\", \"reject_reason\": \"\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"state_changed\": \"true\", \"turn_report_json\": \"{\\\"patch_ok\\\": true, \\\"reject_reason\\\": \\\"\\\", \\\"revision\\\": 1, \\\"requested_capabilities\\\": [], \\\"needed_capabilities\\\": [], \\\"open_threads_open_count\\\": 0, \\\"evidence_dropped_incomplete\\\": false, \\\"evidence_provenance_downgraded\\\": false}\"}"
+        },
+        {
+          "idx": 6,
+          "node_id": "m1_save_snapshot",
+          "title": "写回｜任务上下文快照",
+          "type": "assigner",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.000646,
+          "inputs": "{\"type\": \"assigner\", \"title\": \"\\u5199\\u56de\\uff5c\\u4efb\\u52a1\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\", \"desc\": \"\\u628a\\u7f16\\u8bd1\\u5668\\u7b97\\u51fa\\u7684\\u6700\\u65b0\\u5feb\\u7167\\u5199\\u56de\\u4f1a\\u8bdd\\u53d8\\u91cf\", \"version\": \"2\", \"error_strategy\": null, \"default_value\": null, \"retry_config\": {\"max_retries\": 0, \"retry_interval\": 0, \"retry_enabled\": false}, \"items\": [{\"variable_selector\": [\"conversation\", \"snapshot_json\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"m1_compiler\", \"snapshot_json\"]}], \"selected\": false}",
+          "outputs": "{}"
+        },
+        {
+          "idx": 7,
+          "node_id": "uapp_action",
+          "title": "分诊｜本轮该进哪个能力、要登记哪类事",
+          "type": "llm",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 4.323757,
+          "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+          "outputs": "{\"text\": \"{\\\"action\\\": \\\"NONE\\\", \\\"platform_text\\\": \\\"\\\", \\\"external_ref_text\\\": \\\"\\\", \\\"feedback_text\\\": \\\"\\\", \\\"withdraw_target_text\\\": \\\"\\\", \\\"reason_text\\\": \\\"\\u7528\\u6237\\u5728\\u95ee'\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e'\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u63d0\\u95ee\\uff0c\\u6ca1\\u6709\\u8981\\u6c42\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\\\", \\\"intent\\\": \\\"MATRIX\\\", \\\"intent_reason_text\\\": \\\"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u5c5e\\u4e8e\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad/\\u5b9a\\u4f4d\\u95ee\\u9898\\uff0c\\u5bf9\\u5e94 MATRIX \\u80fd\\u529b\\\", \\\"decisive_question_text\\\": \\\"\\\"}\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->We need output JSON only. Need decide intent/action.\\n\\nInput: \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\" (An account has no traffic, what to do?)\\n\\nContext: task text \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", business goal TRAFFIC. \\\"last_route_intent\\\": \\\"DISCUSS\\\" but no previous conversation. This is first round likely. Need classify intent. \\\"\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" is account-level diagnostic: \\\"\\u6ca1\\u6d41\\u91cf\\u600e\\u4e48\\u529e\\\" example in MATRIX states: \\u6ca1\\u6d41\\u91cf\\u600e\\u4e48\\u529e. So intent MATRIX.\\n\\nAction: User asks what to do, no recorded event. NONE.\\n\\nFields: platform_text empty, external_ref_text empty, feedback_text empty, withdraw_target_text empty, reason_text \\\"\\u7528\\u6237\\u5728\\u95ee'\\u600e\\u4e48\\u529e'\\uff0c\\u6ca1\\u6709\\u9648\\u8ff0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u9700\\u767b\\u8bb0\\u7684\\u4e8b\\u4ef6\\\". intent_reason_text \\\"\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\u5c5e\\u4e8e\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad\\u95ee\\u9898\\uff0c\\u5bf9\\u5e94 MATRIX\\\". decisive_question_text empty.\\n\\nNeed only JSON. Ensure no boolean etc.\", \"usage\": {\"prompt_tokens\": 2948, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 307, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 3255, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 4.318, \"time_to_first_token\": 2.274, \"time_to_generate\": 2.044}, \"finish_reason\": \"stop\", \"structured_output\": {\"action\": \"NONE\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\", \"reason_text\": \"\\u7528\\u6237\\u5728\\u95ee'\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e'\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u63d0\\u95ee\\uff0c\\u6ca1\\u6709\\u8981\\u6c42\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\", \"intent\": \"MATRIX\", \"intent_reason_text\": \"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u5c5e\\u4e8e\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad/\\u5b9a\\u4f4d\\u95ee\\u9898\\uff0c\\u5bf9\\u5e94 MATRIX \\u80fd\\u529b\", \"decisive_question_text\": \"\"}}"
+        },
+        {
+          "idx": 8,
+          "node_id": "uapp_route",
+          "title": "路由｜把意图桥接到该进的那一个能力",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.290572,
+          "inputs": "{\"call_intent_json\": \"{\\\"needed_capabilities\\\": [], \\\"per_capability\\\": {\\\"MATRIX\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"CAMPAIGN\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CONTENT_BRIEF\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CREATIVE_SCRIPT\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PRODUCTION_DIRECTOR\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PUBLISHING_PACKAGING\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"SINGLE_ACCOUNT_OPERATION\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}, \\\"CREATIVE_TOURNAMENT\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}}, \\\"continuation\\\": {\\\"open_threads_to_surface\\\": [], \\\"non_blocking_gaps\\\": [\\\"current_task.temporal_scope\\\", \\\"goal_structure.primary_goal\\\", \\\"account_stage.text\\\", \\\"capacity_triad.desired_output\\\", \\\"capacity_triad.cycle_available\\\", \\\"capacity_triad.baseline\\\", \\\"expression_discretion.plot_allowed\\\", \\\"expression_discretion.remix_allowed\\\", \\\"expression_discretion.conflict_allowed\\\", \\\"expression_discretion.controversy_allowed\\\"]}}\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"user_query\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"ws_id\": \"\", \"conv_id\": \"30496f84-bc4f-4885-88c2-54f0c2da0f57\", \"action_patch\": {\"action\": \"NONE\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\", \"reason_text\": \"\\u7528\\u6237\\u5728\\u95ee'\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e'\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u63d0\\u95ee\\uff0c\\u6ca1\\u6709\\u8981\\u6c42\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\", \"intent\": \"MATRIX\", \"intent_reason_text\": \"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u5c5e\\u4e8e\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad/\\u5b9a\\u4f4d\\u95ee\\u9898\\uff0c\\u5bf9\\u5e94 MATRIX \\u80fd\\u529b\", \"decisive_question_text\": \"\"}, \"action_text\": \"{\\\"action\\\": \\\"NONE\\\", \\\"platform_text\\\": \\\"\\\", \\\"external_ref_text\\\": \\\"\\\", \\\"feedback_text\\\": \\\"\\\", \\\"withdraw_target_text\\\": \\\"\\\", \\\"reason_text\\\": \\\"\\u7528\\u6237\\u5728\\u95ee'\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e'\\uff0c\\u662f\\u5728\\u63cf\\u8ff0\\u95ee\\u9898\\u5e76\\u63d0\\u95ee\\uff0c\\u6ca1\\u6709\\u8981\\u6c42\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\\\", \\\"intent\\\": \\\"MATRIX\\\", \\\"intent_reason_text\\\": \\\"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u5c5e\\u4e8e\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad/\\u5b9a\\u4f4d\\u95ee\\u9898\\uff0c\\u5bf9\\u5e94 MATRIX \\u80fd\\u529b\\\", \\\"decisive_question_text\\\": \\\"\\\"}\"}",
+          "outputs": "{\"action\": \"NONE\", \"action_source\": \"structured_output\", \"asks_one\": \"false\", \"decisive_question\": \"\", \"entry\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"has_capability\": \"true\", \"intent\": \"MATRIX\", \"intent_reason\": \"\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u5c5e\\u4e8e\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad/\\u5b9a\\u4f4d\\u95ee\\u9898\\uff0c\\u5bf9\\u5e94 MATRIX \\u80fd\\u529b\", \"intent_source\": \"canvas_triage\", \"needs_bootstrap\": \"true\", \"platform_text\": \"\", \"route_mode\": \"CAPABILITY\", \"route_note\": \"capability=MATRIX\\uff1baction=NONE\\uff1b\\u80fd\\u529b\\u6765\\u6e90=canvas_triage\\uff1b\\u6a21\\u5f0f=CAPABILITY\\u3002\\u7528\\u6237\\u70b9\\u540d\\u4f18\\u5148\\uff1b\\u672a\\u70b9\\u540d\\u65f6\\u7531\\u672c\\u5c42\\u5206\\u8bca\\u53f0\\u628a\\u81ea\\u7136\\u8bed\\u8a00\\u6865\\u63a5\\u5230\\u80fd\\u529b\\uff0c\\u4f9d\\u636e Founder \\u88c1\\u5b9a UAPP-INTENT-ROUTING-001\\u3002\", \"runs_business\": \"true\", \"runs_m3\": \"true\", \"tag\": \"30496f84bc4f\", \"target_capability\": \"MATRIX\", \"triage_failed\": \"false\", \"user_request\": \"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\", \"withdraw_target_text\": \"\"}"
+        },
+        {
+          "idx": 9,
+          "node_id": "uapp_s2_branch",
+          "title": "分流｜本层三条出口",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.000116,
+          "inputs": "{\"conditions\": [{\"actual_value\": \"true\", \"expected_value\": \"true\", \"comparison_operator\": \"is\"}]}",
+          "outputs": "{\"result\": true, \"selected_case_id\": \"case_business\"}"
+        },
+        {
+          "idx": 10,
+          "node_id": "uapp_boot_gate",
+          "title": "闸门｜本会话是否还没有测试域",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.000106,
+          "inputs": "{\"conditions\": [{\"actual_value\": \"true\", \"expected_value\": \"true\", \"comparison_operator\": \"is\"}]}",
+          "outputs": "{\"result\": true, \"selected_case_id\": \"boot\"}"
+        },
+        {
+          "idx": 11,
+          "node_id": "boot_user",
+          "title": "建域｜登记使用者",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.068554,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"external_ref\\\":\\\"uapp-30496f84bc4f\\\",\\\"display_name\\\":null,\\\"id\\\":\\\"961f152b-c313-4ffd-9f2b-193ac94d8c70\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.100692+00:00\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:01 GMT\", \"server\": \"uvicorn\", \"content-length\": \"148\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 12,
+          "node_id": "boot_p1",
+          "title": "建域｜取回主键",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.049041,
+          "inputs": "{\"raw\": \"{\\\"external_ref\\\":\\\"uapp-30496f84bc4f\\\",\\\"display_name\\\":null,\\\"id\\\":\\\"961f152b-c313-4ffd-9f2b-193ac94d8c70\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.100692+00:00\\\"}\", \"tag\": \"30496f84bc4f\"}",
+          "outputs": "{\"acct_body\": \"{\\\"platform\\\": \\\"test-platform\\\", \\\"handle\\\": \\\"uapp-30496f84bc4f\\\"}\", \"actor\": \"uapp-30496f84bc4f\", \"cycle_body\": \"{\\\"idempotency_key\\\": \\\"cyc-30496f84bc4f\\\", \\\"account_id\\\": \\\"961f152b-c313-4ffd-9f2b-193ac94d8c70\\\", \\\"label\\\": \\\"\\u672c\\u5468\\u671f\\\", \\\"start_at\\\": \\\"2026-08-29T15:13:02+00:00\\\"}\", \"id\": \"961f152b-c313-4ffd-9f2b-193ac94d8c70\", \"now\": \"2026-08-29T15:13:02+00:00\", \"ok\": \"true\", \"task_body\": \"{\\\"idempotency_key\\\": \\\"task-30496f84bc4f\\\", \\\"account_id\\\": \\\"\\\", \\\"cycle_id\\\": \\\"961f152b-c313-4ffd-9f2b-193ac94d8c70\\\", \\\"kind\\\": \\\"uapp-session\\\"}\", \"ws_body\": \"{\\\"name\\\": \\\"ws-uapp-30496f84bc4f\\\", \\\"kind\\\": \\\"personal\\\", \\\"owner_user_id\\\": \\\"961f152b-c313-4ffd-9f2b-193ac94d8c70\\\"}\"}"
+        },
+        {
+          "idx": 13,
+          "node_id": "boot_ws",
+          "title": "建域｜创建测试工作区",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.018039,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"name\\\":\\\"ws-uapp-30496f84bc4f\\\",\\\"kind\\\":\\\"personal\\\",\\\"id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.181841+00:00\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:01 GMT\", \"server\": \"uvicorn\", \"content-length\": \"141\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 14,
+          "node_id": "boot_p2",
+          "title": "建域｜取回主键",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.045897,
+          "inputs": "{\"raw\": \"{\\\"name\\\":\\\"ws-uapp-30496f84bc4f\\\",\\\"kind\\\":\\\"personal\\\",\\\"id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.181841+00:00\\\"}\", \"tag\": \"30496f84bc4f\"}",
+          "outputs": "{\"acct_body\": \"{\\\"platform\\\": \\\"test-platform\\\", \\\"handle\\\": \\\"uapp-30496f84bc4f\\\"}\", \"actor\": \"uapp-30496f84bc4f\", \"cycle_body\": \"{\\\"idempotency_key\\\": \\\"cyc-30496f84bc4f\\\", \\\"account_id\\\": \\\"233411bc-e59a-4c64-9af8-adab614abebb\\\", \\\"label\\\": \\\"\\u672c\\u5468\\u671f\\\", \\\"start_at\\\": \\\"2026-08-29T15:13:02+00:00\\\"}\", \"id\": \"233411bc-e59a-4c64-9af8-adab614abebb\", \"now\": \"2026-08-29T15:13:02+00:00\", \"ok\": \"true\", \"task_body\": \"{\\\"idempotency_key\\\": \\\"task-30496f84bc4f\\\", \\\"account_id\\\": \\\"\\\", \\\"cycle_id\\\": \\\"233411bc-e59a-4c64-9af8-adab614abebb\\\", \\\"kind\\\": \\\"uapp-session\\\"}\", \"ws_body\": \"{\\\"name\\\": \\\"ws-uapp-30496f84bc4f\\\", \\\"kind\\\": \\\"personal\\\", \\\"owner_user_id\\\": \\\"233411bc-e59a-4c64-9af8-adab614abebb\\\"}\"}"
+        },
+        {
+          "idx": 15,
+          "node_id": "boot_acct",
+          "title": "建域｜登记测试账号",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.017203,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"subject_id\\\":null,\\\"platform\\\":\\\"test-platform\\\",\\\"handle\\\":\\\"uapp-30496f84bc4f\\\",\\\"id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.251192+00:00\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:01 GMT\", \"server\": \"uvicorn\", \"content-length\": \"221\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 16,
+          "node_id": "boot_p3",
+          "title": "建域｜取回主键",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.047224,
+          "inputs": "{\"raw\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"subject_id\\\":null,\\\"platform\\\":\\\"test-platform\\\",\\\"handle\\\":\\\"uapp-30496f84bc4f\\\",\\\"id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.251192+00:00\\\"}\", \"tag\": \"30496f84bc4f\"}",
+          "outputs": "{\"acct_body\": \"{\\\"platform\\\": \\\"test-platform\\\", \\\"handle\\\": \\\"uapp-30496f84bc4f\\\"}\", \"actor\": \"uapp-30496f84bc4f\", \"cycle_body\": \"{\\\"idempotency_key\\\": \\\"cyc-30496f84bc4f\\\", \\\"account_id\\\": \\\"b968458f-5676-446a-93a8-db8c0701f854\\\", \\\"label\\\": \\\"\\u672c\\u5468\\u671f\\\", \\\"start_at\\\": \\\"2026-08-29T15:13:02+00:00\\\"}\", \"id\": \"b968458f-5676-446a-93a8-db8c0701f854\", \"now\": \"2026-08-29T15:13:02+00:00\", \"ok\": \"true\", \"task_body\": \"{\\\"idempotency_key\\\": \\\"task-30496f84bc4f\\\", \\\"account_id\\\": \\\"\\\", \\\"cycle_id\\\": \\\"b968458f-5676-446a-93a8-db8c0701f854\\\", \\\"kind\\\": \\\"uapp-session\\\"}\", \"ws_body\": \"{\\\"name\\\": \\\"ws-uapp-30496f84bc4f\\\", \\\"kind\\\": \\\"personal\\\", \\\"owner_user_id\\\": \\\"b968458f-5676-446a-93a8-db8c0701f854\\\"}\"}"
+        },
+        {
+          "idx": 17,
+          "node_id": "boot_cycle",
+          "title": "建域｜开一个周期",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.025672,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"label\\\":\\\"\\u672c\\u5468\\u671f\\\",\\\"start_at\\\":\\\"2026-08-29T15:13:02+00:00\\\",\\\"end_at\\\":null,\\\"idempotency_key\\\":\\\"cyc-30496f84bc4f\\\",\\\"baseline_capacity\\\":null,\\\"baseline_capacity_source\\\":null,\\\"actual_capacity\\\":null,\\\"actual_capacity_source\\\":null,\\\"expected_publish_count\\\":null,\\\"expected_publish_count_source\\\":null,\\\"is_current\\\":true,\\\"supersedes_cycle_id\\\":null,\\\"id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.325836+00:00\\\",\\\"row_version\\\":1}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:01 GMT\", \"server\": \"uvicorn\", \"content-length\": \"547\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 18,
+          "node_id": "boot_p4",
+          "title": "建域｜取回主键",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.045439,
+          "inputs": "{\"raw\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"label\\\":\\\"\\u672c\\u5468\\u671f\\\",\\\"start_at\\\":\\\"2026-08-29T15:13:02+00:00\\\",\\\"end_at\\\":null,\\\"idempotency_key\\\":\\\"cyc-30496f84bc4f\\\",\\\"baseline_capacity\\\":null,\\\"baseline_capacity_source\\\":null,\\\"actual_capacity\\\":null,\\\"actual_capacity_source\\\":null,\\\"expected_publish_count\\\":null,\\\"expected_publish_count_source\\\":null,\\\"is_current\\\":true,\\\"supersedes_cycle_id\\\":null,\\\"id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.325836+00:00\\\",\\\"row_version\\\":1}\", \"tag\": \"30496f84bc4f\", \"account_id\": \"b968458f-5676-446a-93a8-db8c0701f854\"}",
+          "outputs": "{\"acct_body\": \"{\\\"platform\\\": \\\"test-platform\\\", \\\"handle\\\": \\\"uapp-30496f84bc4f\\\"}\", \"actor\": \"uapp-30496f84bc4f\", \"cycle_body\": \"{\\\"idempotency_key\\\": \\\"cyc-30496f84bc4f\\\", \\\"account_id\\\": \\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\", \\\"label\\\": \\\"\\u672c\\u5468\\u671f\\\", \\\"start_at\\\": \\\"2026-08-29T15:13:02+00:00\\\"}\", \"id\": \"d2dee64d-ab27-4913-bb2b-f52eb67cf768\", \"now\": \"2026-08-29T15:13:02+00:00\", \"ok\": \"true\", \"task_body\": \"{\\\"idempotency_key\\\": \\\"task-30496f84bc4f\\\", \\\"account_id\\\": \\\"b968458f-5676-446a-93a8-db8c0701f854\\\", \\\"cycle_id\\\": \\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\", \\\"kind\\\": \\\"uapp-session\\\"}\", \"ws_body\": \"{\\\"name\\\": \\\"ws-uapp-30496f84bc4f\\\", \\\"kind\\\": \\\"personal\\\", \\\"owner_user_id\\\": \\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\"}\"}"
+        },
+        {
+          "idx": 19,
+          "node_id": "boot_task",
+          "title": "建域｜开一个任务",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.025789,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"cycle_id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"kind\\\":\\\"uapp-session\\\",\\\"status\\\":\\\"open\\\",\\\"idempotency_key\\\":\\\"task-30496f84bc4f\\\",\\\"id\\\":\\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.398990+00:00\\\",\\\"row_version\\\":1}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:02 GMT\", \"server\": \"uvicorn\", \"content-length\": \"341\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 20,
+          "node_id": "boot_p5",
+          "title": "建域｜取回主键",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.04623,
+          "inputs": "{\"raw\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"cycle_id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"kind\\\":\\\"uapp-session\\\",\\\"status\\\":\\\"open\\\",\\\"idempotency_key\\\":\\\"task-30496f84bc4f\\\",\\\"id\\\":\\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.398990+00:00\\\",\\\"row_version\\\":1}\", \"tag\": \"30496f84bc4f\", \"account_id\": \"b968458f-5676-446a-93a8-db8c0701f854\"}",
+          "outputs": "{\"acct_body\": \"{\\\"platform\\\": \\\"test-platform\\\", \\\"handle\\\": \\\"uapp-30496f84bc4f\\\"}\", \"actor\": \"uapp-30496f84bc4f\", \"cycle_body\": \"{\\\"idempotency_key\\\": \\\"cyc-30496f84bc4f\\\", \\\"account_id\\\": \\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\", \\\"label\\\": \\\"\\u672c\\u5468\\u671f\\\", \\\"start_at\\\": \\\"2026-08-29T15:13:02+00:00\\\"}\", \"id\": \"dbc56866-0a2c-44f3-8c39-75e37ac8d689\", \"now\": \"2026-08-29T15:13:02+00:00\", \"ok\": \"true\", \"task_body\": \"{\\\"idempotency_key\\\": \\\"task-30496f84bc4f\\\", \\\"account_id\\\": \\\"b968458f-5676-446a-93a8-db8c0701f854\\\", \\\"cycle_id\\\": \\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\", \\\"kind\\\": \\\"uapp-session\\\"}\", \"ws_body\": \"{\\\"name\\\": \\\"ws-uapp-30496f84bc4f\\\", \\\"kind\\\": \\\"personal\\\", \\\"owner_user_id\\\": \\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\"}\"}"
+        },
+        {
+          "idx": 21,
+          "node_id": "boot_assign",
+          "title": "建域｜记住本会话的测试域",
+          "type": "assigner",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.001629,
+          "inputs": "{\"type\": \"assigner\", \"title\": \"\\u5efa\\u57df\\uff5c\\u8bb0\\u4f4f\\u672c\\u4f1a\\u8bdd\\u7684\\u6d4b\\u8bd5\\u57df\", \"desc\": \"\\u4f1a\\u8bdd\\u7ea7\\u6d4b\\u8bd5\\u57df\\u6807\\u8bc6\\u5199\\u56de\\u4f1a\\u8bdd\\u53d8\\u91cf\\uff0c\\u591a\\u8f6e\\u4e0d\\u518d\\u91cd\\u5efa\", \"version\": \"2\", \"error_strategy\": null, \"default_value\": null, \"retry_config\": {\"max_retries\": 0, \"retry_interval\": 0, \"retry_enabled\": false}, \"items\": [{\"variable_selector\": [\"conversation\", \"uapp_ws\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"boot_p2\", \"id\"]}, {\"variable_selector\": [\"conversation\", \"uapp_account\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"boot_p3\", \"id\"]}, {\"variable_selector\": [\"conversation\", \"uapp_cycle\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"boot_p4\", \"id\"]}, {\"variable_selector\": [\"conversation\", \"uapp_task\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"boot_p5\", \"id\"]}, {\"variable_selector\": [\"conversation\", \"uapp_actor\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"boot_p1\", \"actor\"]}], \"selected\": false}",
+          "outputs": "{}"
+        },
+        {
+          "idx": 22,
+          "node_id": "uapp_m2_cycle",
+          "title": "读 M2｜当前周期",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.015221,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"label\\\":\\\"\\u672c\\u5468\\u671f\\\",\\\"start_at\\\":\\\"2026-08-29T15:13:02+00:00\\\",\\\"end_at\\\":null,\\\"idempotency_key\\\":\\\"cyc-30496f84bc4f\\\",\\\"baseline_capacity\\\":null,\\\"baseline_capacity_source\\\":null,\\\"actual_capacity\\\":null,\\\"actual_capacity_source\\\":null,\\\"expected_publish_count\\\":null,\\\"expected_publish_count_source\\\":null,\\\"is_current\\\":true,\\\"supersedes_cycle_id\\\":null,\\\"id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.325836+00:00\\\",\\\"row_version\\\":1}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:02 GMT\", \"server\": \"uvicorn\", \"content-length\": \"547\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 23,
+          "node_id": "uapp_m2_dec",
+          "title": "读 M2｜最近一次周期决策",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.008493,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"decision\\\":\\\"none_recorded\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:02 GMT\", \"server\": \"uvicorn\", \"content-length\": \"28\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 24,
+          "node_id": "uapp_m2_run",
+          "title": "读 M2｜本任务运行状态",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.007757,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"task_id\\\":\\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\",\\\"recovery_state\\\":\\\"none_recorded\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:02 GMT\", \"server\": \"uvicorn\", \"content-length\": \"83\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;detail=mismatch\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 25,
+          "node_id": "uapp_ctx",
+          "title": "组装｜M2 投影",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.04815,
+          "inputs": "{\"cyc_raw\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"label\\\":\\\"\\u672c\\u5468\\u671f\\\",\\\"start_at\\\":\\\"2026-08-29T15:13:02+00:00\\\",\\\"end_at\\\":null,\\\"idempotency_key\\\":\\\"cyc-30496f84bc4f\\\",\\\"baseline_capacity\\\":null,\\\"baseline_capacity_source\\\":null,\\\"actual_capacity\\\":null,\\\"actual_capacity_source\\\":null,\\\"expected_publish_count\\\":null,\\\"expected_publish_count_source\\\":null,\\\"is_current\\\":true,\\\"supersedes_cycle_id\\\":null,\\\"id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.325836+00:00\\\",\\\"row_version\\\":1}\", \"cyc_status\": 200, \"dec_raw\": \"{\\\"decision\\\":\\\"none_recorded\\\"}\", \"dec_status\": 200, \"run_raw\": \"{\\\"task_id\\\":\\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\",\\\"recovery_state\\\":\\\"none_recorded\\\"}\", \"run_status\": 200, \"material_text\": \"\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"account_handle\": \"30496f84bc4f\"}",
+          "outputs": "{\"account_context\": \"\\u3010\\u8d26\\u53f7\\u6700\\u5c0f\\u5f53\\u524d\\u6295\\u5f71 \\u00b7 \\u6765\\u6e90 M2 \\u670d\\u52a1\\u5b9e\\u65f6\\u8bfb\\u53d6\\u3011\\n\\u8d26\\u53f7\\uff1a\\u6d4b\\u8bd5\\u8d26\\u53f7 handle=30496f84bc4f\\uff0c\\u5e73\\u53f0=test-platform\\n\\u5f53\\u524d\\u5468\\u671f\\uff1a\\u672c\\u5468\\u671f\\n\\u5468\\u671f\\u8d77\\u59cb\\uff1a2026-08-29T15:13:02+00:00\\n\\u57fa\\u7ebf\\u4ea7\\u80fd\\uff1a\\uff08\\u7a7a\\uff09\\uff08\\u6765\\u6e90\\uff1a\\uff08\\u7a7a\\uff09\\uff09\\n\\u9884\\u671f\\u53d1\\u5e03\\u6761\\u6570\\uff1a\\uff08\\u7a7a\\uff09\\n\\u6700\\u8fd1\\u4e00\\u6b21\\u5468\\u671f\\u51b3\\u7b56\\uff1anone_recorded\\n\\u5df2\\u53d1\\u5e03\\u5185\\u5bb9\\u4e0e\\u53cd\\u9988\\uff1a\\uff08\\u672c\\u5468\\u671f\\u5c1a\\u65e0\\u53d1\\u5e03\\u4e0e\\u53cd\\u9988\\uff09\\n\\u3010\\u672c\\u4efb\\u52a1\\u8fd0\\u884c\\u72b6\\u6001 \\u00b7 \\u6765\\u6e90 M2\\u3011\\n\\u4e0a\\u4e00\\u6b65\\u6210\\u529f\\u5230\\uff1a\\uff08\\u5c1a\\u65e0\\u6210\\u529f\\u6b65\\u9aa4\\u8bb0\\u5f55\\uff09\\n\\u5931\\u8d25\\u6b65\\u9aa4\\uff1a\\uff08\\u65e0\\uff09\\n\\u53ef\\u4ece\\u6b64\\u5904\\u6062\\u590d\\uff1a\\uff08\\u65e0\\uff09\\n\\u5df2\\u53d1\\u751f\\u7684\\u5199\\u5165\\u526f\\u4f5c\\u7528\\uff1a[]\", \"has_material\": \"false\", \"loaded_references\": \"<<REFERENCE_MANIFEST>>\\n\\n<<END_REFERENCE_MANIFEST>>\\n\\n\", \"m2_note\": \"cycles/current=200 decisions/latest=200 run-state=200\", \"m2_reachable\": \"true\", \"registered_facts\": \"===== \\u7528\\u6237\\u5728\\u5bf9\\u8bdd\\u4e2d\\u8bf4\\u51fa\\u53e3\\u3001\\u5df2\\u767b\\u8bb0\\u7684\\u4e8b\\u5b9e\\u4e0e\\u504f\\u597d =====\\n- [FACT/THIS_ACCOUNT] \\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\"}"
+        },
+        {
+          "idx": 26,
+          "node_id": "uapp_s2_pending",
+          "title": "如实交代｜投影已读、判断未接",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.045665,
+          "inputs": "{\"route_mode\": \"CAPABILITY\", \"triage_failed\": \"false\", \"m2_reachable\": \"true\", \"m2_note\": \"cycles/current=200 decisions/latest=200 run-state=200\", \"registered_facts\": \"===== \\u7528\\u6237\\u5728\\u5bf9\\u8bdd\\u4e2d\\u8bf4\\u51fa\\u53e3\\u3001\\u5df2\\u767b\\u8bb0\\u7684\\u4e8b\\u5b9e\\u4e0e\\u504f\\u597d =====\\n- [FACT/THIS_ACCOUNT] \\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\"}",
+          "outputs": "{\"facts_present\": \"true\", \"m2_state\": \"reachable_with_record\", \"pending_kind\": \"routed_not_wired\", \"pending_text\": \"\\u4f60\\u8bf4\\u7684\\u8fd9\\u4ef6\\u4e8b\\u6211\\u5df2\\u7ecf\\u5f52\\u5230\\u8be5\\u8d70\\u7684\\u90a3\\u6761\\u7ebf\\u4e0a\\u4e86\\u3002\\n\\n\\u6211\\u5df2\\u7ecf\\u628a\\u8fd9\\u4e2a\\u53f7\\u76ee\\u524d\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u5728\\u6848\\u7684\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\uff0c\\u540e\\u9762\\u505a\\u5224\\u65ad\\u4f1a\\u4ee5\\u8fd9\\u4e9b\\u4e3a\\u51c6\\uff0c\\u4e0d\\u4f1a\\u66ff\\u5b83\\u8865\\u6ca1\\u53d1\\u751f\\u8fc7\\u7684\\u4e8b\\u3002\\n\\n\\u4f46\\u771f\\u6b63\\u505a\\u5224\\u65ad\\u7684\\u90a3\\u90e8\\u5206\\u8fd8\\u6ca1\\u63a5\\u8fdb\\u6765\\uff0c\\u6240\\u4ee5\\u6211\\u73b0\\u5728\\u7ed9\\u4e0d\\u4e86\\u4f60\\u5206\\u6790\\u7ed3\\u8bba\\u3002\\u6211\\u4e5f\\u6ca1\\u6709\\u628a\\u5b83\\u6302\\u5728\\u540e\\u53f0\\u8dd1\\u2014\\u2014\\u6ca1\\u8dd1\\u5c31\\u662f\\u6ca1\\u8dd1\\uff0c\\u4e0d\\u9a97\\u4f60\\u7b49\\u3002\\n\\n\\u7b49\\u4e0b\\u4e00\\u6b65\\u63a5\\u4e0a\\uff0c\\u540c\\u6837\\u8fd9\\u53e5\\u8bdd\\u5c31\\u80fd\\u76f4\\u63a5\\u51fa\\u7ed3\\u679c\\u3002\"}"
+        },
+        {
+          "idx": 27,
+          "node_id": "uapp_answer_pending",
+          "title": "回复｜投影已读",
+          "type": "answer",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 8.5e-05,
+          "inputs": "{}",
+          "outputs": "{\"answer\": \"\\u4f60\\u8bf4\\u7684\\u8fd9\\u4ef6\\u4e8b\\u6211\\u5df2\\u7ecf\\u5f52\\u5230\\u8be5\\u8d70\\u7684\\u90a3\\u6761\\u7ebf\\u4e0a\\u4e86\\u3002\\n\\n\\u6211\\u5df2\\u7ecf\\u628a\\u8fd9\\u4e2a\\u53f7\\u76ee\\u524d\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u5728\\u6848\\u7684\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\uff0c\\u540e\\u9762\\u505a\\u5224\\u65ad\\u4f1a\\u4ee5\\u8fd9\\u4e9b\\u4e3a\\u51c6\\uff0c\\u4e0d\\u4f1a\\u66ff\\u5b83\\u8865\\u6ca1\\u53d1\\u751f\\u8fc7\\u7684\\u4e8b\\u3002\\n\\n\\u4f46\\u771f\\u6b63\\u505a\\u5224\\u65ad\\u7684\\u90a3\\u90e8\\u5206\\u8fd8\\u6ca1\\u63a5\\u8fdb\\u6765\\uff0c\\u6240\\u4ee5\\u6211\\u73b0\\u5728\\u7ed9\\u4e0d\\u4e86\\u4f60\\u5206\\u6790\\u7ed3\\u8bba\\u3002\\u6211\\u4e5f\\u6ca1\\u6709\\u628a\\u5b83\\u6302\\u5728\\u540e\\u53f0\\u8dd1\\u2014\\u2014\\u6ca1\\u8dd1\\u5c31\\u662f\\u6ca1\\u8dd1\\uff0c\\u4e0d\\u9a97\\u4f60\\u7b49\\u3002\\n\\n\\u7b49\\u4e0b\\u4e00\\u6b65\\u63a5\\u4e0a\\uff0c\\u540c\\u6837\\u8fd9\\u53e5\\u8bdd\\u5c31\\u80fd\\u76f4\\u63a5\\u51fa\\u7ed3\\u679c\\u3002\", \"files\": []}"
+        }
+      ]
+    },
+    {
+      "turn_id": "T2",
+      "query": "这个号现在的情况怎么样",
+      "attempts": 1,
+      "http_status": 200,
+      "elapsed_seconds": 32.61,
+      "message_id": "118e1c83-a1eb-4d7d-8a05-f7f2b71ce081",
+      "conversation_id": "30496f84-bc4f-4885-88c2-54f0c2da0f57",
+      "workflow_run_id": "4ff3d80e-fa2c-40f8-ad67-6c6b04f13a21",
+      "answer": "你说的这件事我已经归到该走的那条线上了。\n\n我已经把这个号目前在系统里记录在案的情况读出来了，后面做判断会以这些为准，不会替它补没发生过的事。\n\n但真正做判断的那部分还没接进来，所以我现在给不了你分析结论。我也没有把它挂在后台跑——没跑就是没跑，不骗你等。\n\n等下一步接上，同样这句话就能直接出结果。",
+      "nodes_executed": [
+        {
+          "idx": 1,
+          "node_id": "uapp_start",
+          "type": "start",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 2,
+          "node_id": "m1_extract",
+          "type": "document-extractor",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 3,
+          "node_id": "m1_join",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 4,
+          "node_id": "m1_shadow",
+          "type": "llm",
+          "status": "succeeded",
+          "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))"
+        },
+        {
+          "idx": 5,
+          "node_id": "m1_compiler",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 6,
+          "node_id": "m1_save_snapshot",
+          "type": "assigner",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 7,
+          "node_id": "uapp_action",
+          "type": "llm",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 8,
+          "node_id": "uapp_route",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 9,
+          "node_id": "uapp_s2_branch",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 10,
+          "node_id": "uapp_boot_gate",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 11,
+          "node_id": "uapp_m2_cycle",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 12,
+          "node_id": "uapp_m2_dec",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 13,
+          "node_id": "uapp_m2_run",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 14,
+          "node_id": "uapp_ctx",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 15,
+          "node_id": "uapp_s2_pending",
+          "type": "code",
+          "status": "succeeded",
+          "error": null
+        },
+        {
+          "idx": 16,
+          "node_id": "uapp_answer_pending",
+          "type": "answer",
+          "status": "succeeded",
+          "error": null
+        }
+      ],
+      "node_detail": [
+        {
+          "idx": 1,
+          "node_id": "uapp_start",
+          "title": "开始",
+          "type": "start",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.000111,
+          "inputs": "{}",
+          "outputs": "{}"
+        },
+        {
+          "idx": 2,
+          "node_id": "m1_extract",
+          "title": "资料抽取｜上传文件转文本",
+          "type": "document-extractor",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 7.2e-05,
+          "inputs": "{\"variable_selector\": [\"sys\", \"files\"]}",
+          "outputs": "{\"text\": []}"
+        },
+        {
+          "idx": 3,
+          "node_id": "m1_join",
+          "title": "资料抽取｜拼接为文本",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.046827,
+          "inputs": "{\"file_texts\": []}",
+          "outputs": "{\"material_text\": \"\"}"
+        },
+        {
+          "idx": 4,
+          "node_id": "m1_shadow",
+          "title": "影子节点｜只提候选信号补丁",
+          "type": "llm",
+          "status": "succeeded",
+          "error": "[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', port=443): Max retries exceeded with url: /chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1000)')))",
+          "elapsed": 15.921905,
+          "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+          "outputs": "{\"text\": \"{\\\"route_intent\\\": \\\"DISCUSS\\\", \\\"current_task_text\\\": \\\"\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"primary_goal_text\\\": \\\"\\\", \\\"secondary_goal_text\\\": \\\"\\\", \\\"priority_order_text\\\": \\\"\\\", \\\"non_sacrifice_constraint_text\\\": \\\"\\\", \\\"business_goal_category\\\": \\\"UNSTATED\\\", \\\"requested_capabilities_text\\\": \\\"\\\", \\\"confirmation_signal\\\": \\\"NONE\\\", \\\"side_question\\\": \\\"\\\", \\\"user_message_summary\\\": \\\"\\u7528\\u6237\\u8be2\\u95ee\\u8fd9\\u4e2a\\u8d26\\u53f7\\u76ee\\u524d\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u3002\\\", \\\"account_stage_text\\\": \\\"\\\", \\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\", \\\"desired_output_text\\\": \\\"\\\", \\\"cycle_available_text\\\": \\\"\\\", \\\"baseline_text\\\": \\\"\\\", \\\"evidence_text\\\": \\\"\\\", \\\"evidence_nature\\\": \\\"UNSTATED\\\", \\\"evidence_scope\\\": \\\"UNSTATED\\\", \\\"evidence_provenance\\\": \\\"USER_DIRECT\\\", \\\"handled_thread_id\\\": \\\"\\\", \\\"cancel_target\\\": \\\"NONE\\\", \\\"account_anchor_text\\\": \\\"\\\", \\\"cta_target_text\\\": \\\"\\\", \\\"cta_risk_tier\\\": \\\"UNSTATED\\\", \\\"cta_conversion_goal_text\\\": \\\"\\\", \\\"cta_access_path_text\\\": \\\"\\\", \\\"cta_authorization_signal\\\": \\\"NONE\\\", \\\"cta_preference_signal\\\": \\\"NONE\\\"}\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->\\u6211\\u4eec\\u9700\\u8981\\u89e3\\u6790\\u7528\\u6237\\u672c\\u8f6e\\u8f93\\u5165\\uff1a\\\"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\\"\\n\\n\\u56de\\u987e\\u5bf9\\u8bdd\\u5386\\u53f2\\uff1a\\n- \\u7b2c\\u4e00\\u8f6e\\u7528\\u6237\\u8f93\\u5165\\uff08\\u5728\\u5feb\\u7167\\u4e2d\\u6ca1\\u6709\\u76f4\\u63a5\\u7ed9\\u51fa\\uff0c\\u4f46\\u5feb\\u7167\\u53cd\\u6620\\u4e86\\uff09\\uff1a\\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\\"\\u4e4b\\u7c7b\\u3002\\u5feb\\u7167\\u663e\\u793a current_task \\u4e3a\\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\"\\uff0ctemporal_scope UNSTATED\\uff0cbusiness_goal_categories [\\\"TRAFFIC\\\"]\\uff0cevidence \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\" FACT USER_DIRECT scope THIS_ACCOUNT\\uff0croute_intent \\u4e0a\\u8f6e\\u4e3a DISCUSS\\u3002\\n- \\u4e4b\\u540e\\u6709\\u52a9\\u624b\\u54cd\\u5e94\\uff08\\u5b9e\\u9645\\u4e0a\\u90a3\\u53ef\\u80fd\\u662f\\u7cfb\\u7edf\\u751f\\u6210\\u7684\\uff0c\\u4f46\\u6211\\u4eec\\u73b0\\u5728\\u662f\\u89e3\\u6790\\u8282\\u70b9\\uff09\\u3002\\u6ce8\\u610f\\uff1a\\u7528\\u6237\\u5f53\\u524d\\u8f93\\u5165\\u662f\\\"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\\"\\uff0c\\u8fd9\\u662f\\u5728\\u8ffd\\u95ee\\u5f53\\u524d\\u8d26\\u53f7\\u60c5\\u51b5\\u3002\\n\\n\\u6211\\u4eec\\u9700\\u8981\\u6839\\u636e\\u7528\\u6237\\u672c\\u8f6e\\u8f93\\u5165\\u8f93\\u51faJSON\\u3002\\n\\n\\u9996\\u5148\\u7406\\u89e3\\u7528\\u6237\\u672c\\u8f6e\\u610f\\u56fe\\uff1a\\u7528\\u6237\\u5728\\u95ee\\\"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\\"\\u2014\\u2014\\u8fd9\\u662f\\u4e00\\u4e2a\\u8be2\\u95ee/\\u8ba8\\u8bba\\uff0c\\u4e0d\\u662f\\u6267\\u884c\\u8bf7\\u6c42\\uff0c\\u4e0d\\u662fFOCUS\\uff08\\u63cf\\u8ff0\\u9700\\u6c42\\u4f46\\u8fd8\\u6ca1\\u8981\\u6c42\\u6267\\u884c\\uff1f\\u5b9e\\u9645\\u4e0a\\u662f\\u5728\\u95ee\\u60c5\\u51b5\\uff0c\\u7b97DISCUSS\\uff09\\u3002route_intent: DISCUSS\\u3002\\n\\ncurrent_task_text\\uff1a\\u7528\\u6237\\u672c\\u8f6e\\u8bf4\\u51fa\\u53e3\\u7684\\u4efb\\u52a1\\u63cf\\u8ff0\\uff1f\\u7528\\u6237\\u6ca1\\u6709\\u63cf\\u8ff0\\u65b0\\u4efb\\u52a1\\uff0c\\u53ea\\u662f\\u5728\\u95ee\\u8d26\\u53f7\\u60c5\\u51b5\\u3002\\u53ef\\u4ee5\\u7559\\u7a7a\\uff1f\\u4f46\\u5b57\\u6bb5\\u8981\\u6c42\\\"\\u7528\\u6237\\u8fd9\\u4e00\\u8f6e\\u771f\\u5b9e\\u8bf4\\u51fa\\u53e3\\u7684\\u4efb\\u52a1\\u63cf\\u8ff0\\uff0c\\u539f\\u8bdd\\u6216\\u8d34\\u8fd1\\u539f\\u8bdd\\uff0c\\u6ca1\\u6709\\u5c31\\u7559\\u7a7a\\\"\\u3002\\u7528\\u6237\\u8bf4\\\"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\\"\\uff0c\\u8fd9\\u66f4\\u50cf\\u662f\\u4e00\\u4e2a\\u95ee\\u9898/\\u8bf7\\u6c42\\u4e86\\u89e3\\u60c5\\u51b5\\uff0c\\u4e0d\\u662f\\u4efb\\u52a1\\u63cf\\u8ff0\\u3002\\u53ef\\u4ee5\\u7559\\u7a7a\\u3002\\u4f46\\u4e5f\\u53ef\\u4ee5\\u7406\\u89e3\\u4e3a\\u7528\\u6237\\u5728\\u95ee\\u5f53\\u524d\\u8d26\\u53f7\\u72b6\\u6001\\uff0c\\u4e0d\\u7b97\\u4efb\\u52a1\\u3002\\u7559\\u7a7a\\u3002\\n\\ntemporal_scope\\uff1a\\u7528\\u6237\\u6ca1\\u8bf4\\uff0cUNSTATED\\u3002\\n\\nprimary_goal_text\\uff1a\\u7528\\u6237\\u6ca1\\u6709\\u8868\\u8fbe\\u7ecf\\u8425\\u76ee\\u6807\\uff0c\\u662f\\u5728\\u8be2\\u95ee\\u60c5\\u51b5\\u3002\\u7559\\u7a7a\\u3002\\n\\nsecondary_goal_text\\uff1a\\u7559\\u7a7a\\u3002\\n\\npriority_order_text\\uff1a\\u7559\\u7a7a\\u3002\\n\\nnon_sacrifice_constraint_text\\uff1a\\u7559\\u7a7a\\u3002\\n\\nbusiness_goal_category\\uff1a\\u7528\\u6237\\u672c\\u8f6e\\u6ca1\\u6709\\u8868\\u8fbe\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\uff0c\\u867d\\u7136\\u5728\\u5feb\\u7167\\u4e2d\\u6709TRAFFIC\\uff0c\\u4f46\\u90a3\\u662f\\u4e4b\\u524d\\u8f6e\\u6b21\\u7684\\u3002\\u672c\\u8f6e\\u53ea\\u662f\\u95ee\\u60c5\\u51b5\\uff0c\\u6240\\u4ee5UNSTATED\\u3002\\u6ce8\\u610f\\u6307\\u4ee4\\u8bf4\\\"\\u7528\\u6237\\u8fd9\\u4e00\\u8f6e\\u8868\\u8fbe\\u7684\\u7ecf\\u8425\\u76ee\\u6807\\u7c7b\\u522b\\\"\\uff0c\\u6ca1\\u8868\\u8fbe\\u4e3aUNSTATED\\u3002\\n\\nrequested_capabilities_text\\uff1a\\u7528\\u6237\\u6ca1\\u70b9\\u540d\\u80fd\\u529b\\u3002\\u7559\\u7a7a\\u3002\\n\\nconfirmation_signal\\uff1a\\u7528\\u6237\\u662f\\u5426\\u5728\\u56de\\u5e94\\u5f85\\u786e\\u8ba4\\u4e8b\\u9879\\uff1f\\u4e0d\\u662f\\u3002NONE\\u3002\\n\\nside_question\\uff1a\\u6ca1\\u6709\\u3002\\u7559\\u7a7a\\u3002\\n\\nuser_message_summary\\uff1a\\u4e00\\u53e5\\u8bdd\\u590d\\u8ff0\\uff1a\\\"\\u7528\\u6237\\u5728\\u8be2\\u95ee\\u8fd9\\u4e2a\\u8d26\\u53f7\\u76ee\\u524d\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u3002\\\"\\n\\naccount_stage_text\\uff1a\\u7528\\u6237\\u6ca1\\u8bf4\\u9636\\u6bb5\\u3002\\u7559\\u7a7a\\u3002\\n\\nplot_allowed / remix_allowed / conflict_allowed / controversy_allowed\\uff1a\\u90fd\\u6ca1\\u63d0\\u5230\\uff0cUNSTATED\\u3002\\n\\ndesired_output_text\\uff1a\\u6ca1\\u8bf4\\u3002\\u7559\\u7a7a\\u3002\\n\\ncycle_available_text\\uff1a\\u6ca1\\u8bf4\\u3002\\u7559\\u7a7a\\u3002\\n\\nbaseline_text\\uff1a\\u6ca1\\u8bf4\\u3002\\u7559\\u7a7a\\u3002\\n\\nevidence_text\\uff1a\\u7528\\u6237\\u672c\\u8f6e\\u8bf4\\u51fa\\u53e3\\u7684\\u4e00\\u6761\\u4fe1\\u606f\\uff1f\\\"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\\"\\u662f\\u4e00\\u4e2a\\u95ee\\u9898\\uff0c\\u4e0d\\u662f\\u4e00\\u4e2a\\u4e8b\\u5b9e/\\u504f\\u597d/\\u53c2\\u8003\\u3002\\u6ca1\\u6709\\u53ef\\u8bb0\\u5f55\\u7684\\u4fe1\\u606f\\u3002\\u7559\\u7a7a\\u3002\\n\\nevidence_nature\\uff1aUNSTATED\\u3002\\n\\nevidence_scope\\uff1aUNSTATED\\u3002\\n\\nevidence_provenance\\uff1aevidence_text\\u4e3a\\u7a7a\\uff0c\\u6240\\u4ee5\\u53ea\\u80fd\\u662fUSER_DIRECT\\uff1f\\u5b57\\u6bb5\\u8bf4\\u660e\\uff1aevidence_text \\u975e\\u7a7a\\u65f6\\u5fc5\\u987b\\u7ed9\\u51fa FACT/PREFERENCE/REFERENCE \\u4e4b\\u4e00\\uff1bevidence_text \\u7559\\u7a7a\\u65f6\\u586b UNSTATED\\u3002\\u5bf9\\u4e8eprovenance\\uff0c\\u8bf4\\u660e\\\"evidence_text \\u8fd9\\u6761\\u4fe1\\u606f\\u7684\\u6765\\u6e90...\\u3010\\u672c\\u8f6e\\u7528\\u6237\\u4e0a\\u4f20\\u8d44\\u6599\\u539f\\u6587\\u3011\\u4e3a\\u7a7a\\u65f6\\uff0c\\u672c\\u5b57\\u6bb5\\u53ea\\u80fd\\u662f USER_DIRECT\\\"\\u3002\\u6240\\u4ee5\\u5373\\u4f7fevidence_text\\u4e3a\\u7a7a\\uff0c\\u4e5f\\u586bUSER_DIRECT\\u3002\\u6709\\u7684schema\\u53ef\\u80fd\\u8981\\u6c42UNSTATED\\uff0c\\u4f46\\u8fd9\\u91cc\\u660e\\u786e\\u8bf4\\u8d44\\u6599\\u539f\\u6587\\u4e3a\\u7a7a\\u65f6\\u53ea\\u80fd\\u662fUSER_DIRECT\\u3002\\u6240\\u4ee5\\u586bUSER_DIRECT\\u3002\\n\\nhandled_thread_id\\uff1aopen_threads\\u4e3a\\u7a7a\\uff0c\\u6ca1\\u6709\\u3002\\u7559\\u7a7a\\u3002\\n\\ncancel_target\\uff1aNONE\\u3002\\n\\naccount_anchor_text\\uff1a\\u7528\\u6237\\u8bf4\\\"\\u8fd9\\u4e2a\\u53f7\\\"\\uff0c\\u6307\\u7684\\u662f\\u4e4b\\u524d\\u63d0\\u5230\\u7684\\u8d26\\u53f7\\uff0c\\u4f46\\u672c\\u8f6e\\u6ca1\\u6709\\u63cf\\u8ff0\\u8eab\\u4efd\\u7ebf\\u7d22\\u3002\\u53ef\\u4ee5\\u7559\\u7a7a\\uff1f\\u7528\\u6237\\u7528\\u4e86\\\"\\u8fd9\\u4e2a\\u53f7\\\"\\u6307\\u4ee3\\uff0c\\u4f46\\u4e0d\\u6784\\u6210\\u8eab\\u4efd\\u7ebf\\u7d22\\u3002\\u7559\\u7a7a\\u3002\\n\\ncta_target_text\\uff1a\\u6ca1\\u6709\\u3002\\u7559\\u7a7a\\u3002\\n\\ncta_risk_tier\\uff1aUNSTATED\\u3002\\n\\ncta_conversion_goal_text\\uff1a\\u7559\\u7a7a\\u3002\\n\\ncta_access_path_text\\uff1a\\u7559\\u7a7a\\u3002\\n\\ncta_authorization_signal\\uff1aNONE\\u3002\\n\\ncta_preference_signal\\uff1aNONE\\u3002\\n\\n\\u6ce8\\u610f\\uff1a\\u7528\\u6237\\u95ee\\\"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\\"\\u53ef\\u80fd\\u662f\\u5728\\u8981\\u6c42\\u7cfb\\u7edf\\u67e5\\u770b\\u8d26\\u53f7\\u72b6\\u6001\\uff0c\\u4f46\\u8fd9\\u4e0d\\u662f\\u6267\\u884c\\u8bf7\\u6c42\\uff0c\\u800c\\u662f\\u8be2\\u95ee\\u3002\\u6240\\u4ee5DISCUSS\\u3002\\n\\n\\u53e6\\u5916\\uff0c\\u6ce8\\u610f\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\\u4e2d\\u7684current_task\\u662f\\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\"\\uff0c\\u7528\\u6237\\u73b0\\u5728\\u8bf4\\\"\\u8fd9\\u4e2a\\u53f7\\\"\\u627f\\u63a5\\u4e86\\u4e4b\\u524d\\u7684\\u8d26\\u53f7\\u3002\\u4f46\\u4e0d\\u9700\\u8981\\u989d\\u5916\\u5904\\u7406\\u3002\\n\\n\\u6211\\u4eec\\u9700\\u8981\\u8f93\\u51fa\\u6240\\u670933\\u4e2a\\u5b57\\u6bb5\\u3002\\u6ce8\\u610f\\u5b57\\u6bb5\\u5217\\u8868\\uff1aroute_intent, current_task_text, temporal_scope, primary_goal_text, secondary_goal_text, priority_order_text, non_sacrifice_constraint_text, business_goal_category, requested_capabilities_text, confirmation_signal, side_question, user_message_summary, account_stage_text, plot_allowed, remix_allowed, conflict_allowed, controversy_allowed, desired_output_text, cycle_available_text, baseline_text, evidence_text, evidence_nature, evidence_scope, evidence_provenance, handled_thread_id, cancel_target, account_anchor_text, cta_target_text, cta_risk_tier, cta_conversion_goal_text, cta_access_path_text, cta_authorization_signal, cta_preference_signal\\u3002\\n\\n\\u6b63\\u597d33\\u4e2a\\u3002\\n\\n\\u73b0\\u5728\\u6784\\u9020JSON\\u3002\\n\\n\\u68c0\\u67e5\\u6bcf\\u4e2a\\u5b57\\u6bb5\\uff1a\\n- route_intent: \\\"DISCUSS\\\"\\n- current_task_text: \\\"\\\" \\uff08\\u7528\\u6237\\u53ea\\u662f\\u95ee\\u60c5\\u51b5\\uff0c\\u6ca1\\u6709\\u7ed9\\u51fa\\u4efb\\u52a1\\u63cf\\u8ff0\\uff09\\n- temporal_scope: \\\"UNSTATED\\\"\\n- primary_goal_text: \\\"\\\"\\n- secondary_goal_text: \\\"\\\"\\n- priority_order_text: \\\"\\\"\\n- non_sacrifice_constraint_text: \\\"\\\"\\n- business_goal_category: \\\"UNSTATED\\\"\\n- requested_capabilities_text: \\\"\\\"\\n- confirmation_signal: \\\"NONE\\\"\\n- side_question: \\\"\\\"\\n- user_message_summary: \\\"\\u7528\\u6237\\u8be2\\u95ee\\u8fd9\\u4e2a\\u8d26\\u53f7\\u76ee\\u524d\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u3002\\\"\\n- account_stage_text: \\\"\\\"\\n- plot_allowed: \\\"UNSTATED\\\"\\n- remix_allowed: \\\"UNSTATED\\\"\\n- conflict_allowed: \\\"UNSTATED\\\"\\n- controversy_allowed: \\\"UNSTATED\\\"\\n- desired_output_text: \\\"\\\"\\n- cycle_available_text: \\\"\\\"\\n- baseline_text: \\\"\\\"\\n- evidence_text: \\\"\\\"\\n- evidence_nature: \\\"UNSTATED\\\"\\n- evidence_scope: \\\"UNSTATED\\\"\\n- evidence_provenance: \\\"USER_DIRECT\\\"\\n- handled_thread_id: \\\"\\\"\\n- cancel_target: \\\"NONE\\\"\\n- account_anchor_text: \\\"\\\"\\n- cta_target_text: \\\"\\\"\\n- cta_risk_tier: \\\"UNSTATED\\\"\\n- cta_conversion_goal_text: \\\"\\\"\\n- cta_access_path_text: \\\"\\\"\\n- cta_authorization_signal: \\\"NONE\\\"\\n- cta_preference_signal: \\\"NONE\\\"\\n\\n\\u6ce8\\u610f\\uff1aevidence_provenance \\u5728 evidence_text \\u4e3a\\u7a7a\\u65f6\\u586b USER_DIRECT \\u8fd8\\u662f UNSTATED\\uff1f\\u770b\\u5b57\\u6bb5\\u63cf\\u8ff0\\uff1a\\\"evidence_provenance\\uff1aevidence_text \\u8fd9\\u6761\\u4fe1\\u606f\\u7684\\u6765\\u6e90\\uff1a\\u6765\\u81ea\\u3010\\u672c\\u8f6e\\u7528\\u6237\\u4e0a\\u4f20\\u8d44\\u6599\\u539f\\u6587\\u3011\\u4e3a SOURCED_MATERIAL\\uff0c\\u6765\\u81ea\\u7528\\u6237\\u5bf9\\u8bdd\\u539f\\u8bdd\\u4e3a USER_DIRECT\\uff1b\\u8d44\\u6599\\u539f\\u6587\\u4e3a\\u7a7a\\u65f6\\u53ea\\u80fd\\u662f USER_DIRECT\\\"\\u3002\\u6240\\u4ee5\\u5373\\u4f7f\\u7528\\u6237\\u6ca1\\u6709\\u8bf4\\u53ef\\u8bb0\\u5f55\\u7684\\u4fe1\\u606f\\uff0cprovenance\\u4e5f\\u586bUSER_DIRECT\\u3002\\u4e0d\\u8fc7\\u6709\\u4e9b\\u7c7b\\u4f3cschema\\u4f1a\\u8ba9UNSTATED\\u3002\\u4f46\\u8fd9\\u91cc\\u660e\\u786e\\u8bf4\\u660e\\uff0c\\u6240\\u4ee5USER_DIRECT\\u3002\\n\\n\\u786e\\u8ba4handled_thread_id\\uff1aopen_threads\\u4e3a\\u7a7a\\uff0c\\u6240\\u4ee5\\u7559\\u7a7a\\u3002\\n\\ncancel_target\\uff1aNONE\\u3002\\n\\n\\u9700\\u8981\\u786e\\u4fddJSON\\u683c\\u5f0f\\u6b63\\u786e\\uff0c\\u65e0\\u591a\\u4f59\\u6587\\u5b57\\u3002\\n\\n\\u73b0\\u5728\\u8f93\\u51fa\\u3002\", \"usage\": {\"prompt_tokens\": 5337, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 1832, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 7169, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 13.672, \"time_to_first_token\": 2.078, \"time_to_generate\": 11.593}, \"finish_reason\": \"stop\", \"structured_output\": {\"route_intent\": \"DISCUSS\", \"current_task_text\": \"\", \"temporal_scope\": \"UNSTATED\", \"primary_goal_text\": \"\", \"secondary_goal_text\": \"\", \"priority_order_text\": \"\", \"non_sacrifice_constraint_text\": \"\", \"business_goal_category\": \"UNSTATED\", \"requested_capabilities_text\": \"\", \"confirmation_signal\": \"NONE\", \"side_question\": \"\", \"user_message_summary\": \"\\u7528\\u6237\\u8be2\\u95ee\\u8fd9\\u4e2a\\u8d26\\u53f7\\u76ee\\u524d\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u3002\", \"account_stage_text\": \"\", \"plot_allowed\": \"UNSTATED\", \"remix_allowed\": \"UNSTATED\", \"conflict_allowed\": \"UNSTATED\", \"controversy_allowed\": \"UNSTATED\", \"desired_output_text\": \"\", \"cycle_available_text\": \"\", \"baseline_text\": \"\", \"evidence_text\": \"\", \"evidence_nature\": \"UNSTATED\", \"evidence_scope\": \"UNSTATED\", \"evidence_provenance\": \"USER_DIRECT\", \"handled_thread_id\": \"\", \"cancel_target\": \"NONE\", \"account_anchor_text\": \"\", \"cta_target_text\": \"\", \"cta_risk_tier\": \"UNSTATED\", \"cta_conversion_goal_text\": \"\", \"cta_access_path_text\": \"\", \"cta_authorization_signal\": \"NONE\", \"cta_preference_signal\": \"NONE\"}}"
+        },
+        {
+          "idx": 5,
+          "node_id": "m1_compiler",
+          "title": "状态机｜任务上下文编译与调用意图判定",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.052804,
+          "inputs": "{\"user_query\": \"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"shadow_patch\": {\"route_intent\": \"DISCUSS\", \"current_task_text\": \"\", \"temporal_scope\": \"UNSTATED\", \"primary_goal_text\": \"\", \"secondary_goal_text\": \"\", \"priority_order_text\": \"\", \"non_sacrifice_constraint_text\": \"\", \"business_goal_category\": \"UNSTATED\", \"requested_capabilities_text\": \"\", \"confirmation_signal\": \"NONE\", \"side_question\": \"\", \"user_message_summary\": \"\\u7528\\u6237\\u8be2\\u95ee\\u8fd9\\u4e2a\\u8d26\\u53f7\\u76ee\\u524d\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u3002\", \"account_stage_text\": \"\", \"plot_allowed\": \"UNSTATED\", \"remix_allowed\": \"UNSTATED\", \"conflict_allowed\": \"UNSTATED\", \"controversy_allowed\": \"UNSTATED\", \"desired_output_text\": \"\", \"cycle_available_text\": \"\", \"baseline_text\": \"\", \"evidence_text\": \"\", \"evidence_nature\": \"UNSTATED\", \"evidence_scope\": \"UNSTATED\", \"evidence_provenance\": \"USER_DIRECT\", \"handled_thread_id\": \"\", \"cancel_target\": \"NONE\", \"account_anchor_text\": \"\", \"cta_target_text\": \"\", \"cta_risk_tier\": \"UNSTATED\", \"cta_conversion_goal_text\": \"\", \"cta_access_path_text\": \"\", \"cta_authorization_signal\": \"NONE\", \"cta_preference_signal\": \"NONE\"}, \"material_text\": \"\"}",
+          "outputs": "{\"call_intent_json\": \"{\\\"needed_capabilities\\\": [], \\\"per_capability\\\": {\\\"MATRIX\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"CAMPAIGN\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CONTENT_BRIEF\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CREATIVE_SCRIPT\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PRODUCTION_DIRECTOR\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PUBLISHING_PACKAGING\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"SINGLE_ACCOUNT_OPERATION\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}, \\\"CREATIVE_TOURNAMENT\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}}, \\\"continuation\\\": {\\\"open_threads_to_surface\\\": [], \\\"non_blocking_gaps\\\": [\\\"current_task.temporal_scope\\\", \\\"goal_structure.primary_goal\\\", \\\"account_stage.text\\\", \\\"capacity_triad.desired_output\\\", \\\"capacity_triad.cycle_available\\\", \\\"capacity_triad.baseline\\\", \\\"expression_discretion.plot_allowed\\\", \\\"expression_discretion.remix_allowed\\\", \\\"expression_discretion.conflict_allowed\\\", \\\"expression_discretion.controversy_allowed\\\"]}}\", \"dialogue_directive\": \"\\u5f53\\u524d\\u4efb\\u52a1\\uff1a\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"patch_ok\": \"true\", \"reject_reason\": \"\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"state_changed\": \"false\", \"turn_report_json\": \"{\\\"patch_ok\\\": true, \\\"reject_reason\\\": \\\"\\\", \\\"revision\\\": 1, \\\"requested_capabilities\\\": [], \\\"needed_capabilities\\\": [], \\\"open_threads_open_count\\\": 0, \\\"evidence_dropped_incomplete\\\": false, \\\"evidence_provenance_downgraded\\\": false}\"}"
+        },
+        {
+          "idx": 6,
+          "node_id": "m1_save_snapshot",
+          "title": "写回｜任务上下文快照",
+          "type": "assigner",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.000621,
+          "inputs": "{\"type\": \"assigner\", \"title\": \"\\u5199\\u56de\\uff5c\\u4efb\\u52a1\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\", \"desc\": \"\\u628a\\u7f16\\u8bd1\\u5668\\u7b97\\u51fa\\u7684\\u6700\\u65b0\\u5feb\\u7167\\u5199\\u56de\\u4f1a\\u8bdd\\u53d8\\u91cf\", \"version\": \"2\", \"error_strategy\": null, \"default_value\": null, \"retry_config\": {\"max_retries\": 0, \"retry_interval\": 0, \"retry_enabled\": false}, \"items\": [{\"variable_selector\": [\"conversation\", \"snapshot_json\"], \"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"m1_compiler\", \"snapshot_json\"]}], \"selected\": false}",
+          "outputs": "{}"
+        },
+        {
+          "idx": 7,
+          "node_id": "uapp_action",
+          "title": "分诊｜本轮该进哪个能力、要登记哪类事",
+          "type": "llm",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 16.031111,
+          "inputs": "{\"model_provider\": \"langgenius/deepseek/deepseek\", \"model_name\": \"deepseek-v4-flash\"}",
+          "outputs": "{\"text\": \"{\\\"action\\\": \\\"ASK_STATUS\\\", \\\"platform_text\\\": \\\"\\\", \\\"external_ref_text\\\": \\\"\\\", \\\"feedback_text\\\": \\\"\\\", \\\"withdraw_target_text\\\": \\\"\\\", \\\"reason_text\\\": \\\"\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u5728\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u8be5\\u8d26\\u53f7\\u7684\\u4ec0\\u4e48\\u72b6\\u6001\\u3002\\\", \\\"intent\\\": \\\"WRITEBACK_OR_STATUS\\\", \\\"intent_reason_text\\\": \\\"\\u672c\\u8f6e\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8e\\u72b6\\u6001\\u67e5\\u8be2\\uff0c\\u5bf9\\u5e94WRITEBACK_OR_STATUS\\u3002\\\", \\\"decisive_question_text\\\": \\\"\\\"}\", \"reasoning_content\": \"<!--dify-deepseek-reasoning-->\\u6211\\u4eec\\u9700\\u8981\\u89e3\\u6790\\u7528\\u6237\\u7684\\u8f93\\u5165\\u548c\\u4e0a\\u4e0b\\u6587\\uff0c\\u8f93\\u51faJSON\\u3002\\u6ce8\\u610f\\u7cfb\\u7edf\\u63d0\\u793a\\uff1a\\u6211\\u4eec\\u8981\\u5224\\u65adintent\\u548caction\\u3002\\u5bf9\\u8bdd\\u5386\\u53f2\\uff1a\\u7528\\u6237\\u6700\\u521d\\u8bf4\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\uff0c\\u7cfb\\u7edf\\uff08\\u6211\\u4eec\\uff09\\u4e4b\\u524d\\u56de\\u590d\\u8bf4\\u8fd9\\u4e2a\\u53f7\\u7684\\u60c5\\u51b5\\u5df2\\u7ecf\\u8bb0\\u5f55\\u5728\\u6848\\uff0c\\u4f46\\u771f\\u6b63\\u505a\\u5224\\u65ad\\u7684\\u90e8\\u5206\\u8fd8\\u6ca1\\u63a5\\u8fdb\\u6765\\uff0c\\u6240\\u4ee5\\u7ed9\\u4e0d\\u4e86\\u5206\\u6790\\u7ed3\\u8bba\\u3002\\u7136\\u540e\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\u3002\\u8fd9\\u662f\\u7b2c\\u4e8c\\u8f6e\\u3002\\n\\n\\u6211\\u4eec\\u9700\\u8981\\u6839\\u636e\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\\uff0c\\u5f53\\u524d\\u4efb\\u52a1\\u6587\\u672c\\u662f\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\u201d\\uff0ctemporal_scope\\u662fUNSTATED\\uff0csource_ref\\u662fUSER_DIRECT\\u3002\\u8bc1\\u636e\\u5305\\u91cc\\u6709ev_001\\u3002\\u8fd9\\u4f3c\\u4e4e\\u662f\\u4e00\\u4e2a\\u5173\\u4e8e\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u7684\\u521d\\u6b65\\u63cf\\u8ff0\\u3002\\n\\n\\u73b0\\u5728\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\u3002\\u8fd9\\u662f\\u4ec0\\u4e48\\u610f\\u601d\\uff1f\\u7528\\u6237\\u60f3\\u4e86\\u89e3\\u8fd9\\u4e2a\\u8d26\\u53f7\\u7684\\u73b0\\u72b6\\u3002\\u8fd9\\u5e94\\u8be5\\u5c5e\\u4e8e\\u54ea\\u4e2aintent\\uff1f\\u53ef\\u80fd\\u662fSINGLE_ACCOUNT_OPERATION\\uff08\\u8fd9\\u4e2a\\u53f7\\u63a5\\u4e0b\\u6765\\u8be5\\u600e\\u4e48\\u6301\\u7eed\\u505a\\u3001\\u590d\\u76d8\\u4e0a\\u4e00\\u8f6e\\u3001\\u5f00\\u4e0b\\u4e00\\u4e2a\\u5468\\u671f\\uff09\\u6216MATRIX\\uff08\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u8bca\\u65ad\\u3001\\u5b9a\\u4f4d\\u3001\\u5206\\u5de5\\u3001\\u4eba\\u8bbe\\u95ee\\u9898\\uff09\\u3002\\u7528\\u6237\\u8bf4\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u60f3\\u8981\\u4e00\\u4e2a\\u73b0\\u72b6\\u8bc4\\u4f30\\u3002\\u8fd9\\u66f4\\u504f\\u5411\\u4e8e\\u8d26\\u53f7\\u8fd0\\u8425\\u7684\\u590d\\u76d8/\\u72b6\\u6001\\u67e5\\u770b\\u3002\\u4f46\\u662f\\u8981\\u6ce8\\u610f\\uff0c\\u7528\\u6237\\u662f\\u5728\\u95ee\\u201c\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u53ef\\u80fd\\u662f\\u60f3\\u4e86\\u89e3\\u7cfb\\u7edf\\u7684\\u8bb0\\u5f55\\u72b6\\u6001\\uff1f\\u4e5f\\u53ef\\u80fd\\u662f\\u60f3\\u8ba9\\u6211\\u4eec\\u5206\\u6790\\u8fd9\\u4e2a\\u53f7\\u7684\\u60c5\\u51b5\\uff1f\\u6839\\u636e\\u4e0a\\u4e0b\\u6587\\uff0c\\u6211\\u4eec\\u4e4b\\u524d\\u8bf4\\u201c\\u628a\\u8fd9\\u4e2a\\u53f7\\u76ee\\u524d\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u5728\\u6848\\u7684\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\u201d\\uff0c\\u7136\\u540e\\u7528\\u6237\\u95ee\\u201c\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u53ef\\u80fd\\u662f\\u5728\\u95ee\\u7cfb\\u7edf\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff1f\\u8fd9\\u6709\\u53ef\\u80fd\\u5bf9\\u5e94action=ASK_STATUS\\uff08\\u7528\\u6237\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\u3001\\u4e0a\\u6b21\\u505a\\u5230\\u54ea\\uff09\\u3002\\u4f46intent\\u5462\\uff1f\\u5982\\u679c\\u662f\\u95ee\\u7cfb\\u7edf\\u72b6\\u6001\\uff0c\\u5e94\\u8be5\\u662fWRITEBACK_OR_STATUS\\u3002\\u4f46\\u7528\\u6237\\u53ef\\u80fd\\u66f4\\u60f3\\u77e5\\u9053\\u8d26\\u53f7\\u7684\\u5b9e\\u9645\\u8fd0\\u8425\\u60c5\\u51b5\\uff0c\\u800c\\u4e0d\\u662f\\u7cfb\\u7edf\\u8bb0\\u5f55\\u3002\\u6211\\u4eec\\u770b\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\\uff1a\\u5f53\\u524d\\u4efb\\u52a1\\u6587\\u672c\\u662f\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\u201d\\uff0c\\u7528\\u6237\\u73b0\\u5728\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u8fd9\\u66f4\\u50cf\\u662f\\u5728\\u7ee7\\u7eed\\u8ba8\\u8bba\\u8d26\\u53f7\\u95ee\\u9898\\uff0c\\u5e0c\\u671b\\u5f97\\u5230\\u5bf9\\u8d26\\u53f7\\u60c5\\u51b5\\u7684\\u5206\\u6790\\u3002\\u4f46\\u7cfb\\u7edf\\u6ca1\\u6709\\u63d0\\u4f9b\\u5206\\u6790\\u80fd\\u529b\\uff0c\\u4e4b\\u524d\\u4e5f\\u8bf4\\u4e86\\u63a5\\u4e0d\\u4e0a\\u3002\\u7528\\u6237\\u53ef\\u80fd\\u662f\\u60f3\\u83b7\\u53d6\\u7cfb\\u7edf\\u5bf9\\u8fd9\\u4e2a\\u8d26\\u53f7\\u5f53\\u524d\\u72b6\\u6001\\u7684\\u603b\\u7ed3\\uff0c\\u6bd4\\u5982\\u7cfb\\u7edf\\u8bb0\\u5f55\\u4e86\\u54ea\\u4e9b\\u4fe1\\u606f\\u3002\\n\\n\\u8ba9\\u6211\\u4eec\\u4ed4\\u7ec6\\u5206\\u6790action\\u7684\\u516d\\u4e2a\\u9009\\u9879\\uff1a\\n- NONE\\uff1a\\u63cf\\u8ff0\\u9700\\u6c42\\u3001\\u63d0\\u95ee\\u3001\\u804a\\u5929\\uff0c\\u6ca1\\u6709\\u8981\\u6c42\\u767b\\u8bb0\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\\u3002\\n- RECORD_PUBLISH\\uff1a\\u5df2\\u53d1\\u5e03\\n- RECORD_FEEDBACK\\uff1a\\u63d0\\u4f9b\\u5b9e\\u9645\\u53cd\\u9988\\n- WITHDRAW_MATERIAL\\uff1a\\u64a4\\u56de\\n- NEXT_CYCLE\\uff1a\\u5f00\\u542f\\u4e0b\\u4e00\\u4e2a\\u5468\\u671f\\n- ASK_STATUS\\uff1a\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\u3001\\u4e0a\\u6b21\\u505a\\u5230\\u54ea\\u3001\\u67d0\\u4ef6\\u4e8b\\u767b\\u8bb0\\u6210\\u6ca1\\u6709\\n\\n\\u7528\\u6237\\u8bf4\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u8fd9\\u663e\\u7136\\u662f\\u5728\\u8be2\\u95ee\\u72b6\\u6001\\uff0c\\u53ef\\u80fd\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u4e5f\\u53ef\\u80fd\\u8be2\\u95ee\\u8d26\\u53f7\\u7684\\u8fd0\\u8425\\u60c5\\u51b5\\u3002\\u4f46\\u7ed3\\u5408\\u4e0a\\u4e0b\\u6587\\uff0c\\u6211\\u4eec\\u4e4b\\u524d\\u8bf4\\u201c\\u628a\\u8fd9\\u4e2a\\u53f7\\u76ee\\u524d\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u5728\\u6848\\u7684\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\u201d\\uff0c\\u6240\\u4ee5\\u7528\\u6237\\u63a5\\u7740\\u95ee\\u201c\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u5f88\\u53ef\\u80fd\\u662f\\u95ee\\u7cfb\\u7edf\\u8bb0\\u5f55\\u7684\\u60c5\\u51b5\\uff0c\\u5373ASK_STATUS\\u3002\\u56e0\\u4e3a\\u7528\\u6237\\u6ca1\\u6709\\u63d0\\u4f9b\\u65b0\\u4fe1\\u606f\\uff0c\\u53ea\\u662f\\u8be2\\u95ee\\u3002\\u6240\\u4ee5action=ASK_STATUS\\u3002\\n\\nintent\\uff1a\\u5e94\\u4e3aWRITEBACK_OR_STATUS\\uff08\\u672c\\u8f6e\\u4e3b\\u8981\\u662f\\u767b\\u8bb0\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\\u6216\\u95ee\\u7cfb\\u7edf\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff09\\u3002\\u7528\\u6237\\u73b0\\u5728\\u5c31\\u662f\\u5728\\u95ee\\u7cfb\\u7edf\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u6240\\u4ee5intent=WRITEBACK_OR_STATUS\\u3002\\n\\n\\u4f46\\u8981\\u8003\\u8651\\u662f\\u5426\\u5c5e\\u4e8eSINGLE_ACCOUNT_OPERATION\\uff1f\\u5b9a\\u4e49\\u662f\\u201c\\u8fd9\\u4e2a\\u53f7\\u63a5\\u4e0b\\u6765\\u8be5\\u600e\\u4e48\\u6301\\u7eed\\u505a\\u3001\\u590d\\u76d8\\u4e0a\\u4e00\\u8f6e\\u3001\\u5f00\\u4e0b\\u4e00\\u4e2a\\u5468\\u671f\\u201d\\u3002\\u7528\\u6237\\u95ee\\u73b0\\u72b6\\uff0c\\u53ef\\u80fd\\u9690\\u542b\\u590d\\u76d8\\uff0c\\u4f46\\u66f4\\u76f4\\u63a5\\u7684\\u662f\\u8be2\\u95ee\\u73b0\\u72b6\\u3002SINGLE_ACCOUNT_OPERATION\\u5305\\u62ec\\u201c\\u590d\\u76d8\\u4e0a\\u4e00\\u8f6e\\u201d\\uff0c\\u4f46\\u90a3\\u662f\\u9488\\u5bf9\\u8fd0\\u8425\\u52a8\\u4f5c\\u3002\\u8fd9\\u91cc\\u7528\\u6237\\u53ea\\u662f\\u95ee\\u201c\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u53ef\\u80fd\\u53ea\\u662f\\u60f3\\u77e5\\u9053\\u7cfb\\u7edf\\u4e86\\u89e3\\u4e86\\u4ec0\\u4e48\\u3002\\u6240\\u4ee5\\u66f4\\u8d34\\u8fd1WRITEBACK_OR_STATUS\\u3002\\n\\n\\u53e6\\u5916\\uff0c\\u6211\\u4eec\\u4e5f\\u8981\\u6ce8\\u610f\\u5224\\u65ad\\u7eaa\\u5f8b\\uff1a\\u8ffd\\u95ee\\u8f6e\\u8981\\u63a5\\u7740\\u4e0a\\u4e00\\u8f6e\\u8bfb\\u3002\\u4e0a\\u4e00\\u8f6e\\u6211\\u4eec\\u5224\\u65ad\\u7684\\u662f\\u4ec0\\u4e48\\uff1f\\u6ca1\\u6709\\u660e\\u786e\\u8bb0\\u5f55\\uff0c\\u4f46\\u4e0a\\u4e0b\\u6587\\u5feb\\u7167\\u91cc\\u6709last_route_intent: \\\"DISCUSS\\\"\\uff0c\\u8fd9\\u4e0d\\u662f\\u6211\\u4eec\\u7684\\u5206\\u7c7b\\u3002\\u5f53\\u524d\\u4efb\\u52a1\\u6587\\u672c\\u662f\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\u201d\\uff0c\\u8fd9\\u5e94\\u8be5\\u7b97\\u662f\\u4e00\\u4e2a\\u8d26\\u53f7\\u5b9a\\u4f4d/\\u8bca\\u65ad\\u95ee\\u9898\\uff0c\\u5c5e\\u4e8eMATRIX\\uff1f\\u8fd8\\u662fSINGLE_ACCOUNT_OPERATION\\uff1f\\u7528\\u6237\\u6700\\u521d\\u8bf4\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\uff0c\\u8fd9\\u662f\\u5178\\u578b\\u7684\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\u95ee\\u9898\\uff0c\\u5c5e\\u4e8e\\u77e9\\u9635\\u8bca\\u65ad\\uff08\\u8d26\\u53f7\\u5c42\\u9762\\uff09\\u8fd8\\u662f\\u5355\\u8d26\\u53f7\\u8fd0\\u8425\\uff1f\\u6839\\u636e\\u89c4\\u52194\\uff1a\\u95ee\\u9898\\u843d\\u5728\\u201c\\u8fd9\\u4e2a\\u53f7\\u672c\\u8eab\\u8be5\\u662f\\u4ec0\\u4e48\\u201d\\u2192MATRIX\\uff1b\\u843d\\u5728\\u201c\\u8fd9\\u4e2a\\u53f7\\u63a5\\u4e0b\\u6765\\u600e\\u4e48\\u6301\\u7eed\\u505a\\u201d\\u2192SINGLE_ACCOUNT_OPERATION\\u3002\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\uff0c\\u600e\\u4e48\\u529e\\u201d\\u66f4\\u504f\\u5411\\u4e8e\\u8d26\\u53f7\\u6ca1\\u6d41\\u91cf\\uff0c\\u9700\\u8981\\u8bca\\u65ad\\u539f\\u56e0\\uff0c\\u53ef\\u80fd\\u662f\\u5b9a\\u4f4d\\u95ee\\u9898\\uff0c\\u4e5f\\u53ef\\u80fd\\u662f\\u8fd0\\u8425\\u95ee\\u9898\\u3002\\u4f46\\u901a\\u5e38\\u201c\\u6ca1\\u6d41\\u91cf\\u600e\\u4e48\\u529e\\u201d\\u662f\\u8d26\\u53f7\\u5c42\\u9762\\u7684\\u95ee\\u9898\\uff0c\\u5c5e\\u4e8eMATRIX\\u3002\\u4f46\\u662f\\uff0c\\u7528\\u6237\\u73b0\\u5728\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u8fd9\\u53ef\\u80fd\\u662f\\u5728\\u540c\\u4e00\\u4e2a\\u4e3b\\u9898\\u4e0b\\u7ee7\\u7eed\\u8be2\\u95ee\\u3002\\u5982\\u679c\\u6309\\u8ffd\\u95ee\\u8f6e\\u5904\\u7406\\uff0c\\u6211\\u4eec\\u5e94\\u8be5\\u6cbf\\u7528\\u4e0a\\u4e00\\u8f6e\\u786e\\u5b9a\\u7684intent\\u3002\\u4f46\\u4e0a\\u4e00\\u8f6e\\u5e76\\u6ca1\\u6709\\u660e\\u786e\\u8f93\\u51faintent\\uff0c\\u56e0\\u4e3a\\u6211\\u4eec\\u662fassistant\\uff0c\\u53ea\\u7ed9\\u51fa\\u4e86\\u4e00\\u4e2a\\u6a21\\u68f1\\u4e24\\u53ef\\u7684\\u56de\\u7b54\\u3002\\u5b9e\\u9645\\u4e0a\\uff0c\\u5728\\u4e0a\\u4e0b\\u6587\\u4e2d\\uff0c\\u6211\\u4eec\\u4e4b\\u524d\\u8bf4\\u201c\\u5df2\\u7ecf\\u628a\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\uff0c\\u4f46\\u505a\\u5224\\u65ad\\u7684\\u90e8\\u5206\\u8fd8\\u6ca1\\u63a5\\u8fdb\\u6765\\u201d\\uff0c\\u6240\\u4ee5\\u5e76\\u6ca1\\u6709\\u56de\\u7b54\\u95ee\\u9898\\u3002\\u7528\\u6237\\u73b0\\u5728\\u8ffd\\u95ee\\u201c\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u53ef\\u80fd\\u662f\\u60f3\\u8ba9\\u6211\\u4eec\\u8bf4\\u51fa\\u73b0\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u7684\\u4fe1\\u606f\\u3002\\n\\n\\u4e5f\\u8bb8\\u8fd9\\u4e2a\\u573a\\u666f\\u662f\\uff1a\\u7528\\u6237\\u5148\\u63d0\\u51fa\\u201c\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\u201d\\uff0c\\u7cfb\\u7edf\\uff08\\u6211\\u4eec\\uff09\\u4e4b\\u524d\\u6ca1\\u6709\\u76f4\\u63a5\\u56de\\u7b54\\uff0c\\u800c\\u662f\\u8bf4\\u5df2\\u7ecf\\u8bfb\\u53d6\\u4e86\\u8bb0\\u5f55\\u4f46\\u672a\\u63a5\\u4e0a\\u5224\\u65ad\\u3002\\u7136\\u540e\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u5e0c\\u671b\\u6211\\u4eec\\u7ed9\\u51fa\\u7cfb\\u7edf\\u91cc\\u5df2\\u8bb0\\u5f55\\u7684\\u4fe1\\u606f\\u3002\\u8fd9\\u786e\\u5b9e\\u662fASK_STATUS\\u3002\\n\\n\\u6240\\u4ee5\\uff0c\\u6211\\u4eec\\u5e94\\u8f93\\u51fa\\uff1a\\naction: \\\"ASK_STATUS\\\"\\nplatform_text: \\\"\\\"\\nexternal_ref_text: \\\"\\\"\\nfeedback_text: \\\"\\\"\\nwithdraw_target_text: \\\"\\\"\\nreason_text: \\u5f15\\u7528\\u7528\\u6237\\u539f\\u8bdd\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u8fd9\\u662f\\u5728\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u7684\\u8be5\\u8d26\\u53f7\\u72b6\\u6001\\u3002\\nintent: \\\"WRITEBACK_OR_STATUS\\\"\\nintent_reason_text: \\u7528\\u6237\\u8be2\\u95ee\\u201c\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u5728\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8eWRITEBACK_OR_STATUS\\u3002\\ndecisive_question_text: \\\"\\\"\\n\\n\\u6ce8\\u610f\\uff1a\\u662f\\u5426\\u53ef\\u80fd\\u662fAMBIGUOUS\\uff1f\\u4e0d\\uff0c\\u8fd9\\u91cc\\u5f88\\u660e\\u663e\\u662f\\u95ee\\u72b6\\u6001\\u3002\\u6240\\u4ee5\\u4e0d\\u9700\\u8981decisive_question\\u3002\\n\\n\\u53e6\\u5916\\uff0c\\u7528\\u6237\\u8f93\\u5165\\u91cc\\u53ef\\u80fd\\u6ca1\\u6709\\u8bf4\\u5e73\\u53f0\\uff0c\\u4f46\\u4e0a\\u4e0b\\u6587\\u91cc\\u6709\\u201c\\u8d26\\u53f7\\u201d\\uff0c\\u6ca1\\u6709\\u5e73\\u53f0\\u540d\\u79f0\\uff0c\\u6240\\u4ee5platform_text\\u7559\\u7a7a\\u3002\\n\\n\\u8fd8\\u8981\\u6ce8\\u610f\\uff1aaction\\u548cintent\\u7684\\u5173\\u8054\\u3002\\u6839\\u636e\\u8bf4\\u660e\\uff0cWRITEBACK_OR_STATUS\\u5bf9\\u5e94\\u7684\\u662f\\u767b\\u8bb0\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\\u6216\\u95ee\\u7cfb\\u7edf\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u6240\\u4ee5\\u6b63\\u597d\\u3002\\n\\n\\u56e0\\u6b64\\uff0cJSON\\u8f93\\u51fa\\u5e94\\u4e3a\\uff1a\\n{\\n  \\\"action\\\": \\\"ASK_STATUS\\\",\\n  \\\"platform_text\\\": \\\"\\\",\\n  \\\"external_ref_text\\\": \\\"\\\",\\n  \\\"feedback_text\\\": \\\"\\\",\\n  \\\"withdraw_target_text\\\": \\\"\\\",\\n  \\\"reason_text\\\": \\\"\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u5728\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u8be5\\u8d26\\u53f7\\u7684\\u4ec0\\u4e48\\u72b6\\u6001\\u3002\\\",\\n  \\\"intent\\\": \\\"WRITEBACK_OR_STATUS\\\",\\n  \\\"intent_reason_text\\\": \\\"\\u672c\\u8f6e\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8e\\u72b6\\u6001\\u67e5\\u8be2\\uff0c\\u5bf9\\u5e94WRITEBACK_OR_STATUS\\u3002\\\",\\n  \\\"decisive_question_text\\\": \\\"\\\"\\n}\\n\\n\\u6ce8\\u610f\\uff1a\\u5fc5\\u987b\\u4e5d\\u4e2a\\u5b57\\u6bb5\\uff0c\\u4e00\\u4e2a\\u4e0d\\u80fd\\u5c11\\u3002\\u786e\\u8ba4\\u4e00\\u4e0b\\u5b57\\u6bb5\\u7c7b\\u578b\\u90fd\\u662f\\u5b57\\u7b26\\u4e32\\u3002\\n\\n\\u6211\\u4eec\\u518d\\u68c0\\u67e5\\u4e00\\u4e0b\\u662f\\u5426\\u6709\\u5176\\u4ed6\\u66f4\\u5408\\u9002\\u7684action\\uff1f\\u7528\\u6237\\u8bf4\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u6ca1\\u6709\\u63d0\\u5230\\u4efb\\u4f55\\u5df2\\u53d1\\u751f\\u7684\\u4e8b\\uff0c\\u53ea\\u662f\\u8be2\\u95ee\\uff0c\\u6240\\u4ee5\\u4e0d\\u662fRECORD_PUBLISH\\u7b49\\u3002NONE\\u662f\\u201c\\u63cf\\u8ff0\\u9700\\u6c42\\u3001\\u63d0\\u95ee\\u3001\\u804a\\u5929\\u201d\\uff0c\\u4f46ask_status\\u4e5f\\u662f\\u63d0\\u95ee\\uff0c\\u4f46\\u66f4\\u5177\\u4f53\\u3002\\u6839\\u636e\\u5b9a\\u4e49\\u201cASK_STATUS\\uff1a\\u7528\\u6237\\u5728\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\u3001\\u4e0a\\u6b21\\u505a\\u5230\\u54ea\\u3001\\u67d0\\u4ef6\\u4e8b\\u5230\\u5e95\\u767b\\u8bb0\\u6210\\u6ca1\\u6709\\u3002\\u201d\\u8fd9\\u91cc\\u6b63\\u662f\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u6240\\u4ee5ASK_STATUS\\u6b63\\u786e\\u3002\\n\\n\\u53e6\\u5916\\uff0cintent\\u91cc\\u8fd8\\u6709CHITCHAT\\uff0c\\u4f46\\u663e\\u7136\\u4e0d\\u662f\\u3002\\n\\n\\u56e0\\u6b64\\uff0c\\u6211\\u4eec\\u8f93\\u51fa\\u8fd9\\u4e2aJSON\\u3002\", \"usage\": {\"prompt_tokens\": 3044, \"prompt_unit_price\": \"0\", \"prompt_price_unit\": \"0\", \"prompt_price\": \"0\", \"completion_tokens\": 1641, \"completion_unit_price\": \"0\", \"completion_price_unit\": \"0\", \"completion_price\": \"0\", \"total_tokens\": 4685, \"total_price\": \"0\", \"currency\": \"USD\", \"latency\": 16.025, \"time_to_first_token\": 2.342, \"time_to_generate\": 13.683}, \"finish_reason\": \"stop\", \"structured_output\": {\"action\": \"ASK_STATUS\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\", \"reason_text\": \"\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u5728\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u8be5\\u8d26\\u53f7\\u7684\\u4ec0\\u4e48\\u72b6\\u6001\\u3002\", \"intent\": \"WRITEBACK_OR_STATUS\", \"intent_reason_text\": \"\\u672c\\u8f6e\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8e\\u72b6\\u6001\\u67e5\\u8be2\\uff0c\\u5bf9\\u5e94WRITEBACK_OR_STATUS\\u3002\", \"decisive_question_text\": \"\"}}"
+        },
+        {
+          "idx": 8,
+          "node_id": "uapp_route",
+          "title": "路由｜把意图桥接到该进的那一个能力",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.051591,
+          "inputs": "{\"call_intent_json\": \"{\\\"needed_capabilities\\\": [], \\\"per_capability\\\": {\\\"MATRIX\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"CAMPAIGN\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CONTENT_BRIEF\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": \\\"\\u6b64\\u5224\\u5b9a\\u4e0d\\u4ee3\\u8868\\u4e3b Chatflow \\u7684\\u65e2\\u6709\\u7ebf\\u6027\\u9501(v1_state.UPSTREAM_OF)\\u4f1a\\u653e\\u884c\\uff1bM1 \\u5019\\u9009\\u73af\\u5883\\u4e0d\\u7ecf\\u8fc7\\u8be5\\u9501\\uff0c\\u9501\\u7684\\u89e3\\u9664\\u6682\\u5b9a\\u4e3a M4 \\u65bd\\u5de5\\u8303\\u56f4\\u3002\\\"}, \\\"CREATIVE_SCRIPT\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PRODUCTION_DIRECTOR\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"PUBLISHING_PACKAGING\\\": {\\\"status\\\": \\\"DEGRADED_INPUT\\\", \\\"reachable_if_requested\\\": true, \\\"block_reason\\\": null, \\\"known_limitation\\\": null}, \\\"SINGLE_ACCOUNT_OPERATION\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}, \\\"CREATIVE_TOURNAMENT\\\": {\\\"status\\\": \\\"BLOCKED\\\", \\\"reachable_if_requested\\\": false, \\\"block_reason\\\": \\\"NO_PHYSICAL_ENTRY_YET\\\", \\\"known_limitation\\\": null}}, \\\"continuation\\\": {\\\"open_threads_to_surface\\\": [], \\\"non_blocking_gaps\\\": [\\\"current_task.temporal_scope\\\", \\\"goal_structure.primary_goal\\\", \\\"account_stage.text\\\", \\\"capacity_triad.desired_output\\\", \\\"capacity_triad.cycle_available\\\", \\\"capacity_triad.baseline\\\", \\\"expression_discretion.plot_allowed\\\", \\\"expression_discretion.remix_allowed\\\", \\\"expression_discretion.conflict_allowed\\\", \\\"expression_discretion.controversy_allowed\\\"]}}\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"user_query\": \"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\", \"ws_id\": \"233411bc-e59a-4c64-9af8-adab614abebb\", \"conv_id\": \"30496f84-bc4f-4885-88c2-54f0c2da0f57\", \"action_patch\": {\"action\": \"ASK_STATUS\", \"platform_text\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"withdraw_target_text\": \"\", \"reason_text\": \"\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u5728\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u8be5\\u8d26\\u53f7\\u7684\\u4ec0\\u4e48\\u72b6\\u6001\\u3002\", \"intent\": \"WRITEBACK_OR_STATUS\", \"intent_reason_text\": \"\\u672c\\u8f6e\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8e\\u72b6\\u6001\\u67e5\\u8be2\\uff0c\\u5bf9\\u5e94WRITEBACK_OR_STATUS\\u3002\", \"decisive_question_text\": \"\"}, \"action_text\": \"{\\\"action\\\": \\\"ASK_STATUS\\\", \\\"platform_text\\\": \\\"\\\", \\\"external_ref_text\\\": \\\"\\\", \\\"feedback_text\\\": \\\"\\\", \\\"withdraw_target_text\\\": \\\"\\\", \\\"reason_text\\\": \\\"\\u7528\\u6237\\u95ee\\u201c\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\u201d\\uff0c\\u662f\\u5728\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u8be5\\u8d26\\u53f7\\u7684\\u4ec0\\u4e48\\u72b6\\u6001\\u3002\\\", \\\"intent\\\": \\\"WRITEBACK_OR_STATUS\\\", \\\"intent_reason_text\\\": \\\"\\u672c\\u8f6e\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8e\\u72b6\\u6001\\u67e5\\u8be2\\uff0c\\u5bf9\\u5e94WRITEBACK_OR_STATUS\\u3002\\\", \\\"decisive_question_text\\\": \\\"\\\"}\"}",
+          "outputs": "{\"action\": \"ASK_STATUS\", \"action_source\": \"structured_output\", \"asks_one\": \"false\", \"decisive_question\": \"\", \"entry\": \"\", \"external_ref_text\": \"\", \"feedback_text\": \"\", \"has_capability\": \"false\", \"intent\": \"WRITEBACK_OR_STATUS\", \"intent_reason\": \"\\u672c\\u8f6e\\u662f\\u8be2\\u95ee\\u7cfb\\u7edf\\u5f53\\u524d\\u8bb0\\u4f4f\\u4e86\\u4ec0\\u4e48\\uff0c\\u5c5e\\u4e8e\\u72b6\\u6001\\u67e5\\u8be2\\uff0c\\u5bf9\\u5e94WRITEBACK_OR_STATUS\\u3002\", \"intent_source\": \"none\", \"needs_bootstrap\": \"false\", \"platform_text\": \"\", \"route_mode\": \"STATUS\", \"route_note\": \"capability=\\uff08\\u672c\\u8f6e\\u65e0\\uff09\\uff1baction=ASK_STATUS\\uff1b\\u80fd\\u529b\\u6765\\u6e90=none\\uff1b\\u6a21\\u5f0f=STATUS\\u3002\\u7528\\u6237\\u70b9\\u540d\\u4f18\\u5148\\uff1b\\u672a\\u70b9\\u540d\\u65f6\\u7531\\u672c\\u5c42\\u5206\\u8bca\\u53f0\\u628a\\u81ea\\u7136\\u8bed\\u8a00\\u6865\\u63a5\\u5230\\u80fd\\u529b\\uff0c\\u4f9d\\u636e Founder \\u88c1\\u5b9a UAPP-INTENT-ROUTING-001\\u3002\", \"runs_business\": \"true\", \"runs_m3\": \"false\", \"tag\": \"30496f84bc4f\", \"target_capability\": \"\", \"triage_failed\": \"false\", \"user_request\": \"\\u8fd9\\u4e2a\\u53f7\\u73b0\\u5728\\u7684\\u60c5\\u51b5\\u600e\\u4e48\\u6837\\n\\n\\u3010\\u672c\\u4efb\\u52a1\\u5df2\\u767b\\u8bb0\\u7684\\u8bc9\\u6c42\\u3011\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\", \"withdraw_target_text\": \"\"}"
+        },
+        {
+          "idx": 9,
+          "node_id": "uapp_s2_branch",
+          "title": "分流｜本层三条出口",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.00013,
+          "inputs": "{\"conditions\": [{\"actual_value\": \"true\", \"expected_value\": \"true\", \"comparison_operator\": \"is\"}]}",
+          "outputs": "{\"result\": true, \"selected_case_id\": \"case_business\"}"
+        },
+        {
+          "idx": 10,
+          "node_id": "uapp_boot_gate",
+          "title": "闸门｜本会话是否还没有测试域",
+          "type": "if-else",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 9.5e-05,
+          "inputs": "{\"conditions\": [{\"actual_value\": \"false\", \"expected_value\": \"true\", \"comparison_operator\": \"is\"}]}",
+          "outputs": "{\"result\": false, \"selected_case_id\": \"false\"}"
+        },
+        {
+          "idx": 11,
+          "node_id": "uapp_m2_cycle",
+          "title": "读 M2｜当前周期",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.008643,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"label\\\":\\\"\\u672c\\u5468\\u671f\\\",\\\"start_at\\\":\\\"2026-08-29T15:13:02+00:00\\\",\\\"end_at\\\":null,\\\"idempotency_key\\\":\\\"cyc-30496f84bc4f\\\",\\\"baseline_capacity\\\":null,\\\"baseline_capacity_source\\\":null,\\\"actual_capacity\\\":null,\\\"actual_capacity_source\\\":null,\\\"expected_publish_count\\\":null,\\\"expected_publish_count_source\\\":null,\\\"is_current\\\":true,\\\"supersedes_cycle_id\\\":null,\\\"id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.325836+00:00\\\",\\\"row_version\\\":1}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:35 GMT\", \"server\": \"uvicorn\", \"content-length\": \"547\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;fwd=stale;detail=match\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 12,
+          "node_id": "uapp_m2_dec",
+          "title": "读 M2｜最近一次周期决策",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.00791,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"decision\\\":\\\"none_recorded\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:35 GMT\", \"server\": \"uvicorn\", \"content-length\": \"28\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;fwd=stale;detail=match\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 13,
+          "node_id": "uapp_m2_run",
+          "title": "读 M2｜本任务运行状态",
+          "type": "http-request",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.006884,
+          "inputs": "{}",
+          "outputs": "{\"status_code\": 200, \"body\": \"{\\\"task_id\\\":\\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\",\\\"recovery_state\\\":\\\"none_recorded\\\"}\", \"headers\": {\"date\": \"Sat, 29 Aug 2026 15:13:35 GMT\", \"server\": \"uvicorn\", \"content-length\": \"83\", \"content-type\": \"application/json\", \"cache-status\": \"da6b1e7f91cf;fwd=stale;detail=match\", \"via\": \"1.1 da6b1e7f91cf (squid/6.13)\", \"connection\": \"keep-alive\"}, \"files\": []}"
+        },
+        {
+          "idx": 14,
+          "node_id": "uapp_ctx",
+          "title": "组装｜M2 投影",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.044683,
+          "inputs": "{\"cyc_raw\": \"{\\\"workspace_id\\\":\\\"233411bc-e59a-4c64-9af8-adab614abebb\\\",\\\"account_id\\\":\\\"b968458f-5676-446a-93a8-db8c0701f854\\\",\\\"label\\\":\\\"\\u672c\\u5468\\u671f\\\",\\\"start_at\\\":\\\"2026-08-29T15:13:02+00:00\\\",\\\"end_at\\\":null,\\\"idempotency_key\\\":\\\"cyc-30496f84bc4f\\\",\\\"baseline_capacity\\\":null,\\\"baseline_capacity_source\\\":null,\\\"actual_capacity\\\":null,\\\"actual_capacity_source\\\":null,\\\"expected_publish_count\\\":null,\\\"expected_publish_count_source\\\":null,\\\"is_current\\\":true,\\\"supersedes_cycle_id\\\":null,\\\"id\\\":\\\"d2dee64d-ab27-4913-bb2b-f52eb67cf768\\\",\\\"created_at\\\":\\\"2026-08-29T15:13:02.325836+00:00\\\",\\\"row_version\\\":1}\", \"cyc_status\": 200, \"dec_raw\": \"{\\\"decision\\\":\\\"none_recorded\\\"}\", \"dec_status\": 200, \"run_raw\": \"{\\\"task_id\\\":\\\"dbc56866-0a2c-44f3-8c39-75e37ac8d689\\\",\\\"recovery_state\\\":\\\"none_recorded\\\"}\", \"run_status\": 200, \"material_text\": \"\", \"snapshot_json\": \"{\\\"schema_version\\\": 1, \\\"task_id\\\": null, \\\"revision\\\": 1, \\\"current_task\\\": {\\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"temporal_scope\\\": \\\"UNSTATED\\\", \\\"source_ref\\\": \\\"USER_DIRECT\\\"}, \\\"goal_structure\\\": {\\\"primary_goal\\\": null, \\\"secondary_goals\\\": [], \\\"priority_order\\\": [], \\\"non_sacrifice_constraints\\\": []}, \\\"business_goal_categories\\\": [\\\"TRAFFIC\\\"], \\\"account_stage\\\": {\\\"text\\\": null, \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"account_anchor\\\": {\\\"identity_text\\\": null, \\\"source\\\": \\\"NONE\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\"}, \\\"expression_discretion\\\": {\\\"plot_allowed\\\": \\\"UNSTATED\\\", \\\"remix_allowed\\\": \\\"UNSTATED\\\", \\\"conflict_allowed\\\": \\\"UNSTATED\\\", \\\"controversy_allowed\\\": \\\"UNSTATED\\\"}, \\\"capacity_triad\\\": {\\\"desired_output\\\": null, \\\"cycle_available\\\": null, \\\"baseline\\\": null}, \\\"cta_context\\\": {\\\"risk_tier\\\": \\\"UNSTATED\\\", \\\"target_text\\\": null, \\\"conversion_goal_text\\\": null, \\\"access_path_text\\\": null, \\\"authorized_high_risk_targets\\\": [], \\\"no_cta_requested\\\": false}, \\\"evidence_bundle\\\": [{\\\"id\\\": \\\"ev_001\\\", \\\"text\\\": \\\"\\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\\\", \\\"nature\\\": \\\"FACT\\\", \\\"provenance\\\": \\\"USER_DIRECT\\\", \\\"confirmation\\\": \\\"SYSTEM_TENTATIVE\\\", \\\"scope\\\": \\\"THIS_ACCOUNT\\\", \\\"availability\\\": \\\"AVAILABLE\\\", \\\"permission\\\": \\\"OWNED_BY_USER\\\", \\\"freshness\\\": \\\"FRESH\\\", \\\"captured_at_revision\\\": 0}], \\\"market_observations\\\": [], \\\"gaps\\\": [{\\\"field_ref\\\": \\\"current_task.temporal_scope\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"goal_structure.primary_goal\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"account_stage.text\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.desired_output\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.cycle_available\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"capacity_triad.baseline\\\", \\\"status\\\": \\\"MISSING\\\", \\\"degraded_to\\\": null}, {\\\"field_ref\\\": \\\"expression_discretion.plot_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.remix_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.conflict_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}, {\\\"field_ref\\\": \\\"expression_discretion.controversy_allowed\\\", \\\"status\\\": \\\"DEGRADED\\\", \\\"degraded_to\\\": \\\"UNSTATED\\\"}], \\\"allowed_capabilities\\\": [], \\\"open_threads\\\": [], \\\"runtime_evidence\\\": [], \\\"last_confirmation_signal\\\": \\\"NONE\\\", \\\"last_route_intent\\\": \\\"DISCUSS\\\"}\", \"account_handle\": \"30496f84bc4f\"}",
+          "outputs": "{\"account_context\": \"\\u3010\\u8d26\\u53f7\\u6700\\u5c0f\\u5f53\\u524d\\u6295\\u5f71 \\u00b7 \\u6765\\u6e90 M2 \\u670d\\u52a1\\u5b9e\\u65f6\\u8bfb\\u53d6\\u3011\\n\\u8d26\\u53f7\\uff1a\\u6d4b\\u8bd5\\u8d26\\u53f7 handle=30496f84bc4f\\uff0c\\u5e73\\u53f0=test-platform\\n\\u5f53\\u524d\\u5468\\u671f\\uff1a\\u672c\\u5468\\u671f\\n\\u5468\\u671f\\u8d77\\u59cb\\uff1a2026-08-29T15:13:02+00:00\\n\\u57fa\\u7ebf\\u4ea7\\u80fd\\uff1a\\uff08\\u7a7a\\uff09\\uff08\\u6765\\u6e90\\uff1a\\uff08\\u7a7a\\uff09\\uff09\\n\\u9884\\u671f\\u53d1\\u5e03\\u6761\\u6570\\uff1a\\uff08\\u7a7a\\uff09\\n\\u6700\\u8fd1\\u4e00\\u6b21\\u5468\\u671f\\u51b3\\u7b56\\uff1anone_recorded\\n\\u5df2\\u53d1\\u5e03\\u5185\\u5bb9\\u4e0e\\u53cd\\u9988\\uff1a\\uff08\\u672c\\u5468\\u671f\\u5c1a\\u65e0\\u53d1\\u5e03\\u4e0e\\u53cd\\u9988\\uff09\\n\\u3010\\u672c\\u4efb\\u52a1\\u8fd0\\u884c\\u72b6\\u6001 \\u00b7 \\u6765\\u6e90 M2\\u3011\\n\\u4e0a\\u4e00\\u6b65\\u6210\\u529f\\u5230\\uff1a\\uff08\\u5c1a\\u65e0\\u6210\\u529f\\u6b65\\u9aa4\\u8bb0\\u5f55\\uff09\\n\\u5931\\u8d25\\u6b65\\u9aa4\\uff1a\\uff08\\u65e0\\uff09\\n\\u53ef\\u4ece\\u6b64\\u5904\\u6062\\u590d\\uff1a\\uff08\\u65e0\\uff09\\n\\u5df2\\u53d1\\u751f\\u7684\\u5199\\u5165\\u526f\\u4f5c\\u7528\\uff1a[]\", \"has_material\": \"false\", \"loaded_references\": \"<<REFERENCE_MANIFEST>>\\n\\n<<END_REFERENCE_MANIFEST>>\\n\\n\", \"m2_note\": \"cycles/current=200 decisions/latest=200 run-state=200\", \"m2_reachable\": \"true\", \"registered_facts\": \"===== \\u7528\\u6237\\u5728\\u5bf9\\u8bdd\\u4e2d\\u8bf4\\u51fa\\u53e3\\u3001\\u5df2\\u767b\\u8bb0\\u7684\\u4e8b\\u5b9e\\u4e0e\\u504f\\u597d =====\\n- [FACT/THIS_ACCOUNT] \\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\"}"
+        },
+        {
+          "idx": 15,
+          "node_id": "uapp_s2_pending",
+          "title": "如实交代｜投影已读、判断未接",
+          "type": "code",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 0.045993,
+          "inputs": "{\"route_mode\": \"STATUS\", \"triage_failed\": \"false\", \"m2_reachable\": \"true\", \"m2_note\": \"cycles/current=200 decisions/latest=200 run-state=200\", \"registered_facts\": \"===== \\u7528\\u6237\\u5728\\u5bf9\\u8bdd\\u4e2d\\u8bf4\\u51fa\\u53e3\\u3001\\u5df2\\u767b\\u8bb0\\u7684\\u4e8b\\u5b9e\\u4e0e\\u504f\\u597d =====\\n- [FACT/THIS_ACCOUNT] \\u6709\\u4e2a\\u8d26\\u53f7\\u4e00\\u76f4\\u6ca1\\u6d41\\u91cf\"}",
+          "outputs": "{\"facts_present\": \"true\", \"m2_state\": \"reachable_with_record\", \"pending_kind\": \"routed_not_wired\", \"pending_text\": \"\\u4f60\\u8bf4\\u7684\\u8fd9\\u4ef6\\u4e8b\\u6211\\u5df2\\u7ecf\\u5f52\\u5230\\u8be5\\u8d70\\u7684\\u90a3\\u6761\\u7ebf\\u4e0a\\u4e86\\u3002\\n\\n\\u6211\\u5df2\\u7ecf\\u628a\\u8fd9\\u4e2a\\u53f7\\u76ee\\u524d\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u5728\\u6848\\u7684\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\uff0c\\u540e\\u9762\\u505a\\u5224\\u65ad\\u4f1a\\u4ee5\\u8fd9\\u4e9b\\u4e3a\\u51c6\\uff0c\\u4e0d\\u4f1a\\u66ff\\u5b83\\u8865\\u6ca1\\u53d1\\u751f\\u8fc7\\u7684\\u4e8b\\u3002\\n\\n\\u4f46\\u771f\\u6b63\\u505a\\u5224\\u65ad\\u7684\\u90a3\\u90e8\\u5206\\u8fd8\\u6ca1\\u63a5\\u8fdb\\u6765\\uff0c\\u6240\\u4ee5\\u6211\\u73b0\\u5728\\u7ed9\\u4e0d\\u4e86\\u4f60\\u5206\\u6790\\u7ed3\\u8bba\\u3002\\u6211\\u4e5f\\u6ca1\\u6709\\u628a\\u5b83\\u6302\\u5728\\u540e\\u53f0\\u8dd1\\u2014\\u2014\\u6ca1\\u8dd1\\u5c31\\u662f\\u6ca1\\u8dd1\\uff0c\\u4e0d\\u9a97\\u4f60\\u7b49\\u3002\\n\\n\\u7b49\\u4e0b\\u4e00\\u6b65\\u63a5\\u4e0a\\uff0c\\u540c\\u6837\\u8fd9\\u53e5\\u8bdd\\u5c31\\u80fd\\u76f4\\u63a5\\u51fa\\u7ed3\\u679c\\u3002\"}"
+        },
+        {
+          "idx": 16,
+          "node_id": "uapp_answer_pending",
+          "title": "回复｜投影已读",
+          "type": "answer",
+          "status": "succeeded",
+          "error": null,
+          "elapsed": 8e-05,
+          "inputs": "{}",
+          "outputs": "{\"answer\": \"\\u4f60\\u8bf4\\u7684\\u8fd9\\u4ef6\\u4e8b\\u6211\\u5df2\\u7ecf\\u5f52\\u5230\\u8be5\\u8d70\\u7684\\u90a3\\u6761\\u7ebf\\u4e0a\\u4e86\\u3002\\n\\n\\u6211\\u5df2\\u7ecf\\u628a\\u8fd9\\u4e2a\\u53f7\\u76ee\\u524d\\u5728\\u7cfb\\u7edf\\u91cc\\u8bb0\\u5f55\\u5728\\u6848\\u7684\\u60c5\\u51b5\\u8bfb\\u51fa\\u6765\\u4e86\\uff0c\\u540e\\u9762\\u505a\\u5224\\u65ad\\u4f1a\\u4ee5\\u8fd9\\u4e9b\\u4e3a\\u51c6\\uff0c\\u4e0d\\u4f1a\\u66ff\\u5b83\\u8865\\u6ca1\\u53d1\\u751f\\u8fc7\\u7684\\u4e8b\\u3002\\n\\n\\u4f46\\u771f\\u6b63\\u505a\\u5224\\u65ad\\u7684\\u90a3\\u90e8\\u5206\\u8fd8\\u6ca1\\u63a5\\u8fdb\\u6765\\uff0c\\u6240\\u4ee5\\u6211\\u73b0\\u5728\\u7ed9\\u4e0d\\u4e86\\u4f60\\u5206\\u6790\\u7ed3\\u8bba\\u3002\\u6211\\u4e5f\\u6ca1\\u6709\\u628a\\u5b83\\u6302\\u5728\\u540e\\u53f0\\u8dd1\\u2014\\u2014\\u6ca1\\u8dd1\\u5c31\\u662f\\u6ca1\\u8dd1\\uff0c\\u4e0d\\u9a97\\u4f60\\u7b49\\u3002\\n\\n\\u7b49\\u4e0b\\u4e00\\u6b65\\u63a5\\u4e0a\\uff0c\\u540c\\u6837\\u8fd9\\u53e5\\u8bdd\\u5c31\\u80fd\\u76f4\\u63a5\\u51fa\\u7ed3\\u679c\\u3002\", \"files\": []}"
+        }
+      ]
+    }
+  ],
+  "note": "运行器只发起与记录，不判定。判定由 S2_ADJUDICATE 按冻结判据独立执行。"
+}
