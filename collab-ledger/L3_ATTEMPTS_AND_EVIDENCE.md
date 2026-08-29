@@ -1987,3 +1987,13 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 - **`reuse_without_rerun` 的一条与证据不符**：清单称十类短入口中有"无依赖项"可复用，
   逐条查 `apps_actually_run` 后为空集，十条全部穿过被改应用，一律 `STALE`。如实登记，不改清单。
 - **A/B 盲评的结构性缺陷**（见 L2 第 3 条）：非本轮引入，此前每轮同一脚本均如此。
+
+### `ATT-M5-FP-CLOSEOUT` · Founder 接受技术债后的最终收口（2026-08-29）
+
+授权：`M5-FOUNDER-ADJUDICATION-003` + 合同 `v1.2` + 收口 Prompt v1.0，十份哈希现场复算逐条一致。
+
+本轮**零模型调用、零 Workflow 运行、零候选运行时变更**。只做：一次只读绑定刷新、
+四类收口记录追加、确定性哈希/Git 核对、正常 commit 与 push、非 force 的 main 收口。
+
+`CLOSE-AC-01..06` 逐条成立（依据见证据索引 v1.2 的 `v1_2_hard_gates`）；
+`CLOSE-AC-07` 待 Git／远端真实收口后更新。

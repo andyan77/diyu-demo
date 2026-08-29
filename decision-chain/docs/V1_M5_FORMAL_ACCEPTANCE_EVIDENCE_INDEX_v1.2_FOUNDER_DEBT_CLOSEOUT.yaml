@@ -1,0 +1,285 @@
+index_id: M5-FORMAL-ACCEPTANCE-EVIDENCE-INDEX-v1.2-FOUNDER-DEBT-CLOSEOUT
+task_id: DIYU-V1-M5-UNIFIED-INTEGRATION-FINAL-ACCEPTANCE-001
+supersedes_note: >-
+  不取代、不删除 v1.0 与 v1.1_AC07_REBASE。两者作为历史索引继续有效。
+  本索引只做两件事：把 result/freshness 原样继承过来，并为被 Founder 延期的项加
+  founder_disposition。索引只索引，不判定，不重判任何原始结果。
+revised_closeout_contract: v1.2
+revised_closeout_contract_sha256: 35ccf5906ae1c378961998d02ad0e4bbe5ef652f51e28da734f8639cade9df0e
+founder_adjudication: M5-FOUNDER-ADJUDICATION-003
+all_original_ac_pass: false
+technical_debt_register: decision-chain/docs/V1_M5_ACCEPTED_TECHNICAL_DEBT_REGISTER_v1.0.md
+technical_debt_registry_count: 1
+
+candidate:
+  candidate_commit: 5f84d94d542693f143faab0444525618ab21a4e9
+  manifest: decision-chain/docs/V1_M5_CANDIDATE_RUN_MANIFEST_v1.1.4_FINAL_P0.yaml
+  manifest_sha256: f8757bc787fb928d67b8ba4d3af12793d388f9982bb358ce0fe0483fd68fb148
+  bind: fp
+  readonly_binding_refresh:
+    path: decision-chain/evidence/m5-final-p0/CLOSEOUT_READONLY_BINDING_REFRESH.json
+    sha256: 95963781c92e3e00eafb04ae9986c7632c5b664a8972f799672ed0c44e73bf3c
+    apps_checked: 8
+    drift: none
+    workflow_or_model_calls: 0
+
+evidence_binding:
+  FULL_STORY:
+    path: decision-chain/evidence/m5/FULL_STORY_RUN_full01fp1.json
+    sha256: 3369abfb434f1e48bc4acdabde9cd54cbf985a06b3017afec23361e26e0e4910
+    bytes: 112681
+    freshness: CURRENT
+  RISK_PROBE:
+    path: decision-chain/evidence/m5/RISK_PROBE_SUITE_riskfp1.json
+    sha256: dfbc06e2e6d433f30677ad0d4707af9203fda576d9be7115f589898e651d2082
+    bytes: 2069
+    freshness: CURRENT
+    note: >-
+      文件内 verdict 字段为原始 FAIL，按 evidence_policy 不覆盖。
+      当前状态由 Founder 裁决 002 与冻结负控制表达，见 acceptance_criteria.M5-AC-07。
+  DETERMINISTIC_TESTS:
+    path: decision-chain/evidence/m5-final-p0/FINAL_P0_DETERMINISTIC_TESTS.json
+    sha256: 91b7070349babecc1fa1b264c26a8fc5ffb0498c907fba4d4fc6b5f1c38e3dc2
+    bytes: 2060
+    freshness: CURRENT
+  NEGATIVE_CONTROL:
+    path: decision-chain/evidence/m5-final-p0/R4_NEGATIVE_CONTROL_RUN.json
+    sha256: 8af5267cefca73a7ce062c9039fa1b83a9ee59bac248b43863ac2eb959f5e498
+    bytes: 1680
+    freshness: CURRENT
+    run_id: eb2364a5-e740-4679-ad07-02909663965c
+  NEGATIVE_CONTROL_SUPPLEMENT:
+    path: decision-chain/evidence/m5-final-p0/R4_NEGATIVE_CONTROL_RETURNS_SUPPLEMENT.json
+    sha256: 7bd74ffee64df2f40c6b574a03154c5a5577bf0aa58e8174d46949bdedd28ead
+    freshness: CURRENT
+  HOLDOUT_FINAL_P0:
+    path: decision-chain/evidence/m5-final-p0/HOLDOUT_FINAL_P0_RUNS_formal.json
+    sha256: 4db539064cc1b2cd956cb9b8057f39dc71e360fa0a00fabd62a5a396b99f7667
+    bytes: 114479
+    freshness: CURRENT
+  HOLDOUT_RB_RERUN:
+    path: decision-chain/evidence/m5-rb/HOLDOUT_RB_RUNS_fp1.json
+    sha256: 03061ed7fa778fdd5da6515c7213c72786bf62dcdf1bfa5a9c40b7a26d2c5765
+    bytes: 249692
+    freshness: CURRENT
+  HOLDOUT_M5_05_RERUN:
+    path: decision-chain/evidence/m5/HOLDOUT_RUNS_fp1.json
+    sha256: b94f8fe3582d0ff224ac5721ac9c2b5293a5d56ce07517ea1e63e7e41d2f9f1f
+    bytes: 42919
+    freshness: CURRENT
+  R7_INDEX_RECOMPUTE:
+    path: decision-chain/evidence/m5-final-p0/FINAL_P0_R7_INDEX_RECOMPUTE.json
+    sha256: 0bf5a385295207c82659627126122a7052dee2686a7e17da0788ea65dfb4833c
+    bytes: 27819
+    freshness: CURRENT
+  AB_RAW:
+    path: decision-chain/evidence/m5/AB_SUITE_RAW_abFfp1.json
+    sha256: 3ce9d7a1cd7b3435620beee04eef64794bf4dd33bf6099c5a1615485ab82ab12
+    bytes: 53866
+    freshness: CURRENT
+  AB_BLIND:
+    path: decision-chain/evidence/m5/AB_BLIND_abFfp1.json
+    sha256: 020f0c5ebf3e27c2c5e8c8cd5cbf83a3f3e4fbf0c3669cb58b7e259f695d2c17
+    bytes: 50276
+    freshness: CURRENT
+    scoring_status: NOT_SCORED
+  AB_SEALED:
+    path: decision-chain/evidence/m5/AB_MAPPING_SEALED_abFfp1.json
+    sha256: d55c43ab9d47d087ebf9bf6039504e81bb00571ec17b3d123595221f79050e56
+    bytes: 224
+    sealed_status: UNOPENED
+  STALE_PRE_ROUND_BINDINGS:
+    note: >-
+      以下绑定来自本轮之前、且穿过本轮被替换的应用，按 A3 置 STALE。
+      原文件不删除、不覆盖，仅不得用于当前候选的当期结论。
+    DIRECT_ENTRY: decision-chain/evidence/m5/DIRECT_ENTRY_SUITE_deFRB3.json
+    RISK_PROBE_PRE_ROUND: decision-chain/evidence/m5/RISK_PROBE_SUITE_riskFRB3.json
+    REGRESSION_REG_M3: decision-chain/evidence/m5/REGRESSION_RESULTS_FRB3.json
+    AB_PACKAGE_PRE_ROUND: decision-chain/evidence/m5/AB_BLIND_abFRB3.json
+    ab_package_pre_round_status: STALE / INVALID_FOR_FINAL_SCORING
+
+acceptance_criteria:
+- id: M5-AC-00
+  name: 激活、实时基线与保护面
+  kind: static
+  result: PASS
+  freshness: CURRENT
+  note: >-
+    收口现场复算：worktree clean；相对现场 origin/main 为 592 新增 / 2 修改 / 0 删除，
+    两处修改均为共享账本的只追加（删除行 0）；live main 十个既有未跟踪文件仍在，
+    与 594 条待合并路径交集为 0。
+- id: M5-AC-01
+  name: 集成候选与最终 Manifest
+  kind: static
+  result: PASS
+  freshness: CURRENT
+  note: >-
+    Candidate Run Manifest v1.1.4 已 FROZEN；收口前一次只读刷新，8 个候选应用的
+    graph_md5 / node_count / llm_models 与冻结值逐条一致，漂移 none，零 Workflow/LLM 调用。
+- id: M5-AC-02
+  name: 扩展完整主故事
+  kind: cases
+  case_verdicts:
+    FULL-01: PASS
+    FULL-02: PASS
+  result: PASS
+  freshness: CURRENT
+  evidence: FULL_STORY
+- id: M5-AC-03
+  name: 要求的合法短入口
+  kind: cases
+  inherited_case_verdicts_unchanged:
+    DE-01: PASS
+    DE-02: PASS
+    DE-03: FAIL
+    DE-04: PASS
+    DE-05: PASS
+    DE-06: PASS
+    DE-07: PASS
+    DE-08: PASS
+    DE-09: PASS
+    DE-10: PASS
+  result: STALE
+  freshness: STALE
+  stale_reason: 十条全部穿过本轮被替换的应用，本轮未重跑；冻结清单所称「无依赖项可复用」经逐条核对为空集
+  founder_disposition: ACCEPTED_TECHNICAL_DEBT_FOR_V1_CLOSEOUT
+  technical_debt_ref: TD-M5-02
+  blocking_for_v1_2_closeout: false
+- id: M5-AC-04
+  name: 十九维轻量全覆盖
+  kind: dimensions
+  result: STALE
+  freshness: STALE
+  dimensions_stale:
+  - homogenization
+  - dramatization_derivative_creation
+  dimensions_current: 17
+  current_semantics_caveat: >-
+    CURRENT 含义为「有代表性的当期证据」，不是「该维已全覆盖」。
+    权限维的 RISK-PERM-CTA-01、恢复维的 DE-10、不退化维的 REG-M3-01 仍为 STALE。
+  founder_disposition: ACCEPTED_TECHNICAL_DEBT_FOR_V1_CLOSEOUT
+  technical_debt_ref: TD-M5-03
+  blocking_for_v1_2_closeout: false
+- id: M5-AC-05
+  name: M3 A/B
+  kind: human_only
+  result: NOT_VERIFIED
+  freshness: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+  note: >-
+    受影响案例已在当前候选上重建，新 sealed mapping 未打开。
+    盲评在本仓库内不成立：AB_SUITE_RAW 带显式 A/B 键且与盲评包同目录，必须隔离交付。
+    执行侧已因运行器日志得知 AB-M3-01 映射，对该案例评分意见一律无效。
+  founder_disposition: ACCEPTED_TECHNICAL_DEBT_FOR_V1_CLOSEOUT
+  technical_debt_ref: TD-M5-04
+  blocking_for_v1_2_closeout: false
+- id: M5-AC-06
+  name: 最终成品 A/B
+  kind: human_only
+  result: NOT_VERIFIED
+  freshness: NOT_VERIFIED
+  reason: EXECUTION_SIDE_MAY_NOT_DECIDE
+  founder_disposition: ACCEPTED_TECHNICAL_DEBT_FOR_V1_CLOSEOUT
+  technical_debt_ref: TD-M5-04
+  blocking_for_v1_2_closeout: false
+- id: M5-AC-07
+  name: 留出与高风险探针
+  kind: cases
+  case_verdicts_current:
+    RISK-M4-030+031: PASS
+    RISK-F10-01: PASS
+    RISK-PUBLISH-ID-01: PASS
+    RISK-RECOVERY-01: PASS
+  case_verdicts_stale:
+    RISK-FACT-01: PASS_DECIDABLE_PART_ONLY
+    RISK-PERM-CTA-01: PASS_DECIDABLE_PART_ONLY
+    RISK-M4-032: PASS
+  holdout_verdicts_this_round:
+    HOLDOUT-M5-RB-01: 原 P0 面 PASS / CURRENT（裁决 001 + R2 重跑）
+    HOLDOUT-M5-RB-02: 原 P0 面 PASS / CURRENT（裁决 001 + R2 重跑）
+    HOLDOUT-M5-05: 两项残留不复现（R2 重跑）
+    FINAL-P0-HOLDOUT-01: NOT_VERIFIED（PENDING_HUMAN），执行侧可判 P0 零命中
+    FINAL-P0-HOLDOUT-02-A: NOT_VERIFIED（PENDING_HUMAN）
+    FINAL-P0-HOLDOUT-02-B: NOT_VERIFIED（PENDING_HUMAN）
+  holdout_verdicts_historic_unchanged:
+    HOLDOUT-M5-01: PASS_WITH_NOT_VERIFIED_SUBITEM
+    HOLDOUT-M5-02: PASS
+    HOLDOUT-M5-03: PASS_ON_GOAL_AND_METHOD_DELIVERY_FORM_NOT_VERIFIED
+    HOLDOUT-M5-04: PASS_WITH_NOT_VERIFIED_SUBITEM
+    HOLDOUT-M5-05: FAIL_P0
+    HOLDOUT-M5-06: PASS
+  result: NOT_VERIFIED
+  freshness: NOT_VERIFIED
+  reason: 四项非 P0 SEMANTIC_HUMAN_ONLY 子项未决（H01-A1 / H01-A4 / H02-A3 / H02-C2）
+  applicable_p0_failures: 0
+  founder_disposition: ACCEPTED_TECHNICAL_DEBT_FOR_V1_CLOSEOUT
+  technical_debt_ref: TD-M5-05
+  blocking_for_v1_2_closeout: false
+- id: M5-AC-08
+  name: 不退化与受影响回归
+  kind: cases
+  case_verdicts_current:
+    REG-M1-01: PASS
+    REG-M2-01: PASS
+    REG-M4-01: PASS
+    REG-SKILLS-01: PASS
+  case_verdicts_stale:
+    REG-M3-01: PASS
+  case_not_run:
+    AB-M3-01: NOT_RUN
+    AB-FINAL-01: NOT_RUN
+  result: STALE
+  freshness: STALE
+  stale_reason: REG-M3-01 未在改后的 M3 successor 上重跑；A/B 两例未评分
+  founder_disposition: ACCEPTED_TECHNICAL_DEBT_FOR_V1_CLOSEOUT
+  technical_debt_ref: TD-M5-06
+  blocking_for_v1_2_closeout: false
+- id: M5-AC-09
+  name: Founder 产品验收
+  kind: human_only
+  result: PASS
+  freshness: CURRENT
+  acceptance_type: ACCEPTED_WITH_DISCLOSED_TECHNICAL_DEBT
+  authority_ref: M5-FOUNDER-ADJUDICATION-003
+  note: 该接受不替代技术硬门，也不把任何 STALE / NOT_VERIFIED 项改写为 PASS。
+- id: M5-AC-10
+  name: Git、远端与最终回执
+  kind: static
+  result: NOT_VERIFIED
+  freshness: NOT_VERIFIED
+  note: >-
+    本条只能在 Git/远端真实收口发生之后由后继条目更新，不得预填。
+    收口结果见本文件末尾 closeout_update 段。
+
+v1_2_hard_gates:
+  CLOSE-AC-01:
+    pass: true
+    evidence: 裁决 001；R2 定向复验；R3 留出判定；applicable_p0_failures=0；收口证据中未出现新的适用 P0
+  CLOSE-AC-02:
+    pass: true
+    evidence: 裁决 002 正向等价 PASS/CURRENT；一次冻结负控制 PASS（run_id eb2364a5…）；RISK-M4-030+031 = PASS/CURRENT
+  CLOSE-AC-03:
+    pass: true
+    evidence: R5 FULL_STORY_RUN_full01fp1；R6 11/11 FINAL_P0_DETERMINISTIC_TESTS；只读绑定刷新 8/8 无漂移
+  CLOSE-AC-04:
+    pass: true
+    evidence: 技术债主表 TD-M5-01..08 逐项回指 result/freshness/影响/限制/触发条件；零删除、零涂绿、零追溯改 verdict
+  CLOSE-AC-05:
+    pass: true
+    evidence: 受保护资产未改；live main 十个未跟踪文件在位且与待合并路径交集 0；无真实外发；无非测试数据写入；候选零漂移
+  CLOSE-AC-06:
+    pass: true
+    evidence: M5-AC-09 = PASS/CURRENT，acceptance_type = ACCEPTED_WITH_DISCLOSED_TECHNICAL_DEBT
+  CLOSE-AC-07:
+    pass: PENDING
+    note: 待任务分支 push、main 非 force 收口、origin/main 可复算一致与 Final Receipt 落盘后更新
+
+done_formula_v1_2: CLOSE-AC-01..07 全部成立 AND Founder 产品接受已登记 AND applicable_p0_failures=0 AND 技术债完整披露 AND Git/远端收口完成
+original_done_formula_note: >-
+  父合同的 M5-AC-00..10 全绿公式作为历史记录继续有效，只是不再作为本 v1.2 的收口阻断公式。
+  all_original_ac_pass = false。
+prohibited_claims:
+- ALL_ORIGINAL_M5_AC_PASS
+- PRODUCTION_READY
+- REAL_OPERATION_LOOP_VERIFIED
+- OPERATIONAL_UPLIFT_PROVEN

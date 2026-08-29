@@ -449,3 +449,29 @@ Founder 裁定 `RISK-M4-030+031` 的权威判据为冻结 `oracle` 原文与根 
 
 未改 M4、未改冻结判据、未原地改检查器 v1.0、未启动完整正式轮、未合并 main。
 `task_progress: IN_PROGRESS`；`terminal_state`: 留空。
+
+**2026-08-29 追加（Founder 裁决 003：接受技术债并收口；Checkpoint 解除条件已建立）**：
+
+Founder 裁决 `M5-FOUNDER-ADJUDICATION-003`：「我认为两项P0收口后，暂时忽略剩余问题项，
+作为技术债登记，推进M5后续收口」。据此按收口合同 `v1.2`
+（sha256 `35ccf590…de9df0e`）与收口 Prompt（sha256 `e384df3d…49397cc`）执行最终收口。
+`entry_mode = REBASE_TASK`，同一 `task_id`，未新建、未重置失败历史。
+
+**Founder 接受的准确含义**：`founder_product_acceptance = PASS/CURRENT`，
+`acceptance_type = ACCEPTED_WITH_DISCLOSED_TECHNICAL_DEBT`，`all_original_m5_ac_pass = false`。
+它改变的是这些项对 v1.2 收口公式的**阻断资格**，不是它们自己的技术结果或证据时效。
+原 AC 状态、历史 `FAIL`／`NOT_VERIFIED`／`STALE`、sealed mapping 与裁决 001／002 全部原样保留。
+
+**本轮四类收口记录**（只追加，无平行体系）：
+[裁决 003](../decision-chain/docs/V1_M5_FOUNDER_ADJUDICATION_003_TECHNICAL_DEBT_CLOSEOUT.md)、
+[技术债主表 v1.0](../decision-chain/docs/V1_M5_ACCEPTED_TECHNICAL_DEBT_REGISTER_v1.0.md)（全仓唯一）、
+[证据索引 v1.2](../decision-chain/docs/V1_M5_FORMAL_ACCEPTANCE_EVIDENCE_INDEX_v1.2_FOUNDER_DEBT_CLOSEOUT.yaml)、
+[最终回执 v1.1](../decision-chain/docs/V1_M5_FINAL_CLOSURE_RECEIPT_v1.1_FOUNDER_DEBT_CLOSEOUT.md)。
+
+**技术债 8 项**（`TD-M5-01..08`），`open_debt_items_p0 = 0`。仍未验证面：
+`M5-AC-03`／`04`／`08` `STALE`，`M5-AC-05`／`06`／`07` `NOT_VERIFIED`。**不得说全绿。**
+
+**现场刷新结论**：worktree clean；相对现场 `origin/main` 为 **592 新增 / 2 修改 / 0 删除**，
+两处修改均为共享账本只追加（删除行 0）；live main 十个未跟踪文件在位，与 594 条待合并路径
+交集 **0**；候选 8 个 Dify 应用 graph/node/model 与 v1.1.4 冻结值逐条一致，**漂移 none**，
+收口阶段 Workflow/LLM 调用 **0**。

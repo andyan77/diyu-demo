@@ -681,3 +681,22 @@ PLANNED | STARTED | CONFIRMED | FAILED_NO_EFFECT | UNKNOWN | COMPENSATED
 > `NONE_VERIFIED_SINCE_BASELINE` 作为**历史时点结论**予以保留（原文不删），但**不再是当前有效结论**；当前有效结论以本追加块为准。本次治理纠偏（Recovery Task）本身**未**产生任何 Dify 或数据库写入——本追加块是对既有事实的文档纠偏，不是新的外部副作用。
 
 > **状态追加（2026-08-26，`DIYU-V1-M1-MODULE-LANDING-001` 合并落地，追加不改写以上）**：`DIYU-V1-M1-NATURAL-CONTEXT-001` 任务在其自身任务分支上另产生一组独立的真实 Dify 写入类副作用（专用候选 App `dd638b91-d39f-4e92-a984-6ad1ab809119`，与上表 M2 候选 App 不同、互不影响），详见本节 SE-030 起（原分支自身编号 SE-012 起，见上方编号说明）；该任务未涉及 `diyu_business`／Qdrant／ECS／对外消息发送。
+
+## `SE-M5-CLOSEOUT`（2026-08-29）· M5 最终收口的外部副作用
+
+```yaml
+new_model_calls: 0
+new_workflow_runs: 0
+dify_writes: 0                       # 仅只读查询 workflows.graph
+real_external_publish: NONE
+non_test_data_mutation: NONE
+force_push: NONE
+remote_branch_deleted: NONE
+sealed_ab_mapping_opened: NONE
+live_main_untracked_files_touched: NONE
+```
+
+本轮唯一一次真实模型调用发生在收口之前的定向负控制（`run_id eb2364a5-e740-4679-ad07-02909663965c`），
+由 Founder 裁决 002 §四单独授权，1 次，无重试、无重复采样，已单独登记。
+
+Git 推送在本条目之后按事件顺序追加，不预写。
