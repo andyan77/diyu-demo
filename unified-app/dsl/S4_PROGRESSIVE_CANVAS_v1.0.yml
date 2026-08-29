@@ -648,9 +648,21 @@ workflow:
         isInIteration: false
         isInLoop: false
         sourceType: code
-        targetType: answer
-      id: uapp_delivery-source-uapp_answer_main
+        targetType: assigner
+      id: uapp_delivery-source-uapp_save
       source: uapp_delivery
+      sourceHandle: source
+      target: uapp_save
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: answer
+      id: uapp_save-source-uapp_answer_main
+      source: uapp_save
       sourceHandle: source
       target: uapp_answer_main
       targetHandle: target
@@ -4814,6 +4826,46 @@ workflow:
       targetPosition: left
       type: custom
       width: 300
+      zIndex: 0
+    - data:
+        desc: 供下一跳作为上游产出使用；业务真源在 M2，不在会话里
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - uapp_seam_merge
+          - artifact
+          - output
+          variable_selector:
+          - conversation
+          - uapp_last_artifact
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - uapp_route
+          - target_capability
+          variable_selector:
+          - conversation
+          - uapp_last_capability
+          write_mode: over-write
+        selected: false
+        title: 记住｜本轮产物与能力
+        type: assigner
+        version: '2'
+      height: 98
+      id: uapp_save
+      position:
+        x: 7040
+        y: 500
+      positionAbsolute:
+        x: 7040
+        y: 500
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
       zIndex: 0
     - data:
         answer: '{{#uapp_delivery.final_text#}}'

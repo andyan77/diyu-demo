@@ -31,6 +31,7 @@ _S3 = _load("s3b", os.path.join(HERE, "S3_BUILD_v1.0.py"))
 _S1, DC, NODES = _S3._S1, _S3.DC, _S3.NODES
 N, E, code, V, ifelse, answer, tool = (_S1.N, _S1.E, _S1.code, _S1.V, _S1.ifelse,
                                        _S1.answer, _S3.tool)
+assigner = _S3._S2.assigner
 
 APP_ID = os.environ.get("S4_APP_ID", "85c01f85-a081-43e9-ab09-9993289cc200")
 PROVIDER_HOP = "fd3f6f29-237f-4bbe-a820-5d38076ab52e"
@@ -133,10 +134,21 @@ def build_graph():
          V("side_effect_text", ["uapp_noseam", "empty"])],
         ["final_text", "delivered_flag", "modules_actually_run", "leak_hits_json",
          "leak_hit_count", "m2_note"]), 300, 130))
+    # 本轮产物写回会话，供下一跳当上游用。
+    # 读端在上面（uapp_hop 的 upstream_delivery / upstream_capability），
+    # 但 S4 首版只建了读端没建写端，于是 upstream_capability 恒为空、
+    # 能力产出的 artifact 转手被丢弃——CREATIVE_SCRIPT / PRODUCTION_DIRECTOR /
+    # PUBLISHING_PACKAGING 三项因此结构上永远拿不到上游产物（TRIAGE 004）。
+    # 赋值项与继承参考建图 UAPP_BUILD_CANVAS_v1.0.py:655-658 逐字一致。
+    add.append(N("uapp_save", X + 7000, Y + 200, assigner(
+        "记住｜本轮产物与能力", "供下一跳作为上游产出使用；业务真源在 M2，不在会话里",
+        [("variable", ["uapp_seam_merge", "artifact", "output"], "uapp_last_artifact"),
+         ("variable", ["uapp_route", "target_capability"], "uapp_last_capability")])))
     add.append(N("uapp_answer_main", X + 7160, Y + 200,
                  answer("回复｜交付", "{{#uapp_delivery.final_text#}}")))
     edges.append(E("uapp_seam_merge", "uapp_delivery"))
-    edges.append(E("uapp_delivery", "uapp_answer_main"))
+    edges.append(E("uapp_delivery", "uapp_save"))
+    edges.append(E("uapp_save", "uapp_answer_main"))
 
     # 组件失败只影响这一支：Hop 与 Seam 各自的 fail-branch 归到同一个如实交代节点。
     add.append(N("uapp_cap_fail", X + 6520, Y + 440, code(
@@ -207,7 +219,8 @@ def main():
                                        .encode("utf-8")).hexdigest(),
         "dsl_sha256": hashlib.sha256(dsl_text.encode("utf-8")).hexdigest(),
         "new_this_layer": ["uapp_op_gate", "uapp_hop", "uapp_seam", "uapp_noseam",
-                           "uapp_seam_merge", "uapp_delivery", "uapp_answer_main",
+                           "uapp_seam_merge", "uapp_delivery", "uapp_save",
+                           "uapp_answer_main",
                            "uapp_cap_fail", "uapp_answer_capfail"],
         "removed_this_layer": ["uapp_s3_deliver", "uapp_answer_main(S3 薄交付版)"],
         "bindings": {"hop": {"provider": PROVIDER_HOP, "target_app": HOP_APP},

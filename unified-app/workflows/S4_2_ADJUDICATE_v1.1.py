@@ -14,7 +14,7 @@ import os
 import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-GATE = os.path.join(HERE, "..", "stages", "S4_2_STAGE_GATE_v1.1.json")
+GATE = os.path.join(HERE, "..", "stages", "S4_2_STAGE_GATE_v1.2.json")
 EV = os.path.join(HERE, "..", "evidence", "stages")
 
 FIXTURE_ONLY = ["序里集", "XULI", "林序", "周宁", "苏禾", "陈晚"]

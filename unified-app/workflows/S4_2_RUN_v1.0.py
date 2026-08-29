@@ -22,7 +22,7 @@ import uuid as _uuid
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 ENV = "/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env"
-GATE = os.path.join(HERE, "..", "stages", "S4_2_STAGE_GATE_v1.1.json")
+GATE = os.path.join(HERE, "..", "stages", "S4_2_STAGE_GATE_v1.2.json")
 EV = os.path.join(HERE, "..", "evidence", "stages")
 FIXTURE = os.path.join(ROOT, "decision-chain", "fixtures", "一页纸夹具品牌事实 v0.1.md")
 

@@ -76,8 +76,11 @@ def main():
     for side in ("POS", "NEG"):
         if only_side and side != only_side:
             continue
+        only_conv = sys.argv[2] if len(sys.argv) > 2 else ""
         for conv_spec in plan["conversations"]:
             name = conv_spec["name"]
+            if only_conv and name != only_conv:
+                continue
             user = "s42c-%s-%s" % (name.lower(), side.lower())
             conv = ""
             up = None

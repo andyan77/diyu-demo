@@ -1,0 +1,119 @@
+{
+  "stage": "S4",
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "import_status": "completed",
+  "import_was_update_in_place": true,
+  "node_count": 46,
+  "edge_count": 48,
+  "node_ids": [
+    "boot_acct",
+    "boot_assign",
+    "boot_cycle",
+    "boot_p1",
+    "boot_p2",
+    "boot_p3",
+    "boot_p4",
+    "boot_p5",
+    "boot_task",
+    "boot_user",
+    "boot_ws",
+    "m1_chat_llm",
+    "m1_compiler",
+    "m1_extract",
+    "m1_join",
+    "m1_save_snapshot",
+    "m1_shadow",
+    "uapp_action",
+    "uapp_answer_ask",
+    "uapp_answer_capfail",
+    "uapp_answer_chat",
+    "uapp_answer_m3fail",
+    "uapp_answer_main",
+    "uapp_answer_pending",
+    "uapp_ask_one",
+    "uapp_boot_gate",
+    "uapp_cap_fail",
+    "uapp_chat_guard",
+    "uapp_ctx",
+    "uapp_delivery",
+    "uapp_hop",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_m3",
+    "uapp_m3_fail",
+    "uapp_m3_gate",
+    "uapp_noseam",
+    "uapp_op_gate",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_s2_pending",
+    "uapp_save",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_start"
+  ],
+  "graph_sha256": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+  "dsl_sha256": "f987719fbc987868310d2783d1addbc61549d840f94834ca754ad4a3ac665a8f",
+  "new_this_layer": [
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_noseam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main",
+    "uapp_cap_fail",
+    "uapp_answer_capfail"
+  ],
+  "removed_this_layer": [
+    "uapp_s3_deliver",
+    "uapp_answer_main(S3 薄交付版)"
+  ],
+  "bindings": {
+    "hop": {
+      "provider": "fd3f6f29-237f-4bbe-a820-5d38076ab52e",
+      "target_app": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4"
+    },
+    "seam": {
+      "provider": "f8d63527-8c45-4823-8159-443cef37240d",
+      "target_app": "5fca0162-e26b-4545-a00b-66b1a2a2a077"
+    }
+  },
+  "six_capabilities_dispatch": "在 Seam 内部（seam_dispatch），画布只传 capability；画布侧接线一条，不是六条",
+  "m3_reference_digests": [
+    {
+      "path": "references/fashion-and-market.md",
+      "file": "fashion-and-market.md",
+      "status": "LOADED",
+      "sha256": "ba5570f1fd106a4ea47dd7dd73c6cb2baebf06ed8fe459e0676b5f2f9fd0b44b",
+      "bytes": 6650
+    },
+    {
+      "path": "references/six-skill-methods.md",
+      "file": "six-skill-methods.md",
+      "status": "LOADED",
+      "sha256": "96ca5e2928a9477a48cd873699114fadc16059dc40166ab730605d2474b90f18",
+      "bytes": 5991
+    },
+    {
+      "path": "references/operations.md",
+      "file": "operations.md",
+      "status": "LOADED",
+      "sha256": "9093fe61b2054551055c99c9475b83f77b05260397b6bd81990a091449827493",
+      "bytes": 9398
+    },
+    {
+      "path": "references/acceptance-fixtures.md",
+      "file": "acceptance-fixtures.md",
+      "status": "NOT_LOADED",
+      "sha256": "b6e4420a1f3351391ea8b4882016aaa852625fdf0af165633babf3c322452122",
+      "bytes": 8712
+    }
+  ],
+  "layers_not_yet_wired": [
+    "M5 写回与闭环"
+  ],
+  "build_attempt": 4
+}
