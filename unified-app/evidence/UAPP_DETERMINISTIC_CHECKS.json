@@ -1,7 +1,7 @@
 {
   "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
-  "graph_md5": "bec7b303c8a0f6294f3bab1bec8ac398",
-  "graph_sha256": "6675e6a82b800ff8ccecf6f115fef0b14cda9b140de9df2e70a2f91df34a0214",
+  "graph_md5": "ce2a58b2e76004a27c9e959434d6ff6a",
+  "graph_sha256": "0fa01a45ff922d3f4e14ae45f1a971ae4ad50adb1ca9528a030ba4d05fc6a7b9",
   "checks": [
     {
       "id": "D-01",
@@ -12,8 +12,8 @@
         "status": "normal",
         "enable_site": "true",
         "enable_api": "true",
-        "graph_md5": "bec7b303c8a0f6294f3bab1bec8ac398",
-        "published_version_name": "uapp-v1.7-fbkind"
+        "graph_md5": "ce2a58b2e76004a27c9e959434d6ff6a",
+        "published_version_name": "uapp-v1.8-target"
       }
     },
     {
@@ -21,8 +21,8 @@
       "desc": "图结构自洽：无悬空边、无不可达节点",
       "result": "PASS",
       "detail": {
-        "nodes": 63,
-        "edges": 73,
+        "nodes": 65,
+        "edges": 77,
         "dangling": [],
         "unreachable": []
       }
@@ -158,7 +158,9 @@
           "uapp_m3_gate",
           "uapp_op_gate",
           "uapp_persist_gate",
-          "uapp_act_gate"
+          "uapp_act_gate",
+          "uapp_pub_gate",
+          "uapp_fb_gate"
         ]
       }
     },
@@ -199,7 +201,7 @@
           "idempotency_key": "pub-tg-2d711642b726b044",
           "account_id": "acc",
           "platform": "test-platform",
-          "published_at": "2026-08-29T12:01:02+00:00",
+          "published_at": "2026-08-29T12:28:41+00:00",
           "is_test": true,
           "is_simulated": true,
           "content_version_id": "ver-1"
@@ -208,7 +210,7 @@
           "idempotency_key": "fb-tg-03bce10fbe9da41e",
           "kind": "observation",
           "source": "user_reported",
-          "observed_at": "2026-08-29T12:01:02+00:00",
+          "observed_at": "2026-08-29T12:28:41+00:00",
           "is_test": true,
           "is_simulated": true,
           "is_manual_entry": true
@@ -249,8 +251,8 @@
       "desc": "副作用陈述可区分：写成了/没写成/本轮没走，三态互不混淆",
       "result": "PASS",
       "detail": {
-        "ok": "{\"happened\": [\"产物登记\", \"版本登记\", \"测试发布记录\"], \"failed\": [], \"action\": \"RECORD_PUBLISH\"}",
-        "bad": "{\"happened\": [], \"failed\": [\"产物登记\"], \"action\": \"RECORD_PUBLISH\"}",
+        "ok": "{\"happened\": [\"产物登记\", \"版本登记\", \"测试发布记录\"], \"failed\": [], \"action\": \"RECORD_PUBLISH\", \"skipped_no_target\": false}",
+        "bad": "{\"happened\": [], \"failed\": [\"产物登记\"], \"action\": \"RECORD_PUBLISH\", \"skipped_no_target\": false}",
         "nil_text_empty": true
       }
     },
@@ -286,11 +288,30 @@
       "desc": "「跑了但失败」不会被当成「本轮没走」而藏起来",
       "result": "PASS",
       "detail": {
-        "http_failed_status_0": "{\"happened\": [], \"failed\": [\"反馈记录\"], \"action\": \"RECORD_FEEDBACK\"}",
+        "http_failed_status_0": "{\"happened\": [], \"failed\": [\"反馈记录\"], \"action\": \"RECORD_FEEDBACK\", \"skipped_no_target\": false}",
         "never_ran_text_empty": true
+      }
+    },
+    {
+      "id": "D-23",
+      "desc": "无可关联对象时不发注定 422 的请求；有发布挂发布、只有版本挂版本，且恰好一个",
+      "result": "PASS",
+      "detail": {
+        "no_target": "false",
+        "alt_used": "content_version_id",
+        "pub_preferred": "publish_instance_id",
+        "exactly_one": true
+      }
+    },
+    {
+      "id": "D-24",
+      "desc": "被跳过的写入会被明确告诉用户，不沉默",
+      "result": "PASS",
+      "detail": {
+        "note": "这一条我没法登记成发布记录：系统里还没有它对应的内容版本。先把内容做出来、我把版本记下来之后，再说发布这件事。"
       }
     }
   ],
-  "passed": 22,
+  "passed": 24,
   "failed": 0
 }

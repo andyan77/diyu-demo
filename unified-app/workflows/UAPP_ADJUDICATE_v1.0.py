@@ -191,10 +191,19 @@ def adjudicate(case_id):
         wt = turns[-1]
         se = node_out(wt, "uapp_side") or {}
         txt = se.get("side_effect_text") or ""
-        C("WD-01", "撤回把四件事分开说",
-          all(k in txt for k in ("不再用于新的内容", "已经发出去的内容不受影响",
+        ans = wt.get("answer") or ""
+        # 判在**真正回给用户的正文**上。只看副作用台账会漏掉一种最坏的情况：
+        # 写入真的发生了，正文却对用户说没发生（WITHDRAW-01 首轮实测如此）。
+        C("WD-01", "回给用户的正文里把四件事分开说清楚",
+          all(k in ans for k in ("不再用于新的内容", "已经发出去的内容不受影响",
                                  "没有对平台做任何操作")),
-          {"side_effect_text": txt})
+          {"answer_head": ans[:300], "side_effect_text": txt})
+        DENY = ("执行不了", "无法撤回", "不会声称已经撤回", "找不到", "没有任何素材")
+        wrote = (se.get("any_write_happened") == "true")
+        hits = [k for k in DENY if k in ans]
+        C("WD-03", "真的写入了就不得在正文里否认它（不自相矛盾）",
+          (not wrote) or (not hits),
+          {"write_happened": wrote, "denial_phrases_in_answer": hits})
         wd = m2("select count(*) from materials where workspace_id=%s "
                 "and withdrawn_at is not null;" % ws_scope)
         C("WD-02", "本例工作区内确实存在已撤回的素材行", wd != "0",

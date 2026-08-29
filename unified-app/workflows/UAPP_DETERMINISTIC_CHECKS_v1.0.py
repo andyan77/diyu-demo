@@ -348,6 +348,26 @@ def main():
           {"http_failed_status_0": ran_failed["write_ledger_json"],
            "never_ran_text_empty": never_ran["side_effect_text"] == ""})
 
+    fb_none = ns_b["main"](tpl["feedback_body_template"], "", "", "publish_instance_id",
+                           "true", "", "content_version_id")
+    fb_alt = ns_b["main"](tpl["feedback_body_template"], "", "", "publish_instance_id",
+                          "true", "ver-9", "content_version_id")
+    fb_pub = ns_b["main"](tpl["feedback_body_template"], "pub-1", "", "publish_instance_id",
+                          "true", "ver-9", "content_version_id")
+    check("D-23", "无可关联对象时不发注定 422 的请求；有发布挂发布、只有版本挂版本，且恰好一个",
+          fb_none["has_target"] == "false"
+          and fb_alt["resolved_field"] == "content_version_id"
+          and fb_pub["resolved_field"] == "publish_instance_id"
+          and "content_version_id" not in json.loads(fb_pub["body"]),
+          {"no_target": fb_none["has_target"], "alt_used": fb_alt["resolved_field"],
+           "pub_preferred": fb_pub["resolved_field"],
+           "exactly_one": "content_version_id" not in json.loads(fb_pub["body"])})
+
+    skip_note = ns_s["main"]("RECORD_PUBLISH", "", "", "", "", "", "", "", "", "",
+                             "false", "")["side_effect_text"]
+    check("D-24", "被跳过的写入会被明确告诉用户，不沉默",
+          "没法登记成发布记录" in skip_note, {"note": skip_note})
+
     failed = [r for r in RESULTS if r["result"] != "PASS"]
     out = {"app_id": APP_ID, "graph_md5": gmd5, "graph_sha256": sha(json.dumps(
         graph, ensure_ascii=False, sort_keys=True)),

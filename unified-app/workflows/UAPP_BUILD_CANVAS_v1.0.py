@@ -530,7 +530,7 @@ def build_graph():
          V("carried_id", ["conversation", "uapp_last_version"]),
          V("field", ["uapp_wb_prep", "field_content_version"]),
          V("drop_if_empty", ["uapp_wb_prep", "drop_false"])],
-        ["body", "resolved_id", "id_source"])))
+        ["body", "resolved_id", "resolved_field", "has_target", "id_source"])))
     nodes.append(N("uapp_fb_body", X + 9600, Y - 160, code(
         "组装｜反馈请求体（补跨轮发布 id）", "取不到发布 id 时整个字段去掉，不填空串骗 M2",
         NODES.WB_BODY_SRC,
@@ -538,8 +538,10 @@ def build_graph():
          V("this_turn_id", ["wb_p3", "id"]),
          V("carried_id", ["conversation", "uapp_last_publish"]),
          V("field", ["uapp_wb_prep", "field_publish_instance"]),
-         V("drop_if_empty", ["uapp_wb_prep", "drop_true"])],
-        ["body", "resolved_id", "id_source"])))
+         V("drop_if_empty", ["uapp_wb_prep", "drop_true"]),
+         V("alt_id", ["conversation", "uapp_last_version"]),
+         V("alt_field", ["uapp_wb_prep", "field_content_version"])],
+        ["body", "resolved_id", "resolved_field", "has_target", "id_source"])))
 
     for case_id, hid, pid, title, desc, url, body_tpl, dy in acts:
         nodes.append(N(hid, X + 9920, Y + dy, http(title, desc, "post", url, body_tpl)))
@@ -549,13 +551,23 @@ def build_graph():
             ["id", "ok", "status", "detail", "publish_body", "feedback_body"])))
         if case_id == "publish":
             edges.append(E("uapp_act_gate", "uapp_pub_body", case_id))
-            edges.append(E("uapp_pub_body", hid))
         elif case_id == "feedback":
             edges.append(E("uapp_act_gate", "uapp_fb_body", case_id))
-            edges.append(E("uapp_fb_body", hid))
         else:
             edges.append(E("uapp_act_gate", hid, case_id))
         edges.append(E(hid, pid))
+
+    # 没有可关联对象就别发——那种请求 M2 必然 422。跳过并如实说明，不做注定失败的调用。
+    nodes.append(N("uapp_pub_gate", X + 9760, Y - 480, ifelse(
+        "有可登记的内容版本吗", "没有版本就没有可发布的对象，跳过并说明，不发注定失败的请求。",
+        ("ok", ["uapp_pub_body", "has_target"], "true"))))
+    nodes.append(N("uapp_fb_gate", X + 9760, Y - 160, ifelse(
+        "有可挂载的发布或版本吗", "M2 要求反馈恰好挂一个对象；没有就跳过并说明。",
+        ("ok", ["uapp_fb_body", "has_target"], "true"))))
+    edges.append(E("uapp_pub_body", "uapp_pub_gate"))
+    edges.append(E("uapp_fb_body", "uapp_fb_gate"))
+    edges.append(E("uapp_pub_gate", "wb_publish", "ok"))
+    edges.append(E("uapp_fb_gate", "wb_feedback", "ok"))
 
     nodes.append(N("uapp_pub_assign", X + 10560, Y - 480, assigner(
         "记住｜本轮发布记录", "供下一轮反馈按版本幂等写回",
@@ -575,10 +587,14 @@ def build_graph():
          V("withdraw_status", ["wb_p6", "status"]),
          V("persist_detail", ["wb_p1", "detail"]),
          V("publish_detail", ["wb_p3", "detail"]),
-         V("feedback_detail", ["wb_p4", "detail"])],
+         V("feedback_detail", ["wb_p4", "detail"]),
+         V("pub_has_target", ["uapp_pub_body", "has_target"]),
+         V("fb_has_target", ["uapp_fb_body", "has_target"])],
         ["side_effect_text", "any_write_happened", "any_write_failed", "write_ledger_json"])))
     for src in ("uapp_pub_assign", "wb_p4", "wb_p5", "wb_p6"):
         edges.append(E(src, "uapp_side"))
+    edges.append(E("uapp_pub_gate", "uapp_side", "false"))
+    edges.append(E("uapp_fb_gate", "uapp_side", "false"))
     edges.append(E("uapp_act_gate", "uapp_side", "false"))
 
     # ---- 用户投影 ----

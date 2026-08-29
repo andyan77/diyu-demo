@@ -130,7 +130,11 @@ def main(call_intent_json, snapshot_json, user_query, ws_id, conv_id, action_pat
     runs_business = mode != "DIALOGUE"
     # M3 是运营判断层：要产出、要复盘、要开下一周期时才需要它。
     # 单纯问"系统现在记住了什么"不需要 M3——那是 M2 的事实，不是判断。
-    runs_m3 = mode in ("CAPABILITY", "OPERATION_ONLY", "WRITEBACK")
+    # 撤回是针对某一份具体素材的持久化动作，M3 手上没有素材事实。
+    # 让它判，它会诚实地说"查不到这份素材"，而画布随后仍按会话变量照常撤回——
+    # 两句都不假，拼在一起却是自相矛盾的交付（WITHDRAW-01 实测）。所以撤回轮不进 M3。
+    runs_m3 = (mode in ("CAPABILITY", "OPERATION_ONLY")
+               or (mode == "WRITEBACK" and action != "WITHDRAW_MATERIAL"))
 
     # 会话级测试域标签。同一会话稳定，跨会话不同——测试数据因此天然按会话隔离。
     tag = re.sub(r"[^0-9a-zA-Z]", "", str(conv_id or ""))[:12] or "nosession"
@@ -372,6 +376,11 @@ def main(capability, seam_user_delivery, seam_outcome, seam_returns_json,
     if route_mode in ("OPERATION_ONLY", "WRITEBACK"):
         body = (m3_judgment or "").strip()
         delivered = bool(body)
+        # 真的写进去了，就以"实际发生了什么"作为交付正文。
+        # 这一轮没有 M3 正文时说"没有产出"，会和刚刚发生的写入互相打脸。
+        if not body and (side_effect_text or "").strip():
+            body = (side_effect_text or "").strip()
+            delivered = True
     elif route_mode == "STATUS":
         # 只问"系统现在记住了什么"：如实念 M2 的当前投影，不加判断、不加建议。
         body = (account_context or "").strip()
@@ -395,7 +404,7 @@ def main(capability, seam_user_delivery, seam_outcome, seam_returns_json,
 
     # 副作用陈述永远附在最后，且不参与 _scrub 的能力枚举清洗（它本来就是大白话）。
     se = (side_effect_text or "").strip()
-    if se:
+    if se and se not in final:
         final = final + "\n\n" + se
 
     final, hits = _scrub(final)
@@ -640,7 +649,8 @@ import json
 
 
 def main(action, persist_status, version_status, publish_status, feedback_status,
-         cycle_status, withdraw_status, persist_detail, publish_detail, feedback_detail):
+         cycle_status, withdraw_status, persist_detail, publish_detail, feedback_detail,
+         pub_has_target="", fb_has_target=""):
     """把本轮**真实发生过的写入**列出来。没有 2xx 的一律记为"没写成"，不写成"已完成"。
 
     四件事分开，不合并：
@@ -651,6 +661,16 @@ def main(action, persist_status, version_status, publish_status, feedback_status
     """
     def st(x):
         return str(x) in ("200", "201")
+
+    # 没有可关联对象时这一步被闸门跳过了。**要说出来**，不能沉默——
+    # 沉默会让用户以为登记成功了。
+    no_target_note = ""
+    if action == "RECORD_PUBLISH" and pub_has_target == "false":
+        no_target_note = ("这一条我没法登记成发布记录：系统里还没有它对应的内容版本。"
+                          "先把内容做出来、我把版本记下来之后，再说发布这件事。")
+    elif action == "RECORD_FEEDBACK" and fb_has_target == "false":
+        no_target_note = ("这条反馈我先没有记：它要挂在某一条已登记的内容或发布记录上，"
+                          "而现在还没有可挂的对象。")
 
     happened, failed = [], []
     # 每一步各占一行。把"产物"和"版本"合成一行会让『产物没写成、版本根本没试』
@@ -679,6 +699,9 @@ def main(action, persist_status, version_status, publish_status, feedback_status
     if not happened and not failed:
         lines.append("")
 
+    if no_target_note:
+        lines.append(no_target_note)
+
     if str(withdraw_status) in ("200", "201"):
         lines.append("关于撤回：这份素材从现在起不再用于新的内容；"
                      "已经发出去的内容不受影响、也没有被删除；"
@@ -689,7 +712,8 @@ def main(action, persist_status, version_status, publish_status, feedback_status
         "any_write_happened": "true" if happened else "false",
         "any_write_failed": "true" if failed else "false",
         "write_ledger_json": json.dumps(
-            {"happened": happened, "failed": failed, "action": action}, ensure_ascii=False),
+            {"happened": happened, "failed": failed, "action": action,
+             "skipped_no_target": bool(no_target_note)}, ensure_ascii=False),
     }
 '''
 
@@ -713,7 +737,8 @@ WB_BODY_SRC = r'''
 import json
 
 
-def main(template, this_turn_id="", carried_id="", field="", drop_if_empty="true"):
+def main(template, this_turn_id="", carried_id="", field="", drop_if_empty="true",
+         alt_id="", alt_field=""):
     """把模板补上一个跨轮 id。本轮有就用本轮的，没有就用会话里记着的上一轮的。
 
     两个都没有时**把这个字段整个去掉**，而不是填空串——
@@ -726,15 +751,26 @@ def main(template, this_turn_id="", carried_id="", field="", drop_if_empty="true
     if not isinstance(d, dict):
         d = {}
     val = (this_turn_id or "").strip() or (carried_id or "").strip()
+    used = field
     if field:
         if val:
             d[field] = val
+        elif alt_field and (alt_id or "").strip():
+            # M2 的反馈要求**恰好一个**关联：有发布记录就挂发布，没有就挂内容版本。
+            val, used = (alt_id or "").strip(), alt_field
+            d.pop(field, None)
+            d[alt_field] = val
         elif drop_if_empty == "true":
             d.pop(field, None)
     return {
         "body": json.dumps(d, ensure_ascii=False),
         "resolved_id": val,
+        "resolved_field": used if val else "",
+        # 没有可关联的对象时，这一步**根本不该发**——发出去必然 422。
+        # 由下游闸门据此跳过，并如实告诉用户「还没有可登记的对象」。
+        "has_target": "true" if val else "false",
         "id_source": ("this_turn" if (this_turn_id or "").strip()
-                      else ("carried_from_session" if (carried_id or "").strip() else "none")),
+                      else ("carried_from_session" if (carried_id or "").strip()
+                            else ("carried_alt" if val else "none"))),
     }
 '''
