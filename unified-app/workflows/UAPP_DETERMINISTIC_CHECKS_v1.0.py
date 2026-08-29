@@ -223,6 +223,71 @@ def main():
                              "subprocess") if t in blob]
     check("D-13", "图内不引用任何外部手工编排运行时", not forbidden, {"hits": forbidden})
 
+    # ---- 写回纪律 ----
+    blob_nodes = {nid: json.dumps(n["data"], ensure_ascii=False) for nid, n in nodes.items()}
+    prep = nodes["uapp_wb_prep"]["data"]["code"]
+    # 取原始 body 模板串本身；json.dumps 过的整节点会把内层引号转义掉，比对必然假阴。
+    fb_body = nodes["wb_feedback"]["data"]["body"]["data"][0]["value"]
+    check("D-14", "测试发布与反馈显式写死 is_test / is_simulated 为真，不靠 M2 默认值",
+          '"is_test": True' in prep and '"is_simulated": True' in prep
+          and '"is_test": true' in fb_body and '"is_simulated": true' in fb_body,
+          {"prep_declares_test_flags": '"is_test": True' in prep,
+           "feedback_node_declares_test_flags": '"is_test": true' in fb_body,
+           "feedback_body": fb_body})
+
+    ns2 = {}
+    exec(compile(nodes["uapp_wb_prep"]["data"]["code"], "<wb>", "exec"), ns2)
+    wb = ns2["main"]
+    ART = "一份真实产物正文"
+    got_del = wb("NONE", ART, "CONTENT_BRIEF", "", "", "", "t", "a", "tg", "c", "DELIVERED")
+    got_rec = wb("NONE", ART, "CONTENT_BRIEF", "", "", "", "t", "a", "tg", "c",
+                 "DELIVERED_AFTER_RECOVERY")
+    got_undel = wb("NONE", ART, "CONTENT_BRIEF", "", "", "", "t", "a", "tg", "c", "UNKNOWN")
+    got_empty = wb("NONE", "", "CONTENT_BRIEF", "", "", "", "t", "a", "tg", "c", "DELIVERED")
+    check("D-15", "只有真交付且有产物才登记版本：未交付或空产物一律不登记",
+          got_del["should_persist_artifact"] == "true"
+          and got_rec["should_persist_artifact"] == "true"
+          and got_undel["should_persist_artifact"] == "false"
+          and got_empty["should_persist_artifact"] == "false",
+          {"delivered_with_artifact": got_del["should_persist_artifact"],
+           "delivered_after_recovery": got_rec["should_persist_artifact"],
+           "not_delivered": got_undel["should_persist_artifact"],
+           "empty_artifact": got_empty["should_persist_artifact"]})
+
+    # 同键判定必须喂同一段正文；此前这里喂了两段不同正文，是判据自己写错了。
+    same = wb("NONE", ART, "CONTENT_BRIEF", "", "", "", "t", "a", "tg", "c", "DELIVERED")
+    other = wb("NONE", "另一份完全不同的产物", "CONTENT_BRIEF", "", "", "", "t", "a", "tg", "c",
+               "DELIVERED")
+    check("D-16", "幂等键由内容派生：同产物同键、异产物异键",
+          json.loads(same["version_body"])["idempotency_key"]
+          == json.loads(got_del["version_body"])["idempotency_key"]
+          and json.loads(other["version_body"])["idempotency_key"]
+          != json.loads(same["version_body"])["idempotency_key"],
+          {"same_key": json.loads(same["version_body"])["idempotency_key"],
+           "other_key": json.loads(other["version_body"])["idempotency_key"]})
+
+    ns3 = {}
+    exec(compile(nodes["uapp_side"]["data"]["code"], "<se>", "exec"), ns3)
+    se = ns3["main"]
+    ok_row = se("RECORD_PUBLISH", "200", "200", "200", "", "", "", "", "", "")
+    bad_row = se("RECORD_PUBLISH", "404", "", "", "", "", "", "{}", "", "")
+    nil_row = se("NONE", "", "", "", "", "", "", "", "", "")
+    check("D-17", "副作用陈述可区分：写成了/没写成/本轮没走，三态互不混淆",
+          ok_row["any_write_happened"] == "true" and ok_row["any_write_failed"] == "false"
+          and bad_row["any_write_failed"] == "true"
+          and bad_row["any_write_happened"] == "false"
+          and nil_row["side_effect_text"] == "",
+          {"ok": ok_row["write_ledger_json"], "bad": bad_row["write_ledger_json"],
+           "nil_text_empty": nil_row["side_effect_text"] == ""})
+
+    check("D-18", "撤回陈述把四件事分开：未来复用 / 已发布内容 / 平台操作 / 实际写入",
+          all(k in se("WITHDRAW_MATERIAL", "", "", "", "", "", "200", "", "", "")[
+              "side_effect_text"]
+              for k in ("不再用于新的内容", "已经发出去的内容不受影响",
+                        "没有对平台做任何操作")),
+          {"text": se("WITHDRAW_MATERIAL", "", "", "", "", "", "200", "", "",
+                      "")["side_effect_text"]})
+
     failed = [r for r in RESULTS if r["result"] != "PASS"]
     out = {"app_id": APP_ID, "graph_md5": gmd5, "graph_sha256": sha(json.dumps(
         graph, ensure_ascii=False, sort_keys=True)),

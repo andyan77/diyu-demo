@@ -158,12 +158,14 @@ def tool(title, desc, provider_id, tool_name, params, retries=1):
             "tool_parameters": {k: {"type": "mixed", "value": v} for k, v in params.items()}}
 
 
-def ifelse(title, desc, case_id, selector, value):
+def ifelse(title, desc, *cases):
+    """cases: 逐个 (case_id, selector, value)。多分支按声明顺序取第一个命中。"""
     return {"type": "if-else", "title": title, "desc": desc, "selected": False,
             "logical_operator": "and",
-            "cases": [{"case_id": case_id, "logical_operator": "and",
-                       "conditions": [{"comparison_operator": "is", "value": value,
-                                       "variable_selector": selector}]}]}
+            "cases": [{"case_id": cid, "logical_operator": "and",
+                       "conditions": [{"comparison_operator": "is", "value": val,
+                                       "variable_selector": sel}]}
+                      for cid, sel, val in cases]}
 
 
 def answer(title, tpl):
@@ -203,7 +205,28 @@ def build_graph():
         edges.append(E(a, b))
 
     # ---- 路由（只读 M1 已算出的 call_intent）----
-    nodes.append(N("uapp_route", X + 1920, Y, code(
+    nodes.append(N("uapp_action", X + 1920, Y - 200, {
+        "type": "llm", "title": "分类｜本轮要做哪一类经营动作",
+        "desc": "只分类持久化动作；不产出任务上下文、不做专业判断、不写业务事实",
+        "model": {"provider": "langgenius/deepseek/deepseek", "name": "deepseek-v4-flash",
+                  "mode": "chat", "completion_params": {"max_tokens": 800, "top_p": 0.8}},
+        "prompt_template": [
+            {"role": "system", "text": NODES.ACTION_SYSTEM_PROMPT, "id": "uapp-act-sys"},
+            {"role": "user", "text": NODES.ACTION_USER_PROMPT, "id": "uapp-act-usr"}],
+        "context": {"enabled": False, "variable_selector": []},
+        "vision": {"enabled": False}, "selected": False,
+        "structured_output_enabled": True, "reasoning_format": "separated",
+        "structured_output": {"schema": NODES.ACTION_SCHEMA},
+        # 分类失败时退回空补丁 → 路由按 NONE 处理。宁可漏记，不可记下没发生的事。
+        "error_strategy": "default-value",
+        "default_value": [{"key": "structured_output", "type": "object", "value": {}},
+                          {"key": "text", "type": "string", "value": ""}],
+        "retry_config": {"max_retries": 1, "retry_enabled": True, "retry_interval": 2000},
+        "memory": {"query_prompt_template": "{{#sys.query#}}",
+                   "window": {"enabled": True, "size": 4}}}))
+    edges.append(E("m1_save_snapshot", "uapp_action"))
+
+    nodes.append(N("uapp_route", X + 2240, Y, code(
         "路由｜取 M1 已给出的能力调用意图",
         "只读 call_intent.needed_capabilities 挑一个能力；不做意图识别、不替用户选能力",
         NODES.ROUTE_SRC,
@@ -211,30 +234,32 @@ def build_graph():
          V("snapshot_json", ["m1_compiler", "snapshot_json"]),
          V("user_query", ["sys", "query"]),
          V("ws_id", ["conversation", "uapp_ws"]),
-         V("conv_id", ["sys", "conversation_id"])],
-        ["tag", "route_mode", "has_capability", "runs_m3", "target_capability", "entry",
-         "user_request", "needs_bootstrap", "route_note"])))
-    edges.append(E("m1_save_snapshot", "uapp_route"))
+         V("conv_id", ["sys", "conversation_id"]),
+         V("action_patch", ["uapp_action", "structured_output"])],
+        ["tag", "route_mode", "action", "has_capability", "runs_business", "runs_m3",
+         "target_capability", "entry", "user_request", "needs_bootstrap", "route_note",
+         "platform_text", "external_ref_text", "feedback_text", "withdraw_target_text"])))
+    edges.append(E("uapp_action", "uapp_route"))
 
     # ---- 主闸门：要不要动业务链 ----
-    nodes.append(N("uapp_gate", X + 2240, Y, ifelse(
-        "本轮要动业务链吗", "M1 给出经营/能力诉求才进业务链；否则自然对话。这里不做意图识别。",
-        "business", ["uapp_route", "runs_m3"], "true")))
+    nodes.append(N("uapp_gate", X + 2560, Y, ifelse(
+        "本轮要动业务链吗", "有经营诉求或要登记已发生的事才进业务链；纯聊天不进，省一整条链。",
+        ("business", ["uapp_route", "runs_business"], "true"))))
     edges.append(E("uapp_route", "uapp_gate"))
 
     # ---- 自然对话分支 ----
     chat = json.loads(json.dumps(m1nodes["m1_chat_llm"]["data"]))
     chat["title"] = "回复｜自然对话"
-    nodes.append(N("uapp_chat_llm", X + 2560, Y + 320, chat))
-    nodes.append(N("uapp_chat_answer", X + 2880, Y + 320,
+    nodes.append(N("uapp_chat_llm", X + 2880, Y + 320, chat))
+    nodes.append(N("uapp_chat_answer", X + 3200, Y + 320,
                    answer("回复｜对话", "{{#uapp_chat_llm.text#}}")))
     edges.append(E("uapp_gate", "uapp_chat_llm", "false"))
     edges.append(E("uapp_chat_llm", "uapp_chat_answer"))
 
     # ---- 测试域建域（只在本会话尚未建域时执行）----
-    nodes.append(N("uapp_boot_gate", X + 2560, Y - 320, ifelse(
+    nodes.append(N("uapp_boot_gate", X + 2880, Y - 320, ifelse(
         "本会话已经有测试工作区了吗", "没有就建一个会话级测试域；有就直接用，不重复建。",
-        "boot", ["uapp_route", "needs_bootstrap"], "true")))
+        ("boot", ["uapp_route", "needs_bootstrap"], "true"))))
     edges.append(E("uapp_gate", "uapp_boot_gate", "business"))
 
     boot_chain = [
@@ -260,7 +285,7 @@ def build_graph():
     ]
     prev = "uapp_boot_gate"
     handle = "boot"
-    bx = X + 2560
+    bx = X + 2880
     for i, (hid, hdata, pvars) in enumerate(boot_chain):
         pid = "boot_p%d" % (i + 1)
         if pid == "boot_p4":
@@ -318,23 +343,50 @@ def build_graph():
         ["account_context", "loaded_references", "registered_facts", "m2_reachable", "m2_note"])))
     edges.append(E("uapp_m2_run", "uapp_ctx"))
 
-    # ---- 最终 FP M3：周期判断 ----
-    nodes.append(N("uapp_m3", X + 4160, Y, tool(
+    # ---- 上传资料登记为 M2 素材（撤回要有可撤的对象）----
+    nodes.append(N("uapp_mat_gate", X + 4160, Y, ifelse(
+        "本轮有上传资料吗", "有才登记成 M2 素材；素材是撤回的对象，没有素材就没有可撤的东西。",
+        ("has_material", ["uapp_ctx", "has_material"], "true"))))
+    edges.append(E("uapp_ctx", "uapp_mat_gate"))
+    nodes.append(N("wb_material", X + 4480, Y - 240, http(
+        "写 M2｜登记本轮上传素材", "只登记来源与授权位，不存正文", "post",
+        M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/materials",
+        '{"source": "founder_upload", "owner_ref": "{{#uapp_route.tag#}}", '
+        '"analysis_authorized": true, "generation_authorized": true, '
+        '"publish_authorized": false, "content_ref": "conversation:{{#sys.conversation_id#}}"}')))
+    nodes.append(N("wb_p0", X + 4800, Y - 240, code(
+        "解析｜素材主键", "没有 2xx 就是没登记成", NODES.WB_PARSE_SRC,
+        [V("raw", ["wb_material", "body"]), V("status", ["wb_material", "status_code"])],
+        ["id", "ok", "status", "detail", "publish_body", "feedback_body"])))
+    nodes.append(N("uapp_mat_assign", X + 5120, Y - 240, assigner(
+        "记住｜本轮素材", "供后续撤回定位",
+        [("variable", ["wb_p0", "id"], "uapp_last_material")])))
+    edges.append(E("uapp_mat_gate", "wb_material", "has_material"))
+    edges.append(E("wb_material", "wb_p0"))
+    edges.append(E("wb_p0", "uapp_mat_assign"))
+
+    # ---- 要不要进 M3（运营判断层）----
+    nodes.append(N("uapp_m3_gate", X + 5440, Y, ifelse(
+        "本轮要运营判断吗", "要产出/复盘/开下一周期才进 M3；只问系统记住了什么不进——那是 M2 的事实。",
+        ("m3", ["uapp_route", "runs_m3"], "true"))))
+    edges.append(E("uapp_mat_assign", "uapp_m3_gate"))
+    edges.append(E("uapp_mat_gate", "uapp_m3_gate", "false"))
+
+    nodes.append(N("uapp_m3", X + 5760, Y, tool(
         "调用｜最终 FP M3 单账号持续运营", "周期判断与内容任务；专业判断在 M3 内，不在本画布",
         PROVIDER_M3, TOOL_M3,
         {"account_context": "{{#uapp_ctx.account_context#}}",
          "user_request": "{{#uapp_route.user_request#}}",
          "loaded_references": "{{#uapp_ctx.loaded_references#}}"})))
-    edges.append(E("uapp_ctx", "uapp_m3"))
+    edges.append(E("uapp_m3_gate", "uapp_m3", "m3"))
 
-    # ---- 本轮要不要进专业能力 ----
-    nodes.append(N("uapp_op_gate", X + 4480, Y, ifelse(
-        "本轮要进专业能力吗", "只有 M1 点名了六项能力之一才进接缝；否则交付 M3 的运营判断。",
-        "capability", ["uapp_route", "has_capability"], "true")))
+    nodes.append(N("uapp_op_gate", X + 6080, Y, ifelse(
+        "本轮要进专业能力吗", "只有 M1 点名了六项能力之一才进接缝；否则不进，不暗跑。",
+        ("capability", ["uapp_route", "has_capability"], "true"))))
     edges.append(E("uapp_m3", "uapp_op_gate"))
+    edges.append(E("uapp_m3_gate", "uapp_op_gate", "false"))
 
-    # ---- 跨能力抽取 + 统一能力接缝 ----
-    nodes.append(N("uapp_hop", X + 4800, Y, tool(
+    nodes.append(N("uapp_hop", X + 6400, Y, tool(
         "调用｜跨能力抽取适配", "按目标能力的必填清单从已登记来源抽取；只抽取不推断",
         PROVIDER_HOP, TOOL_HOP,
         {"target_capability": "{{#uapp_route.target_capability#}}",
@@ -347,7 +399,7 @@ def build_graph():
          "focus_fields": ""})))
     edges.append(E("uapp_op_gate", "uapp_hop", "capability"))
 
-    nodes.append(N("uapp_seam", X + 5120, Y, tool(
+    nodes.append(N("uapp_seam", X + 6720, Y, tool(
         "调用｜最终 FP 统一能力接缝", "一次只进一个专业能力；入口由接缝自己的充分性规则推导",
         PROVIDER_SEAM, TOOL_SEAM,
         {"capability": "{{#uapp_route.target_capability#}}",
@@ -357,8 +409,125 @@ def build_graph():
          "example_reference_requested": "NO"})))
     edges.append(E("uapp_hop", "uapp_seam"))
 
+    # ---- 写回 M2：先算请求体，再按分支实际写 ----
+    nodes.append(N("uapp_wb_prep", X + 7040, Y, code(
+        "组装｜本轮该写回 M2 的东西", "幂等键由内容派生；没有真实产物就不登记产物",
+        NODES.WRITEBACK_SRC,
+        [V("action", ["uapp_route", "action"]),
+         V("artifact", ["uapp_seam", "artifact"]),
+         V("capability", ["uapp_route", "target_capability"]),
+         V("platform_text", ["uapp_route", "platform_text"]),
+         V("external_ref_text", ["uapp_route", "external_ref_text"]),
+         V("feedback_text", ["uapp_route", "feedback_text"]),
+         V("task_id", ["conversation", "uapp_task"]),
+         V("account_id", ["conversation", "uapp_account"]),
+         V("tag", ["uapp_route", "tag"]),
+         V("cycle_id", ["conversation", "uapp_cycle"]),
+         V("delivered_flag", ["uapp_seam", "business_delivery_outcome"])],
+        ["should_persist_artifact", "content_hash", "artifact_body", "version_body",
+         "publish_body_template", "feedback_body_template", "next_cycle_body",
+         "run_state_body", "note"])))
+    edges.append(E("uapp_seam", "uapp_wb_prep"))
+    edges.append(E("uapp_op_gate", "uapp_wb_prep", "false"))
+
+    nodes.append(N("uapp_persist_gate", X + 7360, Y, ifelse(
+        "本轮有真实产物要登记吗", "只有真的交付了产物才登记版本。登记空产物等于制造假事实。",
+        ("persist", ["uapp_wb_prep", "should_persist_artifact"], "true"))))
+    edges.append(E("uapp_wb_prep", "uapp_persist_gate"))
+
+    nodes.append(N("wb_artifact", X + 7680, Y - 240, http(
+        "写 M2｜登记产物", "content_hash 由产物本体派生", "post",
+        M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/tasks/"
+        "{{#conversation.uapp_task#}}/artifacts", "{{#uapp_wb_prep.artifact_body#}}")))
+    nodes.append(N("wb_p1", X + 8000, Y - 240, code(
+        "解析｜产物主键", "没有 2xx 就是没登记成", NODES.WB_PARSE_SRC,
+        [V("raw", ["wb_artifact", "body"]), V("status", ["wb_artifact", "status_code"])],
+        ["id", "ok", "status", "detail", "publish_body", "feedback_body"])))
+    nodes.append(N("wb_version", X + 8320, Y - 240, http(
+        "写 M2｜登记版本", "同一份产物重复提交幂等键相同，不制造双份事实", "post",
+        M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/artifacts/{{#wb_p1.id#}}/versions",
+        "{{#uapp_wb_prep.version_body#}}")))
+    nodes.append(N("wb_p2", X + 8640, Y - 240, code(
+        "解析｜版本主键并补齐发布请求体", "把 content_version_id 填进发布请求",
+        NODES.WB_PARSE_SRC,
+        [V("raw", ["wb_version", "body"]), V("status", ["wb_version", "status_code"]),
+         V("publish_tpl", ["uapp_wb_prep", "publish_body_template"])],
+        ["id", "ok", "status", "detail", "publish_body", "feedback_body"])))
+    nodes.append(N("uapp_ver_assign", X + 8960, Y - 240, assigner(
+        "记住｜本轮版本", "供后续发布登记引用",
+        [("variable", ["wb_p2", "id"], "uapp_last_version")])))
+    edges.append(E("uapp_persist_gate", "wb_artifact", "persist"))
+    edges.append(E("wb_artifact", "wb_p1"))
+    edges.append(E("wb_p1", "wb_version"))
+    edges.append(E("wb_version", "wb_p2"))
+    edges.append(E("wb_p2", "uapp_ver_assign"))
+
+    # ---- 按用户实际要求的动作写 ----
+    nodes.append(N("uapp_act_gate", X + 9280, Y, ifelse(
+        "本轮要登记哪一类已发生的事", "只登记用户说已经发生的事；打算做的事不登记。",
+        ("publish", ["uapp_route", "action"], "RECORD_PUBLISH"),
+        ("feedback", ["uapp_route", "action"], "RECORD_FEEDBACK"),
+        ("cycle", ["uapp_route", "action"], "NEXT_CYCLE"),
+        ("withdraw", ["uapp_route", "action"], "WITHDRAW_MATERIAL"))))
+    edges.append(E("uapp_ver_assign", "uapp_act_gate"))
+    edges.append(E("uapp_persist_gate", "uapp_act_gate", "false"))
+
+    acts = [
+        ("publish", "wb_publish", "wb_p3", "写 M2｜登记测试发布",
+         "is_test / is_simulated 恒为 true 且显式写出，不靠默认值",
+         M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/publish-instances",
+         "{{#wb_p2.publish_body#}}", -480),
+        ("feedback", "wb_feedback", "wb_p4", "写 M2｜登记反馈",
+         "按版本幂等写回；重复提交不制造双份事实",
+         M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/feedback",
+         '{"idempotency_key": "fb-{{#uapp_route.tag#}}-{{#uapp_wb_prep.content_hash#}}", '
+         '"kind": "observed", "source": "user_reported", "is_test": true, '
+         '"is_simulated": true, "is_manual_entry": true, '
+         '"publish_instance_id": "{{#conversation.uapp_last_publish#}}"}', -160),
+        ("cycle", "wb_cycle", "wb_p5", "写 M2｜开下一个周期",
+         "周期推进是 M2 的事实，不是会话状态",
+         M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/cycles",
+         "{{#uapp_wb_prep.next_cycle_body#}}", 160),
+        ("withdraw", "wb_withdraw", "wb_p6", "写 M2｜撤回素材",
+         "只改这份素材未来能不能被引用；不动已发布内容，不对平台做任何操作",
+         M2_BASE + "/workspaces/{{#conversation.uapp_ws#}}/materials/"
+         "{{#conversation.uapp_last_material#}}/withdraw", None, 480),
+    ]
+    for case_id, hid, pid, title, desc, url, body_tpl, dy in acts:
+        nodes.append(N(hid, X + 9600, Y + dy, http(title, desc, "post", url, body_tpl)))
+        nodes.append(N(pid, X + 9920, Y + dy, code(
+            "解析｜写入结果", "没有 2xx 就是没写成，如实交出失败详情", NODES.WB_PARSE_SRC,
+            [V("raw", [hid, "body"]), V("status", [hid, "status_code"])],
+            ["id", "ok", "status", "detail", "publish_body", "feedback_body"])))
+        edges.append(E("uapp_act_gate", hid, case_id))
+        edges.append(E(hid, pid))
+
+    nodes.append(N("uapp_pub_assign", X + 10240, Y - 480, assigner(
+        "记住｜本轮发布记录", "供下一轮反馈按版本幂等写回",
+        [("variable", ["wb_p3", "id"], "uapp_last_publish")])))
+    edges.append(E("wb_p3", "uapp_pub_assign"))
+
+    # ---- 副作用如实陈述：四件事分开说 ----
+    nodes.append(N("uapp_side", X + 10560, Y, code(
+        "陈述｜本轮真实发生的写入", "撤回/已发布内容/未来复用资格/实际写入四件事分开",
+        NODES.SIDE_EFFECT_SRC,
+        [V("action", ["uapp_route", "action"]),
+         V("persist_status", ["wb_p1", "status"]),
+         V("version_status", ["wb_p2", "status"]),
+         V("publish_status", ["wb_p3", "status"]),
+         V("feedback_status", ["wb_p4", "status"]),
+         V("cycle_status", ["wb_p5", "status"]),
+         V("withdraw_status", ["wb_p6", "status"]),
+         V("persist_detail", ["wb_p1", "detail"]),
+         V("publish_detail", ["wb_p3", "detail"]),
+         V("feedback_detail", ["wb_p4", "detail"])],
+        ["side_effect_text", "any_write_happened", "any_write_failed", "write_ledger_json"])))
+    for src in ("uapp_pub_assign", "wb_p4", "wb_p5", "wb_p6"):
+        edges.append(E(src, "uapp_side"))
+    edges.append(E("uapp_act_gate", "uapp_side", "false"))
+
     # ---- 用户投影 ----
-    nodes.append(N("uapp_delivery", X + 5440, Y, code(
+    nodes.append(N("uapp_delivery", X + 10880, Y, code(
         "投影｜只交自然语言，挡内部泄漏", "只呈现 user_delivery；状态词/字段/ID/节点名一律不出对话",
         NODES.DELIVERY_SRC,
         [V("capability", ["uapp_route", "target_capability"]),
@@ -369,29 +538,30 @@ def build_graph():
          V("m3_gate_status", ["uapp_m3", "gate_status"]),
          V("route_mode", ["uapp_route", "route_mode"]),
          V("m2_note", ["uapp_ctx", "m2_note"]),
-         V("hop_gaps_text", ["uapp_hop", "extraction_gaps_text"])],
+         V("hop_gaps_text", ["uapp_hop", "extraction_gaps_text"]),
+         V("account_context", ["uapp_ctx", "account_context"]),
+         V("side_effect_text", ["uapp_side", "side_effect_text"])],
         ["final_text", "delivered_flag", "modules_actually_run", "leak_hits_json",
          "leak_hit_count", "m2_note"])))
-    edges.append(E("uapp_seam", "uapp_delivery"))
-    edges.append(E("uapp_op_gate", "uapp_delivery", "false"))
+    edges.append(E("uapp_side", "uapp_delivery"))
 
-    nodes.append(N("uapp_save", X + 5760, Y, assigner(
-        "记住｜本轮产物与能力", "供下一跳作为上游产出使用；不写业务真源，业务真源在 M2",
+    nodes.append(N("uapp_save", X + 11200, Y, assigner(
+        "记住｜本轮产物与能力", "供下一跳作为上游产出使用；业务真源在 M2，不在会话里",
         [("variable", ["uapp_seam", "artifact"], "uapp_last_artifact"),
          ("variable", ["uapp_route", "target_capability"], "uapp_last_capability")])))
     edges.append(E("uapp_delivery", "uapp_save"))
-    nodes.append(N("uapp_answer", X + 6080, Y,
+    nodes.append(N("uapp_answer", X + 11520, Y,
                    answer("回复｜业务交付", "{{#uapp_delivery.final_text#}}")))
     edges.append(E("uapp_save", "uapp_answer"))
 
     # ---- 组件级传输失败：只影响这一支 ----
-    nodes.append(N("uapp_toolfail", X + 5120, Y + 320, code(
+    nodes.append(N("uapp_toolfail", X + 6720, Y + 640, code(
         "组件失败｜只影响这一支", "不猜原因、不把传输失败说成业务结论",
         NODES.TOOLFAIL_SRC,
         [V("which", ["uapp_route", "target_capability"]),
          V("error_text", ["uapp_route", "route_note"])],
         ["final_text", "failed_stage", "error_kept"])))
-    nodes.append(N("uapp_fail_answer", X + 5440, Y + 320,
+    nodes.append(N("uapp_fail_answer", X + 7040, Y + 640,
                    answer("回复｜这一步没跑完", "{{#uapp_toolfail.final_text#}}")))
     for src in ("uapp_m3", "uapp_hop", "uapp_seam"):
         edges.append(E(src, "uapp_toolfail", "fail-branch"))
@@ -421,6 +591,9 @@ def conversation_variables(console):
         ("uapp_actor", "本会话调用者标识，作为 M2 的 X-Actor-Ref。"),
         ("uapp_last_artifact", "上一跳专业能力交付的产物本体，只作为下一跳的上游输入。"),
         ("uapp_last_capability", "上一跳交付产物的能力身份。"),
+        ("uapp_last_material", "本会话最近登记的素材 id（M2），撤回时定位用。"),
+        ("uapp_last_version", "本会话最近登记的内容版本 id（M2），发布登记引用它。"),
+        ("uapp_last_publish", "本会话最近的测试发布记录 id（M2），反馈按它幂等写回。"),
     ]
     for name, desc in extra:
         out.append({"id": str(__import__("uuid").uuid5(

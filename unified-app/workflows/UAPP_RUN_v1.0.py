@@ -81,7 +81,9 @@ def main():
     conv = sys.argv[3] if len(sys.argv) > 3 else ""
     console = DC.Console(env=DC.load_env(ENV))
     key = console.app_api_key(APP_ID)
-    user = "uapp-exec-" + tag
+    # Dify 的会话按 end-user 隔离：续同一个 conversation 必须用同一个 user，
+    # 换 user 会拿到 "Conversation Not Exists"。续跑时用 UAPP_USER 显式指定。
+    user = os.environ.get("UAPP_USER") or ("uapp-exec-" + tag)
 
     res = chat(key, query, user, conv)
     body = res["body"]

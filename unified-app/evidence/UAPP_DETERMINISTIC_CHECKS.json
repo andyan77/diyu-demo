@@ -1,7 +1,7 @@
 {
   "app_id": "2448e4f9-818f-4b88-9311-d18546e97da9",
-  "graph_md5": "d8026d2d065b4f9a2111bd1d32366172",
-  "graph_sha256": "c60dc41121de4986abc8a1944f4330fbbc60030047104ebd188cb884a638f05c",
+  "graph_md5": "38b6d0ce200b17c9c9325e12a871f753",
+  "graph_sha256": "3efcc888cbcf90df674ef461ec1c422ae2236c938b141ca8685760ba9a18ee49",
   "checks": [
     {
       "id": "D-01",
@@ -12,8 +12,8 @@
         "status": "normal",
         "enable_site": "true",
         "enable_api": "true",
-        "graph_md5": "d8026d2d065b4f9a2111bd1d32366172",
-        "published_version_name": "uapp-v1.1-triage001"
+        "graph_md5": "38b6d0ce200b17c9c9325e12a871f753",
+        "published_version_name": "uapp-v1.3-persistfix"
       }
     },
     {
@@ -21,8 +21,8 @@
       "desc": "图结构自洽：无悬空边、无不可达节点",
       "result": "PASS",
       "detail": {
-        "nodes": 35,
-        "edges": 38,
+        "nodes": 59,
+        "edges": 69,
         "dangling": [],
         "unreachable": []
       }
@@ -154,7 +154,11 @@
         "if_else_nodes": [
           "uapp_gate",
           "uapp_boot_gate",
-          "uapp_op_gate"
+          "uapp_mat_gate",
+          "uapp_m3_gate",
+          "uapp_op_gate",
+          "uapp_persist_gate",
+          "uapp_act_gate"
         ]
       }
     },
@@ -185,8 +189,56 @@
       "detail": {
         "hits": []
       }
+    },
+    {
+      "id": "D-14",
+      "desc": "测试发布与反馈显式写死 is_test / is_simulated 为真，不靠 M2 默认值",
+      "result": "PASS",
+      "detail": {
+        "prep_declares_test_flags": true,
+        "feedback_node_declares_test_flags": true,
+        "feedback_body": "{\"idempotency_key\": \"fb-{{#uapp_route.tag#}}-{{#uapp_wb_prep.content_hash#}}\", \"kind\": \"observed\", \"source\": \"user_reported\", \"is_test\": true, \"is_simulated\": true, \"is_manual_entry\": true, \"publish_instance_id\": \"{{#conversation.uapp_last_publish#}}\"}"
+      }
+    },
+    {
+      "id": "D-15",
+      "desc": "只有真交付且有产物才登记版本：未交付或空产物一律不登记",
+      "result": "PASS",
+      "detail": {
+        "delivered_with_artifact": "true",
+        "delivered_after_recovery": "true",
+        "not_delivered": "false",
+        "empty_artifact": "false"
+      }
+    },
+    {
+      "id": "D-16",
+      "desc": "幂等键由内容派生：同产物同键、异产物异键",
+      "result": "PASS",
+      "detail": {
+        "same_key": "ver-tg-bbf5e32115af9213",
+        "other_key": "ver-tg-5bb263d0838b4f03"
+      }
+    },
+    {
+      "id": "D-17",
+      "desc": "副作用陈述可区分：写成了/没写成/本轮没走，三态互不混淆",
+      "result": "PASS",
+      "detail": {
+        "ok": "{\"happened\": [\"产物登记\", \"版本登记\", \"测试发布记录\"], \"failed\": [], \"action\": \"RECORD_PUBLISH\"}",
+        "bad": "{\"happened\": [], \"failed\": [\"产物登记\"], \"action\": \"RECORD_PUBLISH\"}",
+        "nil_text_empty": true
+      }
+    },
+    {
+      "id": "D-18",
+      "desc": "撤回陈述把四件事分开：未来复用 / 已发布内容 / 平台操作 / 实际写入",
+      "result": "PASS",
+      "detail": {
+        "text": "这一轮真实记下来的是：素材撤回。\n关于撤回：这份素材从现在起不再用于新的内容；已经发出去的内容不受影响、也没有被删除；我没有对平台做任何操作，只是在系统里把它标成不再复用。"
+      }
     }
   ],
-  "passed": 13,
+  "passed": 18,
   "failed": 0
 }
