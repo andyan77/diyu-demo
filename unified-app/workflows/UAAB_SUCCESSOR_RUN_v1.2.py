@@ -34,6 +34,10 @@ SEAM_MD5 = "db49a3da8973d4fdcbe9ecf63bdf7e2a"
 HOP_MD5 = "e38378c3c2a66b75aa7e645368c9e1ce"
 T1_BODY_SHA256 = "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938"
 T1_FP = "3d7342e36d939c31"
+TASK_KEY = "ec666086-dce5-4e79-ba0f-6ac88f04a0bb"
+T2_PD_SHA256 = "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b"
+T2_PD_FP = "559a204d7c4f1f2a"
+T2_VERIFY_SHA256 = "24f11c8a5a2231167fe76da48e035d49e3758d15bfe6cdbaf5c6ab9b116abacc"
 
 APPS: dict[str, str] = {
     "UAPP": "85c01f85-a081-43e9-ab09-9993289cc200",
@@ -164,6 +168,10 @@ def preflight(turn_id: str) -> dict[str, Any]:
     state = json.loads(variables.get("uapp_task_fields") or "{}")
     stored_t1 = next((item for item in store.get("items", []) if item.get("fp") == T1_FP), None)
     ledger_t1 = next((item for item in state.get("artifacts", []) if item.get("fp") == T1_FP), None)
+    stored_t2 = next((item for item in store.get("items", []) if item.get("fp") == T2_PD_FP), None)
+    ledger_t2 = next((item for item in state.get("artifacts", []) if item.get("fp") == T2_PD_FP), None)
+    t2_verify_path = os.path.join(EVIDENCE_DIR, "UAAB_SUCCESSOR_T2_VERIFY_v1.2.json")
+    t2_verify = json.load(open(t2_verify_path, encoding="utf-8")) if os.path.exists(t2_verify_path) else {}
     result = {
         "gate_sha256": sha256_file(GATE),
         "inputs_sha256": sha256_file(INPUTS),
@@ -188,6 +196,16 @@ def preflight(turn_id: str) -> dict[str, Any]:
             "accepted": (ledger_t1 or {}).get("accepted"),
             "stale": (ledger_t1 or {}).get("stale"),
         },
+        "T2_predecessor": {
+            "verify_sha256": sha256_file(t2_verify_path) if os.path.exists(t2_verify_path) else None,
+            "verify_result": (t2_verify.get("result") or {}).get("result"),
+            "store_present": stored_t2 is not None,
+            "body_sha256": sha256_text((stored_t2 or {}).get("body", "")),
+            "capability": (stored_t2 or {}).get("cap"),
+            "task_key": (stored_t2 or {}).get("task_key"),
+            "accepted": (ledger_t2 or {}).get("accepted"),
+            "stale": (ledger_t2 or {}).get("stale"),
+        },
         "raw_evidence_absent": not os.path.exists(raw_evidence_path(turn_id)),
     }
     expected_runs = 0 if turn_id == "T2" else 1
@@ -211,6 +229,17 @@ def preflight(turn_id: str) -> dict[str, Any]:
         },
         "new_evidence_path": result["raw_evidence_absent"],
     }
+    if turn_id == "T3":
+        checks["T2_predecessor"] = result["T2_predecessor"] == {
+            "verify_sha256": T2_VERIFY_SHA256,
+            "verify_result": "PASS",
+            "store_present": True,
+            "body_sha256": T2_PD_SHA256,
+            "capability": "PRODUCTION_DIRECTOR",
+            "task_key": TASK_KEY,
+            "accepted": False,
+            "stale": False,
+        }
     result["checks"] = checks
     result["verdict"] = "PASS" if all(checks.values()) else "FAIL"
     return result
