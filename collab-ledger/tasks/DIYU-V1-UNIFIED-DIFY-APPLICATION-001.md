@@ -1274,3 +1274,8 @@ CONTENT_BRIEF 且 Seam 真实执行，但 UAPP 外壳漏掉用户已说出的 co
 “她能拿到什么”，故正式 FAIL。Checker v1.0 同时额外要求 G2 立即产生 artifact，属于冻结判据外
 的 Oracle 过编译。两项已在修改前分别确认；本轮使用 Prompt 预留的唯一同范围 successor，
 mutation 仅限 UAPP `uapp_fields` 用户支持等价投影及 Checker 后继，不改任何保护模块。
+
+唯一 GAP-01 successor 已完成零模型收敛并发布：实现控制 `8/8`、Checker 控制 `5/5`；UAPP
+graph md5 `aa32b6385de0024d270ec9f85bd78179`，canonical sha256 `e1f01f08…18768`，只改
+`uapp_fields`。Gate v1.1 sha256 `11d6ed2556e2ddbf2a82cc402467d66267efb2a75f3d146c36bdc9a157fa0d60`；
+successor G1 preflight PASS。当前累计 `2 runs / 7 LLM`，下一动作只运行 successor G1 一次。

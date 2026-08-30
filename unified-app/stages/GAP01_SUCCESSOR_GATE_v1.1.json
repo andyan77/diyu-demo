@@ -1,0 +1,88 @@
+{
+  "document": {
+    "id": "GAP01_SUCCESSOR_GATE_v1.1",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "parent_gate": "GAP01_SUCCESSOR_GATE_v1.0",
+    "parent_gate_sha256": "ff7ceb9d9029ba8a8f55d9154720efb7ac4054975bcc9133bc363b830e73d4a7",
+    "authority": "DIYU_V1_UAPP_S5_GAP01_FINAL_TECHNICAL_REBASE_v1.0",
+    "frozen_before_successor_results": true
+  },
+  "candidate": {
+    "graph_md5": {
+      "UAPP": "aa32b6385de0024d270ec9f85bd78179",
+      "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+      "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+      "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+      "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+      "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+      "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+      "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+      "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+      "PUBLISHING_PACKAGING": "99287feadcd784e86bf4c298bea555fc",
+      "PP_provider": "99287feadcd784e86bf4c298bea555fc"
+    },
+    "uapp_graph_canonical_sha256": "e1f01f082ef30788cb290a53c6432f4d844b8943d85319312fe0ff29e4718768"
+  },
+  "frozen_files": {
+    "scenarios_sha256": "896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577",
+    "manifest_sha256": "11803678883fc961f7c0ea20d8da6b1c7e206e3f55a46d0d70a3225cdd8486c4",
+    "executor_sha256": "e6fa027a4703e3b8cad4384d91618069bde405ca6251acefc0086e363f2afbdc",
+    "checker_sha256": "94a94e2f6cbc764a83ef6217440bd1d4c07035f86fb3932dc0acfe792184987c",
+    "implementation_controls_sha256": "d562542e6aebd54a1308748fed964ff24a4a8985a4611d659f98442595fd0a83",
+    "checker_controls_sha256": "0b545aea9ce8392f7292c1fc9332246b22199b7f53638cbc1cda6dc6a77fa1f3",
+    "publication_evidence_sha256": "07808f23c463378c4539f36de437875683a14565c52da621ae8eb09640b03031"
+  },
+  "inherited_current_evidence": {
+    "UAPP-CAP-01": "49ed38d5c9b80141e81a55daf1f7d56bd30dc84f0c543afa4be2bcda3577e83c",
+    "UAPP-CAP-02": "3c99d17c55cfe57117462577dd40802eaa248f988ccb3831b0f99dcaec6d08c6",
+    "UAPP-CAP-03": "a17abedd1c533616a83c6282134ec6058d276a78dfbe17cd674d4db3b04e6d1e",
+    "UAPP-CAP-04": "01edd4f69a0a8f9f18359b5208f0d34003925a218c08e2671bd98024f001962c",
+    "UAPP-CAP-05": "2bb6e95a5e9c8006d91c7f5e7b9054706cad18bb1fe046ec2c9986589333cb5c",
+    "UAPP-CAP-06": "cd0864c07f206902cba10731531c6a3fb179ed6b685301808ff41761237293d8",
+    "cross_turn_correction_propagation": {"result": "PASS", "freshness": "CURRENT"}
+  },
+  "protected_surface": {
+    "global_m2_before": {
+      "non_test_publish_instances": 1568,
+      "non_test_feedback_records": 117,
+      "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+    },
+    "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2"
+  },
+  "budget": {
+    "formal_top_level_turn_count": 19,
+    "current_candidate_remaining_turn_count": 13,
+    "authorized_top_level_runs_total_max": 15,
+    "used_top_level_runs": 2,
+    "per_turn_static_reachable_llm_nodes": 6,
+    "authorized_llm_node_attempts_total_max": 90,
+    "used_llm_node_attempts": 7,
+    "manual_retries": 0,
+    "conditional_pure_transport_replay_remaining": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "gap01_criteria": {
+    "G1": [
+      "Ask exactly one natural route-changing question answerable by frozen G2.",
+      "Do not choose product, content direction, or Campaign and run no professional capability."
+    ],
+    "G2": [
+      "Continue the same conversation and accept the supplied product and content direction.",
+      "Do not repeat G1 or any user-provided content promise.",
+      "Enter the legal CONTENT_BRIEF path, execute Seam, and run only that capability.",
+      "A real artifact may be delivered; otherwise only one genuinely new precise gap may be asked."
+    ]
+  },
+  "decision_rules": {
+    "inputs_and_order": "VERBATIM_FROM_UAPP_S5_FROZEN_SCENARIOS_v1.1",
+    "criteria": "VERBATIM_UAPP_AC_01_TO_11_WITH_GAP01_PRODUCT_SEMANTICS",
+    "each_successor_input_once": true,
+    "further_candidate": "PROHIBITED",
+    "founder_ac_12": "NOT_AUTHORIZED",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset"
+  }
+}

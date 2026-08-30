@@ -5,7 +5,7 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | IN_PROGRESS | 首候选 G1 PASS/G2 FAIL；successor 8/8 + Checker 5/5 PASS | 2/4 | 7/90 | NONE | 发布 successor |
+| C2 G1/G2 | IN_PROGRESS | 首候选 G1 PASS/G2 FAIL；successor 发布/Gate/preflight PASS | 2/4 | 7/90 | NONE | successor G1 一次 |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
@@ -31,6 +31,10 @@
 - successor 只改 UAPP `uapp_fields`：把本轮用户明确的“看完/读完/听完后知道、明白、理解、
   学会或获得”的原值，在逐字支持时同时登记为 content promise；表达主体仍独立缺失，不代填。
   实现正负控制 `8/8 PASS`，Checker 判别控制 `5/5 PASS`，模型调用保持 `7`。
+- successor 已发布并回读：UAPP `aa32b6385de0024d270ec9f85bd78179`，canonical sha256
+  `e1f01f082ef30788cb290a53c6432f4d844b8943d85319312fe0ff29e4718768`；只改 `uapp_fields`。
+  Gate v1.1 sha256 `11d6ed2556e2ddbf2a82cc402467d66267efb2a75f3d146c36bdc9a157fa0d60`，
+  G1 preflight PASS；无进一步候选额度。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 
