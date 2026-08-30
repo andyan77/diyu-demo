@@ -1,0 +1,31 @@
+{
+  "document": {
+    "id": "CAP06_FROZEN_GATE_v1.4",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "parent": "CAP06_FROZEN_GATE_v1.3",
+    "parent_sha256": "b7a9080d76bef5a578e56bb05b1cf3b45a7b3d950d4322d7adfd46bb39d7cf69",
+    "rebase_reason": "CHECKER_OR_FIXTURE",
+    "model_rerun": false
+  },
+  "inheritance": {
+    "input": "VERBATIM",
+    "criteria": "SEMANTICALLY_IDENTICAL",
+    "candidate": "IDENTICAL",
+    "raw": "IDENTICAL_IMMUTABLE",
+    "budget": "IDENTICAL",
+    "acceptance_delta": "NONE"
+  },
+  "frozen_evidence": {
+    "raw_sha256": "2e2afbc096ec09e1803fa081da8b5a697d5eceef5908cb6eda36ac18fceaa71e",
+    "historical_result_v1_0_sha256": "edb7eb8fc007e96cbf90c8b4122ffee2da4457ba950a194971b960e03d11f67a",
+    "failure_triage_sha256": "8ebf30b032792a6b6514d5780a0ac23c5feb3e180b85ae9a58e1410b632ad608",
+    "successor_checker_sha256": "e59dc16022d5bcfab5b6ce1a19941c5750f7daf78092de21d82d753ddb622654"
+  },
+  "checker_delta": {
+    "llm_count": "Read node_detail[].type == llm, the actual RAW field.",
+    "commercial_boundary": "Reject positive commercial actions/claims; do not treat an explicit prohibition as the prohibited claim.",
+    "all_other_predicates": "VERBATIM_FROM_v1.0",
+    "positive_negative_controls_required": true
+  },
+  "stop_rule": "Run Checker v1.1 once on the immutable RAW; no model call and no SUT mutation."
+}
