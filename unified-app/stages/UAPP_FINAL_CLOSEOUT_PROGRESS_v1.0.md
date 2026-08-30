@@ -22,7 +22,7 @@
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
 | N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS/STALE；CAP-05 历史 FAIL/CURRENT；其余 14 项 NOT_VERIFIED | 历史 8 runs / 44 LLM | Phase A/B/C | 完整接缝修复后 CAP-05 |
-| N4 有界修复 | IN_PROGRESS | Phase A PASS；Phase B 实现中 | 0 | NONE | 最小完整接缝实现 |
+| N4 有界修复 | COMPLETED | Phase A/B/C PASS；30/30 机器硬门 | 0 | NONE | 发布并冻结正式候选 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -167,6 +167,22 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 最高失效接缝：`UAPP_CURRENT_TURN_INLINE_ARTIFACT_SOURCE_TO_BINDING_AND_DELIVERY`。
 - Phase A 模型调用 0，Dify 写入 0，M2 写入 0。
 - 唯一下一动作：实现同一 UAPP 接缝包并运行 Phase C 全接缝机器硬门。
+
+#### Phase B/C 结果
+
+- 实现冻结提交：`8f870ec5ed2e4fbfc41b5ff81159688331c7eb22`，已普通推送且远端一致。
+- 候选 canonical sha256：`2660128ad3f37cabe1976bc321bc825cf35cd3da9b1e1eb36994d63c67234a93`；
+  55→56 节点，57→58 边，新增会话变量 0。
+- 修改节点：`uapp_inline_artifact`（新增）、`uapp_pick_upstream`、`uapp_fields`、
+  `uapp_td24_block`；M3/Hop/Seam/state/persist/save/delivery 等保护节点逐字相同。
+- Phase C 正负硬门 `30/30 PASS`；CAP-05 用户脚本 95 字，来源与注入 sha256 均为
+  `5e2447a1401c404abdf621f92d5279bcd02228fe2c13f6ba5cada56e93b64894`。
+- CAP-06 已实现内容 78 字，来源与注入 sha256 均为
+  `00c3372f5b38e5eca06a9cf97fa7acc09707b753deceea2e3f670f84051e9fcd`。
+- inline 绑定 `persisted=false / accepted=false`；没有写入历史 artifact，也没有进入规范字段载体。
+- 控制证据 sha256：`35327ae8e82b2b3918fe2ac3f934516ebc36ac952dc7976e264cad2bbb386e9b`；
+  构建证据 sha256：`8032f17a4bae3415350703f4815e4fbb38651eec16324e3bef7cac790ff10f39`。
+- 模型调用 0，Dify 写入 0，M2 写入 0；唯一下一动作：发布同一候选并冻结 Gate/Manifest/Executor。
 
 ## 激活现场
 

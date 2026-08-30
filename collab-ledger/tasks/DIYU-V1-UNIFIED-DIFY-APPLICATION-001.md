@@ -1097,3 +1097,15 @@ next_action: commit implementation and frozen Phase C controls before writing fo
 
 外部副作用预登记：下一次普通 push 仅冻结上述实现、Phase C 控制、Phase A 结果与进度投影；
 不发布 Dify、不调用模型、不写 M2、不动 main。
+
+实现/控制冻结 push 已确认：`origin/codex/v1-uapp-progressive-canvas-001` 从 `8fe6e05` 快进到
+`8f870ec5ed2e4fbfc41b5ff81159688331c7eb22`，非 force，本地与远端一致。
+
+Phase C 正式机器硬门：`30/30 PASS`。候选 canonical sha256
+`2660128ad3f37cabe1976bc321bc825cf35cd3da9b1e1eb36994d63c67234a93`；CAP-05 原脚本与
+注入正文 sha256 同为 `5e2447a…64894`，CAP-06 已实现内容与注入正文 sha256 同为
+`00c3372f…e9fcd`；inline binding 明确 `persisted=false / accepted=false`。保护 UAPP 节点逐字相同，
+模型调用 0，Dify/M2 写入 0。
+
+下一外部副作用预登记：只把上述同一候选写入既有 UAPP draft 并发布测试候选，随后现场回读；
+不修改任何专业应用/provider、M2、非测试数据或 main。状态 `PLANNED`，发布前活动 workflow 必须为 0。
