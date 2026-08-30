@@ -1254,3 +1254,6 @@ Founder 已授权 GAP-01 最小修复、G1/G2 定向复验、剩余 11 项 S5、
 首次发布器运行在 Console 请求前因模块引用少一层而 AttributeError；publication 文件不存在，
 线上图、draft、workflow、模型和数据副作用均为 0。归因 `INPUT_ENVIRONMENT_OR_TOOL`，只修发布器
 引用，不改候选、输入、判据或预算；Triage 见 `GAP01_SUCCESSOR_PUBLICATION_TRIAGE_001.md`。
+
+第二次运行在首个 HTTP helper 解析时发现同一父模块的 `console_call` 也少取一层；仍未发出
+请求、publication 文件仍不存在、副作用 0。Triage 002 追加保留，只改该 helper 引用。

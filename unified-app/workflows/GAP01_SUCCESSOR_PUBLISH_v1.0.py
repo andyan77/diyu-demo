@@ -27,7 +27,7 @@ BUILD = load_module("gap01_publish_build", HERE / "GAP01_SUCCESSOR_BUILD_v1.0.py
 
 
 def console_call(console: Any, method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
-    return BUILD.BASE.console_call(console, method, path, body)
+    return BUILD.BASE.BASE.console_call(console, method, path, body)
 
 
 def publish(graph: dict[str, Any]) -> dict[str, Any]:
