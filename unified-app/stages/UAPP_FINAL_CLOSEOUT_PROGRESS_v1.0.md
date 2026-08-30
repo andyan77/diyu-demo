@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | AC 0/11 | 后继 5/19、25/114；生命周期 6/20、32/121 | CAP-05 目标能力未真实运行 | CHECKPOINT；等 Founder 裁决 |
+| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | 正式场景 4/19；AC 0/11 | 本包 6/20；LLM 34/120 | 剩余 15 个冻结输入使最低总运行数达到 21，超过 20 次硬上限 | Founder 版本化调整预算 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.1 冻结 | COMPLETED | PASS / CURRENT | 0 | NONE | N3 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..03 PASS / CURRENT | 5/20；LLM 28/120 | NONE | CAP-04 |
+| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS / CURRENT；整体 NOT_VERIFIED | 6/20；LLM 34/120 | 完成剩余 15 个冻结输入至少需达到 21 次顶层运行，超过 20 次上限 | Founder 版本化调整预算 |
 | N4 有界修复 | COMPLETED | 修复节点 1/2、迭代 1/2；控制 10/10 PASS | 0 | NONE | N3 定向复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -60,23 +60,39 @@ CAMPAIGN 1 次，其他五能力 0 次；artifact length `8250`，sha256
 `4ac7c0fc4880f97b06e35a97b6a4763ab7630067dfa29952ad8471807b736ae6`；
 LLM 6，失败节点 0，平台重放 0。
 
+CAP-04 正式 run `9a5f8aee-0594-4f19-82af-d1e41541efc7`：`PASS / CURRENT`；
+CREATIVE_SCRIPT 1 次，其他五能力 0 次；artifact length `4584`，sha256
+`6dbf6f7997ba0ab93ea10346bd99c06c9dfb4a18f229d3fb6a074d02cc370911`；
+LLM 6，失败节点 0，平台重放 0。
+
+### 2026-08-30 有界预算门
+
+- 当前 Active Work Package 已使用顶层运行 `6/20`、LLM 节点尝试 `34/120`。
+- Gate v1.4 共有 19 个冻结输入，其中 CAP-01～04 已取得有效正式 PASS，仍有 15 个输入未运行。
+- 每个未运行输入至少需要 1 次顶层运行，因此即使零失败、零修复、零重放，完成全部冻结输入也至少需要总计 `21` 次顶层运行。
+- `21 > 20` 已在 CAP-05 调用前确定成立；继续运行无法形成满足当前预算合同的 S5 完整 PASS。
+- 本阻断属于授权预算边界，不是新的 SYSTEM_UNDER_TEST 失败；CAP-01～04 继续保持 `PASS / CURRENT`。
+- 未启动 CAP-05，未产生额外模型调用、状态写入或外部副作用。
+- CAP-05 零模型预检 PASS：活动 workflow 为 0，候选图、Provider、Runner、Gate、输入哈希、
+  M2 schema 与非测试计数均与冻结值一致；预检没有创建 RAW 或 run。
+- 唯一下一动作：Founder 对顶层运行和 LLM 尝试上限做版本化调整；建议上限 `22 / 130`，覆盖 15 个剩余正式输入及最多一次已授权的 CAP-05 修复复验，不改变其他合同。
+
 CAP-03 正式 run `670ec687-d216-4c6e-b15d-a83eed7abd4a`：`PASS / CURRENT`；
 CONTENT_BRIEF 1 次，其他五能力 0 次；artifact length `4727`，sha256
 `a30d8614c6f06560edd680fa527acca237b85d8ddea96ce2b7d21a4f832e1b78`；
 LLM 6，失败节点 0，平台重放 0。
 
 ```yaml
-final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
-current_node: F2
-successor_top_level_runs: 5 / 19
-successor_deepseek_llm_attempts: 25 / 114
-lifetime_top_level_runs: 6 / 20
-lifetime_deepseek_llm_attempts: 32 / 121
-remaining_authorized_nodes: 1 (F2)
+final_closeout_progress: F0 and F1 completed; F2 paused at the bounded budget gate
+current_node: N3 / F2
+active_package_top_level_runs: 6 / 20
+active_package_deepseek_llm_attempts: 34 / 120
+valid_formal_scenarios: 4 / 19
+remaining_frozen_scenarios: 15
 ac_pass: 0 / 11
-current_scenario: UAPP-CAP-05 successor stopped
-current_blocker: CAP-05 routed to PRODUCTION_DIRECTOR but the pre-call upstream gate rejected the branch; Seam and PRODUCTION_DIRECTOR both ran 0 times
-next_action: Founder 裁决是否版本化授权 CAP-05 短入口与已接受上游绑定规则的最小后继修复
+current_scenario: UAPP-CAP-05 not started under Gate v1.4
+current_blocker: minimum required top-level total is 21, above the frozen maximum of 20
+next_action: Founder 版本化调整顶层运行与 LLM 节点尝试预算
 ```
 
 ## 激活现场
