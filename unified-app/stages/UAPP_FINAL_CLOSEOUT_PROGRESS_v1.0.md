@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | 正式场景 4/19；CAP-05 FAIL preserved；AC 0/11 | 本包 7/22；LLM 39/130 | Gate v1.6 候选绑定 | 冻结 Gate v1.6 |
+| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | 正式场景 4/19；CAP-05 FAIL preserved；AC 0/11 | 本包 7/22；LLM 39/130 | Gate v1.6 冻结提交 | 提交 Gate v1.6 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -22,7 +22,7 @@
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
 | N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS；CAP-05 FAIL preserved；整体 NOT_VERIFIED | 7/22；LLM 39/130 | N4 最后一个修复节点 | CAP-05 定向复验 |
-| N4 有界修复 | IN_PROGRESS | 修复节点 2/2；控制 PASS；候选已发布 | 0 | Gate v1.6 候选绑定 | 冻结 Gate v1.6 |
+| N4 有界修复 | IN_PROGRESS | 修复节点 2/2；控制 PASS；候选与 Gate v1.6 已绑定 | 0 | Gate v1.6 冻结提交 | 提交后定向复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -110,6 +110,11 @@ LLM 6，失败节点 0，平台重放 0。
 - 候选已发布并回读一致：UAPP graph md5 `16e10d84dcdf1deb4608d95fe30fb654`；
   发布证据 sha256 `8b5be0c8331b509ca6f7edd1e847c8d74ab65d17ec7f7471c9598a1d9ec6c1a3`。
 - 在 Gate v1.6 绑定新候选前不进行模型复验。
+- Gate v1.6 已绑定 UAPP `16e10d84dcdf1deb4608d95fe30fb654`、Manifest v1.6、
+  Executor v1.7 和原 Checker v1.2；Gate sha256
+  `0a9120d07794b2f17f65ef811da8af89477462aa31f846cc987fa92cf862cf82`。
+- Gate v1.6 相对 v1.5 的业务 criteria、Scenario、Checker 和其他十个应用图均不变；
+  只增加修复节点 2 的候选身份、控制/发布证据和累计成本绑定。
 
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 resumed under budget REBASE 001
@@ -120,8 +125,8 @@ valid_formal_scenarios: 4 / 19
 remaining_frozen_scenarios: 15
 ac_pass: 0 / 11
 current_scenario: UAPP-CAP-05 failed Attempt preserved; directed reverification pending
-current_blocker: Gate v1.6 must bind the repaired candidate before reverification
-next_action: 冻结 Gate v1.6、Manifest 与 Executor
+current_blocker: Gate v1.6 freeze commit
+next_action: 提交 Gate v1.6 后定向复验 CAP-05
 ```
 
 ## 激活现场
