@@ -213,3 +213,30 @@ S5 未启动，main 不合并，terminal 未设置。完整证据见
 **唯一下一步：** Founder 裁定是否建立新的版本化续行，授权修复
 `uapp_hop → uapp_fields` 完整产物绑定不一致，并明确平台内部重放的处置规则；
 当前合同不授权第二次修复或再次运行。
+
+## 十四、Successor REBASE v1.2 · 模型调用前冻结
+
+Founder 已授权同一 task 进入 successor REBASE v1.2。现场 fetch 后，branch / origin
+均为 `225436d69cff68c76a0bb0bbe12dc519cf2fea09`，main / origin/main 均为
+`01a42b0ed97344a67302ecb6778ae4a772eb28b2`；UAPP、PP/provider、Seam、Hop 稳定图与父合同
+完全一致，活动 workflow 为 0。
+
+最小候选从恢复后的稳定 draft 重新构建，不复用失败候选：只改 `uapp_fields`、
+`uapp_hop` 取回接线、`uapp_persist`、`uapp_save`，新增 `uapp_pick_upstream`。
+完整正文身份改为 selector 直接输出；Hop 仍只处理普通字段；没有非空新 artifact 时能力标记
+保持上一合法值。候选 50 节点 / 52 边，canonical graph sha256
+`75c0afbeb6f9bacba514b221702d113cbca7dcfb5dd857b594945f552e9d3ef7`。
+
+零模型确定性控制最终 `12/12 PASS`，含 12 个正例与 13 个单变量负例。首次夹具把
+`accepted=false` 与含「可以」的话术放在一起，第二次夹具用序列化文本搜索多行正文，均确认是
+Checker 夹具／检测器问题；只修对应夹具后全量重跑，未修改被测实现或冻结业务判据。
+
+影响面证明 successor 的新绑定分支只适用于 PD / PP，T1 的 CREATIVE_SCRIPT 无上游路径不可达；
+现场 T1 正文 3497 字、sha256 `65f58acb…5b938`、fp `3d7342e36d939c31`、bfp
+`4af627e012e74e3a`，store / ledger 身份、accepted / stale 状态全部保持。因此路径在任何模型调用前
+冻结为 **A：继承 T1，只跑 T2、T3**；预算 2 个顶层 run / 12 次 LLM 节点尝试。
+
+Successor Gate：`unified-app/stages/UAAB_GATE_v1.2.json`，sha256
+`dbe4c023256e378d93827094b5c762f7c1b67b1c7528fff92fbbb84b219ea622`；输入文件 sha256
+`f669c5163533807e47c827f9c08792f014ce4743e0df35ef23adb9b9b3ac29ca`。下一动作仅为提交冻结，
+随后发布候选并运行 T2 一次；T2 非 PASS 即停止且不运行 T3。

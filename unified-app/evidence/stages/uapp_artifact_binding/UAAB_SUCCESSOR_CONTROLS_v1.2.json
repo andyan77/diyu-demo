@@ -1,0 +1,212 @@
+{
+ "document": {
+  "id": "UAAB_SUCCESSOR_CONTROLS_v1.2",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "model_calls": 0,
+  "writes_to_dify": 0,
+  "builder_sha256": "8e6a50947a77c48a8b3e4ab29fcbf53f8472f63642355c335128a5c5624f9f8f",
+  "fields_code_sha256": "2592d5b2308ec919e83d25dc6b51275af3cde5abbfb4f31ee7ed90179054e91e"
+ },
+ "summary": {
+  "pass": 12,
+  "total": 12,
+  "positive_controls": 12,
+  "single_variable_negative_controls": 13,
+  "verdict": "PASS"
+ },
+ "predecessor_evidence_inheritance": {
+  "modified_binding_branch_condition": "target in {PRODUCTION_DIRECTOR, PUBLISHING_PACKAGING}",
+  "T1_target": "CREATIVE_SCRIPT",
+  "modified_binding_branch_reachable_from_T1": false,
+  "current_identity": {
+   "body_length": 3497,
+   "body_sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938",
+   "store_fp": "3d7342e36d939c31",
+   "store_bfp": "4af627e012e74e3a",
+   "ledger_fp": "3d7342e36d939c31",
+   "accepted": true,
+   "stale": false,
+   "task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb"
+  },
+  "store_record_sha256": "2a5bee994091915647af27f7c6483201ea1a9c7bb776a5667cf0ae5fa1a22273",
+  "ledger_record_sha256": "52b8a902a4d2936f0276ba18cacaa23e3abda1a2d843afd969190171f97fb384",
+  "predecessor_identity_matches": true,
+  "chosen_path": "A · inherit T1 predecessor evidence",
+  "path_frozen_before_model_calls": true
+ },
+ "checks": [
+  {
+   "id": "S-01",
+   "text": "合法 selector 完整正文逐字节注入；正文单变量改变即拒绝",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "binding": "BOUND",
+    "injected_sha256": "f3c8158dfb7f4f0eb0ef5b58c34635500510db7b77130f90e396626641ea848d"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "selector_delivery",
+    "reason": "FP_MISMATCH"
+   }
+  },
+  {
+   "id": "S-02",
+   "text": "Hop 投影不参与 artifact 身份；selector 状态单变量失效时投影不能顶替",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "hop_projection_ignored": true
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "selection_status",
+    "hop_projection_used": false
+   }
+  },
+  {
+   "id": "S-03",
+   "text": "fp 不一致 fail-closed",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "fp": "83a68186fd75a2b2"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "selector_delivery",
+    "reason": "FP_MISMATCH"
+   }
+  },
+  {
+   "id": "S-04",
+   "text": "bfp 不一致 fail-closed",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "bfp": "83a68186fd75a2b2"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "selected_bfp",
+    "reason": "BFP_MISMATCH"
+   }
+  },
+  {
+   "id": "S-05",
+   "text": "task 不一致 fail-closed",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "task": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "ledger artifact task_key",
+    "reason": "CROSS_TASK"
+   }
+  },
+  {
+   "id": "S-06",
+   "text": "capability 不兼容 fail-closed",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "capability": "CREATIVE_SCRIPT"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "selected_capability",
+    "reason": "CAPABILITY_INCOMPATIBLE"
+   }
+  },
+  {
+   "id": "S-07",
+   "text": "NOT_ACCEPTED 或 STALE 均 fail-closed",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "accepted": true,
+    "stale": false
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "accepted flag, then stale flag (two independent single-variable probes)",
+    "not_accepted_reason": "NOT_ACCEPTED",
+    "stale_reason": "STALE"
+   }
+  },
+  {
+   "id": "S-08",
+   "text": "selector 无合法结果时只保留精确缺口，不猜正文",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "status": "BOUND"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "selection_status",
+    "gaps_text": "script_or_equivalent_beats"
+   }
+  },
+  {
+   "id": "S-09",
+   "text": "artifact 正文不进入 canonical field carrier",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "carrier_contains_body": false
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "one carrier field value",
+    "leak_detected": true
+   }
+  },
+  {
+   "id": "S-10",
+   "text": "普通非 artifact 字段继续服从 Hop 载体",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "regular_field": "普通字段甲：保持 Hop 既有规则。"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "Hop content_promise",
+    "regular_field": "普通字段乙：只改变这一项。"
+   }
+  },
+  {
+   "id": "S-11",
+   "text": "NO_NEW_ARTIFACT 不推进 uapp_last_capability",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "capability": "CREATIVE_SCRIPT"
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "new_artifact empty -> non-empty",
+    "capability": "PRODUCTION_DIRECTOR"
+   }
+  },
+  {
+   "id": "S-12",
+   "text": "T1 无上游分支与九个受保护应用零漂移",
+   "result": "PASS",
+   "positive_control": {
+    "pass": true,
+    "T1_binding_branch_reachable": false,
+    "protected_app_drift": {}
+   },
+   "single_variable_negative_control": {
+    "pass": true,
+    "mutated": "target capability; separate synthetic protected hash probe",
+    "PD_branch_status": "REJECTED",
+    "drift_detected": true
+   }
+  }
+ ]
+}

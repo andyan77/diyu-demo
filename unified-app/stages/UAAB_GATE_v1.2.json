@@ -1,0 +1,156 @@
+{
+ "document": {
+  "id": "UAAB_GATE_v1.2",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "task_mode": "REBASE",
+  "authority": "FOUNDER AUTHORIZATION · Successor REBASE Execution Prompt v1.2",
+  "parent_gate": {
+   "file": "unified-app/stages/UAAB_GATE_v1.1.json",
+   "sha256": "069a5af02cfcd173e024c4cfd66c38f74005c1c6d26afdf8e7b19ba81d74d6a6"
+  },
+  "frozen_at": "2026-08-30T09:30:17-07:00",
+  "frozen_before_model_calls": true
+ },
+ "implementation": {
+  "builder": {
+   "file": "unified-app/workflows/UAAB_BUILD_BINDING_FIX_v1.1.py",
+   "sha256": "8e6a50947a77c48a8b3e4ab29fcbf53f8472f63642355c335128a5c5624f9f8f"
+  },
+  "candidate_uapp": {
+   "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+   "published_stable_graph_md5": "99c3edf7bd12172a4fb011b588f25e57",
+   "draft_hash": "e6ef68d206a38d0c2a7774fb4edc4469d9ef2836bf341fc56ab82885608ffd10",
+   "draft_graph_canonical_sha256": "75c0afbeb6f9bacba514b221702d113cbca7dcfb5dd857b594945f552e9d3ef7",
+   "nodes": 50,
+   "edges": 52,
+   "nodes_touched": [
+    "uapp_fields",
+    "uapp_hop",
+    "uapp_persist",
+    "uapp_pick_upstream(NEW)",
+    "uapp_save"
+   ]
+  },
+  "binding_contract": [
+   "uapp_fields receives selector_delivery, selected_fp, selected_bfp, selected_capability and selection_status directly from uapp_pick_upstream",
+   "Hop projection remains authoritative only for ordinary non-artifact fields",
+   "Hop-projected artifact slots are always removed before binding",
+   "selector body must pass task, capability, accepted, non-STALE, fp and bfp checks",
+   "the exact selector body is injected into the current capability call as a lossless JSON string value",
+   "artifact body is not written into canonical decision fields or a new conversation variable",
+   "NO_NEW_ARTIFACT preserves the previous uapp_last_capability"
+  ]
+ },
+ "deterministic_controls": {
+  "script": "unified-app/workflows/UAAB_SUCCESSOR_CONTROLS_v1.2.py",
+  "script_sha256": "e98ab8e3ac068a250790a68737decd414accc452777641d4a8be40be171de186",
+  "evidence": "unified-app/evidence/stages/uapp_artifact_binding/UAAB_SUCCESSOR_CONTROLS_v1.2.json",
+  "evidence_sha256": "5fefe800a8f7835c16515f9dfa84feb0d065f18e3d9b1012983dfb4717e51519",
+  "verdict": "PASS 12/12",
+  "positive_controls": 12,
+  "single_variable_negative_controls": 13
+ },
+ "predecessor_evidence": {
+  "chosen_path": "A · inherit T1 predecessor evidence",
+  "decision_frozen_before_model_calls": true,
+  "reason": "The modified artifact-binding branch is gated to PRODUCTION_DIRECTOR or PUBLISHING_PACKAGING and is unreachable for T1 target CREATIVE_SCRIPT. The current T1 body/store/ledger identity matches predecessor evidence.",
+  "T1": {
+   "workflow_run_id": "ec4b6bfe-2bc7-49f3-963b-7ffcf06dd376",
+   "length": 3497,
+   "sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938",
+   "fp": "3d7342e36d939c31",
+   "bfp": "4af627e012e74e3a",
+   "accepted": true,
+   "stale": false,
+   "store_record_sha256": "2a5bee994091915647af27f7c6483201ea1a9c7bb776a5667cf0ae5fa1a22273",
+   "ledger_record_sha256": "52b8a902a4d2936f0276ba18cacaa23e3abda1a2d843afd969190171f97fb384"
+  }
+ },
+ "inputs": {
+  "file": "unified-app/stages/UAAB_SUCCESSOR_INPUTS_v1.2.json",
+  "sha256": "f669c5163533807e47c827f9c08792f014ce4743e0df35ef23adb9b9b3ac29ca",
+  "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+  "end_user": "s4ct-20260830001839",
+  "inputs": {},
+  "files": []
+ },
+ "budget": {
+  "top_level_workflow_runs_hard_cap": 2,
+  "deepseek_llm_node_attempts_hard_cap": 12,
+  "manual_retry": 0,
+  "top_level_retry": 0,
+  "repeat_sampling": 0,
+  "ab_tests": 0,
+  "reviewer_calls": 0,
+  "platform_internal_transport_replay_hard_cap": 1,
+  "transport_replay_qualification": [
+   "first failure is transport-only",
+   "first attempt has zero usable model output",
+   "first attempt has zero downstream writes or external side effects",
+   "input, model and parameters are identical",
+   "all attempts are counted, retained and disclosed"
+  ]
+ },
+ "formal_turns": [
+  {
+   "id": "T2",
+   "target": "PRODUCTION_DIRECTOR",
+   "query": "这版口播稿可以，基于它告诉我这条该怎么制作。",
+   "criteria": [
+    "only PRODUCTION_DIRECTOR runs",
+    "selector chooses inherited T1 CS",
+    "selector body sha256 equals T1 CS sha256",
+    "uapp_fields artifact_binding_status is BOUND",
+    "PD decoded script_or_equivalent_beats sha256 equals T1 CS sha256",
+    "PD emits a non-empty non-placeholder real artifact",
+    "CS and PD bodies are independently stored and CS is not overwritten",
+    "uapp_last_capability equals the latest real non-empty artifact capability"
+   ]
+  },
+  {
+   "id": "T3",
+   "target": "PUBLISHING_PACKAGING",
+   "query": "刚才那份制作方案可以，基于它给这条出标题和封面。",
+   "criteria": [
+    "only PUBLISHING_PACKAGING runs",
+    "selector chooses the current T2 PD",
+    "PP decoded content_body_or_beats sha256 equals the current T2 PD artifact sha256",
+    "old unaccepted PP, wrong task and wrong capability are not selected",
+    "PP b2 emits a non-empty non-placeholder packaging product",
+    "the product passes existing D1-b fact boundaries",
+    "the product passes existing D1-c CTA boundaries",
+    "CS, PD and PP bodies exist as independent records",
+    "PD is accepted and non-STALE",
+    "new PP is not accepted and does not overwrite PD",
+    "the other five professional capabilities do not run",
+    "UAPP -> Seam -> PP b2 is traceable through real node execution"
+   ]
+  }
+ ],
+ "first_failure_stop": {
+  "no_next_turn": true,
+  "no_manual_rerun": true,
+  "no_second_successor_repair": true,
+  "no_gate_input_or_checker_edit": true
+ },
+ "auto_revert_on_non_pass": {
+  "uapp_graph_md5": "99c3edf7bd12172a4fb011b588f25e57",
+  "pp_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "pp_provider_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "preserve_candidate_and_history_rows": true
+ },
+ "allowed_upgrades_only_if_all_applicable_criteria_pass": {
+  "UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING": "PASS / CURRENT",
+  "D3_SUCCESSOR": "PASS / CURRENT",
+  "PP_BOUNDARY_SUCCESSOR_b2": "PASS / CURRENT",
+  "V-08B_FACT_TRACEABILITY": "PASS / CURRENT",
+  "V-08C_CTA_FIDELITY": "PASS / CURRENT"
+ },
+ "must_remain": {
+  "CROSS_TURN_CORRECTION_PROPAGATION": "NOT_VERIFIED(NOT_CHECKED)",
+  "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+  "S5": "NOT_STARTED",
+  "main_merge": "NOT_ALLOWED",
+  "terminal_state": "unset"
+ }
+}
