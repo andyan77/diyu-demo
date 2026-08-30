@@ -86,14 +86,210 @@
       }
     },
     "C2": {
-      "verdict": "NOT_STARTED",
-      "conditions": [],
-      "reason": "T1/T2 证据缺失"
+      "verdict": "PASS",
+      "conditions": [
+        {
+          "id": "P2-01",
+          "text": "M3、Hop、Seam、Content Brief 均有真实节点执行证据",
+          "result": "PASS",
+          "observed": {
+            "T1": {
+              "canvas": {
+                "uapp_ctx": true,
+                "uapp_m3": true,
+                "uapp_route": true,
+                "uapp_hop": true,
+                "uapp_seam": true,
+                "uapp_seam_merge": true,
+                "uapp_delivery": true,
+                "uapp_persist": true,
+                "uapp_save": true
+              },
+              "seam_tools": {
+                "tool_content_brief": "succeeded"
+              },
+              "content_brief_app_runs": 1
+            },
+            "T2": {
+              "canvas": {
+                "uapp_ctx": true,
+                "uapp_m3": true,
+                "uapp_route": true,
+                "uapp_hop": true,
+                "uapp_seam": true,
+                "uapp_seam_merge": true,
+                "uapp_delivery": true,
+                "uapp_persist": true,
+                "uapp_save": true
+              },
+              "seam_tools": {
+                "tool_content_brief": "succeeded"
+              },
+              "content_brief_app_runs": 1
+            }
+          }
+        },
+        {
+          "id": "P2-02",
+          "text": "其余五个专业能力没有暗跑",
+          "result": "PASS",
+          "observed": {
+            "T1": {
+              "seam_extra_tools": [],
+              "other_capability_app_runs": {
+                "MATRIX": 0,
+                "CAMPAIGN": 0,
+                "CREATIVE_SCRIPT": 0,
+                "PRODUCTION_DIRECTOR": 0,
+                "PUBLISHING_PACKAGING": 0
+              }
+            },
+            "T2": {
+              "seam_extra_tools": [],
+              "other_capability_app_runs": {
+                "MATRIX": 0,
+                "CAMPAIGN": 0,
+                "CREATIVE_SCRIPT": 0,
+                "PRODUCTION_DIRECTOR": 0,
+                "PUBLISHING_PACKAGING": 0
+              }
+            }
+          }
+        },
+        {
+          "id": "P2-03",
+          "text": "facts_registered 从来源到 Content Brief 逐跳保持",
+          "result": "PASS",
+          "observed": {
+            "T1": {
+              "ctx_len": 2450,
+              "hop_in_identical": true,
+              "envelope_has_key": true,
+              "not_a_gap": true,
+              "seam_carries_same_bytes": true
+            },
+            "T2": {
+              "ctx_len": 2531,
+              "hop_in_identical": true,
+              "envelope_has_key": true,
+              "not_a_gap": true,
+              "seam_carries_same_bytes": true
+            }
+          }
+        },
+        {
+          "id": "P2-04",
+          "text": "主目标、受众问题、内容承诺和表达边界没有被接缝改写",
+          "result": "PASS",
+          "observed": {
+            "T1": {
+              "primary_goal": {
+                "present": false,
+                "carried_verbatim": false
+              },
+              "audience_problem": {
+                "present": false,
+                "carried_verbatim": false
+              },
+              "content_promise": {
+                "present": false,
+                "carried_verbatim": false
+              },
+              "expression_boundary": {
+                "present": false,
+                "carried_verbatim": false
+              }
+            },
+            "T2": {
+              "primary_goal": {
+                "present": true,
+                "carried_verbatim": true
+              },
+              "audience_problem": {
+                "present": true,
+                "carried_verbatim": true
+              },
+              "content_promise": {
+                "present": true,
+                "carried_verbatim": true
+              },
+              "expression_boundary": {
+                "present": true,
+                "carried_verbatim": true
+              }
+            }
+          }
+        },
+        {
+          "id": "P2-05",
+          "text": "T2 的 Content Brief 产生非空 artifact",
+          "result": "PASS",
+          "observed": {
+            "T2_artifact_len": 6188,
+            "T2_artifact_head": "# Content Brief Pack\n\n## 0. 运行结论\n\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（本次来源为持续运营决策直接给出的单条内容任务核心；没有 ",
+            "T1_artifact_len": 0,
+            "T1_gaps": [
+              "audience_problem",
+              "audience_problem；expected_change；content_promise；expression_subject_and_boundary",
+              "content_promise",
+              "expected_change",
+              "expression_subject_and_boundary",
+              "objective.goal_family(未声明，不代为推断)",
+              "objective.primary_goal"
+            ],
+            "T2_gaps": [
+              "无"
+            ]
+          }
+        },
+        {
+          "id": "P2-06",
+          "text": "不以模型自述或用户正文声称代替节点输入输出证据",
+          "result": "PASS",
+          "observed": {
+            "sources_used": [
+              "workflow_node_executions.inputs/outputs",
+              "workflow_runs"
+            ],
+            "answer_text_used_for": "仅 P2-08 的确定性词表匹配，不用于结构判定"
+          }
+        },
+        {
+          "id": "P2-07",
+          "text": "继承判据 C01 成立",
+          "result": "PASS",
+          "observed": {
+            "inherited": "C01",
+            "T1_seam": {
+              "tool_content_brief": "succeeded"
+            },
+            "T2_seam": {
+              "tool_content_brief": "succeeded"
+            },
+            "T2_artifact_len": 6188
+          }
+        },
+        {
+          "id": "P2-08",
+          "text": "T1/T2 交付零编造、零授权越界、零内部状态泄漏",
+          "result": "PASS",
+          "observed": {
+            "fabrication": [],
+            "leaks": [],
+            "authorization_overclaim": []
+          }
+        }
+      ],
+      "summary": {
+        "pass": 8,
+        "fail": 0,
+        "total": 8
+      }
     },
     "C3": {
       "verdict": "NOT_STARTED",
       "conditions": [],
-      "reason": "按停止规则，C2 未通过不运行 C3"
+      "reason": "T3–T6 证据不全：已有 [1, 2]"
     }
   },
   "verdict": "NOT_VERIFIED",
