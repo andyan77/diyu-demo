@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | successor Gate v1.8 已预检；当前图正式 PASS 0/19 | 本 REBASE 1/21；5/126 LLM | NONE | CAP-05 successor 唯一调用 |
+| N3 正式验收 | IN_PROGRESS | successor CAP-05 PASS；当前图正式 PASS 1/19 | 本 REBASE 2/21；11/126 LLM | NONE | CAP-06 唯一调用 |
 | N4 有界修复 | COMPLETED | successor 1/1 发布；28/28 机器硬门 PASS | 0 | NONE | N3 复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -240,6 +240,17 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - Manifest v1.8 sha256 `4e57aad6…9420`；Executor v1.9 sha256 `ed1aa91a…26a2`；
   Gate v1.8 sha256 `6c89f42a…88d3`。CAP-05 零模型 preflight exit 0。
 - 唯一下一动作：Gate/Manifest/Executor/发布证据提交并普通 push 后，执行唯一 successor CAP-05。
+
+#### successor CAP-05 PASS
+
+- run_id `13eb198b-2f80-41e2-8209-6f9000b8c0bc`；HTTP 200；elapsed 275.66s；LLM 6；
+  平台内部重放/手动重试/重复采样/A-B/Reviewer 均 0。
+- inline 来源、selector、fields、Seam、Production Director 逐跳成立；脚本 95 字原文一致，
+  `content_origin_mode=室内门店拍摄`、`content_promise=我们只展示真实上身效果，不承诺显瘦。`。
+- 只有 Production Director 运行；其他五能力 0。产生 11,614 字 artifact，sha256
+  `cc30acac…950ad`，独立 store/ledger/last_capability 身份全部 PASS。
+- M2 非测试 publish/feedback `1568/117`、schema `25192c…b4fd`，应用保护面零漂移。
+- 当前图正式 PASS `1/19`；唯一下一动作：先 push CAP-05 RAW/Check，再执行 CAP-06 一次。
 
 ## 激活现场
 

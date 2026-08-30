@@ -1197,3 +1197,11 @@ successor Manifest v1.8 / Executor v1.9 / Gate v1.8 已在模型调用前形成�
 `4e57aad6…9420` / `ed1aa91a…26a2` / `6c89f42a…88d3`。CAP-05 preflight exit 0。
 下一 Git push 只冻结上述发布证据和正式载体，状态 `PLANNED`；远端确认后才使用唯一
 successor CAP-05 槽位。
+
+successor CAP-05 run `13eb198b-2f80-41e2-8209-6f9000b8c0bc` 正式 PASS：HTTP 200，LLM 6，
+重放/重试 0。95 字脚本逐字绑定，两个同源 companion 字段进入规范状态；仅 Production Director
+运行并生成 11,614 字 artifact（sha256 `cc30acac…950ad`），其他五能力 0。store/ledger/
+last_capability 身份一致，M2 非测试计数、schema、UAPP 与全部保护应用零漂移。
+
+当前本 REBASE 成本 `2 runs / 11 LLM`，生命周期 `10 runs / 55 LLM`。下一 Git push 只保全
+CAP-05 RAW/Check/进度，状态 `PLANNED`；远端确认后才运行 CAP-06。
