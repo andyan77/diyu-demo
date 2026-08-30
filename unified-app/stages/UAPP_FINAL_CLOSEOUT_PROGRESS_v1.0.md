@@ -5,7 +5,7 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | IN_PROGRESS | 首候选 G1 PASS/G2 FAIL；successor 发布/Gate/preflight PASS | 2/4 | 7/90 | NONE | successor G1 一次 |
+| C2 G1/G2 | IN_PROGRESS | successor G1 PASS；等待同会话 G2 | 3/4 | 9/90 | NONE | successor G2 一次 |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
@@ -35,6 +35,8 @@
   `e1f01f082ef30788cb290a53c6432f4d844b8943d85319312fe0ff29e4718768`；只改 `uapp_fields`。
   Gate v1.1 sha256 `11d6ed2556e2ddbf2a82cc402467d66267efb2a75f3d146c36bdc9a157fa0d60`，
   G1 preflight PASS；无进一步候选额度。
+- successor G1 run `52f7f504-1e02-4d65-8fe3-5dc63b765e3f` PASS：仍只问一个可由 G2
+  回答的分叉问题；专业能力 0、artifact 0、LLM `2`、重试/重放/副作用 0。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

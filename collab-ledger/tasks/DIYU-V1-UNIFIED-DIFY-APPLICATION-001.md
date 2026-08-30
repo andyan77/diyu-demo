@@ -1279,3 +1279,7 @@ mutation 仅限 UAPP `uapp_fields` 用户支持等价投影及 Checker 后继，
 graph md5 `aa32b6385de0024d270ec9f85bd78179`，canonical sha256 `e1f01f08…18768`，只改
 `uapp_fields`。Gate v1.1 sha256 `11d6ed2556e2ddbf2a82cc402467d66267efb2a75f3d146c36bdc9a157fa0d60`；
 successor G1 preflight PASS。当前累计 `2 runs / 7 LLM`，下一动作只运行 successor G1 一次。
+
+successor G1 run `52f7f504-1e02-4d65-8fe3-5dc63b765e3f` PASS：一个分叉问题、六项专业能力 0、
+artifact 0；LLM `2`。累计 `3 runs / 9 LLM`，下一动作在 conversation
+`b99eb7ef-4b80-402e-a50e-f797fac112ab` 运行 successor G2 一次。
