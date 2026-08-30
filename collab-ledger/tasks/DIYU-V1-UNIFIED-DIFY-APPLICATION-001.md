@@ -1182,3 +1182,9 @@ NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)，不算 PASS。
 `25192c11562827efedfc3b2c22c3b4fd`，非测试 publish/feedback `1568/117`，main/origin-main
 仍为 `01a42b0e…28b2`。下一 Git 外部副作用仅提交并普通 push 实现/控制冻结件，状态 `PLANNED`；
 完成后才发布 successor，模型调用仍为 0。
+
+successor 首次发布 API 因 `marked_name` 超过 20 字符返回 HTTP 400。candidate draft 已写入且
+canonical sha256 为 `8034ddba…cb544`，但 published UAPP 仍为 `f7d98573…cf80`；active workflow
+0，模型/正式 run/业务副作用均 0。归因 `INPUT_ENVIRONMENT_OR_TOOL`，见
+`UAPP_S5_INLINE_ARTIFACT_SUCCESSOR_PUBLICATION_TRIAGE_001.md`。下一动作只版本化缩短发布标签，
+不改候选图或冻结判据。

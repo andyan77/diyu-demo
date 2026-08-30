@@ -224,6 +224,14 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
   当前模型调用仍为本 REBASE 1 run / 5 LLM。
 - 唯一下一动作：提交并推送实现/控制证据，然后发布 successor 并冻结新的正式 Gate。
 
+#### successor 首次发布工具失败
+
+- 发布 API 因 `marked_name` 超过 20 字符返回 HTTP 400；线上 published 图仍为
+  `f7d98573…cf80`，draft 已精确写入候选 `8034ddba…cb544`。
+- 归因 `INPUT_ENVIRONMENT_OR_TOOL`；模型调用、正式 run、业务状态和外部副作用均为 0。
+- 只允许版本化缩短发布标签；候选图、场景、判据和 Checker 不变。
+- 唯一下一动作：封存 Triage 后，用 v1.1 发布器回读 draft 并发布同一候选。
+
 ## 激活现场
 
 - branch / HEAD / upstream: `codex/v1-uapp-progressive-canvas-001` / `e1ef78fa9637e7859598f2a453c3e0152a368caf` / 相同
