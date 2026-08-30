@@ -398,8 +398,67 @@
   ]
  },
  "E3_D3": {
-  "verdict": "NOT_STARTED",
-  "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"
+  "verdict": "NOT_VERIFIED",
+  "reason_code": "INCONCLUSIVE",
+  "why": "纯传输失败：HTTP 400，0.02 秒，**零模型输出**。九个应用在时间窗内 workflow_runs 全为 0，LLM 节点执行 0 次，node_detail 为空。判据一条都没有被执行到，既不能判 PASS，也不能判 FAIL。",
+  "conditions": [
+   {
+    "id": "D3-a",
+    "text": "D3-a 使用统一画布自然语言入口，不注入内部 envelope",
+    "result": "NOT_VERIFIED",
+    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+   },
+   {
+    "id": "D3-b",
+    "text": "D3-b 不修改数据库或会话变量伪造前置状态",
+    "result": "NOT_VERIFIED",
+    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+   },
+   {
+    "id": "D3-c",
+    "text": "D3-c 实际路由到 PUBLISHING_PACKAGING",
+    "result": "NOT_VERIFIED",
+    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+   },
+   {
+    "id": "D3-d",
+    "text": "D3-d 其它五个专业能力零暗跑",
+    "result": "NOT_VERIFIED",
+    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+   },
+   {
+    "id": "D3-e",
+    "text": "D3-e UAPP → Seam → 新 PP 后继版本的绑定可从真实节点运行记录回指",
+    "result": "NOT_VERIFIED",
+    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+   },
+   {
+    "id": "D3-f",
+    "text": "D3-f 最终用户交付满足 D1-b 与 D1-c 的事实与 CTA 边界",
+    "result": "NOT_VERIFIED",
+    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+   }
+  ],
+  "http_status": 400,
+  "elapsed_seconds": 0.02,
+  "attempts": 1,
+  "workflow_started": false,
+  "nested_runs_total": 0,
+  "nested_runs_by_app": {
+   "MATRIX": 0,
+   "CAMPAIGN": 0,
+   "CONTENT_BRIEF": 0,
+   "CREATIVE_SCRIPT": 0,
+   "PRODUCTION_DIRECTOR": 0,
+   "PUBLISHING_PACKAGING": 0,
+   "SEAM": 0,
+   "HOP": 0,
+   "M3": 0
+  },
+  "llm_node_executions_in_window": [],
+  "zero_model_output": true,
+  "pp_provider_pin_at_attempt": "2026-08-30 09:51:55.613459",
+  "no_retry": "按 Gate v2.0 transport_failure_rule 与执行 Prompt 第八节：纯传输失败如未产生模型输出，也不得自行重试；登记后停下请示。"
  },
  "cost_account": {
   "top_level_workflow_runs_used": 2,
@@ -412,16 +471,24 @@
   "reviewer_calls": 0
  },
  "protected_surface_now": {
-  "pp_current_graph_md5": "8366328bf827bd0f460455d750d45c4f",
-  "pp_current_version": "2026-08-30 09:51:55.613459",
-  "pp_provider_pin": "2026-08-29 03:34:58.999575",
-  "pin_is_old_stable": true,
-  "pp_workflow_rows": 5,
+  "pp_current_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "pp_current_version": "2026-08-30 10:12:50.213217",
+  "pp_provider_pin": "2026-08-30 10:12:50.213217",
+  "pp_provider_pinned_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "pin_graph_is_old_stable": true,
+  "original_stable_version_row_still_present": true,
+  "pp_workflow_rows": 6,
   "seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
  },
  "allowed_upgrades": {
   "applied": [],
-  "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立"
+  "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立；D3 为 NOT_VERIFIED，公式不成立，一项都不上调"
+ },
+ "protected_surface_restored": {
+  "what": "provider 钉与 PP 当前发布指针都已恢复为旧稳定图",
+  "why": "provider 钉到 b2 是 Gate 里冻结的**测试范围**变更，只为执行 D3；D3 未能执行，该授权窗口关闭，不得把测试范围变更留成事实上的正式绑定（执行 Prompt 第九节要求三项全 PASS 才允许正式钉到 b2）。",
+  "disclosure": "冻结的回退条件字面只写了『D3 FAIL』，未写『D3 未执行』。把本次归入该条是执行侧的判断：留着未过 D3 的版本对外供 Seam / M5 / 统一画布调用，风险高于把受保护面恢复到测试前状态；Gate 也已写明『恢复受保护面到测试前状态不是修复迭代』。如认为该判断越权，请指出，可再行处置。",
+  "b1_b2_rows_preserved": "b1 与 b2 的 workflow 行都保留，重跑 D3 只需一次零模型的重新发布与重钉。"
  },
  "must_remain": {
   "CROSS_TURN_CORRECTION_PROPAGATION": "NOT_VERIFIED(NOT_CHECKED)",

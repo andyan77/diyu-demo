@@ -22,6 +22,7 @@ GATE = os.path.join(UAPP, "stages", "PPBS_GATE_v2.0.json")
 OUT = os.path.join(UAPP, "stages", "PPBS_B2_PHASE_E_RESULT_v1.0.json")
 PP_APP = "c9cdea24-9df3-400b-9ecd-1d740e8c96df"
 STABLE_VERSION = "2026-08-29 03:34:58.999575"
+STABLE_MD5 = "788c8555aca09e6fa6d979f237f70157"
 
 HISTORY_PROBES = ["一直在用", "常用", "长期以来", "十年", "历来", "向来", "一贯",
                   "多年来", "一直以来", "从来都"]
@@ -366,12 +367,49 @@ def adj_d2(gate):
                                     if n["type"] == "llm"]}
 
 
+def adj_d3(gate):
+    raw = load("D3")
+    if raw is None:
+        return {"verdict": "NOT_STARTED",
+                "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"}
+    C = gate["phase_d_criteria"]["D3"]["must_all_hold"]
+    started = bool(raw.get("workflow_run_id")) or bool(raw.get("message_id"))
+    nested = raw.get("nested_app_runs") or {}
+    total_nested = sum(len(v.get("runs") or []) for v in nested.values())
+    llm = raw.get("llm_node_executions_in_window") or []
+    conds = [{"id": c.split()[0], "text": c, "result": "NOT_VERIFIED",
+              "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，"
+                        "本条判据没有任何可判定的运行事实"}
+             for c in C]
+    return {"verdict": "NOT_VERIFIED",
+            "reason_code": "INCONCLUSIVE",
+            "why": "纯传输失败：HTTP 400，0.02 秒，**零模型输出**。"
+                   "九个应用在时间窗内 workflow_runs 全为 0，LLM 节点执行 0 次，"
+                   "node_detail 为空。判据一条都没有被执行到，"
+                   "既不能判 PASS，也不能判 FAIL。",
+            "conditions": conds,
+            "http_status": raw.get("http_status"),
+            "elapsed_seconds": raw.get("elapsed_seconds"),
+            "attempts": raw.get("attempts"),
+            "workflow_started": started,
+            "nested_runs_total": total_nested,
+            "nested_runs_by_app": {k: len(v.get("runs") or []) for k, v in nested.items()},
+            "llm_node_executions_in_window": llm,
+            "zero_model_output": (not started) and total_nested == 0 and not llm,
+            "pp_provider_pin_at_attempt": raw.get("pp_provider_pin_at_run"),
+            "no_retry": "按 Gate v2.0 transport_failure_rule 与执行 Prompt 第八节："
+                        "纯传输失败如未产生模型输出，也不得自行重试；登记后停下请示。"}
+
+
 def main():
     gate = json.load(io.open(GATE, encoding="utf-8"))
     d1 = adj_d1(gate)
     d2 = adj_d2(gate) if d1.get("verdict") == "PASS" else {
         "verdict": "NOT_STARTED", "reason": "D1 未通过，按 stop_rules 不执行"}
-    runs = sum(1 for c in ("D1", "D2", "D3") if load(c) is not None)
+    d3 = adj_d3(gate) if d2.get("verdict") == "PASS" else {
+        "verdict": "NOT_STARTED", "reason": "D1/D2 未全通过，按 stop_rules 不执行"}
+    # 顶层 run 只计**真实发起并执行**的：D3 请求在参数校验阶段即被拒，未产生任何 run
+    runs = sum(1 for c in ("D1", "D2") if load(c) is not None)
     llm = (len(d1.get("llm_node_executions") or [])
            + len(d2.get("llm_node_executions") or []))
     res = {"document": {"id": "PPBS_B2_PHASE_E_RESULT_v1.0",
@@ -385,9 +423,7 @@ def main():
                         "model_calls_by_adjudicator": 0},
            "E1_D1": d1,
            "E2_D2": d2,
-           "E3_D3": ({"verdict": "NOT_STARTED",
-                      "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"}
-                     if load("D3") is None else {}),
+           "E3_D3": d3,
            "cost_account": {"top_level_workflow_runs_used": runs,
                             "top_level_workflow_runs_budget":
                                 gate["budget"]["top_level_workflow_runs"],
@@ -403,16 +439,40 @@ def main():
                                           "on a.workflow_id=w.id where a.id='%s';" % PP_APP),
                "pp_provider_pin": psql("select version from tool_workflow_providers "
                                        "where name='diyu_m5fp_publishing_packaging';"),
-               "pin_is_old_stable": psql("select version from tool_workflow_providers where "
-                                         "name='diyu_m5fp_publishing_packaging';")
-                                    == STABLE_VERSION,
+               # 判定按**图**而非版本字符串：console 只能把钉对齐到当前发布版本，
+               # 恢复后的版本行必然是新的，但其 graph 与旧稳定图逐字节相同。
+               "pp_provider_pinned_graph_md5": psql(
+                   "select md5(graph) from workflows where app_id='%s' and version="
+                   "(select version from tool_workflow_providers where "
+                   "name='diyu_m5fp_publishing_packaging');" % PP_APP),
+               "pin_graph_is_old_stable": psql(
+                   "select md5(graph) from workflows where app_id='%s' and version="
+                   "(select version from tool_workflow_providers where "
+                   "name='diyu_m5fp_publishing_packaging');" % PP_APP) == STABLE_MD5,
+               "original_stable_version_row_still_present": bool(psql(
+                   "select 1 from workflows where app_id='%s' and version='%s';"
+                   % (PP_APP, STABLE_VERSION))),
                "pp_workflow_rows": int(psql("select count(*) from workflows where app_id='%s';"
                                             % PP_APP)),
                "seam_graph_md5": psql("select md5(w.graph) from workflows w join apps a "
                                       "on a.workflow_id=w.id "
                                       "where a.id='5fca0162-e26b-4545-a00b-66b1a2a2a077';")},
            "allowed_upgrades": {"applied": [],
-                                "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立"},
+                                "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立；"
+                                       "D3 为 NOT_VERIFIED，公式不成立，一项都不上调"},
+           "protected_surface_restored": {
+               "what": "provider 钉与 PP 当前发布指针都已恢复为旧稳定图",
+               "why": "provider 钉到 b2 是 Gate 里冻结的**测试范围**变更，"
+                      "只为执行 D3；D3 未能执行，该授权窗口关闭，"
+                      "不得把测试范围变更留成事实上的正式绑定（执行 Prompt 第九节"
+                      "要求三项全 PASS 才允许正式钉到 b2）。",
+               "disclosure": "冻结的回退条件字面只写了『D3 FAIL』，未写『D3 未执行』。"
+                             "把本次归入该条是执行侧的判断：留着未过 D3 的版本对外供 "
+                             "Seam / M5 / 统一画布调用，风险高于把受保护面恢复到测试前状态；"
+                             "Gate 也已写明『恢复受保护面到测试前状态不是修复迭代』。"
+                             "如认为该判断越权，请指出，可再行处置。",
+               "b1_b2_rows_preserved": "b1 与 b2 的 workflow 行都保留，重跑 D3 只需"
+                                       "一次零模型的重新发布与重钉。"},
            "must_remain": gate["must_remain_regardless"]}
     io.open(OUT, "w", encoding="utf-8").write(json.dumps(res, ensure_ascii=False, indent=1) + "\n")
     print("E1 · D1 判定：%s" % d1["verdict"])
@@ -432,14 +492,23 @@ def main():
         print("  run=%s %s %.1fs attempts=%s"
               % (d2.get("run_id"), d2.get("run_status"), d2.get("elapsed_seconds") or 0,
                  d2.get("attempts")))
+    print("E3 · D3 判定：%s（%s）" % (d3["verdict"], d3.get("reason_code") or d3.get("reason")))
+    if d3.get("http_status"):
+        print("  http=%s %.2fs 工作流启动=%s 九应用 run 合计=%s 窗口内 LLM=%s"
+              % (d3["http_status"], d3.get("elapsed_seconds") or 0,
+                 d3.get("workflow_started"), d3.get("nested_runs_total"),
+                 d3.get("llm_node_executions_in_window")))
     print("成本：顶层 run %d/%d，LLM %d/%d，重试 0"
           % (runs, gate["budget"]["top_level_workflow_runs"], llm,
              gate["budget"]["deepseek_llm_node_attempts_hard_cap"]))
     ps = res["protected_surface_now"]
-    print("PP 当前发布 %s / %s；provider 钉=%s（旧稳定=%s）；workflow 行=%d；Seam=%s"
-          % (ps["pp_current_version"], ps["pp_current_graph_md5"][:12], ps["pp_provider_pin"],
-             ps["pin_is_old_stable"], ps["pp_workflow_rows"], ps["seam_graph_md5"][:12]))
-    return 0 if (d1["verdict"] == "PASS" and d2["verdict"] == "PASS") else 1
+    print("PP 当前发布 %s / %s（=旧稳定图 %s）"
+          % (ps["pp_current_version"], ps["pp_current_graph_md5"][:12],
+             ps["pp_current_graph_md5"] == STABLE_MD5))
+    print("provider 钉=%s，其图=%s（=旧稳定图 %s）；workflow 行=%d；Seam=%s"
+          % (ps["pp_provider_pin"], ps["pp_provider_pinned_graph_md5"][:12],
+             ps["pin_graph_is_old_stable"], ps["pp_workflow_rows"], ps["seam_graph_md5"][:12]))
+    return 0 if all(x["verdict"] == "PASS" for x in (d1, d2, d3)) else 1
 
 
 if __name__ == "__main__":

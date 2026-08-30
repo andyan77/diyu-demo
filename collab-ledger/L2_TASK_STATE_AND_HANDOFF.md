@@ -670,3 +670,41 @@ PP-5「评论区是设计出来的」整节与 `author_share_line` 一节未被�
 
 详见 [`collab-ledger/tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md`](tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md)
 与 [`unified-app/docs/PPBS_FAILURE_TRIAGE_001_D1_CTA.md`](../unified-app/docs/PPBS_FAILURE_TRIAGE_001_D1_CTA.md)。
+
+---
+
+## `DIYU-V1-PP-BOUNDARY-SUCCESSOR-001` · b2 REBASE（2026-08-30）
+
+**CTA 边界修好了，事实边界保持成立；统一入口那一关没跑起来，卡在我自己的运行器上。**
+
+启动状态按规划侧裁定只追加登记：b1 整体 `FAIL/CURRENT`，当前 S4 整体 `FAIL/CURRENT`。
+Phase A 零模型把 PP app 的已发布指针从 b1 退回旧稳定图（上一轮那项待裁定的披露，已裁定为退回）。
+
+b2 从 b1 逐字继承（事实修复两整块逐字在场未回退），补的正是 b1 算漏的覆盖面：
+`strict_cta_closed` 一次判定 ＋ 九行对外输出面清单、PP-5 条件化、`author_share_line`
+条件化、自检 17 全表面扫描。收紧只发生在 `true` 分支。
+Gate v2.0 的 D 判据由 v1.1 直接取值构造，逐块一致——**没有因为 b1 失败去改 CTA 判据**。
+
+确定性验证 14/14（含正向控制、负向控制、三条单点变异各自翻 FAIL 且另两项不受影响）。
+
+- **E1 · D1 正例 PASS 5/5**（`07d5ca02`，160.4s，1 次调用）：受众指向问句 0 句；
+  b1 的五处失败点逐点修好；历史行为探针 0 次。
+- **E2 · D2 冲突负例 PASS 5/5**（`81dc796d`，97.3s，1 次调用）：两项冲突要求各自明确拒绝
+  并给出替代，且写明「不是包装环节可以自己放宽的」；仍交付完整成品，未整任务拒绝。
+- **E3 · D3 NOT_VERIFIED(INCONCLUSIVE)**：HTTP 400、0.02 秒、**零模型输出**
+  （九应用 run 全 0、LLM 0）。根因是运行器把字面量 `"file"` 当成了 Bearer token
+  且没解包返回元组——继承自 b1 运行器、这次第一次被执行。按预算规则不重跑。
+
+成本 2/3 顶层 run、2/10 LLM、零重试。受保护面已恢复到测试前状态：
+PP 当前发布图与 provider 钉住的图都是旧稳定图 `788c8555`，b1/b2 行全部保留；
+Seam、候选画布、其余八应用、`hop_pin` 零漂移；`main` 仍 `01a42b0`。
+
+**三项上调一项都没做**（公式未成立）。`S4_OVERALL_ACCEPTANCE` 维持 `NOT_VERIFIED`，
+`S5` `NOT_STARTED`，`main` 不合并，不建 b3。
+
+**下一步只有一件：**你裁定是否授权重跑 D3（修运行器 ＋ 重新发布并重钉 ＋ 按原冻结判据跑一次）。
+同时请确认「D3 未执行也按 D3 FAIL 那条恢复受保护面」这个判断是否越权。
+
+详见 [`collab-ledger/tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md`](tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md)、
+[`unified-app/docs/PPBS_B2_FAILURE_TRIAGE_003_D3_TRANSPORT.md`](../unified-app/docs/PPBS_B2_FAILURE_TRIAGE_003_D3_TRANSPORT.md)
+与 [`unified-app/stages/PPBS_B2_PHASE_E_RESULT_v1.0.json`](../unified-app/stages/PPBS_B2_PHASE_E_RESULT_v1.0.json)。
