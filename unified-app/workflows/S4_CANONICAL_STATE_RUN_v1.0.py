@@ -103,7 +103,8 @@ def preflight(g):
     if drift:
         raise SystemExit("受保护应用漂移，拒绝执行：" + json.dumps(drift, ensure_ascii=False))
     fx_sha = shaf(R.FIXTURE)
-    if fx_sha != g["fixture"]["sha256"]:
+    plan = json.load(io.open(INPUTS, encoding="utf-8"))
+    if fx_sha != plan["conversation"]["fixture"]["sha256"]:
         raise SystemExit("夹具 hash 不一致，拒绝执行：%s" % fx_sha)
     print("PREFLIGHT ok | graph=%s | 节点%d边%d | pin=%s | 受保护面 %d/%d 一致 | 隔离门 fail-closed"
           % (snap["candidate_graph_sha256"][:16], m["candidate_canvas"]["node_count"],
