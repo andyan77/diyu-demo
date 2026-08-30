@@ -1205,3 +1205,17 @@ last_capability 身份一致，M2 非测试计数、schema、UAPP 与全部保�
 
 当前本 REBASE 成本 `2 runs / 11 LLM`，生命周期 `10 runs / 55 LLM`。下一 Git push 只保全
 CAP-05 RAW/Check/进度，状态 `PLANNED`；远端确认后才运行 CAP-06。
+
+CAP-05 证据 push 已确认：远端任务分支快进到
+`3d73664b9c42cf2f9864576befd3138de1c03966`，非 force。
+
+CAP-06 run `e71e84af-e3e3-47ec-afc4-72bd02941540` 正式 FAIL：HTTP 200，LLM 5，重放/重试 0。
+78 字成片正文、来源、task、fp/bfp 均完整绑定；只运行 Publishing & Packaging，其他五能力 0；
+但 UAPP 未把“自然 CTA + 不写价格/折扣/站外购买承诺”规范为受限的 `cta.contract`，PP 准确
+fail-closed 并只问一个自然缺口，artifact 为空。
+
+confirmed highest failing node 为 `UAPP_INLINE_ARTIFACT_CTA_CONTRACT_NORMALIZATION`。唯一 successor
+`1/1` 已消耗且 Gate v1.8 禁止第三候选，CAP-06 也已使用唯一正式输入；其余 17 项不得继续。
+当前本 REBASE `3 runs / 16 LLM`，生命周期 `11 / 60`；所有 retry/replay/resampling/A-B/reviewer
+为 0。S5 FAIL/CURRENT，AC-12 不授权，main 不允许，terminal unset。唯一下一动作是 Founder
+版本化授权最窄 CAP-06 CTA normalization REBASE。

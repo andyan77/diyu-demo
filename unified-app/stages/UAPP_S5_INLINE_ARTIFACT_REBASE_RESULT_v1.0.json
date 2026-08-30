@@ -1,0 +1,58 @@
+{
+  "document": {
+    "id": "UAPP_S5_INLINE_ARTIFACT_REBASE_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "gate_sha256": "6c89f42a3594e23135b1bffc93f66a3745eed609f71387c96ad32e31f40e88d3",
+    "candidate_graph_md5": "07ea334bfcbe6e87ba8c5cd5d5dac380"
+  },
+  "phase_A": "PASS",
+  "phase_B": "PASS",
+  "phase_C": {
+    "result": "PASS",
+    "controls": "28/28",
+    "model_calls": 0
+  },
+  "phase_D": {
+    "result": "FAIL",
+    "CAP05": {
+      "result": "PASS / CURRENT",
+      "run_id": "13eb198b-2f80-41e2-8209-6f9000b8c0bc",
+      "llm_attempts": 6,
+      "artifact_length": 11614,
+      "artifact_sha256": "cc30acac3f9e6162cd6f92e89f7a104b4d5a4bb1a1992b323a03142bb7a950ad"
+    },
+    "CAP06": {
+      "result": "FAIL / CURRENT",
+      "run_id": "e71e84af-e3e3-47ec-afc4-72bd02941540",
+      "llm_attempts": 5,
+      "artifact_length": 0,
+      "highest_failing_node": "UAPP_INLINE_ARTIFACT_CTA_CONTRACT_NORMALIZATION"
+    },
+    "remaining_formal_inputs": "NOT_RUN_BY_FROZEN_STOP_ORDER"
+  },
+  "S5_TECHNICAL_ACCEPTANCE": "FAIL / CURRENT",
+  "UAPP_AC_01_TO_11": "NOT_ALL_PASS",
+  "founder_AC_12": "NOT_AUTHORIZED",
+  "main_merge": "NOT_ALLOWED",
+  "terminal_state": "unset",
+  "cost": {
+    "current_rebase_top_level_runs": 3,
+    "current_rebase_llm_attempts": 16,
+    "lifetime_top_level_runs": 11,
+    "lifetime_llm_attempts": 60,
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "completion_check": {
+    "real_behavior_verified": "PARTIAL: CAP05 true; CAP06 false",
+    "validator_discrimination_verified": true,
+    "core_problem_solved": false,
+    "protected_targets_unchanged_or_authorized": true,
+    "unnecessary_complexity_remaining": "No parallel runtime/state system added; one missing CTA normalization remains",
+    "founder_test_package_created": false,
+    "founder_test_package_reason": "S5 AC-01..11 did not pass"
+  }
+}

@@ -21,9 +21,9 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | successor CAP-05 PASS；当前图正式 PASS 1/19 | 本 REBASE 2/21；11/126 LLM | NONE | CAP-06 唯一调用 |
-| N4 有界修复 | COMPLETED | successor 1/1 发布；28/28 机器硬门 PASS | 0 | NONE | N3 复验 |
-| N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
+| N3 正式验收 | IN_PROGRESS | CAP-05 PASS；CAP-06 FAIL；后续17项未运行 | 本 REBASE 3/21；16/126 LLM | third candidate prohibited | Founder REBASE |
+| N4 有界修复 | COMPLETED | successor 1/1 发布；28/28 机器硬门 PASS | 0 | NONE | — |
+| N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | CAP-06 FAIL | Founder REBASE 后定向复验 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
 `MATRIX`，其他五能力零暗跑，但 UAPP 转交的 capability call 漏掉已有用户原话支持的
@@ -251,6 +251,17 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
   `cc30acac…950ad`，独立 store/ledger/last_capability 身份全部 PASS。
 - M2 非测试 publish/feedback `1568/117`、schema `25192c…b4fd`，应用保护面零漂移。
 - 当前图正式 PASS `1/19`；唯一下一动作：先 push CAP-05 RAW/Check，再执行 CAP-06 一次。
+
+#### CAP-06 FAIL / bounded stop
+
+- run_id `e71e84af-e3e3-47ec-afc4-72bd02941540`；HTTP 200；LLM 5；内部重放/重试 0。
+- 78 字成片正文已完整 BOUND，只有 Publishing & Packaging 运行，其他五能力 0；但
+  `cta_contract` 未被 UAPP 从用户原话规范化，专业能力精确 Return，artifact 为空。
+- 最高失效节点：`UAPP_INLINE_ARTIFACT_CTA_CONTRACT_NORMALIZATION`；不是 Hop/Seam/PP。
+- 唯一 same-scope successor `1/1` 已消耗，Gate v1.8 禁止第三候选；CAP-06 正式输入也已使用
+  一次。其余 17 项按冻结顺序未运行。
+- 当前 S5 `FAIL / CURRENT`；Founder AC-12 不授权，main 不允许，terminal unset。
+- 唯一下一动作：Founder 对 CAP-06 CTA normalization 建立新的最窄 REBASE 授权。
 
 ## 激活现场
 
