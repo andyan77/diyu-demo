@@ -158,3 +158,17 @@ Checker 或输入。完整回读见
 当前成本仍为：顶层 workflow `0 / 3`，DeepSeek LLM 节点 `0 / 18`，模型重试 `0`。
 下一动作：在冻结 conversation / end_user 下只运行 T1 原句一次，随后先判定 T1，
 未满足预期即停止，不进入 T2。
+
+## 十一、REBASE v1.1 · T1 正式运行与逐轮判定
+
+T1 顶层 run `ec4b6bfe-2bc7-49f3-963b-7ffcf06dd376`，只运行一次、无上传、无重试。
+真实路由为 `CREATIVE_SCRIPT`；六个专业能力中仅 CS 运行 1 次，其余五个均为 0。
+CS artifact 长 3497，sha256
+`65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938`，以
+`CREATIVE_SCRIPT@turn9` 独立追加进存储，账本 fp `3d7342e36d939c31`，非空、非占位。
+
+T1 判定：`PASS / CURRENT`。累计成本：顶层 run `1 / 3`，LLM 节点 `6 / 18`，
+失败 0，重试 0。原始与复算证据：
+`unified-app/evidence/UAPP_RUN_UAAB_V11_T1.json`、
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_T1_VERIFY_v1.1.json`。
+下一动作：只运行冻结 T2 原句一次；T2 未通过即停止，不进入 T3。
