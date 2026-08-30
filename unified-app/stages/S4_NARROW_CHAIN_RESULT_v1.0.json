@@ -1,0 +1,466 @@
+{
+  "stage": "S4_NARROW_CHAIN",
+  "gate_sha256": "7ccb7e666273075ba8c93e8df44a52e0da099e1035b8c170fcaf702a3826c9e0",
+  "r1_baseline_sha256": "db1b7a74b753d852f156f74380769feb4447e38f73a3ad0855c54b4641e51e38",
+  "model_calls_by_adjudicator": 0,
+  "verdict": "FAIL",
+  "summary": {
+    "pass": 13,
+    "fail": 4,
+    "not_verified": 0,
+    "total": 17
+  },
+  "conditions": [
+    {
+      "id": "N-01",
+      "text": "首段真实经过 M3 → Hop → Seam → Content Brief",
+      "result": "PASS",
+      "observed": {
+        "T1": {
+          "canvas": {
+            "uapp_m3": true,
+            "uapp_hop": true,
+            "uapp_fields": true,
+            "uapp_seam": true
+          },
+          "seam": {
+            "tool_content_brief": "succeeded"
+          },
+          "content_brief_app_runs": 1
+        },
+        "T2": {
+          "canvas": {
+            "uapp_m3": true,
+            "uapp_hop": true,
+            "uapp_fields": true,
+            "uapp_seam": true
+          },
+          "seam": {
+            "tool_content_brief": "succeeded"
+          },
+          "content_brief_app_runs": 1
+        }
+      }
+    },
+    {
+      "id": "N-02",
+      "text": "Content Brief 产生非空 artifact",
+      "result": "PASS",
+      "observed": {
+        "T2_artifact_len": 2527,
+        "head": "# Content Brief Pack（内部 Artifact 完整版，与上方交付内容一致，含调试信息）\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 "
+      }
+    },
+    {
+      "id": "N-03",
+      "text": "facts_registered 来源可回指",
+      "result": "PASS",
+      "observed": {
+        "T1": {
+          "ctx_len": 2449,
+          "hop_in_identical": true,
+          "merged_has_key": true,
+          "seam_same_bytes": true
+        },
+        "T2": {
+          "ctx_len": 2526,
+          "hop_in_identical": true,
+          "merged_has_key": true,
+          "seam_same_bytes": true
+        }
+      }
+    },
+    {
+      "id": "N-04",
+      "text": "T3 精确询问 content_origin_mode",
+      "result": "FAIL",
+      "observed": {
+        "T3_merged_gaps": [
+          "content_origin_mode",
+          "goal_family"
+        ],
+        "T3_hop_gaps": [
+          "content_origin_mode",
+          "content_promise",
+          "expected_change",
+          "objective.goal_family(未声明，不代为推断)",
+          "objective.primary_goal"
+        ]
+      }
+    },
+    {
+      "id": "N-05",
+      "text": "T4 回答后该字段在 T5/T6 仍然存在，不再重复询问",
+      "result": "FAIL",
+      "observed": {
+        "T4_user_answered": "content_origin_mode",
+        "later": {
+          "T5": {
+            "merged_gaps": [
+              "production_profile"
+            ],
+            "value_len": 51,
+            "hop_wanted_it_again": true,
+            "asked_user_again": false
+          },
+          "T6": {
+            "merged_gaps": [],
+            "value_len": 0,
+            "hop_wanted_it_again": false,
+            "asked_user_again": false
+          }
+        }
+      }
+    },
+    {
+      "id": "N-06",
+      "text": "content_promise、primary_goal、audience_problem、expected_change 和经营边界不被抽空或改写",
+      "result": "PASS",
+      "observed": {
+        "carrier_shrank": [],
+        "confirmed_value_changed": [],
+        "envelope_disagrees_with_carrier": [],
+        "held_by_turn": {
+          "T1": "",
+          "T2": "explicit_non_promise,expression_boundary,facts_registered,primary_goal",
+          "T3": "cta_contract,expression_boundary,facts_registered",
+          "T4": "facts_registered,primary_goal",
+          "T5": "",
+          "T6": "asset_publish_permission,content_promise,explicit_non_promise,expression_boundary,facts_registered"
+        },
+        "named_fields_confirmed": [
+          "audience_problem",
+          "content_promise",
+          "cta_contract",
+          "expected_change",
+          "explicit_non_promise",
+          "expression_boundary",
+          "expression_subject_and_boundary",
+          "primary_goal"
+        ]
+      }
+    },
+    {
+      "id": "N-07",
+      "text": "CS、PD、PP 分别产生非空、非占位 artifact",
+      "result": "FAIL",
+      "observed": {
+        "T4": {
+          "artifact_len": 6843,
+          "seam": {
+            "tool_creative_script": "succeeded"
+          },
+          "head": "# Creative Script 完整产出（内部 Artifact）\n\n## 运行结论\n\n- **状态**：READY_WITH_CONDITIONS\n- *",
+          "outcome": "DELIVERED"
+        },
+        "T5": {
+          "artifact_len": 0,
+          "seam": {
+            "tool_production_director": "succeeded"
+          },
+          "head": "",
+          "outcome": "UNKNOWN"
+        },
+        "T6": {
+          "artifact_len": 9031,
+          "seam": {
+            "tool_publishing_packaging": "succeeded"
+          },
+          "head": "## Publishing & Packaging 完整产出\n\n### 推导出的运行结论\n\n| 项 | 值 | 推导依据 |\n|---|---|---|\n| `",
+          "outcome": "DELIVERED"
+        }
+      }
+    },
+    {
+      "id": "N-08",
+      "text": "只运行目标能力，无暗跑",
+      "result": "PASS",
+      "observed": {
+        "per_turn": {
+          "T1": {
+            "tool_content_brief": "succeeded"
+          },
+          "T2": {
+            "tool_content_brief": "succeeded"
+          },
+          "T3": {
+            "tool_creative_script": "succeeded"
+          },
+          "T4": {
+            "tool_creative_script": "succeeded"
+          },
+          "T5": {
+            "tool_production_director": "succeeded"
+          },
+          "T6": {
+            "tool_publishing_packaging": "succeeded"
+          }
+        },
+        "violations": []
+      }
+    },
+    {
+      "id": "N-09",
+      "text": "未获授权素材不被声称已授权",
+      "result": "PASS",
+      "observed": {
+        "hits": []
+      }
+    },
+    {
+      "id": "N-14",
+      "text": "用户交付零内部字段泄漏",
+      "result": "PASS",
+      "observed": {
+        "hits": []
+      }
+    },
+    {
+      "id": "N-17",
+      "text": "交付中没有编造夹具未提供的事实",
+      "result": "PASS",
+      "observed": {
+        "hits": []
+      }
+    },
+    {
+      "id": "N-10",
+      "text": "空返回不抹除成功上游产物",
+      "result": "PASS",
+      "observed": {
+        "T1": {
+          "artifact_len": 0,
+          "persist": "KEEP_PREVIOUS",
+          "last_len_after": 0,
+          "prev_len": 0
+        },
+        "T2": {
+          "artifact_len": 2527,
+          "persist": "WRITE_NEW",
+          "last_len_after": 2527,
+          "prev_len": 0
+        },
+        "T3": {
+          "artifact_len": 0,
+          "persist": "KEEP_PREVIOUS",
+          "last_len_after": 2527,
+          "prev_len": 2527
+        },
+        "T4": {
+          "artifact_len": 6843,
+          "persist": "WRITE_NEW",
+          "last_len_after": 6843,
+          "prev_len": 2527
+        },
+        "T5": {
+          "artifact_len": 0,
+          "persist": "KEEP_PREVIOUS",
+          "last_len_after": 6843,
+          "prev_len": 6843
+        },
+        "T6": {
+          "artifact_len": 9031,
+          "persist": "WRITE_NEW",
+          "last_len_after": 9031,
+          "prev_len": 6843
+        }
+      }
+    },
+    {
+      "id": "N-11",
+      "text": "M2 无重复副作用",
+      "result": "PASS",
+      "observed": {
+        "boot_turns": [
+          1
+        ],
+        "m2_rows": {
+          "workspaces": 1,
+          "accounts": 1,
+          "cycles": 1,
+          "tasks": 1
+        },
+        "duplicate_keys": []
+      }
+    },
+    {
+      "id": "N-12",
+      "text": "新基线漂移判据 PASS",
+      "result": "PASS",
+      "observed": {
+        "baseline_file": "UAPP_R1_PROTECTED_BASELINE_v1.0.json",
+        "drift": {},
+        "candidate_graph_sha256_now": "8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99",
+        "hop_pin_now": "2026-08-30 03:38:31.449618"
+      }
+    },
+    {
+      "id": "N-13",
+      "text": "作用域隔离判据 PASS",
+      "result": "PASS",
+      "observed": {
+        "scope_snapshot_identical_before_after": true,
+        "intrusion_file_present": false,
+        "concurrent_foreign_writers_disclosed_not_blocking": []
+      }
+    },
+    {
+      "id": "N-15",
+      "text": "已确认字段不得被空值擦除（正负控制）",
+      "result": "FAIL",
+      "observed": {
+        "positive": {
+          "T1": {
+            "hop_gaps": [
+              "audience_problem",
+              "content_promise",
+              "expected_change",
+              "expression_subject_and_boundary",
+              "objective.goal_family(未声明，不代为推断)",
+              "objective.primary_goal"
+            ],
+            "carrier_could_fill": [],
+            "carried": [
+              "primary_goal"
+            ],
+            "filled_in_envelope": []
+          },
+          "T2": {
+            "hop_gaps": [],
+            "carrier_could_fill": [],
+            "carried": [],
+            "filled_in_envelope": []
+          },
+          "T3": {
+            "hop_gaps": [
+              "content_origin_mode",
+              "content_promise",
+              "expected_change",
+              "objective.goal_family(未声明，不代为推断)",
+              "objective.primary_goal"
+            ],
+            "carrier_could_fill": [
+              "content_promise",
+              "expected_change"
+            ],
+            "carried": [
+              "content_promise",
+              "expected_change",
+              "primary_goal"
+            ],
+            "filled_in_envelope": [
+              "content_promise",
+              "expected_change"
+            ]
+          },
+          "T4": {
+            "hop_gaps": [
+              "content_promise",
+              "expected_change",
+              "expression_subject",
+              "objective.goal_family(未声明，不代为推断)"
+            ],
+            "carrier_could_fill": [
+              "content_promise",
+              "expected_change",
+              "expression_subject"
+            ],
+            "carried": [
+              "content_promise",
+              "expected_change",
+              "expression_subject"
+            ],
+            "filled_in_envelope": [
+              "content_promise",
+              "expected_change",
+              "expression_subject"
+            ]
+          },
+          "T5": {
+            "hop_gaps": [
+              "content_origin_mode",
+              "content_promise",
+              "production_profile",
+              "time_window"
+            ],
+            "carrier_could_fill": [
+              "content_origin_mode",
+              "content_promise",
+              "time_window"
+            ],
+            "carried": [
+              "content_origin_mode",
+              "content_promise",
+              "time_window"
+            ],
+            "filled_in_envelope": [
+              "content_origin_mode",
+              "content_promise",
+              "time_window"
+            ]
+          },
+          "T6": {
+            "hop_gaps": [
+              "cta_contract"
+            ],
+            "carrier_could_fill": [
+              "cta_contract"
+            ],
+            "carried": [
+              "cta_contract"
+            ],
+            "filled_in_envelope": [
+              "cta_contract"
+            ]
+          }
+        },
+        "negative_control_zero_model_call": {
+          "turn": 1,
+          "field": "primary_goal",
+          "with_empty_carrier_still_a_gap": false,
+          "carried_when_empty": "primary_goal"
+        }
+      }
+    },
+    {
+      "id": "N-16",
+      "text": "新任务不得继承内容级字段（正负控制）",
+      "result": "PASS",
+      "observed": {
+        "positive": {
+          "task_keys": [
+            "0c4d9c23-b95c-46da-b615-f620584799f3"
+          ],
+          "revs": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        "negative_control_zero_model_call": {
+          "swapped_task_key": "NEW-TASK-0000",
+          "rev_reset_to": 1,
+          "content_origin_mode_inherited": false,
+          "carried": ""
+        }
+      }
+    }
+  ],
+  "allowed_upgrades_if_pass": [
+    "TD-UAPP-20 → CLOSED / CURRENT",
+    "TD-UAPP-21 → CLOSED / CURRENT",
+    "TD-UAPP-22 → CLOSED / CURRENT",
+    "FACT_SUFFICIENCY_CHAIN_REPAIR → PASS / CURRENT",
+    "S4_CONTENT_ORIGIN_CONTINUATION → PASS / CURRENT"
+  ],
+  "what_pass_does_not_imply": [
+    "不等于 S4 全部通过",
+    "不等于统一 Dify 应用全部验收完成",
+    "不等于 UAPP-AC-01..12 全绿",
+    "不等于可以进入 S5",
+    "不等于可以合并 main"
+  ]
+}

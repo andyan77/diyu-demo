@@ -570,3 +570,11 @@ Phase A 根因 **PASS**、Phase B 最小修复 **PASS**、Phase C 的 C1 **PASS 
 两项均不上调：`FACT_SUFFICIENCY_CHAIN_REPAIR`、`S4_CONTENT_ORIGIN_CONTINUATION`。
 
 下一动作与技术债后继见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 末节；失败归因见 [`unified-app/docs/S4_PHASE_C_C3_FAILURE_TRIAGE_002.md`](../unified-app/docs/S4_PHASE_C_C3_FAILURE_TRIAGE_002.md)。
+
+---
+
+## `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` · 2026-08-30 CHECKPOINT 二（非终态）
+
+TD-UAPP-20 的跨轮字段载体已上线并**验证生效**：T4 用户回答 `content_origin_mode` 后，T5 由载体补齐、用户未被重复询问；CS 6843 字、PP 9031 字均产出（修复前同场景 T4/T5/T6 全为 0）。受影响连续链整体 **FAIL 13/17**：PD 停在 `production_profile`（`INSUFFICIENT_EVIDENCE`），载体不覆盖非反引号声明字段 `goal_family`（`SYSTEM_UNDER_TEST`），另两条在判据与检查器侧。五项允许上调的结论一项都未上调。
+
+详见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 末节与 [`unified-app/docs/S4_NARROW_CHAIN_FAILURE_TRIAGE_003.md`](../unified-app/docs/S4_NARROW_CHAIN_FAILURE_TRIAGE_003.md)。

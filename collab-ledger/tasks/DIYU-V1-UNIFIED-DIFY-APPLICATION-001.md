@@ -437,3 +437,100 @@ enter_s5: NOT_AUTHORIZED
 | `TD-UAPP-20` | **新增，未修** | 跨轮已确认字段无承载体，多轮链路结构上无法走完。证据 `S4_PHASE_C_C3_FAILURE_TRIAGE_002.md` |
 | `TD-UAPP-21` | **新增，未修** | `P3-12` 继承判据引用 Phase B 之前的受保护基线，与已授权修复自相矛盾 |
 | `TD-UAPP-22` | **新增，未修** | 运行器预检"窗口内没有其它写入者"只打印数字未把门 |
+
+---
+
+## `ATT-UAPP-FIELD-01`（2026-08-30）｜TD-UAPP-20/21/22 最小修复与受影响连续链验证
+
+**授权**：规划侧 CONTINUE_TASK 裁决（2026-08-30）。`second_repair_iteration = AUTHORIZED_ONCE_FOR_TD-UAPP-20_ONLY`；任务分支 push 不再以三层全 PASS 为前置。
+
+### 修复内容（一次，最小连通）
+
+| | |
+|---|---|
+| 会话载体 | `uapp_task_fields`——本内容任务已确认字段的结构化载体，按 `task_key` 作用域 |
+| 确定性节点 | `uapp_fields`，接在 `uapp_hop` 与 `uapp_seam` 之间 |
+| 权威顺序 | A（用户本轮答了系统上一轮问的那一项）> B（载体）> E（本轮模型抽取） |
+| 确定性规则 | 空值／未提及／漏抽取不擦除已确认字段；用户明确纠正以新值更新并登记下游 `STALE`；新内容任务不继承内容级决定 |
+| 恒等性 | 载体为空时是恒等变换，现有 C1/C2 的充分输入一个字节不变 |
+| 候选画布 | 47/49 → **48/50**，`8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99` |
+| 未动 | M1／M2／最终 FP M3／Seam／六能力语义；`m5_extract` 的 prompt、模型、参数 |
+
+`TD-UAPP-21`：新建 `unified-app/evidence/UAPP_R1_PROTECTED_BASELINE_v1.0.json`（`db1b7a74…`），R0 原样保留。
+`TD-UAPP-22`：`S4_SCOPE_ISOLATION_PREFLIGHT_v1.0.py`，第三方并发允许并登记、触碰任务作用域即 fail-closed，正负控制 7/7。
+
+零模型调用验证 11/11（`FIELD_CARRIER_VERIFICATION.json`），主证据为真实 T2–T6 外壳的历史失败回放。
+
+### 受影响连续链结果：**FAIL 13 PASS / 4 FAIL / 17**
+
+判据 `S4_NARROW_CHAIN_GATE_v1.0.json`（`7ccb7e66…`），冻结提交 `dbc212a`。
+
+**修复生效的部分**（同一场景，修复前 T4/T5/T6 的 artifact 全部为 0）：
+
+| 轮 | 载体补齐 | 用户本轮确认 | 仍缺 | artifact |
+|---|---|---|---|---|
+| T2 | 无 | 4 项 | 无 | 6188+ |
+| T3 | `primary_goal` `expected_change` `content_promise` | 无 | `content_origin_mode` `goal_family` | 0 |
+| T4 | 3 项 | **`content_origin_mode`** | `goal_family` | **6843** |
+| T5 | **`content_origin_mode`** `time_window` `content_promise` | 无 | `production_profile` | 0 |
+| T6 | `cta_contract` | 无 | 无 | **9031** |
+
+T5 的 hop 仍把 `content_origin_mode` 列为缺口，载体补齐了它，**用户没有被重复询问**——TD-UAPP-20 要解决的那件事成立了。
+
+**四条 FAIL 的归因**（详见 `unified-app/docs/S4_NARROW_CHAIN_FAILURE_TRIAGE_003.md`）：
+
+| 判据 | 归因 | 内容 |
+|---|---|---|
+| N-04 | `SYSTEM_UNDER_TEST` | 载体只认反引号字段，`goal_family`（外壳 `objective` 块内非反引号书写）在覆盖范围之外，跨轮仍会丢 |
+| N-05 | `ORACLE_OR_CRITERION` | 判据要求 `content_origin_mode` 出现在 PP 的外壳里，但它不在该能力必填清单内；实质要求（载体保留＋不重复询问）已成立 |
+| N-07 | `INSUFFICIENT_EVIDENCE` | PD 停在 `production_profile`。制作规模在夹具与六轮话术里一个字都没有；修复前那轮 hop 曾从上游对冲出一句话（来源标记 `UP`），本轮判为缺口 |
+| N-15 | `CHECKER_OR_FIXTURE` | 负控制选了 T1（同轮自填），不是真实跨轮携带；正控制六轮全部成立 |
+
+### `ATT-UAPP-FIELD-01` 的真实外部副作用
+
+| 目标 | 冻结预算 | 实际 |
+|---|---|---|
+| 画布 workflow run | 6 | **6** |
+| 嵌套应用 run | ≤24 | **24** |
+| DeepSeek LLM 节点 | 预期 36／上限 44 | **33 成功、0 失败** |
+| 重试 | ≤1 | **0** |
+| 夹具上传 | 6 | **6** |
+| M2 `diyu_business` | 各 1 | **各 1**；`task_snapshots`／`artifacts`／`publish_instances` 各 0 |
+| 重复幂等键 | 0 | **0** |
+| 第三方并发写入者 | 允许并登记 | **本轮为空** |
+| 九受保护应用（R1 基线） | 零漂移 | **零漂移** |
+| 真实内容平台 | 从未连接 | **0 行** |
+| `main` / `origin/main` | 未动 | 停在 `01a42b0` |
+
+---
+
+## L2 追加 · `ATT-UAPP-FIELD-01` 之后的 CHECKPOINT（2026-08-30，非终态）
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+next_state: CHECKPOINT
+
+TD_UAPP_20_REPAIR_DEPLOYED: true              # 载体 + 合成节点已上线并验证生效
+S4_NARROW_CHAIN: FAIL                          # 13 PASS / 4 FAIL / 17
+FACT_SUFFICIENCY_CHAIN_REPAIR: NOT_UPGRADED
+S4_CONTENT_ORIGIN_CONTINUATION: NOT_UPGRADED
+TD-UAPP-20: OPEN      # 覆盖范围不含非反引号声明字段
+TD-UAPP-21: DONE_PENDING_CLOSURE   # R1 基线已建并通过 N-12，随本轮整体 FAIL 未 CLOSED
+TD-UAPP-22: DONE_PENDING_CLOSURE   # 作用域隔离门已建并通过 N-13，随本轮整体 FAIL 未 CLOSED
+TD-UAPP-23: NEW       # hop 同一次执行既写 primary_goal 值又报同名缺口，未确认未追查
+
+successor_app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+graph_sha256: 8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99
+node_edge_count: 48/50
+protected_baseline: unified-app/evidence/UAPP_R1_PROTECTED_BASELINE_v1.0.json
+gate: unified-app/stages/S4_NARROW_CHAIN_GATE_v1.0.json
+freeze_commit: dbc212a240267dec15a39b47113354395a741bc3
+main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2      # 未动
+main_merge: NOT_ALLOWED
+third_repair_iteration: FORBIDDEN
+enter_s5: NOT_AUTHORIZED
+```
+
+**唯一下一动作：等规划侧对五件事裁定**（`uapp_fields` 字段识别范围、N-05 判据改写、`production_profile` 归属、N-15 负控制选轮、`TD-UAPP-23`）。执行侧不自选。

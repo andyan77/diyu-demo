@@ -14,9 +14,13 @@ import subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 UAPP = os.path.abspath(os.path.join(HERE, ".."))
-EV = os.path.join(UAPP, "evidence", "stages", "s4_phase_c")
-FREEZE = os.path.join(UAPP, "stages", "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1.json")
-OUT = os.path.join(EV, "PHASE_C_COST_ACCOUNT.json")
+# 证据目录、判据与产出路径可由环境变量切换，这样同一套核算口径可以复用到
+# 后继的受影响连续链，而不是复制第二份统计逻辑（避免两套口径各算各的）。
+EV = os.environ.get("COST_EV") or os.path.join(UAPP, "evidence", "stages", "s4_phase_c")
+FREEZE = os.environ.get("COST_FREEZE") or os.path.join(
+    UAPP, "stages", "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1.json")
+OUT = os.environ.get("COST_OUT") or os.path.join(EV, "PHASE_C_COST_ACCOUNT.json")
+CASE_GLOB = os.environ.get("COST_GLOB") or "S4-PC-*.json"
 
 CANVAS = "85c01f85-a081-43e9-ab09-9993289cc200"
 # 本任务的全部应用。计数必须按应用作用域，不能按时间窗口全实例统计——
@@ -43,7 +47,7 @@ def psql(sql, db="dify"):
 def main():
     fz = json.load(io.open(FREEZE, encoding="utf-8"))
     docs = []
-    for p in sorted(glob.glob(os.path.join(EV, "S4-PC-*.json"))):
+    for p in sorted(glob.glob(os.path.join(EV, CASE_GLOB))):
         docs.append((os.path.basename(p)[:-5], json.load(io.open(p, encoding="utf-8"))))
     if not docs:
         raise SystemExit("无证据")
@@ -96,6 +100,13 @@ def main():
                               "left join apps a on a.id=w.app_id;" % (w0, IN_MINE)) or "[]")
 
     budget = fz["cost_budget"]
+    if "total" not in budget:   # 新 Gate 的预算是平铺的
+        budget = {"total": {
+            "dify_workflow_runs": budget.get("canvas_workflow_runs", 0)
+                                  + budget.get("direct_capability_runs", 0),
+            "nested_app_runs_max": budget.get("nested_app_runs_max"),
+            "deepseek_llm_node_attempts_expected": budget.get("deepseek_llm_node_attempts_expected"),
+            "deepseek_llm_node_attempts_max": budget.get("deepseek_llm_node_attempts_max")}}
     # C1 是对 Content Brief 应用的直调，属"我发起的顶层 run"，不是画布触发的嵌套 run。
     c1_direct = 1 if os.path.exists(os.path.join(EV, "S4-PC-C1.json")) else 0
     top_level = canvas_total + c1_direct
