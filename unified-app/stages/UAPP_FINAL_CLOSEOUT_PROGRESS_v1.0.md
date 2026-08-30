@@ -15,6 +15,16 @@
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
 
+## S5 Autonomous Bounded Convergence v1.0
+
+| Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
+|---|---|---:|---:|---|---|
+| N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
+| N2 Gate v1.1 冻结 | COMPLETED | PASS / CURRENT | 0 | NONE | N3 |
+| N3 正式验收 | IN_PROGRESS | NOT_VERIFIED | 0/20 | NONE | CAP-01 |
+| N4 有界修复 | NOT_STARTED | NOT_APPLICABLE | 0 | N3 | 按需 |
+| N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
+
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
 current_node: F2

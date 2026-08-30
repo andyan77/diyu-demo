@@ -1,0 +1,35 @@
+document:
+  id: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.1
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  authority_event: S5_AUTONOMOUS_BOUNDED_CONVERGENCE_v1.0
+  parent: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.0
+contract:
+  task_contract_sha256: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  semantic_delta: NONE
+candidate:
+  parent_git_head_before_freeze: 84e66557d62e88d7ed9270b94174c95fb6ffe740
+  UAPP: {app_id: 85c01f85-a081-43e9-ab09-9993289cc200, graph_md5: 89bbfeade1f149ccce12a768bed6e94a}
+  M3: cd93757bcf8ad322f3b32fc43b2da3ff
+  HOP: e38378c3c2a66b75aa7e645368c9e1ce
+  SEAM: db49a3da8973d4fdcbe9ecf63bdf7e2a
+  PP_provider: 8366328bf827bd0f460455d750d45c4f
+scenario_audit:
+  path: unified-app/docs/UAPP_S5_SCENARIO_CAPABILITY_CONTRACT_AUDIT_v1.0.md
+  sha256: 81ae4641e39b0439dad87f3cc438af235e7b804df7660a403f1c9a083972759d
+frozen_files:
+  scenarios: {path: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.1.json, sha256: 896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577}
+  runner_base: {path: unified-app/workflows/UAPP_S5_RUN_v1.0.py, sha256: bf69ae00bf8e22ab095288dc3927d49b12ebb660d280e74931f55e007c11c992}
+  executor: {path: unified-app/workflows/UAPP_S5_EXEC_v1.1.py, sha256: 33175a426d0e14631b38952cd82c85183bce6f68e14e75c45718c6291b64adac}
+  checker: {path: unified-app/workflows/UAPP_S5_VERIFY_v1.1.py, sha256: 410ad4edc9d2e22b02455f6db09923c72d3edcc1295b10db1326e46e95be59e0}
+  controls: {path: unified-app/workflows/UAPP_S5_CONTROLS_v1.1.py, sha256: 27ebb90f80c23db8a064304ccadc1b43bc1b0c5ba4f45b098510802f4ed21e4f}
+budget:
+  new_top_level_runs_max: 20
+  new_llm_attempts_max: 120
+  transient_replay_max: 1
+  blind_resampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+scope:
+  founder_ac_12: NOT_AUTHORIZED
+  main_merge: NOT_ALLOWED
+  terminal_state: unset
