@@ -899,3 +899,49 @@ terminal_state: unset
 next_state: CHECKPOINT
 unique_next_action: Founder 版本化授权 TD-UAPP-24 的最小 successor repair
 ```
+
+---
+
+# ATT-UAPP-TD24-SUCCESSOR-01 · 规范纠正传播最小后继修复与 S4 定向收口（2026-08-30）
+
+`task_mode: REBASE_TASK`；合同语义无变化。授权来源为 Founder《TD-UAPP-24 规范纠正传播最小后继修复与 S4 定向收口 Execution Prompt v1.0》。本段只追加，不覆盖 `ATT-UAPP-CORRECTION-01` 的 FAIL、旧图、旧 Gate、旧 RAW 或旧 Result。
+
+## 实现与零模型控制
+
+- 最小修改面：统一应用内部能力中立纠正接缝、现有 artifact 账本的最小 `upstream_fp`、纠正后选择与绑定复核；未新增应用、数据库、状态服务或外部运行时。
+- Candidate canonical sha256 `a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1`，55 节点 / 57 边。
+- Controls v1.1：11/11 PASS，11 正例 + 11 单变量负例；v1.0 的 10/11 与 `CHECKER_OR_FIXTURE` 归因保留。
+- Gate `UAPP_TD24_GATE_v1.0.json` sha256 `fb040eb9fd3a27cdbe0a047fbd360055d0287baa335c12d1971092c61ea5ddb0`，冻结早于正式调用。
+
+## 唯一正式运行
+
+顶层 run `010fe130-d990-48ae-893b-13adaeb0b08e`；HTTP 200，172.67s；DeepSeek LLM 节点 5，失败 0；人工重试、平台内部重放、重复采样、A/B、Reviewer 均 0。
+
+真实状态：
+
+- `production.profile` 与 `production.capacity_or_owner` 同步从一人改为两人；task revision 13→14，两个字段 revision 各 +1，来源 `USER_UTTERANCE / TURN14.user_request`；
+- `production.time_window` 与 `facts.registered` 值和 revision 不变；
+- PD `099061257c9677bd`、`559a204d7c4f1f2a` 直接 STALE；PP `a7bf609e2dc9eecb` 经 `upstream_fp=559a204d7c4f1f2a` 传递 STALE；
+- selector `NO_LEGAL_UPSTREAM`，binding `REJECTED`；Seam/PP 运行 0，新 PP 0；
+- artifact 8→8，正文存储 sha256 保持 `8f8499a1594276ca8ae0e29428e4e3059f97411f244badcae3ccab042c843224`；
+- M2 task 行、publish_instance、schema 和非测试计数不变，无真实发布。
+
+正式结果 `UAPP_TD24_RESULT_v1.0.json`：C-01…C-12 **12/12 PASS / CURRENT**，sha256 `3284ce2be889041c8cec6d3cd9973c95f17a8efc649e2d89ac35d41b70aeadd2`。
+
+## S4 定向收口
+
+零模型重算现行八项必要条件，另对当前候选的非纠正产物绑定路径执行真实旧状态正例及错误 fp 单变量负例：8/8 PASS。结果 `UAPP_TD24_S4_CLOSEOUT_v1.0.json`，sha256 `2296dbc3821e8ae4d967960e8c9c6a96e9e26d926d6f535ade262bff41a5072b`。
+
+```yaml
+CROSS_TURN_CORRECTION_PROPAGATION: PASS / CURRENT
+S4_OVERALL_ACCEPTANCE: PASS / CURRENT
+S5: NOT_STARTED
+S5_START: WAIT_FOUNDER_AUTHORIZATION
+UAPP-AC-12: NOT_VERIFIED
+main_merge: NOT_ALLOWED
+task_progress: IN_PROGRESS
+terminal_state: unset
+unique_next_action: Founder 审阅本轮交付后决定是否另行授权 S5
+```
+
+技术债唯一当前主表升级为 `unified-app/docs/UAPP_TECHNICAL_DEBT_REGISTER_v1.5.md`；TD-UAPP-24 由 successor 关闭，v1.4 及其历史 FAIL 原文保留。

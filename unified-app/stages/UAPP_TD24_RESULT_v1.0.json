@@ -1,0 +1,309 @@
+{
+  "document": {
+    "id": "UAPP_TD24_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "gate_sha256": "fb040eb9fd3a27cdbe0a047fbd360055d0287baa335c12d1971092c61ea5ddb0",
+    "raw_sha256": "3705a27cfc9d72f799428a37c8ce51fc3ba2e8b6e6b75be2e3fad540fcaea0e8",
+    "checker_sha256": "6c3e91eb66a92d59a578d5ce95c58a66e17c7b09121addb3f04daea5bc44c5c5"
+  },
+  "formal_run": {
+    "workflow_run_id": "010fe130-d990-48ae-893b-13adaeb0b08e",
+    "message_id": "4f6dfb2b-0269-438c-bd0d-6fb7073edcd2",
+    "http_status": 200,
+    "top_level_workflow_runs": 1,
+    "llm_node_attempts": 5,
+    "failed_llm_nodes": 0,
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "summary": {
+    "pass": 12,
+    "total": 12,
+    "verdict": "PASS / CURRENT"
+  },
+  "criteria": [
+    {
+      "id": "C-01",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "correction_status": "APPLIED",
+        "state_revision": 14,
+        "profile": {
+          "v": "只用门店已有素材、不补拍，由两人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备",
+          "lvl": "A",
+          "kind": "USER_UTTERANCE",
+          "ref": "TURN14.user_request",
+          "sc": "PRODUCTION",
+          "frev": 3,
+          "origin_turn": 14
+        }
+      }
+    },
+    {
+      "id": "C-02",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "profile_value": "只用门店已有素材、不补拍，由两人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备",
+        "capacity_value": "由两人完成素材检索和基础剪辑"
+      }
+    },
+    {
+      "id": "C-03",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "time_window": {
+          "v": "今天半天内",
+          "lvl": "B",
+          "kind": "USER_UTTERANCE",
+          "ref": "TURN6.user_request",
+          "sc": "PRODUCTION",
+          "frev": 1,
+          "origin_turn": 6
+        },
+        "facts_value_sha256": "c11ac2b01f4788dac525dc182d6cc627d637dcd6f3f53a8e446c2a8b9879062d",
+        "facts_frev": 4
+      }
+    },
+    {
+      "id": "C-04",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "099061257c9677bd": {
+          "stale": true,
+          "reason": "FIELD_CHANGED:production.capacity_or_owner,production.profile"
+        },
+        "559a204d7c4f1f2a": {
+          "stale": true,
+          "reason": "FIELD_CHANGED:production.capacity_or_owner,production.profile"
+        }
+      }
+    },
+    {
+      "id": "C-05",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "pp_fp": "a7bf609e2dc9eecb",
+        "stale": true,
+        "upstream_fp": "559a204d7c4f1f2a",
+        "additional_stale_reasons": [
+          "UPSTREAM_STALE:559a204d7c4f1f2a"
+        ]
+      }
+    },
+    {
+      "id": "C-06",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "2e41c4b7629a081d": {
+          "before": {
+            "capability": "CONTENT_BRIEF",
+            "stale": true,
+            "stale_reason": "FIELD_CHANGED:facts.registered"
+          },
+          "after": {
+            "stale": true,
+            "stale_reason": "FIELD_CHANGED:facts.registered"
+          }
+        },
+        "95ecee48bdb1357a": {
+          "before": {
+            "capability": "CREATIVE_SCRIPT",
+            "stale": true,
+            "stale_reason": "FIELD_CHANGED:facts.registered"
+          },
+          "after": {
+            "stale": true,
+            "stale_reason": "FIELD_CHANGED:facts.registered"
+          }
+        },
+        "3d7342e36d939c31": {
+          "before": {
+            "capability": "CREATIVE_SCRIPT",
+            "stale": true,
+            "stale_reason": "FIELD_CHANGED:facts.registered"
+          },
+          "after": {
+            "stale": true,
+            "stale_reason": "FIELD_CHANGED:facts.registered"
+          }
+        }
+      }
+    },
+    {
+      "id": "C-07",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "selector_status": "NO_LEGAL_UPSTREAM",
+        "binding_status": "REJECTED",
+        "binding": [
+          {
+            "slot": "content_body_or_beats",
+            "fp": "",
+            "bfp": "",
+            "upstream_capability": "",
+            "lineage": "REJECTED",
+            "reason": "SELECTOR_NOT_SELECTED"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C-08",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "artifact_count_before": 8,
+        "artifact_count_after": 8,
+        "seam_runs": 0,
+        "pp_runs": 0
+      }
+    },
+    {
+      "id": "C-09",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "answer": "你刚才说的“把制作规模从一人改为两人，制作时间和其他已经确认的内容都不变”已经记下。这个变化会影响刚才的制作方案，所以我先不继续用旧方案做标题和封面。需要先更新制作方案，之后才能可靠继续；其他已经确认且不受影响的内容会保留。",
+        "forbidden_hits": []
+      }
+    },
+    {
+      "id": "C-10",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "m2_before": {
+          "task_snapshots": 0,
+          "artifacts": 0,
+          "task_run_states": 0,
+          "account_publish_instances": 0,
+          "non_test_publish_instances": 1568,
+          "non_test_feedback_records": 117,
+          "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+        },
+        "m2_after": {
+          "task_snapshots": 0,
+          "artifacts": 0,
+          "task_run_states": 0,
+          "account_publish_instances": 0,
+          "non_test_publish_instances": 1568,
+          "non_test_feedback_records": 117,
+          "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+        }
+      }
+    },
+    {
+      "id": "C-11",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "professional_runs": {
+          "MATRIX": 0,
+          "CAMPAIGN": 0,
+          "CONTENT_BRIEF": 0,
+          "CREATIVE_SCRIPT": 0,
+          "PRODUCTION_DIRECTOR": 0,
+          "PUBLISHING_PACKAGING": 0
+        },
+        "llm_attempts": 5,
+        "failed_llm": 0,
+        "runner_attempts": 1
+      }
+    },
+    {
+      "id": "C-12",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "protected_apps": {
+          "UAPP": {
+            "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+            "workflow_id": "9935ef37-f11c-4e3e-801f-d989fcc916d2",
+            "version": "2026-08-30 18:24:13.079209",
+            "graph_md5": "89bbfeade1f149ccce12a768bed6e94a",
+            "nodes": 55,
+            "edges": 57
+          },
+          "M3": {
+            "app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+            "workflow_id": "366e6f4c-1645-421a-ae15-f30463155ee3",
+            "version": "2026-08-29 03:29:56.878929",
+            "graph_md5": "cd93757bcf8ad322f3b32fc43b2da3ff",
+            "nodes": 7,
+            "edges": 6
+          },
+          "HOP": {
+            "app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+            "workflow_id": "eef79b4e-bd8e-4523-89bf-def106dd3f5c",
+            "version": "2026-08-30 03:38:31.449618",
+            "graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+            "nodes": 4,
+            "edges": 3
+          },
+          "SEAM": {
+            "app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+            "workflow_id": "e886dfe8-2c5b-4522-a885-cb410006a318",
+            "version": "2026-08-29 03:34:59.916878",
+            "graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+            "nodes": 25,
+            "edges": 29
+          },
+          "MATRIX": {
+            "app_id": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+            "workflow_id": "b96104e9-fab8-4f83-9c19-e0990c7dacdf",
+            "version": "2026-08-29 03:34:54.375302",
+            "graph_md5": "6cdaeac9cacf69fbeea4bd25e1536ace",
+            "nodes": 15,
+            "edges": 15
+          },
+          "CAMPAIGN": {
+            "app_id": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+            "workflow_id": "689aaca8-fc58-4836-b0fc-546802ae1885",
+            "version": "2026-08-29 03:34:55.305410",
+            "graph_md5": "4876dacc43a73741b41c5a3083796347",
+            "nodes": 15,
+            "edges": 15
+          },
+          "CONTENT_BRIEF": {
+            "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+            "workflow_id": "9313faf5-5a65-4244-b978-648f2b174241",
+            "version": "2026-08-29 03:34:56.245539",
+            "graph_md5": "0c841642a71feedfb327ffb76aec0ddd",
+            "nodes": 15,
+            "edges": 15
+          },
+          "CREATIVE_SCRIPT": {
+            "app_id": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+            "workflow_id": "0377f50f-e00e-4700-b080-e1d0242ff35b",
+            "version": "2026-08-29 03:34:57.114722",
+            "graph_md5": "a1cd859d5b88d0d025f336665ca94e51",
+            "nodes": 15,
+            "edges": 15
+          },
+          "PRODUCTION_DIRECTOR": {
+            "app_id": "13cfabd5-f592-4354-a304-47098b765697",
+            "workflow_id": "30906327-ef90-48f8-86c3-3c74eca1fb9e",
+            "version": "2026-08-29 03:34:58.037065",
+            "graph_md5": "964e9a947dc9790d1de82496469689ad",
+            "nodes": 15,
+            "edges": 15
+          },
+          "PUBLISHING_PACKAGING": {
+            "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+            "workflow_id": "da7311a2-76b3-4077-8024-1537f803cd76",
+            "version": "2026-08-30 16:33:49.099566",
+            "graph_md5": "8366328bf827bd0f460455d750d45c4f",
+            "nodes": 15,
+            "edges": 15
+          },
+          "PP_provider": {
+            "provider_id": "21a000b1-5d14-42e9-b380-64c2c2aa16a0",
+            "version": "2026-08-30 16:33:49.099566",
+            "graph_md5": "8366328bf827bd0f460455d750d45c4f"
+          }
+        },
+        "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+        "store_sha256": "8f8499a1594276ca8ae0e29428e4e3059f97411f244badcae3ccab042c843224"
+      }
+    }
+  ],
+  "result": "PASS / CURRENT"
+}

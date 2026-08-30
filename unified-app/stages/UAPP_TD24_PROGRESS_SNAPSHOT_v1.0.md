@@ -11,18 +11,18 @@
 | N1 根因与合同 | COMPLETED | PASS / CURRENT | 3/3 | `UAPP_TD24_FAILURE_TRIAGE_v1.0.md`; 能力中立纠正/最小血缘/TOCTOU 三接口收敛 | 0 | NONE | 实施最小候选 |
 | N2 最小实现 | COMPLETED | PASS / CURRENT | 1/1 | candidate `a39b72d5...`; 55 nodes/57 edges; protected nodes byte-equal | 0 | NONE | 执行正负控制与真实接缝回放 |
 | N3 机器与接缝验证 | COMPLETED | PASS / CURRENT | 4/4 | controls v1.1 `11/11`; 工具自审 PASS；Gate `fb040eb9...`; 静态可达 LLM 5/8 | 0 | NONE | 提交冻结件并发布唯一候选 |
-| N4 正式定向验证 | IN_PROGRESS | NOT_VERIFIED | 0/12 | Gate `fb040eb9...`; published candidate `89bbfead...` / `a39b72d5...` | 0/8 | NONE | 提交发布证据并执行只读预检 |
-| N5 S4 收口 | NOT_STARTED | NOT_VERIFIED | 0/1 | - | 0 | 等 N4 | 等 N4 |
-| N6 Git与交付 | NOT_STARTED | NOT_VERIFIED | 0/1 | - | 0 | 等 N5 | 等 N5 |
+| N4 正式定向验证 | COMPLETED | PASS / CURRENT | 12/12 | run `010fe130...`; correction APPLIED; PD/PP 失效；无新 PP；LLM 5/8 | 5/8 | NONE | 零模型重算 S4 |
+| N5 S4 收口 | COMPLETED | PASS / CURRENT | 1/1 | S4 closeout `8/8 PASS`; current non-correction binding replay positive/negative PASS | 0 | NONE | 账本、技术债与 Git 收口 |
+| N6 Git与交付 | IN_PROGRESS | NOT_VERIFIED | 0/1 | formal RAW/Result 与 S4 closeout 已落盘 | 0 | NONE | 账本、技术债与 Git 收口 |
 
 ```yaml
-authorized_package_progress: 4/7 nodes completed
-current_node: N4
-top_level_runs: 0 / 1
-deepseek_llm_attempts: 0 / 8
-remaining_nodes: 3
+authorized_package_progress: 6/7 nodes completed
+current_node: N6
+top_level_runs: 1 / 1
+deepseek_llm_attempts: 5 / 8
+remaining_nodes: 1
 current_blocker: NONE
-next_action: 提交发布证据并执行只读预检
+next_action: 账本、技术债与 Git 收口
 ```
 
 ## N0 现场锚点

@@ -1,0 +1,141 @@
+{
+  "document": {
+    "id": "UAPP_TD24_S4_CLOSEOUT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "gate_sha256": "fb040eb9fd3a27cdbe0a047fbd360055d0287baa335c12d1971092c61ea5ddb0",
+    "td24_result_sha256": "3284ce2be889041c8cec6d3cd9973c95f17a8efc649e2d89ac35d41b70aeadd2",
+    "uaab_result_sha256": "fff7ab0c60dab2586e5ef3494107adbdf1fbcca152f48f28bd1142cdebdebf91",
+    "model_calls": 0,
+    "dify_writes": 0,
+    "m2_writes": 0
+  },
+  "candidate": {
+    "uapp_graph_md5": "89bbfeade1f149ccce12a768bed6e94a",
+    "uapp_graph_canonical_sha256": "a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1",
+    "pp_provider_graph_md5": "8366328bf827bd0f460455d750d45c4f",
+    "seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+    "hop_graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce"
+  },
+  "summary": {
+    "pass": 8,
+    "total": 8,
+    "verdict": "PASS / CURRENT"
+  },
+  "criteria": [
+    {
+      "id": "S4-01",
+      "text": "规范任务状态载体",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "td24_criteria": [
+          "C-01",
+          "C-02",
+          "C-03"
+        ],
+        "state_revision": 14
+      }
+    },
+    {
+      "id": "S4-02",
+      "text": "CS→PD→PP 连续链",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "uaab_result_sha256": "fff7ab0c60dab2586e5ef3494107adbdf1fbcca152f48f28bd1142cdebdebf91",
+        "current_path_replay": {
+          "positive_pass": true,
+          "single_variable_negative_pass": true,
+          "selection_status": "SELECTED",
+          "selected_fp": "559a204d7c4f1f2a",
+          "selected_bfp": "846c1f3833180c11",
+          "selected_capability": "PRODUCTION_DIRECTOR",
+          "delivery_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+          "binding_status": "BOUND",
+          "injected_body_byte_equal": true,
+          "negative_binding_status": "REJECTED"
+        }
+      }
+    },
+    {
+      "id": "S4-03",
+      "text": "已接受上游产物绑定",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "positive_pass": true,
+        "single_variable_negative_pass": true,
+        "selection_status": "SELECTED",
+        "selected_fp": "559a204d7c4f1f2a",
+        "selected_bfp": "846c1f3833180c11",
+        "selected_capability": "PRODUCTION_DIRECTOR",
+        "delivery_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+        "binding_status": "BOUND",
+        "injected_body_byte_equal": true,
+        "negative_binding_status": "REJECTED"
+      }
+    },
+    {
+      "id": "S4-04",
+      "text": "事实边界",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "successor": "V-08B_FACT_TRACEABILITY PASS / CURRENT",
+        "pp_unchanged": true
+      }
+    },
+    {
+      "id": "S4-05",
+      "text": "CTA 边界",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "successor": "V-08C_CTA_FIDELITY PASS / CURRENT",
+        "pp_unchanged": true
+      }
+    },
+    {
+      "id": "S4-06",
+      "text": "用户纠正后的失效传播",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "td24_result_sha256": "3284ce2be889041c8cec6d3cd9973c95f17a8efc649e2d89ac35d41b70aeadd2",
+        "formal_run_id": "010fe130-d990-48ae-893b-13adaeb0b08e",
+        "criteria": "12/12 PASS / CURRENT"
+      }
+    },
+    {
+      "id": "S4-07",
+      "text": "作用域隔离",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "td24_criteria": [
+          "C-10",
+          "C-12"
+        ]
+      }
+    },
+    {
+      "id": "S4-08",
+      "text": "无暗跑",
+      "result": "PASS / CURRENT",
+      "evidence": {
+        "professional_runs": {
+          "MATRIX": 0,
+          "CAMPAIGN": 0,
+          "CONTENT_BRIEF": 0,
+          "CREATIVE_SCRIPT": 0,
+          "PRODUCTION_DIRECTOR": 0,
+          "PUBLISHING_PACKAGING": 0
+        },
+        "llm_attempts": 5,
+        "failed_llm": 0,
+        "runner_attempts": 1
+      }
+    }
+  ],
+  "states": {
+    "CROSS_TURN_CORRECTION_PROPAGATION": "PASS / CURRENT",
+    "S4_OVERALL_ACCEPTANCE": "PASS / CURRENT",
+    "S5": "NOT_STARTED",
+    "S5_START": "WAIT_FOUNDER_AUTHORIZATION",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset"
+  }
+}
