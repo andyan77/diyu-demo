@@ -2,6 +2,17 @@
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 
+### CAP-06 正式结果与 S5 接续
+
+- CAP-06 `PASS / CURRENT`：run `9f6ff2fe-b59a-4e46-85d5-c9577b1bd255`，只运行
+  Publishing & Packaging；其他五能力 0；正文 hash `00c3372f…e9fcd`；平台小红书；
+  CTA 为低风险平台内互动；六类包装齐全；artifact length `5115` / sha256
+  `73bc661d77cb32480a0381ed12b0624b859c06407ad34c369f0773735b1f5832`。
+- 实际 DeepSeek 节点 `6`，失败节点 `0`，重试/内部重放 `0`；无真实发布、无非测试变化。
+- Checker v1.0 的两项历史误判原样保留；Triage 确认其错读 RAW 字段并混淆否定边界与
+  正向商业承诺；Checker v1.1 对同一 RAW 判别控制 4/4、正式谓词全 PASS，未重跑模型。
+- CAP-01～06 当前 `6/6 PASS / CURRENT`；剩余正式输入 `13`，从 `UAPP-GAP-01:G1` 开始。
+
 | Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
 |---|---|---|---:|---|---|
 | CAP06-A 根因与绑定证明 | COMPLETED | PASS / CURRENT | 0 | — | 已完成 |
