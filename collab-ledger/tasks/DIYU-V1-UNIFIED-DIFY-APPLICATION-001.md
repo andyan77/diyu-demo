@@ -945,3 +945,15 @@ unique_next_action: Founder 审阅本轮交付后决定是否另行授权 S5
 ```
 
 技术债唯一当前主表升级为 `unified-app/docs/UAPP_TECHNICAL_DEBT_REGISTER_v1.5.md`；TD-UAPP-24 由 successor 关闭，v1.4 及其历史 FAIL 原文保留。
+
+---
+
+# ATT-UAPP-S5-F1-01 · 最终技术验收冻结与预检（2026-08-30，进行中）
+
+Founder 事件 `UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30` 在原 task_id 下只授权 Prompt 1 的 F1/F2；Prompt 2/3、AC-12、main 合并和终态未授权。
+
+激活现场：任务分支与远端均为 `e1ef78fa9637e7859598f2a453c3e0152a368caf`，main/origin/main 均为 `01a42b0ed97344a67302ecb6778ae4a772eb28b2`，活动 workflow 0；UAPP/PP/provider/Seam/Hop/M3 与 S4 当前锚点一致，M2 schema 和非测试计数未漂移。
+
+F1 将合同来源场景逐字编译成 19 个冻结自然语言输入，计划上限 19 个顶层 run、114 个静态可达 DeepSeek 节点尝试。Checker 首轮暗跑负例错误加入了本例允许能力，独立归因 `CHECKER_OR_FIXTURE`；未调用模型、未改被测对象，只修该夹具后 19 个正例与 190 个逐判据单变量负例全部通过。该控制结果不构成任何 UAPP AC 的功能 PASS。
+
+当前技术债主表升级为 v1.6；正式 Gate 尚待最终现场预检、冻结 commit 与 push 后才允许 F2 开跑。

@@ -11,6 +11,14 @@
 **账本起算锚点**（固定值，由 `COLLAB-LEDGER-BOOTSTRAP-001` 钉定，**不是持续追踪的当前 HEAD**）：`main @ 6ae78abf5967535bda81392255b8ee3e79e4bcb5`。
 **要知道仓库当前实际版本，请实时核验** `git rev-parse main` 或 `git ls-remote origin refs/heads/main`——**不要**把上面这个锚点值当成当前 HEAD。
 
+## 当前活动投影（2026-08-30 · S5 Prompt 1）
+
+`DIYU-V1-UNIFIED-DIFY-APPLICATION-001` 仍为同一非终态任务。S4 已在当前候选图上 `PASS / CURRENT`；Founder 事件 `UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30` 已授权且仅授权 F1/F2。当前为 `F1 IN_PROGRESS / NOT_VERIFIED`，正式模型调用 0；F2 尚未开始。Prompt 2、Prompt 3、Founder AC-12、最终包、main 合并与终态均未授权。
+
+当前候选 UAPP 图 md5 `89bbfeade1f149ccce12a768bed6e94a`；PP/provider `8366328bf827bd0f460455d750d45c4f`；Seam `db49a3da8973d4fdcbe9ecf63bdf7e2a`；Hop `e38378c3c2a66b75aa7e645368c9e1ce`。S5 当前进度唯一索引为 `unified-app/stages/UAPP_FINAL_CLOSEOUT_PROGRESS_v1.0.md`，当前技术债主表为 v1.6。
+
+唯一下一动作：完成 F1 的现场预检、冻结提交和非 force push；只有 F1 全部通过才可开始 19 个冻结正式输入。
+
 ---
 
 ## 一、按 `task_id` 的任务状态

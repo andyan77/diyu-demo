@@ -1,0 +1,74 @@
+document:
+  id: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.0
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  authority_event: UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30
+  execution_scope: F1_F2_ONLY
+  prompt_2_authorized: false
+  prompt_3_authorized: false
+
+authority:
+  task_contract_sha256: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  execution_prompt_sha256: d048d99e17ced4e558f876df4eaefe2b7b4e808fd6abb518d0dc3adda7facd5f
+  candidate_source_git_head: e1ef78fa9637e7859598f2a453c3e0152a368caf
+  main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2
+  origin_main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2
+
+candidate:
+  UAPP:
+    app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+    workflow_id: 9935ef37-f11c-4e3e-801f-d989fcc916d2
+    published_version: '2026-08-30 18:24:13.079209'
+    graph_md5: 89bbfeade1f149ccce12a768bed6e94a
+    graph_canonical_sha256: a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1
+    nodes: 55
+    edges: 57
+  M3: {app_id: a4c3b19b-243f-490b-9aca-3aa19767d6a5, workflow_id: 366e6f4c-1645-421a-ae15-f30463155ee3, graph_md5: cd93757bcf8ad322f3b32fc43b2da3ff}
+  HOP: {app_id: 6c46fdb1-5f49-4513-a0c0-29957b3dcee4, workflow_id: eef79b4e-bd8e-4523-89bf-def106dd3f5c, graph_md5: e38378c3c2a66b75aa7e645368c9e1ce}
+  SEAM: {app_id: 5fca0162-e26b-4545-a00b-66b1a2a2a077, workflow_id: e886dfe8-2c5b-4522-a885-cb410006a318, graph_md5: db49a3da8973d4fdcbe9ecf63bdf7e2a}
+  MATRIX: {app_id: fd25ebfa-db67-40c3-82e5-202e1254facf, workflow_id: b96104e9-fab8-4f83-9c19-e0990c7dacdf, graph_md5: 6cdaeac9cacf69fbeea4bd25e1536ace}
+  CAMPAIGN: {app_id: 1f9d65ea-8af5-45f0-a1d0-a80223d354e2, workflow_id: 689aaca8-fc58-4836-b0fc-546802ae1885, graph_md5: 4876dacc43a73741b41c5a3083796347}
+  CONTENT_BRIEF: {app_id: b1dcf784-540e-4b3f-8ba2-3812f477f3ce, workflow_id: 9313faf5-5a65-4244-b978-648f2b174241, graph_md5: 0c841642a71feedfb327ffb76aec0ddd}
+  CREATIVE_SCRIPT: {app_id: 44b55f9d-3792-40c3-b095-f2696464b4ec, workflow_id: 0377f50f-e00e-4700-b080-e1d0242ff35b, graph_md5: a1cd859d5b88d0d025f336665ca94e51}
+  PRODUCTION_DIRECTOR: {app_id: 13cfabd5-f592-4354-a304-47098b765697, workflow_id: 30906327-ef90-48f8-86c3-3c74eca1fb9e, graph_md5: 964e9a947dc9790d1de82496469689ad}
+  PUBLISHING_PACKAGING: {app_id: c9cdea24-9df3-400b-9ecd-1d740e8c96df, workflow_id: da7311a2-76b3-4077-8024-1537f803cd76, graph_md5: 8366328bf827bd0f460455d750d45c4f}
+  PP_provider: {provider_id: 21a000b1-5d14-42e9-b380-64c2c2aa16a0, version: '2026-08-30 16:33:49.099566', graph_md5: 8366328bf827bd0f460455d750d45c4f}
+
+models:
+  UAPP_m1_shadow: {provider: langgenius/deepseek/deepseek, name: deepseek-v4-flash, max_tokens: 10000, top_p: 0.8}
+  UAPP_action: {provider: langgenius/deepseek/deepseek, name: deepseek-v4-flash, max_tokens: 4000, top_p: 0.8}
+  UAPP_chat: {provider: langgenius/deepseek/deepseek, name: deepseek-v4-flash, max_tokens: 1200, temperature: 0.6, top_p: 0.9}
+
+frozen_files:
+  scenarios: {path: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.0.json, sha256: 6738bd6588540569983399e44bce626590cfc23772952c2c064008b9511d0ddc}
+  runner: {path: unified-app/workflows/UAPP_S5_RUN_v1.0.py, sha256: bf69ae00bf8e22ab095288dc3927d49b12ebb660d280e74931f55e007c11c992}
+  checker: {path: unified-app/workflows/UAPP_S5_VERIFY_v1.0.py, sha256: 5748cbe9d32b7cab46bccf450472a17752c0b2c52b307b7304ccc921c186835b}
+  controls: {path: unified-app/workflows/UAPP_S5_CONTROLS_v1.0.py, sha256: 0cb01358f381fdd1f95401b4a5a883fa2e840ae94b2fa8aa8e9c8aff5574747f}
+  controls_result: {path: unified-app/evidence/stages/uapp_s5/preflight/UAPP_S5_CONTROLS_v1.0.json, sha256: 652bb9bfd42245bdbdb0e547b33c25f7d74aef0a842e229f482edc57d8c5d7f0, positive: 19, single_variable_negative: 190, model_calls: 0}
+  dsl_exporter: {path: unified-app/workflows/UAPP_S5_EXPORT_DSL_v1.0.py, sha256: 5563b2536aac9093379a6af34445a2d138d1c3d4c70de1578402a37d5077f258}
+  dsl: {path: unified-app/dsl/UAPP_S5_FINAL_CANDIDATE_v1.0.yml, sha256: b9bd796cc18d48501253261264988774e9e0eee751c50e9bd9b3d99c27eb65fd, credential_scan_hits: 0}
+
+inherited_current_evidence:
+  cross_turn_correction_propagation: {path: unified-app/stages/UAPP_TD24_RESULT_v1.0.json, sha256: 3284ce2be889041c8cec6d3cd9973c95f17a8efc649e2d89ac35d41b70aeadd2, result: PASS, freshness: CURRENT}
+  S4_closeout: {path: unified-app/stages/UAPP_TD24_S4_CLOSEOUT_v1.0.json, sha256: 2296dbc3821e8ae4d967960e8c9c6a96e9e26d926d6f535ade262bff41a5072b, result: PASS, freshness: CURRENT}
+
+m2:
+  schema_md5: 25192c11562827efedfc3b2c22c3b4fd
+  non_test_publish_instances_before: 1568
+  non_test_feedback_records_before: 117
+  scope_rule: Each formal conversation creates and uses only its own ws-uapp-<conversation-tag> test workspace.
+
+budget:
+  formal_top_level_turn_count: 19
+  per_turn_static_reachable_llm_nodes: 6
+  reachable_llm_node_attempt_cap: 114
+  hard_max_top_level_runs: 22
+  hard_max_deepseek_llm_attempts: 140
+  manual_retries: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+
+stop_rules:
+  - Stop after the first hard FAIL or NOT_VERIFIED.
+  - Preserve RAW; do not modify candidate, frozen input, Gate, Runner, or Checker.
+  - Do not start Prompt 2, Prompt 3, Founder AC-12, main merge, or terminal closeout.

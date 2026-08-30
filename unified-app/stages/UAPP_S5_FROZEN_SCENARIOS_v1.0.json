@@ -1,0 +1,52 @@
+{
+  "document": {
+    "id": "UAPP_S5_FROZEN_SCENARIOS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority_event": "UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30",
+    "purpose": "S5 current-candidate technical acceptance inputs for UAPP-AC-01..11",
+    "result_freeze": true
+  },
+  "source": {
+    "task_contract_sha256": "279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f",
+    "predecessor_input_source": "unified-app/docs/UAPP_FROZEN_SCENARIOS_v1.0.json",
+    "rule": "Inputs below preserve the predecessor source text byte-for-byte; predecessor outcomes are not reused as current evidence."
+  },
+  "discipline": {
+    "inputs": {},
+    "one_execution_per_turn": true,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "real_publish": false,
+    "stop_on_first_hard_failure": true
+  },
+  "formal_order": [
+    "UAPP-CAP-01", "UAPP-CAP-02", "UAPP-CAP-03", "UAPP-CAP-04", "UAPP-CAP-05", "UAPP-CAP-06",
+    "UAPP-GAP-01:G1", "UAPP-GAP-01:G2",
+    "UAPP-EQUIV-01a", "UAPP-EQUIV-01b", "UAPP-EQUIV-01c", "UAPP-EQUIV-01n",
+    "UAPP-WITHDRAW-01:W0", "UAPP-WITHDRAW-01:W1",
+    "UAPP-FULL-01:T1", "UAPP-FULL-01:T2", "UAPP-FULL-01:T3", "UAPP-FULL-01:T4",
+    "UAPP-RECOVERY-01:R1"
+  ],
+  "turns": [
+    {"key":"UAPP-CAP-01","case_id":"UAPP-CAP-01","turn_id":"C1","conversation_group":"CAP01","expected_capability":"MATRIX","query":"我们手上有四个账号，一直各发各的，看着挺热闹但说不清谁负责什么。帮我理一下这四个账号各自该做什么、人设怎么分开，别都长一个样。","source_ref":"task_contract.formal_scenarios.UAPP-CAP-01"},
+    {"key":"UAPP-CAP-02","case_id":"UAPP-CAP-02","turn_id":"C2","conversation_group":"CAP02","expected_capability":"CAMPAIGN","query":"下个月有一波秋冬上新要推，我想把这一轮的内容排期整体安排出来，哪几天发什么、节奏怎么走。","source_ref":"task_contract.formal_scenarios.UAPP-CAP-02"},
+    {"key":"UAPP-CAP-03","case_id":"UAPP-CAP-03","turn_id":"C3","conversation_group":"CAP03","expected_capability":"CONTENT_BRIEF","query":"这周要发的内容我想先把制作依据定下来，做之前把该说清楚的说清楚。","source_ref":"task_contract.formal_scenarios.UAPP-CAP-03"},
+    {"key":"UAPP-CAP-04","case_id":"UAPP-CAP-04","turn_id":"C4","conversation_group":"CAP04","expected_capability":"CREATIVE_SCRIPT","query":"这条内容的口播稿帮我写出来，从开头第一句到结尾都要能直接念。","source_ref":"task_contract.formal_scenarios.UAPP-CAP-04"},
+    {"key":"UAPP-CAP-05","case_id":"UAPP-CAP-05","turn_id":"C5","conversation_group":"CAP05","expected_capability":"PRODUCTION_DIRECTOR","query":"这条要怎么拍？场地、机位、要准备什么，帮我出一份拍摄方案。","source_ref":"task_contract.formal_scenarios.UAPP-CAP-05"},
+    {"key":"UAPP-CAP-06","case_id":"UAPP-CAP-06","turn_id":"C6","conversation_group":"CAP06","expected_capability":"PUBLISHING_PACKAGING","query":"发的时候标题、封面和话题怎么弄比较好？帮我把发布包装做出来。","source_ref":"task_contract.formal_scenarios.UAPP-CAP-06"},
+    {"key":"UAPP-GAP-01:G1","case_id":"UAPP-GAP-01","turn_id":"G1","conversation_group":"GAP01","query":"这周想发点东西，你看着办吧。","source_ref":"task_contract.formal_scenarios.UAPP-GAP-01.G1"},
+    {"key":"UAPP-GAP-01:G2","case_id":"UAPP-GAP-01","turn_id":"G2","conversation_group":"GAP01","query":"主推秋冬新款廓形西装外套，库存充足可以出镜。说给 28-38 岁城市通勤女性听，她早上试好几套还是觉得不够精神；希望她看完知道缺的是一件能压住整套的外套。只讲穿搭方法和真实上身效果，不做剧情、不碰争议。","source_ref":"task_contract.formal_scenarios.UAPP-GAP-01.G2"},
+    {"key":"UAPP-EQUIV-01a","case_id":"UAPP-EQUIV-01","turn_id":"E1a","conversation_group":"EQUIV01A","equivalence":"positive_plain","query":"这周内容说给 28-38 岁城市通勤女性听，她卡在早上试好几套还是觉得不够精神。我希望她看完知道缺的是一件能压住整套的外套，会用它三天不重样。只讲穿搭方法和真实上身效果，不做剧情、不碰争议、不承诺改变身材。主推秋冬新款廓形西装外套，库存充足可出镜。帮我把这周的内容制作依据定下来。","source_ref":"task_contract.formal_scenarios.UAPP-EQUIV-01a"},
+    {"key":"UAPP-EQUIV-01b","case_id":"UAPP-EQUIV-01","turn_id":"E1b","conversation_group":"EQUIV01B","equivalence":"positive_yaml_quote","query":"这周的内容我按条列一下：\n受众: \"28-38 岁城市通勤女性\"\n她卡在哪: \"早上要试好几套，还是觉得穿出去不够精神\"\n希望她看完明白: \"缺的不是衣服数量，是一件能压住整套的外套，并且会用它三天不重样\"\n表达边界: \"只讲穿搭方法和真实上身效果，不做剧情、不碰争议、不承诺改变身材\"\n主推商品: \"秋冬新款廓形西装外套，库存充足，可以出镜\"\n帮我把这周的内容制作依据定下来。","source_ref":"task_contract.formal_scenarios.UAPP-EQUIV-01b"},
+    {"key":"UAPP-EQUIV-01c","case_id":"UAPP-EQUIV-01","turn_id":"E1c","conversation_group":"EQUIV01C","equivalence":"positive_json_like","query":"这周的内容参数是这样：{\"受众\": \"28-38 岁城市通勤女性\", \"她卡在哪\": \"早上试好几套还是觉得不够精神\", \"希望她看完明白\": \"缺的是一件能压住整套的外套，而且会用它三天不重样\", \"表达边界\": \"只讲穿搭方法和真实上身效果，不做剧情、不碰争议、不承诺改变身材\", \"主推商品\": \"秋冬新款廓形西装外套，库存充足可出镜\"}。帮我把这周的内容制作依据定下来。","source_ref":"task_contract.formal_scenarios.UAPP-EQUIV-01c"},
+    {"key":"UAPP-EQUIV-01n","case_id":"UAPP-EQUIV-01","turn_id":"E1n","conversation_group":"EQUIV01N","equivalence":"negative_missing_expected_change","deliberately_missing":"期望改变","query":"这周的内容我按条列一下：\n受众: \"28-38 岁城市通勤女性\"\n她卡在哪: \"早上要试好几套，还是觉得穿出去不够精神\"\n表达边界: \"只讲穿搭方法和真实上身效果，不做剧情、不碰争议、不承诺改变身材\"\n主推商品: \"秋冬新款廓形西装外套，库存充足，可以出镜\"\n帮我把这周的内容制作依据定下来。","source_ref":"task_contract.formal_scenarios.UAPP-EQUIV-01n"},
+    {"key":"UAPP-WITHDRAW-01:W0","case_id":"UAPP-WITHDRAW-01","turn_id":"W0","conversation_group":"WITHDRAW01","upload":"decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md","query":"这是我们的品牌资料，先存着。基于这份资料，这周想把内容制作依据定下来。","source_ref":"task_contract.formal_scenarios.UAPP-WITHDRAW-01.W0"},
+    {"key":"UAPP-WITHDRAW-01:W1","case_id":"UAPP-WITHDRAW-01","turn_id":"W1","conversation_group":"WITHDRAW01","query":"刚才那份素材撤回吧，以后别再用了。","source_ref":"task_contract.formal_scenarios.UAPP-WITHDRAW-01.W1"},
+    {"key":"UAPP-FULL-01:T1","case_id":"UAPP-FULL-01","turn_id":"T1","conversation_group":"FULL01","query":"我是序里集 XULI SELECT 品牌号。这周主推秋冬新款廓形西装外套，库存充足、可以出镜。内容说给 28-38 岁城市通勤女性听：她衣柜里通勤衣服不少，但每天早上还是要试好几套才敢出门，总觉得穿出去不够精神。我希望她看完能明白——不是衣服不够多，是缺一件能压住整套的外套，并且知道怎么用它三天不重样。表达上只讲穿搭方法和真实上身效果，不做剧情、不碰争议话题，不承诺瘦身或改变身材。帮我把这周的内容制作依据定下来。","source_ref":"task_contract.formal_scenarios.UAPP-FULL-01.T1"},
+    {"key":"UAPP-FULL-01:T2","case_id":"UAPP-FULL-01","turn_id":"T2","conversation_group":"FULL01","query":"这条我已经发出去了。","source_ref":"task_contract.formal_scenarios.UAPP-FULL-01.T2"},
+    {"key":"UAPP-FULL-01:T3","case_id":"UAPP-FULL-01","turn_id":"T3","conversation_group":"FULL01","query":"收到的反馈是：播放比上周高一些，评论里问得最多的是这件外套配什么裤子。","source_ref":"task_contract.formal_scenarios.UAPP-FULL-01.T3"},
+    {"key":"UAPP-FULL-01:T4","case_id":"UAPP-FULL-01","turn_id":"T4","conversation_group":"FULL01","query":"这个周期就到这里，开下一个周期吧。","source_ref":"task_contract.formal_scenarios.UAPP-FULL-01.T4"},
+    {"key":"UAPP-RECOVERY-01:R1","case_id":"UAPP-RECOVERY-01","turn_id":"R1","conversation_group":"FULL01","query":"刚才那条反馈我再提交一次：播放比上周高一些，评论里问得最多的是这件外套配什么裤子。","source_ref":"task_contract.formal_scenarios.UAPP-RECOVERY-01.R1"}
+  ]
+}
