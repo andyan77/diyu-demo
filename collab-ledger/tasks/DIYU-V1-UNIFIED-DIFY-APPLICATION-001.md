@@ -965,3 +965,11 @@ CAP-01 顶层 run `b1f4485d-f921-4aac-a202-b3727f51f87e` 真实路由到 MATRIX�
 由于异常前已有 UAPP 模型输出，并已创建测试 workspace/cycle/task，本正式槽位不满足零输出、零状态写入、零副作用的传输重试例外。未手动重试，CAP-02～其余 18 个输入均未运行。归因 `INPUT_ENVIRONMENT_OR_TOOL`，`mutation_target=NONE`；UAPP-AC-01～11 全部保持 NOT_VERIFIED，S5 技术验收未通过也未证实系统 P0 失败。
 
 技术债主表升级为 v1.7，新增 TD-UAPP-25 环境/平台重放披露。当前停在 CHECKPOINT，唯一下一动作是 Founder 裁决是否授权版本化后继正式槽位；Prompt 2/3、AC-12、main 合并和终态继续未授权。
+
+## ATT-UAPP-S5-F2-SUCCESSOR-001 · Founder 启动授权
+
+Founder 已明确授权在完全相同的候选、19 项输入、Gate、Runner、Checker 和顺序下建立唯一一次版本化后继正式槽位。旧 run `b1f4485d…` 保持 `INVALID_FOR_ACCEPTANCE`，不删除、不改判。
+
+零模型激活核验：Git/远端一致、工作区起始 clean、冻结哈希一致、全部图一致、活动 workflow 0；Dify API 200，API/DB healthy、worker 运行，DeepSeek TLS 端点 401（网络与 TLS 可达，未调用模型）；旧 workspace/cycle/task 各保留 1 行。后继使用全新 `uapp-s5-succ-v1-*` 身份和会话，证据写入独立 namespace；原 Runner/Checker 文件不改，适配层仅重定向证据路径和首次测试身份。
+
+后继预算 19/114，内部重放允许 0；生命周期上限 20/121。模型调用前先提交并推送 Successor Manifest/Slot。

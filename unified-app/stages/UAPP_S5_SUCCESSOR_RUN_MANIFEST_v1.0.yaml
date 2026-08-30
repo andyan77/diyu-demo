@@ -1,0 +1,60 @@
+document:
+  id: UAPP_S5_SUCCESSOR_RUN_MANIFEST_v1.0
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  attempt_id: UAPP-S5-F2-SUCCESSOR-001
+  authority: Founder explicit start in S5 F2 Transport-Failure Successor Formal Slot CONTINUE Execution Prompt v1.0
+  purpose: Restore F2 formal-evidence eligibility after INPUT_ENVIRONMENT_OR_TOOL failure.
+
+parent:
+  gate: {path: unified-app/stages/UAPP_S5_GATE_v1.0.json, sha256: d27254ff95ba47d4cd056c3697d658e463956382faa5cdbec0d07b187e3b358a}
+  scenarios: {path: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.0.json, sha256: 6738bd6588540569983399e44bce626590cfc23772952c2c064008b9511d0ddc}
+  runner: {path: unified-app/workflows/UAPP_S5_RUN_v1.0.py, sha256: bf69ae00bf8e22ab095288dc3927d49b12ebb660d280e74931f55e007c11c992}
+  checker: {path: unified-app/workflows/UAPP_S5_VERIFY_v1.0.py, sha256: 5748cbe9d32b7cab46bccf450472a17752c0b2c52b307b7304ccc921c186835b}
+  controls: {path: unified-app/evidence/stages/uapp_s5/preflight/UAPP_S5_CONTROLS_v1.0.json, sha256: 652bb9bfd42245bdbdb0e547b33c25f7d74aef0a842e229f482edc57d8c5d7f0, result: PASS}
+
+previous_invalid_attempt:
+  run_id: b1f4485d-f921-4aac-a202-b3727f51f87e
+  result: NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)
+  acceptance_eligibility: INVALID_FOR_ACCEPTANCE
+  raw: {path: unified-app/evidence/stages/uapp_s5/raw/UAPP-CAP-01.json, sha256: 48ae72ff486dfbf1ce7f78fd82cdfc23dc0ba9ed013c583cca9c641c2e55b513}
+  top_level_runs: 1
+  llm_attempts: 7
+  note: CAP-01/CAP-02/CAP-03 in the old Triage are three internal checks of the single UAPP-CAP-01 scenario; CAP-02 and CAP-03 scenarios were not run.
+
+candidate:
+  git_head_at_successor_freeze_start: 1d5d72c2e1492ac07ca66282cdff25a772622ad6
+  UAPP: {app_id: 85c01f85-a081-43e9-ab09-9993289cc200, graph_md5: 89bbfeade1f149ccce12a768bed6e94a, graph_canonical_sha256: a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1}
+  M3: cd93757bcf8ad322f3b32fc43b2da3ff
+  HOP: e38378c3c2a66b75aa7e645368c9e1ce
+  SEAM: db49a3da8973d4fdcbe9ecf63bdf7e2a
+  MATRIX: 6cdaeac9cacf69fbeea4bd25e1536ace
+  CAMPAIGN: 4876dacc43a73741b41c5a3083796347
+  CONTENT_BRIEF: 0c841642a71feedfb327ffb76aec0ddd
+  CREATIVE_SCRIPT: a1cd859d5b88d0d025f336665ca94e51
+  PRODUCTION_DIRECTOR: 964e9a947dc9790d1de82496469689ad
+  PUBLISHING_PACKAGING: 8366328bf827bd0f460455d750d45c4f
+  PP_provider: 8366328bf827bd0f460455d750d45c4f
+
+successor_namespace:
+  evidence_root: unified-app/evidence/stages/uapp_s5_successor_v1
+  identity_prefix: uapp-s5-succ-v1
+  new_conversation_per_group: true
+  groups: [CAP01, CAP02, CAP03, CAP04, CAP05, CAP06, GAP01, EQUIV01A, EQUIV01B, EQUIV01C, EQUIV01N, WITHDRAW01, FULL01]
+  adapter: {path: unified-app/workflows/UAPP_S5_SUCCESSOR_EXEC_v1.0.py, sha256: 8b5ec6ffa68894944b616d9bb4f990151faaff276a24ae75a03a0235236769e9}
+  adapter_scope: Evidence paths, successor attempt label, and first-turn end-user identity only. Frozen Runner and Checker functions are called unchanged.
+
+budget:
+  successor_top_level_runs_max: 19
+  successor_deepseek_llm_attempts_max: 114
+  manual_retries: 0
+  platform_internal_replays_allowed: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+  real_publish: 0
+  maximum_task_total_after_successor: {top_level_runs: 20, llm_attempts: 121}
+
+stop_rules:
+  - Stop on any DeepSeek transport failure or platform internal replay.
+  - Stop on the first frozen Checker FAIL or NOT_VERIFIED.
+  - Do not retry, modify the SUT, create a third slot, or start Prompt 2/3.

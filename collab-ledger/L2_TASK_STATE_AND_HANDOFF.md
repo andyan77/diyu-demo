@@ -17,7 +17,7 @@
 
 当前候选 UAPP 图 md5 `89bbfeade1f149ccce12a768bed6e94a`；PP/provider `8366328bf827bd0f460455d750d45c4f`；Seam `db49a3da8973d4fdcbe9ecf63bdf7e2a`；Hop `e38378c3c2a66b75aa7e645368c9e1ce`。S5 当前进度唯一索引为 `unified-app/stages/UAPP_FINAL_CLOSEOUT_PROGRESS_v1.0.md`，当前技术债主表为 v1.7。
 
-唯一下一动作：Founder 裁决是否授权在相同候选、输入与判据下建立版本化后继正式槽位；当前不得重试。
+Founder 已明确授权唯一后继正式槽位 `UAPP-S5-F2-SUCCESSOR-001`。当前后继成本 0/19 顶层 run、0/114 LLM，生命周期成本 1/20、7/121；唯一下一动作是先提交并推送后继冻结件，再重新运行 CAP-01 一次。
 
 ---
 
