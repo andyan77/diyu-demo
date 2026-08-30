@@ -1,0 +1,103 @@
+{
+ "document": {
+  "id": "S4_CANONICAL_TASK_STATE_INPUTS_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "frozen_before_any_model_run": true,
+  "frozen_before_any_implementation_change": true,
+  "authority": "七轮话术逐字取自 CONTINUE EXECUTION PROMPT v1.0 第六节，执行侧一字未改、未增、未删；换行仅按同一句合并为单行，与 S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0 的既有约定一致",
+  "criteria_ref": "S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+  "does_not_supersede": "不取代 S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json（371381cf…）与 S4_NARROW_CHAIN_GATE_v1.0.json（7ccb7e66…）；旧输入与旧 FAIL 原样保留",
+  "no_executor_authored_business_decision": "七轮全部由规划侧给出。执行侧未代拟任何经营决定、制作决定或素材授权声明。"
+ },
+ "conversation": {
+  "name": "S4_CANONICAL_TASK_STATE",
+  "fresh_conversation": true,
+  "side": "POS_ONLY",
+  "fixture_uploaded_every_turn": true,
+  "fixture": {
+   "path": "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+   "sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a"
+  },
+  "turns": [
+   {
+    "idx": 1,
+    "case_id": "S4-CT-T1",
+    "expect_capability": "CONTENT_BRIEF",
+    "role": "开场：只给制作依据的意图，不给任何业务字段",
+    "text": "这条内容开拍之前，先把制作依据定下来。",
+    "accepts_artifact": false
+   },
+   {
+    "idx": 2,
+    "case_id": "S4-CT-T2",
+    "expect_capability": "CONTENT_BRIEF",
+    "role": "回答 T1 的缺口：受众、卡点、期望变化、素材范围、出镜与事实确认人、CTA 边界",
+    "text": "说给常来店里试穿、拿不准一件衣服到底适不适合自己的熟客听。她卡在的是「这件跟我衣橱里已经有的搭不搭」。看完之后她能自己判断搭不搭、要不要添，而不是又多买一件。就按你手上资料里写的那次上新来做，出镜的人用最懂搭配试穿的那位，事实由负责选品的那位确认。这条不做购买、到店、私信或领取引导，只保留内容本身。",
+    "accepts_artifact": false,
+    "fixture_provenance": [
+     "『拿不准适不适合』← 夹具三「商品存在适合与不适合，不应把所有衣服都描述成人人可穿」",
+     "『搭不搭、不是又多买一件』← 夹具三「搭配不是增加购买数量，而是提高已有衣服的使用率」",
+     "『那次上新』← 夹具七，不点名，由夹具告诉系统",
+     "『最懂搭配试穿的那位』『负责选品的那位』← 夹具五角色描述，不点名"
+    ]
+   },
+   {
+    "idx": 3,
+    "case_id": "S4-CT-T3",
+    "expect_capability": "CREATIVE_SCRIPT",
+    "role": "接受 Content Brief 产物并推进到 Creative Script",
+    "text": "刚才的制作依据可以，接着把这条的口播稿写出来。",
+    "accepts_artifact": true,
+    "accepts_capability": "CONTENT_BRIEF"
+   },
+   {
+    "idx": 4,
+    "case_id": "S4-CT-T4",
+    "expect_capability": "CREATIVE_SCRIPT",
+    "role": "回答 content_origin_mode 缺口",
+    "text": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布。",
+    "accepts_artifact": false,
+    "scope": "仅本次冻结测试场景与当前内容任务；不是系统默认值，不是长期品牌事实，不等于任何具体素材已获授权"
+   },
+   {
+    "idx": 5,
+    "case_id": "S4-CT-T5",
+    "expect_capability": "PRODUCTION_DIRECTOR",
+    "role": "接受 Creative Script 产物并推进到 Production Director",
+    "text": "这版口播稿可以。接着告诉我这条该怎么制作；场地、机位和要准备的东西按实际需要列，没有拍摄就不要硬写机位。",
+    "accepts_artifact": true,
+    "accepts_capability": "CREATIVE_SCRIPT"
+   },
+   {
+    "idx": 6,
+    "case_id": "S4-CT-T6",
+    "expect_capability": "PRODUCTION_DIRECTOR",
+    "role": "回答 production_profile 缺口：班底规模、分工、时间窗口、设备边界",
+    "text": "这条只用门店已有素材，不补拍；由一人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备。就按这个制作方式做。",
+    "accepts_artifact": false,
+    "supplies": [
+     "production.profile",
+     "production.time_window"
+    ],
+    "note": "『今天半天内』是生产时间窗口，与运营周期『四周内』分属不同作用域，不得互相顶替"
+   },
+   {
+    "idx": 7,
+    "case_id": "S4-CT-T7",
+    "expect_capability": "PUBLISHING_PACKAGING",
+    "role": "接受 Production Director 产物并推进到 Publishing & Packaging",
+    "text": "刚才的制作方案可以，基于它给这条出标题和封面。还没拿到真实成片的部分不要说成已经定稿。",
+    "accepts_artifact": true,
+    "accepts_capability": "PRODUCTION_DIRECTOR"
+   }
+  ]
+ },
+ "run_discipline": {
+  "samples_per_turn": 1,
+  "unplanned_followups": 0,
+  "ab_tests": 0,
+  "stability_resampling": 0,
+  "first_formal_fail_stops_everything": "第一项正式 FAIL 出现后立即停止：不改实现、不改判据、不补输入、不重跑求 PASS",
+  "transport_retry": "纯传输失败且零模型输出时最多重试 1 次，并保留 Attempt 1；任何产生了模型输出的失败不得重试"
+ }
+}
