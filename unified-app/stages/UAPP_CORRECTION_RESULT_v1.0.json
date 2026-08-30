@@ -1,0 +1,98 @@
+{
+  "document": {
+    "id": "UAPP_CORRECTION_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "gate_file": "unified-app/stages/UAPP_CORRECTION_GATE_v1.0.json",
+    "gate_sha256": "9220a7bd587ec030fa340892609addab15cb70432199924285e1b1fa634a95d7",
+    "inputs_sha256": "eda84ad987a58e1db3fd79f028859d0ddbce9146d83dca7038ce5c804d2c9549",
+    "raw_file": "unified-app/evidence/stages/uapp_correction/UAPP_CORRECTION_RAW_v1.0.json",
+    "raw_sha256": "cc2b0c9aed9d28ef440182bc5c32290f660dae4774f1cbdc5ead11e81a2642dc"
+  },
+  "formal_run": {
+    "workflow_run_id": "592ba2d3-c6a4-41a7-a8e9-f33818be98c4",
+    "message_id": "7defbe75-c224-46cf-a6d7-3c1645d93292",
+    "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+    "http_status": 200,
+    "elapsed_seconds": 591.97,
+    "request_attempts": 1,
+    "top_level_workflow_runs": 1,
+    "llm_node_attempts": 6,
+    "failed_llm_nodes": 0,
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "nested_runs": {
+    "M3": "dca3cc1f-d1e0-409a-8967-4da81e866d00",
+    "Hop": "396cee36-13a2-4d02-a965-e5775223b353",
+    "Seam": "36923827-2138-410a-9613-f982af032b00",
+    "PUBLISHING_PACKAGING": "213101ba-cb9e-4585-b9f6-befdf3c8f9e0",
+    "other_professional_capability_runs": 0
+  },
+  "observed_behavior": {
+    "M3_recognized_user_correction": true,
+    "Hop_emitted_production_profile": false,
+    "state_revision_before": 12,
+    "state_revision_after": 13,
+    "production_profile_before": "只用门店已有素材、不补拍，由一人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备",
+    "production_profile_after": "只用门店已有素材、不补拍，由一人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备",
+    "production_profile_field_revision_before": 2,
+    "production_profile_field_revision_after": 2,
+    "actual_corrected_fields": ["facts.registered"],
+    "actual_staled_records": ["PUBLISHING_PACKAGING@t12:df85e97cb07cd0df"],
+    "PD_t6_stale_after": false,
+    "PD_t11_stale_after": false,
+    "selector_selected_fp": "559a204d7c4f1f2a",
+    "fields_binding": "BOUND",
+    "bound_PD_body_length": 9304,
+    "bound_PD_body_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+    "new_PP_artifact": {"fp": "a7bf609e2dc9eecb", "bfp": "786ab7f43d2c02b9", "length": 7370, "sha256": "ca5ca64e373912277f2f1aa5d96e6f117e871591e370059d72c8f78842243c9f", "accepted": false, "stale": false},
+    "answer_length": 1122,
+    "answer_sha256": "8af5655c5fa83757c0fab80098f585986723f0cf797a52efaef82446f3a7c98b",
+    "answer_delivered_titles_and_cover": true,
+    "state_sha256_after": "1ab76c1521ab46a48dbcafedcbcddd0325f73b6abb838151d06521a913caf8c8",
+    "store_sha256_after": "8f8499a1594276ca8ae0e29428e4e3059f97411f244badcae3ccab042c843224"
+  },
+  "criteria": [
+    {"id": "C-01", "result": "FAIL / CURRENT", "reason": "production.profile 值与 frev 均未变化；系统只改了 facts.registered"},
+    {"id": "C-02", "result": "FAIL / CURRENT", "reason": "两份依赖 production.profile 的 PD 均保持 stale=false"},
+    {"id": "C-03", "result": "FAIL / CURRENT", "reason": "用户要求其他内容不变，但 facts.registered 被改写且无 production.profile 依赖的 PP@t12 被置 STALE"},
+    {"id": "C-04", "result": "FAIL / CURRENT", "reason": "旧 PD 正文以完全相同 sha256 绑定并进入 PP"},
+    {"id": "C-05", "result": "FAIL / CURRENT", "reason": "新增 7370 字 PP artifact，并向用户交付标题和封面"},
+    {"id": "C-06", "result": "FAIL / CURRENT", "reason": "回复声称制作规模已调整且继续完成包装，没有要求先更新制作方案"},
+    {"id": "C-07", "result": "PASS / CURRENT", "reason": "无 M2 行、publish_instance、真实发布、撤回、删除或权限变化"},
+    {"id": "C-08", "result": "PASS / CURRENT", "reason": "六项专业能力中仅 Publishing & Packaging 运行；保护图、Schema、非测试数据和 main 零变化，调用完整计数"}
+  ],
+  "protected_surface": {
+    "app_and_provider_bindings_unchanged": true,
+    "m2_before_equals_after": true,
+    "m2_task_snapshots": 0,
+    "m2_artifacts": 0,
+    "m2_task_run_states": 0,
+    "m2_account_publish_instances": 0,
+    "m2_non_test_publish_instances_before_after": 1568,
+    "m2_non_test_feedback_records_before_after": 117,
+    "m2_schema_md5_before_after": "25192c11562827efedfc3b2c22c3b4fd",
+    "main_unchanged": true
+  },
+  "failure_attribution": {
+    "first_failed_criterion": "C-01",
+    "confirmed_origin": "SYSTEM_UNDER_TEST",
+    "highest_confirmed_node": "UAPP correction-to-canonical-field extraction/binding path: uapp_hop omitted production_profile, so uapp_fields could not update it or invalidate dependent PD",
+    "triage": "unified-app/docs/UAPP_CORRECTION_FAILURE_TRIAGE_001.md",
+    "mutation_target": "NONE"
+  },
+  "result": "FAIL / CURRENT",
+  "state": {
+    "CROSS_TURN_CORRECTION_PROPAGATION": "FAIL / CURRENT",
+    "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+    "S5": "NOT_STARTED",
+    "UAPP-AC-12": "NOT_VERIFIED",
+    "main_merge": "NOT_ALLOWED",
+    "task_progress": "IN_PROGRESS",
+    "terminal_state": "unset",
+    "next_state": "CHECKPOINT"
+  }
+}

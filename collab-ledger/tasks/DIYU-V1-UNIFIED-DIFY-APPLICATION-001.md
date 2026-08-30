@@ -860,3 +860,42 @@ D-01…D-12 正例及单变量负例全部通过；保护面前后指纹相等�
 技术债唯一当前主表升级为 `unified-app/docs/UAPP_TECHNICAL_DEBT_REGISTER_v1.3.md`；v1.2 原文保留。v1.3 明确区分 successor 已关闭、仍有效、当前图 STALE、未验证及新披露但不阻断项。
 
 下一动作仅有一个：在冻结会话中逐字运行一次冻结纠正原话；任一 C-01…C-08 非 PASS 即保留 RAW、FAILURE TRIAGE、停止，不进入 S4/S5，也不修改被测对象。
+
+## ATT-UAPP-CORRECTION-01 · 一次真实纠正传播 FAIL（2026-08-30）
+
+冻结原话只运行一次。顶层 run `592ba2d3-c6a4-41a7-a8e9-f33818be98c4`，HTTP 200，591.97s；LLM 节点 6，失败 0，人工重试 0，平台内部重放 0，重复采样/A-B/Reviewer 均 0。
+
+**第一处硬门 C-01 FAIL。** M3 已识别“制作规模从一人改为两人”，但 Hop 的 PP 外壳没有输出 `production_profile`；`uapp_fields` 只更新 `facts.registered`，`production.profile` 仍为旧的一人值且 frev 仍为 2。两份依赖该字段的 PD 都保持非 STALE，最新 PD 9304 字正文以原 sha256 `8f91984b…c21b` 被 `BOUND` 到 PP。系统新增 PP@t13（7370 字，sha256 `ca5ca64e…43c9f`），并真实向用户交付了标题和封面。
+
+```yaml
+C-01: FAIL / CURRENT
+C-02: FAIL / CURRENT
+C-03: FAIL / CURRENT
+C-04: FAIL / CURRENT
+C-05: FAIL / CURRENT
+C-06: FAIL / CURRENT
+C-07: PASS / CURRENT
+C-08: PASS / CURRENT
+confirmed_origin: SYSTEM_UNDER_TEST
+mutation_target: NONE
+```
+
+归因见 `unified-app/docs/UAPP_CORRECTION_FAILURE_TRIAGE_001.md`；结果见 `unified-app/stages/UAPP_CORRECTION_RESULT_v1.0.json`；RAW sha256 `cc2b0c9aed9d28ef440182bc5c32290f660dae4774f1cbdc5ead11e81a2642dc`。
+
+保护面：六个专业能力中仅 PP 运行；UAPP、PP/provider、Seam、Hop、M3 与六能力图前后相等；M2 task 行、publish_instance 均 0→0；Schema 与非测试计数不变；main 未动。仅测试会话 state rev 12→13、旧 PP@t12 STALE、新 PP@t13 追加，失败状态原样保留，不直接改库。
+
+新增 `TD-UAPP-24`，唯一当前技术债主表升级为 v1.4，v1.3 原文保留。
+
+按冻结停止规则：不修改实现、不改 Gate/输入/Checker、不重跑、不进入 S4、不启动 S5。
+
+```yaml
+CROSS_TURN_CORRECTION_PROPAGATION: FAIL / CURRENT
+S4_OVERALL_ACCEPTANCE: NOT_VERIFIED
+S5: NOT_STARTED
+UAPP-AC-12: NOT_VERIFIED
+main_merge: NOT_ALLOWED
+task_progress: IN_PROGRESS
+terminal_state: unset
+next_state: CHECKPOINT
+unique_next_action: Founder 版本化授权 TD-UAPP-24 的最小 successor repair
+```
