@@ -1219,3 +1219,18 @@ confirmed highest failing node 为 `UAPP_INLINE_ARTIFACT_CTA_CONTRACT_NORMALIZAT
 当前本 REBASE `3 runs / 16 LLM`，生命周期 `11 / 60`；所有 retry/replay/resampling/A-B/reviewer
 为 0。S5 FAIL/CURRENT，AC-12 不授权，main 不允许，terminal unset。唯一下一动作是 Founder
 版本化授权最窄 CAP-06 CTA normalization REBASE。
+
+## CAP-06 semantic contract REBASE 与 post-CAP06 S5 Attempt
+
+CAP-06 successor run `9f6ff2fe-b59a-4e46-85d5-c9577b1bd255`：`PASS / CURRENT`。只运行
+Publishing & Packaging；正文 78 字、sha256 `00c3372f…e9fcd`；平台小红书；CTA 为低风险平台内
+互动；六类包装齐全；artifact 5,115 字、sha256 `73bc661d…f5832`；LLM 6，重试/重放 0。
+Checker v1.0 的 RAW 字段与否定语义误判保留，v1.1 对同一 RAW 判别后 PASS，未重跑模型。
+
+随后按 Gate v1.9 开始剩余 S5。首个 `UAPP-GAP-01:G1` run
+`347272fd-df0f-4ddd-aaea-cf904f0e3236`：系统自然地只问一个缺口且未生成 artifact，但问的是
+“时间或阶段边界”；冻结 G2 只补商品与内容方向，不能回答该问题，故 AC-06 `FAIL / CURRENT`。
+Checker 的“必须 uapp_ask_one/不得运行能力”属于过度编译，不作为 SUT FAIL 依据。其余 12 项按
+停止规则未运行。本 CAP-06 REBASE 总计 2 runs / 11 LLM；所有重试、重放、A/B、重复采样、
+Reviewer、真实发布和非测试变化为 0。当前唯一下一动作是 Founder 版本化授权最窄 GAP-01
+决定性缺口/路由后继；AC-12、main、terminal 均不启动。

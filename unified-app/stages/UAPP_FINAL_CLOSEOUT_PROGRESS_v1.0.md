@@ -18,8 +18,8 @@
 | CAP06-A 根因与绑定证明 | COMPLETED | PASS / CURRENT | 0 | — | 已完成 |
 | CAP06-B 最小候选实现 | COMPLETED | BUILD VERIFIED | 0 | — | 已完成 |
 | CAP06-C 确定性硬门 | COMPLETED | 23/23 PASS | 0 | — | 冻结并发布 |
-| CAP06-D 正式定向验证 | NOT_STARTED | NOT_VERIFIED | 0/14 | Gate/commit | 原句运行一次 |
-| S5 剩余场景与收口 | NOT_STARTED | NOT_VERIFIED | 0 | CAP-06 | 等 CAP-06 PASS |
+| CAP06-D 正式定向验证 | COMPLETED | PASS / CURRENT | 6/14 | — | 已完成 |
+| S5 剩余场景与收口 | IN_PROGRESS | FAIL / CURRENT | 5 | GAP-01 决定性缺口错误 | Founder 最窄 GAP-01 REBASE |
 
 - 激活 Git：branch `codex/v1-uapp-progressive-canvas-001`，HEAD/upstream
   `ff66406e4eea62ffc57999168b3117d6c393b330`，main/origin-main
@@ -30,7 +30,21 @@
 - 确定性绑定：正文 length `78`，源/注入 sha256
   `00c3372f5b38e5eca06a9cf97fa7acc09707b753deceea2e3f670f84051e9fcd`；平台“小红书”；
   CTA `LOW_RISK_INTERACTION`；兑现点为原文子串而非整段正文。
-- 当前授权包顶层运行 `0/2`，DeepSeek `0/14`；没有 Dify 写入、模型调用或副作用。
+- 当前授权包累计顶层运行 `2`，DeepSeek `11/14`；没有真实发布、重试、内部重放或非测试变化。
+
+### 2026-08-30 · CAP-06 PASS 后 S5 首个剩余场景停止
+
+- CAP-06 已完成 `PASS / CURRENT`，本轮 run `1` / LLM `6`；TD-UAPP-28 关闭。
+- `UAPP-GAP-01:G1` run `347272fd-df0f-4ddd-aaea-cf904f0e3236`：HTTP 200，LLM `5`，
+  无重试/重放。系统未编造成品、只跑 CAMPAIGN、其他五能力 0，但追问“时间或阶段边界”。
+- 冻结 G2 只补主推商品/内容方向等信息，不回答时间边界，因此同会话连续性硬门 FAIL。
+- Checker 要求 `uapp_ask_one` 且零能力运行属于另一个过度编译问题，不作为 SUT FAIL 依据。
+- 后续 12 项没有运行；当前正式场景 `6 PASS / 1 FAIL / 12 NOT_RUN`，AC-06 FAIL/CURRENT，
+  S5 F2 仍 IN_PROGRESS，Founder AC-12 未授权。
+- 本 CAP-06 REBASE 累计顶层运行 `2`、DeepSeek `11`；重试、内部重放、A/B、重复采样、
+  Reviewer、真实发布、非测试变化均为 `0`。
+- 唯一下一动作：Founder 版本化授权 UAPP “模糊周期请求 → 决定性商品/内容方向缺口”的
+  最窄后继；不得修改受保护 CAMPAIGN 或冻结 G1/G2。
 
 `task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001`
 
@@ -42,7 +56,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED / CURRENT REBASE | CAP-01..04 PASS/STALE；CAP-05 历史 FAIL 保留；当前图正式 PASS 0/19 | 历史 8 runs / 44 LLM；本 REBASE 0 | NONE | Phase A 全接缝重放 |
+| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | 6 PASS / 1 FAIL / 12 NOT_RUN | 本 CAP-06 REBASE 2 runs / 11 LLM | GAP-01 决定性缺口错误 | Founder 最窄 GAP-01 REBASE |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
