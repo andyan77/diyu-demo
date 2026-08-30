@@ -148,3 +148,55 @@ Founder §五 写「只有 D1、D2、D3 全部 PASS，才允许：1. 发布 PP �
   因为后继版本未通过验证，现在建立 successor 基线会把未验证状态上行。
 - 保持 `CURRENT`：M1/M2/M3/Hop/Seam 路由结论、四份上游产物、无暗跑结论、
   S4 载体侧 V-01…V-07 / V-08A / V-09 / S-01。**不 blanket STALE。**
+
+---
+
+## REBASE · b2 最小修复与收口（2026-08-30）
+
+`task_mode: REBASE`｜沿用同一 `task_id`，不新建平行任务。
+`planning_observed_head: 53e1f76995de079f4bcb37931416ae95af7c0488`。
+授权：《DIYU V1 · PP Boundary Successor b2 最小修复与收口执行 Prompt》。
+
+### 一、启动状态修正（只追加，不覆盖，不追溯改绿）
+
+规划侧裁定 b1 的登记等级偏低——b1 已经执行过一次**正式** D1，
+因此它的整体不能停在 `NOT_VERIFIED`；同时 D2 未运行，事实面也不能整条上调。
+
+```yaml
+PP_BOUNDARY_SUCCESSOR_b1: FAIL / CURRENT
+V-08B_FACT_TRACEABILITY_b1:
+  D1_positive: PASS
+  overall:     NOT_VERIFIED        # D2 未运行，不能上调完整 V-08B
+V-08C_CTA_FIDELITY_b1: FAIL / CURRENT
+CURRENT_UAPP_S4_OVERALL_ACCEPTANCE: FAIL / CURRENT
+```
+
+第四条的理由：统一应用当前仍调用**旧 PP**，而旧 PP 的既有适用失败尚未被
+任何通过验证的 successor 取代——所以 S4 整体不是"还没查"，是"当前为失败"。
+
+历史证据原样保留。b1 的全部落盘件（`PPBS_*_v1.0`、`PPBS_D1_RAW.json`、
+`PPBS_PHASE_D_RESULT_v1.0.json`、失败归因 001）**一个字节都不改**。
+
+### 二、Phase A · 恢复安全发布指针（零模型调用）
+
+上一轮遗留的待裁定项，规划侧已裁定：退回。
+
+| | 之前 | 现在 |
+|---|---|---|
+| PP app 当前发布图 | `7940dc00…`（b1，未通过验证） | `788c8555…`（旧稳定图） |
+| PP app 当前发布版本 | `2026-08-30 09:05:41.729617` | `2026-08-30 09:44:26.834257` |
+| PP workflow 行数 | 3 | 4（b1 行与旧稳定行都保留） |
+| provider 钉 | `2026-08-29 03:34:58.999575` | 未动 |
+
+机制：Dify console `draft-sync` + `publish` 重新发布旧稳定图。
+**没有执行任何 `UPDATE` / `DELETE` 语句**，b1 历史行原样保留可供回指。
+恢复后复算：`hop_pin`、候选画布、Seam 与其余八个受保护应用 **零漂移**。
+
+证据：`unified-app/evidence/stages/pp_boundary_successor/PPBS_B2_PHASE_A_RESTORE.json`。
+
+这一步**只是隔离失败候选，不构成 PP 产品验收 PASS。**
+
+一次已披露的传输侧失败：首次 `draft-sync` 返回 400——
+`environment_variables` / `conversation_variables` 在 DB 里存成 `{}`，
+而 SyncDraftWorkflow 要求 list。零模型调用、零 Dify 写入、零状态变化，
+修正为空列表后重发（空对象与空列表在语义上都是"没有变量"，不改变任何取值）。

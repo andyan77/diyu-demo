@@ -1,0 +1,105 @@
+{
+ "document": {
+  "id": "PPBS_B2_PHASE_A_RESTORE_v1.0",
+  "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
+  "task_mode": "REBASE",
+  "authority": "b2 最小修复与收口执行 Prompt 第三节 Phase A",
+  "model_calls": 0,
+  "direct_db_updates": 0
+ },
+ "why": "隔离失败候选 b1：把 PP app 的当前发布行为恢复为旧稳定图。这不构成 PP 产品验收 PASS。",
+ "mechanism": "console draft-sync + publish（Dify 支持的重新发布机制），不执行任何 UPDATE/DELETE 语句",
+ "pp_workflow_rows_before": [
+  {
+   "id": "5f10ef48-616d-4fc3-881d-1fddc3149140",
+   "version": "2026-08-29 03:34:58.999575",
+   "md5": "788c8555aca09e6fa6d979f237f70157",
+   "marked_name": "m5fp-delivery-v1.2",
+   "created_at": "2026-08-29 03:34:58.999728"
+  },
+  {
+   "id": "bbd62850-63bc-44b7-9433-3e57a645c675",
+   "version": "draft",
+   "md5": "7940dc009d0bba06e1b5ca99dac61e2e",
+   "marked_name": "",
+   "created_at": "2026-08-29 03:34:59"
+  },
+  {
+   "id": "f3eaafd8-a076-47f5-9060-959de2fe3d38",
+   "version": "2026-08-30 09:05:41.729617",
+   "md5": "7940dc009d0bba06e1b5ca99dac61e2e",
+   "marked_name": "pp-b1-boundary",
+   "created_at": "2026-08-30 09:05:41.730194"
+  }
+ ],
+ "pp_current_graph_md5_before": "7940dc009d0bba06e1b5ca99dac61e2e",
+ "restore_source_row": {
+  "id": "5f10ef48-616d-4fc3-881d-1fddc3149140",
+  "version": "2026-08-29 03:34:58.999575",
+  "md5": "788c8555aca09e6fa6d979f237f70157",
+  "marked_name": "m5fp-delivery-v1.2",
+  "created_at": "2026-08-29 03:34:58.999728"
+ },
+ "b1_row_preserved_expected": {
+  "id": "f3eaafd8-a076-47f5-9060-959de2fe3d38",
+  "version": "2026-08-30 09:05:41.729617",
+  "md5": "7940dc009d0bba06e1b5ca99dac61e2e",
+  "marked_name": "pp-b1-boundary",
+  "created_at": "2026-08-30 09:05:41.730194"
+ },
+ "graph_to_publish_md5_local": "788c8555aca09e6fa6d979f237f70157",
+ "applied": true,
+ "publish_status": 200,
+ "recompute_after": {
+  "pp_current_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "pp_current_graph_md5_equals_stable": true,
+  "pp_current_version": "2026-08-30 09:44:26.834257",
+  "pp_workflow_rows_after": [
+   {
+    "id": "5f10ef48-616d-4fc3-881d-1fddc3149140",
+    "version": "2026-08-29 03:34:58.999575",
+    "md5": "788c8555aca09e6fa6d979f237f70157",
+    "marked_name": "m5fp-delivery-v1.2",
+    "created_at": "2026-08-29 03:34:58.999728"
+   },
+   {
+    "id": "bbd62850-63bc-44b7-9433-3e57a645c675",
+    "version": "draft",
+    "md5": "788c8555aca09e6fa6d979f237f70157",
+    "marked_name": "",
+    "created_at": "2026-08-29 03:34:59"
+   },
+   {
+    "id": "f3eaafd8-a076-47f5-9060-959de2fe3d38",
+    "version": "2026-08-30 09:05:41.729617",
+    "md5": "7940dc009d0bba06e1b5ca99dac61e2e",
+    "marked_name": "pp-b1-boundary",
+    "created_at": "2026-08-30 09:05:41.730194"
+   },
+   {
+    "id": "80a96a71-4074-4f55-a1a3-926165374925",
+    "version": "2026-08-30 09:44:26.834257",
+    "md5": "788c8555aca09e6fa6d979f237f70157",
+    "marked_name": "restore-stable",
+    "created_at": "2026-08-30 09:44:26.834453"
+   }
+  ],
+  "b1_row_still_present": true,
+  "old_stable_row_still_present": true,
+  "pp_provider_pin": "2026-08-29 03:34:58.999575",
+  "hop_pin": "2026-08-30 03:38:31.449618",
+  "candidate_md5": "99c3edf7bd12172a4fb011b588f25e57",
+  "protected_md5_now": {
+   "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+   "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+   "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+   "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+   "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+   "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+   "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+   "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+  },
+  "protected_drift": {},
+  "all_clear": true
+ }
+}
