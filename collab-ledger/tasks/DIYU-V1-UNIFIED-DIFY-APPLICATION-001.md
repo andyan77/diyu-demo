@@ -1234,3 +1234,19 @@ Checker 的“必须 uapp_ask_one/不得运行能力”属于过度编译，不�
 停止规则未运行。本 CAP-06 REBASE 总计 2 runs / 11 LLM；所有重试、重放、A/B、重复采样、
 Reviewer、真实发布和非测试变化为 0。当前唯一下一动作是 Founder 版本化授权最窄 GAP-01
 决定性缺口/路由后继；AC-12、main、terminal 均不启动。
+
+## GAP-01 与最终技术验收 REBASE 激活
+
+Founder 已授权 GAP-01 最小修复、G1/G2 定向复验、剩余 11 项 S5、AC-01～11 收口及 AC-12
+试用包。本轮不授权执行 AC-12、main 合并或终态。
+
+激活现场本地/远端 HEAD 同为 `5c2aab4a96a3e5227647516d310e69df95c12892`，main/origin-main
+同为 `01a42b0ed97344a67302ecb6778ae4a772eb28b2`，worktree clean，活动 workflow 0。旧 RAW
+确定性回放确认 G1 被直接路由 CAMPAIGN、未产生决定性问题，最终追问冻结 G2 不回答的时间边界。
+
+最小候选只改 UAPP `uapp_action` / `uapp_route`；其余 54 节点、58 条边、全部会话变量和受保护
+应用不动。candidate canonical sha256 `65f46389…bcf2`；零模型控制 30/30 PASS，含等价表达、
+明确 Campaign、明确单条内容、两问/错误缺口负例和 CAP-01～06 路由逐项等价。
+
+下一外部副作用是发布该 UAPP 候选；发布前先提交并普通 push 当前实现/控制证据，状态
+`PLANNED`。发布、回读和 Gate 冻结均不调用模型。

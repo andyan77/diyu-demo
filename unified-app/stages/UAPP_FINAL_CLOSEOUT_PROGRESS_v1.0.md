@@ -1,5 +1,24 @@
 # UAPP Final Closeout Progress v1.0
 
+## 2026-08-30 · GAP-01 与最终技术验收 REBASE
+
+| Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
+|---|---|---|---:|---:|---|---|
+| C1 GAP 修复 | IN_PROGRESS | 30/30 确定性控制 PASS；待发布/冻结 | 0/2 | 0/90 | NONE | 发布候选并冻结 Gate |
+| C2 G1/G2 | NOT_STARTED | NOT_VERIFIED | 0/2 | 0 | C1 | 等 C1 |
+| C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
+| C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
+| C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
+
+- 激活 Git/远端：`5c2aab4a96a3e5227647516d310e69df95c12892`；main/origin-main
+  `01a42b0ed97344a67302ecb6778ae4a772eb28b2`；worktree 激活时 clean。
+- 线上基线：UAPP `7932502949d91ad366a4fa70d39a8a56`；PP/provider
+  `99287feadcd784e86bf4c298bea555fc`；Seam `db49a3da8973d4fdcbe9ecf63bdf7e2a`；
+  Hop `e38378c3c2a66b75aa7e645368c9e1ce`；活动 workflow `0`。
+- Phase A 原始失败回放成立；旧 Checker 的节点位置命题已与产品语义命题分离，不追溯改绿。
+- Phase B/C 候选只改 UAPP `uapp_action` / `uapp_route`，CAP-01～06 路由等价控制逐项 PASS；
+  未新增状态、数据库、路由系统或模型调用。
+
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 
 ### CAP-06 正式结果与 S5 接续
