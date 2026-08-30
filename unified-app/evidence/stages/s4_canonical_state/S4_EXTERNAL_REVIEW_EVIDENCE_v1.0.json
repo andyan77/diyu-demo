@@ -1,0 +1,565 @@
+{
+ "document": {
+  "id": "S4_EXTERNAL_REVIEW_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "CONTINUE EXECUTION PROMPT v1.0（UAPP S4 证据真值纠偏与 PP 交付边界归因）第三节",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "workflow_runs_started": 0,
+  "reads_only": [
+   "T1–T7 RAW",
+   "Dify 只读运行库",
+   "Git"
+  ]
+ },
+ "A_chain_facts": {
+  "top_level_runs": 7,
+  "http_status_set": [
+   200
+  ],
+  "attempts_per_turn": [
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
+  ],
+  "conversation_ids": [
+   "5cfcaf57-8808-4fc7-8c66-d661e515d05a"
+  ],
+  "graph_sha256_at_run_set": [
+   "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852"
+  ],
+  "gate_sha256_bound_by_evidence": [
+   "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79"
+  ],
+  "manifest_sha256_bound_by_evidence": [
+   "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468"
+  ],
+  "nested_app_runs_total": 28,
+  "nested_app_runs_status": {
+   "succeeded": 28
+  },
+  "nested_app_runs_turns_by_app": {
+   "CONTENT_BRIEF": [
+    1,
+    2
+   ],
+   "CREATIVE_SCRIPT": [
+    3,
+    4
+   ],
+   "HOP": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "M3": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "PRODUCTION_DIRECTOR": [
+    5,
+    6
+   ],
+   "PUBLISHING_PACKAGING": [
+    7
+   ],
+   "SEAM": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  "node_executions_in_window": [
+   {
+    "type": "answer",
+    "status": "succeeded",
+    "c": 7
+   },
+   {
+    "type": "assigner",
+    "status": "succeeded",
+    "c": 15
+   },
+   {
+    "type": "code",
+    "status": "succeeded",
+    "c": 125
+   },
+   {
+    "type": "document-extractor",
+    "status": "succeeded",
+    "c": 7
+   },
+   {
+    "type": "end",
+    "status": "succeeded",
+    "c": 28
+   },
+   {
+    "type": "http-request",
+    "status": "succeeded",
+    "c": 26
+   },
+   {
+    "type": "if-else",
+    "status": "succeeded",
+    "c": 46
+   },
+   {
+    "type": "llm",
+    "status": "succeeded",
+    "c": 39
+   },
+   {
+    "type": "start",
+    "status": "succeeded",
+    "c": 35
+   },
+   {
+    "type": "template-transform",
+    "status": "succeeded",
+    "c": 12
+   },
+   {
+    "type": "tool",
+    "status": "succeeded",
+    "c": 28
+   },
+   {
+    "type": "variable-aggregator",
+    "status": "succeeded",
+    "c": 7
+   }
+  ],
+  "artifact_per_turn": {
+   "T1": {
+    "cap": "CONTENT_BRIEF",
+    "len": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "T2": {
+    "cap": "CONTENT_BRIEF",
+    "len": 6600,
+    "sha256": "5912166572ff6e239278e00c0e14b934482a1d0811dbd6e8435bce94dac21dd0"
+   },
+   "T3": {
+    "cap": "CREATIVE_SCRIPT",
+    "len": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "T4": {
+    "cap": "CREATIVE_SCRIPT",
+    "len": 6016,
+    "sha256": "81635d887e13ef6e68280c6b388441c5a33d491b8531af67562b3d8d3360fef1"
+   },
+   "T5": {
+    "cap": "PRODUCTION_DIRECTOR",
+    "len": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "T6": {
+    "cap": "PRODUCTION_DIRECTOR",
+    "len": 10121,
+    "sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb"
+   },
+   "T7": {
+    "cap": "PUBLISHING_PACKAGING",
+    "len": 14984,
+    "sha256": "88909e875b0c4c692ddbb9453daf1150b5a6a9f25976a7073a36ffd5644b2de4"
+   }
+  },
+  "user_delivery_per_turn": {
+   "T1": {
+    "len": 92,
+    "sha256": "4d50d4b86b5c93f64b69a31d59888f01351b27ea451b39852221860499fb48bb"
+   },
+   "T2": {
+    "len": 1110,
+    "sha256": "294236114ff8c4c6610f4405f49329df1a03c5a1e0fde69252fc6462a942dacf"
+   },
+   "T3": {
+    "len": 117,
+    "sha256": "ba72045b8e42febfa14656fb76ce0258548e6e0a9c17819a1528f85752c88d8a"
+   },
+   "T4": {
+    "len": 1144,
+    "sha256": "9de03f1bee8a5c42870920e074718eee3dc7f1d80fd1a24fb044a4a6653be7b0"
+   },
+   "T5": {
+    "len": 98,
+    "sha256": "0ade99c2077086a09db479fbc6957b0932155f0cc07006b8b80f0f8fc558f232"
+   },
+   "T6": {
+    "len": 1632,
+    "sha256": "d8e15ff750ac4850394daaedfd0e65f5ee909bcaa7471e1db223a3dec54bc4dc"
+   },
+   "T7": {
+    "len": 1632,
+    "sha256": "5de55987b39f14d14515737eb684066c0a371a3cd4da032d94fceb59ff07fa40"
+   }
+  },
+  "T7_upstream_capability": "PRODUCTION_DIRECTOR",
+  "T7_upstream_len": 10121,
+  "T7_upstream_sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+  "T7_upstream_equals_T6_artifact": true,
+  "seam_tool_nodes_per_turn": {
+   "T1": [
+    "tool_content_brief"
+   ],
+   "T2": [
+    "tool_content_brief"
+   ],
+   "T3": [
+    "tool_creative_script"
+   ],
+   "T4": [
+    "tool_creative_script"
+   ],
+   "T5": [
+    "tool_production_director"
+   ],
+   "T6": [
+    "tool_production_director"
+   ],
+   "T7": [
+    "tool_publishing_packaging"
+   ]
+  }
+ },
+ "A_scope_zero_drift_at_review_time": {
+  "drift": [],
+  "now": {
+   "candidate_graph_sha256": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+   "candidate_nodes": 49,
+   "candidate_edges": 51,
+   "protected_md5": {
+    "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+    "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+    "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+    "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+    "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+    "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+    "PUBLISHING_PACKAGING": "788c8555aca09e6fa6d979f237f70157",
+    "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+   }
+  },
+  "run_meta_before": {
+   "candidate_graph_sha256": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+   "protected_md5": {
+    "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+    "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+    "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+    "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+    "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+    "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+    "PUBLISHING_PACKAGING": "788c8555aca09e6fa6d979f237f70157",
+    "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+   },
+   "hop_pin": "2026-08-30 03:38:31.449618",
+   "pinned_m5_compose_sha256": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855"
+  }
+ },
+ "BC_pp_boundary": {
+  "pp_run": {
+   "id": "15e2643a-7710-47d0-a162-40b13726219d",
+   "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+   "app": "PUBLISHING_PACKAGING",
+   "app_id_is_protected_pp": true,
+   "status": "succeeded",
+   "created_at": "2026-08-30 07:40:48.558961",
+   "elapsed_time": "103.451004"
+  },
+  "input_constraints": {
+   "cta_contract_verbatim_present": true,
+   "cta_contract_line": "`cta_contract`: 不做购买、到店、私信或领取引导，只保留内容本身",
+   "NO_CTA_marker_present": true,
+   "facts_registered_present": true,
+   "explicit_non_promise_present": true,
+   "expression_boundary_present": true,
+   "asset_publish_permission_present": true,
+   "T6_PD_artifact_contained_verbatim": true,
+   "T6_PD_artifact_sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+   "input_lengths": {
+    "capability_call": 6961,
+    "professional_input": 14273
+   }
+  },
+  "layer_lengths": {
+   "IN.capability_call": 6961,
+   "IN.professional_input": 14273,
+   "PP.raw_preserved": 16753,
+   "PP.artifact": 14984,
+   "PP.user_delivery": 1632,
+   "SEAM.artifact": 14984,
+   "SEAM.user_delivery": 1632,
+   "SEAM_MERGE.artifact": 15369,
+   "SEAM_MERGE.user_delivery": 1719,
+   "CANVAS.final_text": 1632,
+   "CANVAS.answer": 1632
+  },
+  "layer_sha256": {
+   "IN.capability_call": "4983d4f806949689e1b1e8d31c24a6c66814f37b88955c75de2f76590da09e85",
+   "IN.professional_input": "3dab43c6a924f7f7a6f2ef3fce778852d615d584a7862a693d3a12c8095d7b09",
+   "PP.raw_preserved": "abe93c86855d8eb53bd1208eb4249beecd0c3dc63688b7e78b4b4a1b830d19b4",
+   "PP.artifact": "88909e875b0c4c692ddbb9453daf1150b5a6a9f25976a7073a36ffd5644b2de4",
+   "PP.user_delivery": "5de55987b39f14d14515737eb684066c0a371a3cd4da032d94fceb59ff07fa40",
+   "SEAM.artifact": "88909e875b0c4c692ddbb9453daf1150b5a6a9f25976a7073a36ffd5644b2de4",
+   "SEAM.user_delivery": "5de55987b39f14d14515737eb684066c0a371a3cd4da032d94fceb59ff07fa40",
+   "SEAM_MERGE.artifact": "004577b378a99e6e35fb47a14711a813a032af24c8afe4441eeb71a170101c12",
+   "SEAM_MERGE.user_delivery": "8037e2da483b89881c5c6e91d4f75de07c66c23b6246446daf7168575d24492e",
+   "CANVAS.final_text": "5de55987b39f14d14515737eb684066c0a371a3cd4da032d94fceb59ff07fa40",
+   "CANVAS.answer": "5de55987b39f14d14515737eb684066c0a371a3cd4da032d94fceb59ff07fa40"
+  },
+  "string_provenance": [
+   {
+    "id": "PB-01",
+    "probe": "一直在用这套三问",
+    "why": "把未登记的人物长期行为写成事实",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 4,
+     "PP.artifact": 3,
+     "PP.user_delivery": 1,
+     "SEAM.artifact": 3,
+     "SEAM.user_delivery": 1,
+     "SEAM_MERGE.artifact": 3,
+     "SEAM_MERGE.user_delivery": 1,
+     "CANVAS.final_text": 1,
+     "CANVAS.answer": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-02",
+    "probe": "门店做搭配服务",
+    "why": "把未登记的人物长期行为写成事实（评论区口径）",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 3,
+     "PP.artifact": 2,
+     "PP.user_delivery": 1,
+     "SEAM.artifact": 2,
+     "SEAM.user_delivery": 1,
+     "SEAM_MERGE.artifact": 2,
+     "SEAM_MERGE.user_delivery": 1,
+     "CANVAS.final_text": 1,
+     "CANVAS.answer": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-03",
+    "probe": "常用这套思路",
+    "why": "同上，推断词包装",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 5,
+     "PP.artifact": 4,
+     "PP.user_delivery": 1,
+     "SEAM.artifact": 4,
+     "SEAM.user_delivery": 1,
+     "SEAM_MERGE.artifact": 4,
+     "SEAM_MERGE.user_delivery": 1,
+     "CANVAS.final_text": 1,
+     "CANVAS.answer": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-04",
+    "probe": "你自己买衣服前",
+    "why": "面向评论互动的提问",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 3,
+     "PP.artifact": 2,
+     "PP.user_delivery": 1,
+     "SEAM.artifact": 2,
+     "SEAM.user_delivery": 1,
+     "SEAM_MERGE.artifact": 2,
+     "SEAM_MERGE.user_delivery": 1,
+     "CANVAS.final_text": 1,
+     "CANVAS.answer": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-05",
+    "probe": "哪个问题",
+    "why": "面向评论互动的提问（问句尾）",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 4,
+     "PP.artifact": 3,
+     "PP.user_delivery": 1,
+     "SEAM.artifact": 3,
+     "SEAM.user_delivery": 1,
+     "SEAM_MERGE.artifact": 3,
+     "SEAM_MERGE.user_delivery": 1,
+     "CANVAS.final_text": 1,
+     "CANVAS.answer": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-06",
+    "probe": "评论区",
+    "why": "评论区设计整段",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 10,
+     "PP.artifact": 8,
+     "PP.user_delivery": 2,
+     "SEAM.artifact": 8,
+     "SEAM.user_delivery": 2,
+     "SEAM_MERGE.artifact": 8,
+     "SEAM_MERGE.user_delivery": 2,
+     "CANVAS.final_text": 2,
+     "CANVAS.answer": 2
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-07",
+    "probe": "只有内容讨论和问题回应",
+    "why": "把 NO_CTA 自我解释成可以引导评论",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 1,
+     "PP.user_delivery": 1,
+     "SEAM.user_delivery": 1,
+     "SEAM_MERGE.user_delivery": 1,
+     "CANVAS.final_text": 1,
+     "CANVAS.answer": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-08",
+    "probe": "低风险互动范畴",
+    "why": "自造的边界豁免类目",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 1,
+     "PP.artifact": 1,
+     "SEAM.artifact": 1,
+     "SEAM_MERGE.artifact": 1
+    },
+    "present_in_pp_input": false
+   },
+   {
+    "id": "PB-09",
+    "probe": "不含购买引导",
+    "why": "把『只保留内容本身』改写成『不做购买引导』",
+    "first_layer": "PP.raw_preserved",
+    "counts_by_layer": {
+     "PP.raw_preserved": 2,
+     "PP.artifact": 2,
+     "SEAM.artifact": 2,
+     "SEAM_MERGE.artifact": 2
+    },
+    "present_in_pp_input": false
+   }
+  ],
+  "downstream_is_passthrough": {
+   "PP.artifact == SEAM.artifact": true,
+   "PP.user_delivery == SEAM.user_delivery": true,
+   "PP.user_delivery == CANVAS.final_text": true,
+   "CANVAS.final_text == CANVAS.answer": true
+  }
+ },
+ "binding_reconciliation": {
+  "file_sha256": {
+   "GATE_v1_0": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+   "GATE_v1_1": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+   "MANIFEST_v1_0": "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468",
+   "INPUTS_v1_0": "f19f5d1bc1dcba3061c578b42c43188484706eaa6e9dd265f3f5c37987ee17a6",
+   "RESULT_v1_0": "f068dfe84b5e224bcb54056d15d6e4358226b6523fbe6f44a732a48e560e0f12",
+   "VERIFY_v1_0": "78004a8fa3512b96b548e3502f5b58ae1f111cde99f0853fbe48e26467893355",
+   "ADJUDICATE_v1_0": "c0cfa4d548554916ca3c2a4a9cce216143f510a334c15230138bfd23767be73a",
+   "NODES_v1_0": "6c350c6a4e721b85a531d48fff13afefbe4f6a5218e334c1f191ca3aaba6f3fe"
+  },
+  "evidence_gate_sha256": [
+   "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79"
+  ],
+  "findings": [
+   {
+    "id": "BR-01",
+    "claim": "Gate v1.1 自称 frozen_before_any_implementation_change=true",
+    "counter_evidence": "Phase C 实现之后、**任何模型调用之前**。本版不放宽任何业务含义，只把实现期必须确定下来的三条判定细则写清楚，并登记两条判据的自我改写。",
+    "verdict": "CONTRADICTORY",
+    "what_survives": "frozen_before_any_model_run=true（由 Manifest model_calls_so_far=0 与证据内 gate_sha256 全等 v1.1 支持）",
+    "what_does_not_survive": "frozen_before_any_implementation_change 对 v1.1 不成立：v1.1 冻结于 Phase C 实现之后。该字段是 v1.0 的属性被复制到 v1.1。"
+   },
+   {
+    "id": "BR-02",
+    "claim": "Candidate Manifest v1.0 的 criteria_ref 指向 Gate v1.0",
+    "manifest_criteria_ref": {
+     "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+     "sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19"
+    },
+    "evidence_gate_sha256": [
+     "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79"
+    ],
+    "gate_v1_1_sha256": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+    "verdict": "MISMATCH",
+    "note": "正式 T1–T7 全部绑定 Gate v1.1；Manifest 仍指 v1.0。Manifest 冻结于 git_head=codex/v1-uapp-progressive-canvas-001（Phase B），早于 v1.1，属时序事实，但结果引用时不得把两者当作同一判据。"
+   },
+   {
+    "id": "BR-03",
+    "claim": "S4_CANONICAL_STATE_VERIFY.json（14/14）绑定 Gate v1.0",
+    "verify_criteria_ref": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+    "verify_criteria_sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+    "equals_gate_v1_0": true,
+    "verdict": "MISMATCH",
+    "note": "该 14/14 在 Gate v1.0 下成立，不能被引用为『Gate v1.1 下的 14/14』。本轮以 S4_CANONICAL_STATE_VERIFY_v1.1.json 重绑定后重算。"
+   },
+   {
+    "id": "BR-04",
+    "claim": "RESULT v1.0 的 V-07 展示字段实现缺陷",
+    "defect": "S4_CANONICAL_STATE_ADJUDICATE_v1.0.py 中 `sorted(k for k, v in last.items() if v == \"E\")` 把字段字典 v 与字符串 \"E\" 比较，恒为空列表。",
+    "impact": "只影响 observed 的展示，不进入 V-07 的 PASS 谓词 `V(not bad_ref and not bad_kind and not ph)`。V-07 判定本身不受影响。",
+    "verdict": "DISPLAY_ONLY",
+    "result_v1_0_V07_display": []
+   },
+   {
+    "id": "BR-05",
+    "claim": "RESULT v1.0 的 V-08 用一个 PASS 同时代表五件事",
+    "covered_by_one_verdict": [
+     "单能力执行/无暗跑",
+     "无泄漏",
+     "无 M2 重复副作用",
+     "无事实编造",
+     "CTA 忠实"
+    ],
+    "discriminating_evidence_available": {
+     "单能力执行/无暗跑": "有——seam 工具节点与嵌套 run 计数确定性可判",
+     "无泄漏": "有——leak_forbidden_tokens 逐条",
+     "无 M2 重复副作用": "有——diyu_business 行数与幂等键",
+     "无事实编造": "无——fabrication_probes 只覆盖面料百分比/库存/SKU/顾客口碑姓名/预约时段/价格子集/人名白名单，苏禾在白名单内，『长期行为主张是否可回指』不在探针覆盖面内",
+     "CTA 忠实": "无——leak_forbidden_tokens 与 authorization_overclaim_tokens 均不含任何 CTA 语义项，CTA 忠实从未被真正检查"
+    },
+    "verdict": "OVERBROAD_SINGLE_VERDICT"
+   }
+  ]
+ }
+}

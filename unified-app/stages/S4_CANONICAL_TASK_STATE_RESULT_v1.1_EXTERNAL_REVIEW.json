@@ -1,0 +1,678 @@
+{
+ "document": {
+  "id": "S4_CANONICAL_TASK_STATE_RESULT_v1.1_EXTERNAL_REVIEW",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "CONTINUE EXECUTION PROMPT v1.0（UAPP S4 证据真值纠偏与 PP 交付边界归因）第五节",
+  "not_an_inplace_edit": "新增文件。S4_CANONICAL_TASK_STATE_RESULT_v1.0.json、COST_ACCOUNT.json、T1–T7 RAW 与两份 Gate 原样保留。",
+  "supersedes_conclusion_of": {
+   "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_RESULT_v1.0.json",
+   "sha256": "f068dfe84b5e224bcb54056d15d6e4358226b6523fbe6f44a732a48e560e0f12",
+   "its_verdict": "PASS",
+   "its_summary": {
+    "pass": 10,
+    "fail": 0,
+    "not_verified": 0,
+    "total": 10
+   },
+   "why": "v1.0 的 V-08 用一个 PASS 同时代表五件事，其中『无事实编造』与『CTA 忠实』两件从未被真正检查。拆开后两件成立 FAIL。"
+  },
+  "model_calls_by_adjudicator": 0,
+  "dify_writes": 0,
+  "workflow_runs_started": 0
+ },
+ "gate_sha256": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+ "manifest_sha256": "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468",
+ "verify_rebound_to_gate_v1_1": "unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY_v1.1.json",
+ "verdict": "FAIL",
+ "S4_OVERALL_ACCEPTANCE": {
+  "result": "FAIL",
+  "flag": "CURRENT"
+ },
+ "summary": {
+  "pass": 10,
+  "fail": 2,
+  "not_verified": 0,
+  "total": 12
+ },
+ "conditions": [
+  {
+   "id": "V-01",
+   "text": "T2 Content Brief 真实产出（artifact 非空、非占位）",
+   "result": "PASS",
+   "observed": {
+    "artifact_len": 6600,
+    "head": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE",
+    "seam": {
+     "tool_content_brief": "succeeded"
+    },
+    "sha256": "5912166572ff6e239278e00c0e14b934482a1d0811dbd6e8435bce94dac21dd0"
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "V-02",
+   "text": "T3 只询问真正阻塞的 content.origin_mode；不再缺 objective.goal_family；不使用缺失占位符补齐",
+   "result": "PASS",
+   "observed": {
+    "merged_gaps": [
+     "content_origin_mode"
+    ],
+    "hop_gaps": [
+     "content_origin_mode",
+     "content_promise"
+    ],
+    "goal_family": {
+     "v": "LONG_TERM_VALUE",
+     "lvl": "B",
+     "kind": "USER_UTTERANCE",
+     "ref": "TURN2.user_request",
+     "sc": "CONTENT_TASK",
+     "frev": 1,
+     "origin_turn": 2
+    },
+    "envelope_goal_family": "LONG_TERM_VALUE",
+    "carried": [
+     "content.promise"
+    ],
+    "carried_that_are_placeholders": [],
+    "对照旧轮": "旧版 T3 缺口是 {content_origin_mode, goal_family}，且用占位符补了 primary_goal"
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "V-03",
+   "text": "T4 回答后 Creative Script 真实产出",
+   "result": "PASS",
+   "observed": {
+    "artifact_len": 6016,
+    "head": "# Creative Script 专业产出（完整版）\n\n## 运行与来源\n\n- capability / entry / run_mode：CREATIVE_SCRIPT / E",
+    "seam": {
+     "tool_creative_script": "succeeded"
+    },
+    "user_answered": [
+     "content.origin_mode",
+     "facts.publish_permission"
+    ],
+    "sha256": "81635d887e13ef6e68280c6b388441c5a33d491b8531af67562b3d8d3360fef1"
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "V-04",
+   "text": "T5 只询问 production.profile 中真正缺失的制作条件；不重复询问 content.origin_mode",
+   "result": "PASS",
+   "observed": {
+    "T5_merged_gaps": [
+     "time_window"
+    ],
+    "T5_hop_gaps": [
+     "time_window"
+    ],
+    "gaps_all_in_production_scope": true,
+    "carrier_content_origin_mode": {
+     "v": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布",
+     "lvl": "B",
+     "kind": "USER_UTTERANCE",
+     "ref": "TURN4.user_request",
+     "sc": "CONTENT_TASK",
+     "frev": 1,
+     "origin_turn": 4
+    },
+    "later_gaps": {
+     "T5": [
+      "time_window"
+     ],
+     "T6": [],
+     "T7": []
+    },
+    "reask_token_hits": {
+     "T5": [],
+     "T6": [],
+     "T7": []
+    },
+    "判据说明": "『保留』判在任务载体与是否重复询问，不判在每个能力外壳里键是否在场"
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "V-05",
+   "text": "T6 回答后回到同一个 Production Director 任务并产出 PD artifact",
+   "result": "PASS",
+   "observed": {
+    "artifact_len": 10121,
+    "head": "## Production Director 产出 · 已有素材剪辑模式\n\n**运行状态：** 计划已排定，可执行。素材检索判据清单已逐 beat 写死；`realization_",
+    "seam": {
+     "tool_production_director": "succeeded"
+    },
+    "user_answered": [
+     "production.capacity_or_owner",
+     "production.profile",
+     "production.time_window"
+    ],
+    "sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+    "T5_produced_nothing": 0,
+    "同一任务": {
+     "T5_task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+     "T6_task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb"
+    }
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "V-06",
+   "text": "T7 的 PP：upstream_capability = PRODUCTION_DIRECTOR；upstream_delivery hash = T6 PD artifact hash；无真实成片／manifest 时按 PRE 边界交付，不声称 FINAL",
+   "result": "PASS",
+   "observed": {
+    "upstream_capability": "PRODUCTION_DIRECTOR",
+    "upstream_delivery_sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+    "T6_pd_artifact_sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+    "hash_equal": true,
+    "upstream_binding": [
+     {
+      "slot": "content_body_or_beats",
+      "upstream_capability": "PRODUCTION_DIRECTOR",
+      "fp": "099061257c9677bd",
+      "artifact_norm_len": 10053,
+      "produced_turn": 6,
+      "accepted_turn": 7,
+      "accepted_revision": 7,
+      "lineage": "BOUND"
+     }
+    ],
+    "pp_artifact_len": 14984,
+    "final_claim_hits": [],
+    "对照上一轮": "上一轮 PP 的上游是 CS artifact，属 PRE 短入口，不填完整链位"
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "V-07",
+   "text": "任一用户确认字段均有 source_ref；模型临时抽取值未成为跨轮硬事实",
+   "result": "PASS",
+   "observed": {
+    "missing_source_ref": [],
+    "level_ref_mismatch": [],
+    "placeholder_in_carrier": [],
+    "final_levels": {
+     "audience.expected_change": "B",
+     "audience.problem": "B",
+     "content.explicit_non_promise": "E",
+     "content.origin_mode": "B",
+     "content.promise": "B",
+     "cta.contract": "B",
+     "cta.level": "E",
+     "delivery.platform": "E",
+     "expression.boundary": "E",
+     "expression.subject": "E",
+     "expression.subject_and_boundary": "B",
+     "facts.publish_permission": "B",
+     "facts.registered": "E",
+     "objective.goal_family": "B",
+     "objective.primary_goal": "B",
+     "operation.time_window": "E",
+     "production.capacity_or_owner": "B",
+     "production.profile": "B",
+     "production.time_window": "B"
+    },
+    "E 级字段": [
+     "content.explicit_non_promise",
+     "cta.level",
+     "delivery.platform",
+     "expression.boundary",
+     "expression.subject",
+     "facts.registered",
+     "operation.time_window"
+    ],
+    "B 级字段": [
+     "audience.expected_change",
+     "audience.problem",
+     "content.origin_mode",
+     "content.promise",
+     "cta.contract",
+     "expression.subject_and_boundary",
+     "facts.publish_permission",
+     "objective.goal_family",
+     "objective.primary_goal",
+     "production.capacity_or_owner",
+     "production.profile",
+     "production.time_window"
+    ],
+    "_display_defect_fixed": {
+     "v1.0": "sorted(k for k, v in last.items() if v == \"E\") —— 字段字典与字符串比较，恒为 []",
+     "v1.1": "sorted(k for k, v in last.items() if v.get(\"lvl\") == \"E\")",
+     "verdict_unchanged": true,
+     "v1_0_displayed": []
+    }
+   }
+  },
+  {
+   "id": "V-08A",
+   "text": "执行路由、无暗跑、无泄漏、无 M2 重复副作用——机器可判",
+   "result": "PASS",
+   "adjudicator": "DETERMINISTIC",
+   "sub_verdicts": {
+    "执行路由与单能力": {
+     "result": "PASS",
+     "observed": {
+      "seam_per_turn": {
+       "T1": {
+        "tool_content_brief": "succeeded"
+       },
+       "T2": {
+        "tool_content_brief": "succeeded"
+       },
+       "T3": {
+        "tool_creative_script": "succeeded"
+       },
+       "T4": {
+        "tool_creative_script": "succeeded"
+       },
+       "T5": {
+        "tool_production_director": "succeeded"
+       },
+       "T6": {
+        "tool_production_director": "succeeded"
+       },
+       "T7": {
+        "tool_publishing_packaging": "succeeded"
+       }
+      },
+      "shadow_runs": []
+     }
+    },
+    "无泄漏": {
+     "result": "PASS",
+     "observed": {
+      "leaks": []
+     }
+    },
+    "无 M2 重复副作用": {
+     "result": "PASS",
+     "observed": {
+      "m2_rows": {
+       "workspaces": 1,
+       "accounts": 1,
+       "cycles": 1,
+       "tasks": 1,
+       "task_snapshots": 0,
+       "artifacts": 0,
+       "publish_instances": 0
+      },
+      "duplicate_idempotency_keys": [],
+      "boot_turns": [
+       1
+      ]
+     }
+    }
+   },
+   "observed": {
+    "note": "每个子项各自出结论，不再由一个 PASS 代表多件事"
+   }
+  },
+  {
+   "id": "V-08B",
+   "text": "发布物中每一条关于真实人物、组织或商品的事实主张，都必须能逐项回指到已登记来源（facts.registered、夹具原文或用户话语）。",
+   "result": "FAIL",
+   "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+   "rubric": {
+    "id": "V-08B",
+    "text": "发布物中每一条关于真实人物、组织或商品的事实主张，都必须能逐项回指到已登记来源（facts.registered、夹具原文或用户话语）。",
+    "explicit": [
+     "关于真实人物长期或习惯性行为的主张（『一直在用』『常用』『长期以来都』），属于事实主张，不属于判断或建议。",
+     "在文案里另加一句『这是推断』**不**构成回指：读者读到的仍是一条关于真人的事实陈述，而声明的可信度不因加一句限定语而下降到推断级（A2：非事件的变换不改变阶梯位置）。"
+    ],
+    "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+    "why_not_machine": "v1.0 的 fabrication_probes 只覆盖面料百分比、库存销量、SKU、顾客口碑姓名、预约时段、价格子集与人名白名单。苏禾在白名单内，『长期行为主张是否可回指』完全不在探针覆盖面内——token 未命中不是通过的证据。"
+   },
+   "authority": "CONTINUE EXECUTION PROMPT v1.0 第五节第 3 条",
+   "verbatim_claims": [
+    {
+     "where": "PP.user_delivery / PP.artifact 发布文案",
+     "quote": "我们门店的搭配师苏禾，教顾客挑衣服时一直在用这套「三问」",
+     "why": "把未登记的人物长期行为写成已发生的事实。"
+    },
+    {
+     "where": "PP.artifact 评论区预埋回答 2",
+     "quote": "苏禾在门店做搭配服务时常用这套思路",
+     "why": "同一条主张换成『常用』，仍是事实陈述。"
+    },
+    {
+     "where": "PP.artifact used_fact_refs 自述",
+     "quote": "夹具原文写的是「长期接触门店陈列、顾客试穿和成套搭配」，没有写「常用三问」",
+     "why": "PP 自己已经核对出夹具没有这条依据，仍然写进了发布物——标注推断不构成回指。"
+    },
+    {
+     "where": "PP.user_delivery 脚注",
+     "quote": "「苏禾一直在用这套三问」是基于她搭配师工作职责的合理推断，不是已登记的事实陈述",
+     "why": "A2：加一句限定语属于非事件的变换，不改变声明的可信度位置。"
+    }
+   ],
+   "evidence_locators": [
+    {
+     "quote": "一直在用这套三问",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 4,
+      "PP.artifact": 3,
+      "PP.user_delivery": 1,
+      "SEAM.artifact": 3,
+      "SEAM.user_delivery": 1,
+      "SEAM_MERGE.artifact": 3,
+      "SEAM_MERGE.user_delivery": 1,
+      "CANVAS.final_text": 1,
+      "CANVAS.answer": 1
+     }
+    },
+    {
+     "quote": "门店做搭配服务",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 3,
+      "PP.artifact": 2,
+      "PP.user_delivery": 1,
+      "SEAM.artifact": 2,
+      "SEAM.user_delivery": 1,
+      "SEAM_MERGE.artifact": 2,
+      "SEAM_MERGE.user_delivery": 1,
+      "CANVAS.final_text": 1,
+      "CANVAS.answer": 1
+     }
+    },
+    {
+     "quote": "常用这套思路",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 5,
+      "PP.artifact": 4,
+      "PP.user_delivery": 1,
+      "SEAM.artifact": 4,
+      "SEAM.user_delivery": 1,
+      "SEAM_MERGE.artifact": 4,
+      "SEAM_MERGE.user_delivery": 1,
+      "CANVAS.final_text": 1,
+      "CANVAS.answer": 1
+     }
+    }
+   ],
+   "evidence_ref": "unified-app/evidence/stages/s4_canonical_state/S4_EXTERNAL_REVIEW_EVIDENCE_v1.0.json",
+   "observed": {
+    "token_probe_result_is_not_evidence": "v1.0 的 fabrication_probes 只覆盖面料百分比、库存销量、SKU、顾客口碑姓名、预约时段、价格子集与人名白名单。苏禾在白名单内，『长期行为主张是否可回指』完全不在探针覆盖面内——token 未命中不是通过的证据。"
+   }
+  },
+  {
+   "id": "V-08C",
+   "text": "下游不得缩小上游冻结的 CTA 边界。cta_contract 原文为「不做购买、到店、私信或领取引导，只保留内容本身」，『只保留内容本身』覆盖一切要求受众采取动作的表达。",
+   "result": "FAIL",
+   "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+   "rubric": {
+    "id": "V-08C",
+    "text": "下游不得缩小上游冻结的 CTA 边界。cta_contract 原文为「不做购买、到店、私信或领取引导，只保留内容本身」，『只保留内容本身』覆盖一切要求受众采取动作的表达。",
+    "explicit": [
+     "购买、到店、私信、领取、关注、评论、收藏、转发、预约、咨询、下单，都是要求受众采取动作的表达，都在边界之外。",
+     "把『只保留内容本身』改写成『不做购买引导』，是下游缩小上游边界。",
+     "自造豁免类目（如『低风险互动范畴』）不改变边界，因为边界只能由有权者改版，不能由执行方在产出里改写（A1、A4）。"
+    ],
+    "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+    "why_not_machine": "leak_forbidden_tokens 与 authorization_overclaim_tokens 两张表里没有任何一项与 CTA 语义相关，CTA 忠实从未被真正检查过。"
+   },
+   "authority": "CONTINUE EXECUTION PROMPT v1.0 第五节第 3 条",
+   "verbatim_claims": [
+    {
+     "where": "PP.user_delivery 发布文案结尾",
+     "quote": "你自己买衣服前，会先问自己哪个问题？",
+     "why": "直接向受众索取评论动作，越出「只保留内容本身」。"
+    },
+    {
+     "where": "PP.user_delivery / PP.artifact",
+     "quote": "### 评论区设计（建议）……置顶第一条……可能会被问到的问题，可以这样答",
+     "why": "整段以引导评论互动为目的的设计。"
+    },
+    {
+     "where": "PP.artifact CTA 承接（cta_surface）",
+     "quote": "发布文案结尾问题为互动提问，属低风险互动范畴，不改变 NO_CTA 状态",
+     "why": "自造豁免类目，把上游边界改写成可以引导评论。"
+    },
+    {
+     "where": "PP.user_delivery 评论区段末",
+     "quote": "评论区全程没有引导关注、领取或到店动作，只有内容讨论和问题回应——这和这条「不做购买引导」的边界一致",
+     "why": "把「只保留内容本身」缩小成「不做购买引导」，这是下游缩小上游冻结边界（A4：非承诺只读向下继承）。"
+    }
+   ],
+   "evidence_locators": [
+    {
+     "quote": "你自己买衣服前",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 3,
+      "PP.artifact": 2,
+      "PP.user_delivery": 1,
+      "SEAM.artifact": 2,
+      "SEAM.user_delivery": 1,
+      "SEAM_MERGE.artifact": 2,
+      "SEAM_MERGE.user_delivery": 1,
+      "CANVAS.final_text": 1,
+      "CANVAS.answer": 1
+     }
+    },
+    {
+     "quote": "评论区",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 10,
+      "PP.artifact": 8,
+      "PP.user_delivery": 2,
+      "SEAM.artifact": 8,
+      "SEAM.user_delivery": 2,
+      "SEAM_MERGE.artifact": 8,
+      "SEAM_MERGE.user_delivery": 2,
+      "CANVAS.final_text": 2,
+      "CANVAS.answer": 2
+     }
+    },
+    {
+     "quote": "只有内容讨论和问题回应",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 1,
+      "PP.user_delivery": 1,
+      "SEAM.user_delivery": 1,
+      "SEAM_MERGE.user_delivery": 1,
+      "CANVAS.final_text": 1,
+      "CANVAS.answer": 1
+     }
+    },
+    {
+     "quote": "低风险互动范畴",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 1,
+      "PP.artifact": 1,
+      "SEAM.artifact": 1,
+      "SEAM_MERGE.artifact": 1
+     }
+    },
+    {
+     "quote": "不含购买引导",
+     "first_layer": "PP.raw_preserved",
+     "present_in_pp_input": false,
+     "counts_by_layer": {
+      "PP.raw_preserved": 2,
+      "PP.artifact": 2,
+      "SEAM.artifact": 2,
+      "SEAM_MERGE.artifact": 2
+     }
+    }
+   ],
+   "evidence_ref": "unified-app/evidence/stages/s4_canonical_state/S4_EXTERNAL_REVIEW_EVIDENCE_v1.0.json",
+   "observed": {
+    "token_probe_result_is_not_evidence": "leak_forbidden_tokens 与 authorization_overclaim_tokens 两张表里没有任何一项与 CTA 语义相关，CTA 忠实从未被真正检查过。"
+   }
+  },
+  {
+   "id": "V-09",
+   "text": "九个受保护应用与钉住 provider 零漂移",
+   "result": "PASS",
+   "observed": {
+    "drift": {},
+    "candidate_graph_sha256_now": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+    "candidate_graph_sha256_frozen": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+    "hop_pin_now": "2026-08-30 03:38:31.449618"
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  },
+  {
+   "id": "S-01",
+   "text": "stop_rules.scope_intrusion：运行前后作用域快照一致，未触发隔离门",
+   "result": "PASS",
+   "observed": {
+    "scope_snapshot_identical_before_after": true,
+    "intrusion_file_present": false,
+    "concurrent_foreign_writers_disclosed_not_blocking": [
+     {
+      "app_id": "18dd7b02-b661-4cad-a8db-23058e1bcb48",
+      "name": "FCVSS",
+      "runs": 79
+     }
+    ]
+   },
+   "inherited_from": "S4_CANONICAL_TASK_STATE_RESULT_v1.0.json（判定逻辑未改）"
+  }
+ ],
+ "retained_current_results": [
+  {
+   "item": "四份 artifact 真实产生（CB 6600 / CS 6016 / PD 10121 / PP 14984）",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "PD→PP 哈希血缘成立（T7 upstream == T6 artifact）",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "每轮只运行一个目标能力，无暗跑",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "已确认字段未被空值擦除",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "E 级抽取值没有自动升级为 B",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "作用域隔离成立（operation/production 同名键不串）",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "S4_CONTENT_ORIGIN_CONTINUATION 的窄结论",
+   "result": "PASS",
+   "flag": "CURRENT"
+  },
+  {
+   "item": "九个受保护应用零漂移（复核时点重算 9/9 一致）",
+   "result": "PASS",
+   "flag": "CURRENT"
+  }
+ ],
+ "no_longer_claimable": [
+  "S4 整体 PASS",
+  "Validator discrimination 全部成立",
+  "PP 交付符合 PRD",
+  "可以进入 S5",
+  "可以合并 main"
+ ],
+ "CROSS_TURN_CORRECTION_PROPAGATION": {
+  "result": "NOT_VERIFIED",
+  "reason": "NOT_CHECKED",
+  "flag": "CURRENT",
+  "why": "本轮两次真实纠正（T4 facts.publish_permission、T6 production.profile）命中的字段都不在当时既有 artifact 的依赖集内，STALE 通路未被真实触发。离线单点变异（MUT-06）能翻掉 P-05，说明实现侧有这条路径，但真实链路上没有走到——不上调。"
+ },
+ "cost_account": {
+  "window": [
+   "2026-08-30 07:18:39.924437+00",
+   "2026-08-30 08:27:44.582964+00"
+  ],
+  "scope_app_ids": [
+   "13cfabd5-f592-4354-a304-47098b765697",
+   "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+   "44b55f9d-3792-40c3-b095-f2696464b4ec",
+   "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+   "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+   "85c01f85-a081-43e9-ab09-9993289cc200",
+   "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+   "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+   "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+   "fd25ebfa-db67-40c3-82e5-202e1254facf"
+  ],
+  "canvas_workflow_runs": 7,
+  "budget_canvas_runs": 7,
+  "nested_app_runs": 28,
+  "llm_node_executions_by_status": [
+   {
+    "status": "succeeded",
+    "c": 39
+   }
+  ],
+  "llm_total": 39,
+  "hard_cap_llm": 48,
+  "turn_attempts": {
+   "T1": 1,
+   "T2": 1,
+   "T3": 1,
+   "T4": 1,
+   "T5": 1,
+   "T6": 1,
+   "T7": 1
+  },
+  "retries": 0,
+  "fixture_uploads": 7,
+  "http_status": {
+   "T1": 200,
+   "T2": 200,
+   "T3": 200,
+   "T4": 200,
+   "T5": 200,
+   "T6": 200,
+   "T7": 200
+  },
+  "elapsed_seconds": {
+   "T1": 121.68,
+   "T2": 321.94,
+   "T3": 100.5,
+   "T4": 226.22,
+   "T5": 205.1,
+   "T6": 204.58,
+   "T7": 238.99
+  },
+  "m2_rows": {
+   "workspaces": 1,
+   "accounts": 1,
+   "cycles": 1,
+   "tasks": 1,
+   "task_snapshots": 0,
+   "artifacts": 0,
+   "publish_instances": 0
+  },
+  "duplicate_idempotency_keys": []
+ },
+ "what_this_does_not_imply": [
+  "不等于 UAPP 全部验收完成",
+  "不等于 M1–M5 全部生产就绪",
+  "不等于所有 UAPP-AC 已全绿",
+  "不等于可以自动合并 main",
+  "不等于可以进入 S5"
+ ]
+}

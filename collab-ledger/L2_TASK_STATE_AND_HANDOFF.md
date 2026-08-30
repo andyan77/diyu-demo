@@ -594,3 +594,45 @@ TD-UAPP-20 的跨轮字段载体已上线并**验证生效**：T4 用户回答 `
 九受保护应用零漂移，hop 钉住与 `m5_compose` 钉住未变，`main` / `origin/main` 停在 `01a42b0`。未合并 main，未进入 S5，未填根任务终态。
 
 详见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 的 `ATT-UAPP-CANON-01` 段。
+
+---
+
+## `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` · 2026-08-30 CHECKPOINT 四（非终态）
+
+**技术链是真的，交付内容不合格。** 外部验收复核零模型独立重算：CHECKPOINT 三 记录的链路结论未被推翻
+（7/7 顶层 run、28/28 嵌套、39 LLM 全 succeeded、四份 artifact 哈希现算一致、T7 上游与 T6 PD 逐字节相等、
+九受保护应用与候选图复核时点零漂移），但 **PP 最终交付内容 FAIL**。
+
+PP 真实运行 `15e2643a-7710-47d0-a162-40b13726219d` 的输入**已逐字包含** `cta_contract:「不做购买、到店、私信或领取引导，只保留内容本身」`、
+`NO_CTA`、`facts_registered`、`explicit_non_promise`、`expression_boundary`、`publish_permission` 与整段 T6 PD artifact——
+「PP 没收到约束」这条归因已排除。九条违规定位串全部在 `PP.raw_preserved` 首次出现、PP 输入零命中，
+下游 Seam 与统一画布逐层 sha256 相等（纯透传）。
+
+```yaml
+highest_confirmed_failing_node: PUBLISHING_PACKAGING delivery generation
+S4_OVERALL_ACCEPTANCE: FAIL / CURRENT
+V-08A: PASS / CURRENT
+V-08B: FAIL / CURRENT     # 事实主张逐项可回指
+V-08C: FAIL / CURRENT     # CTA 与上游冻结边界一致
+CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED(NOT_CHECKED)
+S5: NOT_STARTED
+main_merge: NOT_ALLOWED
+```
+
+两类问题：PP 把未登记的「苏禾一直在用这套三问」写成事实（且 PP 自己已核对出夹具没写，加脚注标注推断不构成回指）；
+PP 收到 NO_CTA 仍生成结尾互动提问与整段评论区设计，并把「只保留内容本身」改写成「不做购买引导」、
+自造「低风险互动范畴」豁免。旧 V-08 报 PASS 是因为 `fabrication_probes` 七项与 `leak/overclaim` 43 项
+**都不覆盖**这两类——PASS 是探针未命中，不是证据支持的通过。
+
+本轮零模型调用、零 Dify 写入、零工作流发起、零数据库写入；`git status --porcelain` 只有新增文件，
+Gate v1.0/v1.1、Manifest、RESULT v1.0、VERIFY(v1.0)、COST_ACCOUNT、T1–T7 RAW 一个字节未动。
+14/14 已在 **Gate v1.1** 下重绑定重算并附单点变异区分证明。
+
+唯一后继最小修复候选：**PUBLISHING_PACKAGING 能力应用的交付生成层**（`c9cdea24…`）。
+该 PP 是 M5 FP 的 PP，graph md5 被 7 处记录绑定（含 M5 已完成验收证据），**不得静默修改**，
+实施需独立 Execution Prompt 与 Founder 授权。
+
+详见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 的 `ATT-UAPP-EXT-REVIEW-01` 段、
+[`unified-app/docs/S4_CANONICAL_TASK_STATE_FAILURE_TRIAGE_001_PP_BOUNDARY.md`](../unified-app/docs/S4_CANONICAL_TASK_STATE_FAILURE_TRIAGE_001_PP_BOUNDARY.md)、
+[`unified-app/docs/S4_CANONICAL_TASK_STATE_EXTERNAL_ACCEPTANCE_REVIEW_v1.0.md`](../unified-app/docs/S4_CANONICAL_TASK_STATE_EXTERNAL_ACCEPTANCE_REVIEW_v1.0.md)
+与 [`unified-app/docs/S4_PP_BOUNDARY_MINIMAL_REPAIR_PLAN_v1.0.md`](../unified-app/docs/S4_PP_BOUNDARY_MINIMAL_REPAIR_PLAN_v1.0.md)。

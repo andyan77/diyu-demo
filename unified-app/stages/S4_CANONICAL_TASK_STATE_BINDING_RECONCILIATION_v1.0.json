@@ -1,0 +1,86 @@
+{
+ "document": {
+  "id": "S4_CANONICAL_TASK_STATE_BINDING_RECONCILIATION_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "CONTINUE EXECUTION PROMPT v1.0 第四节 F4、第五节",
+  "not_an_inplace_edit": "新增文件。不覆盖 Gate v1.0/v1.1、Manifest v1.0、RESULT v1.0、VERIFY(v1.0) 中任何一个字节。",
+  "model_calls": 0
+ },
+ "evidence_binding_truth": {
+  "formal_run_T1_T7_bound_to": "S4_CANONICAL_TASK_STATE_GATE_v1.1.json",
+  "gate_v1_1_sha256": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+  "gate_v1_0_sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+  "manifest_v1_0_sha256": "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468",
+  "inputs_v1_0_sha256": "f19f5d1bc1dcba3061c578b42c43188484706eaa6e9dd265f3f5c37987ee17a6"
+ },
+ "findings": [
+  {
+   "id": "BR-01",
+   "claim": "Gate v1.1 自称 frozen_before_any_implementation_change=true",
+   "counter_evidence": "Phase C 实现之后、**任何模型调用之前**。本版不放宽任何业务含义，只把实现期必须确定下来的三条判定细则写清楚，并登记两条判据的自我改写。",
+   "verdict": "CONTRADICTORY",
+   "what_survives": "frozen_before_any_model_run=true（由 Manifest model_calls_so_far=0 与证据内 gate_sha256 全等 v1.1 支持）",
+   "what_does_not_survive": "frozen_before_any_implementation_change 对 v1.1 不成立：v1.1 冻结于 Phase C 实现之后。该字段是 v1.0 的属性被复制到 v1.1。"
+  },
+  {
+   "id": "BR-02",
+   "claim": "Candidate Manifest v1.0 的 criteria_ref 指向 Gate v1.0",
+   "manifest_criteria_ref": {
+    "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+    "sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19"
+   },
+   "evidence_gate_sha256": [
+    "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79"
+   ],
+   "gate_v1_1_sha256": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+   "verdict": "MISMATCH",
+   "note": "正式 T1–T7 全部绑定 Gate v1.1；Manifest 仍指 v1.0。Manifest 冻结于 git_head=codex/v1-uapp-progressive-canvas-001（Phase B），早于 v1.1，属时序事实，但结果引用时不得把两者当作同一判据。"
+  },
+  {
+   "id": "BR-03",
+   "claim": "S4_CANONICAL_STATE_VERIFY.json（14/14）绑定 Gate v1.0",
+   "verify_criteria_ref": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+   "verify_criteria_sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+   "equals_gate_v1_0": true,
+   "verdict": "MISMATCH",
+   "note": "该 14/14 在 Gate v1.0 下成立，不能被引用为『Gate v1.1 下的 14/14』。本轮以 S4_CANONICAL_STATE_VERIFY_v1.1.json 重绑定后重算。"
+  },
+  {
+   "id": "BR-04",
+   "claim": "RESULT v1.0 的 V-07 展示字段实现缺陷",
+   "defect": "S4_CANONICAL_STATE_ADJUDICATE_v1.0.py 中 `sorted(k for k, v in last.items() if v == \"E\")` 把字段字典 v 与字符串 \"E\" 比较，恒为空列表。",
+   "impact": "只影响 observed 的展示，不进入 V-07 的 PASS 谓词 `V(not bad_ref and not bad_kind and not ph)`。V-07 判定本身不受影响。",
+   "verdict": "DISPLAY_ONLY",
+   "result_v1_0_V07_display": []
+  },
+  {
+   "id": "BR-05",
+   "claim": "RESULT v1.0 的 V-08 用一个 PASS 同时代表五件事",
+   "covered_by_one_verdict": [
+    "单能力执行/无暗跑",
+    "无泄漏",
+    "无 M2 重复副作用",
+    "无事实编造",
+    "CTA 忠实"
+   ],
+   "discriminating_evidence_available": {
+    "单能力执行/无暗跑": "有——seam 工具节点与嵌套 run 计数确定性可判",
+    "无泄漏": "有——leak_forbidden_tokens 逐条",
+    "无 M2 重复副作用": "有——diyu_business 行数与幂等键",
+    "无事实编造": "无——fabrication_probes 只覆盖面料百分比/库存/SKU/顾客口碑姓名/预约时段/价格子集/人名白名单，苏禾在白名单内，『长期行为主张是否可回指』不在探针覆盖面内",
+    "CTA 忠实": "无——leak_forbidden_tokens 与 authorization_overclaim_tokens 均不含任何 CTA 语义项，CTA 忠实从未被真正检查"
+   },
+   "verdict": "OVERBROAD_SINGLE_VERDICT"
+  }
+ ],
+ "file_sha256": {
+  "GATE_v1_0": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+  "GATE_v1_1": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+  "MANIFEST_v1_0": "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468",
+  "INPUTS_v1_0": "f19f5d1bc1dcba3061c578b42c43188484706eaa6e9dd265f3f5c37987ee17a6",
+  "RESULT_v1_0": "f068dfe84b5e224bcb54056d15d6e4358226b6523fbe6f44a732a48e560e0f12",
+  "VERIFY_v1_0": "78004a8fa3512b96b548e3502f5b58ae1f111cde99f0853fbe48e26467893355",
+  "ADJUDICATE_v1_0": "c0cfa4d548554916ca3c2a4a9cce216143f510a334c15230138bfd23767be73a",
+  "NODES_v1_0": "6c350c6a4e721b85a531d48fff13afefbe4f6a5218e334c1f191ca3aaba6f3fe"
+ }
+}

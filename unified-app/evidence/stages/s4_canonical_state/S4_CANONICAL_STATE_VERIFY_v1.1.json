@@ -1,0 +1,1175 @@
+{
+ "document": {
+  "id": "S4_CANONICAL_STATE_VERIFY_v1.1",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "CONTINUE EXECUTION PROMPT v1.0（UAPP S4 证据真值纠偏与 PP 交付边界归因）第五节第 1 条",
+  "criteria_ref": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.1.json",
+  "criteria_sha256": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+  "supersedes_binding_only": {
+   "file": "unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY.json",
+   "its_criteria_ref": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+   "its_criteria_sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+   "kind": "只换判据绑定与展示，不改判据内容、不改被测对象、不改检查逻辑。v1.0 结果文件原样保留。"
+  },
+  "checker_src_sha256": "4722325a363d43d5fe3690f551b1419ea977edbd428dc8d535609a6a90dfe61f",
+  "nodes_src_sha256": "6c350c6a4e721b85a531d48fff13afefbe4f6a5218e334c1f191ca3aaba6f3fe",
+  "system_under_test": "S4_CANONICAL_STATE_NODES_v1.0.py 的 FIELDS_SRC / STATE_SRC（磁盘文件未修改；变异只作用于内存副本）",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "workflow_runs_started": 0
+ },
+ "summary": {
+  "pass": 14,
+  "total": 14,
+  "verdict": "PASS"
+ },
+ "discrimination": {
+  "method": "单点变异：改被测源码一处，与冻结的预期对照。expect=FLIP 的必须至少翻掉一条检查；expect=MASKED_BY_INDEPENDENT_LAYER 的必须翻不掉，并给出更前一道独立防线作为理由。预期在运行之前写死在 MUTATIONS 表里。",
+  "mutations_total": 8,
+  "mutations_applied": 8,
+  "all_as_expected": false,
+  "deviations": [
+   "MUT-01"
+  ],
+  "deviation_resolution": {
+   "MUT-01": {
+    "observed": "未翻掉任何一条；冻结预期为 FLIP。预期不回改。",
+    "why": "P-02 的正控制场景里，占位值同时出现在外壳与缺口清单中，P-08 的 fail-closed 矛盾闸门先把它拦掉，因此只拆掉 MISS 词表这一处不足以让任何一条翻绿变红。",
+    "resolved_by": [
+     "MUT-07",
+     "MUT-08"
+    ],
+    "conclusion": "MUT-07 单独拆掉矛盾闸门 ⇒ P-08 翻；MUT-08 两道同时拆掉 ⇒ P-02、P-08、R-02 一起翻。因此占位保证**确实**被 14 条覆盖，MUT-01 的偏差是两道独立防线互相遮蔽，不是检查覆盖缺口。",
+    "not_upgraded": "all_as_expected 保持 false，不因这条解释而改绿。"
+   }
+  },
+  "per_mutation": [
+   {
+    "id": "MUT-01",
+    "guarantee": "缺失语义词表整体失效（占位识别的唯一真源）",
+    "expect": "FLIP",
+    "applied": true,
+    "anchor": "\"UNDECLARED\", \"UNKNOWN\", \"UNSPECIFIED\", \"NOT_GIVEN\", \"N/A\", \"TBD\"]",
+    "flipped_checks": [],
+    "as_expected": false,
+    "raised": null,
+    "why_masked": null
+   },
+   {
+    "id": "MUT-02",
+    "guarantee": "只拆掉 offer 内的第二道占位闸门",
+    "expect": "MASKED_BY_INDEPENDENT_LAYER",
+    "applied": true,
+    "anchor": "if _missing(val):",
+    "flipped_checks": [],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": "env 解析处（`if _missing(e[\"v\"]): env_missing.append(cid)`）先于 offer 生效，占位值在进入 offer 之前已被拦掉。这是两道**独立**防线的正确先后，不是检查覆盖缺口——同一条业务保证由 MUT-01 证明确实被 14 条覆盖。"
+   },
+   {
+    "id": "MUT-03",
+    "guarantee": "低权威可以覆盖高权威（等级闸门失效）",
+    "expect": "FLIP",
+    "applied": true,
+    "anchor": "if ln > lo or (ln == lo and lvl == \"E\"):",
+    "flipped_checks": [
+     "P-04",
+     "P-05"
+    ],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": null
+   },
+   {
+    "id": "MUT-04",
+    "guarantee": "同轮细化与跨轮纠正不再区分（纠正被吞成 REFINED）",
+    "expect": "FLIP",
+    "applied": true,
+    "anchor": "if int(old.get(\"origin_turn\") or 0) >= rev:",
+    "flipped_checks": [
+     "P-05"
+    ],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": null
+   },
+   {
+    "id": "MUT-05",
+    "guarantee": "生产时间窗的作用域限定被去掉",
+    "expect": "FLIP",
+    "applied": true,
+    "anchor": "\"only\": [\"PRODUCTION_DIRECTOR\"]},",
+    "flipped_checks": [
+     "P-03"
+    ],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": null
+   },
+   {
+    "id": "MUT-06",
+    "guarantee": "依赖字段变化不再使 artifact 失效",
+    "expect": "FLIP",
+    "applied": true,
+    "anchor": "a[\"stale\"] = True",
+    "flipped_checks": [
+     "P-05"
+    ],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": null
+   },
+   {
+    "id": "MUT-07",
+    "guarantee": "P-08 fail-closed 矛盾闸门失效（占位识别的第二道独立防线）",
+    "expect": "FLIP",
+    "applied": true,
+    "anchor": "contradictions = [c for c in list(env_vals) if c in gaps]",
+    "flipped_checks": [
+     "P-08"
+    ],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": null
+   },
+   {
+    "id": "MUT-08",
+    "guarantee": "两道占位防线同时拆掉（两点探针，用于判定 MUT-01 是覆盖缺口还是冗余遮蔽）",
+    "expect": "FLIP",
+    "applied": true,
+    "anchors": [
+     "\"UNDECLARED\", \"UNKNOWN\", \"UNSPECIFIED\", \"NOT_GIVEN\", \"N/A\", \"TBD\"]",
+     "contradictions = [c for c in list(env_vals) if c in gaps]"
+    ],
+    "two_point": true,
+    "flipped_checks": [
+     "P-02",
+     "P-08",
+     "R-02"
+    ],
+    "as_expected": true,
+    "raised": null,
+    "why_masked": null
+   }
+  ]
+ },
+ "checks": [
+  {
+   "id": "P-01",
+   "name": "M1 business_goal_categories 规范映射到 objective.goal_family",
+   "result": "PASS",
+   "detail": {
+    "pos_value": {
+     "v": "LONG_TERM_VALUE",
+     "lvl": "D",
+     "kind": "M1_SNAPSHOT",
+     "ref": "M1_SNAPSHOT.rev3.business_goal_categories",
+     "sc": "CONTENT_TASK",
+     "frev": 1,
+     "origin_turn": 1
+    },
+    "pos_envelope_line": "LONG_TERM_VALUE",
+    "pos_gaps": "无",
+    "neg_gaps": "objective.goal_family",
+    "neg_in_carrier": false,
+    "写法": "裸键写回 objective 块内，与 Hop 现有外壳写法一致"
+   }
+  },
+  {
+   "id": "P-02",
+   "name": "缺失占位符不入载体、不关闭缺口",
+   "result": "PASS",
+   "detail": {
+    "pos_carrier_has": false,
+    "pos_gaps": "objective.primary_goal",
+    "pos_contradiction": "",
+    "neg_carrier": {
+     "v": "让熟客自己判断搭不搭",
+     "lvl": "E",
+     "kind": "MODEL_EXTRACTION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "sc": "CONTENT_TASK",
+     "frev": 1,
+     "origin_turn": 1
+    }
+   }
+  },
+  {
+   "id": "P-03",
+   "name": "运营周期时间窗不被回填进生产时间窗；生产时间窗自身正常回填",
+   "result": "PASS",
+   "detail": {
+    "CB 轮解析为": [
+     "operation.time_window"
+    ],
+    "PD 轮缺口": "time_window",
+    "PD 轮补齐": "(空)",
+    "负控制补齐": "production.time_window",
+    "负控制回填值": "今天半天内出母版"
+   }
+  },
+  {
+   "id": "P-04",
+   "name": "E 级不覆盖 A/B 级；A 级可以升级 E 级",
+   "result": "PASS",
+   "detail": {
+    "pos_held": "content.promise",
+    "pos_载体值": {
+     "v": "判断搭不搭是有方法可循的",
+     "lvl": "B",
+     "kind": "USER_UTTERANCE",
+     "ref": "TURN1.user_request",
+     "sc": "CONTENT_TASK",
+     "frev": 1,
+     "origin_turn": 1
+    },
+    "pos_外壳被改回": "判断搭不搭是有方法可循的",
+    "neg_升级后": {
+     "v": "用户后来给的准确一句话",
+     "lvl": "A",
+     "kind": "USER_UTTERANCE",
+     "ref": "TURN2.user_request",
+     "sc": "CONTENT_TASK",
+     "frev": 2,
+     "origin_turn": 2
+    }
+   }
+  },
+  {
+   "id": "P-05",
+   "name": "用户主动纠正（未被询问）更新值、frev+1、依赖 artifact 置 STALE",
+   "result": "PASS",
+   "detail": {
+    "pos_corrected": "content.promise",
+    "pos_stale": "CONTENT_BRIEF@t1",
+    "pos_stale_reason": "FIELD_CHANGED:content.promise",
+    "pos_frev": 2,
+    "neg_corrected": "(空)",
+    "neg_stale": false,
+    "neg_held": "content.promise",
+    "判定": "本轮原话与新值 8 字重合 ⇒ A 级；无重合 ⇒ E 级"
+   }
+  },
+  {
+   "id": "P-06",
+   "name": "跨轮字段（origin_turn < 当前轮）清空载体后重新成为缺口；同轮自填不得当样本",
+   "result": "PASS",
+   "detail": {
+    "origin_turn": 1,
+    "第二轮补齐": "content.origin_mode",
+    "清空后缺口": "content_origin_mode",
+    "清空后补齐": "(空)",
+    "同轮自填样本的 carried": "(空)",
+    "修正": "旧 N-15 负控制误选同轮自填轮次；本判据显式排除 origin_turn == 当前轮"
+   }
+  },
+  {
+   "id": "P-07",
+   "name": "task_key 变化即新内容任务，内容级字段一个不继承",
+   "result": "PASS",
+   "detail": {
+    "新 task_key 载体": {},
+    "新 task_key 缺口": "content_promise",
+    "同 task_key 补齐": "content.promise",
+    "reset 事件": "TASK_KEY_CHANGE"
+   }
+  },
+  {
+   "id": "P-08",
+   "name": "外壳非空且同时报缺口 ⇒ fail-closed：值不入载体、字段保持缺口（TD-UAPP-23）",
+   "result": "PASS",
+   "detail": {
+    "pos_contradiction": "content.promise",
+    "pos_carrier": [],
+    "pos_gaps": "content_promise",
+    "neg_carrier": {
+     "v": "外壳里写着的一句话",
+     "lvl": "E",
+     "kind": "MODEL_EXTRACTION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "sc": "CONTENT_TASK",
+     "frev": 1,
+     "origin_turn": 1
+    },
+    "登记": "TD-UAPP-23：Hop 同一次执行既写非空值又报同名缺口"
+   }
+  },
+  {
+   "id": "P-09",
+   "name": "PP 上游是 CS ⇒ PRE 短入口；上游是本轮 PD 且指纹相等 ⇒ 完整链",
+   "result": "PASS",
+   "detail": {
+    "CS 直达": {
+     "slot": "content_body_or_beats",
+     "upstream_capability": "CREATIVE_SCRIPT",
+     "fp": "976288796e491e04",
+     "artifact_norm_len": 528,
+     "produced_turn": 1,
+     "accepted_turn": 2,
+     "accepted_revision": 2,
+     "lineage": "BOUND"
+    },
+    "PD 下游": {
+     "slot": "content_body_or_beats",
+     "upstream_capability": "PRODUCTION_DIRECTOR",
+     "fp": "db7d89f3a425a370",
+     "artifact_norm_len": 534,
+     "produced_turn": 2,
+     "accepted_turn": 3,
+     "accepted_revision": 3,
+     "lineage": "BOUND"
+    },
+    "完整链判据": "upstream_capability == PRODUCTION_DIRECTOR 且 sha256 相等，由判定器离线复算"
+   }
+  },
+  {
+   "id": "P-10",
+   "name": "同一指纹挂两个能力身份 ⇒ 冲突拒绝；同身份重复 ⇒ 不重复计数",
+   "result": "PASS",
+   "detail": {
+    "冲突动作": "IDENTITY_CONFLICT",
+    "冲突内容": "CREATIVE_SCRIPT!=PRODUCTION_DIRECTOR",
+    "同身份动作": "ALREADY_PRESENT",
+    "账本条数": 1
+   }
+  },
+  {
+   "id": "P-11",
+   "name": "未接受的上游 artifact 被摘除并计为缺口；接受后正常保留",
+   "result": "PASS",
+   "detail": {
+    "未接受": {
+     "slot": "script_or_equivalent_beats",
+     "fp": "976288796e491e04",
+     "lineage": "REJECTED",
+     "reason": "NOT_ACCEPTED"
+    },
+    "未接受后缺口": "script_or_equivalent_beats",
+    "接受后": {
+     "slot": "script_or_equivalent_beats",
+     "upstream_capability": "CREATIVE_SCRIPT",
+     "fp": "976288796e491e04",
+     "artifact_norm_len": 528,
+     "produced_turn": 1,
+     "accepted_turn": 2,
+     "accepted_revision": 2,
+     "lineage": "BOUND"
+    },
+    "接受词": "可以",
+    "对照 A-08": "旧版 stale_downstream 无消费者；本版接受闸门真正摘除外壳槽位"
+   }
+  },
+  {
+   "id": "R-01",
+   "name": "真实 T1–T6 载荷重放：goal_family 与 primary_goal 取到真实值且不是 E 级，载体内无占位符",
+   "result": "PASS",
+   "detail": {
+    "objective.goal_family": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "LONG_TERM_VALUE"
+    },
+    "objective.primary_goal": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "让常来店里试穿、但拿不准一件衣服适不适合自己的熟客，在“这件跟我衣橱里已经有的搭"
+    },
+    "两项均非 E 级": true,
+    "载体内无缺失占位": true,
+    "载体内无整篇 artifact": true,
+    "每条都有 source_ref": true,
+    "对照旧版": "旧载体 primary_goal 六轮都是『（已登记来源中未明确写出）』，goal_family 从未入账"
+   }
+  },
+  {
+   "id": "R-02",
+   "name": "真实载荷重放：占位 primary_goal 被拦在载体外并保持缺口；未登记键不回填",
+   "result": "PASS",
+   "detail": {
+    "占位值全程未入载体": true,
+    "T1 缺口": "objective.primary_goal；audience_problem；expected_change；content_promise；expression_subject_and_boundary；objective.goal_family",
+    "逐轮矛盾": [
+     [
+      1,
+      "(空)"
+     ],
+     [
+      2,
+      "(空)"
+     ],
+     [
+      3,
+      "(空)"
+     ],
+     [
+      4,
+      "(空)"
+     ],
+     [
+      5,
+      "(空)"
+     ],
+     [
+      6,
+      "(空)"
+     ]
+    ],
+    "逐轮未登记反引号键": [
+     [
+      1,
+      "(空)"
+     ],
+     [
+      2,
+      "(空)"
+     ],
+     [
+      3,
+      "(空)"
+     ],
+     [
+      4,
+      "(空)"
+     ],
+     [
+      5,
+      "(空)"
+     ],
+     [
+      6,
+      "(空)"
+     ]
+    ],
+    "为什么矛盾恒空": "缺失语义整值匹配先于矛盾检测生效；矛盾检测的可触发性由 P-08 单点负控制证明",
+    "未登记裸键": "equivalence_basis 等裸键根本不参与解析——只有登记为 PL 的裸键才被读取，这正是『不要泛化正则』的直接后果"
+   }
+  },
+  {
+   "id": "R-03",
+   "name": "旧场景无接受话术 ⇒ 上游 artifact 被摘除；新场景 T3/T5/T7 含接受话术",
+   "result": "PASS",
+   "detail": {
+    "被摘除的轮次": [
+     5,
+     6
+    ],
+    "原因": "旧六轮话术里 T5『这条该怎么拍？』、T6『标题和封面帮我定一下。』都不含接受词，按 B4『未明确接受时不得自动送入下一专业能力』摘除，属正确行为",
+    "新场景": "T3『刚才的制作依据可以』、T5『这版口播稿可以』、T7『刚才的制作方案可以』"
+   }
+  }
+ ],
+ "replay": [
+  {
+   "turn": 1,
+   "capability": "CONTENT_BRIEF",
+   "note": "任务=task-can rev=1 目标=CONTENT_BRIEF｜补齐=无｜维持=无｜用户本轮确认=无｜新登记=content.explicit_non_promise,delivery.platform,expression.boundary,facts.registered,operation.time_window｜纠正=无｜撤回=无｜矛盾=无｜上游=无｜置STALE=无｜本轮仍缺=objective.primary_goal,audience_problem,expected_change,content_promise,expression_subject_and_boundary,objective.goal_family",
+   "gaps_out": "objective.primary_goal；audience_problem；expected_change；content_promise；expression_subject_and_boundary；objective.goal_family",
+   "contradictions": "",
+   "unspecified_keys": "",
+   "ledger": "账本 rev=1 动作=NO_NEW_ARTIFACT 能力=CONTENT_BRIEF 长度=0 依赖字段=5 冲突=无 累计=0",
+   "fields": {
+    "content.explicit_non_promise": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "不能因品牌具备多渠道而同时测试多种内容格式；线上不以低价直播清仓作为主要经营方式"
+    },
+    "delivery.platform": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "DELIVERY",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "NOT_LOCKED"
+    },
+    "expression.boundary": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "品牌内容禁止：制造年龄、身材和身份焦虑；使用显瘦十斤、闭眼入、谁穿谁高级等无依据"
+    },
+    "facts.registered": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "序里集 XULI SELECT（虚构品牌，暂定名）；面向成熟女性的中高端女装集合"
+    },
+    "operation.time_window": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "OPERATION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "四周内"
+    }
+   }
+  },
+  {
+   "turn": 2,
+   "capability": "CONTENT_BRIEF",
+   "note": "任务=task-can rev=2 目标=CONTENT_BRIEF｜补齐=无｜维持=content.explicit_non_promise,expression.boundary,facts.registered｜用户本轮确认=audience.expected_change,audience.problem,content.promise,expression.subject_and_boundary,objective.goal_family｜新登记=objective.primary_goal,objective.goal_family,audience.expected_change,audience.problem,content.promise,cta.contract,cta.level,expression.subject_and_boundary｜纠正=无｜撤回=无｜矛盾=无｜上游=无｜置STALE=无｜本轮仍缺=无",
+   "gaps_out": "无",
+   "contradictions": "",
+   "unspecified_keys": "",
+   "ledger": "账本 rev=2 动作=APPENDED 能力=CONTENT_BRIEF 长度=2527 依赖字段=12 冲突=无 累计=1",
+   "fields": {
+    "audience.expected_change": {
+     "lvl": "A",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "从“我拿不准、怕买错”变成“我有方法判断搭不搭、要不要添”"
+    },
+    "audience.problem": {
+     "lvl": "A",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "常来店里试穿、但拿不准一件衣服适不适合自己的熟客，卡在“这件和我衣橱里已有的搭不"
+    },
+    "content.explicit_non_promise": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "不能因品牌具备多渠道而同时测试多种内容格式；线上不以低价直播清仓作为主要经营方式"
+    },
+    "content.promise": {
+     "lvl": "A",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "判断一件新衣和已有衣橱搭不搭是有方法可循的，而且不靠多买一件来解决。"
+    },
+    "cta.contract": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "默认只做站内互动，比如让观众说出自己衣橱里“一直搭不上”的那件单品，或收藏这套判"
+    },
+    "cta.level": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "LOW_RISK_INTERACTION"
+    },
+    "delivery.platform": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "DELIVERY",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "NOT_LOCKED"
+    },
+    "expression.boundary": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "品牌内容禁止：制造年龄、身材和身份焦虑；使用显瘦十斤、闭眼入、谁穿谁高级等无依据"
+    },
+    "expression.subject_and_boundary": {
+     "lvl": "A",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "苏禾出镜，表达边界：不使用“显瘦”“闭眼入”“人人可穿”这类无依据话术；不制造身"
+    },
+    "facts.registered": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "序里集 XULI SELECT（虚构品牌，暂定名）；面向成熟女性的中高端女装集合"
+    },
+    "objective.goal_family": {
+     "lvl": "A",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "LONG_TERM_VALUE"
+    },
+    "objective.primary_goal": {
+     "lvl": "A",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "让常来店里试穿、但拿不准一件衣服适不适合自己的熟客，在“这件跟我衣橱里已经有的搭"
+    },
+    "operation.time_window": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "OPERATION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "四周内"
+    }
+   }
+  },
+  {
+   "turn": 3,
+   "capability": "CREATIVE_SCRIPT",
+   "note": "任务=task-can rev=3 目标=CREATIVE_SCRIPT｜补齐=objective.primary_goal,audience.expected_change,content.promise,objective.goal_family｜维持=cta.contract,expression.boundary,facts.registered,objective.primary_goal｜用户本轮确认=无｜新登记=expression.subject｜纠正=无｜撤回=无｜矛盾=无｜上游=无｜置STALE=无｜本轮仍缺=content_origin_mode",
+   "gaps_out": "content_origin_mode",
+   "contradictions": "",
+   "unspecified_keys": "",
+   "ledger": "账本 rev=3 动作=NO_NEW_ARTIFACT 能力=CREATIVE_SCRIPT 长度=0 依赖字段=11 冲突=无 累计=1",
+   "fields": {
+    "audience.expected_change": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "从“我拿不准、怕买错”变成“我有方法判断搭不搭、要不要添”"
+    },
+    "audience.problem": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "常来店里试穿、但拿不准一件衣服适不适合自己的熟客，卡在“这件和我衣橱里已有的搭不"
+    },
+    "content.explicit_non_promise": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "不能因品牌具备多渠道而同时测试多种内容格式；线上不以低价直播清仓作为主要经营方式"
+    },
+    "content.promise": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "判断一件新衣和已有衣橱搭不搭是有方法可循的，而且不靠多买一件来解决。"
+    },
+    "cta.contract": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "默认只做站内互动，比如让观众说出自己衣橱里“一直搭不上”的那件单品，或收藏这套判"
+    },
+    "cta.level": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "LOW_RISK_INTERACTION"
+    },
+    "delivery.platform": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "DELIVERY",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "NOT_LOCKED"
+    },
+    "expression.boundary": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "品牌内容禁止：制造年龄、身材和身份焦虑；使用显瘦十斤、闭眼入、谁穿谁高级等无依据"
+    },
+    "expression.subject": {
+     "lvl": "E",
+     "t": 3,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN3.uapp_hop.CREATIVE_SCRIPT",
+     "v": "苏禾出镜（零售搭配负责人）"
+    },
+    "expression.subject_and_boundary": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "苏禾出镜，表达边界：不使用“显瘦”“闭眼入”“人人可穿”这类无依据话术；不制造身"
+    },
+    "facts.registered": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "序里集 XULI SELECT（虚构品牌，暂定名）；面向成熟女性的中高端女装集合"
+    },
+    "objective.goal_family": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "LONG_TERM_VALUE"
+    },
+    "objective.primary_goal": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "让常来店里试穿、但拿不准一件衣服适不适合自己的熟客，在“这件跟我衣橱里已经有的搭"
+    },
+    "operation.time_window": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "OPERATION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "四周内"
+    }
+   }
+  },
+  {
+   "turn": 4,
+   "capability": "CREATIVE_SCRIPT",
+   "note": "任务=task-can rev=4 目标=CREATIVE_SCRIPT｜补齐=audience.expected_change,content.promise,expression.subject,objective.goal_family｜维持=facts.registered,objective.primary_goal｜用户本轮确认=content.origin_mode,facts.publish_permission｜新登记=content.origin_mode,facts.publish_permission｜纠正=无｜撤回=无｜矛盾=无｜上游=无｜置STALE=无｜本轮仍缺=无",
+   "gaps_out": "无",
+   "contradictions": "",
+   "unspecified_keys": "",
+   "ledger": "账本 rev=4 动作=APPENDED 能力=CREATIVE_SCRIPT 长度=6843 依赖字段=9 冲突=无 累计=2",
+   "fields": {
+    "audience.expected_change": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "从“我拿不准、怕买错”变成“我有方法判断搭不搭、要不要添”"
+    },
+    "audience.problem": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "常来店里试穿、但拿不准一件衣服适不适合自己的熟客，卡在“这件和我衣橱里已有的搭不"
+    },
+    "content.explicit_non_promise": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "不能因品牌具备多渠道而同时测试多种内容格式；线上不以低价直播清仓作为主要经营方式"
+    },
+    "content.origin_mode": {
+     "lvl": "A",
+     "t": 4,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN4.user_request",
+     "v": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获"
+    },
+    "content.promise": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "判断一件新衣和已有衣橱搭不搭是有方法可循的，而且不靠多买一件来解决。"
+    },
+    "cta.contract": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "默认只做站内互动，比如让观众说出自己衣橱里“一直搭不上”的那件单品，或收藏这套判"
+    },
+    "cta.level": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "LOW_RISK_INTERACTION"
+    },
+    "delivery.platform": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "DELIVERY",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "NOT_LOCKED"
+    },
+    "expression.boundary": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "品牌内容禁止：制造年龄、身材和身份焦虑；使用显瘦十斤、闭眼入、谁穿谁高级等无依据"
+    },
+    "expression.subject": {
+     "lvl": "E",
+     "t": 3,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN3.uapp_hop.CREATIVE_SCRIPT",
+     "v": "苏禾出镜（零售搭配负责人）"
+    },
+    "expression.subject_and_boundary": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "苏禾出镜，表达边界：不使用“显瘦”“闭眼入”“人人可穿”这类无依据话术；不制造身"
+    },
+    "facts.publish_permission": {
+     "lvl": "A",
+     "t": 4,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN4.user_request",
+     "v": "具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布。"
+    },
+    "facts.registered": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "序里集 XULI SELECT（虚构品牌，暂定名）；面向成熟女性的中高端女装集合"
+    },
+    "objective.goal_family": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "LONG_TERM_VALUE"
+    },
+    "objective.primary_goal": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "让常来店里试穿、但拿不准一件衣服适不适合自己的熟客，在“这件跟我衣橱里已经有的搭"
+    },
+    "operation.time_window": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "OPERATION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "四周内"
+    }
+   }
+  },
+  {
+   "turn": 5,
+   "capability": "PRODUCTION_DIRECTOR",
+   "note": "任务=task-can rev=5 目标=PRODUCTION_DIRECTOR｜补齐=content.origin_mode,content.promise｜维持=objective.primary_goal｜用户本轮确认=无｜新登记=无｜纠正=无｜撤回=无｜矛盾=无｜上游=script_or_equivalent_beats:REJECTED｜置STALE=无｜本轮仍缺=production_profile,time_window,script_or_equivalent_beats",
+   "gaps_out": "production_profile；time_window；script_or_equivalent_beats",
+   "contradictions": "",
+   "unspecified_keys": "",
+   "ledger": "账本 rev=5 动作=NO_NEW_ARTIFACT 能力=PRODUCTION_DIRECTOR 长度=0 依赖字段=4 冲突=无 累计=2",
+   "fields": {
+    "audience.expected_change": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "从“我拿不准、怕买错”变成“我有方法判断搭不搭、要不要添”"
+    },
+    "audience.problem": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "常来店里试穿、但拿不准一件衣服适不适合自己的熟客，卡在“这件和我衣橱里已有的搭不"
+    },
+    "content.explicit_non_promise": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "不能因品牌具备多渠道而同时测试多种内容格式；线上不以低价直播清仓作为主要经营方式"
+    },
+    "content.origin_mode": {
+     "lvl": "B",
+     "t": 4,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN4.user_request",
+     "v": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获"
+    },
+    "content.promise": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "判断一件新衣和已有衣橱搭不搭是有方法可循的，而且不靠多买一件来解决。"
+    },
+    "cta.contract": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "默认只做站内互动，比如让观众说出自己衣橱里“一直搭不上”的那件单品，或收藏这套判"
+    },
+    "cta.level": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "LOW_RISK_INTERACTION"
+    },
+    "delivery.platform": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "DELIVERY",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "NOT_LOCKED"
+    },
+    "expression.boundary": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "品牌内容禁止：制造年龄、身材和身份焦虑；使用显瘦十斤、闭眼入、谁穿谁高级等无依据"
+    },
+    "expression.subject": {
+     "lvl": "E",
+     "t": 3,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN3.uapp_hop.CREATIVE_SCRIPT",
+     "v": "苏禾出镜（零售搭配负责人）"
+    },
+    "expression.subject_and_boundary": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "苏禾出镜，表达边界：不使用“显瘦”“闭眼入”“人人可穿”这类无依据话术；不制造身"
+    },
+    "facts.publish_permission": {
+     "lvl": "B",
+     "t": 4,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN4.user_request",
+     "v": "具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布。"
+    },
+    "facts.registered": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "序里集 XULI SELECT（虚构品牌，暂定名）；面向成熟女性的中高端女装集合"
+    },
+    "objective.goal_family": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "LONG_TERM_VALUE"
+    },
+    "objective.primary_goal": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "让常来店里试穿、但拿不准一件衣服适不适合自己的熟客，在“这件跟我衣橱里已经有的搭"
+    },
+    "operation.time_window": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "OPERATION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "四周内"
+    }
+   }
+  },
+  {
+   "turn": 6,
+   "capability": "PUBLISHING_PACKAGING",
+   "note": "任务=task-can rev=6 目标=PUBLISHING_PACKAGING｜补齐=cta.contract｜维持=content.explicit_non_promise,content.promise,cta.level,expression.boundary,facts.publish_permission,facts.registered,objective.primary_goal｜用户本轮确认=无｜新登记=无｜纠正=无｜撤回=无｜矛盾=无｜上游=content_body_or_beats:REJECTED｜置STALE=无｜本轮仍缺=content_body_or_beats",
+   "gaps_out": "content_body_or_beats",
+   "contradictions": "",
+   "unspecified_keys": "",
+   "ledger": "账本 rev=6 动作=APPENDED 能力=PUBLISHING_PACKAGING 长度=9031 依赖字段=9 冲突=无 累计=3",
+   "fields": {
+    "audience.expected_change": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "从“我拿不准、怕买错”变成“我有方法判断搭不搭、要不要添”"
+    },
+    "audience.problem": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "常来店里试穿、但拿不准一件衣服适不适合自己的熟客，卡在“这件和我衣橱里已有的搭不"
+    },
+    "content.explicit_non_promise": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "不能因品牌具备多渠道而同时测试多种内容格式；线上不以低价直播清仓作为主要经营方式"
+    },
+    "content.origin_mode": {
+     "lvl": "B",
+     "t": 4,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN4.user_request",
+     "v": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获"
+    },
+    "content.promise": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "判断一件新衣和已有衣橱搭不搭是有方法可循的，而且不靠多买一件来解决。"
+    },
+    "cta.contract": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "默认只做站内互动，比如让观众说出自己衣橱里“一直搭不上”的那件单品，或收藏这套判"
+    },
+    "cta.level": {
+     "lvl": "E",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.uapp_hop.CONTENT_BRIEF",
+     "v": "LOW_RISK_INTERACTION"
+    },
+    "delivery.platform": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "DELIVERY",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "NOT_LOCKED"
+    },
+    "expression.boundary": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "品牌内容禁止：制造年龄、身材和身份焦虑；使用显瘦十斤、闭眼入、谁穿谁高级等无依据"
+    },
+    "expression.subject": {
+     "lvl": "E",
+     "t": 3,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN3.uapp_hop.CREATIVE_SCRIPT",
+     "v": "苏禾出镜（零售搭配负责人）"
+    },
+    "expression.subject_and_boundary": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "苏禾出镜，表达边界：不使用“显瘦”“闭眼入”“人人可穿”这类无依据话术；不制造身"
+    },
+    "facts.publish_permission": {
+     "lvl": "B",
+     "t": 4,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN4.user_request",
+     "v": "具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布。"
+    },
+    "facts.registered": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "序里集 XULI SELECT（虚构品牌，暂定名）；面向成熟女性的中高端女装集合"
+    },
+    "objective.goal_family": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "LONG_TERM_VALUE"
+    },
+    "objective.primary_goal": {
+     "lvl": "B",
+     "t": 2,
+     "frev": 1,
+     "sc": "CONTENT_TASK",
+     "ref": "TURN2.user_request",
+     "v": "让常来店里试穿、但拿不准一件衣服适不适合自己的熟客，在“这件跟我衣橱里已经有的搭"
+    },
+    "operation.time_window": {
+     "lvl": "E",
+     "t": 1,
+     "frev": 1,
+     "sc": "OPERATION",
+     "ref": "TURN1.uapp_hop.CONTENT_BRIEF",
+     "v": "四周内"
+    }
+   }
+  }
+ ]
+}

@@ -649,3 +649,152 @@ next_state: CHECKPOINT
 main_merge: NOT_ALLOWED
 enter_s5: NOT_AUTHORIZED
 ```
+
+---
+
+# ATT-UAPP-EXT-REVIEW-01 · S4 证据真值纠偏与 PP 交付边界归因（2026-08-30）
+
+`task_mode: CONTINUE`（同一 `task_id`，同一合同哈希，不是 REBASE）。
+授权：CONTINUE EXECUTION PROMPT v1.0《DIYU V1 · UAPP S4 证据真值纠偏与 PP 交付边界归因》。
+**本轮零模型调用、零 Dify 写入、零工作流发起、零数据库写入。** 只读 T1–T7 RAW、Dify 运行库与 Git。
+
+## 一句话
+
+**技术链是真的，交付内容不合格。** 上一段 `ATT-UAPP-CANON-01` 记录的链路结论未被推翻，
+但 PP 的最终交付里同时出现「把未登记的人物长期行为写成事实」与「已收到 NO_CTA 仍生成评论互动引导」，
+而旧 V-08 因为探针面根本不覆盖这两类，误报了 PASS。
+
+```yaml
+S4_OVERALL_ACCEPTANCE: FAIL / CURRENT
+```
+
+## 激活核验
+
+`HEAD = a13a73458ee8e3008d67fc4b14758b80296a0df2`，与 `origin/codex/v1-uapp-progressive-canvas-001` 一致；
+`main = origin/main = 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；worktree clean；
+`git diff a13a734 -- unified-app` 为空，八份绑定文件与 T1–T7 RAW 哈希全部与 `a13a734` 一致。
+
+## 零模型独立复算（不采信既有摘要）
+
+顶层 run 7/7、嵌套 28/28 全 succeeded、LLM 节点 39 succeeded / 0 failed（按窗口与十个 app_id 现查）、
+单一会话、每轮 Seam 工具唯一；
+四份 artifact 现算：CB 6600 `5912166572ff6e23…`、CS 6016 `81635d887e13ef6e…`、PD 10121 `b032cfd7cb6f1862…`、PP 14984 `88909e875b0c4c69…`；
+T7 `upstream_capability = PRODUCTION_DIRECTOR` 且 `sha256(upstream_delivery)` 与 T6 PD artifact 逐字节相等；
+复核时点重算九受保护应用 md5 9/9 一致、候选图 `6bf7c8f5f050e0e8…`（49 节点 / 51 边）一致、`hop_pin` 未变，
+运行窗口之后候选画布与四个能力应用零新增 run。
+
+## PP 输入约束：到位，归因排除
+
+PP 真实运行 `15e2643a-7710-47d0-a162-40b13726219d`（app `c9cdea24…` = 受保护 PP，succeeded，103.45s）。
+输入逐字包含 `cta_contract: 不做购买、到店、私信或领取引导，只保留内容本身`、`NO_CTA`、
+`facts_registered`、`explicit_non_promise`、`expression_boundary`、`asset_publish_permission`，
+且**整段逐字包含** T6 PD artifact（10121 字）。
+「PP 没收到约束」这条归因不成立。
+
+## 最高失效节点
+
+```yaml
+highest_confirmed_failing_node: PUBLISHING_PACKAGING delivery generation
+```
+
+九条冻结定位串全部在 `PP.raw_preserved`（PP 自己的原始模型输出）**首次出现**，在 PP 两路输入中**零命中**；
+下游逐层 sha256 相等：`PP.artifact == SEAM.artifact`、`PP.user_delivery == SEAM.user_delivery == CANVAS.final_text == CANVAS.answer`。
+Seam 与统一画布是纯透传，一个字没加。按 A3，**不得在投影层打补丁**。
+
+## F1–F5 归因
+
+| 编号 | `confirmed_origin` | 一句话 |
+|---|---|---|
+| F1 | `SYSTEM_UNDER_TEST`（PP 交付生成层） | 把未登记的「苏禾一直在用这套三问」写成事实；PP 自己已核对出夹具没写，仍然写入；加脚注标注推断不构成回指（A2：非事件的变换不改变阶梯位置） |
+| F2 | `SYSTEM_UNDER_TEST`（PP 交付生成层） | 收到 NO_CTA 仍生成结尾互动提问与整段评论区设计；把「只保留内容本身」改写成「不做购买引导」，自造「低风险互动范畴」豁免（A4 下游缩小上游边界；A1 执行方不得改版边界） |
+| F3 | `CHECKER_OR_FIXTURE` | V-08 报 `fabrication=[]`＋PASS，但 `fabrication_probes` 七项与 `leak/overclaim` 43 项**都不覆盖**这两类；苏禾在人名白名单内。PASS 是探针未命中，不是证据支持的通过 |
+| F4 | `ORACLE_OR_CRITERION` / `EVIDENCE_BINDING` | Gate v1.1 的 `frozen_before_any_implementation_change` 与自身 `supersedes.when` 冲突；Manifest v1.0 与 VERIFY(v1.0) 仍绑 Gate v1.0，而正式 T1–T7 绑 Gate v1.1；V-07 展示行缺陷 |
+| F5 | `INSUFFICIENT_EVIDENCE` | `CROSS_TURN_CORRECTION_PROPAGATION` 维持 `NOT_VERIFIED(NOT_CHECKED)`：两次真实纠正都没命中既有 artifact 的依赖字段，STALE 通路未被真实触发 |
+
+## 版本化证据纠偏（全部新增，零覆盖）
+
+| 新增文件 | 作用 |
+|---|---|
+| `unified-app/docs/S4_CANONICAL_TASK_STATE_FAILURE_TRIAGE_001_PP_BOUNDARY.md` | F1–F5 正式归因 |
+| `unified-app/docs/S4_CANONICAL_TASK_STATE_EXTERNAL_ACCEPTANCE_REVIEW_v1.0.md` | 外部验收复核正文 |
+| `unified-app/docs/S4_PP_BOUNDARY_MINIMAL_REPAIR_PLAN_v1.0.md` | 唯一一份最小后继修复计划（**只计划不实施**） |
+| `unified-app/stages/S4_CANONICAL_TASK_STATE_BINDING_RECONCILIATION_v1.0.json` | BR-01…BR-05 绑定复算 |
+| `unified-app/stages/S4_CANONICAL_TASK_STATE_RESULT_v1.1_EXTERNAL_REVIEW.json` | 拆分后的判定结果 |
+| `unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY_v1.1.json` | 14/14 在 **Gate v1.1** 下重绑定重算 ＋ 单点变异区分证明 |
+| `unified-app/evidence/stages/s4_canonical_state/S4_EXTERNAL_REVIEW_EVIDENCE_v1.0.json` | 链事实、PP 逐层归属、绑定复算的原始证据 |
+| `unified-app/workflows/S4_EXTERNAL_REVIEW_v1.0.py` | 零模型复算脚本 |
+| `unified-app/workflows/S4_CANONICAL_STATE_VERIFY_v1.1.py` | Gate v1.1 重绑定 ＋ 变异区分 |
+| `unified-app/workflows/S4_CANONICAL_STATE_ADJUDICATE_v1.1.py` | V-07 展示纠正 ＋ V-08 拆分 |
+
+`git status --porcelain` 只有新增，**零修改、零删除、零重命名**。Gate v1.0/v1.1、Manifest v1.0、RESULT v1.0、
+`S4_CANONICAL_STATE_VERIFY.json`、`COST_ACCOUNT.json`、T1–T7 RAW 一个字节未动。
+
+## 14/14 在 Gate v1.1 下重新绑定
+
+`criteria_sha256 = a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79`，被测对象与检查逻辑均未改，
+结果 **14/14 PASS**。
+单点变异区分（预期在运行前写死）：8 条变异，MUT-03/04/05/06/07/08 均按预期翻掉对应检查，MUT-02 按预期被前一道独立防线遮蔽；
+**MUT-01 未按冻结预期翻转，预期不回改**（A2）——追加 MUT-07（翻 P-08）与 MUT-08（翻 P-02/P-08/R-02）
+定性为两道独立防线互相遮蔽，不是覆盖缺口；`all_as_expected` 保持 `false`，不改绿。
+
+## V-08 拆分与 V-07 展示纠正
+
+```yaml
+V-08A: PASS / CURRENT     # 执行路由、无暗跑、无泄漏、无 M2 重复副作用 —— 机器可判，三个子项各自出结论
+V-08B: FAIL / CURRENT     # 事实主张逐项可回指 —— BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC
+V-08C: FAIL / CURRENT     # CTA 与上游冻结边界一致 —— BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC
+S4_OVERALL_ACCEPTANCE: FAIL / CURRENT
+```
+
+V-08B/V-08C **绝不因 token 未命中而 PASS**。定位串标注 `evidence_locator_only, NOT_A_CHECKER`，
+只用于在本次产出里定位已认定的违规，不得被改写成未来的校验器。
+
+V-07 展示纠正后终态真值：**E 级 7 个**（`content.explicit_non_promise`、`cta.level`、`delivery.platform`、
+`expression.boundary`、`expression.subject`、`facts.registered`、`operation.time_window`），**B 级 12 个**。
+判定谓词一字未改，V-07 仍为 PASS。
+
+## 状态继承
+
+保留 `PASS / CURRENT`：四份 artifact 真实产生；PD→PP 哈希血缘成立；每轮只运行一个目标能力；
+已确认字段未被空值擦除；E 级抽取值未自动升级为 B；作用域隔离成立；`S4_CONTENT_ORIGIN_CONTINUATION` 的窄结论；
+九受保护应用零漂移。**不 blanket STALE。**
+
+被下调：`S4_OVERALL_ACCEPTANCE` → **FAIL / CURRENT**；V-08 合一 PASS → 拆分后 V-08B/V-08C **FAIL**；
+`S4_CANONICAL_STATE_VERIFY.json` 的 14/14 仅在 **Gate v1.0** 下成立。
+
+不再可声明：S4 整体 PASS ／ Validator discrimination 全部成立 ／ PP 交付符合 PRD ／ 可以进入 S5 ／ 可以合并 main。
+
+`ATT-UAPP-CANON-01` 段登记的 `CANONICAL_TASK_STATE_CARRIER`、`CS_PD_PP_NARROW_CHAIN`、
+`S4_CONTENT_ORIGIN_CONTINUATION` 三项是**载体与链路**层面的窄结论，本轮证据未推翻，保持 CURRENT；
+它们**从来不蕴含** PP 交付内容合格——本轮把这条区分显式写死。
+
+## 唯一后继最小修复候选
+
+```yaml
+candidate_repair_node: PUBLISHING_PACKAGING 能力应用的交付生成层
+app_id: c9cdea24-9df3-400b-9ecd-1d740e8c96df
+```
+
+影响面已登记：该 PP 是 **M5 FP 的 PP**，其 graph md5 `788c8555…` 被 7 处记录绑定
+（含 M5 已完成验收证据与 M5 收口只读绑定），消费者是 M5 FP Seam `5fca0162…`。
+**不得静默修改**；实施需独立 Execution Prompt 与 Founder 授权。计划见
+`unified-app/docs/S4_PP_BOUNDARY_MINIMAL_REPAIR_PLAN_v1.0.md`。
+
+## COMPLETION CHECK
+
+- `real_behavior_verified`：**是**——既包含真实链路成功，也包含 PP 真实内容失败（逐字原文 ＋ 逐层首次出现位置）。
+- `validator_discrimination_verified`：**只有 V-08A 可成立**。V-08B/V-08C 不得继续用旧 Checker 冒充成立。
+- `core_problem_solved`：本 Prompt 只解决「证据与声明一致」，**不声称 PP 已修复**。
+- `protected_targets_unchanged_or_authorized`：**true**（只增不改，Dify 侧复核时点重算全等）。
+- `unnecessary_complexity_remaining`：无 A/B、无重复采样、无新架构层、零模型调用。
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+next_state: CHECKPOINT
+S5: NOT_STARTED
+main_merge: NOT_ALLOWED
+CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED(NOT_CHECKED)
+S4_OVERALL_ACCEPTANCE: FAIL/CURRENT
+```
