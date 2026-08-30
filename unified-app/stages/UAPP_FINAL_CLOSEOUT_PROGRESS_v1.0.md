@@ -21,8 +21,8 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | Gate v1.7 已预检；当前图正式 PASS 0/19 | 本 REBASE 0/21；0/126 LLM | NONE | CAP-05 唯一正式调用 |
-| N4 有界修复 | COMPLETED | Phase A/B/C PASS；30/30 机器硬门 | 0 | NONE | 发布并冻结正式候选 |
+| N3 正式验收 | IN_PROGRESS | CAP-05 Gate v1.7 FAIL；历史 Attempt 保留 | 本 REBASE 1/21；5/126 LLM | inline companion fields | 唯一 successor 修复 |
+| N4 有界修复 | IN_PROGRESS | 唯一 same-scope successor 1/1 启动 | 0 | NONE | content origin/promise 规范化 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -198,6 +198,18 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - CAP-05 运行前预检 PASS：候选与 10 个受保护绑定一致、活动 workflow 0、API key 与 DeepSeek
   凭据只确认存在、M2 结构/非测试计数一致、RAW 路径为空。
 - 当前阻断：`NONE`；唯一下一动作：CAP-05 原冻结输入正式运行一次并立即核验。
+
+#### Gate v1.7 CAP-05 真实结果
+
+- run_id `3f5e2fa5-3fa8-4ce3-964d-d8da948a5e42`；HTTP 200；LLM 5；节点失败 0；
+  平台内部重放/手动重试/重复采样/A-B/Reviewer 均 0。
+- inline 来源、selector、fields binding 均成立；Production Director 实际输入中的脚本 sha256
+  等于冻结原文 `5e2447a…64894`；Seam 和 Production Director 各运行 1 次，其他五能力 0。
+- 第一处未离线可见的同接缝硬门：目标能力缺 `content_origin_mode` 与 `content_promise`，精确
+  Return 且 artifact 为空；CAP-04 FAIL，CAP-06 未启动。
+- 当前使用 Founder 授权的唯一 same-scope successor `1/1`；不修改 Hop、Seam 或专业能力。
+- 当前图正式 PASS `0/19`；唯一下一动作：从同一用户原文规范化这两个 call-local companion
+  字段，完成全套零模型回归后版本化发布 successor。
 
 ## 激活现场
 

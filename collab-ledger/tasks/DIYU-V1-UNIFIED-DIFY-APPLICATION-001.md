@@ -1142,3 +1142,23 @@ main_merge: NOT_ALLOWED
 
 CAP-05 零模型预检全部 PASS；DeepSeek 凭据仅确认存在，未读取或打印。下一 Git 外部副作用为
 Gate/Manifest/Executor/发布证据普通 push，状态 `PLANNED`；完成后才允许 CAP-05 正式调用。
+
+Gate/Manifest/Executor 冻结 push 已确认：远端任务分支快进到
+`2cbe5013821752ceab0a3036cde2c8af429c0d5c`，非 force，本地与远端一致。
+
+## Gate v1.7 CAP-05 Attempt
+
+正式 run `3f5e2fa5-3fa8-4ce3-964d-d8da948a5e42`：HTTP 200，LLM 5，失败节点 0，平台内部
+重放 0。UAPP inline/selector/fields binding 均 PASS，Production Director 收到的脚本正文与
+冻结原文 sha256 同为 `5e2447a…64894`；Seam/Production Director 各运行 1 次，其他五能力 0。
+
+目标专业能力的既有充分性闸准确 Return：缺 `content_origin_mode` 和 `content_promise`，因此
+没有 artifact，也没有保存空产物。Checker 除 CAP-04 外全部通过；CAP-06 未启动。统一归因见
+`unified-app/docs/UAPP_S5_INLINE_ARTIFACT_SUCCESSOR_FAILURE_TRIAGE_v1.0.md`。
+
+该缺陷位于同一 inline-artifact 规范化接缝，且只有真实专业能力充分性闸可观察，符合 Founder
+授权的唯一 same-scope successor 条件。successor 使用 `1/1`；若后继 CAP-05 仍失败，不建立
+第三候选。
+
+下一 Git push 只保全本 Attempt RAW/Check/Triage/进度，状态 `PLANNED`；不改图、不调模型、
+不写 M2 或 main。当前成本：本 REBASE 1 run / 5 LLM；生命周期 9 runs / 49 LLM。
