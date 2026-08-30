@@ -240,3 +240,19 @@ Successor Gate：`unified-app/stages/UAAB_GATE_v1.2.json`，sha256
 `dbe4c023256e378d93827094b5c762f7c1b67b1c7528fff92fbbb84b219ea622`；输入文件 sha256
 `f669c5163533807e47c827f9c08792f014ce4743e0df35ef23adb9b9b3ac29ca`。下一动作仅为提交冻结，
 随后发布候选并运行 T2 一次；T2 非 PASS 即停止且不运行 T3。
+
+## 十五、Successor REBASE v1.2 · 测试候选发布（模型调用前）
+
+Gate 已先于发布提交于 `5aedf67`，其后发布动作仍为零模型调用、零数据库直接写入。
+UAPP 候选已发布为 workflow `28059850-1745-4e6d-bfac-0fbe278c5615`，canonical graph
+sha256 `75c0afbeb6f9bacba514b221702d113cbca7dcfb5dd857b594945f552e9d3ef7`，
+50 节点 / 52 边。Dify 存储图 md5 为 `91a3984b2c3797d6741165b116fa3cb1`。
+
+PP b2 已原样重发为 workflow `da7311a2-76b3-4077-8024-1537f803cd76`，图 md5
+`8366328bf827bd0f460455d750d45c4f`；provider 实际钉住同一版本与同一图。Seam
+`db49a3da8973d4fdcbe9ecf63bdf7e2a`、Hop `e38378c3c2a66b75aa7e645368c9e1ce`
+保持不变，活动 workflow 为 0。完整发布前后回读见
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_SUCCESSOR_PUBLISH_v1.2.json`。
+
+当前 successor 正式成本仍为顶层 run `0 / 2`、LLM 节点尝试 `0 / 12`、人工重试 0、
+平台内部重放 0。下一动作只运行冻结 T2 原句一次；逐轮判定非 PASS 时立即停止并恢复稳定发布面。
