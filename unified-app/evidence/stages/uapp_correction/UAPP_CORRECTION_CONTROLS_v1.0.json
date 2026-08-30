@@ -1,0 +1,41 @@
+{
+  "document": {
+    "id": "UAPP_CORRECTION_CONTROLS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "script": "unified-app/workflows/UAPP_CORRECTION_CONTROLS_v1.0.py",
+    "script_sha256": "fea625560b0ccc646338bac13a1bfdc9b505e3a89da94c3c2e4ccdbbaa5a7e6b",
+    "model_calls": 0,
+    "dify_writes": 0,
+    "m2_writes": 0
+  },
+  "binding": {
+    "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+    "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+    "end_user": "s4ct-20260830001839",
+    "task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+    "state_revision_before": 12,
+    "pd_fp": "559a204d7c4f1f2a",
+    "pd_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b"
+  },
+  "controls": [
+    {"id": "D-01", "result": "PASS", "positive": "production.profile frev 2 -> 3", "single_variable_negative": "production.time_window 与 production.capacity_or_owner 不变"},
+    {"id": "D-02", "result": "PASS", "positive": "099061257c9677bd 与 559a204d7c4f1f2a 均 STALE", "single_variable_negative": "删去一个依赖记录会缩小预期集并被检出"},
+    {"id": "D-03", "result": "PASS", "positive": "五份无 production.profile 依赖的记录逐项不变", "single_variable_negative": "翻转任一 unaffected.stale 被检出"},
+    {"id": "D-04", "result": "PASS", "positive": "重复原值保持 frev=2 且零新失效", "single_variable_negative": "人为 frev+1 被检出"},
+    {"id": "D-05", "result": "PASS", "positive": "无用户原话支持的三人抽取值被维持为旧确认值", "single_variable_negative": "强行替换为模型值被检出"},
+    {"id": "D-06", "result": "PASS", "positive": "STALE PD 后 selection_status=NO_LEGAL_UPSTREAM", "single_variable_negative": "恢复 PD.stale=false 后只选择 559a204d7c4f1f2a"},
+    {"id": "D-07", "result": "PASS", "positive": "纠正前预选 559a204d7c4f1f2a，后置门以 STALE 拒绝", "single_variable_negative": "只观察前置选择会错误放行"},
+    {"id": "D-08", "result": "PASS", "positive": "跨 task 无合法上游且会话归冻结 end_user", "single_variable_negative": "OTHER-END-USER owner_match=0"},
+    {"id": "D-09", "result": "PASS", "positive": "PD 正文 sha256 与冻结值一致", "single_variable_negative": "正文追加 X 后 fail-closed"},
+    {"id": "D-10", "result": "PASS", "positive": "最新 PP 不能替代被拒绝 PD", "single_variable_negative": "仅恢复合法 PD 后才可选择"},
+    {"id": "D-11", "result": "PASS", "positive": "保护面前后 sha256 均为 c9e6ab0a29bc3a889fc2add78bdd20052e87a61f1745904ed3936ed4784eb956", "single_variable_negative": "改变 M2 Schema 指纹被检出"},
+    {"id": "D-12", "result": "PASS", "positive": "D-01..D-11 每项正例及单变量负例均通过", "single_variable_negative": "删除任一负控制被检出"}
+  ],
+  "summary": {
+    "passed": 12,
+    "total": 12,
+    "positive_controls": 12,
+    "single_variable_negative_controls": 12,
+    "verdict": "PASS"
+  }
+}

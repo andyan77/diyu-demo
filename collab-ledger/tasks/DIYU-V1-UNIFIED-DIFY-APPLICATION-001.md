@@ -798,3 +798,65 @@ main_merge: NOT_ALLOWED
 CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED(NOT_CHECKED)
 S4_OVERALL_ACCEPTANCE: FAIL/CURRENT
 ```
+
+---
+
+# ATT-UAPP-CORRECTION-FREEZE-01 · UAAB successor 同步与跨轮纠正正式冻结（2026-08-30）
+
+`task_mode: CONTINUE`；`task_id`、合同哈希与根任务保持不变。授权来源为 Founder《统一 Dify 应用跨轮纠正传播、S4 收口与 S5 最终验收 CONTINUE Execution Prompt v1.0》。本段只追加，不覆盖前述 PP 旧 FAIL、旧图身份、旧 Attempt 或 Founder RETURN。
+
+## successor 状态同步
+
+只读继承相关工作包 `DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001`：
+
+```yaml
+UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING: PASS / CURRENT
+D3_SUCCESSOR: PASS / CURRENT
+PP_BOUNDARY_SUCCESSOR_b2: PASS / CURRENT
+V-08B_FACT_TRACEABILITY: PASS / CURRENT
+V-08C_CTA_FIDELITY: PASS / CURRENT
+CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED(NOT_CHECKED)
+S4_OVERALL_ACCEPTANCE: NOT_VERIFIED
+S5: NOT_STARTED
+UAPP-AC-12: NOT_VERIFIED
+main_merge: NOT_ALLOWED
+terminal_state: unset
+```
+
+当前发布面：UAPP `85c01f85-a081-43e9-ab09-9993289cc200` / graph md5 `91a3984b2c3797d6741165b116fa3cb1`；PP 与 provider `8366328bf827bd0f460455d750d45c4f`；Seam `db49a3da8973d4fdcbe9ecf63bdf7e2a`；Hop `e38378c3c2a66b75aa7e645368c9e1ce`。UAAB Gate v1.2 `dbe4c023…ea622`、Result v1.2 `fff7ab0c…bf91` 与 checker-scope triage `1823b3e0…2abc` 均现场复算一致。
+
+## 零模型接管与影响面
+
+- Git：`HEAD = origin/task = 729e528826f37cc36a2a38210eab1c93d7b4d917`；`main = origin/main = 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；开始施工前 clean。
+- Dify：运行中 workflow = 0；UAPP/PP/provider/Seam/Hop/M3 与六能力保护图现场一致。
+- 会话：`5cfcaf57-8808-4fc7-8c66-d661e515d05a` / end_user `s4ct-20260830001839` / task `ec666086-dce5-4e79-ba0f-6ac88f04a0bb`；state rev 12。
+- 当前已接受 PD：fp `559a204d7c4f1f2a`，9304 字，sha256 `8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b`，accepted=true，stale=false，依赖 `production.profile@frev2`。
+- 影响集：`PRODUCTION_DIRECTOR@t6:099061257c9677bd`、`PRODUCTION_DIRECTOR@t11:559a204d7c4f1f2a`。其余五条无该字段依赖的记录列入不受影响集，不 blanket STALE。
+- M2：本 task 的 task_snapshots/artifacts/task_run_states 均 0；该测试账号 publish_instance=0；Schema 指纹 `25192c11562827efedfc3b2c22c3b4fd`。
+
+## 正式冻结
+
+```yaml
+inputs_file: unified-app/stages/UAPP_CORRECTION_INPUTS_v1.0.json
+inputs_file_sha256: eda84ad987a58e1db3fd79f028859d0ddbce9146d83dca7038ce5c804d2c9549
+query_sha256: 949f7474a6ad5c0d57955c01c9b1daf03052fd5b1a7a5d08a871c1301785af2f
+gate_file: unified-app/stages/UAPP_CORRECTION_GATE_v1.0.json
+gate_sha256: 9220a7bd587ec030fa340892609addab15cb70432199924285e1b1fa634a95d7
+controls: PASS 12/12
+controls_script_sha256: fea625560b0ccc646338bac13a1bfdc9b505e3a89da94c3c2e4ccdbbaa5a7e6b
+controls_evidence_sha256: c5fbf5139905c7cbce65300c6e8f1cf3b0d19a63f9776b3aaa7398fb57ed7d14
+formal_top_level_turn_count: 1
+reachable_llm_node_attempt_cap: 7
+manual_retry: 0
+repeat_sampling: 0
+ab_tests: 0
+reviewer_calls: 0
+model_calls_before_freeze: 0
+mutation_target: NONE
+```
+
+D-01…D-12 正例及单变量负例全部通过；保护面前后指纹相等。控制脚本只读取发布图和会话副本并在内存执行 code node，未调用模型、未写 Dify、未写 M2。
+
+技术债唯一当前主表升级为 `unified-app/docs/UAPP_TECHNICAL_DEBT_REGISTER_v1.3.md`；v1.2 原文保留。v1.3 明确区分 successor 已关闭、仍有效、当前图 STALE、未验证及新披露但不阻断项。
+
+下一动作仅有一个：在冻结会话中逐字运行一次冻结纠正原话；任一 C-01…C-08 非 PASS 即保留 RAW、FAILURE TRIAGE、停止，不进入 S4/S5，也不修改被测对象。

@@ -1,0 +1,107 @@
+{
+  "document": {
+    "id": "UAPP_CORRECTION_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "task_entry_mode": "CONTINUE_TASK",
+    "task_contract_sha256": "279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f",
+    "authority": "Founder · 笛语 V1 统一 Dify 应用跨轮纠正传播、S4 收口与 S5 最终验收 CONTINUE Execution Prompt v1.0",
+    "frozen_at": "2026-08-30T10:26:54-07:00",
+    "frozen_before_model_calls": true,
+    "mutation_target": "NONE"
+  },
+  "predecessor_evidence": {
+    "UAAB_GATE_v1.2_sha256": "dbe4c023256e378d93827094b5c762f7c1b67b1c7528fff92fbbb84b219ea622",
+    "UAAB_RESULT_v1.2_sha256": "fff7ab0c60dab2586e5ef3494107adbdf1fbcca152f48f28bd1142cdebdebf91",
+    "relation": "INHERITED_READ_ONLY_SUCCESSOR_EVIDENCE",
+    "UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING": "PASS / CURRENT",
+    "V-08B_FACT_TRACEABILITY": "PASS / CURRENT",
+    "V-08C_CTA_FIDELITY": "PASS / CURRENT"
+  },
+  "candidate": {
+    "git_head_before_freeze_commit": "729e528826f37cc36a2a38210eab1c93d7b4d917",
+    "UAPP": {"app_id": "85c01f85-a081-43e9-ab09-9993289cc200", "workflow_id": "28059850-1745-4e6d-bfac-0fbe278c5615", "version": "2026-08-30 16:33:49.024613", "graph_md5": "91a3984b2c3797d6741165b116fa3cb1", "canonical_graph_sha256": "75c0afbeb6f9bacba514b221702d113cbca7dcfb5dd857b594945f552e9d3ef7", "nodes": 50, "edges": 52},
+    "PP": {"app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df", "workflow_id": "da7311a2-76b3-4077-8024-1537f803cd76", "version": "2026-08-30 16:33:49.099566", "graph_md5": "8366328bf827bd0f460455d750d45c4f"},
+    "PP_provider": {"provider_id": "21a000b1-5d14-42e9-b380-64c2c2aa16a0", "version": "2026-08-30 16:33:49.099566", "graph_md5": "8366328bf827bd0f460455d750d45c4f"},
+    "Seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+    "Hop_graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "M3_graph_md5": "cd93757bcf8ad322f3b32fc43b2da3ff"
+  },
+  "inputs": {
+    "file": "unified-app/stages/UAPP_CORRECTION_INPUTS_v1.0.json",
+    "file_sha256": "eda84ad987a58e1db3fd79f028859d0ddbce9146d83dca7038ce5c804d2c9549",
+    "query_sha256": "949f7474a6ad5c0d57955c01c9b1daf03052fd5b1a7a5d08a871c1301785af2f",
+    "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+    "end_user": "s4ct-20260830001839",
+    "task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+    "inputs": {},
+    "files": []
+  },
+  "state_before": {
+    "revision": 12,
+    "state_sha256": "7d7c678b4f9a54e26acf8040d0e95869f1fa2858f34825bbf7a6d46c1d91b070",
+    "store_sha256": "1d095c20c2a3e4815c4e5a53b1e2f870cd80ba009d0fc0bf24ff70a61170c217",
+    "correction_field": "production.profile",
+    "old_field_revision": 2,
+    "old_value_source": "TURN6.user_request",
+    "current_PD": {"fp": "559a204d7c4f1f2a", "bfp": "846c1f3833180c11", "length": 9304, "body_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b", "accepted": true, "stale": false},
+    "affected_current_records": ["PRODUCTION_DIRECTOR@t6:099061257c9677bd", "PRODUCTION_DIRECTOR@t11:559a204d7c4f1f2a"],
+    "unaffected_records": ["CONTENT_BRIEF@t2:2e41c4b7629a081d", "CREATIVE_SCRIPT@t4:95ecee48bdb1357a", "PUBLISHING_PACKAGING@t7:757af4204cc42fb3", "CREATIVE_SCRIPT@t9:3d7342e36d939c31", "PUBLISHING_PACKAGING@t12:df85e97cb07cd0df"]
+  },
+  "deterministic_controls": {
+    "script": "unified-app/workflows/UAPP_CORRECTION_CONTROLS_v1.0.py",
+    "script_sha256": "fea625560b0ccc646338bac13a1bfdc9b505e3a89da94c3c2e4ccdbbaa5a7e6b",
+    "evidence": "unified-app/evidence/stages/uapp_correction/UAPP_CORRECTION_CONTROLS_v1.0.json",
+    "evidence_sha256": "c5fbf5139905c7cbce65300c6e8f1cf3b0d19a63f9776b3aaa7398fb57ed7d14",
+    "site_snapshot": "unified-app/evidence/stages/uapp_correction/UAPP_CORRECTION_SITE_SNAPSHOT_v1.0.json",
+    "site_snapshot_sha256": "deb567adfa53101a7a1b6cf8cfd72b9c2587b0a5490868bcf6efc00bae5643db",
+    "result": "PASS 12/12",
+    "positive_controls": 12,
+    "single_variable_negative_controls": 12
+  },
+  "formal_criteria": [
+    {"id": "C-01", "text": "production.profile 由旧值准确改为两人对应的用户确认值，source_ref 回指本轮，field revision 精确 +1；production.time_window 与其他明确保持不变的字段不被改写"},
+    {"id": "C-02", "text": "所有运行前 accepted、非 STALE 且依赖 production.profile 的 PD 转为 STALE，原因精确回指 production.profile"},
+    {"id": "C-03", "text": "运行前无 production.profile 依赖的状态和 artifact 保持原状态，任务不被整体清空，历史证据不被删除或覆盖"},
+    {"id": "C-04", "text": "旧 PD 正文不得进入 PP，upstream_delivery 不得等于旧 PD hash，不得以旧 PP、CS、最新任意正文或 Hop 改写替代"},
+    {"id": "C-05", "text": "本轮不得产生新 PP artifact，不得声称标题封面已完成，不得编造更新后的制作条件或画面信息"},
+    {"id": "C-06", "text": "自然回复准确表达制作规模已变、旧制作方案受影响、须先更新制作方案后才能可靠包装，且只暂停受影响分支；不泄露内部状态词、节点、ID、JSON 或技术错误"},
+    {"id": "C-07", "text": "不创建 publish_instance，不真实发布，不发生未经授权的撤回、删除或权限变化；测试写入保持 task scope 与测试标识"},
+    {"id": "C-08", "text": "只执行适用节点与能力，其余专业能力零暗跑；受保护应用、Schema、非测试数据和 main 零变化，全部调用、失败与重放完整计数"}
+  ],
+  "budget": {
+    "semantic_samples": 1,
+    "frozen_user_turns": 1,
+    "top_level_workflow_runs_hard_cap": 1,
+    "reachable_llm_node_attempts_hard_cap": 7,
+    "reachable_llm_nodes": {
+      "UAPP": ["m1_shadow", "uapp_action"],
+      "M3": ["operating_one_account_llm", "gate_repair_llm"],
+      "Hop": ["m5_extract"],
+      "PP": ["skill_llm", "recovery_llm"]
+    },
+    "manual_retry": 0,
+    "blind_resampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "platform_internal_transport_replay_hard_cap": 1,
+    "transport_replay_only_if": ["零模型输出", "零业务副作用", "零状态写入", "输入、图、模型、参数、Gate 完全相同", "首次 Attempt 完整保留"]
+  },
+  "stop_rules": {
+    "first_hard_failure_stops": true,
+    "no_gate_input_or_checker_edit_after_result": true,
+    "no_manual_rerun": true,
+    "no_sut_fix": true,
+    "no_stage_three_on_non_pass": true,
+    "on_non_pass": "preserve RAW, write FAILURE TRIAGE, commit/push evidence, CHECKPOINT"
+  },
+  "allowed_upgrade_only_if_all_C01_C08_pass": {
+    "CROSS_TURN_CORRECTION_PROPAGATION": "PASS / CURRENT"
+  },
+  "must_remain_until_later_authority": {
+    "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+    "S5": "NOT_STARTED",
+    "UAPP-AC-12": "NOT_VERIFIED",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset"
+  }
+}
