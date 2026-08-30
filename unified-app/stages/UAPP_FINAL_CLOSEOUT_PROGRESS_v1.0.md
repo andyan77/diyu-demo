@@ -5,7 +5,7 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | NOT_STARTED | NOT_VERIFIED | 0/2 | 0 | C1 | 等 C1 |
+| C2 G1/G2 | IN_PROGRESS | G1 preflight PASS；等待唯一正式运行 | 0/2 | 0/90 | NONE | 运行 G1 一次 |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
