@@ -1061,3 +1061,39 @@ dify_write: 0
 model_calls: 0
 main_write: 0
 ```
+
+Phase A 冻结 push 已确认：`origin/codex/v1-uapp-progressive-canvas-001` 从 `7af7293` 快进到
+`8fe6e056f534a036dc616ae7f2182e15a61595e2`，非 force，本地与远端一致。
+
+Phase A 正式零模型结果：历史路径观察 `7/7 PASS`，正向/等价/单变量负控制 `14/14 PASS`；
+结果 sha256 `034a9a6e15d476d31130471f5e98d17a5ba2fe5f4229b3ddefdbcd804c22752e`。
+
+## Phase B/C 实现与机器硬门冻结
+
+```yaml
+implementation_package:
+  - uapp_inline_artifact new deterministic source classifier
+  - uapp_pick_upstream inline precedence plus historical selector preservation
+  - uapp_fields exact call-local binding and injection
+  - uapp_td24_block natural-language scrubbing
+candidate_base_graph_md5: 16e10d84dcdf1deb4608d95fe30fb654
+protected_uapp_nodes:
+  - m1_shadow
+  - m1_compiler
+  - uapp_m3
+  - uapp_hop
+  - uapp_seam
+  - uapp_state
+  - uapp_persist
+  - uapp_save
+  - uapp_delivery
+  - uapp_td24_correction
+conversation_variables_added: 0
+diagnostic_controls_before_freeze: 30/30 PASS
+model_calls: 0
+dify_writes: 0
+next_action: commit implementation and frozen Phase C controls before writing formal control evidence
+```
+
+外部副作用预登记：下一次普通 push 仅冻结上述实现、Phase C 控制、Phase A 结果与进度投影；
+不发布 Dify、不调用模型、不写 M2、不动 main。

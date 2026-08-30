@@ -22,7 +22,7 @@
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
 | N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS/STALE；CAP-05 历史 FAIL/CURRENT；其余 14 项 NOT_VERIFIED | 历史 8 runs / 44 LLM | Phase A/B/C | 完整接缝修复后 CAP-05 |
-| N4 有界修复 | IN_PROGRESS | REBASE 授权的 inline-artifact 完整接缝包；Phase A | 0 | NONE | RAW 重放与控制冻结 |
+| N4 有界修复 | IN_PROGRESS | Phase A PASS；Phase B 实现中 | 0 | NONE | 最小完整接缝实现 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -158,6 +158,15 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 当前图有效正式 PASS 为 `0/19`；CAP-01～04 历史 PASS 继续为 STALE，CAP-05 两次历史 FAIL 不覆盖。
 - 当前阻断：`NONE`。
 - 唯一下一动作：冻结并运行 Phase A 全接缝重放、正例、单变量负例和等价变体。
+
+#### Phase A 结果
+
+- 冻结提交：`8fe6e056f534a036dc616ae7f2182e15a61595e2`，已普通推送且本地/远端一致。
+- 两次历史 RAW 观察：`7/7 PASS`；来源正例、等价载体与单变量负控制：`14/14 PASS`。
+- 结果 sha256：`034a9a6e15d476d31130471f5e98d17a5ba2fe5f4229b3ddefdbcd804c22752e`。
+- 最高失效接缝：`UAPP_CURRENT_TURN_INLINE_ARTIFACT_SOURCE_TO_BINDING_AND_DELIVERY`。
+- Phase A 模型调用 0，Dify 写入 0，M2 写入 0。
+- 唯一下一动作：实现同一 UAPP 接缝包并运行 Phase C 全接缝机器硬门。
 
 ## 激活现场
 
