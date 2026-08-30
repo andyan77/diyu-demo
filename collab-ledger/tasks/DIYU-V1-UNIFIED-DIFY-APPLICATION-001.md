@@ -957,3 +957,11 @@ Founder 事件 `UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30` 在原 task_id �
 F1 将合同来源场景逐字编译成 19 个冻结自然语言输入，计划上限 19 个顶层 run、114 个静态可达 DeepSeek 节点尝试。Checker 首轮暗跑负例错误加入了本例允许能力，独立归因 `CHECKER_OR_FIXTURE`；未调用模型、未改被测对象，只修该夹具后 19 个正例与 190 个逐判据单变量负例全部通过。该控制结果不构成任何 UAPP AC 的功能 PASS。
 
 当前技术债主表升级为 v1.6。F1 最终 10/10 完成：Gate sha256 `d27254ff95ba47d4cd056c3697d658e463956382faa5cdbec0d07b187e3b358a`，冻结提交 `b1ff8ed7866b6dfb3cd29ca361d1585a34f178e4`（`2026-08-30T12:01:20-07:00`），已非 force push 且远端一致。F2 现在获准按冻结顺序开始；首个硬失败立即停止。
+
+## F2 首个正式输入停止
+
+CAP-01 顶层 run `b1f4485d-f921-4aac-a202-b3727f51f87e` 真实路由到 MATRIX，Seam/MATRIX 各 1 次、其他五能力 0，用户回复无内部泄漏。M3 首次 `gate_repair_llm` 发生 DeepSeek SSL EOF，Dify 自动重放 M3 一次；实际 7 个 LLM attempt，冻结每轮静态可达数为 6。
+
+由于异常前已有 UAPP 模型输出，并已创建测试 workspace/cycle/task，本正式槽位不满足零输出、零状态写入、零副作用的传输重试例外。未手动重试，CAP-02～其余 18 个输入均未运行。归因 `INPUT_ENVIRONMENT_OR_TOOL`，`mutation_target=NONE`；UAPP-AC-01～11 全部保持 NOT_VERIFIED，S5 技术验收未通过也未证实系统 P0 失败。
+
+技术债主表升级为 v1.7，新增 TD-UAPP-25 环境/平台重放披露。当前停在 CHECKPOINT，唯一下一动作是 Founder 裁决是否授权版本化后继正式槽位；Prompt 2/3、AC-12、main 合并和终态继续未授权。

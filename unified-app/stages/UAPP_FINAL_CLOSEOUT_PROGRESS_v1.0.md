@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | AC 0/11 | 0/19 | NONE | 运行 UAPP-CAP-01 一次并立即判定 |
+| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) | AC 0/11 | 1/19；LLM 7/114 | DeepSeek SSL EOF；Dify 内部重放 1 次；不具备重试资格 | CHECKPOINT，等待 Founder 裁决 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -18,11 +18,11 @@
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 in progress
 current_node: F2
-top_level_runs: 0 / 19
-deepseek_llm_attempts: 0 / 114
+top_level_runs: 1 / 19
+deepseek_llm_attempts: 7 / 114
 remaining_nodes: 2 authorized nodes (F1, F2)
-current_blocker: NONE
-next_action: 按冻结顺序运行 UAPP-CAP-01 一次并立即判定
+current_blocker: INPUT_ENVIRONMENT_OR_TOOL（CAP-01 已有输出和测试域写入后发生 SSL EOF，并由 Dify 内部重放）
+next_action: CHECKPOINT；由 Founder 裁决是否建立相同候选与输入的版本化后继正式槽位
 ```
 
 ## 激活现场
@@ -42,3 +42,4 @@ next_action: 按冻结顺序运行 UAPP-CAP-01 一次并立即判定
 - 夹具修正后：19/19 正控制、190/190 逐判据单变量负控制 PASS；正式调用仍为 0。
 - Gate v1.0 sha256：`d27254ff95ba47d4cd056c3697d658e463956382faa5cdbec0d07b187e3b358a`；冻结输入 19 条，计划预算 19/114。
 - F1 冻结提交：`b1ff8ed7866b6dfb3cd29ca361d1585a34f178e4`，时间 `2026-08-30T12:01:20-07:00`；已非 force push，远端一致。
+- F2 首个 run `b1f4485d-f921-4aac-a202-b3727f51f87e`：MATRIX 唯一路由和零暗跑成立，但 M3 SSL EOF 后平台内部重放一次；7 次 LLM attempt，重试资格不成立。其余 18 个输入未运行。

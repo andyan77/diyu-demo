@@ -1,0 +1,82 @@
+{
+  "document": {
+    "id": "UAPP_S5_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "result_scope": "Prompt 1 / F2 stopped at first hard failure"
+  },
+  "gate_sha256": "d27254ff95ba47d4cd056c3697d658e463956382faa5cdbec0d07b187e3b358a",
+  "freeze_commit": "b1ff8ed7866b6dfb3cd29ca361d1585a34f178e4",
+  "freeze_time": "2026-08-30T12:01:20-07:00",
+  "first_formal_turn": {
+    "key": "UAPP-CAP-01",
+    "workflow_run_id": "b1f4485d-f921-4aac-a202-b3727f51f87e",
+    "http_status": 200,
+    "raw_sha256": "48ae72ff486dfbf1ce7f78fd82cdfc23dc0ba9ed013c583cca9c641c2e55b513",
+    "checker_sha256": "76da19c49c361b00194749042d2dc27f8fd7b7b61407d3ce3aa1f25ebf107ff1",
+    "checker_verdict": "FAIL",
+    "confirmed_origin": "INPUT_ENVIRONMENT_OR_TOOL",
+    "business_observations": {
+      "target_capability": "MATRIX",
+      "seam_runs": 1,
+      "matrix_runs": 1,
+      "other_five_capability_runs": 0,
+      "internal_leak_hits": 0
+    },
+    "environment_failure": {
+      "failed_node": "M3.gate_repair_llm",
+      "error": "SSL UNEXPECTED_EOF_WHILE_READING",
+      "platform_internal_replays": 1,
+      "llm_node_attempts": 7,
+      "frozen_per_turn_static_reachable": 6,
+      "retry_eligible": false,
+      "retry_ineligibility_reason": "The formal slot already had model output and test-domain state writes before the transport failure."
+    }
+  },
+  "stopped_before": [
+    "UAPP-CAP-02", "UAPP-CAP-03", "UAPP-CAP-04", "UAPP-CAP-05", "UAPP-CAP-06",
+    "UAPP-GAP-01", "UAPP-EQUIV-01", "UAPP-WITHDRAW-01", "UAPP-FULL-01", "UAPP-RECOVERY-01"
+  ],
+  "acceptance": {
+    "UAPP-AC-01": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)",
+    "UAPP-AC-02": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)",
+    "UAPP-AC-03": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-04": "NOT_VERIFIED(INSUFFICIENT)",
+    "UAPP-AC-05": "NOT_VERIFIED(INSUFFICIENT)",
+    "UAPP-AC-06": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-07": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-08": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-09": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-10": "NOT_VERIFIED(INSUFFICIENT)",
+    "UAPP-AC-11": "NOT_VERIFIED(INSUFFICIENT)"
+  },
+  "cost": {
+    "top_level_workflow_runs": 1,
+    "deepseek_llm_node_attempts": 7,
+    "failed_llm_nodes": 1,
+    "manual_retries": 0,
+    "platform_internal_replays": 1,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "side_effects": {
+    "test_workspaces": 1,
+    "test_cycles": 1,
+    "test_tasks": 1,
+    "artifacts": 0,
+    "content_versions": 0,
+    "publish_instances": 0,
+    "feedback_records": 0,
+    "real_publish": 0,
+    "non_test_data_change": 0,
+    "schema_change": 0
+  },
+  "status": {
+    "S5_TECHNICAL_ACCEPTANCE": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)",
+    "S5": "IN_PROGRESS",
+    "UAPP_AC_12": "NOT_VERIFIED(NOT_AUTHORIZED)",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset",
+    "next_state": "CHECKPOINT"
+  }
+}
