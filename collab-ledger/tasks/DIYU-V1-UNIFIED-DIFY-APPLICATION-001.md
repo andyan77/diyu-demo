@@ -995,3 +995,69 @@ unique_next_action: Founder 裁决是否版本化授权 CAP-05 短入口与已�
 ```
 
 原环境失败 run `b1f4485d…` 仍为 `INVALID_FOR_ACCEPTANCE`，未删除、未改判。本次不修改被测实现、Gate、输入、Runner 或 Checker，不重跑，不建立第三个槽位，不进入 Prompt 2/3、Founder AC-12 或 main merge。
+
+---
+
+# REBASE-UAPP-S5-INLINE-ARTIFACT-001 · 当前轮合法产物直达专业能力（2026-08-30）
+
+Founder 在原 `task_id` 下版本化解除上一 Active Work Package 的修复节点停止门，授权一个完整、
+同根的 UAPP inline-artifact 接缝修复包。原合同哈希、PRD、19 项 S5 场景、UAPP-AC-01..11
+产品含义与受保护对象不变；历史两次 CAP-05 FAIL、8 次顶层 run、44 次 LLM 尝试原样保留。
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_entry_mode: REBASE_TASK
+task_contract_hash: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+task_progress: IN_PROGRESS
+terminal_state: unset
+core_problem: >
+  用户本轮直接提供完整、明确确认可用的合法产物时，UAPP 必须识别其来源与类型，按当前
+  task 和当前 turn 绑定原文身份，并把它逐字交给目标专业能力；不完整或歧义输入必须
+  fail-closed，用户交付不得泄露内部标识。
+allowed_delta:
+  - UAPP current-turn inline artifact source classification and normalization
+  - UAPP selector precedence, compatibility and task-scoped identity
+  - UAPP fields binding verification and exact call-local injection
+  - UAPP pre-Seam eligibility and blocked/delivered response scrubbing
+protected_assets:
+  - M1 / M2 / M3
+  - Hop / Seam
+  - six professional capability applications and PP b2 body/provider
+  - database schema and non-test data
+  - frozen PRD semantics, historical RAW, Gate, Result, Triage and workflow rows
+  - main / origin/main
+acceptance:
+  - Phase A replays both historical CAP-05 RAWs across the whole seam with zero model calls
+  - deterministic positive, single-variable negative and carrier-equivalence controls are 100% PASS
+  - CAP-05 exact user script reaches Production Director and only that capability runs
+  - CAP-06 valid realized content reaches Publishing & Packaging and only that capability runs
+  - all 19 frozen scenarios obtain CURRENT evidence on one final candidate
+  - UAPP-AC-01..11 are PASS / CURRENT before Founder AC-12 package is prepared
+next_stage_default: false
+founder_ac_12: NOT_AUTHORIZED
+main_merge: NOT_ALLOWED
+```
+
+## Phase A 激活与统一归因
+
+- Git 激活：`HEAD = origin/task = 7af7293a772c7ba3d1165669efea1c008fe0a68d`；
+  `main = origin/main = 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；worktree 起始 clean。
+- 当前 UAPP graph md5 `16e10d84dcdf1deb4608d95fe30fb654`；模型调用 0；Dify 写入 0。
+- 冻结 RAW：Gate v1.5 run `45c783b7-b7fc-47fa-80c0-639ce843ee55` 与 Gate v1.6 run
+  `cbabab77-bbb3-4f07-a655-83d61bbd9b62`。
+- 统一 triage：`unified-app/docs/UAPP_S5_INLINE_ARTIFACT_FAILURE_TRIAGE_v1.0.md`。
+- 冻结重放与控制：`unified-app/workflows/UAPP_S5_INLINE_ARTIFACT_PHASE_A_REPLAY_v1.0.py`。
+
+## L5 · 当前 REBASE 外部副作用
+
+```yaml
+event: GIT_TASK_BRANCH_FREEZE_PUSH_PHASE_A
+state_before: PLANNED
+target: origin/codex/v1-uapp-progressive-canvas-001
+method: ordinary non-force push
+content: Phase A triage, replay/control freeze and progress/ledger projection
+real_publish: 0
+dify_write: 0
+model_calls: 0
+main_write: 0
+```

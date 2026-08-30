@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | CAP-01..04 PASS/STALE；CAP-05 FAIL/CURRENT；AC 2 PASS / 3 FAIL / 6 NOT_VERIFIED | 本包 8/22；LLM 44/130 | 修复节点 2/2 与额外槽 1/1 均耗尽 | Founder 收敛检查点 |
+| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED / CURRENT REBASE | CAP-01..04 PASS/STALE；CAP-05 历史 FAIL 保留；当前图正式 PASS 0/19 | 历史 8 runs / 44 LLM；本 REBASE 0 | NONE | Phase A 全接缝重放 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -21,8 +21,8 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS/STALE；CAP-05 FAIL/CURRENT；其余 14 项 NOT_VERIFIED | 8/22；LLM 44/130 | 有界收敛上限 | 停止正式调用 |
-| N4 有界修复 | COMPLETED | FAIL / CURRENT；修复节点 2/2、额外槽 1/1 已用 | 1 个定向复验 | 无第三修复授权 | 收敛证据包 |
+| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS/STALE；CAP-05 历史 FAIL/CURRENT；其余 14 项 NOT_VERIFIED | 历史 8 runs / 44 LLM | Phase A/B/C | 完整接缝修复后 CAP-05 |
+| N4 有界修复 | IN_PROGRESS | REBASE 授权的 inline-artifact 完整接缝包；Phase A | 0 | NONE | RAW 重放与控制冻结 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -147,6 +147,17 @@ current_scenario: UAPP-CAP-05 directed reverification failed and preserved
 current_blocker: bounded convergence exhausted (SUT repair nodes 2/2; extra run slot 1/1)
 next_action: Founder 查看合并收敛证据包；本 Active Work Package 不再执行
 ```
+
+### 2026-08-30 Inline Artifact Seam REBASE 激活
+
+- Founder 在同一 task_id 下版本化授权一个完整 UAPP 接缝修复包；上一 Active Work Package
+  的修复节点与运行上限继续作为历史成本保留，不再作为本 REBASE 的当前阻断。
+- 当前 Phase A：使用 Gate v1.5 / v1.6 的两次 CAP-05 RAW，零模型重放
+  `correction → source classification → selector → fields → Seam eligibility → delivery scrub`。
+- 当前候选图仍为 `16e10d84dcdf1deb4608d95fe30fb654`；尚未修改、发布或调用模型。
+- 当前图有效正式 PASS 为 `0/19`；CAP-01～04 历史 PASS 继续为 STALE，CAP-05 两次历史 FAIL 不覆盖。
+- 当前阻断：`NONE`。
+- 唯一下一动作：冻结并运行 Phase A 全接缝重放、正例、单变量负例和等价变体。
 
 ## 激活现场
 
