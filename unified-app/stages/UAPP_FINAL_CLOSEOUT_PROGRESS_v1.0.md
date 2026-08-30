@@ -1,5 +1,26 @@
 # UAPP Final Closeout Progress v1.0
 
+## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
+
+| Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
+|---|---|---|---:|---|---|
+| CAP06-A 根因与绑定证明 | COMPLETED | PASS / CURRENT | 0 | — | 已完成 |
+| CAP06-B 最小候选实现 | COMPLETED | BUILD VERIFIED | 0 | — | 已完成 |
+| CAP06-C 确定性硬门 | COMPLETED | 23/23 PASS | 0 | — | 冻结并发布 |
+| CAP06-D 正式定向验证 | NOT_STARTED | NOT_VERIFIED | 0/14 | Gate/commit | 原句运行一次 |
+| S5 剩余场景与收口 | NOT_STARTED | NOT_VERIFIED | 0 | CAP-06 | 等 CAP-06 PASS |
+
+- 激活 Git：branch `codex/v1-uapp-progressive-canvas-001`，HEAD/upstream
+  `ff66406e4eea62ffc57999168b3117d6c393b330`，main/origin-main
+  `01a42b0ed97344a67302ecb6778ae4a772eb28b2`，激活时 worktree clean。
+- 线上激活图：UAPP `07ea334bfcbe6e87ba8c5cd5d5dac380`；PP/provider
+  `8366328bf827bd0f460455d750d45c4f`；Seam `db49a3da8973d4fdcbe9ecf63bdf7e2a`；
+  Hop `e38378c3c2a66b75aa7e645368c9e1ce`；活动 workflow `0`。
+- 确定性绑定：正文 length `78`，源/注入 sha256
+  `00c3372f5b38e5eca06a9cf97fa7acc09707b753deceea2e3f670f84051e9fcd`；平台“小红书”；
+  CTA `LOW_RISK_INTERACTION`；兑现点为原文子串而非整段正文。
+- 当前授权包顶层运行 `0/2`，DeepSeek `0/14`；没有 Dify 写入、模型调用或副作用。
+
 `task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001`
 
 `authority_event: UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30`

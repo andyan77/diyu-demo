@@ -1,0 +1,78 @@
+{
+  "document": {
+    "id": "CAP06_FROZEN_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority": "DIYU_V1_UAPP_S5_CAP06_SEMANTIC_CONTRACT_REBASE_v1.0",
+    "parent_gate": "UAPP_S5_GATE_v1.8",
+    "parent_gate_sha256": "6c89f42acd6229679038b4295a073051991322c9cded6f5b7f562b30161e88d3",
+    "frozen_before_model_result": true,
+    "model_calls_before_freeze": 0
+  },
+  "input": {
+    "scenario": "UAPP-CAP-06",
+    "scenario_file": "unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.1.json",
+    "scenario_sha256": "896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577",
+    "exact_original_input_required": true,
+    "structured_fields_added_by_runner": false,
+    "body_length": 78,
+    "body_sha256": "00c3372f5b38e5eca06a9cf97fa7acc09707b753deceea2e3f670f84051e9fcd"
+  },
+  "predecessor": {
+    "UAPP_graph_md5": "07ea334bfcbe6e87ba8c5cd5d5dac380",
+    "PP_graph_md5": "8366328bf827bd0f460455d750d45c4f",
+    "formal_run_id": "e71e84af-e3e3-47ec-afc4-72bd02941540",
+    "result": "FAIL_PRESERVED",
+    "raw_sha256": "6784265624cce933f9825900ed47e421be92eac641227b25435366b649c98ce2"
+  },
+  "candidate_build": {
+    "UAPP_canonical_sha256": "6caf1ca0c7ebb9d9000aa52a272515418575839265032847f8f2832d8e844bc9",
+    "PP_canonical_sha256": "6f8fd8bfd1c975212d119ff845cc4faed94cd7e380a38b0c4633447dd635d3b1",
+    "UAPP_touched_nodes": ["uapp_fields", "uapp_inline_artifact"],
+    "PP_touched_nodes": ["envelope_check"],
+    "PP_professional_prompt_unchanged": true,
+    "conversation_variables_added": []
+  },
+  "frozen_files": {
+    "nodes_sha256": "7cfc2fdf51c0a0ec8afaf2e812e7d33297706e1e8c98f0f0d823bda1130f0629",
+    "builder_sha256": "de1f5662e7d10e928bc57340e25112eb792f4ac53575109b30afef9016c7d54c",
+    "controls_sha256": "93afa7d960002819a830a1dd59a7a442b46e7c35247530f32f52cc0053201905",
+    "controls_result_sha256": "8d02917371a559aab84abde89e8e17a914a8778d3a4d49639a82891e34a9c6f3",
+    "build_result_sha256": "4c7198a9960df4c2a98af9552b25315e45557cbcc669f474acdfae7fa0ade9e2"
+  },
+  "deterministic_gate": {
+    "passed": 23,
+    "total": 23,
+    "all_pass": true,
+    "deepseek_calls": 0
+  },
+  "criteria": {
+    "CAP06-01": "Only Publishing & Packaging executes; the other five professional capabilities execute zero times.",
+    "CAP06-02": "PP content body sha256 equals the current-turn user body sha256.",
+    "CAP06-03": "PP platform is Xiaohongshu and CTA is bounded to low-risk in-platform interaction.",
+    "CAP06-04": "Title, cover copy, first frame, publish copy, topics and natural CTA are all present.",
+    "CAP06-05": "No title, copy or CTA exceeds realized footage or revives price, discount, consultation, store visit, private message, purchase or off-platform promises.",
+    "CAP06-06": "User delivery has no internal field, capability, state or contract-level leakage.",
+    "CAP06-07": "No real publish, non-test write, schema drift or unauthorized side effect occurs.",
+    "CAP06-08": "Frozen checker positive and single-variable negative discrimination remains true."
+  },
+  "budget": {
+    "formal_CAP06_candidate_runs_max": 2,
+    "formal_CAP06_candidate_runs_used_before_gate": 0,
+    "deepseek_llm_node_attempts_max": 14,
+    "deepseek_llm_node_attempts_used_before_gate": 0,
+    "pure_transport_replay_max": 1,
+    "manual_retry": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "stop_rules": {
+    "pass": "All CAP06-01..08 pass on one real run.",
+    "first_failure": "Preserve RAW, triage highest failing node, and allow at most one same-scope successor candidate.",
+    "second_failure": "Stop without a third candidate.",
+    "founder_ac_12": "NOT_AUTHORIZED",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset"
+  }
+}
+
