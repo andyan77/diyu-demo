@@ -20,7 +20,7 @@
 | Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
-| N2 Gate v1.5 冻结 | IN_PROGRESS | 预算后继已生成，待冻结提交 | 0 | NONE | 提交并复算 Gate v1.5 |
+| N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
 | N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS / CURRENT；整体 NOT_VERIFIED | 6/22；LLM 34/130 | N2 冻结与剩余场景预检 | CAP-05 |
 | N4 有界修复 | COMPLETED | 修复节点 1/2、迭代 1/2；控制 10/10 PASS | 0 | NONE | N3 定向复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
@@ -82,7 +82,9 @@ LLM 6，失败节点 0，平台重放 0。
 - Founder 已批准将累计硬上限版本化调整为顶层运行 `22`、LLM 节点尝试 `130`。
 - 19 个输入、formal order、UAPP-AC-01..11、业务 Checker、Scenario v1.1、候选实现和保护面均不改变。
 - 当前累计继续从 `6 / 34` 继承；CAP-01～04 保持 `PASS / CURRENT`，不重跑。
-- Gate v1.5、Manifest v1.5 和 Executor v1.6 已生成，冻结提交与 15 项零模型预检尚未完成。
+- Gate v1.5、Manifest v1.5 和 Executor v1.6 已由 commit `adc6ff1` 冻结并推送；
+  Gate sha256 `07e85de566e477da2f895329d562d33ffdc589134d6fac871932d8beffe1102a`。
+- 15 项零模型预检工具已冻结待运行；尚未发生新模型调用。
 
 CAP-03 正式 run `670ec687-d216-4c6e-b15d-a83eed7abd4a`：`PASS / CURRENT`；
 CONTENT_BRIEF 1 次，其他五能力 0 次；artifact length `4727`，sha256
@@ -98,8 +100,8 @@ valid_formal_scenarios: 4 / 19
 remaining_frozen_scenarios: 15
 ac_pass: 0 / 11
 current_scenario: UAPP-CAP-05 not started under Gate v1.5
-current_blocker: Gate v1.5 freeze commit and remaining-scenario preflights
-next_action: 提交并复算 Gate v1.5
+current_blocker: remaining-scenario zero-model preflights
+next_action: 运行 15 项零模型预检
 ```
 
 ## 激活现场
