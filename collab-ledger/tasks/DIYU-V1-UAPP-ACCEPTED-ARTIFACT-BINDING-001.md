@@ -279,3 +279,63 @@ successor 累计顶层 run `1 / 2`、LLM `6 / 12`。原始与复算证据：
 `unified-app/evidence/stages/uapp_artifact_binding/UAAB_SUCCESSOR_RAW_T2_v1.2.json`、
 `unified-app/evidence/stages/uapp_artifact_binding/UAAB_SUCCESSOR_T2_VERIFY_v1.2.json`。
 下一动作只运行冻结 T3 原句一次；任一 T3 项非 PASS 即停止并恢复稳定发布面。
+
+## 十七、Successor REBASE v1.2 · T3、失败归因与最小收口
+
+T3 顶层 run `4751f9b1-ac88-41e4-b731-2fe6f9bf0cbc` 只发起一次；只运行
+Publishing & Packaging，PP run `1367a48d-412a-4528-9775-4cf58bdf4898`；其余五个专业能力
+均为 0。选择器选中本轮 T2 PD（fp `559a204d7c4f1f2a`），selector、fields 解码值与
+PP 实际输入正文 sha256 全等于
+`8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b`，binding 为 `BOUND`。
+
+PP 产物 8816 字，sha256
+`f52d24b8b40ed3990a8f750f7262666ffdc51ace5f19540059b3fc0f462166d3`，fp
+`df85e97cb07cd0df`，非空、非占位，`delivery_outcome=DELIVERED`。事实边界 D1-b 与 CTA
+边界 D1-c 均通过。T3 后有界存储中包含历史 PP、T1 CS、本轮 PD、本轮 PP 四条记录；
+CS / PD / 新 PP 三份正文指纹与 hash 互异。PD `accepted=true / stale=false`，新 PP
+`accepted=false / stale=false`，PD 正文未被覆盖。
+
+版本化 verifier 首次把 T3-05 报为 FAIL，原因是它额外要求
+`artifact_status=OK`；PP 实际返回 `STRUCTURE_MISSING_RAW_PRESERVED`。FAILURE TRIAGE
+确认这是 `CHECKER_OR_FIXTURE`：冻结 Gate 的 T3 第 5 项只要求「非空、非占位包装成品」，
+没有授权加入 D1-a 结构提取门槛。真实产物含标题候选、推荐标题、封面、首帧、发布文案、
+包装路线、事实与 CTA 检查等完整包装内容，故按**冻结 Gate 原文**该项为 PASS。
+
+误报 checker、FAIL 输出与原始 evidence 全部保留，未修改 Checker / Gate / 输入 / 实现，
+也没有任何追加模型调用。完整归因见
+`unified-app/docs/UAAB_SUCCESSOR_FAILURE_TRIAGE_001_T3_CHECKER_SCOPE.md`。因为没有冻结项
+非 PASS，失败专用回退条件未触发；successor UAPP / PP b2 / provider 绑定予以保留。
+
+Successor 正式总成本：顶层 run `2 / 2`，LLM 节点尝试 `12 / 12`，模型节点失败 0，
+人工／顶层重试 0，平台内部重放 0，重复采样 / A-B / Reviewer 均为 0。Seam、Hop、九个
+受保护应用、M2 schema 与本任务数据行零漂移；main 未修改。
+
+## 十八、COMPLETION CHECK 与当前状态
+
+真实行为已验证：T1 CS 完整正文经 T2 逐字取回形成 PD，T2 PD 经 T3 逐字取回形成 PP；
+三份正文按指纹独立保存，后来的未接受 PP 未覆盖已接受 PD。12 组确定性控制及其 13 个
+单变量负例证明 Validator 能区分合法与错误绑定；保护对象未误改。
+
+允许的最窄上调：
+
+```yaml
+UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING: PASS / CURRENT
+D3_SUCCESSOR: PASS / CURRENT
+PP_BOUNDARY_SUCCESSOR_b2: PASS / CURRENT
+V-08B_FACT_TRACEABILITY: PASS / CURRENT
+V-08C_CTA_FIDELITY: PASS / CURRENT
+```
+
+保持不变：
+
+```yaml
+CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED(NOT_CHECKED)
+S4_OVERALL_ACCEPTANCE: NOT_VERIFIED
+S5: NOT_STARTED
+main_merge: NOT_ALLOWED
+terminal_state: unset
+task_progress: IN_PROGRESS
+```
+
+结果真源：`unified-app/stages/UAAB_RESULT_v1.2.json`。本轮授权范围到此停止；不合并 main，
+不启动 S5，不把「已接受产物正确取回」扩大成「跨轮纠正失效传播已验证」。
