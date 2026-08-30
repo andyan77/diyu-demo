@@ -729,3 +729,35 @@ PP 返回 `INPUT_INSUFFICIENT` ＋ 七项齐全的精确升级。**b2 的行为�
 再跑一次并对真实包装正文施加 D1-b / D1-c——那是画布/Hop 的跨轮绑定问题，
 需要单独授权与单独范围。详见
 [`unified-app/docs/PPBS_B2_FAILURE_TRIAGE_004_D3F_INSUFFICIENT.md`](../unified-app/docs/PPBS_B2_FAILURE_TRIAGE_004_D3F_INSUFFICIENT.md)。
+
+---
+
+## `DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001`（2026-08-30）
+
+**修好了，离线控制 12/12，但正式集成验证跑不了——预算给 2 个回合，最短链要 3 个。**
+
+根因锁死（零模型、可复算）：`uapp_persist` + `uapp_save` 单槽位无条件覆盖，
+任何能力产出非空 artifact 就整体覆盖 `conversation.uapp_last_artifact`，
+不看 accepted、不看 stale。T7 未被接受的 PP 产物因此覆盖了 T6 已接受的 PD 正文。
+账本仍记着 PD `accepted=true / stale=false`——**知道有，拿不到**。
+M2 有 artifact API 但两张表都没有正文列，且本任务 0 行；要它当真源得改 schema，不做。
+
+最小实现（只同步 draft，**未发布**）：`uapp_last_artifact` 改为按指纹分格的产物存储；
+新增 `uapp_pick_upstream` 确定性选择器（同 task／已接受／非 STALE／能力兼容／
+正文可取回且摘要现场复算一致，任一不成立 fail-closed 只问一个问题）；
+`uapp_hop` 改接选择器。节点 49→50，边 51→52，其余节点逐字节未动，未新增会话变量。
+
+Phase E 没跑，原因是现场证据推翻了 2 回合的前提：PD 硬性要求
+`script_or_equivalent_beats`，而本会话 CB 与 CS **都已 STALE**（D3 上传夹具触发的
+`facts.registered` 更正）。CS/CB 本身不依赖 artifact 槽位，所以最短链是
+CS → 接受+PD → 接受+PP，**三个回合**。三句自然语言原文已冻结在 Gate 里。
+场景 A 也排除了：候选画布全部会话逐个枚举，没有一个 `uapp_last_capability` 是 PD。
+
+成本 0/2 顶层 run、0/12 LLM。候选画布已发布图仍 `99c3edf7`；
+PP 与 provider 都在旧稳定图；八应用、`hop_pin`、M2 零漂移；`main` 仍 `01a42b0`。
+
+**下一步只有一件：** 把顶层回合预算从 2 提到 3，按已冻结的三句原文与 E-01…E-10 跑一次。
+判据、输入、实现全部已冻结并提交，不需要其它改动。
+
+详见 [`collab-ledger/tasks/DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001.md`](tasks/DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001.md)
+与 [`unified-app/docs/UAAB_FAILURE_TRIAGE_001_ARTIFACT_SLOT.md`](../unified-app/docs/UAAB_FAILURE_TRIAGE_001_ARTIFACT_SLOT.md)。

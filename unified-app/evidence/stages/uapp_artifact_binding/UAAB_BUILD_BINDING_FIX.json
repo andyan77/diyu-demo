@@ -1,0 +1,57 @@
+{
+ "document": {
+  "id": "UAAB_BUILD_BINDING_FIX_v1.0",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "model_calls": 0
+ },
+ "graph_md5_before": "99c3edf7bd12172a4fb011b588f25e57",
+ "nodes_touched": [
+  "uapp_hop",
+  "uapp_persist",
+  "uapp_pick_upstream(NEW)",
+  "uapp_save"
+ ],
+ "nodes_touched_expected": [
+  "uapp_hop",
+  "uapp_persist",
+  "uapp_pick_upstream(NEW)",
+  "uapp_save"
+ ],
+ "impact_surface_exact": true,
+ "node_count": {
+  "before": 49,
+  "after": 50
+ },
+ "edge_count": {
+  "before": 51,
+  "after": 52
+ },
+ "edges_added": [
+  "uapp_op_gate-capability-uapp_pick_upstream",
+  "uapp_pick_upstream-source-uapp_hop"
+ ],
+ "edges_removed": [
+  "uapp_op_gate-capability-uapp_hop"
+ ],
+ "conversation_variables_added": [],
+ "conversation_variables_description_updated": [
+  "uapp_last_artifact"
+ ],
+ "persist_code_sha256": "19bb193fd956c444075e87cf638f22613942485084cf14dab2d2c605288182a6",
+ "pick_code_sha256": "a7d06d054a86b16a65aa078e7e692582c0e55f269c64fb232d4446bb94e3ce28",
+ "hop_rewired": {
+  "upstream_delivery": "{{#uapp_pick_upstream.upstream_delivery#}}",
+  "upstream_capability": "{{#uapp_pick_upstream.upstream_capability#}}"
+ },
+ "untouched_assert": {
+  "uapp_fields": true,
+  "uapp_state": true,
+  "uapp_seam": true,
+  "uapp_m3": true,
+  "uapp_route": true,
+  "uapp_delivery": true,
+  "m1_compiler": true
+ },
+ "applied": true,
+ "draft_synced": true
+}

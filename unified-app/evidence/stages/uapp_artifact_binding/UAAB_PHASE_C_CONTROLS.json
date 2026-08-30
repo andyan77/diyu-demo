@@ -1,0 +1,209 @@
+{
+ "document": {
+  "id": "UAAB_PHASE_C_CONTROLS_v1.0",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "model_calls": 0,
+  "writes": 0,
+  "persist_code_sha256": "19bb193fd956c444075e87cf638f22613942485084cf14dab2d2c605288182a6",
+  "pick_code_sha256": "a7d06d054a86b16a65aa078e7e692582c0e55f269c64fb232d4446bb94e3ce28",
+  "fixtures": "全部为中性合成文本，不含任何真实案例内容"
+ },
+ "summary": {
+  "pass": 12,
+  "total": 12,
+  "verdict": "PASS"
+ },
+ "checks": [
+  {
+   "id": "C-01",
+   "text": "已接受 PD + 后续未接受 PP → PP 再次调用时选择 PD，不选择 PP",
+   "result": "PASS",
+   "observed": {
+    "status": "SELECTED",
+    "cap": "PRODUCTION_DIRECTOR",
+    "fp": "8d17f30354764877",
+    "delivery_is_pd_body": true,
+    "delivery_is_pp_body": false,
+    "note": "选中 PRODUCTION_DIRECTOR@turn6 fp=8d17f30354764877 bfp=b41fabb68cfc08b7 正文 291 字｜接受来源=账本已接受｜点名=PRODUCTION_DIRECTOR｜候选 1 拒绝 2｜拒绝原因=[{\"fp\": \"3018a425c5439e5e\", \"cap\": \"CREATIVE_SCRIPT\", \"turn\": 4, \"why\": \"CAPABILITY_INCOMPATIBLE\"}, {\"fp\": \"c8e3e8097895e437\", \"cap\": \"PUBLISHING_PACKAGING\", \"turn\": 7, \"wh"
+   }
+  },
+  {
+   "id": "C-02",
+   "text": "PD body hash 与 ledger hash 一致 → 允许进入 content_body_or_beats",
+   "result": "PASS",
+   "observed": {
+    "ledger_fp": "8d17f30354764877",
+    "selected_fp": "8d17f30354764877",
+    "store_bfp": "b41fabb68cfc08b7",
+    "selected_bfp": "b41fabb68cfc08b7",
+    "recomputed_from_delivery": "8d17f30354764877"
+   }
+  },
+  {
+   "id": "C-03",
+   "text": "经过一个或多个中间能力轮次后 → 已接受 PD 仍可取回",
+   "result": "PASS",
+   "observed": {
+    "persist_action_t7": "APPENDED",
+    "persist_action_t8": "NO_NEW_ARTIFACT",
+    "store_items": "3",
+    "status": "SELECTED",
+    "cap": "PRODUCTION_DIRECTOR",
+    "delivery_is_pd_body": true,
+    "store_note": "存储 rev=8 动作=NO_NEW_ARTIFACT 能力=PUBLISHING_PACKAGING 载入=STORE 条目=3 正文合计=530 裁剪(条数)=0 裁剪(体积)=0"
+   }
+  },
+  {
+   "id": "C-04",
+   "text": "用户明确说「基于刚才的制作方案」→ 解析到 PD artifact",
+   "result": "PASS",
+   "observed": {
+    "named_pd_case_cap": "PRODUCTION_DIRECTOR",
+    "named_marker_in_note": true,
+    "unnamed_case_cap_by_priority": "PRODUCTION_DIRECTOR",
+    "named_cs_case_cap": "CREATIVE_SCRIPT",
+    "named_cs_marker": true,
+    "priority_order": "PUBLISHING_PACKAGING → [PRODUCTION_DIRECTOR, CREATIVE_SCRIPT]",
+    "meaning": "点名 PD → PD；不点名 → 按优先级仍是 PD；点名 CS → CS（点名压过优先级）"
+   }
+  },
+  {
+   "id": "C-05",
+   "text": "PD accepted=false → 不得选择",
+   "result": "PASS",
+   "observed": {
+    "status": "NO_LEGAL_UPSTREAM",
+    "delivery_len": 0,
+    "reason_in_note": true
+   }
+  },
+  {
+   "id": "C-06",
+   "text": "PD stale=true → 不得选择",
+   "result": "PASS",
+   "observed": {
+    "status": "NO_LEGAL_UPSTREAM",
+    "delivery_len": 0,
+    "reason_in_note": true
+   }
+  },
+  {
+   "id": "C-07",
+   "text": "PD 属于其他 task/account → 不得选择",
+   "result": "PASS",
+   "observed": {
+    "status": "NO_LEGAL_UPSTREAM",
+    "reason_in_note": true,
+    "ledger_task": "TASK-A",
+    "artifact_task": "TASK-B"
+   }
+  },
+  {
+   "id": "C-08",
+   "text": "body hash 与 ledger 不一致 → fail-closed",
+   "result": "PASS",
+   "observed": {
+    "status": "NO_LEGAL_UPSTREAM",
+    "delivery_len": 0,
+    "reason_in_note": true
+   }
+  },
+  {
+   "id": "C-09",
+   "text": "只有未接受 PP artifact，没有合法 PD → 精确询问缺口，不自循环",
+   "result": "PASS",
+   "observed": {
+    "status": "NO_LEGAL_UPSTREAM",
+    "delivery_len": 0,
+    "question": "这一步要用到已经确认过的PRODUCTION_DIRECTOR／CREATIVE_SCRIPT产物，但我这边取不到它的正文。把它给我，或者说一句「上一版可以」让我用已有的那份。",
+    "self_upstream_blocked": true
+   }
+  },
+  {
+   "id": "C-10",
+   "text": "两个候选无法唯一消歧 → 询问用户，不自行选择",
+   "result": "PASS",
+   "observed": {
+    "status": "AMBIGUOUS",
+    "delivery_len": 0,
+    "question": "同一轮里有不止一份PRODUCTION_DIRECTOR产物，我不替你挑。你要用哪一份？",
+    "note": "并列候选：[{\"fp\": \"8d17f30354764877\", \"cap\": \"PRODUCTION_DIRECTOR\", \"turn\": 6, \"accepted_now\": false}, {\"fp\": \"8d17f30354764877\", \"cap\": \"PRODUCTION_DIRECTOR\", \"turn\": 6, \"accepted_now\": false}]"
+   }
+  },
+  {
+   "id": "C-11",
+   "text": "删除「accepted / current-non-stale / same-task / compatible / body-hash」任一条件 → 对应负控制必须转 FAIL",
+   "result": "PASS",
+   "observed": {
+    "mutations": [
+     {
+      "id": "accepted",
+      "baseline_status": "NO_LEGAL_UPSTREAM",
+      "after_mutation_status": "SELECTED",
+      "after_mutation_delivery_len": 291,
+      "flipped": true
+     },
+     {
+      "id": "stale",
+      "baseline_status": "NO_LEGAL_UPSTREAM",
+      "after_mutation_status": "SELECTED",
+      "after_mutation_delivery_len": 291,
+      "flipped": true
+     },
+     {
+      "id": "same_task",
+      "baseline_status": "NO_LEGAL_UPSTREAM",
+      "after_mutation_status": "SELECTED",
+      "after_mutation_delivery_len": 291,
+      "flipped": true
+     },
+     {
+      "id": "compatible_and_not_self",
+      "baseline_status": "NO_LEGAL_UPSTREAM",
+      "after_mutation_status": "SELECTED",
+      "after_mutation_delivery_len": 126,
+      "flipped": true
+     },
+     {
+      "id": "body_digest",
+      "baseline_status": "NO_LEGAL_UPSTREAM",
+      "after_mutation_status": "SELECTED",
+      "after_mutation_delivery_len": 311,
+      "flipped": true
+     }
+    ],
+    "count": 5,
+    "guard_redundancy_probe": {
+     "baseline_status": "NO_LEGAL_UPSTREAM",
+     "baseline_reason_is_self_upstream": true,
+     "remove_self_guard_only": {
+      "status": "NO_LEGAL_UPSTREAM",
+      "still_blocked": true,
+      "reason_now_capability_incompatible": true
+     },
+     "remove_compat_list_only": {
+      "status": "NO_LEGAL_UPSTREAM",
+      "still_blocked": true,
+      "reason_still_self_upstream": true
+     },
+     "meaning": "兼容性条件由两道守卫实现（自上游禁令 + 兼容清单），互为冗余但不可互换：去掉任一道，拒绝仍成立而留下的证据不同；两道同时去掉才放行。因此隔离该条件必须双点变异——这是冗余，不是覆盖缺口。"
+    }
+   }
+  },
+  {
+   "id": "C-12",
+   "text": "保护面及无关节点零漂移",
+   "result": "PASS",
+   "observed": {
+    "other_eight_drift": {},
+    "candidate_published_md5": "99c3edf7bd12172a4fb011b588f25e57",
+    "candidate_frozen": "99c3edf7bd12172a4fb011b588f25e57",
+    "pp_published_md5": "788c8555aca09e6fa6d979f237f70157",
+    "pp_provider_pinned_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+    "pp_b2_row_preserved": 2,
+    "hop_pin": "2026-08-30 03:38:31.449618",
+    "note": "本阶段只改候选画布的 draft，尚未发布；已发布图仍为冻结值"
+   }
+  }
+ ]
+}
