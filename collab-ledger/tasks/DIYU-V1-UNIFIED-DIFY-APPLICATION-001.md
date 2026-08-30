@@ -1109,3 +1109,36 @@ Phase C 正式机器硬门：`30/30 PASS`。候选 canonical sha256
 
 下一外部副作用预登记：只把上述同一候选写入既有 UAPP draft 并发布测试候选，随后现场回读；
 不修改任何专业应用/provider、M2、非测试数据或 main。状态 `PLANNED`，发布前活动 workflow 必须为 0。
+
+候选发布已确认：Dify 返回 success；UAPP graph md5 `f7d9857323823b64d288455e1b67cf80`，
+canonical sha256 `2660128ad3f37cabe1976bc321bc825cf35cd3da9b1e1eb36994d63c67234a93`，
+56 节点 / 58 边，活动 workflow 回读 0。PP/provider、M3、Hop、Seam 和六能力绑定均未变化。
+
+## Phase D 正式槽冻结
+
+```yaml
+gate: UAPP_S5_GATE_v1.7.json
+gate_sha256: 6bbc1b66e7872f4440d888018c4f693b4d2b4945b0f53413edfb6660e97eb4a8
+manifest: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.7.yaml
+manifest_sha256: 3f028251b6eb3ad06db2e77b898d6196e55b29e010beb9e5ce7884884e1594bd
+executor: UAPP_S5_EXEC_v1.8.py
+executor_sha256: 3a6a5a8b5ceeef227c4794e4a7aad75b3bd4e630877a47ec31c4a301aa2fcdac
+scenario_sha256: 896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577
+primary_formal_runs_max: 19
+primary_llm_attempts_max: 114
+same_scope_cap05_successor_max: 1
+pure_transport_replay_max: 1
+rebase_total_max: {top_level_runs: 21, llm_attempts: 126}
+historical_cost: {top_level_runs: 8, llm_attempts: 44}
+lifetime_max: {top_level_runs: 29, llm_attempts: 170}
+manual_retry: 0
+repeat_sampling: 0
+ab_tests: 0
+reviewer_calls: 0
+execution_order_first: [UAPP-CAP-05, UAPP-CAP-06]
+founder_ac_12: NOT_AUTHORIZED
+main_merge: NOT_ALLOWED
+```
+
+CAP-05 零模型预检全部 PASS；DeepSeek 凭据仅确认存在，未读取或打印。下一 Git 外部副作用为
+Gate/Manifest/Executor/发布证据普通 push，状态 `PLANNED`；完成后才允许 CAP-05 正式调用。

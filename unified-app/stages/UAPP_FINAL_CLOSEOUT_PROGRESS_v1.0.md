@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS/STALE；CAP-05 历史 FAIL/CURRENT；其余 14 项 NOT_VERIFIED | 历史 8 runs / 44 LLM | Phase A/B/C | 完整接缝修复后 CAP-05 |
+| N3 正式验收 | IN_PROGRESS | Gate v1.7 已预检；当前图正式 PASS 0/19 | 本 REBASE 0/21；0/126 LLM | NONE | CAP-05 唯一正式调用 |
 | N4 有界修复 | COMPLETED | Phase A/B/C PASS；30/30 机器硬门 | 0 | NONE | 发布并冻结正式候选 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -183,6 +183,21 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 控制证据 sha256：`35327ae8e82b2b3918fe2ac3f934516ebc36ac952dc7976e264cad2bbb386e9b`；
   构建证据 sha256：`8032f17a4bae3415350703f4815e4fbb38651eec16324e3bef7cac790ff10f39`。
 - 模型调用 0，Dify 写入 0，M2 写入 0；唯一下一动作：发布同一候选并冻结 Gate/Manifest/Executor。
+
+#### Phase D 候选与正式槽冻结
+
+- 已发布并回读一致：UAPP graph md5 `f7d9857323823b64d288455e1b67cf80`，canonical sha256
+  `2660128ad3f37cabe1976bc321bc825cf35cd3da9b1e1eb36994d63c67234a93`，56 节点 / 58 边。
+- 发布证据 sha256：`f8b38c43b18fb6932f4b875732032ca2bca1e3d603d4c4f39754987d893e7e98`。
+- Gate v1.7 sha256：`6bbc1b66e7872f4440d888018c4f693b4d2b4945b0f53413edfb6660e97eb4a8`；
+  Scenario v1.1、UAPP-AC-01..11 和 Checker 含义不变。
+- Manifest v1.7 sha256：`3f028251b6eb3ad06db2e77b898d6196e55b29e010beb9e5ce7884884e1594bd`；
+  Executor v1.8 sha256：`3a6a5a8b5ceeef227c4794e4a7aad75b3bd4e630877a47ec31c4a301aa2fcdac`。
+- 新正式主槽 19 次 / 114 LLM；同接缝 CAP-05 successor 最多 1 次；合格纯传输重放最多 1 次；
+  本 REBASE 硬上限 21 次 / 126 LLM，历史成本另列 8 次 / 44 LLM。
+- CAP-05 运行前预检 PASS：候选与 10 个受保护绑定一致、活动 workflow 0、API key 与 DeepSeek
+  凭据只确认存在、M2 结构/非测试计数一致、RAW 路径为空。
+- 当前阻断：`NONE`；唯一下一动作：CAP-05 原冻结输入正式运行一次并立即核验。
 
 ## 激活现场
 
