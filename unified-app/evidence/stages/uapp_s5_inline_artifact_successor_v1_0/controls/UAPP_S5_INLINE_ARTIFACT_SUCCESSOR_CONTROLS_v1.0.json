@@ -1,0 +1,103 @@
+{
+  "document": {
+    "id": "UAPP_S5_INLINE_ARTIFACT_SUCCESSOR_CONTROLS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "model_calls": 0,
+    "dify_writes": 0,
+    "successor_iteration": "1/1"
+  },
+  "candidate_graph_canonical_sha256": "8034ddba7c2db320d31d301aadb1e88411542950dc9352d3d637f917706cb544",
+  "controls": {
+    "P01_cap05_inline_ready": true,
+    "P02_companion_same_task": true,
+    "P03_origin_exact_user_text": true,
+    "P04_promise_exact_user_text": true,
+    "P05_selector_preserves_companion": true,
+    "P06_fields_bound": true,
+    "P07_script_byte_identity": true,
+    "P08_script_sha_identity": true,
+    "P09_pd_actual_input_path_bound": false,
+    "P10_companion_gaps_removed": true,
+    "P11_companion_user_source_level": true,
+    "P12_artifact_not_auto_persisted": true,
+    "P13_artifact_body_not_canonical_field": true,
+    "P14_cap06_inline_ready": true,
+    "P15_cap06_bound": true,
+    "P16_cap06_body_identity": true,
+    "P17_historical_path_unchanged": true,
+    "P18_protected_nodes_unchanged": true,
+    "N01_missing_origin_rejected": true,
+    "N02_missing_promise_rejected": true,
+    "N03_companion_task_mismatch_rejected": true,
+    "N04_companion_source_mismatch_rejected": true,
+    "N05_companion_turn_mismatch_rejected": true,
+    "N06_companion_bfp_mismatch_rejected": true,
+    "N07_unsupported_origin_rejected": true,
+    "N08_unsupported_promise_rejected": true,
+    "N09_target_not_self_upstream": true,
+    "N10_no_new_conversation_variables": true
+  },
+  "positive_negative_pairings": {
+    "P03_origin_exact_user_text": "N07_unsupported_origin_rejected",
+    "P04_promise_exact_user_text": "N08_unsupported_promise_rejected",
+    "P05_selector_preserves_companion": "N04_companion_source_mismatch_rejected",
+    "P06_fields_bound": "N01_missing_origin_rejected",
+    "P07_script_byte_identity": "N06_companion_bfp_mismatch_rejected",
+    "P11_companion_user_source_level": "N05_companion_turn_mismatch_rejected",
+    "P12_artifact_not_auto_persisted": "N03_companion_task_mismatch_rejected"
+  },
+  "passed": 27,
+  "total": 28,
+  "all_pass": false,
+  "cap05": {
+    "source_body_length": 95,
+    "source_body_sha256": "5e2447a1401c404abdf621f92d5279bcd02228fe2c13f6ba5cada56e93b64894",
+    "injected_body_length": 95,
+    "injected_body_sha256": "5e2447a1401c404abdf621f92d5279bcd02228fe2c13f6ba5cada56e93b64894",
+    "content_origin_mode": "室内门店拍摄",
+    "content_promise": "我们只展示真实上身效果，不承诺显瘦。",
+    "binding": [
+      {
+        "slot": "script_or_equivalent_beats",
+        "upstream_capability": "CREATIVE_SCRIPT",
+        "fp": "fc8a8dffc37dd992",
+        "bfp": "fc8a8dffc37dd992",
+        "artifact_norm_len": 95,
+        "artifact_raw_len": 95,
+        "produced_turn": null,
+        "accepted_turn": null,
+        "accepted_revision": null,
+        "source_turn": "CURRENT_TURN",
+        "task_key": "task-a",
+        "artifact_type": "SCRIPT_OR_EQUIVALENT_BEATS",
+        "persisted": false,
+        "accepted": false,
+        "companion_fields": [
+          "content.origin_mode",
+          "content.promise"
+        ],
+        "lineage": "BOUND",
+        "identity_source": "USER_INLINE_CURRENT_TURN"
+      }
+    ]
+  },
+  "cap06": {
+    "source_body_length": 78,
+    "source_body_sha256": "00c3372f5b38e5eca06a9cf97fa7acc09707b753deceea2e3f670f84051e9fcd",
+    "injected_body_length": 78,
+    "injected_body_sha256": "00c3372f5b38e5eca06a9cf97fa7acc09707b753deceea2e3f670f84051e9fcd"
+  },
+  "protected_nodes_equal": {
+    "m1_shadow": true,
+    "m1_compiler": true,
+    "uapp_m3": true,
+    "uapp_hop": true,
+    "uapp_seam": true,
+    "uapp_state": true,
+    "uapp_persist": true,
+    "uapp_save": true,
+    "uapp_delivery": true,
+    "uapp_td24_correction": true,
+    "uapp_td24_block": true
+  }
+}

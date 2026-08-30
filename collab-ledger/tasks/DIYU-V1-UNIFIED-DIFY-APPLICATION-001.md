@@ -1162,3 +1162,23 @@ Gate/Manifest/Executor 冻结 push 已确认：远端任务分支快进到
 
 下一 Git push 只保全本 Attempt RAW/Check/Triage/进度，状态 `PLANNED`；不改图、不调模型、
 不写 M2 或 main。当前成本：本 REBASE 1 run / 5 LLM；生命周期 9 runs / 49 LLM。
+
+失败证据 push 已确认：远端任务分支快进到
+`e6017d74e957a0b5390fbce8432a9ec3fc8c711e`，非 force，本地与远端一致。
+
+## Inline-artifact successor Phase B/C
+
+唯一 successor `1/1` 已实现于同一接缝包：来源节点从用户当前轮原话提取与完整正文同源的
+`content.origin_mode` / `content.promise`，selector 只透明传递，fields 在 task/source turn/source
+kind/body bfp/原话逐字支持全部通过后才登记 A 级普通字段并绑定正文。artifact 仍
+`persisted=false`、`accepted=false`，正文不进入 canonical fields。
+
+构建候选 sha256 `8034ddba7c2db320d31d301aadb1e88411542950dc9352d3d637f917706cb544`；
+最终确定性控制 v1.1 `28/28 PASS`。v1.0 的 `27/28` 是 Checker 错读 Seam tool 参数位置，原文件
+保留；v1.1 只修观察路径。py_compile/ruff/diff-check PASS；mypy launcher 缺包，记
+NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)，不算 PASS。
+
+发布前 UAPP 仍为 `f7d9857323823b64d288455e1b67cf80`，active workflow 0，M2 schema
+`25192c11562827efedfc3b2c22c3b4fd`，非测试 publish/feedback `1568/117`，main/origin-main
+仍为 `01a42b0e…28b2`。下一 Git 外部副作用仅提交并普通 push 实现/控制冻结件，状态 `PLANNED`；
+完成后才发布 successor，模型调用仍为 0。

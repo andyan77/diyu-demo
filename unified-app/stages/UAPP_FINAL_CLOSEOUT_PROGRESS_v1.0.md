@@ -22,7 +22,7 @@
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
 | N3 正式验收 | IN_PROGRESS | CAP-05 Gate v1.7 FAIL；历史 Attempt 保留 | 本 REBASE 1/21；5/126 LLM | inline companion fields | 唯一 successor 修复 |
-| N4 有界修复 | IN_PROGRESS | 唯一 same-scope successor 1/1 启动 | 0 | NONE | content origin/promise 规范化 |
+| N4 有界修复 | IN_PROGRESS | successor 1/1 实现完成；28/28 机器硬门 PASS | 0 | NONE | 冻结并发布 successor |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -210,6 +210,19 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 当前使用 Founder 授权的唯一 same-scope successor `1/1`；不修改 Hop、Seam 或专业能力。
 - 当前图正式 PASS `0/19`；唯一下一动作：从同一用户原文规范化这两个 call-local companion
   字段，完成全套零模型回归后版本化发布 successor。
+
+#### 唯一 successor Phase B/C
+
+- 只修改 `uapp_inline_artifact`、`uapp_pick_upstream`、`uapp_fields` 三个同根接缝节点；边、会话
+  变量、产物接受/持久化规则均未改变。
+- CAP-05 脚本原文与注入正文同为 95 字、sha256 `5e2447a…64894`；原话支持的
+  `室内门店拍摄` 与 `我们只展示真实上身效果，不承诺显瘦。` 同源登记。
+- v1.0 控制因读取 tool 节点接线位置错误为 27/28，原样保留；版本化 v1.1 Checker 只修观察
+  路径，28/28 PASS。mypy 安装入口损坏记 NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)，不计 PASS；
+  py_compile、ruff、diff-check 均通过。
+- 候选 canonical sha256 `8034ddba…cb544`；56 节点/58 边不变；11 个保护节点逐字节一致；
+  当前模型调用仍为本 REBASE 1 run / 5 LLM。
+- 唯一下一动作：提交并推送实现/控制证据，然后发布 successor 并冻结新的正式 Gate。
 
 ## 激活现场
 
