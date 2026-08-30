@@ -38,6 +38,18 @@ _s = importlib.util.spec_from_file_location("s42run", os.path.join(HERE, "S4_2_R
 R = importlib.util.module_from_spec(_s)
 _s.loader.exec_module(R)
 
+# 绑定文件按受保护面命名（M1_HOST），S4_2_RUN.APPS 按画布调用位命名（M3）。
+# 两者指同一个应用，这里显式给出映射，不靠键名巧合。
+PROTECTED_IDS = {"M1_HOST": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+                 "HOP": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+                 "SEAM": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+                 "MATRIX": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+                 "CAMPAIGN": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+                 "CONTENT_BRIEF": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+                 "CREATIVE_SCRIPT": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+                 "PRODUCTION_DIRECTOR": "13cfabd5-f592-4354-a304-47098b765697",
+                 "PUBLISHING_PACKAGING": "c9cdea24-9df3-400b-9ecd-1d740e8c96df"}
+
 TRANSIENT = ("Connection reset", "timed out", "timeout", "Bad Gateway", "502", "504",
              "Remote end closed")
 
@@ -87,7 +99,7 @@ def preflight(fz, layer):
     drift = {}
     for k, m in b["protected_apps_graph_md5"].items():
         now = R.psql("select md5(w.graph) from workflows w join apps a on a.workflow_id=w.id "
-                     "where a.id='%s';" % R.APPS[k]).strip()
+                     "where a.id='%s';" % PROTECTED_IDS[k]).strip()
         if now != m:
             drift[k] = {"frozen": m, "now": now}
     if drift:
