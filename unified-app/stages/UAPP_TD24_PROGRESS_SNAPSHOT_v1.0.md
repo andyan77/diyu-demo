@@ -11,7 +11,7 @@
 | N1 根因与合同 | COMPLETED | PASS / CURRENT | 3/3 | `UAPP_TD24_FAILURE_TRIAGE_v1.0.md`; 能力中立纠正/最小血缘/TOCTOU 三接口收敛 | 0 | NONE | 实施最小候选 |
 | N2 最小实现 | COMPLETED | PASS / CURRENT | 1/1 | candidate `a39b72d5...`; 55 nodes/57 edges; protected nodes byte-equal | 0 | NONE | 执行正负控制与真实接缝回放 |
 | N3 机器与接缝验证 | COMPLETED | PASS / CURRENT | 4/4 | controls v1.1 `11/11`; 工具自审 PASS；Gate `fb040eb9...`; 静态可达 LLM 5/8 | 0 | NONE | 提交冻结件并发布唯一候选 |
-| N4 正式定向验证 | IN_PROGRESS | NOT_VERIFIED | 0/12 | Gate `fb040eb9...`; 输入 `949f7474...`; candidate `a39b72d5...` | 0/8 | NONE | 提交冻结件并发布唯一候选 |
+| N4 正式定向验证 | IN_PROGRESS | NOT_VERIFIED | 0/12 | Gate `fb040eb9...`; published candidate `89bbfead...` / `a39b72d5...` | 0/8 | NONE | 提交发布证据并执行只读预检 |
 | N5 S4 收口 | NOT_STARTED | NOT_VERIFIED | 0/1 | - | 0 | 等 N4 | 等 N4 |
 | N6 Git与交付 | NOT_STARTED | NOT_VERIFIED | 0/1 | - | 0 | 等 N5 | 等 N5 |
 
@@ -22,7 +22,7 @@ top_level_runs: 0 / 1
 deepseek_llm_attempts: 0 / 8
 remaining_nodes: 3
 current_blocker: NONE
-next_action: 提交冻结件并发布唯一候选
+next_action: 提交发布证据并执行只读预检
 ```
 
 ## N0 现场锚点
