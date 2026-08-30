@@ -13,16 +13,16 @@
 | N3 机器与接缝验证 | COMPLETED | PASS / CURRENT | 4/4 | controls v1.1 `11/11`; 工具自审 PASS；Gate `fb040eb9...`; 静态可达 LLM 5/8 | 0 | NONE | 提交冻结件并发布唯一候选 |
 | N4 正式定向验证 | COMPLETED | PASS / CURRENT | 12/12 | run `010fe130...`; correction APPLIED; PD/PP 失效；无新 PP；LLM 5/8 | 5/8 | NONE | 零模型重算 S4 |
 | N5 S4 收口 | COMPLETED | PASS / CURRENT | 1/1 | S4 closeout `8/8 PASS`; current non-correction binding replay positive/negative PASS | 0 | NONE | 账本、技术债与 Git 收口 |
-| N6 Git与交付 | IN_PROGRESS | NOT_VERIFIED | 0/1 | formal RAW/Result 与 S4 closeout 已落盘 | 0 | NONE | 账本、技术债与 Git 收口 |
+| N6 Git与交付 | COMPLETED | PASS / CURRENT | 1/1 | evidence commit `ca4d6b2`; ledger/technical debt/completion check landed; remote received | 0 | NONE | 停止并等待 Founder 决定是否授权 S5 |
 
 ```yaml
-authorized_package_progress: 6/7 nodes completed
-current_node: N6
+authorized_package_progress: 7/7 nodes completed
+current_node: NONE
 top_level_runs: 1 / 1
 deepseek_llm_attempts: 5 / 8
-remaining_nodes: 1
+remaining_nodes: 0
 current_blocker: NONE
-next_action: 账本、技术债与 Git 收口
+next_action: Founder 审阅本轮交付后决定是否另行授权 S5
 ```
 
 ## N0 现场锚点
