@@ -1,0 +1,111 @@
+{
+  "stage": "S4_PHASE_C",
+  "adjudicator": "v1.1",
+  "freeze_sha256": "789ed5586fd099247b2aef69d1b8f0bfd87a8a6b5a015efdb06d6819bf57ab5e",
+  "superseded_freeze_v1_0_sha256": "38025c9da2540729eb95ba98a2f0cfc0efdff59dee8b50713f29a02fb3afcc05",
+  "inherited_gate_sha256": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d",
+  "binding_sha256": "f2a5169a9cf005ec6bd40b116fb89e5f16aff2f2d7f1830af4078cafcf4d21ed",
+  "model_calls_by_adjudicator": 0,
+  "c1_evidence_reused_without_recall": true,
+  "layers": {
+    "C1": {
+      "verdict": "PASS",
+      "conditions": [
+        {
+          "id": "P1-01",
+          "text": "Content Brief 真实运行",
+          "result": "PASS",
+          "observed": {
+            "run_status": "succeeded",
+            "skill_llm": "succeeded",
+            "http": 200,
+            "attempts": 1
+          }
+        },
+        {
+          "id": "P1-02",
+          "text": "facts_registered 进入能力输入且来源可回指",
+          "result": "PASS",
+          "observed": {
+            "facts_registered_key_in_envelope": true,
+            "source_len": 2459,
+            "verbatim_carry": true,
+            "source_map": "DERIVED(registered_facts)"
+          }
+        },
+        {
+          "id": "P1-03",
+          "text": "六个必要字段无缺失",
+          "result": "PASS",
+          "observed": {
+            "replayed_gaps": [],
+            "six_fields_present": {
+              "primary_goal": true,
+              "audience_problem": true,
+              "expected_change": true,
+              "content_promise": true,
+              "facts_registered": true,
+              "expression_subject_and_boundary": true
+            }
+          }
+        },
+        {
+          "id": "P1-04",
+          "text": "产生非空、非占位专业 artifact",
+          "result": "PASS",
+          "observed": {
+            "artifact_len": 7975,
+            "artifact_head": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE（本次来源为持续运营决策，无 Campaign 来源）\n- ",
+            "delivery_outcome": "DELIVERED",
+            "artifact_status": "OK"
+          }
+        },
+        {
+          "id": "P1-05",
+          "text": "没有编造夹具未提供的事实",
+          "result": "PASS",
+          "observed": {
+            "hits": [],
+            "checked_chars": 8843
+          }
+        },
+        {
+          "id": "P1-06",
+          "text": "没有内部状态泄漏",
+          "result": "PASS",
+          "observed": {
+            "hits": [],
+            "canvas_reported_leaks": []
+          }
+        }
+      ],
+      "summary": {
+        "pass": 6,
+        "fail": 0,
+        "total": 6
+      }
+    },
+    "C2": {
+      "verdict": "NOT_STARTED",
+      "conditions": [],
+      "reason": "T1/T2 证据缺失"
+    },
+    "C3": {
+      "verdict": "NOT_STARTED",
+      "conditions": [],
+      "reason": "按停止规则，C2 未通过不运行 C3"
+    }
+  },
+  "verdict": "NOT_VERIFIED",
+  "allowed_upgrades_if_pass": [
+    "FACT_SUFFICIENCY_CHAIN_REPAIR = PASS / CURRENT",
+    "S4_CONTENT_ORIGIN_CONTINUATION = PASS / CURRENT"
+  ],
+  "what_pass_does_not_imply": [
+    "不等于 S4 全部通过",
+    "不等于统一 Dify 应用全部验收完成",
+    "不等于 UAPP-AC-01..12 全绿",
+    "不等于可以进入 S5",
+    "不等于可以合并 main"
+  ]
+}
