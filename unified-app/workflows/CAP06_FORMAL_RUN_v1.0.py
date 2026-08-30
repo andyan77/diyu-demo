@@ -13,7 +13,7 @@ from typing import Any
 HERE = os.path.dirname(os.path.abspath(__file__))
 UAPP_ROOT = os.path.abspath(os.path.join(HERE, ".."))
 SCENARIOS = os.path.join(UAPP_ROOT, "stages", "UAPP_S5_FROZEN_SCENARIOS_v1.1.json")
-GATE = os.path.join(UAPP_ROOT, "stages", "CAP06_FROZEN_GATE_v1.2.json")
+GATE = os.path.join(UAPP_ROOT, "stages", "CAP06_FROZEN_GATE_v1.3.json")
 MANIFEST = os.path.join(UAPP_ROOT, "stages", "UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.8.yaml")
 EVIDENCE = os.path.join(UAPP_ROOT, "evidence", "stages", "cap06_semantic_contract_v1_0", "formal")
 RAW = os.path.join(EVIDENCE, "CAP06_FORMAL_RAW_v1.0.json")
@@ -37,6 +37,7 @@ EXPECTED_GRAPHS = {
     "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
     "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
     "PUBLISHING_PACKAGING": "99287feadcd784e86bf4c298bea555fc",
+    "PP_provider": "99287feadcd784e86bf4c298bea555fc",
 }
 
 
@@ -61,7 +62,7 @@ BASE.check_path = lambda _key: os.path.join(EVIDENCE, "CAP06_FORMAL_RESULT_v1.0.
 def frozen() -> tuple[dict[str, Any], dict[str, Any]]:
     scenarios = BASE.load_json(SCENARIOS)
     gate = BASE.load_json(GATE)
-    if gate.get("document", {}).get("id") != "CAP06_FROZEN_GATE_v1.2":
+    if gate.get("document", {}).get("id") != "CAP06_FROZEN_GATE_v1.3":
         raise RuntimeError("Unexpected CAP-06 Gate")
     return scenarios, gate
 
@@ -143,4 +144,3 @@ def main() -> int:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     raise SystemExit(main())
-
