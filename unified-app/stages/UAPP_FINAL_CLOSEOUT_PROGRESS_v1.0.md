@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.1 冻结 | COMPLETED | PASS / CURRENT | 0 | NONE | N3 |
-| N3 正式验收 | IN_PROGRESS | NOT_VERIFIED(CHECKER_OR_FIXTURE) | 2/20；LLM 10/120 | Checker 证据路径/产物 Oracle | 唯一 Checker 后继冻结 |
+| N3 正式验收 | IN_PROGRESS | CAP-01 PASS / CURRENT | 3/20；LLM 16/120 | NONE | CAP-02 |
 | N4 有界修复 | COMPLETED | 修复节点 1/2、迭代 1/2；控制 10/10 PASS | 0 | NONE | N3 定向复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -49,6 +49,11 @@ Checker v1.2 已完成 7/7 判别力控制；当前正式 Gate v1.4 sha256
 `a5660c3c3d7d9a6d26b6d39dab6df28d510f3f103ff0d1f4744a3ceaf8d601e5`。
 该 Gate 继续使用原 19 条自然语言输入和 UAPP-AC-01..11，仅把 AC-04 编译回根合同的
 “最小可执行 smoke + 真实产物可回指”，并保留场景实际要求的 M2 副作用检查。
+
+Gate v1.4 CAP-01 正式 run `23d56cf5-1aba-416b-a2ce-da33166126a8`：
+`PASS / CURRENT`；MATRIX 1 次，其他五能力 0 次；artifact length `2473`，sha256
+`0c78a39684cd76cf5a58f64dfdbf88f6cc1a154b6c3b7dc4545b0de8cca9b3e0`；
+LLM 6，失败节点 0，平台重放 0，真实发布 0，保护面零漂移。
 
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
