@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | 正式场景 4/19；AC 0/11 | 本包 6/22；LLM 34/130 | NONE | CAP-05 |
+| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | 正式场景 4/19；CAP-05 FAIL preserved；AC 0/11 | 本包 7/22；LLM 39/130 | 已确认 UAPP 空状态无纠正分支误拒绝 | 冻结最小修复与控制 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -21,8 +21,8 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS / CURRENT；15/15 预检 PASS；整体 NOT_VERIFIED | 6/22；LLM 34/130 | NONE | CAP-05 |
-| N4 有界修复 | COMPLETED | 修复节点 1/2、迭代 1/2；控制 10/10 PASS | 0 | NONE | N3 定向复验 |
+| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS；CAP-05 FAIL preserved；整体 NOT_VERIFIED | 7/22；LLM 39/130 | N4 最后一个修复节点 | CAP-05 定向复验 |
+| N4 有界修复 | IN_PROGRESS | 修复节点 2/2 已确认；额外运行槽 1/1 已保留 | 0 | NONE | 冻结最小修复与正负控制 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -95,17 +95,27 @@ CONTENT_BRIEF 1 次，其他五能力 0 次；artifact length `4727`，sha256
 `a30d8614c6f06560edd680fa527acca237b85d8ddea96ce2b7d21a4f832e1b78`；
 LLM 6，失败节点 0，平台重放 0。
 
+### Gate v1.5 CAP-05 首次正式 Attempt
+
+- run_id `45c783b7-b7fc-47fa-80c0-639ce843ee55`；HTTP 200；LLM 5；失败节点 0；平台重放 0。
+- 路由唯一命中 PRODUCTION_DIRECTOR，其他五能力零暗跑；但 Seam 与目标能力均未运行，产物为空。
+- 独立证据确认：新会话 `prev_state_json=""` 且 `correction_deltas=[]` 时，
+  `uapp_td24_correction` 错误返回 `REJECTED / TASK_IDENTITY_MISMATCH`。
+- 原 RAW 和 FAIL Check 已保留；最高失效节点为 UAPP 自身空状态无纠正分支，Checker、输入、
+  M3、Hop、Seam 和专业能力不修改。
+- 当前使用第二个也是最后一个 SUT 修复节点；唯一额外运行槽保留给修复后的 CAP-05 定向复验。
+
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 resumed under budget REBASE 001
 current_node: N3 / F2
-active_package_top_level_runs: 6 / 22
-active_package_deepseek_llm_attempts: 34 / 130
+active_package_top_level_runs: 7 / 22
+active_package_deepseek_llm_attempts: 39 / 130
 valid_formal_scenarios: 4 / 19
 remaining_frozen_scenarios: 15
 ac_pass: 0 / 11
-current_scenario: UAPP-CAP-05 not started under Gate v1.5
-current_blocker: NONE
-next_action: 执行 UAPP-CAP-05 一次正式运行
+current_scenario: UAPP-CAP-05 failed Attempt preserved; directed reverification pending
+current_blocker: confirmed empty-state correction seam defect
+next_action: 冻结并运行零模型正负控制
 ```
 
 ## 激活现场
