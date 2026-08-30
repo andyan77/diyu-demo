@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | 正式场景 4/19；CAP-05 FAIL preserved；AC 0/11 | 本包 7/22；LLM 39/130 | Gate v1.6 冻结提交 | 提交 Gate v1.6 |
+| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | CAP-01..04 PASS；CAP-05 FAIL；AC 2 PASS / 3 FAIL / 6 NOT_VERIFIED | 本包 8/22；LLM 44/130 | 修复节点 2/2 与额外槽 1/1 均耗尽 | Founder 收敛检查点 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -21,8 +21,8 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS；CAP-05 FAIL preserved；整体 NOT_VERIFIED | 7/22；LLM 39/130 | N4 最后一个修复节点 | CAP-05 定向复验 |
-| N4 有界修复 | IN_PROGRESS | 修复节点 2/2；控制 PASS；候选与 Gate v1.6 已绑定 | 0 | Gate v1.6 冻结提交 | 提交后定向复验 |
+| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS；CAP-05 FAIL；其余 14 项 NOT_VERIFIED | 8/22；LLM 44/130 | 有界收敛上限 | 停止正式调用 |
+| N4 有界修复 | COMPLETED | FAIL / CURRENT；修复节点 2/2、额外槽 1/1 已用 | 1 个定向复验 | 无第三修复授权 | 收敛证据包 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -116,17 +116,28 @@ LLM 6，失败节点 0，平台重放 0。
 - Gate v1.6 相对 v1.5 的业务 criteria、Scenario、Checker 和其他十个应用图均不变；
   只增加修复节点 2 的候选身份、控制/发布证据和累计成本绑定。
 
+### Gate v1.6 CAP-05 定向复验与收敛停止
+
+- run_id `cbabab77-bbb3-4f07-a655-83d61bbd9b62`；HTTP 200；LLM 5；平台重放 0。
+- 修复 2 的目标行为真实成立：`uapp_td24_correction=NONE / NEW_TASK_NO_CORRECTION`。
+- 后继硬门仍失败：selector 返回 `NAMED_UPSTREAM_INCOMPATIBLE`，用户本轮直接提供的完整脚本
+  未成为合法上游绑定；Seam 与 PRODUCTION_DIRECTOR 均为 0，artifact 为空。
+- 用户回复包含字面量 `PRODUCTION_DIRECTOR`，冻结 Checker T-05 FAIL。
+- 当前累计 `8/22` 顶层运行、`44/130` LLM；没有重试、重放、A/B、重复采样或 Reviewer。
+- 停止原因：SUT 修复节点 `2/2`、post-result Checker rebase `1/1`、额外正式槽 `1/1`
+  均已用完；继续必须建立第三个修复节点，超出授权。其余 14 个输入不再运行。
+
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 resumed under budget REBASE 001
 current_node: N3 / F2
-active_package_top_level_runs: 7 / 22
-active_package_deepseek_llm_attempts: 39 / 130
+active_package_top_level_runs: 8 / 22
+active_package_deepseek_llm_attempts: 44 / 130
 valid_formal_scenarios: 4 / 19
-remaining_frozen_scenarios: 15
-ac_pass: 0 / 11
-current_scenario: UAPP-CAP-05 failed Attempt preserved; directed reverification pending
-current_blocker: Gate v1.6 freeze commit
-next_action: 提交 Gate v1.6 后定向复验 CAP-05
+remaining_frozen_scenarios: 14 (not run after bounded convergence limit)
+ac_pass: 2 / 11
+current_scenario: UAPP-CAP-05 directed reverification failed and preserved
+current_blocker: bounded convergence exhausted (SUT repair nodes 2/2; extra run slot 1/1)
+next_action: Founder 查看合并收敛证据包；本 Active Work Package 不再执行
 ```
 
 ## 激活现场

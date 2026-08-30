@@ -1,0 +1,121 @@
+{
+  "document": {
+    "id": "UAPP_S5_BOUNDED_CONVERGENCE_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "gate": "UAPP_S5_GATE_v1.6",
+    "gate_sha256": "0a9120d07794b2f17f65ef811da8af89477462aa31f846cc987fa92cf862cf82",
+    "result": "FAIL",
+    "freshness": "CURRENT",
+    "stop_reason": "BOUNDED_SUT_REPAIR_LIMIT_REACHED"
+  },
+  "candidate": {
+    "UAPP_graph_md5": "16e10d84dcdf1deb4608d95fe30fb654",
+    "UAPP_graph_canonical_sha256": "1747957df30b87b3670f9e59e3546c9e363fcb33b247ed61d1855b6ed05f1d28",
+    "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+    "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+    "PP_provider": "8366328bf827bd0f460455d750d45c4f"
+  },
+  "formal_scenarios": {
+    "UAPP-CAP-01": {
+      "result": "PASS",
+      "freshness": "CURRENT",
+      "run_id": "23d56cf5-1aba-416b-a2ce-da33166126a8"
+    },
+    "UAPP-CAP-02": {
+      "result": "PASS",
+      "freshness": "CURRENT",
+      "run_id": "77aae6ad-817f-4a15-ac8a-d01c6f35dabe"
+    },
+    "UAPP-CAP-03": {
+      "result": "PASS",
+      "freshness": "CURRENT",
+      "run_id": "670ec687-d216-4c6e-b15d-a83eed7abd4a"
+    },
+    "UAPP-CAP-04": {
+      "result": "PASS",
+      "freshness": "CURRENT",
+      "run_id": "9a5f8aee-0594-4f19-82af-d1e41541efc7"
+    },
+    "UAPP-CAP-05": {
+      "result": "FAIL",
+      "freshness": "CURRENT",
+      "failed_attempts": [
+        "45c783b7-b7fc-47fa-80c0-639ce843ee55",
+        "cbabab77-bbb3-4f07-a655-83d61bbd9b62"
+      ],
+      "target_capability": "PRODUCTION_DIRECTOR",
+      "target_capability_runs": 0,
+      "other_professional_capability_runs": 0,
+      "artifact_created": false
+    },
+    "remaining_14": {
+      "result": "NOT_VERIFIED",
+      "reason": "NOT_RUN_AFTER_BOUNDED_CONVERGENCE_LIMIT"
+    }
+  },
+  "ac_matrix": {
+    "UAPP-AC-01": "PASS / CURRENT",
+    "UAPP-AC-02": "PASS / CURRENT",
+    "UAPP-AC-03": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-04": "FAIL / CURRENT",
+    "UAPP-AC-05": "FAIL / CURRENT",
+    "UAPP-AC-06": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-07": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-08": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-09": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-10": "FAIL / CURRENT",
+    "UAPP-AC-11": "NOT_VERIFIED(INCOMPLETE_FORMAL_SET)"
+  },
+  "cost": {
+    "top_level_runs": 8,
+    "top_level_runs_max": 22,
+    "llm_node_attempts": 44,
+    "llm_node_attempts_max": 130,
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "sut_repair_nodes_used": 2,
+    "sut_repair_nodes_max": 2,
+    "post_result_checker_rebases_used": 1,
+    "post_result_checker_rebases_max": 1,
+    "extra_formal_run_slots_used": 1,
+    "extra_formal_run_slots_max": 1
+  },
+  "side_effects": {
+    "real_publish": 0,
+    "non_test_publish_instances_before_after": [1568, 1568],
+    "non_test_feedback_records_before_after": [117, 117],
+    "m2_schema_md5_before_after": [
+      "25192c11562827efedfc3b2c22c3b4fd",
+      "25192c11562827efedfc3b2c22c3b4fd"
+    ],
+    "cap05_reverification_test_rows": {
+      "workspace": 1,
+      "cycle": 1,
+      "task": 1,
+      "artifacts": 0,
+      "content_versions": 0,
+      "publish_instances": 0,
+      "feedback_records": 0
+    }
+  },
+  "evidence": {
+    "cap05_failed_raw_sha256": "614481dcff6c8354065668c980d4bdb0c117d6a7f8200cfc0c3ebd2a297ff1b4",
+    "cap05_failed_check_sha256": "5a8a90fdd71b7892da12327669b62233d85357ebb1267105bbd45fbbdf341a04",
+    "repair_controls_sha256": "f502c8b0fce8c334901eb5a145eb874eb4bef872027c41de820d33f8ba4876a6",
+    "repair_publication_sha256": "8b5be0c8331b509ca6f7edd1e847c8d74ab65d17ec7f7471c9598a1d9ec6c1a3",
+    "triage_1_sha256": "236bfb2ae2bafb22eee697c9d834a7e52afab99efb4ee7457137137705aff6f8",
+    "triage_2_sha256": "ef381e3da216372c9ff7069588032e2462cb0228ada905ddae77f1181953e7aa"
+  },
+  "state": {
+    "F2": "IN_PROGRESS / FAIL / CURRENT",
+    "F3": "NOT_AUTHORIZED / NOT_VERIFIED",
+    "founder_ac_12": "NOT_AUTHORIZED / NOT_VERIFIED",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset",
+    "next_state": "FOUNDER_CHECKPOINT_AFTER_BOUNDED_CONVERGENCE_LIMIT"
+  }
+}
