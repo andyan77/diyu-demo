@@ -560,3 +560,13 @@ main_merge: NOT_ALLOWED
 
 **这条 Checkpoint 不上行任何状态。** Founder 裁定 002 只把「`content_origin_mode` 精确追问」
 这一项行为判 `PASS`，Gate 4 的历史 `FAIL` 一条不改绿，S4／UAPP／M5 一律不动。
+
+---
+
+## `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` · 2026-08-30 CHECKPOINT（非终态）
+
+Phase A 根因 **PASS**、Phase B 最小修复 **PASS**、Phase C 的 C1 **PASS 6/6**、C2 **PASS 8/8**、C3 **FAIL 9/13**。事实充分性这一跳修好并被实测验证（Content Brief 产出 6188 字，修复前为 0）；窄链停在**另一个**缺陷——跨轮已确认字段无承载体（`TD-UAPP-20`）。
+
+两项均不上调：`FACT_SUFFICIENCY_CHAIN_REPAIR`、`S4_CONTENT_ORIGIN_CONTINUATION`。
+
+下一动作与技术债后继见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 末节；失败归因见 [`unified-app/docs/S4_PHASE_C_C3_FAILURE_TRIAGE_002.md`](../unified-app/docs/S4_PHASE_C_C3_FAILURE_TRIAGE_002.md)。

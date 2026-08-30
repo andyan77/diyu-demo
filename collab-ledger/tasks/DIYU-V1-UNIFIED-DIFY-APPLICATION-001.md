@@ -317,3 +317,123 @@ enter_s5: NOT_AUTHORIZED
 
 **本轮不上行任何状态。** Gate 4 的历史记录、S4.2 判据 v1.2、五个负例与 CAMPAIGN-POS 的
 `OUT_OF_SCOPE_GATE_MISMATCH`、S5 的 `NOT_AUTHORIZED` 全部原样保留。
+
+---
+
+## `ATT-UAPP-FACT-01`（2026-08-30）｜事实充分性根因定位、最小修复与 Phase C 点对点验证
+
+**授权**：`DIYU_V1_UAPP_FACT_SUFFICIENCY_ROOT_CAUSE_AND_MINIMAL_REPAIR_CONTINUE_EXECUTION_PROMPT_v1.0.md`
+（sha256 `5d4fcbe0d5e6915314e098dd41d251d61b58bc9575106dec7e42d8e1a97496f3`）
+Founder 2026-08-30 追加授权：建立 FB-07 判据后继版本；对已落盘的同一份 C1 证据做零模型调用的定向重判。
+
+### Phase A｜第一失效节点
+
+| | |
+|---|---|
+| `confirmed_origin` | `SYSTEM_UNDER_TEST` |
+| `highest_failing_node` | hop `6c46fdb1` 的 `m5_compose` 代码节点 |
+| 决定性证据 | 同一条会话六轮，`uapp_ctx.registered_facts` 恒非空（2367/2459/2459/2541/2541/2541），外壳 `facts_registered` 却四轮在场两轮为空；**同一次 `m5_compose` 执行**把 `registered_facts` 原样写进 `professional_input`，同时把它判成缺口 |
+| 未采纳的旧结论 | 上一轮"Hop 抽取判定不稳定"，其前提"同一输入两次结论不同"被复算推翻（两次 T2 输入在四个字段上不同）。按 Prompt §0 不采纳 |
+
+判定书：`unified-app/docs/S4_FACT_SUFFICIENCY_FAILURE_TRIAGE_FINAL_v1.0.md`
+
+### Phase B｜一份最小连通改动（第二次修复不允许）
+
+1. hop `m5_compose`：`facts_registered` 建立确定性下限——来源非空而抽取器留空时按来源绑定据实标为在场；**来源为空一律不合成**，充分性闸门不放松
+2. 候选画布：新增 `uapp_persist` 写回闸门，空产出不再覆盖上一轮已确认产物（47 节点／49 边）
+3. hop provider 版本钉重新指向新发布版
+
+> **第 3 项是本轮最关键的一次拦截。** Dify 的 workflow-as-tool 按版本钉死取图（`core/tools/workflow_as_tool/tool.py:_get_workflow`），不是取最新已发布。不重钉的话画布仍调旧代码——**修复发布了却够不着，会造成假通过**。
+
+确定性验证：离线 18/18 PASS；对**线上钉住代码**的集成 17/17 PASS；11 例真实载荷重放中 T2/T3 的抹除消失、其余字段判定逐例不变；负控制（来源真空）仍精确停在 `facts_registered`；九个受保护应用零漂移。
+
+### Phase C｜三层点对点验证（判据早于结果，冻结提交 `7e0e1d1`）
+
+| 层 | 结果 | 关键数字 |
+|---|---|---|
+| C1 Content Brief 受影响模块单点 | **PASS 6/6** | artifact 7975 字，`delivery_outcome=DELIVERED`，`gate_sufficiency` 通过而未停在输入不足 |
+| C2 M3 → Hop → Seam → Content Brief | **PASS 8/8** | `registered_facts` 2531 字逐跳保持，hop 缺口 `无`，artifact **6188** 字（修复前同场景为 0，交付 111 字缺口追问） |
+| C3 CS → PD → PP 原窄链 | **FAIL 9/13** | T4/T5/T6 artifact 均为 0 |
+
+C3 的四条 FAIL 分属两个原因，详见 `unified-app/docs/S4_PHASE_C_C3_FAILURE_TRIAGE_002.md`：
+
+- **原因 A（真实缺陷）** `P3-04`/`P3-05`/`P3-06`：跨轮已确认字段没有承载体。T3 精确提问 `content_origin_mode` → T4 用户回答且 hop 确实抽到 → **T5 逐字重复同一个问题、该字段又变空**。同类丢失还有 `content_promise`（T4 起恒空）与 `primary_goal`（T6 变空）。`confirmed_origin = SYSTEM_UNDER_TEST`；`highest_failing_node =` 跨轮已确认字段无承载体（画布只有 `uapp_last_artifact`／`uapp_last_capability`，hop 每轮由 `m5_extract` 从零重抽）。**不指向 `m5_extract` 的 prompt**——那是下游统计补丁。
+- **原因 B（判据侧陈旧）** `P3-12`：继承的 `C11` 比对 `UAPP_R0_PROTECTED_BASELINE.json`，那是 Phase B 修复之前的基线。九应用逐个复算：**Phase C 全程零漂移**。`confirmed_origin = ORACLE_OR_CRITERION`，是冻结规格缺陷。
+
+### 判据侧变更（Founder 授权，旧版不覆盖）
+
+| | |
+|---|---|
+| `S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1.json` | 只重写 `FB-07` 一条探针；其余判据、预算、停止规则、继承 Gate 一字未改 |
+| `FB-07` v1.0 的缺陷 | 抓"职务词前后 2–3 个汉字"当人名，把夹具自身的 `零售搭配负责人` 切成不存在的人名 |
+| `FB-07` v1.1 的判据 | 候选人名必须以姓氏起头（单字姓氏表＋复姓表）、2–3 字、与职务词直接相邻；在白名单内／夹具原文中逐字出现／本身是职务词一部分者不计命中 |
+| 四类控制 | 合成正控制、单点负控制、历史失败回放、**反过拟合对照**（同一份真实产物注入编造人名后仍 FAIL），31/31 |
+| 旧记录 | `S4_PHASE_C_RESULT_v1.0.json` 的 `P1-05=FAIL` 原样保留，不覆盖、不改绿 |
+
+### `ATT-UAPP-FACT-01` 的真实外部副作用
+
+| 目标 | 操作 | 冻结预算 | 实际 |
+|---|---|---|---|
+| 顶层 Dify workflow run | 画布 6 + Content Brief 直调 1 | 7 | **7** |
+| 嵌套应用 run | M3／Hop／Seam／各能力 | ≤24 | **24** |
+| DeepSeek LLM 节点 | | 预期 35／上限 44 | **32 成功、0 失败** |
+| 重试 | 仅纯传输失败时允许一次 | ≤1 | **0** |
+| Dify 文件上传 | 同一份夹具，每轮一次，size 6119 | 6 | **6** |
+| M2 `diyu_business` | workspace／account／cycle／task | 各 1 | **各 1**；`task_snapshots`／`artifacts`／`publish_instances` 各 0 |
+| 重复幂等键 | | 0 | **0** |
+| 九个受保护应用 | | 零漂移 | **零漂移**（预检 C2 前、C3 前各一次，判定后一次） |
+| 候选图 | | 零变更 | 仍为 `8c9788f2…` |
+| 真实内容平台 | | 从未连接 | **`publish_instances` 0 行** |
+| `main` / `origin/main` | | 未动 | 停在 `01a42b0` |
+| 任务分支 | | 三层全 PASS 才 push | **本轮未 push**（条件未达成） |
+| 凭据 | | 不落盘 | 未落盘、未打印、未提交 |
+
+**披露**：同一 Dify 实例中第三方应用 `FCVSS`（`18dd7b02`）在 Phase C 窗口内运行 44 次并上传无关文件。与本任务九个受保护应用、候选画布、`diyu_business` 均无交集；全部判定按 `app_id` 作用域取记录；32 次 LLM 节点逐条归属核过，`FCVSS` 零占用。但运行器预检项"窗口内没有其它写入者"只打印数字未把门，缺陷一并登记。
+
+---
+
+## L2 追加 · `ATT-UAPP-FACT-01` 之后的 CHECKPOINT（2026-08-30，非终态）
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+next_state: CHECKPOINT
+
+PHASE_A_ROOT_CAUSE: PASS / CURRENT              # 第一失效节点已定位并有证据
+PHASE_B_MINIMAL_REPAIR: PASS / CURRENT          # 离线 18/18、线上集成 17/17
+PHASE_C_C1_MODULE: PASS / CURRENT               # 6/6
+PHASE_C_C2_ADJACENT_SEAM: PASS / CURRENT        # 8/8
+PHASE_C_C3_NARROW_CHAIN: FAIL                   # 9/13
+
+FACT_SUFFICIENCY_CHAIN_REPAIR: NOT_UPGRADED     # 冻结规格要求三层全部成立
+S4_CONTENT_ORIGIN_CONTINUATION: NOT_UPGRADED    # 同上；旧 FAIL 记录原样保留
+
+successor_app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+graph_sha256: 8c9788f293fa7750bea451bd2195ddfb4df7c2647ca00c383ec7c096a4cdc2d1
+hop_provider_pinned: "2026-08-30 03:38:31.449618"
+pinned_m5_compose: 6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855
+freeze_commit: 7e0e1d1b586c30b2251115b4dca7a3ac2d8c3d7b
+main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2      # 未动
+main_merge: NOT_ALLOWED
+task_branch_push: NOT_DONE_THIS_ROUND             # 条件是三层全 PASS
+second_repair_iteration: NOT_AUTHORIZED
+enter_s5: NOT_AUTHORIZED
+```
+
+**唯一下一动作：等规划侧对两件事各自裁定。**
+
+| # | 事项 | 归因 | 为什么执行侧不自选 |
+|---|---|---|---|
+| 1 | 跨轮已确认字段的承载与合成规则 | `SYSTEM_UNDER_TEST` | `second_repair_iteration: NOT_AUTHORIZED`；且承载什么、由谁确认、能不能跨任务，是产品语义，属规划侧权威 |
+| 2 | `P3-12` 继承判据引用的受保护基线陈旧 | `ORACLE_OR_CRITERION` | 改的是验收判据；且要先裁定 HOP 修复后的新 md5 是否成为新基线 |
+
+### 技术债后继登记
+
+| ID | 状态 | 内容 |
+|---|---|---|
+| `TD-UAPP-18` | 后继：`FACT_SUFFICIENCY_CHAIN_INCONSISTENCY` **已关闭** | 本轮定位到 `m5_compose` 并修复，C1/C2 实测验证。`confirmed_origin` 由 `INSUFFICIENT_EVIDENCE` 上行为 `SYSTEM_UNDER_TEST`，触发事件是 Phase A 的自足证据 |
+| `TD-UAPP-19` | 新增 | Phase A 登记的放大器：`uapp_save` 无条件写回。本轮已由 `uapp_persist` 闸门修复，C2/C3 的 `P3-07` PASS 证实 |
+| `TD-UAPP-20` | **新增，未修** | 跨轮已确认字段无承载体，多轮链路结构上无法走完。证据 `S4_PHASE_C_C3_FAILURE_TRIAGE_002.md` |
+| `TD-UAPP-21` | **新增，未修** | `P3-12` 继承判据引用 Phase B 之前的受保护基线，与已授权修复自相矛盾 |
+| `TD-UAPP-22` | **新增，未修** | 运行器预检"窗口内没有其它写入者"只打印数字未把门 |
