@@ -22,7 +22,7 @@
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
 | N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS；CAP-05 FAIL preserved；整体 NOT_VERIFIED | 7/22；LLM 39/130 | N4 最后一个修复节点 | CAP-05 定向复验 |
-| N4 有界修复 | IN_PROGRESS | 修复节点 2/2 已确认；额外运行槽 1/1 已保留 | 0 | NONE | 冻结最小修复与正负控制 |
+| N4 有界修复 | IN_PROGRESS | 修复节点 2/2；行为控制 6/6、结构控制 4/4 PASS | 0 | NONE | 发布最小候选 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -104,6 +104,9 @@ LLM 6，失败节点 0，平台重放 0。
 - 原 RAW 和 FAIL Check 已保留；最高失效节点为 UAPP 自身空状态无纠正分支，Checker、输入、
   M3、Hop、Seam 和专业能力不修改。
 - 当前使用第二个也是最后一个 SUT 修复节点；唯一额外运行槽保留给修复后的 CAP-05 定向复验。
+- 最小候选只修改 `uapp_td24_correction`；其余 54 个 UAPP 节点逐字相同，无新增会话变量。
+- 零模型行为正负控制 `6/6 PASS`、结构控制 `4/4 PASS`；候选 canonical sha256
+  `1747957df30b87b3670f9e59e3546c9e363fcb33b247ed61d1855b6ed05f1d28`。
 
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 resumed under budget REBASE 001
@@ -114,8 +117,8 @@ valid_formal_scenarios: 4 / 19
 remaining_frozen_scenarios: 15
 ac_pass: 0 / 11
 current_scenario: UAPP-CAP-05 failed Attempt preserved; directed reverification pending
-current_blocker: confirmed empty-state correction seam defect
-next_action: 冻结并运行零模型正负控制
+current_blocker: NONE
+next_action: 发布修复节点 2 的最小 UAPP 候选
 ```
 
 ## 激活现场

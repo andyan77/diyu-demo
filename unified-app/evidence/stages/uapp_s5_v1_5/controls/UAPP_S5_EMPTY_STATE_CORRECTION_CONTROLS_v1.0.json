@@ -1,0 +1,117 @@
+{
+  "document": {
+    "id": "UAPP_S5_EMPTY_STATE_CORRECTION_CONTROLS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "model_calls": 0
+  },
+  "candidate_graph_canonical_sha256": "1747957df30b87b3670f9e59e3546c9e363fcb33b247ed61d1855b6ed05f1d28",
+  "cases": [
+    {
+      "id": "P-01_EMPTY_STATE_NO_CORRECTION_INITIALIZES",
+      "expected": {
+        "correction_status": "NONE",
+        "correction_note": "NEW_TASK_NO_CORRECTION"
+      },
+      "actual": {
+        "correction_status": "NONE",
+        "correction_note": "NEW_TASK_NO_CORRECTION"
+      },
+      "predicates": {
+        "correction_status": true,
+        "correction_note": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "N-01_EMPTY_STATE_EXPLICIT_CHANGE_FAILS_CLOSED",
+      "expected": {
+        "correction_status": "REJECTED",
+        "correction_note": "TASK_IDENTITY_MISMATCH"
+      },
+      "actual": {
+        "correction_status": "REJECTED",
+        "correction_note": "TASK_IDENTITY_MISMATCH"
+      },
+      "predicates": {
+        "correction_status": true,
+        "correction_note": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "N-02_EMPTY_STATE_PROPOSED_DELTA_FAILS_CLOSED",
+      "expected": {
+        "correction_status": "REJECTED",
+        "correction_note": "TASK_IDENTITY_MISMATCH"
+      },
+      "actual": {
+        "correction_status": "REJECTED",
+        "correction_note": "TASK_IDENTITY_MISMATCH"
+      },
+      "predicates": {
+        "correction_status": true,
+        "correction_note": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "P-02_MATCHED_STATE_NO_CORRECTION_UNCHANGED",
+      "expected": {
+        "correction_status": "NONE",
+        "correction_note": "NO_CORRECTION"
+      },
+      "actual": {
+        "correction_status": "NONE",
+        "correction_note": "NO_CORRECTION"
+      },
+      "predicates": {
+        "correction_status": true,
+        "correction_note": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "P-03_MATCHED_STATE_REAL_CORRECTION_APPLIES",
+      "expected": {
+        "correction_status": "APPLIED",
+        "corrected_fields": "production.profile"
+      },
+      "actual": {
+        "correction_status": "APPLIED",
+        "corrected_fields": "production.profile"
+      },
+      "predicates": {
+        "correction_status": true,
+        "corrected_fields": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "N-03_WRONG_TASK_REAL_CORRECTION_FAILS_CLOSED",
+      "expected": {
+        "correction_status": "REJECTED",
+        "correction_note": "TASK_IDENTITY_MISMATCH"
+      },
+      "actual": {
+        "correction_status": "REJECTED",
+        "correction_note": "TASK_IDENTITY_MISMATCH"
+      },
+      "predicates": {
+        "correction_status": true,
+        "correction_note": true
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "case_pass_count": 6,
+  "case_count": 6,
+  "structural": {
+    "only_correction_node_touched": true,
+    "all_other_uapp_nodes_equal": true,
+    "no_conversation_variables_added": true,
+    "node_and_edge_counts_stable": true
+  },
+  "structural_pass_count": 4,
+  "structural_count": 4,
+  "verdict": "PASS"
+}
