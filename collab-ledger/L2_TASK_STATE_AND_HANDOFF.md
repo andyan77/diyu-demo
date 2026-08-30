@@ -636,3 +636,37 @@ Gate v1.0/v1.1、Manifest、RESULT v1.0、VERIFY(v1.0)、COST_ACCOUNT、T1–T7 
 [`unified-app/docs/S4_CANONICAL_TASK_STATE_FAILURE_TRIAGE_001_PP_BOUNDARY.md`](../unified-app/docs/S4_CANONICAL_TASK_STATE_FAILURE_TRIAGE_001_PP_BOUNDARY.md)、
 [`unified-app/docs/S4_CANONICAL_TASK_STATE_EXTERNAL_ACCEPTANCE_REVIEW_v1.0.md`](../unified-app/docs/S4_CANONICAL_TASK_STATE_EXTERNAL_ACCEPTANCE_REVIEW_v1.0.md)
 与 [`unified-app/docs/S4_PP_BOUNDARY_MINIMAL_REPAIR_PLAN_v1.0.md`](../unified-app/docs/S4_PP_BOUNDARY_MINIMAL_REPAIR_PLAN_v1.0.md)。
+
+---
+
+## `DIYU-V1-PP-BOUNDARY-SUCCESSOR-001` · 2026-08-30 CHECKPOINT 一（非终态）
+
+新后继任务，父任务 `DIYU-V1-UNIFIED-DIFY-APPLICATION-001`。Founder 三项裁决已落盘并哈希绑定。
+
+**事实边界修好了，CTA 边界没修好。D1 = FAIL，按停止规则立即停止，D2/D3 未执行。**
+
+在现有 PP 应用 `c9cdea24` 上建立后继版本（未建分叉应用）：后继 Skill
+`packaging-content-for-release-m4-b1` 继承体逐字节等同 M4 源，新增 4 块 4055 字，零案例专用串；
+PP 只改 `skill_llm.system`，发布新版本 `2026-08-30 09:05:41.729617`，旧版本行保留；
+**provider 钉全程未动**，Seam / M5 FP / 统一画布整个验证期间走的仍是旧 PP。
+确定性验证 9/9（含两条单点变异区分）。
+
+D1（run `53b90396`，1 次调用，1 个 LLM 节点，零重试）：
+D1-a/b/d/e PASS，**D1-c FAIL**。十个历史行为探针命中 0 次——旧版「一直在用这套三问」类
+无来源人物历史已消失；但 `cta_surface` 逐字引用 `cta_contract` 后自检面只剩四项业务动作，
+`comment_design` 置顶自述「被追问的」，`author_share_line` 是句末指向受众的问题。
+「闭合」「权威顺序」「要求受众」在产出中各 0 次——新规则在推理里零痕迹。
+
+`confirmed_origin = SYSTEM_UNDER_TEST`，失效节点是**本轮修复的覆盖面不足**：
+PP-5「评论区是设计出来的」整节与 `author_share_line` 一节未被新规则约束（A3「少算」）。
+不是 PP 应用本身坏了，也不是判据、检查器或输入的问题。
+
+成本 1/3 顶层 run、1/10 LLM、零重试。`main` 未动，`origin/main` 仍 `01a42b0`。
+三项允许上调一项都未上调。
+
+一项待裁定：Founder §五 要求三项全 PASS 才发布后继版本，但 D1 必须调用到后继版本才能验证，
+排法只能是「先发布、后重钉」——该排法已在模型调用之前写进冻结 Gate。现状是 PP app 的已发布
+指针指向未通过验证的 b1，但**无任何消费者引用**。是否把该指针退回旧版本，需明确授权。
+
+详见 [`collab-ledger/tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md`](tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md)
+与 [`unified-app/docs/PPBS_FAILURE_TRIAGE_001_D1_CTA.md`](../unified-app/docs/PPBS_FAILURE_TRIAGE_001_D1_CTA.md)。
