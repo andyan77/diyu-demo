@@ -10,7 +10,7 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | CAP-01..04 PASS；CAP-05 FAIL；AC 2 PASS / 3 FAIL / 6 NOT_VERIFIED | 本包 8/22；LLM 44/130 | 修复节点 2/2 与额外槽 1/1 均耗尽 | Founder 收敛检查点 |
+| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | CAP-01..04 PASS/STALE；CAP-05 FAIL/CURRENT；AC 2 PASS / 3 FAIL / 6 NOT_VERIFIED | 本包 8/22；LLM 44/130 | 修复节点 2/2 与额外槽 1/1 均耗尽 | Founder 收敛检查点 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS；CAP-05 FAIL；其余 14 项 NOT_VERIFIED | 8/22；LLM 44/130 | 有界收敛上限 | 停止正式调用 |
+| N3 正式验收 | IN_PROGRESS | CAP-01..04 PASS/STALE；CAP-05 FAIL/CURRENT；其余 14 项 NOT_VERIFIED | 8/22；LLM 44/130 | 有界收敛上限 | 停止正式调用 |
 | N4 有界修复 | COMPLETED | FAIL / CURRENT；修复节点 2/2、额外槽 1/1 已用 | 1 个定向复验 | 无第三修复授权 | 收敛证据包 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -127,12 +127,20 @@ LLM 6，失败节点 0，平台重放 0。
 - 停止原因：SUT 修复节点 `2/2`、post-result Checker rebase `1/1`、额外正式槽 `1/1`
   均已用完；继续必须建立第三个修复节点，超出授权。其余 14 个输入不再运行。
 
+### 当前图证据时效纠正
+
+- CAP-01～04 原 RAW 均显示空状态、空 correction delta，并真实经过修复 2 改动的分支。
+- 四项历史 PASS 原样保留，但相对当前 UAPP 图必须标记 `STALE`，不能继续写 CURRENT。
+- 当前图正式 PASS 场景为 `0/19`；历史 PASS/STALE 为 `4`；CAP-05 为 `FAIL / CURRENT`。
+- 本纠正由零模型影响面重算产生，不增加 Attempt，也不恢复任何运行额度。
+
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 resumed under budget REBASE 001
 current_node: N3 / F2
 active_package_top_level_runs: 8 / 22
 active_package_deepseek_llm_attempts: 44 / 130
-valid_formal_scenarios: 4 / 19
+current_formal_pass_scenarios: 0 / 19
+historical_pass_stale_scenarios: 4
 remaining_frozen_scenarios: 14 (not run after bounded convergence limit)
 ac_pass: 2 / 11
 current_scenario: UAPP-CAP-05 directed reverification failed and preserved

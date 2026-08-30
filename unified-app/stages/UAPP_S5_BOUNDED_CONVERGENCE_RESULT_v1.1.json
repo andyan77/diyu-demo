@@ -1,0 +1,69 @@
+{
+  "document": {
+    "id": "UAPP_S5_BOUNDED_CONVERGENCE_RESULT_v1.1",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "parent": "UAPP_S5_BOUNDED_CONVERGENCE_RESULT_v1.0",
+    "parent_sha256": "51d5bd72e255981311e664575470aaba57bb0eb1a1d95140eac2ada0cd5310a8",
+    "result": "FAIL",
+    "freshness": "CURRENT",
+    "stop_reason": "BOUNDED_SUT_REPAIR_LIMIT_REACHED",
+    "projection_correction": "CAP01_TO_04_STALE_AFTER_REPAIR_2_REACHABLE_BRANCH_CHANGE"
+  },
+  "gate": {
+    "id": "UAPP_S5_GATE_v1.6",
+    "sha256": "0a9120d07794b2f17f65ef811da8af89477462aa31f846cc987fa92cf862cf82"
+  },
+  "candidate": {
+    "UAPP_graph_md5": "16e10d84dcdf1deb4608d95fe30fb654",
+    "UAPP_graph_canonical_sha256": "1747957df30b87b3670f9e59e3546c9e363fcb33b247ed61d1855b6ed05f1d28"
+  },
+  "formal_scenario_projection": {
+    "UAPP-CAP-01": "PASS / STALE",
+    "UAPP-CAP-02": "PASS / STALE",
+    "UAPP-CAP-03": "PASS / STALE",
+    "UAPP-CAP-04": "PASS / STALE",
+    "UAPP-CAP-05": "FAIL / CURRENT",
+    "remaining_14": "NOT_VERIFIED(NOT_RUN)"
+  },
+  "current_formal_pass_count": 0,
+  "historical_pass_stale_count": 4,
+  "ac_matrix": {
+    "UAPP-AC-01": "PASS / CURRENT",
+    "UAPP-AC-02": "PASS / CURRENT",
+    "UAPP-AC-03": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-04": "FAIL / CURRENT",
+    "UAPP-AC-05": "FAIL / CURRENT",
+    "UAPP-AC-06": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-07": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-08": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-09": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-10": "FAIL / CURRENT",
+    "UAPP-AC-11": "NOT_VERIFIED(INCOMPLETE_FORMAL_SET)"
+  },
+  "cost": {
+    "top_level_runs": 8,
+    "top_level_runs_max": 22,
+    "llm_node_attempts": 44,
+    "llm_node_attempts_max": 130,
+    "sut_repair_nodes_used": "2/2",
+    "post_result_checker_rebases_used": "1/1",
+    "extra_formal_run_slots_used": "1/1",
+    "retries_replays_sampling_ab_reviewer": 0
+  },
+  "protected_surface": {
+    "active_workflows": 0,
+    "non_test_publish_instances": 1568,
+    "non_test_feedback_records": 117,
+    "m2_schema_md5": "25192c11562827efedfc3b2c22c3b4fd",
+    "real_publish": 0,
+    "main_changed": false
+  },
+  "state": {
+    "F2": "IN_PROGRESS / FAIL / CURRENT",
+    "F3": "NOT_AUTHORIZED / NOT_VERIFIED",
+    "founder_ac_12": "NOT_AUTHORIZED / NOT_VERIFIED",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset",
+    "next_state": "FOUNDER_CHECKPOINT_AFTER_BOUNDED_CONVERGENCE_LIMIT"
+  }
+}
