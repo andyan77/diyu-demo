@@ -1,0 +1,315 @@
+{
+ "document": {
+  "id": "PPBS_B2_PHASE_C_CHECKS_v1.0",
+  "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
+  "task_mode": "REBASE",
+  "criteria_ref": "unified-app/stages/PPBS_GATE_v2.0.json",
+  "criteria_sha256": "c172d9450568bef6396b0afbfadba396d1c1648a1b991d33c665f2b491619ac8",
+  "b2_skill_sha256": "2b15b7858bddb6cf2d31201512c883b9f64aa2d34cac6255f1272aa61f033b0c",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "workflow_runs_started": 0
+ },
+ "summary": {
+  "pass": 14,
+  "total": 14,
+  "verdict": "PASS"
+ },
+ "checks": [
+  {
+   "id": "C-01",
+   "text": "后继 b2 Skill 源码与 PP 已发布实际 system prompt 字节可回指：线上 system == b2 SKILL.md + 与旧版逐字相同的固定注入尾",
+   "result": "PASS",
+   "observed": {
+    "live_len": 39743,
+    "b2_len": 39620,
+    "live_starts_with_b2": true,
+    "tail_sha256_live": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+    "tail_sha256_expected_verbatim_from_old_version": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+    "tail_len": 123,
+    "b2_sha256": "2b15b7858bddb6cf2d31201512c883b9f64aa2d34cac6255f1272aa61f033b0c"
+   }
+  },
+  {
+   "id": "C-02",
+   "text": "PP graph 除 skill_llm.system 之外无其它变化：节点集、边集、模型、参数、其余节点逐字节相同",
+   "result": "PASS",
+   "observed": {
+    "graph_identical_except_skill_llm_system": true,
+    "nodes_touched_at_apply": [
+     "skill_llm"
+    ],
+    "edges_unchanged": true,
+    "node_count": 15,
+    "edge_count": 15,
+    "llm_model_and_params_unchanged": true,
+    "llm_models_now": {
+     "skill_llm": {
+      "completion_params": {
+       "max_tokens": 384000,
+       "reasoning_effort": "low",
+       "thinking": true,
+       "top_p": 0.8
+      },
+      "mode": "chat",
+      "name": "deepseek-v4-flash",
+      "provider": "langgenius/deepseek/deepseek"
+     },
+     "recovery_llm": {
+      "completion_params": {
+       "max_tokens": 384000,
+       "reasoning_effort": "low",
+       "thinking": true,
+       "top_p": 0.8
+      },
+      "mode": "chat",
+      "name": "deepseek-v4-flash",
+      "provider": "langgenius/deepseek/deepseek"
+     }
+    },
+    "md5_before": "788c8555aca09e6fa6d979f237f70157",
+    "md5_after": "8366328bf827bd0f460455d750d45c4f"
+   }
+  },
+  {
+   "id": "C-03",
+   "text": "其余八个受保护应用 graph md5 零漂移；候选画布 md5 与 hop_pin 不变",
+   "result": "PASS",
+   "observed": {
+    "other_eight_drift": {},
+    "other_eight_now": {
+     "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+     "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+     "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+     "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+     "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+     "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+     "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+     "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+    },
+    "candidate_md5_now": "99c3edf7bd12172a4fb011b588f25e57",
+    "candidate_md5_frozen": "99c3edf7bd12172a4fb011b588f25e57",
+    "hop_pin_now": "2026-08-30 03:38:31.449618"
+   }
+  },
+  {
+   "id": "C-04A",
+   "text": "**本轮新增文本**（b2 相对 b1 的全部插入块 ＋ 本轮全部新增脚本）中不存在案例专用字符串：苏禾／SUHE／三问／序里集／XULI／D1 商品与品牌／D1 原句／针对本次夹具的关键词黑名单。零容忍。",
+   "result": "PASS",
+   "observed": {
+    "case_specific_hits_in_new_text": [],
+    "scanned": [
+     "b2_inserted_skill_text",
+     "script:PPBS_B2_APPLY_AND_PUBLISH_v1.0.py",
+     "script:PPBS_B2_BUILD_SUCCESSOR_SKILL_v1.0.py",
+     "script:PPBS_B2_PHASE_A_RESTORE_v1.0.py",
+     "script:PPBS_B2_PHASE_C_CHECKS_v1.0.py"
+    ],
+    "inserted_chars": 4470,
+    "ban_list_size": 23,
+    "excluded_self_definition": "本文件内的 CASE_STRINGS 禁止面常量表本身含这些串，它是判据定义不是实现分支，共 23 处，已单列不计入"
+   }
+  },
+  {
+   "id": "C-04B",
+   "text": "b2 的**继承体**逐字等同 b1 SKILL.md；b1 的「事实来源必须蕴含该主张」整节与「CTA 权威顺序」整节逐字在场，一处未删未改（事实来源修复不得回退）",
+   "result": "PASS",
+   "observed": {
+    "inherited_body_byte_identical_to_b1": true,
+    "b1_fact_section_verbatim_occurrences": 1,
+    "b1_fact_section_chars": 1211,
+    "b1_cta_section_verbatim_occurrences": 1,
+    "b1_cta_section_chars": 1149,
+    "BRF_SUHE_m4": 3,
+    "BRF_SUHE_b1": 3,
+    "BRF_SUHE_b2": 3,
+    "note": "事实来源修复不得回退：b1 两整块逐字在场，各 1 次"
+   }
+  },
+  {
+   "id": "C-05",
+   "text": "单点变异：删除「事实来源蕴含」规则后，事实控制在离线判定上失败",
+   "result": "PASS",
+   "observed": {
+    "baseline": true,
+    "after_removal": false,
+    "removed_chars": 1211,
+    "probes_lost": [
+     "## 事实来源必须蕴含该主张",
+     "回指必须是蕴含关系，不是相关关系",
+     "这条来源自己有没有说这件事发生过",
+     "任何限定语都不把无来源变成有来源",
+     "改为不主张真实历史的当前内容表达"
+    ],
+    "cta_control_unaffected": true
+   }
+  },
+  {
+   "id": "C-06",
+   "text": "单点变异：删除「cta_contract 原文优先」规则后，CTA 控制在离线判定上失败",
+   "result": "PASS",
+   "observed": {
+    "baseline": true,
+    "after_removal": false,
+    "removed_chars": 1149,
+    "probes_lost": [
+     "### CTA 权威顺序",
+     "cta_contract 的用户／上游自然语言原文",
+     "上游闭合表达一旦出现，整份包装闭合",
+     "不得用「低风险互动」放宽上游更严格的边界",
+     "同样不得自造豁免类目",
+     "内容内部的问题不是 CTA",
+     "本节不删除低风险互动能力"
+    ],
+    "fact_control_unaffected": true
+   }
+  },
+  {
+   "id": "C-07",
+   "text": "provider 与 Seam 在 D1/D2 之前仍指向旧版本 2026-08-29 03:34:58.999575",
+   "result": "PASS",
+   "observed": {
+    "pp_provider_pin_now": "2026-08-29 03:34:58.999575",
+    "must_stay": "2026-08-29 03:34:58.999575",
+    "seam_graph_md5_now": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+    "meaning": "Seam 与 M5 在 E1/E2 期间仍走旧稳定 PP，本次发布不改变它们看到的图"
+   }
+  },
+  {
+   "id": "C-08",
+   "text": "判据与输入哈希早于任何模型结果：Gate v2.0 与 Inputs 已提交，b2 model_calls_so_far=0",
+   "result": "PASS",
+   "observed": {
+    "gate_v2_0_commit": "76df362 DIYU-V1-PP-BOUNDARY-SUCCESSOR-001 · b2 Phase B/D：后继 Skill 与判据在任何模型结果之前冻结",
+    "gate_v2_0_sha256": "c172d9450568bef6396b0afbfadba396d1c1648a1b991d33c665f2b491619ac8",
+    "inputs_sha256": "f7a21d5d0fb03f90d027a9f272e50442e35ca80d25fcbbf0bbf0345b3dacfc67",
+    "inputs_reused_unchanged": true,
+    "b2_model_results_on_disk": [],
+    "b2_model_calls_so_far": 0
+   }
+  },
+  {
+   "id": "C-09",
+   "text": "正向控制：strict_cta_closed=true 分支已装载——状态判定式、九行对外输出面清单、『句末指向受众等一个回答的问句』三者同时在场",
+   "result": "PASS",
+   "observed": {
+    "probes": [
+     "strict_cta_closed = true",
+     "下面每一个对外输出面受同一条约束",
+     "以及：句末指向受众、等一个回答的任何问句",
+     "| 6 | `comment_design`（置顶首条、每一组预埋问答、每一条作者回复） |",
+     "| 7 | `author_share_line` |",
+     "| 9 | 用户交付块的每一句（**包括你对边界本身的那句说明**） |"
+    ],
+    "missing": [],
+    "surface_table_rows_found": 9
+   }
+  },
+  {
+   "id": "C-10",
+   "text": "负向控制：strict_cta_closed=false 分支未被全局删除——false 分支表述在场，且 CTA 三级表『低风险互动』行与 PP-5 原三条要求逐字保留",
+   "result": "PASS",
+   "observed": {
+    "false_branch_probes": [
+     "strict_cta_closed = false` 时，什么都不变",
+     "低风险互动能力**一条没删**",
+     "b2 只在 `true` 那一支收紧，另一支一个字都没动",
+     "= false` 时，本节**照常全部适用**，一条都不减",
+     "`false` 时，本节照常适用"
+    ],
+    "false_branch_missing": [],
+    "inherited_low_risk_capability_probes": [
+     "- **第一条自己写**，写一条**能被追问的**，不是\"感谢支持\"",
+     "- 预埋 2 个可能被问到的问题，先准备好答案",
+     "按目标与表达裁量即可提出",
+     "**可以做**：提一个能一句话回答的具体问题"
+    ],
+    "inherited_missing": [],
+    "meaning": "strict_cta_closed=false 时合法低风险互动能力未被全局删除：PP-5 原三条要求、CTA 三级表低风险行、无 CTA 评论区『可以做』清单全部逐字在场"
+   }
+  },
+  {
+   "id": "C-11",
+   "text": "单点变异：删除 comment_design（PP-5）条件化约束后，comment_design 控制转 FAIL，且 author_share_line 控制与全表面自检控制不受影响",
+   "result": "PASS",
+   "observed": {
+    "mutated_block": "PP5_COND",
+    "label": "comment_design 条件化",
+    "removed_chars": 454,
+    "baseline_three_controls": {
+     "comment": true,
+     "share": true,
+     "allsurface": true
+    },
+    "after_mutation_three_controls": {
+     "comment": false,
+     "share": true,
+     "allsurface": true
+    },
+    "target_control": "comment",
+    "target_flipped_PASS_to_FAIL": true,
+    "other_two_unaffected": true,
+    "probes_lost": [
+     "`strict_cta_closed = true` 时，本节下面三条要求**整体不适用**",
+     "不主动设计置顶互动问题",
+     "换一种措辞继续要求互动，等于没有执行这一条"
+    ]
+   }
+  },
+  {
+   "id": "C-12",
+   "text": "单点变异：删除 author_share_line 条件化约束后，author_share_line 控制转 FAIL，且另两项不受影响",
+   "result": "PASS",
+   "observed": {
+    "mutated_block": "SHARE_COND",
+    "label": "author_share_line 条件化",
+    "removed_chars": 247,
+    "baseline_three_controls": {
+     "comment": true,
+     "share": true,
+     "allsurface": true
+    },
+    "after_mutation_three_controls": {
+     "comment": true,
+     "share": false,
+     "allsurface": true
+    },
+    "target_control": "share",
+    "target_flipped_PASS_to_FAIL": true,
+    "other_two_unaffected": true,
+    "probes_lost": [
+     "`author_share_line` 只能是**陈述句**",
+     "句末指向受众、在等一个回答**，同样不成立"
+    ]
+   }
+  },
+  {
+   "id": "C-13",
+   "text": "单点变异：删除全表面自检约束（自检 17）后，全表面自检控制转 FAIL，且另两项不受影响",
+   "result": "PASS",
+   "observed": {
+    "mutated_block": "SELFCHECK17",
+    "label": "全表面自检",
+    "removed_chars": 563,
+    "baseline_three_controls": {
+     "comment": true,
+     "share": true,
+     "allsurface": true
+    },
+    "after_mutation_three_controls": {
+     "comment": true,
+     "share": true,
+     "allsurface": false
+    },
+    "target_control": "allsurface",
+    "target_flipped_PASS_to_FAIL": true,
+    "other_two_unaffected": true,
+    "probes_lost": [
+     "17. **（b2）**",
+     "把那张九行的对外输出面清单逐行走一遍",
+     "只扫了购买／到店／私信／领取这几类业务动作，**就是没扫完**"
+    ]
+   }
+  }
+ ]
+}
