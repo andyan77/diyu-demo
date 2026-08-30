@@ -1,0 +1,240 @@
+{
+ "document": {
+  "id": "UAAB_GATE_v1.1",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "task_mode": "REBASE",
+  "parent_task": "DIYU-V1-UAPP-PROGRESSIVE-CANVAS-001",
+  "related_task_read_only": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
+  "authority": "FOUNDER AUTHORIZATION · UAAB 三轮真实集成验证与最小收口",
+  "planning_observed_head": "405cc3d50afe769450cb1702a6ecdef509fcbb72",
+  "frozen_before_any_model_call": true,
+  "not_an_inplace_edit": "新建文件。不覆盖 PPBS_GATE_v2.0、D1/D2/D3 历史证据、旧 PP 版本、M5 历史回执。",
+  "rootcause_ref": {
+   "file": "unified-app/evidence/stages/uapp_artifact_binding/UAAB_PHASE_A_ROOTCAUSE.json",
+   "sha256": "64a1f3598a7625d900492f564bfb1906f15f24eb73da03d23c4dd04c8f6cc8a0",
+   "confirmed_origin": "SYSTEM_UNDER_TEST · 统一画布产物持久化接缝",
+   "highest_failing_node": "uapp_persist + uapp_save 单槽位无条件覆盖"
+  },
+  "controls_ref": {
+   "file": "unified-app/evidence/stages/uapp_artifact_binding/UAAB_PHASE_C_CONTROLS.json",
+   "sha256": "5062c9dd26ad24503ede30e84cfa04300685505e7b25c70966729826980d9c3b",
+   "verdict": "PASS 12/12"
+  },
+  "parent_gate_ref": {
+   "file": "unified-app/stages/UAAB_GATE_v1.0.json",
+   "sha256": "51219a56ef0bd96d74f5651ecf70fac8f9a53dc383b4ca5e106805e1ae0108c4"
+  },
+  "frozen_at": "2026-08-30T08:40:42-07:00",
+  "rebase_delta": [
+   "top_level_workflow_runs: 2 → 3",
+   "deepseek_llm_node_attempts_hard_cap: 12 → 18",
+   "E-08 明确按 T1/T2/T3 各目标回合分别判断",
+   "新增 E-11：T3 后 PD 与 PP 正文分格共存的真实收口检查"
+  ]
+ },
+ "candidate_uapp": {
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "published_graph_md5_frozen_baseline": "99c3edf7bd12172a4fb011b588f25e57",
+  "draft_graph_md5_with_fix": "1aba8d45b33a2b034d415ef715f108cc",
+  "published_untouched": "本轮只同步 draft，**未发布**。已发布图仍为 99c3edf7。",
+  "nodes": {
+   "before": 49,
+   "after": 50
+  },
+  "edges": {
+   "before": 51,
+   "after": 52
+  },
+  "nodes_touched": [
+   "uapp_persist",
+   "uapp_save",
+   "uapp_hop",
+   "uapp_pick_upstream(NEW)"
+  ],
+  "code_sha256": {
+   "uapp_persist": "19bb193fd956c444075e87cf638f22613942485084cf14dab2d2c605288182a6",
+   "uapp_pick_upstream": "a7d06d054a86b16a65aa078e7e692582c0e55f269c64fb232d4446bb94e3ce28"
+  },
+  "builder": "unified-app/workflows/UAAB_BUILD_BINDING_FIX_v1.0.py",
+  "conversation_variables_added": [],
+  "canonical_body_source": "conversation.uapp_last_artifact 由「上一跳正文」改为**产物存储**（按指纹分格的 JSON）。正文仍然只有一处，不产生平行副本。不新增会话变量：既有会话的 12 个变量与图里声明一一对应，新声明不会为既有会话补建行，取回会 fail-open。",
+  "selection_rules_frozen": [
+   "同 task；账本 accepted（或本轮用户原话构成接受事件，镜像 uapp_fields 第 4 节）；非 STALE",
+   "能力兼容：PUBLISHING_PACKAGING ← [PRODUCTION_DIRECTOR, CREATIVE_SCRIPT]；PRODUCTION_DIRECTOR ← [CREATIVE_SCRIPT]；CREATIVE_SCRIPT ← [CONTENT_BRIEF]",
+   "目标能力自身永不作为自己的上游（自上游禁令）",
+   "用户原话点名某能力时只认该能力，点名压过优先级",
+   "同一 task 内取最近一份；同一轮并列则 AMBIGUOUS，只问一个问题不自行选",
+   "正文必须可取回，且现场复算 fp（规范化前 256 字）与 bfp（规范化全文）都一致",
+   "任一条不成立 → fail-closed，输出空正文 + 一个精确问题；绝不用最近一次任意产物顶替",
+   "选择器不写账本；账本唯一写入者仍是 uapp_fields + uapp_state"
+  ]
+ },
+ "m2_not_used_as_body_source": {
+  "why": "M2 已有 artifacts / content_versions 表与完整 API，但两张表都只存 content_hash / content_ref，**没有正文列**；且本任务 artifacts=0、task_snapshots=0。要让 M2 充当正文真源必须改 schema —— 按 Prompt 第 6.3 节末段不自行扩大授权，故不走这条路。",
+  "artifacts_columns": "task_id,kind,content_hash,parent_artifact_id,id,created_at",
+  "content_versions_columns": "artifact_id,version_no,is_current,content_ref,content_hash,…"
+ },
+ "phase_c_controls": [
+  {
+   "id": "C-01",
+   "text": "已接受 PD + 后续未接受 PP → PP 再次调用时选择 PD，不选择 PP"
+  },
+  {
+   "id": "C-02",
+   "text": "PD body hash 与 ledger hash 一致 → 允许进入 content_body_or_beats"
+  },
+  {
+   "id": "C-03",
+   "text": "经过一个或多个中间能力轮次后 → 已接受 PD 仍可取回"
+  },
+  {
+   "id": "C-04",
+   "text": "用户明确说「基于刚才的制作方案」→ 解析到 PD artifact"
+  },
+  {
+   "id": "C-05",
+   "text": "PD accepted=false → 不得选择"
+  },
+  {
+   "id": "C-06",
+   "text": "PD stale=true → 不得选择"
+  },
+  {
+   "id": "C-07",
+   "text": "PD 属于其他 task/account → 不得选择"
+  },
+  {
+   "id": "C-08",
+   "text": "body hash 与 ledger 不一致 → fail-closed"
+  },
+  {
+   "id": "C-09",
+   "text": "只有未接受 PP artifact，没有合法 PD → 精确询问缺口，不自循环"
+  },
+  {
+   "id": "C-10",
+   "text": "两个候选无法唯一消歧 → 询问用户，不自行选择"
+  },
+  {
+   "id": "C-11",
+   "text": "删除 accepted / non-stale / same-task / compatible / body-hash 任一条件 → 对应负控制必须转 FAIL"
+  },
+  {
+   "id": "C-12",
+   "text": "保护面及无关节点零漂移"
+  }
+ ],
+ "phase_e_formal_criteria": [
+  {
+   "id": "E-01",
+   "text": "用户自然语言正确路由到 PP"
+  },
+  {
+   "id": "E-02",
+   "text": "被选择的是同 task、accepted、CURRENT、非 STALE 的 PD artifact"
+  },
+  {
+   "id": "E-03",
+   "text": "PP 输入正文 hash == 该 PD artifact 正文 hash"
+  },
+  {
+   "id": "E-04",
+   "text": "未接受 PP artifact 没有被当成上游"
+  },
+  {
+   "id": "E-05",
+   "text": "PP b2 产生非空、非占位包装成品"
+  },
+  {
+   "id": "E-06",
+   "text": "包装成品满足既有 D1-b 事实边界"
+  },
+  {
+   "id": "E-07",
+   "text": "包装成品满足既有 D1-c CTA 边界"
+  },
+  {
+   "id": "E-08",
+   "text": "其他五能力零暗跑（按每个目标回合分别判断：T1 只允许 CREATIVE_SCRIPT；T2 只允许 PRODUCTION_DIRECTOR；T3 只允许 PUBLISHING_PACKAGING。T1/T2 的预期能力运行不得被误判成 T3 的暗跑。）"
+  },
+  {
+   "id": "E-09",
+   "text": "UAPP → Seam → PP b2 全链可从真实 node execution 回指"
+  },
+  {
+   "id": "E-10",
+   "text": "没有跨 task、跨账号或错误 artifact 绑定"
+  },
+  {
+   "id": "E-11",
+   "text": "T3 完成后，conversation.uapp_last_artifact 的有界存储中必须同时满足：T2 的 PD 记录仍然存在；task 相同；capability = PRODUCTION_DIRECTOR；accepted = true；stale = false；正文非空；现场复算正文 hash 与 T2 PD artifact 完全一致；T3 的 PP 记录单独存在且尚未被接受；PP 记录不得覆盖、改写或删除 PD 正文。E-11 只读取真实会话变量和运行证据，不增加第四个模型回合。"
+  }
+ ],
+ "scenario_selection": {
+  "chosen": "B · 建立最短新鲜自然语言链",
+  "why_not_A": "历史已接受 PD 正文**没有任何合法可取回真源**：会话唯一正文槽位被 T7 的 PP 产物覆盖；M2 不存正文且本任务 0 行；候选画布全部会话的 uapp_last_capability 中**没有一个是 PRODUCTION_DIRECTOR**（逐会话枚举过）。从 Dify 执行日志取回并写入会话变量属直接写库，FORBIDDEN。",
+  "site_finding_that_breaks_the_2_turn_assumption": {
+   "fact": "PRODUCTION_DIRECTOR 的 envelope_check REQUIRED 含 script_or_equivalent_beats（artifact 槽位）；CONTENT_BRIEF 与 CREATIVE_SCRIPT 的 REQUIRED **只有字段、无 artifact 槽位**。",
+   "state": "本会话账本 rev=8：CONTENT_BRIEF@t2 STALE、CREATIVE_SCRIPT@t4 STALE（stale_reason=FIELD_CHANGED:facts.registered，D3 那轮上传夹具触发的更正）、PRODUCTION_DIRECTOR@t6 accepted 且非 STALE 但正文已丢、PUBLISHING_PACKAGING@t7 未接受且 STALE。",
+   "consequence": "没有非 STALE 的已接受 CS，PD 就拿不到 script_or_equivalent_beats，一轮产不出 PD artifact。因此最短链是 **3 个顶层回合**，不是 2：",
+   "minimum_chain": [
+    {
+     "turn": 1,
+     "target": "CREATIVE_SCRIPT",
+     "query": "这条的口播稿再给我一版。",
+     "why": "CS 无 artifact 槽位依赖，账本里它的 6 个必填字段全部已确认，可一轮产出"
+    },
+    {
+     "turn": 2,
+     "target": "PRODUCTION_DIRECTOR",
+     "query": "这版口播稿可以，基于它告诉我这条该怎么制作。",
+     "why": "同一句既是对 CS 的接受事件，又是 PD 请求；PD 由此拿到非 STALE 的已接受 CS"
+    },
+    {
+     "turn": 3,
+     "target": "PUBLISHING_PACKAGING",
+     "query": "刚才那份制作方案可以，基于它给这条出标题和封面。",
+     "why": "同一句既是对 PD 的接受事件，又是 PP 请求；E-01…E-10 在这一轮判定"
+    }
+   ],
+   "frozen_run_conditions": {
+    "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+    "end_user": "s4ct-20260830001839",
+    "inputs": "{}（空），不注入任何内部 envelope",
+    "upload_fixture": "否。再次上传会再次触发 facts.registered 更正，从而把本轮新产出的 CS 在下一轮置 STALE，破坏链路；facts.registered 已在账本中确认（lvl E），由 uapp_fields 携带进外壳。"
+   },
+   "budget_rebase_resolution": "Founder 已版本化批准顶层回合预算 2 → 3、DeepSeek 节点尝试硬上限 12 → 18；仍保持 retries=0、repeat_sampling=0、ab_tests=0、reviewer_calls=0。"
+  }
+ },
+ "budget": {
+  "top_level_workflow_runs": 3,
+  "deepseek_llm_node_attempts_hard_cap": 18,
+  "retries": 0,
+  "repeat_sampling": 0,
+  "ab_tests": 0,
+  "reviewer_calls": 0,
+  "note": "纯上传与确定性 preflight 不计模型调用，且不得借 preflight 发起对话；三句冻结输入各只运行一次，不得重试、重复采样或追加第四轮。"
+ },
+ "auto_revert_on_non_pass": {
+  "candidate_canvas": "发布指针恢复 99c3edf7bd12172a4fb011b588f25e57",
+  "pp_published": "恢复旧稳定图 788c8555aca09e6fa6d979f237f70157",
+  "pp_provider": "恢复旧稳定图",
+  "b1_b2_rows": "原样保留",
+  "authorized_without_re_asking": true
+ },
+ "allowed_upgrades_if_all_pass": {
+  "UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING": "PASS / CURRENT",
+  "D3_SUCCESSOR": "PASS / CURRENT",
+  "PP_BOUNDARY_SUCCESSOR_b2": "PASS / CURRENT",
+  "V-08B_FACT_TRACEABILITY": "PASS / CURRENT",
+  "V-08C_CTA_FIDELITY": "PASS / CURRENT"
+ },
+ "must_remain_regardless": {
+  "CROSS_TURN_CORRECTION_PROPAGATION": "NOT_VERIFIED(NOT_CHECKED)",
+  "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+  "S5": "NOT_STARTED",
+  "main_merge": "NOT_ALLOWED",
+  "terminal_state": "unset",
+  "why": "「已接受产物取回」不等于「用户纠正后依赖产物失效传播」已经验证。"
+ }
+}
