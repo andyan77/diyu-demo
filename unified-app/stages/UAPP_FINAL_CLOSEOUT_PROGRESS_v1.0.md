@@ -33,8 +33,9 @@ Seam 与 MATRIX 不修改。
 
 修复候选已发布：UAPP graph md5 `02610a77c3ce86f46f7a80de6d47ac2e`，
 canonical sha256 `726b1d196717bb4e68b43fe9e6a3b9b85734a5db4611cf4d10bac19ee213dad5`。
-发布后只读控制 `10/10 PASS`；Gate v1.2 sha256
-`dcdba123ce4b3ef3697fce7749270a053e29473bb89daa31acb457cd8b4ff147`。
+发布后只读控制 `10/10 PASS`。Gate v1.2 的预检在零调用时发现旧 Runner 所需的
+总预算别名缺失，已保留原 Gate 并版本化为 Gate v1.3；当前 Gate v1.3 sha256
+`a5e5170092267cfc101e91c003058af1850623a8fca73dbef491c8c5420b5dd5`。
 发布标签首次因长度限制被 Dify 在发布前拒绝，已按工具失败留证；该次没有模型调用、
 workflow run、数据写入或发布图变化。
 
