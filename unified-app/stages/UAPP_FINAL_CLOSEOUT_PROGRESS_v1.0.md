@@ -5,7 +5,7 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | IN_PROGRESS | G1 PASS；G2 FAIL，已确认同范围 successor | 2/2 | 7/90 | G2 重复追问已给承诺 | 零模型 successor 修复 |
+| C2 G1/G2 | IN_PROGRESS | 首候选 G1 PASS/G2 FAIL；successor 8/8 + Checker 5/5 PASS | 2/4 | 7/90 | NONE | 发布 successor |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
@@ -28,6 +28,9 @@
 - G2 run `217fee1f-b6f1-4c1d-b189-f6c510564e31`：同会话、CONTENT_BRIEF 唯一运行、Seam
   执行均成立，但重复询问 G2 已表达的 content promise，正式 FAIL；LLM `5`。Checker 同时把
   “必须立即生成 artifact”额外写成硬门，已分别归因。原 RAW/FAIL 保留，启动授权内唯一 successor。
+- successor 只改 UAPP `uapp_fields`：把本轮用户明确的“看完/读完/听完后知道、明白、理解、
+  学会或获得”的原值，在逐字支持时同时登记为 content promise；表达主体仍独立缺失，不代填。
+  实现正负控制 `8/8 PASS`，Checker 判别控制 `5/5 PASS`，模型调用保持 `7`。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

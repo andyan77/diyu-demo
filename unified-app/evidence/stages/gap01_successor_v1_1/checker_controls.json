@@ -1,0 +1,73 @@
+{
+  "document": {
+    "id": "GAP01_CHECKER_CONTROLS_v1.1",
+    "model_calls": 0
+  },
+  "checks": [
+    {
+      "id": "positive-new-subject-gap",
+      "result": "PASS",
+      "expected": true,
+      "actual": true,
+      "detail": {
+        "component_return": true,
+        "one_precise_question": true,
+        "does_not_repeat_promise": true,
+        "does_not_repeat_g1": true
+      }
+    },
+    {
+      "id": "negative-repeated-promise",
+      "result": "PASS",
+      "expected": false,
+      "actual": false,
+      "detail": {
+        "component_return": true,
+        "one_precise_question": true,
+        "does_not_repeat_promise": false,
+        "does_not_repeat_g1": true
+      }
+    },
+    {
+      "id": "negative-repeated-route",
+      "result": "PASS",
+      "expected": false,
+      "actual": false,
+      "detail": {
+        "component_return": true,
+        "one_precise_question": true,
+        "does_not_repeat_promise": true,
+        "does_not_repeat_g1": false
+      }
+    },
+    {
+      "id": "negative-two-questions",
+      "result": "PASS",
+      "expected": false,
+      "actual": false,
+      "detail": {
+        "component_return": true,
+        "one_precise_question": false,
+        "does_not_repeat_promise": true,
+        "does_not_repeat_g1": true
+      }
+    },
+    {
+      "id": "negative-no-component-return",
+      "result": "PASS",
+      "expected": false,
+      "actual": false,
+      "detail": {
+        "component_return": false,
+        "one_precise_question": true,
+        "does_not_repeat_promise": true,
+        "does_not_repeat_g1": true
+      }
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "total": 5,
+    "verdict": "PASS"
+  }
+}
