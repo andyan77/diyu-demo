@@ -1,0 +1,90 @@
+{
+  "document": {
+    "id": "UAPP_S5_SUCCESSOR_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "successor_attempt": "UAPP-S5-F2-SUCCESSOR-001",
+    "result_scope": "F2 successor stopped at first confirmed SYSTEM_UNDER_TEST hard failure"
+  },
+  "gate_sha256": "d27254ff95ba47d4cd056c3697d658e463956382faa5cdbec0d07b187e3b358a",
+  "successor_manifest_sha256": "6ff3b16fe0eee9456d807c27aad0675f446722d264feba43832557b3b1ccec58",
+  "successor_slot_sha256": "6d5e5efdae4726f2ad6f6f331f1e97ce31f4d48f55e45681b296bbec9f4197a5",
+  "previous_invalid_attempt": {
+    "workflow_run_id": "b1f4485d-f921-4aac-a202-b3727f51f87e",
+    "status": "INVALID_FOR_ACCEPTANCE",
+    "confirmed_origin": "INPUT_ENVIRONMENT_OR_TOOL",
+    "top_level_runs": 1,
+    "llm_attempts": 7
+  },
+  "successor_turns": [
+    {"key": "UAPP-CAP-01", "workflow_run_id": "0aab0adc-9649-488b-9680-7d33f806818d", "result": "PASS", "llm_attempts": 5, "platform_internal_replays": 0},
+    {"key": "UAPP-CAP-02", "workflow_run_id": "85281051-b911-4198-823b-9c6603b45d6d", "result": "PASS", "llm_attempts": 5, "platform_internal_replays": 0},
+    {"key": "UAPP-CAP-03", "workflow_run_id": "67cd4c01-987c-4486-8898-fe37c18dc6e5", "result": "PASS", "llm_attempts": 5, "platform_internal_replays": 0},
+    {"key": "UAPP-CAP-04", "workflow_run_id": "d3049f19-3da2-47c5-82d6-4cd4ab7acc6d", "result": "PASS", "llm_attempts": 5, "platform_internal_replays": 0},
+    {"key": "UAPP-CAP-05", "workflow_run_id": "d68493e9-f832-4b67-8bd5-36cd4541c273", "result": "FAIL", "llm_attempts": 5, "platform_internal_replays": 0, "failed_check": "CAP-02", "confirmed_origin": "SYSTEM_UNDER_TEST"}
+  ],
+  "failure": {
+    "turn": "UAPP-CAP-05",
+    "route_target": "PRODUCTION_DIRECTOR",
+    "seam_runs": 0,
+    "production_director_runs": 0,
+    "other_five_capability_runs": 0,
+    "upstream_binding_status": "REJECTED",
+    "upstream_reason": "SELECTOR_NOT_SELECTED",
+    "raw_sha256": "886eb9bc0d361b715dd5461b48fa9a3ef1cb859b06f2e4f4bbd474ed3ec0a91a",
+    "checker_sha256": "9b52ad4332f31b823de31d830fc257f986acd5d03756cbdab2b48caac05c0d1a"
+  },
+  "stopped_before": [
+    "UAPP-CAP-06", "UAPP-GAP-01:G1", "UAPP-GAP-01:G2",
+    "UAPP-EQUIV-01a", "UAPP-EQUIV-01b", "UAPP-EQUIV-01c", "UAPP-EQUIV-01n",
+    "UAPP-WITHDRAW-01:W0", "UAPP-WITHDRAW-01:W1",
+    "UAPP-FULL-01:T1", "UAPP-FULL-01:T2", "UAPP-FULL-01:T3", "UAPP-FULL-01:T4",
+    "UAPP-RECOVERY-01:R1"
+  ],
+  "acceptance": {
+    "UAPP-AC-01": "NOT_VERIFIED(INSUFFICIENT:5/19)",
+    "UAPP-AC-02": "NOT_VERIFIED(INSUFFICIENT:5/19)",
+    "UAPP-AC-03": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-04": "FAIL / CURRENT",
+    "UAPP-AC-05": "FAIL / CURRENT",
+    "UAPP-AC-06": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-07": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-08": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-09": "NOT_VERIFIED(NOT_CHECKED)",
+    "UAPP-AC-10": "NOT_VERIFIED(INSUFFICIENT:5/19)",
+    "UAPP-AC-11": "NOT_VERIFIED(INSUFFICIENT:5/19)"
+  },
+  "cost": {
+    "successor_top_level_runs": 5,
+    "successor_deepseek_llm_attempts": 25,
+    "lifetime_top_level_runs": 6,
+    "lifetime_deepseek_llm_attempts": 32,
+    "failed_llm_nodes": 0,
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "side_effects": {
+    "successor_test_workspaces": 5,
+    "successor_test_cycles": 5,
+    "successor_test_tasks": 5,
+    "artifacts": 0,
+    "content_versions": 0,
+    "publish_instances": 0,
+    "feedback_records": 0,
+    "real_publish": 0,
+    "non_test_data_change": 0,
+    "schema_change": 0,
+    "protected_graph_drift": 0
+  },
+  "status": {
+    "F2": "IN_PROGRESS / FAIL / CURRENT",
+    "S5_TECHNICAL_ACCEPTANCE": "FAIL / CURRENT",
+    "F3": "NOT_AUTHORIZED",
+    "UAPP_AC_12": "NOT_VERIFIED(NOT_AUTHORIZED)",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset",
+    "next_state": "CHECKPOINT"
+  }
+}

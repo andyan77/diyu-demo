@@ -973,3 +973,25 @@ Founder 已明确授权在完全相同的候选、19 项输入、Gate、Runner�
 零模型激活核验：Git/远端一致、工作区起始 clean、冻结哈希一致、全部图一致、活动 workflow 0；Dify API 200，API/DB healthy、worker 运行，DeepSeek TLS 端点 401（网络与 TLS 可达，未调用模型）；旧 workspace/cycle/task 各保留 1 行。后继使用全新 `uapp-s5-succ-v1-*` 身份和会话，证据写入独立 namespace；原 Runner/Checker 文件不改，适配层仅重定向证据路径和首次测试身份。
 
 后继预算 19/114，内部重放允许 0；生命周期上限 20/121。模型调用前先提交并推送 Successor Manifest/Slot。
+
+## ATT-UAPP-S5-F2-SUCCESSOR-RESULT-001 · CAP-05 首个系统硬门失败
+
+唯一后继槽位依冻结顺序运行 CAP-01…05；CAP-01…04 各自的冻结子检查均 PASS。CAP-05 顶层 run `d68493e9-f832-4b67-8bd5-36cd4541c273` 返回 HTTP 200，路由正确命中 Production Director，其他五能力零暗跑；但调用前上游闸门因无合法 `script_or_equivalent_beats` 拒绝，Seam 与 Production Director 均运行 0 次。冻结 Checker `CAP-02=FAIL`，独立归因 `SYSTEM_UNDER_TEST`。
+
+后继累计顶层 run 5/19，DeepSeek LLM 尝试 25/114，节点失败 0，人工重试 0，平台内部重放 0；任务生命周期累计 6/20 和 32/121。CAP-06 及后续 14 个输入未运行。本轮没有 artifact、content version、publish instance 或 feedback record，也没有真实发布、非测试数据、schema、图或 main 变化。
+
+```yaml
+UAPP-AC-04: FAIL / CURRENT
+UAPP-AC-05: FAIL / CURRENT
+other_UAPP_AC_01_03_06_11: NOT_VERIFIED
+F2: IN_PROGRESS / FAIL / CURRENT
+S5_TECHNICAL_ACCEPTANCE: FAIL / CURRENT
+F3: NOT_AUTHORIZED
+UAPP-AC-12: NOT_VERIFIED(NOT_AUTHORIZED)
+main_merge: NOT_ALLOWED
+terminal_state: unset
+next_state: CHECKPOINT
+unique_next_action: Founder 裁决是否版本化授权 CAP-05 短入口与已接受上游绑定规则的最小后继修复
+```
+
+原环境失败 run `b1f4485d…` 仍为 `INVALID_FOR_ACCEPTANCE`，未删除、未改判。本次不修改被测实现、Gate、输入、Runner 或 Checker，不重跑，不建立第三个槽位，不进入 Prompt 2/3、Founder AC-12 或 main merge。

@@ -10,23 +10,23 @@
 |---|---|---|---:|---:|---|---|
 | F0 S4 | COMPLETED | PASS / CURRENT | 8/8 | 已完成 | NONE | S5 |
 | F1 S5 冻结 | COMPLETED | PASS / CURRENT | 10/10 | 0 | NONE | F2 |
-| F2 S5 验收 | IN_PROGRESS | NOT_VERIFIED | AC 0/11 | 后继 0/19、0/114；生命周期 1/20、7/121 | NONE | 提交并推送后继槽位后运行 CAP-01 |
+| F2 S5 验收 | IN_PROGRESS | FAIL / CURRENT | AC 0/11 | 后继 5/19、25/114；生命周期 6/20、32/121 | CAP-05 目标能力未真实运行 | CHECKPOINT；等 Founder 裁决 |
 | F3 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F2 | 等待 |
 | F4 最终包 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F3 | 等待 |
 | F5 main/终态 | NOT_AUTHORIZED | NOT_VERIFIED | 0/1 | 0 | F4 | 等待 |
 
 ```yaml
-final_closeout_progress: F0 and F1 completed; F2 in progress
+final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
 current_node: F2
-successor_top_level_runs: 0 / 19
-successor_deepseek_llm_attempts: 0 / 114
-lifetime_top_level_runs: 1 / 20
-lifetime_deepseek_llm_attempts: 7 / 121
+successor_top_level_runs: 5 / 19
+successor_deepseek_llm_attempts: 25 / 114
+lifetime_top_level_runs: 6 / 20
+lifetime_deepseek_llm_attempts: 32 / 121
 remaining_authorized_nodes: 1 (F2)
 ac_pass: 0 / 11
-current_scenario: UAPP-CAP-01 successor
-current_blocker: NONE
-next_action: 提交并非 force push 后继槽位冻结件，然后运行后继 CAP-01 一次
+current_scenario: UAPP-CAP-05 successor stopped
+current_blocker: CAP-05 routed to PRODUCTION_DIRECTOR but the pre-call upstream gate rejected the branch; Seam and PRODUCTION_DIRECTOR both ran 0 times
+next_action: Founder 裁决是否版本化授权 CAP-05 短入口与已接受上游绑定规则的最小后继修复
 ```
 
 ## 激活现场
@@ -50,3 +50,10 @@ next_action: 提交并非 force push 后继槽位冻结件，然后运行后继 
 - 上一行提到的 `CAP-01/CAP-02/CAP-03` 是单个 `UAPP-CAP-01` 场景内的三个 Checker 子检查，不代表三个场景已运行；实际旧槽位仅运行了 `UAPP-CAP-01`。
 - Founder 已授权唯一后继槽位 `UAPP-S5-F2-SUCCESSOR-001`；旧 Attempt 继续登记为 `INVALID_FOR_ACCEPTANCE`，没有删除或改判。
 - 后继 Manifest sha256 `6ff3b16fe0eee9456d807c27aad0675f446722d264feba43832557b3b1ccec58`；Slot sha256 `6d5e5efdae4726f2ad6f6f331f1e97ce31f4d48f55e45681b296bbec9f4197a5`；冻结后继 CAP-01 预检 PASS。
+- 后继 CAP-01 run `0aab0adc-9649-488b-9680-7d33f806818d`：5 个 LLM attempt、0 失败、0 平台内部重放；全部内部子检查 PASS。
+- 后继 CAP-02 run `85281051-b911-4198-823b-9c6603b45d6d`：5 个 LLM attempt、0 失败、0 平台内部重放；全部内部子检查 PASS。
+- 后继 CAP-03 run `67cd4c01-987c-4486-8898-fe37c18dc6e5`：5 个 LLM attempt、0 失败、0 平台内部重放；全部内部子检查 PASS。
+- 后继 CAP-04 run `d3049f19-3da2-47c5-82d6-4cd4ab7acc6d`：5 个 LLM attempt、0 失败、0 平台内部重放；全部内部子检查 PASS。
+- 后继 CAP-05 run `d68493e9-f832-4b67-8bd5-36cd4541c273`：HTTP 200，5 个 LLM attempt、0 节点失败、0 重试、0 平台内部重放；自然语言路由正确命中 `PRODUCTION_DIRECTOR`，其他五能力零暗跑，但调用前上游闸门因无合法 `script_or_equivalent_beats` 拒绝，Seam 与 Production Director 均运行 0 次。冻结 Checker `CAP-02=FAIL`，确认归因 `SYSTEM_UNDER_TEST`；CAP-06 及后续 14 个场景均未运行。
+- FAILURE TRIAGE sha256 `846edd196e2d6bab7d7b5144b9de1638c36d4ed4e4e0df01e7c9e8b258904fb7`；Successor Result sha256 `d1fdbc9626121f4b4a256ba693e5ef60da558b7d96a7c6b5835c606c990cb3e1`；AC Matrix sha256 `ab4398af607f9ca7827194b774ad1f82d24f3cd441573d8e6ca9f67abce6eb37`。
+- 当前技术债主表升级为 v1.8：TD-UAPP-25 由无传输失败/内部重放的后继证据关闭；新增 TD-UAPP-26 记录 CAP-05 短入口与上游绑定闸门冲突。
