@@ -1,0 +1,102 @@
+{
+ "document": {
+  "id": "UAAB_REBASE_PREFLIGHT_v1.1",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "task_mode": "REBASE",
+  "observed_at": "2026-08-30T08:43:33-07:00",
+  "gate_ref": {
+   "file": "unified-app/stages/UAAB_GATE_v1.1.json",
+   "sha256": "069a5af02cfcd173e024c4cfd66c38f74005c1c6d26afdf8e7b19ba81d74d6a6",
+   "commit": "ee679e4d4623e0b98cac2e7190e2a5bf80bf1fc4"
+  },
+  "model_calls": 0,
+  "dify_writes": 0
+ },
+ "repository": {
+  "branch": "codex/v1-uapp-progressive-canvas-001",
+  "head": "ee679e4d4623e0b98cac2e7190e2a5bf80bf1fc4",
+  "origin_branch_before_gate_commit": "cd7462ec4284ea3c0dde81fc88058581ebbbfb1e",
+  "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+  "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+  "worktree_clean_before_gate_creation": true
+ },
+ "candidate_identity": {
+  "uapp_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "uapp_published_graph_md5": "99c3edf7bd12172a4fb011b588f25e57",
+  "uapp_draft_graph_md5": "1aba8d45b33a2b034d415ef715f108cc",
+  "uapp_draft_nodes": 50,
+  "uapp_draft_edges": 52,
+  "draft_delta_nodes": ["uapp_hop", "uapp_persist", "uapp_pick_upstream(NEW)", "uapp_save"],
+  "draft_delta_exact": true,
+  "pp_app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+  "pp_published_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "pp_provider_pinned_graph_md5": "788c8555aca09e6fa6d979f237f70157",
+  "seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+  "hop_graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+  "active_workflow_runs": 0,
+  "uapp_runs_since_gate_freeze": 0
+ },
+ "deterministic_controls": {
+  "script": "unified-app/workflows/UAAB_PHASE_C_CONTROLS_v1.0.py",
+  "result": "PASS",
+  "pass": 12,
+  "total": 12,
+  "recomputed_evidence_sha256": "5062c9dd26ad24503ede30e84cfa04300685505e7b25c70966729826980d9c3b",
+  "builder_sha256": "3b56256c7e0e847a1fff58f96e8895230f1c0f29e177f98da30fcfd06e48303e",
+  "protected_nodes_equal_to_published": {
+   "uapp_fields": true,
+   "uapp_state": true,
+   "uapp_seam": true,
+   "uapp_m3": true,
+   "uapp_route": true,
+   "uapp_delivery": true,
+   "m1_compiler": true
+  },
+  "other_eight_application_drift": {},
+  "hop_provider_pin": "2026-08-30 03:38:31.449618"
+ },
+ "m2_protected_state": {
+  "task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+  "artifacts_rows": 0,
+  "task_snapshots_rows": 0,
+  "artifacts_columns": "task_id,kind,content_hash,parent_artifact_id,id,created_at",
+  "content_versions_columns": "artifact_id,version_no,is_current,content_ref,content_hash,produced_by,promoted_by,promoted_at,superseded_at,was_selected,was_produced,id,created_at,row_version,invalidated_at,invalidation_reason,idempotency_key",
+  "schema_or_data_modified_by_this_rebase": false
+ },
+ "three_turn_minimum_reverified": {
+  "uapp_fields_code_sha256": "d8d9d1c3ce8dea98ba68635876706897ae8933d0ff00dc520546ffa241cc3518",
+  "artifact_slots_exact": ["script_or_equivalent_beats", "content_body_or_beats"],
+  "artifact_slots_excluded_from_plain_field_carrier": true,
+  "production_director_compatible_upstream": ["CREATIVE_SCRIPT"],
+  "creative_script_compatible_upstream": ["CONTENT_BRIEF"],
+  "current_conversation": {
+   "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+   "end_user": "s4ct-20260830001839",
+   "task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+   "ledger_rev": 8,
+   "content_brief": {"accepted": true, "stale": true, "body_retrievable": false},
+   "creative_script": {"accepted": true, "stale": true, "body_retrievable": false},
+   "production_director": {"accepted": true, "stale": false, "body_retrievable": false},
+   "slot_declared_capability": "PUBLISHING_PACKAGING",
+   "slot_body_length": 14984
+  },
+  "candidate_canvas_all_conversations_last_capability_counts": {
+   "EMPTY": 41,
+   "CONTENT_BRIEF": 1,
+   "PUBLISHING_PACKAGING": 4,
+   "CREATIVE_SCRIPT": 0,
+   "PRODUCTION_DIRECTOR": 0
+  },
+  "artifact_injection_allowed": false,
+  "verdict": "PASS · 三轮不可压缩"
+ },
+ "external_side_effect_plan": {
+  "status": "PLANNED",
+  "uapp_publish_target_draft_md5": "1aba8d45b33a2b034d415ef715f108cc",
+  "pp_publish_target_graph_md5": "8366328bf827bd0f460455d750d45c4f",
+  "pp_provider_target": "PP app 当前发布 b2 版本",
+  "auto_revert_uapp_md5": "99c3edf7bd12172a4fb011b588f25e57",
+  "auto_revert_pp_and_provider_md5": "788c8555aca09e6fa6d979f237f70157"
+ },
+ "verdict": "PASS"
+}

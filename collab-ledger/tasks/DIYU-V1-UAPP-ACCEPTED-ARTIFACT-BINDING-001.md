@@ -130,3 +130,18 @@ S5: NOT_STARTED   main_merge: NOT_ALLOWED   terminal_state: UNSET   next_state: 
 把 `top_level_workflow_runs` 从 2 提到 **3**（`deepseek_llm_node_attempts` 相应到 18），
 按 Gate 里已冻结的三句自然语言原文跑一次，按已冻结的 E-01…E-10 判定。
 判据、输入、实现都已冻结并提交，不需要任何其它改动。
+
+## 九、REBASE v1.1 启动记录（2026-08-30）
+
+Founder 已授权把三轮正式链预算版本化为 `3 / 18 / 0 retries`，任务身份保持
+`DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001`。Gate v1.1 已在任何模型调用前冻结：
+`sha256 069a5af02cfcd173e024c4cfd66c38f74005c1c6d26afdf8e7b19ba81d74d6a6`，
+提交 `ee679e4d4623e0b98cac2e7190e2a5bf80bf1fc4`。
+
+零模型预检结果 `PASS`：12/12 确定性控制复算通过，候选 draft 仍为 `1aba8d45`，
+保护节点、M2 schema / 数据、PP / provider / Seam / Hop 均未漂移，运行中 workflow 为 0；
+三轮不可压缩的现场前提仍成立。原始复算见
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_REBASE_PREFLIGHT_v1.1.json`。
+
+外部副作用状态：`PLANNED`——下一动作仅为发布 UAPP `1aba8d45`、重新发布 PP b2
+`8366328b`、把 PP provider 对齐 b2；任一正式验收非 PASS 按 Gate v1.1 自动恢复稳定图。
