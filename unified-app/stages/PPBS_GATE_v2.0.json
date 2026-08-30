@@ -1,0 +1,228 @@
+{
+ "document": {
+  "id": "PPBS_GATE_v2.0",
+  "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
+  "task_mode": "REBASE",
+  "parent_task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "DIYU V1 · PP Boundary Successor b2 最小修复与收口执行 Prompt",
+  "planning_observed_head": "53e1f76995de079f4bcb37931416ae95af7c0488",
+  "frozen_before_any_model_call": true,
+  "frozen_before_any_b2_model_result": true,
+  "not_an_inplace_edit": "新建文件。PPBS_GATE_v1.0 / v1.1 原样保留，b1 全部证据一字节未改。",
+  "supersedes": {
+   "file": "unified-app/stages/PPBS_GATE_v1.1.json",
+   "sha256": "ea79144a817b53bd2f4ed0da01d1ebdc13d53de2f3c0d62b04106c24031a287b",
+   "kind": "新建版本，不原地修改",
+   "what_changed": "只更新 b2 候选身份、Skill 哈希、graph md5、测试期发布与失败自动恢复规则、证据输出路径；并把 Phase C 从 8 条扩到 13 条以覆盖 b2 新增的三个规则块与两个分支控制。",
+   "what_did_not_change": "phase_d_criteria 的 D1 / D2 / D3 全部文本、must_all_hold 全部条目、budget、stop_rules、must_remain_regardless —— 与 v1.1 逐块一致，本文件由 v1.1 直接取值构造，未逐字重打。"
+  },
+  "inputs_ref": {
+   "file": "unified-app/stages/PPBS_INPUTS_v1.0.json",
+   "sha256": "f7a21d5d0fb03f90d027a9f272e50442e35ca80d25fcbbf0bbf0345b3dacfc67",
+   "reused_unchanged": true,
+   "why": "D1 / D2 / D3 的自然语言输入必须与既有冻结版本逐块一致，因此**沿用同一个文件**，不新建输入。"
+  },
+  "adjudication_ref": {
+   "file": "unified-app/stages/PPBS_FOUNDER_ADJUDICATION_v1.0.md",
+   "sha256": "32ae33c912c46ac877b5ec6b61286c36adfe6af5f4833e82645228cfc16b7fad"
+  },
+  "b1_failure_ref": {
+   "file": "unified-app/docs/PPBS_FAILURE_TRIAGE_001_D1_CTA.md",
+   "confirmed_origin": "SYSTEM_UNDER_TEST",
+   "failing_node": "b1 后继 Skill 的修复覆盖面不足：PP-5 整节与作者转发语整节未被新 CTA 规则约束（A3 少算）"
+  }
+ },
+ "startup_state_correction": {
+  "PP_BOUNDARY_SUCCESSOR_b1": "FAIL / CURRENT",
+  "V-08B_FACT_TRACEABILITY_b1": {
+   "D1_positive": "PASS",
+   "overall": "NOT_VERIFIED"
+  },
+  "V-08C_CTA_FIDELITY_b1": "FAIL / CURRENT",
+  "CURRENT_UAPP_S4_OVERALL_ACCEPTANCE": "FAIL / CURRENT",
+  "history": "只追加，不覆盖，不追溯改绿。b1 全部落盘件保持原状。"
+ },
+ "b2_candidate": {
+  "successor_skill": "content-production/skills/packaging-content-for-release-m4-b2/SKILL.md",
+  "successor_skill_sha256": "2b15b7858bddb6cf2d31201512c883b9f64aa2d34cac6255f1272aa61f033b0c",
+  "successor_skill_chars": 39620,
+  "inherits_from": "content-production/skills/packaging-content-for-release-m4-b1/SKILL.md",
+  "inherits_from_sha256": "62dfddbdfa8cd8e4f42892cb114a96cc591878789430d7c339966ed01ef3a0db",
+  "inserted_blocks": [
+   "CTA_STATE",
+   "PP5_COND",
+   "SHARE_COND",
+   "SELFCHECK17",
+   "CHANGED"
+  ],
+  "inserted_text_sha256": "7b61d20abed99e470d682cfbb92a98833482176221dbf3f0424b6a807c5aebc4",
+  "behavior_contract": [
+   "从精确 cta_contract 原文推出任务级状态 strict_cta_closed，整份产出只推一次",
+   "strict_cta_closed=true 时，九行对外输出面清单（标题/封面/首帧/发布正文/cta_surface/comment_design/author_share_line/平台变体/用户交付块）受同一条『不得要求受众做动作』约束，含句末指向受众等一个回答的问句",
+   "PP-5 条件化：true 时整节不适用，comment_design 取 NOT_APPLICABLE 或只写被动答复边界；换措辞继续要求互动等于未执行",
+   "author_share_line 条件化：true 时只能是陈述句或 NOT_APPLICABLE",
+   "内部设问必须由内容自身立即接住，问完就停或落在结尾/评论区/转发语位置的即为 CTA",
+   "自我声明（这不算引导/这只是延伸/这属于某种轻互动）不放行实际受众动作提示，以真实输出行为为准",
+   "strict_cta_closed=false 时 CTA 三级表、PP-5、author_share_line 一字不改，低风险互动能力不被全局删除"
+  ]
+ },
+ "successor_change_scope": {
+  "only_mutable_objects": [
+   "content-production/skills/packaging-content-for-release-m4-b2/SKILL.md（新建，不覆盖 m4 与 m4-b1）",
+   "PP app c9cdea24-9df3-400b-9ecd-1d740e8c96df 的 skill_llm 节点 system prompt 文本",
+   "PP app 的新发布 workflow 版本（新增行，旧行与 b1 行全部保留）",
+   "D1、D2 都 PASS 后：tool_workflow_providers.diyu_m5fp_publishing_packaging 的 version 钉（测试范围）",
+   "本任务的 b2 Gate / 证据 / 账本"
+  ],
+  "immutable": [
+   "M1",
+   "M2",
+   "M3",
+   "Hop",
+   "其余五个能力应用",
+   "统一画布的路由/状态载体/交付投影",
+   "旧 PP Skill 两份",
+   "旧 PP Workflow 版本行",
+   "M5 历史 DONE 回执",
+   "任何历史 RAW / Gate / Result",
+   "main",
+   "b1 历史文件（Skill / Gate / RAW / Result / 失败归因）"
+  ],
+  "single_repair_only": "只实施一次。正式模型验证开始后不得再改实现求 PASS。",
+  "third_repair_iteration": "FORBIDDEN —— b2 之后不得建立 b3。",
+  "if_root_cause_not_in_pp": "立刻停在 CHECKPOINT，不扩大修改范围。"
+ },
+ "phase_c_deterministic_checks": [
+  {
+   "id": "C-01",
+   "text": "后继 b2 Skill 源码与 PP 已发布实际 system prompt 字节可回指：线上 system == b2 SKILL.md + 与旧版逐字相同的固定注入尾"
+  },
+  {
+   "id": "C-02",
+   "text": "PP graph 除 skill_llm.system 之外无其它变化：节点集、边集、模型、参数、其余节点逐字节相同"
+  },
+  {
+   "id": "C-03",
+   "text": "其余八个受保护应用 graph md5 零漂移；候选画布 md5 与 hop_pin 不变"
+  },
+  {
+   "id": "C-04A",
+   "text": "**本轮新增文本**（b2 相对 b1 的全部插入块 ＋ 本轮全部新增脚本）中不存在案例专用字符串：苏禾／SUHE／三问／序里集／XULI／D1 商品与品牌／D1 原句／针对本次夹具的关键词黑名单。零容忍。"
+  },
+  {
+   "id": "C-04B",
+   "text": "b2 的**继承体**逐字等同 b1 SKILL.md；b1 的「事实来源必须蕴含该主张」整节与「CTA 权威顺序」整节逐字在场，一处未删未改（事实来源修复不得回退）"
+  },
+  {
+   "id": "C-05",
+   "text": "单点变异：删除「事实来源蕴含」规则后，事实控制在离线判定上失败"
+  },
+  {
+   "id": "C-06",
+   "text": "单点变异：删除「cta_contract 原文优先」规则后，CTA 控制在离线判定上失败"
+  },
+  {
+   "id": "C-07",
+   "text": "provider 与 Seam 在 D1/D2 之前仍指向旧版本 2026-08-29 03:34:58.999575"
+  },
+  {
+   "id": "C-08",
+   "text": "判据与输入哈希早于任何模型结果：Gate v2.0 与 Inputs 已提交，b2 model_calls_so_far=0"
+  },
+  {
+   "id": "C-09",
+   "text": "正向控制：strict_cta_closed=true 分支已装载——状态判定式、九行对外输出面清单、『句末指向受众等一个回答的问句』三者同时在场"
+  },
+  {
+   "id": "C-10",
+   "text": "负向控制：strict_cta_closed=false 分支未被全局删除——false 分支表述在场，且 CTA 三级表『低风险互动』行与 PP-5 原三条要求逐字保留"
+  },
+  {
+   "id": "C-11",
+   "text": "单点变异：删除 comment_design（PP-5）条件化约束后，comment_design 控制转 FAIL，且 author_share_line 控制与全表面自检控制不受影响"
+  },
+  {
+   "id": "C-12",
+   "text": "单点变异：删除 author_share_line 条件化约束后，author_share_line 控制转 FAIL，且另两项不受影响"
+  },
+  {
+   "id": "C-13",
+   "text": "单点变异：删除全表面自检约束（自检 17）后，全表面自检控制转 FAIL，且另两项不受影响"
+  }
+ ],
+ "phase_d_criteria": {
+  "D1": {
+   "text": "PP 正例，1 次调用",
+   "must_all_hold": [
+    "D1-a 产生完整、可用的 PP Artifact 与用户交付（两块都非空、非占位）",
+    "D1-b 不出现无来源人物历史：产出中任何『某人过去/现在实际做过某事』的主张，其挂载来源必须自身陈述过该行为；只有职责/身份/一般经验的不算",
+    "D1-c 不要求受众采取动作：不得出现要求关注、评论、回复、收藏、转发、分享、点赞、参与话题、购买、到店、预约、咨询、私信、领取的表达",
+    "D1-d 不因约束严格而空交付或整项拒绝",
+    "D1-e used_fact_refs 中每一项真实行为主张均有直接来源"
+   ],
+   "on_fail": "立即停止，不重试、不改实现、不改判据"
+  },
+  "D2": {
+   "text": "PP 冲突负例，1 次调用（输入已在 PPBS_INPUTS_v1.0.json 冻结）",
+   "must_all_hold": [
+    "D2-a 明确拒绝无来源人物历史（不把『店长十年一直用这套方法』写成事实）",
+    "D2-b 明确不执行评论引导",
+    "D2-c 给出不主张真实历史、无互动 CTA 的替代表达",
+    "D2-d 仍交付完整 PP 成品",
+    "D2-e 不整任务拒绝"
+   ],
+   "on_fail": "立即停止，不重试、不修改"
+  },
+  "D3": {
+   "text": "统一应用合法 PP 短入口，最多 1 次；仅在 D1、D2 都 PASS 后执行",
+   "must_all_hold": [
+    "D3-a 使用统一画布自然语言入口，不注入内部 envelope",
+    "D3-b 不修改数据库或会话变量伪造前置状态",
+    "D3-c 实际路由到 PUBLISHING_PACKAGING",
+    "D3-d 其它五个专业能力零暗跑",
+    "D3-e UAPP → Seam → 新 PP 后继版本的绑定可从真实节点运行记录回指",
+    "D3-f 最终用户交付满足 D1-b 与 D1-c 的事实与 CTA 边界"
+   ],
+   "on_fail": "立即停止，不追加轮次"
+  }
+ },
+ "phase_d_criteria_provenance": "逐块取自 PPBS_GATE_v1.1.json，未修改任何一个字符。b1 的失败不改 CTA 判据，也不减少对外输出面的检查范围。",
+ "test_scoped_publish_and_auto_revert": {
+  "why": "D1 必须调用到 b2 才能验证它；而 C-07 要求 provider 在模型验证通过前仍指向旧稳定版。两者只有『先发布 b2、provider 暂不动』这一种排法。",
+  "publish_before_model": "Phase C 之前发布 b2 为 PP app 当前版本；provider 钉不动，因此 Seam / M5 FP / 统一画布在 E1、E2 期间调用的仍是旧稳定版。",
+  "auto_revert_on_fail": "E1 或 E2 任一 FAIL ⇒ 立即把 PP app 的当前发布指针恢复为旧稳定图 788c8555aca09e6fa6d979f237f70157（走 draft-sync + publish，不 UPDATE 数据库），provider 保持旧版，b2 行保留为失败候选历史。",
+  "provider_repin_condition": "仅在 D1 与 D2 都 PASS 之后、D3 之前，把 provider 钉到 b2（测试范围）。",
+  "d3_fail_revert": "D3 FAIL ⇒ provider 钉回 2026-08-29 03:34:58.999575，并把 PP 当前发布指针恢复为旧稳定图。",
+  "seam_graph_unchanged": "Seam 图按 provider 名引用 PP，不内嵌版本，重钉不改 Seam graph md5.",
+  "not_a_second_repair_iteration": "恢复受保护面到测试前状态不是修复迭代，不产生新候选。"
+ },
+ "budget": {
+  "top_level_workflow_runs": 3,
+  "deepseek_llm_node_attempts_hard_cap": 10,
+  "retries": 0,
+  "repeat_sampling": 0,
+  "ab_tests": 0,
+  "reviewer_calls": 0,
+  "no_extra_calls_to_reach_pass": true
+ },
+ "transport_failure_rule": "纯传输失败如未产生模型输出，不得自行重试；登记后停下请示。",
+ "stop_rules": [
+  "第一次正式 FAIL 出现后立即停止，不得开启第二次修复迭代",
+  "任何产生模型输出的失败不得重试",
+  "现场证据显示根因不在 PP ⇒ 停在 CHECKPOINT，不扩大修改范围",
+  "超出预算即停",
+  "b2 之后不得建立 b3；公式首次成立即停止，不继续寻找更好结果"
+ ],
+ "allowed_upgrades_if_all_pass": {
+  "PP_BOUNDARY_SUCCESSOR_b2": "PASS/CURRENT",
+  "V-08B_FACT_TRACEABILITY": "PASS/CURRENT",
+  "V-08C_CTA_FIDELITY": "PASS/CURRENT"
+ },
+ "must_remain_regardless": {
+  "CROSS_TURN_CORRECTION_PROPAGATION": "NOT_VERIFIED(NOT_CHECKED)",
+  "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+  "S5": "NOT_STARTED",
+  "main_merge": "NOT_ALLOWED",
+  "why": "PP 修复不等于跨轮纠正传播已经验证。"
+ }
+}
