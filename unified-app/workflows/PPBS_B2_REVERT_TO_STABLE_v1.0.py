@@ -108,12 +108,44 @@ def main():
         else:
             rep["republished_stable_graph"] = False
             rep["republish_skipped_because"] = "当前发布图已经是旧稳定图"
-        # provider 钉：只在被改过时恢复，且走 ORM 之外的唯一合法途径——
-        # 本任务从未重钉过 provider 时此处不动任何东西。
+        # provider 钉：只在它当前指向的版本**不是旧稳定图**时才恢复。
+        # 恢复走 console tool-provider/workflow/update（把钉对齐到 app 当前发布版本），
+        # 因此必须先完成上面的重新发布。不执行任何 UPDATE 语句。
+        pin_now = psql("select version from tool_workflow_providers where name='%s';"
+                       % PP_PROVIDER)
+        pin_md5 = psql("select md5(graph) from workflows where app_id='%s' and version='%s';"
+                       % (PP_APP, pin_now))
+        rep["provider_pin_before_repin"] = pin_now
+        rep["provider_pinned_graph_md5_before_repin"] = pin_md5
+        if pin_md5 != STABLE_MD5:
+            st, tool = console.call(
+                "GET", "/console/api/workspaces/current/tool-provider/workflow/get"
+                       "?workflow_app_id=%s" % PP_APP, timeout=300)
+            assert st == 200, ("get provider", st, str(tool)[:400])
+            payload = {"workflow_tool_id": tool["workflow_tool_id"], "name": tool["name"],
+                       "label": tool["label"], "icon": tool["icon"],
+                       "description": tool["description"], "parameters": tool["parameters"],
+                       "privacy_policy": tool.get("privacy_policy") or "",
+                       "labels": [x["name"] if isinstance(x, dict) else x
+                                  for x in (tool.get("tool") or {}).get("labels", [])] or []}
+            st, res = console.call(
+                "POST", "/console/api/workspaces/current/tool-provider/workflow/update",
+                body=payload, timeout=300)
+            assert st in (200, 201), ("update provider", st, str(res)[:400])
+            rep["provider_repinned"] = True
+            rep["repin_note"] = ("console update 把钉对齐到 app **当前发布版本**，"
+                                 "因此版本字符串会是重新发布出来的新行，"
+                                 "但其 graph 与旧稳定图逐字节相同（md5 校验见下）。")
+        else:
+            rep["provider_repinned"] = False
+            rep["repin_skipped_because"] = "provider 钉住的版本其 graph 已经是旧稳定图"
         rep["provider_pin_after"] = psql("select version from tool_workflow_providers "
                                          "where name='%s';" % PP_PROVIDER)
-        rep["provider_pin_was_never_changed"] = (before["provider_pin"] == STABLE_VERSION
-                                                 and rep["provider_pin_after"] == STABLE_VERSION)
+        rep["provider_pinned_graph_md5_after"] = psql(
+            "select md5(graph) from workflows where app_id='%s' and version='%s';"
+            % (PP_APP, rep["provider_pin_after"]))
+        rep["provider_pinned_graph_is_stable"] = (
+            rep["provider_pinned_graph_md5_after"] == STABLE_MD5)
         rep["applied"] = True
 
     after = {"pp_current_md5": psql("select md5(w.graph) from workflows w join apps a "
@@ -125,7 +157,12 @@ def main():
              "workflow_rows": int(psql("select count(*) from workflows where app_id='%s';"
                                        % PP_APP))}
     after["restored_to_stable"] = after["pp_current_md5"] == STABLE_MD5
-    after["provider_pin_is_stable"] = after["provider_pin"] == STABLE_VERSION
+    after["provider_pinned_graph_md5"] = psql(
+        "select md5(graph) from workflows where app_id='%s' and version='%s';"
+        % (PP_APP, after["provider_pin"]))
+    # 判定按**图**，不按版本字符串：console update 只能把钉对齐到当前发布版本，
+    # 恢复后的版本字符串必然是新行，但图与旧稳定图逐字节相同。
+    after["provider_pin_is_stable"] = after["provider_pinned_graph_md5"] == STABLE_MD5
     after["b2_and_b1_rows_preserved"] = after["workflow_rows"] >= before["workflow_rows"]
     rep["after"] = after
     os.makedirs(EVDIR, exist_ok=True)

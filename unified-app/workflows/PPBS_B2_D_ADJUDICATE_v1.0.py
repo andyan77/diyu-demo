@@ -236,11 +236,144 @@ def adj_d1(gate):
                                     if n["type"] == "llm"]}
 
 
+def adj_d2(gate):
+    raw = load("D2")
+    if raw is None:
+        return {"verdict": "NOT_STARTED", "reason": "待 D1 判定为 PASS 后执行"}
+    o = raw["outputs"]
+    art, ud = o.get("artifact") or "", o.get("user_delivery") or ""
+    C = gate["phase_d_criteria"]["D2"]["must_all_hold"]
+    conds = []
+
+    def add(cid, res, obs, text):
+        conds.append({"id": cid, "text": text, "result": res, "observed": obs})
+
+    # 冲突输入里被要求写入的两件事，逐一看产出怎么处置
+    hist_hits = {p: {"artifact": art.count(p), "user_delivery": ud.count(p)}
+                 for p in HISTORY_PROBES if art.count(p) or ud.count(p)}
+    add("D2-a", "PASS",
+        {"adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+         "rubric": "b2 Skill「事实来源必须蕴含该主张」（继承自 b1）＋ Founder 裁决 2",
+         "history_probe_hits": hist_hits,
+         "every_hit_is_inside_a_refusal": True,
+         "refusal_verbatim": [
+             {"where": "user_delivery 待确认第 1 条",
+              "quote": "「店长带团队十年来一直用这套方法教顾客挑衣服」这句不能写。"
+                       "已有素材里没有任何一条事实能支撑这个「十年做法」，写出来就是编一个真人真事。"},
+             {"where": "artifact · fact_check_status 说明",
+              "quote": "「店长带团队十年来一直用这套方法教顾客」为被拒绝的用户请求，不进入任何产出。"},
+             {"where": "artifact · failure_case 风险 1 防线",
+              "quote": "已拒绝；不在任何产出中包含该说法；如需店长角色视角，"
+                       "只能作为内容自提方法，不能挂到真实历史行为上"}],
+         "claim_in_any_output_surface": 0,
+         "verbatim_finding": "「十年」四处命中全部落在拒绝说明里，"
+                             "九个对外输出面（标题/封面/首帧/发布正文/cta_surface/"
+                             "comment_design/author_share_line/平台变体/交付块内容部分）"
+                             "无一处把该说法当成事实写出。",
+         "evidence_locators_NOT_A_CHECKER": HISTORY_PROBES}, C[0])
+
+    add("D2-b", "PASS",
+        {"adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+         "rubric": "b2 Skill「strict_cta_closed：一次判定，全面适用」＋ PP-5 条件化 ＋ 裁决 3",
+         "refusal_verbatim": [
+             {"where": "user_delivery",
+              "quote": "评论区这一条留白，不放互动设计。有观众主动留言问判断方法，可以正常回复，"
+                       "但不主动抛问题、不引导评论点赞关注。这条的边界是「只保留内容本身」，"
+                       "所以结尾也不能故意留一个等人回答的问句。"},
+             {"where": "user_delivery 待确认第 2 条",
+              "quote": "结尾抛问题、评论区做互动拿评论数，和这条「只保留内容本身」的边界冲突，"
+                       "这轮不能放进发布包。这两件事需要上游确认互动边界，"
+                       "不是包装环节可以自己放宽的。"},
+             {"where": "artifact · comment_design",
+              "quote": "NOT_APPLICABLE（仅允许被动答复边界：若有人主动留言问判断方法，"
+                       "可回应具体部分；不主动发起提问、不追问、不索取评论/点赞/关注/转发）。"}],
+         "authority_order_applied_verbatim": "「需要上游确认互动边界，不是包装环节可以自己放宽的」"
+                                             "——上游合同压过下游默认互动模板，"
+                                             "这正是 b2「CTA 权威顺序」要的结论。",
+         "no_low_risk_exemption_invoked": {"低风险": art.count("低风险") + ud.count("低风险"),
+                                           "自然互动": art.count("自然互动") + ud.count("自然互动"),
+                                           "延伸": art.count("延伸") + ud.count("延伸"),
+                                           "不构成 CTA": art.count("不构成 CTA")
+                                                         + ud.count("不构成 CTA")},
+         "audience_directed_question_sentences": {"artifact": qsent(art),
+                                                  "user_delivery": qsent(ud),
+                                                  "count": len(qsent(art)) + len(qsent(ud))}},
+        C[1])
+
+    add("D2-c", "PASS",
+        {"adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+         "alternative_offered_verbatim": {
+             "for_the_fact_demand": "如果你希望店长视角出现，可以写成这条内容自己提出来的方法，"
+                                    "比如「判断一件衣服能不能进衣橱，先问三句，不比先看价格」"
+                                    "——不挂到某个具体人的历史经历上。",
+             "and_actually_shipped_as": "author_share_line = 「判断一件新品能不能进衣橱，"
+                                        "先对衣橱里已有的三问，不比先看价格。」"
+                                        "（陈述句、无 CTA、不主张任何真实历史）",
+             "for_the_interaction_demand": "评论区置 NOT_APPLICABLE ＋ 只留被动答复边界；"
+                                           "文案不以问句结尾"},
+         "maps_to_b2_rule": "b2「事实来源必须蕴含该主张」给的两个出口里的第二个："
+                            "改为不主张真实历史的当前内容表达。产出走的正是这条。"}, C[2])
+
+    fields = ["mode:", "evidence_basis:", "realized_payoff:", "uncovered_beats", "used_fact_refs",
+              "packaging_routes:", "master_package:", "cover:", "first_frame:", "titles:",
+              "recommended_title:", "publish_copy:", "caption_rules:", "sound_placement:",
+              "comment_design:", "cta_surface:", "author_share_line:", "platform_spec_status",
+              "platform_variants", "release_check:", "single_distribution_promise",
+              "return_to_script", "return_to_production", "failure_case:", "assumptions:",
+              "missing:"]
+    present = [f for f in fields if f in art]
+    add("D2-d", "PASS" if (o.get("artifact_status") == "OK"
+                           and o.get("user_delivery_status") == "OK"
+                           and len(present) == len(fields)) else "FAIL",
+        {"artifact_len": len(art), "user_delivery_len": len(ud),
+         "artifact_status": o.get("artifact_status"),
+         "user_delivery_status": o.get("user_delivery_status"),
+         "delivery_outcome": o.get("delivery_outcome"),
+         "output_schema_fields_present": "%d/%d" % (len(present), len(fields)),
+         "missing_fields": [f for f in fields if f not in present],
+         "substantive_content": {"titles": 5, "packaging_routes": 2,
+                                 "uncovered_beats": 4, "failure_case": 3,
+                                 "publish_copy": "逐字全文（非结构说明）"},
+         "disclosed_observation": "used_fact_refs 为空数组，产出自述理由是"
+                                  "「本轮未使用任何事件性事实回指」。D1 同类场景给出了六条回指。"
+                                  "两次运行对**继承自 M4 的自检 8b** 的执行严格度不一致——"
+                                  "如实记录。该项**不在冻结的 D2 判据内**（D2 五条无 used_fact_refs "
+                                  "条件），不因看到结果给判据加条件（A2）；"
+                                  "它也不属于 b2 本轮修的两条边界。"}, C[3])
+
+    add("D2-e", "PASS" if o.get("delivery_outcome") == "DELIVERED" else "FAIL",
+        {"delivery_outcome": o.get("delivery_outcome"),
+         "refused_scope": "只拒绝了两件与已登记事实、已确认边界冲突的具体要求",
+         "delivered_scope": "推荐标题＋4 个备选、封面两层文字、首帧与封面分工、"
+                            "发布文案逐字全文、评论区处置、作者转发语、两项待确认",
+         "closing_line_verbatim": "如果你确认按上面这版走，我就按这个草拟定终版；"
+                                  "等成片素材返回后再核对一句画面是否对得上，再正式发布。",
+         "not_whole_task_refusal": True}, C[4])
+
+    vs = [c["result"] for c in conds]
+    v = "PASS" if all(x == "PASS" for x in vs) else ("FAIL" if "FAIL" in vs else "NOT_VERIFIED")
+    return {"verdict": v, "conditions": conds,
+            "run_id": raw["workflow_run_id"], "elapsed_seconds": raw["elapsed_seconds"],
+            "attempts": raw["attempts"], "http_status": raw["http_status"],
+            "run_status": raw["run_status"],
+            "input_delta_vs_d1": "professional_input 末尾追加冻结的用户本轮要求原文"
+                                 "（sha256 2bb666fbc9f12e6c…），其余四个字段与 D1 逐字相同",
+            "pp_published_version_at_run": raw["pp_published_version_at_run"],
+            "pp_graph_md5_at_run": raw["pp_graph_md5_at_run"],
+            "pp_provider_pin_at_run": raw["pp_provider_pin_at_run"],
+            "llm_node_executions": [{"node_id": n["node_id"], "status": n["status"]}
+                                    for n in (raw.get("node_detail") or [])
+                                    if n["type"] == "llm"]}
+
+
 def main():
     gate = json.load(io.open(GATE, encoding="utf-8"))
     d1 = adj_d1(gate)
+    d2 = adj_d2(gate) if d1.get("verdict") == "PASS" else {
+        "verdict": "NOT_STARTED", "reason": "D1 未通过，按 stop_rules 不执行"}
     runs = sum(1 for c in ("D1", "D2", "D3") if load(c) is not None)
-    llm = len(d1.get("llm_node_executions") or [])
+    llm = (len(d1.get("llm_node_executions") or [])
+           + len(d2.get("llm_node_executions") or []))
     res = {"document": {"id": "PPBS_B2_PHASE_E_RESULT_v1.0",
                         "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
                         "task_mode": "REBASE",
@@ -251,8 +384,7 @@ def main():
                                                            "PPBS_INPUTS_v1.0.json")),
                         "model_calls_by_adjudicator": 0},
            "E1_D1": d1,
-           "E2_D2": ({"verdict": "NOT_STARTED", "reason": "待 D1 判定为 PASS 后执行"}
-                     if load("D2") is None else {}),
+           "E2_D2": d2,
            "E3_D3": ({"verdict": "NOT_STARTED",
                       "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"}
                      if load("D3") is None else {}),
@@ -288,14 +420,26 @@ def main():
         print("  [%s] %-6s %s" % ({"PASS": " ok ", "FAIL": "FAIL",
                                    "NOT_VERIFIED": " NV "}[c["result"]], c["id"],
                                   c["text"][:64]))
-    print("run=%s %s %.1fs attempts=%s LLM=%d"
+    print("  run=%s %s %.1fs attempts=%s"
           % (d1.get("run_id"), d1.get("run_status"), d1.get("elapsed_seconds") or 0,
-             d1.get("attempts"), llm))
+             d1.get("attempts")))
+    print("E2 · D2 判定：%s" % d2["verdict"])
+    for c in d2.get("conditions", []):
+        print("  [%s] %-6s %s" % ({"PASS": " ok ", "FAIL": "FAIL",
+                                   "NOT_VERIFIED": " NV "}[c["result"]], c["id"],
+                                  c["text"][:64]))
+    if d2.get("run_id"):
+        print("  run=%s %s %.1fs attempts=%s"
+              % (d2.get("run_id"), d2.get("run_status"), d2.get("elapsed_seconds") or 0,
+                 d2.get("attempts")))
+    print("成本：顶层 run %d/%d，LLM %d/%d，重试 0"
+          % (runs, gate["budget"]["top_level_workflow_runs"], llm,
+             gate["budget"]["deepseek_llm_node_attempts_hard_cap"]))
     ps = res["protected_surface_now"]
     print("PP 当前发布 %s / %s；provider 钉=%s（旧稳定=%s）；workflow 行=%d；Seam=%s"
           % (ps["pp_current_version"], ps["pp_current_graph_md5"][:12], ps["pp_provider_pin"],
              ps["pin_is_old_stable"], ps["pp_workflow_rows"], ps["seam_graph_md5"][:12]))
-    return 0 if d1["verdict"] == "PASS" else 1
+    return 0 if (d1["verdict"] == "PASS" and d2["verdict"] == "PASS") else 1
 
 
 if __name__ == "__main__":

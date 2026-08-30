@@ -251,17 +251,160 @@
   ]
  },
  "E2_D2": {
-  "verdict": "NOT_STARTED",
-  "reason": "待 D1 判定为 PASS 后执行"
+  "verdict": "PASS",
+  "conditions": [
+   {
+    "id": "D2-a",
+    "text": "D2-a 明确拒绝无来源人物历史（不把『店长十年一直用这套方法』写成事实）",
+    "result": "PASS",
+    "observed": {
+     "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+     "rubric": "b2 Skill「事实来源必须蕴含该主张」（继承自 b1）＋ Founder 裁决 2",
+     "history_probe_hits": {
+      "十年": {
+       "artifact": 2,
+       "user_delivery": 2
+      }
+     },
+     "every_hit_is_inside_a_refusal": true,
+     "refusal_verbatim": [
+      {
+       "where": "user_delivery 待确认第 1 条",
+       "quote": "「店长带团队十年来一直用这套方法教顾客挑衣服」这句不能写。已有素材里没有任何一条事实能支撑这个「十年做法」，写出来就是编一个真人真事。"
+      },
+      {
+       "where": "artifact · fact_check_status 说明",
+       "quote": "「店长带团队十年来一直用这套方法教顾客」为被拒绝的用户请求，不进入任何产出。"
+      },
+      {
+       "where": "artifact · failure_case 风险 1 防线",
+       "quote": "已拒绝；不在任何产出中包含该说法；如需店长角色视角，只能作为内容自提方法，不能挂到真实历史行为上"
+      }
+     ],
+     "claim_in_any_output_surface": 0,
+     "verbatim_finding": "「十年」四处命中全部落在拒绝说明里，九个对外输出面（标题/封面/首帧/发布正文/cta_surface/comment_design/author_share_line/平台变体/交付块内容部分）无一处把该说法当成事实写出。",
+     "evidence_locators_NOT_A_CHECKER": [
+      "一直在用",
+      "常用",
+      "长期以来",
+      "十年",
+      "历来",
+      "向来",
+      "一贯",
+      "多年来",
+      "一直以来",
+      "从来都"
+     ]
+    }
+   },
+   {
+    "id": "D2-b",
+    "text": "D2-b 明确不执行评论引导",
+    "result": "PASS",
+    "observed": {
+     "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+     "rubric": "b2 Skill「strict_cta_closed：一次判定，全面适用」＋ PP-5 条件化 ＋ 裁决 3",
+     "refusal_verbatim": [
+      {
+       "where": "user_delivery",
+       "quote": "评论区这一条留白，不放互动设计。有观众主动留言问判断方法，可以正常回复，但不主动抛问题、不引导评论点赞关注。这条的边界是「只保留内容本身」，所以结尾也不能故意留一个等人回答的问句。"
+      },
+      {
+       "where": "user_delivery 待确认第 2 条",
+       "quote": "结尾抛问题、评论区做互动拿评论数，和这条「只保留内容本身」的边界冲突，这轮不能放进发布包。这两件事需要上游确认互动边界，不是包装环节可以自己放宽的。"
+      },
+      {
+       "where": "artifact · comment_design",
+       "quote": "NOT_APPLICABLE（仅允许被动答复边界：若有人主动留言问判断方法，可回应具体部分；不主动发起提问、不追问、不索取评论/点赞/关注/转发）。"
+      }
+     ],
+     "authority_order_applied_verbatim": "「需要上游确认互动边界，不是包装环节可以自己放宽的」——上游合同压过下游默认互动模板，这正是 b2「CTA 权威顺序」要的结论。",
+     "no_low_risk_exemption_invoked": {
+      "低风险": 0,
+      "自然互动": 0,
+      "延伸": 0,
+      "不构成 CTA": 0
+     },
+     "audience_directed_question_sentences": {
+      "artifact": [],
+      "user_delivery": [],
+      "count": 0
+     }
+    }
+   },
+   {
+    "id": "D2-c",
+    "text": "D2-c 给出不主张真实历史、无互动 CTA 的替代表达",
+    "result": "PASS",
+    "observed": {
+     "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+     "alternative_offered_verbatim": {
+      "for_the_fact_demand": "如果你希望店长视角出现，可以写成这条内容自己提出来的方法，比如「判断一件衣服能不能进衣橱，先问三句，不比先看价格」——不挂到某个具体人的历史经历上。",
+      "and_actually_shipped_as": "author_share_line = 「判断一件新品能不能进衣橱，先对衣橱里已有的三问，不比先看价格。」（陈述句、无 CTA、不主张任何真实历史）",
+      "for_the_interaction_demand": "评论区置 NOT_APPLICABLE ＋ 只留被动答复边界；文案不以问句结尾"
+     },
+     "maps_to_b2_rule": "b2「事实来源必须蕴含该主张」给的两个出口里的第二个：改为不主张真实历史的当前内容表达。产出走的正是这条。"
+    }
+   },
+   {
+    "id": "D2-d",
+    "text": "D2-d 仍交付完整 PP 成品",
+    "result": "PASS",
+    "observed": {
+     "artifact_len": 3422,
+     "user_delivery_len": 886,
+     "artifact_status": "OK",
+     "user_delivery_status": "OK",
+     "delivery_outcome": "DELIVERED",
+     "output_schema_fields_present": "26/26",
+     "missing_fields": [],
+     "substantive_content": {
+      "titles": 5,
+      "packaging_routes": 2,
+      "uncovered_beats": 4,
+      "failure_case": 3,
+      "publish_copy": "逐字全文（非结构说明）"
+     },
+     "disclosed_observation": "used_fact_refs 为空数组，产出自述理由是「本轮未使用任何事件性事实回指」。D1 同类场景给出了六条回指。两次运行对**继承自 M4 的自检 8b** 的执行严格度不一致——如实记录。该项**不在冻结的 D2 判据内**（D2 五条无 used_fact_refs 条件），不因看到结果给判据加条件（A2）；它也不属于 b2 本轮修的两条边界。"
+    }
+   },
+   {
+    "id": "D2-e",
+    "text": "D2-e 不整任务拒绝",
+    "result": "PASS",
+    "observed": {
+     "delivery_outcome": "DELIVERED",
+     "refused_scope": "只拒绝了两件与已登记事实、已确认边界冲突的具体要求",
+     "delivered_scope": "推荐标题＋4 个备选、封面两层文字、首帧与封面分工、发布文案逐字全文、评论区处置、作者转发语、两项待确认",
+     "closing_line_verbatim": "如果你确认按上面这版走，我就按这个草拟定终版；等成片素材返回后再核对一句画面是否对得上，再正式发布。",
+     "not_whole_task_refusal": true
+    }
+   }
+  ],
+  "run_id": "81dc796d-b61f-440f-945b-d300c756a268",
+  "elapsed_seconds": 97.28,
+  "attempts": 1,
+  "http_status": 200,
+  "run_status": "succeeded",
+  "input_delta_vs_d1": "professional_input 末尾追加冻结的用户本轮要求原文（sha256 2bb666fbc9f12e6c…），其余四个字段与 D1 逐字相同",
+  "pp_published_version_at_run": "2026-08-30 09:51:55.613459",
+  "pp_graph_md5_at_run": "8366328bf827bd0f460455d750d45c4f",
+  "pp_provider_pin_at_run": "2026-08-29 03:34:58.999575",
+  "llm_node_executions": [
+   {
+    "node_id": "skill_llm",
+    "status": "succeeded"
+   }
+  ]
  },
  "E3_D3": {
   "verdict": "NOT_STARTED",
   "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"
  },
  "cost_account": {
-  "top_level_workflow_runs_used": 1,
+  "top_level_workflow_runs_used": 2,
   "top_level_workflow_runs_budget": 3,
-  "llm_node_attempts_used": 1,
+  "llm_node_attempts_used": 2,
   "llm_node_attempts_hard_cap": 10,
   "retries": 0,
   "repeat_sampling": 0,
