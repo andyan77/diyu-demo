@@ -31,7 +31,8 @@ def console_call(console: Any, method: str, path: str, body: dict[str, Any] | No
 
 
 def publish(graph: dict[str, Any]) -> dict[str, Any]:
-    console = BUILD.BASE.DC.Console(env=BUILD.BASE.DC.load_env(BUILD.ENV_FILE))
+    client_module = BUILD.BASE.BASE.DC
+    console = client_module.Console(env=client_module.load_env(BUILD.ENV_FILE))
     draft = console_call(console, "GET", f"/console/api/apps/{BUILD.UAPP_APP_ID}/workflows/draft")
     console_call(
         console,
@@ -63,7 +64,6 @@ def main() -> int:
         raise RuntimeError("UAPP predecessor drift")
     if int(BUILD.BASE.BASE.psql("select count(*) from workflow_runs where status='running';")) != 0:
         raise RuntimeError("Active workflow exists")
-    before_apps = BUILD.BASE.BASE_STATE.protected_apps() if hasattr(BUILD.BASE, "BASE_STATE") else None
     candidate, touched = BUILD.patch_uapp(BUILD.published_graph())
     response = publish(candidate)
     readback = BUILD.published_graph()
@@ -77,7 +77,6 @@ def main() -> int:
         "node_count": len(readback["nodes"]),
         "edge_count": len(readback["edges"]),
         "touched_nodes": touched,
-        "before_apps_optional": before_apps,
     }
     OUTPUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0

@@ -1250,3 +1250,7 @@ Founder 已授权 GAP-01 最小修复、G1/G2 定向复验、剩余 11 项 S5、
 
 下一外部副作用是发布该 UAPP 候选；发布前先提交并普通 push 当前实现/控制证据，状态
 `PLANNED`。发布、回读和 Gate 冻结均不调用模型。
+
+首次发布器运行在 Console 请求前因模块引用少一层而 AttributeError；publication 文件不存在，
+线上图、draft、workflow、模型和数据副作用均为 0。归因 `INPUT_ENVIRONMENT_OR_TOOL`，只修发布器
+引用，不改候选、输入、判据或预算；Triage 见 `GAP01_SUCCESSOR_PUBLICATION_TRIAGE_001.md`。
