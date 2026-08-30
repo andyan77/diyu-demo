@@ -1,0 +1,135 @@
+{
+ "document": {
+  "id": "S4_NARROW_CHAIN_GATE_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "stage": "TD-UAPP-20 最小修复后的受影响连续链验证",
+  "frozen_before_any_model_run": true,
+  "authority": "规划侧 CONTINUE_TASK 裁决（2026-08-30）：TD-UAPP-20/21/22 三项裁决；second_repair_iteration = AUTHORIZED_ONCE_FOR_TD-UAPP-20_ONLY",
+  "narrow_question": "跨轮已确认字段建立承载体之后，Content Brief → Creative Script →（精确询问 content_origin_mode）→ 用户回答 → Creative Script → Production Director → Publishing & Packaging 这条窄链能否一次走通，且已确认字段不被抽空或改写、不重复询问。",
+  "not_an_inplace_edit": "本 Gate 是新建版本，**不修改** S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.0/v1.1 与 S4_PHASE_C_RESULT_v1.0/v1.1。旧 C3 的 FAIL 原样保留、不覆盖、不改绿。",
+  "product_goal_unchanged": "产品目标与 P3 一致：窄链走通、事实来源可回指、不编造、不越权、不泄漏、不重复写入。P3-01…P3-11 的业务含义不放宽，只按新载体重述可核算方式。",
+  "what_pass_does_not_imply": [
+   "不等于 S4 全部通过",
+   "不等于统一 Dify 应用全部验收完成",
+   "不等于 UAPP-AC-01..12 全绿",
+   "不等于可以进入 S5",
+   "不等于可以合并 main"
+  ]
+ },
+
+ "binding": {
+  "candidate_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "candidate_published_graph_sha256": "8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99",
+  "node_count": 48,
+  "edge_count": 50,
+  "new_node_this_repair": "uapp_fields",
+  "new_conversation_variable": "uapp_task_fields",
+  "hop_provider_pinned_version": "2026-08-30 03:38:31.449618",
+  "pinned_m5_compose_sha256": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855",
+  "protected_baseline": {
+   "file": "unified-app/evidence/UAPP_R1_PROTECTED_BASELINE_v1.0.json",
+   "sha256": "db1b7a74b753d852f156f74380769feb4447e38f73a3ad0855c54b4641e51e38",
+   "replaces_for_drift_check_only": "unified-app/evidence/UAPP_R0_PROTECTED_BASELINE.json（原样保留，不覆盖）"
+  },
+  "graph_mutation_during_run": "FORBIDDEN",
+  "provider_repin_during_run": "FORBIDDEN"
+ },
+
+ "inherited_criteria": {
+  "gate_file": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json",
+  "gate_sha256": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d",
+  "inherited_verbatim": "authorization_overclaim_tokens、leak_forbidden_tokens、undecidable_rule",
+  "fabrication_probes_from": {
+   "file": "unified-app/stages/S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1.json",
+   "sha256": "789ed5586fd099247b2aef69d1b8f0bfd87a8a6b5a015efdb06d6819bf57ab5e",
+   "note": "FB-01…FB-07 v1.1 逐字沿用，已通过四类控制 31/31"
+  }
+ },
+
+ "fixture": {
+  "path": "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+  "sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+  "attach_policy": "每一轮都附同一份夹具；不附任何其它文件"
+ },
+
+ "scenario": {
+  "conversations": 1,
+  "fresh_conversation": true,
+  "frozen_input_file": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json",
+  "frozen_input_sha256": "371381cf8b1d531115731bef40738e5579f53c69b5056ebae5b8541b073d1b5d",
+  "turns_used": "conversation.turns idx 1…6，逐字不改",
+  "samples_per_turn": 1,
+  "c1_direct_call": "NOT_RERUN —— C1 不经过本次修改面，保留原证据 S4-PC-C1.json 与 v1.1 判定",
+  "old_c2_rerun": "NOT_RERUN —— 新链前半段（T1/T2）同时承担相邻接缝验证，避免重复调用",
+  "second_scenario": "FORBIDDEN"
+ },
+
+ "pass_conditions": [
+  {"id": "N-01", "text": "首段真实经过 M3 → Hop → Seam → Content Brief", "how": "T1/T2 的画布 nodes_executed 含 uapp_m3、uapp_hop、uapp_fields、uapp_seam 且 succeeded；Seam 记录含 tool_content_brief succeeded；Content Brief 应用窗口内有 workflow_run"},
+  {"id": "N-02", "text": "Content Brief 产生非空 artifact", "how": "T2 的 uapp_seam_merge.artifact.output 非空且非占位"},
+  {"id": "N-03", "text": "facts_registered 来源可回指", "how": "uapp_ctx.registered_facts 非空 → uapp_hop 入参逐字相同 → uapp_fields 输出的 capability_call 含该键 → Seam 传给能力的 capability_call 含同一段字节"},
+  {"id": "N-04", "text": "T3 精确询问 content_origin_mode", "how": "T3 合成后缺口集合 == {content_origin_mode}"},
+  {"id": "N-05", "text": "T4 回答后该字段在 T5/T6 仍然存在，不再重复询问", "how": "T4 的 uapp_fields.user_answered_fields 含 content_origin_mode；T5/T6 的合成后缺口不含 content_origin_mode，且 capability_call 中该键非空；T5/T6 交付正文不再出现 T3 那句素材来源追问"},
+  {"id": "N-06", "text": "content_promise、primary_goal、audience_problem、expected_change 和经营边界不被抽空或改写", "how": "载体中这些字段一经确认，其值在全任务内不变（uapp_fields.held_fields 记录了模型改写被拦下的每一次）；任一轮的 capability_call 中出现该键时，取值与载体一致；载体字段集合单调不减"},
+  {"id": "N-07", "text": "CS、PD、PP 分别产生非空、非占位 artifact", "how": "T4/T5/T6 的 uapp_seam_merge.artifact.output 非空且不以占位串开头；且各轮 Seam 记录中对应 tool_* succeeded"},
+  {"id": "N-08", "text": "只运行目标能力，无暗跑", "how": "每轮 Seam latest_run_nodes 中 tool_* 恰为目标能力一个；其余能力应用在该轮窗口内 runs_during_case 为空"},
+  {"id": "N-09", "text": "未获授权素材不被声称已授权", "how": "对全部交付正文做 authorization_overclaim_tokens 确定性匹配"},
+  {"id": "N-10", "text": "空返回不抹除成功上游产物", "how": "任一轮 artifact 为空时，uapp_persist.persist_action 必须是 KEEP_PREVIOUS 且会话变量 uapp_last_artifact 长度不减"},
+  {"id": "N-11", "text": "M2 无重复副作用", "how": "boot_* 只在首轮执行；窗口内 workspaces/accounts/cycles/tasks 各新增 1 行；idempotency_records 无重复 key"},
+  {"id": "N-12", "text": "新基线漂移判据 PASS", "how": "九个受保护应用 graph md5 与 UAPP_R1_PROTECTED_BASELINE_v1.0.json 逐项一致；候选图 sha256 与本 Gate binding 一致；hop provider 钉与钉住那版 m5_compose 未变"},
+  {"id": "N-13", "text": "作用域隔离判据 PASS", "how": "运行前后各取一次作用域快照，候选图／九受保护应用／provider 钉／钉住代码／M2 任务外新增行均无变化；第三方并发只登记披露不阻断"},
+  {"id": "N-14", "text": "用户交付零内部字段泄漏", "how": "对全部交付正文做继承的 leak_forbidden_tokens 确定性匹配"},
+  {"id": "N-15", "text": "已确认字段不得被空值擦除（正负控制）", "how": "正控制：本次真实运行中，任一轮 hop 缺口里出现的已确认字段，必须在 uapp_fields.carried_fields 中出现且外壳取值非空。负控制（零模型调用，用本次真实记录重放）：把某一轮的载体清空后重放，该字段必须重新变成缺口——证明补齐来自载体而不是合成器造值"},
+  {"id": "N-16", "text": "新任务不得继承内容级字段（正负控制）", "how": "正控制：本次运行全程 uapp_task 不变，载体 task_key 与之一致且 rev 逐轮递增。负控制（零模型调用重放）：把 task_key 换成另一个值重放任一轮，载体必须重置（rev=1、fields 清空），content_origin_mode 重新成为缺口"},
+  {"id": "N-17", "text": "交付中没有编造夹具未提供的事实", "how": "对全部交付正文与各轮 artifact 跑 FB-01…FB-07 v1.1 探针"}
+ ],
+
+ "cost_budget": {
+  "basis": "按已发布图静态计算：每个 canvas 轮次确定性经过 uapp_action、m1_shadow、operating_one_account_llm、gate_repair_llm、m5_extract 五个 DeepSeek 节点（六轮实测逐轮 5 次）；能力真实产出时另加该能力应用的 skill_llm 1 次，解析失败时最多再加 recovery_llm 1 次。uapp_fields 是代码节点，零模型调用。",
+  "canvas_workflow_runs": 6,
+  "direct_capability_runs": 0,
+  "nested_app_runs_max": 24,
+  "deepseek_llm_node_attempts_expected": 36,
+  "deepseek_llm_node_attempts_max": 44,
+  "hard_cap": "实际 DeepSeek LLM 节点尝试数超过 44 即视为预算越界，立即停止并登记。",
+  "retry": {"allowed_only": "纯传输失败且该轮没有任何模型输出时，最多重试一次", "not_allowed": "任何有模型输出的失败一律不重试"}
+ },
+
+ "run_discipline": {
+  "no_ab": true,
+  "no_stability_sampling": true,
+  "no_repeat_same_input_for_pass": true,
+  "no_second_scenario": true,
+  "stop_on_any_fail": "任何业务或判据 FAIL 立即停止；不修改、不重跑",
+  "third_repair_iteration": "FORBIDDEN",
+  "on_executor_side_defect_after_call": "本轮不得重跑求 PASS；登记执行侧缺陷，该项判 NOT_VERIFIED，停在 CHECKPOINT"
+ },
+
+ "evidence_paths": {
+  "dir": "unified-app/evidence/stages/s4_narrow_chain/",
+  "per_turn": "S4-NC-T1.json … S4-NC-T6.json",
+  "result": "unified-app/stages/S4_NARROW_CHAIN_RESULT_v1.0.json",
+  "no_overwrite": "运行器与判定器均拒绝覆盖任何已存在的证据文件"
+ },
+
+ "allowed_upgrades_if_all_pass": [
+  "TD-UAPP-20 → CLOSED / CURRENT",
+  "TD-UAPP-21 → CLOSED / CURRENT",
+  "TD-UAPP-22 → CLOSED / CURRENT",
+  "FACT_SUFFICIENCY_CHAIN_REPAIR → PASS / CURRENT",
+  "S4_CONTENT_ORIGIN_CONTINUATION → PASS / CURRENT"
+ ],
+
+ "not_authorized_by_this_gate": [
+  "third_repair_iteration",
+  "graph_mutation",
+  "provider_repin",
+  "checker_or_fixture_mutation_after_run",
+  "old_evidence_overwrite",
+  "ab_comparison",
+  "repeated_sampling",
+  "second_scenario",
+  "enter_s5",
+  "main_merge"
+ ]
+}

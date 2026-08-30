@@ -1,0 +1,407 @@
+{
+ "document": {
+  "id": "UAPP_R1_PROTECTED_BASELINE_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "规划侧裁决 TD-UAPP-21：接受 Phase B 修复后的 HOP 版本作为下一轮新受保护基线",
+  "supersedes_for_drift_check_only": {
+   "file": "unified-app/evidence/UAPP_R0_PROTECTED_BASELINE.json",
+   "sha256": "3f7e5f086ae2e4555ed3bd4ec02bcf8201e204889c29fbf558b2a5cbb7b9a00b",
+   "not_overwritten": "R0 原样保留、不覆盖、不改写；它仍是 Phase B 之前那一轮的历史基线"
+  },
+  "scope_limit": "新基线只是下一轮的漂移判据，**不等于整个 S4 已验收**，也不改变任何既有 AC 状态。",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "frozen_at_utc": "2026-08-30T05:47:30Z",
+  "git_branch": "codex/v1-uapp-progressive-canvas-001",
+  "git_head": "0c2af46f5899986df95934998651a5047667799f",
+  "git_porcelain": [
+   "M unified-app/dsl/S4_PROGRESSIVE_CANVAS_v1.0.yml",
+   " M unified-app/workflows/S4_BUILD_v1.0.py",
+   "?? unified-app/evidence/S4_BUILD_06.json",
+   "?? unified-app/evidence/stages/s4_phase_c/FIELD_CARRIER_VERIFICATION.json",
+   "?? unified-app/workflows/S4_FIELD_CARRIER_VERIFY_v1.0.py",
+   "?? unified-app/workflows/S4_PROTECTED_BASELINE_R1_v1.0.py",
+   "?? unified-app/workflows/S4_SCOPE_ISOLATION_PREFLIGHT_v1.0.py"
+  ]
+ },
+ "hop_post_repair_identity": {
+  "app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+  "provider_name": "diyu_uapp_hop",
+  "provider_pinned_version": "2026-08-30 03:38:31.449618",
+  "m5_compose_sha256": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855",
+  "m5_compose_sha256_cross_checked_in_sql": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855",
+  "repair_ref": "unified-app/workflows/S4_HOP_FACT_FLOOR_REPAIR_v1.0.py",
+  "pre_repair_m5_compose_sha256": "f444166c7beef5f78045a7708857698a51ba6c14623c06a48798dcb696c1e171"
+ },
+ "candidate_canvas": {
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "name": "DIYU V1 · Unified Founder Canvas · Progressive Candidate",
+  "published_version": "2026-08-30 05:44:12.800192",
+  "graph_md5": "a7ebd3441d28ed2718d8a0564e7101f9",
+  "graph_sha256": "8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99",
+  "node_count": 48,
+  "edge_count": 50,
+  "model_hashes": {
+   "m1_shadow": {
+    "provider": "langgenius/deepseek/deepseek",
+    "name": "deepseek-v4-flash",
+    "completion_params_sha256": "2d542d4f4460b3e7e8b5578a0e362c1dcac1d6684cba59c726c699b97eb362b2"
+   },
+   "uapp_action": {
+    "provider": "langgenius/deepseek/deepseek",
+    "name": "deepseek-v4-flash",
+    "completion_params_sha256": "6e59cd85bb6773244948f877c49d377f199c41a7bfb5976c23ddeedf00c01b77"
+   },
+   "m1_chat_llm": {
+    "provider": "langgenius/deepseek/deepseek",
+    "name": "deepseek-v4-flash",
+    "completion_params_sha256": "96186934dfd215349154c3c944f4b0081264fc89806052d475023a65045cdcb4"
+   }
+  },
+  "prompt_hashes": {
+   "m1_shadow": "119eee8ddc883030b417457ccb3fe8ffdfdf2cc2e98dc1187188610663211639",
+   "uapp_action": "a77423e1d5136ab7b660f154bdf7a5d7a9e79dbc1df3575f4fdceff1d04b888f",
+   "m1_chat_llm": "51f26ea0061cc08d425ab140aa7e5c073d6a93f08bdb510b621c7954180dfbe1"
+  },
+  "tool_parameter_hashes": {
+   "uapp_m3": "8f71811fa0b0e996e465a0e97ec347d7a4e9ade0014f589687598ef99ba68dd8",
+   "uapp_hop": "db0d565d36964a2ba0d799f0ccc475ded56598957926a522286f5fc5580ba4a2",
+   "uapp_seam": "c49f66666dae7d3436d0b5cdf522ee667c074fcc69b371a2ab38f30388bc91e8"
+  },
+  "code_node_hashes": {
+   "m1_join": "ccc228f2614567610f33fc63e4e217526f1ee7795800b9b7fcbf56d3924dfff3",
+   "m1_compiler": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b",
+   "uapp_route": "0abc7d46583bc5f91bfdf9d90ba1ada8f4bc6687a4b2a7fb5800d90f2726f376",
+   "uapp_ask_one": "a86673a389798bd3a2baacb8bc5bdcb698798d16b1525c224551b9aee5162ed6",
+   "boot_p1": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p2": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p3": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p4": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p5": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "uapp_ctx": "5efb4adc7b8ec4afc8ac706f253c5734c007fae19774a04c3a5ddd08118ec508",
+   "uapp_s2_pending": "41d971bb5c538b7977edb3e87f96a5004a65b414d03faf3deb59c720fb235793",
+   "uapp_chat_guard": "3c0aad20e118c89a3591eaf4d1bb4067eb9af2c85d7f65a924a12ab5e429b9f2",
+   "uapp_m3_fail": "5b6ac36e1f71dd20f53a1375e590e377e6a4ff551410528f3384181b6cedfd76",
+   "uapp_fields": "446d54f96dc66055fea88183d69691016cbd9459b66eeb8963fe7f3e39c9c60c",
+   "uapp_noseam": "3a5dbbf66061098e7b9220a697f73d2ff68ca1197c3df528fd2383e65363dbc2",
+   "uapp_delivery": "8856fe9d1726fe0f200d149a0380fce432e8e55768ab9ded4e3c94831561382f",
+   "uapp_persist": "9d986b01ad79bbd3ed9ebc01d94c930f1c75b2ccc796a72135e9a3dc6791b7d3",
+   "uapp_cap_fail": "5b6ac36e1f71dd20f53a1375e590e377e6a4ff551410528f3384181b6cedfd76"
+  }
+ },
+ "protected_apps": {
+  "CAMPAIGN": {
+   "app_id": "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Campaign Orchestrator",
+   "published_version": "2026-08-29 03:34:55.305410",
+   "graph_md5": "4876dacc43a73741b41c5a3083796347",
+   "graph_sha256": "f138b5569d4e38f3cfadb7254fde99b3e5892f9b9b7ce314617b52183c0bdb1b",
+   "node_count": 15,
+   "edge_count": 15,
+   "model_hashes": {
+    "skill_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    },
+    "recovery_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    }
+   },
+   "prompt_hashes": {
+    "skill_llm": "6325fda701139f0638a2b267fb83b9b6a8325384e83f8073ba345e1b5f9926b4",
+    "recovery_llm": "71b5e0ba566206e2036fd84193e0858beacd77df5b321d32f10bdcc74e4fd012"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "envelope_check": "9575967ced4780431a9d45fe3e7470fd5240b2215861696481bf89bac22a8aaa",
+    "returns_adapter": "741a02a37ac844ed5cd96b969e8472343b927fa71667bc5225d364e47ece7f4d",
+    "delivery_finalize": "ac3a4ebdbf7c0aba8fd8f57a5f910c011df40b403f58e27565c8b70c7624f7f1",
+    "binding_record": "3ab6c8715653436f5d075aa7df77c4a9bedee203507378c44c3b351a22bc7109",
+    "component_return": "9bbdc2e4f7a858dc62928df703cc858b4515a16fde35915b6957e8060a5b73a9"
+   }
+  },
+  "CONTENT_BRIEF": {
+   "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Content Brief Architect",
+   "published_version": "2026-08-29 03:34:56.245539",
+   "graph_md5": "0c841642a71feedfb327ffb76aec0ddd",
+   "graph_sha256": "7d0db8bddd0938f63c71613bfe62c4c449afe1b45c73558885dc6eb21cd68b9c",
+   "node_count": 15,
+   "edge_count": 15,
+   "model_hashes": {
+    "skill_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    },
+    "recovery_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    }
+   },
+   "prompt_hashes": {
+    "skill_llm": "288bef97a8d6cd1bce6e1a5b26a7fb116a08d425989172fcefa6f82e6a3db09b",
+    "recovery_llm": "71b5e0ba566206e2036fd84193e0858beacd77df5b321d32f10bdcc74e4fd012"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "envelope_check": "8b13cbf09df37e5eed750c00669252baab80e5720d5572f2a4d4702df01e7b62",
+    "returns_adapter": "422434c4b14701667413bfed974cdd1628f5221ca6b3fbe5d19ba5b9b63f6f62",
+    "delivery_finalize": "ac3a4ebdbf7c0aba8fd8f57a5f910c011df40b403f58e27565c8b70c7624f7f1",
+    "binding_record": "fcc638329d1ec8ae1595c5886b4d47e10f30fbb095ab627799b6d6d8b5c8b6ee",
+    "component_return": "31ec4da3f0b9676fecc70be86981d2a38f9a0fdb3a4b104368ef4fe3e2a1933b"
+   }
+  },
+  "CREATIVE_SCRIPT": {
+   "app_id": "44b55f9d-3792-40c3-b095-f2696464b4ec",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Creative Script (CS-1 + Script)",
+   "published_version": "2026-08-29 03:34:57.114722",
+   "graph_md5": "a1cd859d5b88d0d025f336665ca94e51",
+   "graph_sha256": "9ec5c1af549ac0a47bb8d0f139859e78c44f5feedf00107d7e678456a938cd1b",
+   "node_count": 15,
+   "edge_count": 15,
+   "model_hashes": {
+    "skill_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    },
+    "recovery_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    }
+   },
+   "prompt_hashes": {
+    "skill_llm": "ea8006e094623faac0fc3a7580b8eb5bae7dd6358142b5a4977ebade8b2f09a4",
+    "recovery_llm": "71b5e0ba566206e2036fd84193e0858beacd77df5b321d32f10bdcc74e4fd012"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "envelope_check": "26f10a440ec37381552e5aefd9316a63d0fde4847bd8d95c92e5228ec58bd721",
+    "returns_adapter": "8673d6176bbc80ef907670e52eb96c57fa20e3a87582afca5ab10095186a9286",
+    "delivery_finalize": "ac3a4ebdbf7c0aba8fd8f57a5f910c011df40b403f58e27565c8b70c7624f7f1",
+    "binding_record": "4d39cd239ce5c4502a55edcb27d4e96ce27045b9f1189c09da28c0704739add5",
+    "component_return": "4e27cacfbc6133142208531163d38c93385cca4d5485a57ad241b64894ed4e5f"
+   }
+  },
+  "HOP": {
+   "app_id": "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+   "name": "DIYU M5 TEST CANDIDATE · 跨能力接缝适配器（能力感知抽取）",
+   "published_version": "2026-08-30 03:38:31.449618",
+   "graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+   "graph_sha256": "bd9a4d16f6621434bbe31b585a90a03a5bcb6a2b0865e99b779d3e1cb88d32be",
+   "node_count": 4,
+   "edge_count": 3,
+   "model_hashes": {
+    "m5_extract": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "44d5252b31c36d4c7e9a6255b7713b3498583b2da1ed17f750fa14b73caf27ba"
+    }
+   },
+   "prompt_hashes": {
+    "m5_extract": "1215796eee9ff06fde64c67f737cf911941735a9edff998be405b1fd363d9dc6"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "m5_compose": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855"
+   }
+  },
+  "M1_HOST": {
+   "app_id": "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+   "name": "DIYU M5 FP · M3 单账号持续运营（撤回影响面与在场判断）",
+   "published_version": "2026-08-29 03:29:56.878929",
+   "graph_md5": "cd93757bcf8ad322f3b32fc43b2da3ff",
+   "graph_sha256": "ea7a5f26dc82d65fb15cc327ddef1dc4cd86dcfdbc4844d025b20d2683fddb46",
+   "node_count": 7,
+   "edge_count": 6,
+   "model_hashes": {
+    "operating_one_account_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "843b7d5289c15053a9e61ae18925dca1f3c537f47d191982abe174daafed97f4"
+    },
+    "gate_repair_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "843b7d5289c15053a9e61ae18925dca1f3c537f47d191982abe174daafed97f4"
+    }
+   },
+   "prompt_hashes": {
+    "operating_one_account_llm": "2b0eeba53b3521a5fc3533bee36d2418cd8a4293b3c206ab4c2da89a116544c3",
+    "gate_repair_llm": "1216c506371931b4a52be853b119516dfe66e7ebd1d9cf2c5c8c6afc9ce903a3"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "required_item_gate": "f617d484c00bfdcdee5d56c7c93101ac4595e0a3c6ca03ea4048b71d9673c15e",
+    "assemble": "236b1e04bed9116d1992ebced9d114da73183023d482e8655cd1702cb16524d6",
+    "post_gate": "3f52ec8afc4349d101f5cbf39a5bc56054ab04cf930ae5e2395ac9f2d7694c0c"
+   }
+  },
+  "MATRIX": {
+   "app_id": "fd25ebfa-db67-40c3-82e5-202e1254facf",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Matrix Architect",
+   "published_version": "2026-08-29 03:34:54.375302",
+   "graph_md5": "6cdaeac9cacf69fbeea4bd25e1536ace",
+   "graph_sha256": "b59a2d6cc33c4b3a873724b27894dbed231f3295a636d9528bd521f313c798b7",
+   "node_count": 15,
+   "edge_count": 15,
+   "model_hashes": {
+    "skill_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    },
+    "recovery_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    }
+   },
+   "prompt_hashes": {
+    "skill_llm": "3cf0f84d8fb7733d420e458f37a33e23afe1c1e08f7931c764b102ad80540fd1",
+    "recovery_llm": "71b5e0ba566206e2036fd84193e0858beacd77df5b321d32f10bdcc74e4fd012"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "envelope_check": "6ca5310761439eaa7dc280109e37ba917a4bfcb382e4aedfc369bc6377b9a89a",
+    "returns_adapter": "8d1761cc2097c75345ef44a2a58a0c9ca010436c7e3b9f4911059f4db5f00acf",
+    "delivery_finalize": "ac3a4ebdbf7c0aba8fd8f57a5f910c011df40b403f58e27565c8b70c7624f7f1",
+    "binding_record": "d4a359380fb320605fa8ec928309a5a2b253b20491f40b14f6bacc272511fe69",
+    "component_return": "7bb6727df152ecc8a5769aebe5e469fcce09c3a6630cb5a444f259024a419d6b"
+   }
+  },
+  "PRODUCTION_DIRECTOR": {
+   "app_id": "13cfabd5-f592-4354-a304-47098b765697",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Production Director",
+   "published_version": "2026-08-29 03:34:58.037065",
+   "graph_md5": "964e9a947dc9790d1de82496469689ad",
+   "graph_sha256": "5b2e03f685af74f1a61e2d59d3ba747c32f54682c41aba2650b593b0e87a69b9",
+   "node_count": 15,
+   "edge_count": 15,
+   "model_hashes": {
+    "skill_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    },
+    "recovery_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    }
+   },
+   "prompt_hashes": {
+    "skill_llm": "2060475cf78df2beac7792a7218e602f24965e5fe810ef0992b161386a51f506",
+    "recovery_llm": "71b5e0ba566206e2036fd84193e0858beacd77df5b321d32f10bdcc74e4fd012"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "envelope_check": "1f6f72c78ba66d0e78cb6653e07c864e90b8154dfc7973e83abed1163729fe1f",
+    "returns_adapter": "2b1831a95a7e7f472a859848814dfd4c512e4965c42432ca33926d42f397da26",
+    "delivery_finalize": "ac3a4ebdbf7c0aba8fd8f57a5f910c011df40b403f58e27565c8b70c7624f7f1",
+    "binding_record": "b58bba829c69d702323a97e6f6c95f9f57a3790aa9de571218df0f3787155b77",
+    "component_return": "ae489cf49a893e2bededad24fdabdcd5433d66653c106cc5d5f871287c6bbb59"
+   }
+  },
+  "PUBLISHING_PACKAGING": {
+   "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Publishing & Packaging",
+   "published_version": "2026-08-29 03:34:58.999575",
+   "graph_md5": "788c8555aca09e6fa6d979f237f70157",
+   "graph_sha256": "3915d2802177f91004e21a861af9935bbe7d398ddb55b8aa5add631dd8882f33",
+   "node_count": 15,
+   "edge_count": 15,
+   "model_hashes": {
+    "skill_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    },
+    "recovery_llm": {
+     "provider": "langgenius/deepseek/deepseek",
+     "name": "deepseek-v4-flash",
+     "completion_params_sha256": "9aade35ec251efbb9c20abb827729cd3f475339ccb6cb01571d011850e8e0bb3"
+    }
+   },
+   "prompt_hashes": {
+    "skill_llm": "48913479d283691a6a987c0107cf0a5d010b90f8c600053220a4f555cde0132b",
+    "recovery_llm": "71b5e0ba566206e2036fd84193e0858beacd77df5b321d32f10bdcc74e4fd012"
+   },
+   "tool_parameter_hashes": {},
+   "code_node_hashes": {
+    "envelope_check": "1bcf1be8f119c53e81301abc803f5b03ad1fe871d7d13fa67bffa2d1a7c325ac",
+    "returns_adapter": "cb27c5e6634873b146bfbfc6e721a949b80c956bd027cd19ce7c20233dd5ce82",
+    "delivery_finalize": "ac3a4ebdbf7c0aba8fd8f57a5f910c011df40b403f58e27565c8b70c7624f7f1",
+    "binding_record": "d62f797d17d6a84a408256f994e2fc566201668da90d7beaec6b518502306b01",
+    "component_return": "3b01730706c049c56f2aa19583550ece5fe9fa5dfc9ed0f0deaa5bb84de963b8"
+   }
+  },
+  "SEAM": {
+   "app_id": "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+   "name": "DIYU M5 FP · DIYU M5 RB · DIYU M4 v1.3 TEST · Capability Seam",
+   "published_version": "2026-08-29 03:34:59.916878",
+   "graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+   "graph_sha256": "6faaa52dfb24f3420386bcc30fd7f3a7f4f4f35aa2331194da95dfd00b8961e4",
+   "node_count": 25,
+   "edge_count": 29,
+   "model_hashes": {},
+   "prompt_hashes": {},
+   "tool_parameter_hashes": {
+    "tool_matrix": "365a8d9080b7065478cd9a23215c2be69b03a86ae93aa284b2e281c17db0ebc0",
+    "tool_campaign": "365a8d9080b7065478cd9a23215c2be69b03a86ae93aa284b2e281c17db0ebc0",
+    "tool_content_brief": "365a8d9080b7065478cd9a23215c2be69b03a86ae93aa284b2e281c17db0ebc0",
+    "tool_creative_script": "365a8d9080b7065478cd9a23215c2be69b03a86ae93aa284b2e281c17db0ebc0",
+    "tool_production_director": "365a8d9080b7065478cd9a23215c2be69b03a86ae93aa284b2e281c17db0ebc0",
+    "tool_publishing_packaging": "365a8d9080b7065478cd9a23215c2be69b03a86ae93aa284b2e281c17db0ebc0"
+   },
+   "code_node_hashes": {
+    "entry_resolver": "b27364241ed1c76c9fd6c6e50d02fb8f28e49bfc0fe78dee12844362c64ec6ae",
+    "fin_matrix": "614fc3711ab765295852a81b56595071be26f62029941dd4a1c20b767e7ba24e",
+    "fin_campaign": "614fc3711ab765295852a81b56595071be26f62029941dd4a1c20b767e7ba24e",
+    "fin_content_brief": "614fc3711ab765295852a81b56595071be26f62029941dd4a1c20b767e7ba24e",
+    "fin_creative_script": "614fc3711ab765295852a81b56595071be26f62029941dd4a1c20b767e7ba24e",
+    "fin_production_director": "614fc3711ab765295852a81b56595071be26f62029941dd4a1c20b767e7ba24e",
+    "fin_publishing_packaging": "614fc3711ab765295852a81b56595071be26f62029941dd4a1c20b767e7ba24e",
+    "seam_tool_fail": "dec3ba8917cac754944641f1349b8c015530b08511bbedf610881810da8c4f79",
+    "unsupported": "6b93ca0f9ccb2d59f4f82eeec3d0d4135f2ebbb6c8e928b3b815c7de54264d30"
+   }
+  }
+ },
+ "protected_apps_graph_md5": {
+  "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+  "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+  "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+  "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+  "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+  "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+  "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+  "PUBLISHING_PACKAGING": "788c8555aca09e6fa6d979f237f70157",
+  "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+ },
+ "all_uapp_provider_pins": [
+  {
+   "name": "diyu_uapp_hop",
+   "pinned": "2026-08-30 03:38:31.449618",
+   "app_published": "2026-08-30 03:38:31.449618",
+   "aligned": true
+  },
+  {
+   "name": "diyu_uapp_m3",
+   "pinned": "2026-08-29 03:29:56.878929",
+   "app_published": "2026-08-29 03:29:56.878929",
+   "aligned": true
+  },
+  {
+   "name": "diyu_uapp_seam",
+   "pinned": "2026-08-29 03:34:59.916878",
+   "app_published": "2026-08-29 03:34:59.916878",
+   "aligned": true
+  }
+ ]
+}

@@ -1,0 +1,242 @@
+{
+ "document": {
+  "id": "S4_FIELD_CARRIER_VERIFICATION_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "规划侧裁决 TD-UAPP-20/21/22；second_repair_iteration = AUTHORIZED_ONCE_FOR_TD-UAPP-20_ONLY",
+  "model_calls": 0,
+  "dify_writes": 0
+ },
+ "checks": [
+  {
+   "id": "F-01",
+   "text": "用户确认的 content_origin_mode 进入任务作用域载体",
+   "result": "PASS",
+   "detail": {
+    "value": "使用门店已有素材剪辑，不安排重新拍摄",
+    "level": "A",
+    "T3_asked": [
+     "content_origin_mode"
+    ]
+   }
+  },
+  {
+   "id": "F-02",
+   "text": "T5 抽取器返回空值时不擦除 content_origin_mode",
+   "result": "PASS",
+   "detail": {
+    "in_gaps": [
+     "content_origin_mode",
+     "content_promise",
+     "time_window"
+    ],
+    "out_gaps": [],
+    "carried": "content_origin_mode,time_window,content_promise",
+    "value_in_envelope": "使用门店已有素材剪辑，不安排重新拍摄"
+   }
+  },
+  {
+   "id": "F-03",
+   "text": "已确认字段全任务保留（载体单调不减）、成为缺口时必由载体补齐",
+   "result": "PASS",
+   "detail": {
+    "carrier_never_shrank": true,
+    "shrunk": [],
+    "gaps_the_carrier_could_fill_but_did_not": [],
+    "residual_gaps_carrier_could_have_filled": [],
+    "named_fields_confirmed_in_carrier": [
+     "audience_problem",
+     "content_promise",
+     "expected_change",
+     "expression_subject_and_boundary",
+     "facts_registered",
+     "primary_goal"
+    ],
+    "per_turn_carried": {
+     "T3": "",
+     "T4": "content_promise",
+     "T5": "content_origin_mode,time_window,content_promise",
+     "T6": "content_promise"
+    }
+   }
+  },
+  {
+   "id": "F-04",
+   "text": "用户明确纠正时新值生效、旧值不再下行、登记下游 STALE",
+   "result": "PASS",
+   "detail": {
+    "new": {
+     "v": "使用门店已有素材剪辑，不安排重新拍摄",
+     "lvl": "A",
+     "turn": 2
+    },
+    "stale": [
+     "content_origin_mode"
+    ],
+    "old_still_downstream": false
+   }
+  },
+  {
+   "id": "F-05",
+   "text": "新内容任务不继承上一任务的 content_origin_mode",
+   "result": "PASS",
+   "detail": {
+    "gaps": [
+     "content_origin_mode",
+     "content_promise",
+     "time_window"
+    ],
+    "carried": "",
+    "task_key": "NEW-TASK-0000"
+   }
+  },
+  {
+   "id": "F-06",
+   "text": "来源真空时仍精确停在 facts_registered，合成器不制造事实",
+   "result": "PASS",
+   "detail": {
+    "gaps": [
+     "facts_registered"
+    ],
+    "carried": ""
+   }
+  },
+  {
+   "id": "F-07",
+   "text": "本轮抽取与已确认值冲突时不静默采纳，维持已确认值并登记",
+   "result": "PASS",
+   "detail": {
+    "envelope": "锁定的主目标",
+    "held": "primary_goal",
+    "note": "A/B > E，不是同权威冲突，因此维持而非追问；新值不被静默采纳，登记在 held_fields"
+   }
+  },
+  {
+   "id": "F-08",
+   "text": "空 artifact 不覆盖最后一个成功上游产物；有真产出正常覆盖；首轮不造值",
+   "result": "PASS",
+   "detail": {
+    "keep": {
+     "artifact_to_persist": "上一份成功产物",
+     "capability_to_persist": "CONTENT_BRIEF",
+     "persist_action": "KEEP_PREVIOUS"
+    },
+    "write": {
+     "artifact_to_persist": "新产物",
+     "capability_to_persist": "CREATIVE_SCRIPT",
+     "persist_action": "WRITE_NEW"
+    },
+    "first": {
+     "artifact_to_persist": "",
+     "capability_to_persist": "",
+     "persist_action": "KEEP_PREVIOUS"
+    }
+   }
+  },
+  {
+   "id": "F-09",
+   "text": "载体为空时合成节点是恒等变换，不改变现有 C1/C2 充分输入",
+   "result": "PASS",
+   "detail": [
+    {
+     "turn": 2,
+     "envelope_identical": true,
+     "gaps_identical": true,
+     "carried": "",
+     "held": ""
+    },
+    {
+     "turn": 3,
+     "envelope_identical": true,
+     "gaps_identical": true,
+     "carried": "",
+     "held": ""
+    }
+   ]
+  },
+  {
+   "id": "F-10",
+   "text": "九个受保护应用零漂移（本次修改只动候选画布）",
+   "result": "PASS",
+   "detail": {}
+  },
+  {
+   "id": "F-11",
+   "text": "作用域隔离预检正负控制均通过（无关第三方允许／触碰任务作用域拒绝）",
+   "result": "PASS",
+   "detail": "作用域隔离预检自检 7/7 通过"
+  }
+ ],
+ "dry_run_structure": {
+  "node_count": 48,
+  "edge_count": 50,
+  "has_uapp_fields": true,
+  "graph_sha256_dry_run": "8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99"
+ },
+ "replay": [
+  {
+   "turn": 2,
+   "capability": "CONTENT_BRIEF",
+   "in_gaps": [],
+   "out_gaps": [],
+   "carried": "",
+   "held": "",
+   "user_answered": "",
+   "note": "任务=200efb2e rev=1 目标=CONTENT_BRIEF｜补齐=无｜维持=无｜用户本轮确认=无｜本轮仍缺=无"
+  },
+  {
+   "turn": 3,
+   "capability": "CREATIVE_SCRIPT",
+   "in_gaps": [
+    "content_origin_mode"
+   ],
+   "out_gaps": [
+    "content_origin_mode"
+   ],
+   "carried": "",
+   "held": "asset_publish_permission,content_promise,cta_contract,explicit_non_promise,expression_boundary,facts_registered,primary_goal",
+   "user_answered": "",
+   "note": "任务=200efb2e rev=2 目标=CREATIVE_SCRIPT｜补齐=无｜维持=asset_publish_permission,content_promise,cta_contract,explicit_non_promise,expression_boundary,facts_registered,primary_goal｜用户本轮确认=无｜本轮仍缺=content_origin_mode"
+  },
+  {
+   "turn": 4,
+   "capability": "CREATIVE_SCRIPT",
+   "in_gaps": [
+    "content_promise"
+   ],
+   "out_gaps": [],
+   "carried": "content_promise",
+   "held": "asset_publish_permission,cta_contract,explicit_non_promise,expression_boundary,facts_registered,primary_goal",
+   "user_answered": "content_origin_mode",
+   "note": "任务=200efb2e rev=3 目标=CREATIVE_SCRIPT｜补齐=content_promise｜维持=asset_publish_permission,cta_contract,explicit_non_promise,expression_boundary,facts_registered,primary_goal｜用户本轮确认=content_origin_mode｜本轮仍缺=无"
+  },
+  {
+   "turn": 5,
+   "capability": "PRODUCTION_DIRECTOR",
+   "in_gaps": [
+    "content_origin_mode",
+    "content_promise",
+    "time_window"
+   ],
+   "out_gaps": [],
+   "carried": "content_origin_mode,time_window,content_promise",
+   "held": "asset_publish_permission,capacity_or_owner,cta_contract,explicit_non_promise,expression_boundary",
+   "user_answered": "",
+   "note": "任务=200efb2e rev=4 目标=PRODUCTION_DIRECTOR｜补齐=content_origin_mode,time_window,content_promise｜维持=asset_publish_permission,capacity_or_owner,cta_contract,explicit_non_promise,expression_boundary｜用户本轮确认=无｜本轮仍缺=无"
+  },
+  {
+   "turn": 6,
+   "capability": "PUBLISHING_PACKAGING",
+   "in_gaps": [
+    "content_body_or_beats",
+    "content_promise"
+   ],
+   "out_gaps": [
+    "content_body_or_beats"
+   ],
+   "carried": "content_promise",
+   "held": "asset_publish_permission,cta_contract,explicit_non_promise,expression_boundary,facts_registered,time_window",
+   "user_answered": "",
+   "note": "任务=200efb2e rev=5 目标=PUBLISHING_PACKAGING｜补齐=content_promise｜维持=asset_publish_permission,cta_contract,explicit_non_promise,expression_boundary,facts_registered,time_window｜用户本轮确认=无｜本轮仍缺=content_body_or_beats"
+  }
+ ]
+}

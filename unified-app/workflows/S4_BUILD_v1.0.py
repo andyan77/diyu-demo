@@ -52,6 +52,153 @@ SEAM_APP = "5fca0162-e26b-4545-a00b-66b1a2a2a077"
 # 为什么 artifact 与 capability 必须一起动：只保产物不保身份，会让下一跳把
 # 「上一个能力是 CREATIVE_SCRIPT」和「上一个产物是 Content Brief 正文」配成一对，
 # hop 的 ARTIFACT_IS_FIELD 规则会据此把 Brief 正文当成脚本本体——那是编造。
+FIELDS_SRC = r'''
+import json
+import re
+
+# 任务作用域已确认字段的确定性合成。规划侧裁决 TD-UAPP-20 的工程编译。
+#
+# 权威顺序 A > B > C/D > E：
+#   A 用户当前轮明确补充/确认/纠正的字段——判定依据是"系统上一轮就是问的这一项"
+#   B 当前内容任务已确认字段（载体）
+#   C/D 成功上游产物与 M2 投影中已锁定的字段——它们进入载体的通道与 B 相同
+#   E 当前轮模型抽取结果，只能补空缺，不能覆盖 A–D
+#
+# 三条确定性规则：
+#   1 空值、未提及、模型漏抽取，一律不擦除已确认字段
+#   2 用户明确纠正（系统问过的那一项这一轮有了新值）以新值更新，并登记依赖下游 STALE
+#   3 载体按 task_key 作用域。task_key 变了就是新内容任务，一律不继承内容级决定
+#
+# 本节点不制造事实：载体里的每一个值，都来自本任务此前某一轮真实发出的能力外壳。
+# 载体为空时（首轮），本节点是恒等变换——外壳与缺口原样透传。
+
+FIELD_LINE = re.compile(r"^(\s*)`([A-Za-z_][A-Za-z0-9_]*)`\s*:\s*(.*)$")
+NESTED_UNDER_OBJECTIVE = ("primary_goal",)
+
+
+def _norm_gap(g):
+    """objective.primary_goal -> primary_goal；去掉括号里的说明。"""
+    g = (g or "").strip()
+    g = re.split(r"[（(]", g)[0].strip()
+    if "." in g:
+        g = g.rsplit(".", 1)[-1]
+    return g
+
+
+def _split_gaps(text):
+    out = []
+    for x in re.split(r"[；;]", text or ""):
+        x = _norm_gap(x)
+        if x and x != "无":
+            out.append(x)
+    return out
+
+
+def _parse(env):
+    """把外壳拆成行，并取出全部反引号字段。值是单行的（上游 _clean 已折叠空白）。"""
+    lines = (env or "").split("\n")
+    found = {}
+    for i, ln in enumerate(lines):
+        m = FIELD_LINE.match(ln)
+        if m:
+            found[m.group(2)] = {"i": i, "indent": m.group(1), "v": m.group(3).strip()}
+    return lines, found
+
+
+def _set(lines, found, key, value):
+    """已有该行就原地替换；没有就按正确缩进插入。不动其它任何一行。"""
+    if key in found:
+        e = found[key]
+        lines[e["i"]] = "%s`%s`: %s" % (e["indent"], key, value)
+        e["v"] = value
+        return
+    if key in NESTED_UNDER_OBJECTIVE:
+        for i, ln in enumerate(lines):
+            if ln.strip() == "objective:":
+                lines.insert(i + 1, "  `%s`: %s" % (key, value))
+                for e in found.values():
+                    if e["i"] > i:
+                        e["i"] += 1
+                found[key] = {"i": i + 1, "indent": "  ", "v": value}
+                return
+    last = -1
+    for e in found.values():
+        if e["indent"] == "" and e["i"] > last:
+            last = e["i"]
+    at = last + 1 if last >= 0 else len(lines)
+    lines.insert(at, "`%s`: %s" % (key, value))
+    for e in found.values():
+        if e["i"] >= at:
+            e["i"] += 1
+    found[key] = {"i": at, "indent": "", "v": value}
+
+
+def main(prev_fields_json, task_key, capability_call, gaps_text, target_capability):
+    tk = (task_key or "").strip()
+    try:
+        prev = json.loads(prev_fields_json) if (prev_fields_json or "").strip() else {}
+    except Exception:
+        prev = {}
+    if not isinstance(prev, dict) or prev.get("task_key") != tk or not tk:
+        # 新内容任务不继承上一任务的内容级决定
+        prev = {"task_key": tk, "rev": 0, "fields": {}, "asked": [], "stale": []}
+
+    fields = prev.get("fields") or {}
+    asked_prev = set(prev.get("asked") or [])
+    rev = int(prev.get("rev") or 0) + 1
+
+    lines, found = _parse(capability_call)
+    gaps = _split_gaps(gaps_text)
+
+    carried, held, answered, stale = [], [], [], []
+
+    # 1. 本轮抽取值入账。系统上一轮问过的那一项按 A 处理，其余按 E。
+    for key in sorted(found):
+        v = found[key]["v"].strip()
+        if not v:
+            continue
+        if key in asked_prev:
+            if key in fields and fields[key].get("v") != v:
+                stale.append(key)
+            fields[key] = {"v": v, "lvl": "A", "turn": rev}
+            answered.append(key)
+        elif key in fields:
+            if fields[key].get("v") != v:
+                # B/A 不被本轮模型抽取改写；不静默采纳新值，也不丢弃它，只登记
+                _set(lines, found, key, fields[key]["v"])
+                held.append(key)
+        else:
+            fields[key] = {"v": v, "lvl": "E", "turn": rev}
+
+    # 2. 用载体补本轮缺口。只补，不造。
+    remaining = []
+    for g in gaps:
+        cur = (fields.get(g) or {}).get("v") or ""
+        if cur:
+            _set(lines, found, g, cur)
+            carried.append(g)
+        else:
+            remaining.append(g)
+
+    merged_env = "\n".join(lines)
+    merged_gaps = "；".join(remaining) if remaining else "无"
+    carrier = {"task_key": tk, "rev": rev, "fields": fields,
+               "asked": remaining, "stale": sorted(set((prev.get("stale") or []) + stale))}
+
+    note = "任务=%s rev=%d 目标=%s｜补齐=%s｜维持=%s｜用户本轮确认=%s｜本轮仍缺=%s" % (
+        tk[:8] or "(空)", rev, target_capability or "",
+        ",".join(carried) or "无", ",".join(held) or "无",
+        ",".join(answered) or "无", ",".join(remaining) or "无")
+    return {"capability_call": merged_env,
+            "gaps_text": merged_gaps,
+            "task_fields_json": json.dumps(carrier, ensure_ascii=False),
+            "carried_fields": ",".join(carried),
+            "held_fields": ",".join(held),
+            "user_answered_fields": ",".join(answered),
+            "stale_downstream": ",".join(carrier["stale"]),
+            "merge_note": note}
+'''
+
 PERSIST_SRC = r"""
 def main(new_artifact, new_capability, prev_artifact, prev_capability):
     new_a = (new_artifact or "").strip()
@@ -101,16 +248,30 @@ def build_graph():
          "focus_fields": ""})))
     edges.append(E("uapp_op_gate", "uapp_hop", "capability"))
 
+    add.append(N("uapp_fields", X + 6040, Y + 200, code(
+        "合成｜本任务已确认字段",
+        "已确认字段不被空值擦除；用户答过的那一项以新值更新并登记下游 STALE；"
+        "新任务不继承上一任务的内容级决定。载体为空时是恒等变换。",
+        FIELDS_SRC,
+        [V("prev_fields_json", ["conversation", "uapp_task_fields"]),
+         V("task_key", ["conversation", "uapp_task"]),
+         V("capability_call", ["uapp_hop", "capability_call"]),
+         V("gaps_text", ["uapp_hop", "extraction_gaps_text"]),
+         V("target_capability", ["uapp_route", "target_capability"])],
+        ["capability_call", "gaps_text", "task_fields_json", "carried_fields",
+         "held_fields", "user_answered_fields", "stale_downstream", "merge_note"])))
+    edges.append(E("uapp_hop", "uapp_fields"))
+
     add.append(N("uapp_seam", X + 6200, Y + 200, tool(
         "调用｜最终 FP 统一能力接缝",
         "一次只进一个专业能力；入口由接缝自己的确定性充分性规则推导，本画布不再算一遍",
         PROVIDER_SEAM, TOOL_SEAM,
         {"capability": "{{#uapp_route.target_capability#}}",
          "entry": "{{#uapp_route.entry#}}",
-         "capability_call": "{{#uapp_hop.capability_call#}}",
+         "capability_call": "{{#uapp_fields.capability_call#}}",
          "professional_input": "{{#uapp_hop.professional_input#}}",
          "example_reference_requested": "NO"})))
-    edges.append(E("uapp_hop", "uapp_seam"))
+    edges.append(E("uapp_fields", "uapp_seam"))
 
     add.append(N("uapp_noseam", X + 5880, Y + 440, code(
         "占位｜本轮不进专业能力", "只提供空值，不代替判断",
@@ -123,7 +284,7 @@ def build_graph():
         ("user_delivery", ["uapp_seam", "user_delivery"], ["uapp_noseam", "empty"]),
         ("outcome", ["uapp_seam", "business_delivery_outcome"], ["uapp_noseam", "empty"]),
         ("returns_json", ["uapp_seam", "returns_json"], ["uapp_noseam", "empty_arr"]),
-        ("hop_gaps", ["uapp_hop", "extraction_gaps_text"], ["uapp_noseam", "empty"]),
+        ("hop_gaps", ["uapp_fields", "gaps_text"], ["uapp_noseam", "empty"]),
     ]
     add.append(N("uapp_seam_merge", X + 6520, Y + 200, {
         "type": "variable-aggregator", "title": "汇合｜能力分支与非能力分支",
@@ -177,7 +338,8 @@ def build_graph():
     add.append(N("uapp_save", X + 7000, Y + 200, assigner(
         "记住｜本轮产物与能力", "供下一跳作为上游产出使用；业务真源在 M2，不在会话里",
         [("variable", ["uapp_persist", "artifact_to_persist"], "uapp_last_artifact"),
-         ("variable", ["uapp_persist", "capability_to_persist"], "uapp_last_capability")])))
+         ("variable", ["uapp_persist", "capability_to_persist"], "uapp_last_capability"),
+         ("variable", ["uapp_fields", "task_fields_json"], "uapp_task_fields")])))
     add.append(N("uapp_answer_main", X + 7160, Y + 200,
                  answer("回复｜交付", "{{#uapp_delivery.final_text#}}")))
     edges.append(E("uapp_seam_merge", "uapp_delivery"))
@@ -211,6 +373,15 @@ def main():
     convvars = draft.get("conversation_variables") or []
     if isinstance(convvars, dict):
         convvars = list(convvars.values())
+    # 任务作用域已确认字段载体。只在缺席时补建；已存在则保持线上现值不动。
+    if not any((v or {}).get("name") == "uapp_task_fields" for v in convvars):
+        import uuid as _uuid
+        convvars.append({
+            "id": str(_uuid.uuid5(_uuid.NAMESPACE_DNS, "uapp_task_fields")),
+            "name": "uapp_task_fields", "value": "", "value_type": "string",
+            "selector": ["conversation", "uapp_task_fields"],
+            "description": "本内容任务已确认字段的结构化载体（JSON）。业务真源在 M2 与上游产物，"
+                           "这里只存本任务作用域内已确认过的字段与其权威等级，供确定性合成使用。"})
 
     dsl = {
         "app": {"name": _S1.APP_NAME, "mode": "advanced-chat", "icon_type": "emoji", "icon": "🎯",
@@ -253,7 +424,7 @@ def main():
         "graph_sha256": hashlib.sha256(json.dumps(graph, ensure_ascii=False, sort_keys=True)
                                        .encode("utf-8")).hexdigest(),
         "dsl_sha256": hashlib.sha256(dsl_text.encode("utf-8")).hexdigest(),
-        "new_this_layer": ["uapp_op_gate", "uapp_hop", "uapp_seam", "uapp_noseam",
+        "new_this_layer": ["uapp_op_gate", "uapp_hop", "uapp_fields", "uapp_seam", "uapp_noseam",
                            "uapp_seam_merge", "uapp_delivery", "uapp_persist", "uapp_save",
                            "uapp_answer_main",
                            "uapp_cap_fail", "uapp_answer_capfail"],

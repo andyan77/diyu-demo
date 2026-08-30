@@ -83,6 +83,14 @@ workflow:
     name: uapp_last_publish
     value: ''
     value_type: string
+  - description: 本内容任务已确认字段的结构化载体（JSON）。业务真源在 M2 与上游产物，这里只存本任务作用域内已确认过的字段与其权威等级，供确定性合成使用。
+    id: 1fc225d3-6301-5a3d-b0cc-e5cd53e2429a
+    name: uapp_task_fields
+    selector:
+    - conversation
+    - uapp_task_fields
+    value: ''
+    value_type: string
   environment_variables: []
   features:
     file_upload:
@@ -588,9 +596,21 @@ workflow:
         isInIteration: false
         isInLoop: false
         sourceType: tool
-        targetType: tool
-      id: uapp_hop-source-uapp_seam
+        targetType: code
+      id: uapp_hop-source-uapp_fields
       source: uapp_hop
+      sourceHandle: source
+      target: uapp_fields
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: tool
+      id: uapp_fields-source-uapp_seam
+      source: uapp_fields
       sourceHandle: source
       target: uapp_seam
       targetHandle: target
@@ -4530,6 +4550,141 @@ workflow:
       width: 244
       zIndex: 0
     - data:
+        code: "\nimport json\nimport re\n\n# 任务作用域已确认字段的确定性合成。规划侧裁决 TD-UAPP-20 的工程编译。\n\
+          #\n# 权威顺序 A > B > C/D > E：\n#   A 用户当前轮明确补充/确认/纠正的字段——判定依据是\"系统上一轮就是问的这一项\"\
+          \n#   B 当前内容任务已确认字段（载体）\n#   C/D 成功上游产物与 M2 投影中已锁定的字段——它们进入载体的通道与 B 相同\n\
+          #   E 当前轮模型抽取结果，只能补空缺，不能覆盖 A–D\n#\n# 三条确定性规则：\n#   1 空值、未提及、模型漏抽取，一律不擦除已确认字段\n\
+          #   2 用户明确纠正（系统问过的那一项这一轮有了新值）以新值更新，并登记依赖下游 STALE\n#   3 载体按 task_key 作用域。task_key\
+          \ 变了就是新内容任务，一律不继承内容级决定\n#\n# 本节点不制造事实：载体里的每一个值，都来自本任务此前某一轮真实发出的能力外壳。\n#\
+          \ 载体为空时（首轮），本节点是恒等变换——外壳与缺口原样透传。\n\nFIELD_LINE = re.compile(r\"^(\\s*)`([A-Za-z_][A-Za-z0-9_]*)`\\\
+          s*:\\s*(.*)$\")\nNESTED_UNDER_OBJECTIVE = (\"primary_goal\",)\n\n\ndef _norm_gap(g):\n\
+          \    \"\"\"objective.primary_goal -> primary_goal；去掉括号里的说明。\"\"\"\n    g\
+          \ = (g or \"\").strip()\n    g = re.split(r\"[（(]\", g)[0].strip()\n   \
+          \ if \".\" in g:\n        g = g.rsplit(\".\", 1)[-1]\n    return g\n\n\n\
+          def _split_gaps(text):\n    out = []\n    for x in re.split(r\"[；;]\", text\
+          \ or \"\"):\n        x = _norm_gap(x)\n        if x and x != \"无\":\n  \
+          \          out.append(x)\n    return out\n\n\ndef _parse(env):\n    \"\"\
+          \"把外壳拆成行，并取出全部反引号字段。值是单行的（上游 _clean 已折叠空白）。\"\"\"\n    lines = (env or \"\
+          \").split(\"\\n\")\n    found = {}\n    for i, ln in enumerate(lines):\n\
+          \        m = FIELD_LINE.match(ln)\n        if m:\n            found[m.group(2)]\
+          \ = {\"i\": i, \"indent\": m.group(1), \"v\": m.group(3).strip()}\n    return\
+          \ lines, found\n\n\ndef _set(lines, found, key, value):\n    \"\"\"已有该行就原地替换；没有就按正确缩进插入。不动其它任何一行。\"\
+          \"\"\n    if key in found:\n        e = found[key]\n        lines[e[\"i\"\
+          ]] = \"%s`%s`: %s\" % (e[\"indent\"], key, value)\n        e[\"v\"] = value\n\
+          \        return\n    if key in NESTED_UNDER_OBJECTIVE:\n        for i, ln\
+          \ in enumerate(lines):\n            if ln.strip() == \"objective:\":\n \
+          \               lines.insert(i + 1, \"  `%s`: %s\" % (key, value))\n   \
+          \             for e in found.values():\n                    if e[\"i\"]\
+          \ > i:\n                        e[\"i\"] += 1\n                found[key]\
+          \ = {\"i\": i + 1, \"indent\": \"  \", \"v\": value}\n                return\n\
+          \    last = -1\n    for e in found.values():\n        if e[\"indent\"] ==\
+          \ \"\" and e[\"i\"] > last:\n            last = e[\"i\"]\n    at = last\
+          \ + 1 if last >= 0 else len(lines)\n    lines.insert(at, \"`%s`: %s\" %\
+          \ (key, value))\n    for e in found.values():\n        if e[\"i\"] >= at:\n\
+          \            e[\"i\"] += 1\n    found[key] = {\"i\": at, \"indent\": \"\"\
+          , \"v\": value}\n\n\ndef main(prev_fields_json, task_key, capability_call,\
+          \ gaps_text, target_capability):\n    tk = (task_key or \"\").strip()\n\
+          \    try:\n        prev = json.loads(prev_fields_json) if (prev_fields_json\
+          \ or \"\").strip() else {}\n    except Exception:\n        prev = {}\n \
+          \   if not isinstance(prev, dict) or prev.get(\"task_key\") != tk or not\
+          \ tk:\n        # 新内容任务不继承上一任务的内容级决定\n        prev = {\"task_key\": tk, \"\
+          rev\": 0, \"fields\": {}, \"asked\": [], \"stale\": []}\n\n    fields =\
+          \ prev.get(\"fields\") or {}\n    asked_prev = set(prev.get(\"asked\") or\
+          \ [])\n    rev = int(prev.get(\"rev\") or 0) + 1\n\n    lines, found = _parse(capability_call)\n\
+          \    gaps = _split_gaps(gaps_text)\n\n    carried, held, answered, stale\
+          \ = [], [], [], []\n\n    # 1. 本轮抽取值入账。系统上一轮问过的那一项按 A 处理，其余按 E。\n    for\
+          \ key in sorted(found):\n        v = found[key][\"v\"].strip()\n       \
+          \ if not v:\n            continue\n        if key in asked_prev:\n     \
+          \       if key in fields and fields[key].get(\"v\") != v:\n            \
+          \    stale.append(key)\n            fields[key] = {\"v\": v, \"lvl\": \"\
+          A\", \"turn\": rev}\n            answered.append(key)\n        elif key\
+          \ in fields:\n            if fields[key].get(\"v\") != v:\n            \
+          \    # B/A 不被本轮模型抽取改写；不静默采纳新值，也不丢弃它，只登记\n                _set(lines, found,\
+          \ key, fields[key][\"v\"])\n                held.append(key)\n        else:\n\
+          \            fields[key] = {\"v\": v, \"lvl\": \"E\", \"turn\": rev}\n\n\
+          \    # 2. 用载体补本轮缺口。只补，不造。\n    remaining = []\n    for g in gaps:\n    \
+          \    cur = (fields.get(g) or {}).get(\"v\") or \"\"\n        if cur:\n \
+          \           _set(lines, found, g, cur)\n            carried.append(g)\n\
+          \        else:\n            remaining.append(g)\n\n    merged_env = \"\\\
+          n\".join(lines)\n    merged_gaps = \"；\".join(remaining) if remaining else\
+          \ \"无\"\n    carrier = {\"task_key\": tk, \"rev\": rev, \"fields\": fields,\n\
+          \               \"asked\": remaining, \"stale\": sorted(set((prev.get(\"\
+          stale\") or []) + stale))}\n\n    note = \"任务=%s rev=%d 目标=%s｜补齐=%s｜维持=%s｜用户本轮确认=%s｜本轮仍缺=%s\"\
+          \ % (\n        tk[:8] or \"(空)\", rev, target_capability or \"\",\n    \
+          \    \",\".join(carried) or \"无\", \",\".join(held) or \"无\",\n        \"\
+          ,\".join(answered) or \"无\", \",\".join(remaining) or \"无\")\n    return\
+          \ {\"capability_call\": merged_env,\n            \"gaps_text\": merged_gaps,\n\
+          \            \"task_fields_json\": json.dumps(carrier, ensure_ascii=False),\n\
+          \            \"carried_fields\": \",\".join(carried),\n            \"held_fields\"\
+          : \",\".join(held),\n            \"user_answered_fields\": \",\".join(answered),\n\
+          \            \"stale_downstream\": \",\".join(carrier[\"stale\"]),\n   \
+          \         \"merge_note\": note}\n"
+        code_language: python3
+        desc: 已确认字段不被空值擦除；用户答过的那一项以新值更新并登记下游 STALE；新任务不继承上一任务的内容级决定。载体为空时是恒等变换。
+        outputs:
+          capability_call:
+            children: null
+            type: string
+          carried_fields:
+            children: null
+            type: string
+          gaps_text:
+            children: null
+            type: string
+          held_fields:
+            children: null
+            type: string
+          merge_note:
+            children: null
+            type: string
+          stale_downstream:
+            children: null
+            type: string
+          task_fields_json:
+            children: null
+            type: string
+          user_answered_fields:
+            children: null
+            type: string
+        selected: false
+        title: 合成｜本任务已确认字段
+        type: code
+        variables:
+        - value_selector:
+          - conversation
+          - uapp_task_fields
+          variable: prev_fields_json
+        - value_selector:
+          - conversation
+          - uapp_task
+          variable: task_key
+        - value_selector:
+          - uapp_hop
+          - capability_call
+          variable: capability_call
+        - value_selector:
+          - uapp_hop
+          - extraction_gaps_text
+          variable: gaps_text
+        - value_selector:
+          - uapp_route
+          - target_capability
+          variable: target_capability
+      height: 98
+      id: uapp_fields
+      position:
+        x: 6080
+        y: 500
+      positionAbsolute:
+        x: 6080
+        y: 500
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
         desc: 一次只进一个专业能力；入口由接缝自己的确定性充分性规则推导，本画布不再算一遍
         error_strategy: fail-branch
         provider_id: f8d63527-8c45-4823-8159-443cef37240d
@@ -4551,7 +4706,7 @@ workflow:
             value: '{{#uapp_route.target_capability#}}'
           capability_call:
             type: mixed
-            value: '{{#uapp_hop.capability_call#}}'
+            value: '{{#uapp_fields.capability_call#}}'
           entry:
             type: mixed
             value: '{{#uapp_route.entry#}}'
@@ -4649,8 +4804,8 @@ workflow:
           - group_name: hop_gaps
             output_type: string
             variables:
-            - - uapp_hop
-              - extraction_gaps_text
+            - - uapp_fields
+              - gaps_text
             - - uapp_noseam
               - empty
         desc: 哪一支跑了就取哪一支；两支都没有就是空。不代替判断，只做取值。
@@ -4914,6 +5069,15 @@ workflow:
           variable_selector:
           - conversation
           - uapp_last_capability
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - uapp_fields
+          - task_fields_json
+          variable_selector:
+          - conversation
+          - uapp_task_fields
           write_mode: over-write
         selected: false
         title: 记住｜本轮产物与能力
