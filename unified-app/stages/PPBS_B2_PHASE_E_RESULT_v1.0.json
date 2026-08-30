@@ -399,71 +399,175 @@
  },
  "E3_D3": {
   "verdict": "NOT_VERIFIED",
-  "reason_code": "INCONCLUSIVE",
-  "why": "纯传输失败：HTTP 400，0.02 秒，**零模型输出**。九个应用在时间窗内 workflow_runs 全为 0，LLM 节点执行 0 次，node_detail 为空。判据一条都没有被执行到，既不能判 PASS，也不能判 FAIL。",
+  "reason_code": "INSUFFICIENT",
   "conditions": [
    {
     "id": "D3-a",
     "text": "D3-a 使用统一画布自然语言入口，不注入内部 envelope",
-    "result": "NOT_VERIFIED",
-    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+    "result": "PASS",
+    "observed": {
+     "entry": "/v1/chat-messages 自然语言入口",
+     "query_verbatim": "基于刚才那份制作方案，重新给我一版标题和封面。",
+     "query_sha256_matches_frozen": true,
+     "payload_keys_sent": [
+      "query",
+      "inputs",
+      "response_mode",
+      "user",
+      "conversation_id",
+      "files"
+     ],
+     "inputs_sent": "{}（空）——未注入任何内部 envelope、字段或状态",
+     "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+     "uploaded_fixture": {
+      "http_status": 201,
+      "file_id": "c9709b33-a581-4740-98bd-aaeeed63c70d",
+      "name": "一页纸夹具品牌事实 v0.1.md",
+      "sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+      "reused_from_preflight": true
+     },
+     "http_status": 200,
+     "elapsed_seconds": 111.28,
+     "attempts": 1
+    }
    },
    {
     "id": "D3-b",
     "text": "D3-b 不修改数据库或会话变量伪造前置状态",
-    "result": "NOT_VERIFIED",
-    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+    "result": "PASS",
+    "observed": {
+     "direct_db_updates_by_execution_side": 0,
+     "update_or_delete_statements_executed": 0,
+     "conversation_state_untouched": "沿用 T7 已存在的会话 5cfcaf57-8808-4fc7-8c66-d661e515d05a 与 end_user s4ct-20260830001839，未写会话变量、未预置任何前置状态",
+     "writes_that_did_happen": [
+      "重新发布 b2 为 PP app 当前版本",
+      "把 provider 钉对齐到该版本"
+     ],
+     "why_those_are_not_fabrication": "两项都是 Gate v2.0 test_scoped_publish_and_auto_revert 在任何模型调用之前冻结的**测试范围绑定变更**，走 console API，不是伪造运行结果或会话前置状态。如实披露。"
+    }
    },
    {
     "id": "D3-c",
     "text": "D3-c 实际路由到 PUBLISHING_PACKAGING",
-    "result": "NOT_VERIFIED",
-    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+    "result": "PASS",
+    "observed": {
+     "pp_runs_in_window": [
+      {
+       "id": "c9c9f16b-5996-44f5-b5b4-21be7819e9ea",
+       "status": "succeeded",
+       "created_at": "2026-08-30 10:24:55.116467",
+       "elapsed": 0.178055,
+       "workflow_id": "5b5c68af-385a-41f3-9989-c8b3af50bb72",
+       "workflow_version": "2026-08-30 10:22:07.307119",
+       "workflow_graph_md5": "8366328bf827bd0f460455d750d45c4f"
+      }
+     ],
+     "canvas_modules_actually_run": "[\"M1 任务上下文\", \"M2 当前投影\", \"M3 单账号持续运营\", \"M5 跨能力接缝抽取\", \"M4 统一能力接缝 → 发布包装\"]",
+     "canvas_seam_node": "uapp_seam（tool）succeeded，节点执行记录见 node_detail 第 20 项",
+     "pp_real_inputs_head": "capability_call 带 content_promise / explicit_non_promise / facts_registered；**缺 content_body_or_beats**",
+     "pp_real_outputs_branch": "branch_result = INPUT_INSUFFICIENT，returns_status = COMPONENT_RETURN"
+    }
    },
    {
     "id": "D3-d",
     "text": "D3-d 其它五个专业能力零暗跑",
-    "result": "NOT_VERIFIED",
-    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+    "result": "PASS",
+    "observed": {
+     "other_five_runs": {
+      "CAMPAIGN": 0,
+      "CONTENT_BRIEF": 0,
+      "CREATIVE_SCRIPT": 0,
+      "MATRIX": 0,
+      "PRODUCTION_DIRECTOR": 0
+     },
+     "zero_shadow_runs": true,
+     "llm_nodes_in_window_by_app": {
+      "统一画布": [
+       "m1_shadow",
+       "uapp_action"
+      ],
+      "M3 单账号持续运营": [
+       "operating_one_account_llm",
+       "gate_repair_llm"
+      ],
+      "跨能力接缝": [
+       "m5_extract"
+      ]
+     },
+     "note": "M3 与接缝是画布路径上的既定节点（uapp_m3 / uapp_seam），不属于『其余五个专业能力』；五个专业能力各 0 次运行。"
+    }
    },
    {
     "id": "D3-e",
     "text": "D3-e UAPP → Seam → 新 PP 后继版本的绑定可从真实节点运行记录回指",
-    "result": "NOT_VERIFIED",
-    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+    "result": "PASS",
+    "observed": {
+     "chain_from_real_node_records": {
+      "1_UAPP_candidate_canvas_run": [
+       "217f8e2d-4dfa-4b43-b673-99fa62a4b183"
+      ],
+      "2_SEAM_run": [
+       "481a2abf-b756-4500-a918-935d55ddd867"
+      ],
+      "3_PP_run": [
+       {
+        "id": "c9c9f16b-5996-44f5-b5b4-21be7819e9ea",
+        "workflow_id": "5b5c68af-385a-41f3-9989-c8b3af50bb72",
+        "workflow_version": "2026-08-30 10:22:07.307119",
+        "workflow_graph_md5": "8366328bf827bd0f460455d750d45c4f"
+       }
+      ]
+     },
+     "pp_graph_md5_used": [
+      "8366328bf827bd0f460455d750d45c4f"
+     ],
+     "equals_phase_c_verified_b2_graph": true,
+     "reference_md5": {
+      "b2": "8366328bf827bd0f460455d750d45c4f",
+      "b1": "7940dc009d0bba06e1b5ca99dac61e2e",
+      "old_stable": "788c8555aca09e6fa6d979f237f70157"
+     },
+     "provider_pin_at_run": "2026-08-30 10:22:07.307119",
+     "provider_pinned_graph_md5_at_run": "8366328bf827bd0f460455d750d45c4f",
+     "how_traced": "按 workflow_runs.workflow_id → workflows 行 → graph md5 回指，不看应用名、不看时间巧合"
+    }
    },
    {
     "id": "D3-f",
     "text": "D3-f 最终用户交付满足 D1-b 与 D1-c 的事实与 CTA 边界",
     "result": "NOT_VERIFIED",
-    "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，本条判据没有任何可判定的运行事实"
+    "observed": {
+     "reason_code": "INSUFFICIENT",
+     "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+     "final_delivery_verbatim": "这一步我还差一样东西才能往下判断：\n\n把成片内容或逐段说明给我：每一段实际拍到了什么。\n\n只补这一项就够了，其他已经给过的内容不用再说一遍。\n这一轮里不依赖这一步的其他事情不受影响，可以照常继续。",
+     "delivered_flag": "false",
+     "seam_merge_artifact": "空字符串",
+     "pp_branch_result": "INPUT_INSUFFICIENT",
+     "pp_return_precise_gap": "content_body_or_beats",
+     "literal_reading": "交付正文里不存在任何人物历史主张，也不存在任何要求受众动作的表达——D1-b 与 D1-c 在字面上都不被违反。",
+     "why_not_PASS": "因为它们是**空过**的：本次统一应用交付正文是一条输入不足升级，里面没有标题、封面、首帧、发布正文、评论区设计或转发语——九个对外输出面一个都没产生。没有包装内容，事实与 CTA 边界就没有被真正考到。按内核反查四态，这是『有但不够』，独立成态，不得填成『有』。",
+     "what_would_verify_it": "统一画布上一次**产出了包装成品**的交付，再对其正文施加 D1-b / D1-c。",
+     "already_verified_elsewhere": "同样两条边界在 D1（正例）与 D2（冲突负例）上已由真实包装成品正式通过——缺的只是『经统一应用这条路径』这一段。"
+    }
    }
   ],
-  "http_status": 400,
-  "elapsed_seconds": 0.02,
+  "run_id": "217f8e2d-4dfa-4b43-b673-99fa62a4b183",
+  "elapsed_seconds": 111.28,
   "attempts": 1,
-  "workflow_started": false,
-  "nested_runs_total": 0,
-  "nested_runs_by_app": {
-   "MATRIX": 0,
-   "CAMPAIGN": 0,
-   "CONTENT_BRIEF": 0,
-   "CREATIVE_SCRIPT": 0,
-   "PRODUCTION_DIRECTOR": 0,
-   "PUBLISHING_PACKAGING": 0,
-   "SEAM": 0,
-   "HOP": 0,
-   "M3": 0
-  },
-  "llm_node_executions_in_window": [],
-  "zero_model_output": true,
-  "pp_provider_pin_at_attempt": "2026-08-30 09:51:55.613459",
-  "no_retry": "按 Gate v2.0 transport_failure_rule 与执行 Prompt 第八节：纯传输失败如未产生模型输出，也不得自行重试；登记后停下请示。"
+  "http_status": 200,
+  "message_id": "c0e1bdbc-5000-42de-96bf-155836445e50",
+  "our_chain_llm_nodes": 5,
+  "root_cause_of_no_packaging_output": {
+   "where": "PP 之前——统一画布/Hop 这一轮没有把 content_body_or_beats 绑上来",
+   "evidence": "PP 真实输入里 capability_call 只带到 content_promise / explicit_non_promise / facts_registered；hop_gaps = content_body_or_beats；PP 输出 branch_result = INPUT_INSUFFICIENT",
+   "b2_behaved_correctly": "输入不足时不编造、精确升级、七项齐全的 COMPONENT_RETURN，且 is_task_terminal_state=false、triggers_downstream_invalidation=false——这是既有判据要求的行为，不是缺陷",
+   "stop_rule": "Gate v2.0：现场证据显示根因不在 PP ⇒ 停在 CHECKPOINT，不扩大修改范围。本轮不动画布、不动 Hop、不动 b2。"
+  }
  },
  "cost_account": {
-  "top_level_workflow_runs_used": 2,
+  "top_level_workflow_runs_used": 3,
   "top_level_workflow_runs_budget": 3,
-  "llm_node_attempts_used": 2,
+  "llm_node_attempts_used": 7,
   "llm_node_attempts_hard_cap": 10,
   "retries": 0,
   "repeat_sampling": 0,
@@ -472,17 +576,17 @@
  },
  "protected_surface_now": {
   "pp_current_graph_md5": "788c8555aca09e6fa6d979f237f70157",
-  "pp_current_version": "2026-08-30 10:12:50.213217",
-  "pp_provider_pin": "2026-08-30 10:12:50.213217",
+  "pp_current_version": "2026-08-30 10:29:55.835716",
+  "pp_provider_pin": "2026-08-30 10:29:55.835716",
   "pp_provider_pinned_graph_md5": "788c8555aca09e6fa6d979f237f70157",
   "pin_graph_is_old_stable": true,
   "original_stable_version_row_still_present": true,
-  "pp_workflow_rows": 6,
+  "pp_workflow_rows": 8,
   "seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
  },
  "allowed_upgrades": {
   "applied": [],
-  "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立；D3 为 NOT_VERIFIED，公式不成立，一项都不上调"
+  "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立；D3-f 为 NOT_VERIFIED(INSUFFICIENT)，公式不成立，一项都不上调"
  },
  "protected_surface_restored": {
   "what": "provider 钉与 PP 当前发布指针都已恢复为旧稳定图",

@@ -708,3 +708,24 @@ Seam、候选画布、其余八应用、`hop_pin` 零漂移；`main` 仍 `01a42b
 详见 [`collab-ledger/tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md`](tasks/DIYU-V1-PP-BOUNDARY-SUCCESSOR-001.md)、
 [`unified-app/docs/PPBS_B2_FAILURE_TRIAGE_003_D3_TRANSPORT.md`](../unified-app/docs/PPBS_B2_FAILURE_TRIAGE_003_D3_TRANSPORT.md)
 与 [`unified-app/stages/PPBS_B2_PHASE_E_RESULT_v1.0.json`](../unified-app/stages/PPBS_B2_PHASE_E_RESULT_v1.0.json)。
+
+**D3 重跑（Founder 2026-08-30 授权）结果：`NOT_VERIFIED(INSUFFICIENT)`。**
+harness 修好了，链路真的走通了——D3-a 至 D3-e 全 PASS：自然语言入口、零 envelope、
+零伪造前置状态、实际路由到 PP、其余五能力零暗跑、
+UAPP → Seam → PP 按 `workflow_id → graph md5` 逐跳回指到 b2（`8366328b`）。
+
+卡在 D3-f：统一应用最终交付正文是一条**输入不足升级**，不是包装成品。
+九个对外输出面一个都没产生，事实与 CTA 边界**没有被真正考到**——
+字面不违反，但那是空过，按内核反查四态属「有但不够」，不填成「有」。
+
+根因不在 PP：PP 真实输入缺 `content_body_or_beats`，`hop_gaps` 也是它，
+PP 返回 `INPUT_INSUFFICIENT` ＋ 七项齐全的精确升级。**b2 的行为是对的。**
+缺口在画布/Hop 的跨轮状态绑定。按停止规则停在 CHECKPOINT，不动画布/Hop/b2，不建 b3。
+
+成本 3/3 顶层 run、7/10 LLM、零重试。受保护面按 §九 全部退回旧稳定图
+（b1、b2、原始行都保留），八应用与 hop_pin 零漂移。三项上调一项都没做。
+
+**下一步：** 补齐 D3-f 需要先让画布这一轮把 `content_body_or_beats` 绑上来，
+再跑一次并对真实包装正文施加 D1-b / D1-c——那是画布/Hop 的跨轮绑定问题，
+需要单独授权与单独范围。详见
+[`unified-app/docs/PPBS_B2_FAILURE_TRIAGE_004_D3F_INSUFFICIENT.md`](../unified-app/docs/PPBS_B2_FAILURE_TRIAGE_004_D3F_INSUFFICIENT.md)。

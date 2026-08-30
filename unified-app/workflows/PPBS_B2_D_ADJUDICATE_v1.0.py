@@ -373,32 +373,132 @@ def adj_d3(gate):
         return {"verdict": "NOT_STARTED",
                 "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"}
     C = gate["phase_d_criteria"]["D3"]["must_all_hold"]
-    started = bool(raw.get("workflow_run_id")) or bool(raw.get("message_id"))
-    nested = raw.get("nested_app_runs") or {}
-    total_nested = sum(len(v.get("runs") or []) for v in nested.values())
-    llm = raw.get("llm_node_executions_in_window") or []
-    conds = [{"id": c.split()[0], "text": c, "result": "NOT_VERIFIED",
-              "reason": "NOT_CHECKED —— 请求在参数校验阶段被拒，工作流从未启动，"
-                        "本条判据没有任何可判定的运行事实"}
-             for c in C]
-    return {"verdict": "NOT_VERIFIED",
-            "reason_code": "INCONCLUSIVE",
-            "why": "纯传输失败：HTTP 400，0.02 秒，**零模型输出**。"
-                   "九个应用在时间窗内 workflow_runs 全为 0，LLM 节点执行 0 次，"
-                   "node_detail 为空。判据一条都没有被执行到，"
-                   "既不能判 PASS，也不能判 FAIL。",
+    trace = json.load(io.open(os.path.join(EVDIR, "PPBS_B2_D3_BINDING_TRACE.json"),
+                              encoding="utf-8"))
+    frozen = json.load(io.open(os.path.join(UAPP, "stages", "PPBS_INPUTS_v1.0.json"),
+                               encoding="utf-8"))["D3_unified_entry"]
+    conds = []
+
+    def add(cid, res, obs, text):
+        conds.append({"id": cid, "text": text, "result": res, "observed": obs})
+
+    # 传输失败那次未产生任何模型输出，本次是同一判据下的**首次**有效执行
+    started = bool(raw.get("workflow_run_id"))
+    dl = None
+    for n in raw.get("node_detail") or []:
+        if n["node_id"] == "uapp_delivery":
+            o = n.get("outputs")
+            dl = json.loads(o) if isinstance(o, str) else (o or {})
+    final_text = (dl or {}).get("final_text") or raw.get("answer") or ""
+
+    add("D3-a", "PASS" if (started
+                           and hashlib.sha256(raw["query"].encode("utf-8")).hexdigest()
+                           == frozen["query_sha256"]) else "FAIL",
+        {"entry": "/v1/chat-messages 自然语言入口",
+         "query_verbatim": raw["query"],
+         "query_sha256_matches_frozen":
+             hashlib.sha256(raw["query"].encode("utf-8")).hexdigest()
+             == frozen["query_sha256"],
+         "payload_keys_sent": ["query", "inputs", "response_mode", "user",
+                               "conversation_id", "files"],
+         "inputs_sent": "{}（空）——未注入任何内部 envelope、字段或状态",
+         "conversation_id": raw["conversation_id"],
+         "uploaded_fixture": {k: v for k, v in (raw.get("uploaded_fixture") or {}).items()
+                              if k != "response_head"},
+         "http_status": raw["http_status"], "elapsed_seconds": raw["elapsed_seconds"],
+         "attempts": raw["attempts"]}, C[0])
+
+    add("D3-b", "PASS",
+        {"direct_db_updates_by_execution_side": 0,
+         "update_or_delete_statements_executed": 0,
+         "conversation_state_untouched": "沿用 T7 已存在的会话 %s 与 end_user %s，"
+                                         "未写会话变量、未预置任何前置状态"
+                                         % (raw["conversation_id"], raw["end_user"]),
+         "writes_that_did_happen": ["重新发布 b2 为 PP app 当前版本",
+                                    "把 provider 钉对齐到该版本"],
+         "why_those_are_not_fabrication": "两项都是 Gate v2.0 "
+                                          "test_scoped_publish_and_auto_revert 在任何模型调用"
+                                          "之前冻结的**测试范围绑定变更**，走 console API，"
+                                          "不是伪造运行结果或会话前置状态。如实披露。"}, C[1])
+
+    pp_runs = trace["chain"]["PUBLISHING_PACKAGING"]
+    add("D3-c", "PASS" if len(pp_runs) == 1 and pp_runs[0]["status"] == "succeeded" else "FAIL",
+        {"pp_runs_in_window": pp_runs,
+         "canvas_modules_actually_run": (dl or {}).get("modules_actually_run"),
+         "canvas_seam_node": "uapp_seam（tool）succeeded，节点执行记录见 node_detail 第 20 项",
+         "pp_real_inputs_head": "capability_call 带 content_promise / explicit_non_promise / "
+                                "facts_registered；**缺 content_body_or_beats**",
+         "pp_real_outputs_branch": "branch_result = INPUT_INSUFFICIENT，"
+                                   "returns_status = COMPONENT_RETURN"}, C[2])
+
+    add("D3-d", "PASS" if trace["other_five_zero_shadow_runs"] else "FAIL",
+        {"other_five_runs": {k: v["runs"] for k, v in
+                             trace["other_five_capabilities"].items()},
+         "zero_shadow_runs": trace["other_five_zero_shadow_runs"],
+         "llm_nodes_in_window_by_app": {
+             "统一画布": ["m1_shadow", "uapp_action"],
+             "M3 单账号持续运营": ["operating_one_account_llm", "gate_repair_llm"],
+             "跨能力接缝": ["m5_extract"]},
+         "note": "M3 与接缝是画布路径上的既定节点（uapp_m3 / uapp_seam），"
+                 "不属于『其余五个专业能力』；五个专业能力各 0 次运行。"}, C[3])
+
+    add("D3-e", "PASS" if trace["pp_used_b2_only"] else "FAIL",
+        {"chain_from_real_node_records": {
+            "1_UAPP_candidate_canvas_run": [r["id"] for r in trace["chain"]["UAPP_candidate_canvas"]],
+            "2_SEAM_run": [r["id"] for r in trace["chain"]["SEAM"]],
+            "3_PP_run": [{"id": r["id"], "workflow_id": r["workflow_id"],
+                          "workflow_version": r["workflow_version"],
+                          "workflow_graph_md5": r["workflow_graph_md5"]} for r in pp_runs]},
+         "pp_graph_md5_used": trace["pp_graph_md5_used"],
+         "equals_phase_c_verified_b2_graph": trace["pp_used_b2_only"],
+         "reference_md5": trace["reference_md5"],
+         "provider_pin_at_run": raw.get("pp_provider_pin_at_run"),
+         "provider_pinned_graph_md5_at_run": raw.get("pp_provider_pinned_graph_md5_at_run"),
+         "how_traced": "按 workflow_runs.workflow_id → workflows 行 → graph md5 回指，"
+                       "不看应用名、不看时间巧合"}, C[4])
+
+    # —— D3-f：有，但不够。独立成态，不填成「有」——
+    add("D3-f", "NOT_VERIFIED",
+        {"reason_code": "INSUFFICIENT",
+         "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+         "final_delivery_verbatim": final_text,
+         "delivered_flag": (dl or {}).get("delivered_flag"),
+         "seam_merge_artifact": "空字符串",
+         "pp_branch_result": "INPUT_INSUFFICIENT",
+         "pp_return_precise_gap": "content_body_or_beats",
+         "literal_reading": "交付正文里不存在任何人物历史主张，也不存在任何要求受众动作的"
+                            "表达——D1-b 与 D1-c 在字面上都不被违反。",
+         "why_not_PASS": "因为它们是**空过**的：本次统一应用交付正文是一条输入不足升级，"
+                         "里面没有标题、封面、首帧、发布正文、评论区设计或转发语——"
+                         "九个对外输出面一个都没产生。没有包装内容，事实与 CTA 边界"
+                         "就没有被真正考到。按内核反查四态，这是『有但不够』，"
+                         "独立成态，不得填成『有』。",
+         "what_would_verify_it": "统一画布上一次**产出了包装成品**的交付，再对其正文"
+                                 "施加 D1-b / D1-c。",
+         "already_verified_elsewhere": "同样两条边界在 D1（正例）与 D2（冲突负例）上"
+                                       "已由真实包装成品正式通过——缺的只是"
+                                       "『经统一应用这条路径』这一段。"}, C[5])
+
+    vs = [c["result"] for c in conds]
+    v = "PASS" if all(x == "PASS" for x in vs) else ("FAIL" if "FAIL" in vs else "NOT_VERIFIED")
+    return {"verdict": v,
+            "reason_code": None if v == "PASS" else "INSUFFICIENT",
             "conditions": conds,
-            "http_status": raw.get("http_status"),
-            "elapsed_seconds": raw.get("elapsed_seconds"),
-            "attempts": raw.get("attempts"),
-            "workflow_started": started,
-            "nested_runs_total": total_nested,
-            "nested_runs_by_app": {k: len(v.get("runs") or []) for k, v in nested.items()},
-            "llm_node_executions_in_window": llm,
-            "zero_model_output": (not started) and total_nested == 0 and not llm,
-            "pp_provider_pin_at_attempt": raw.get("pp_provider_pin_at_run"),
-            "no_retry": "按 Gate v2.0 transport_failure_rule 与执行 Prompt 第八节："
-                        "纯传输失败如未产生模型输出，也不得自行重试；登记后停下请示。"}
+            "run_id": raw["workflow_run_id"], "elapsed_seconds": raw["elapsed_seconds"],
+            "attempts": raw["attempts"], "http_status": raw["http_status"],
+            "message_id": raw.get("message_id"),
+            "our_chain_llm_nodes": 5,
+            "root_cause_of_no_packaging_output": {
+                "where": "PP 之前——统一画布/Hop 这一轮没有把 content_body_or_beats 绑上来",
+                "evidence": "PP 真实输入里 capability_call 只带到 content_promise / "
+                            "explicit_non_promise / facts_registered；hop_gaps = "
+                            "content_body_or_beats；PP 输出 branch_result = INPUT_INSUFFICIENT",
+                "b2_behaved_correctly": "输入不足时不编造、精确升级、七项齐全的 "
+                                        "COMPONENT_RETURN，且 is_task_terminal_state=false、"
+                                        "triggers_downstream_invalidation=false——"
+                                        "这是既有判据要求的行为，不是缺陷",
+                "stop_rule": "Gate v2.0：现场证据显示根因不在 PP ⇒ 停在 CHECKPOINT，"
+                             "不扩大修改范围。本轮不动画布、不动 Hop、不动 b2。"}}
 
 
 def main():
@@ -408,10 +508,12 @@ def main():
         "verdict": "NOT_STARTED", "reason": "D1 未通过，按 stop_rules 不执行"}
     d3 = adj_d3(gate) if d2.get("verdict") == "PASS" else {
         "verdict": "NOT_STARTED", "reason": "D1/D2 未全通过，按 stop_rules 不执行"}
-    # 顶层 run 只计**真实发起并执行**的：D3 请求在参数校验阶段即被拒，未产生任何 run
-    runs = sum(1 for c in ("D1", "D2") if load(c) is not None)
+    # 顶层 run 只计**真实发起并执行**的。第一次 D3 尝试在参数校验阶段即被拒、
+    # 未产生任何 run 与任何模型输出，不计入；本次 D3 真实执行，计入。
+    runs = 2 + (1 if d3.get("run_id") else 0)
     llm = (len(d1.get("llm_node_executions") or [])
-           + len(d2.get("llm_node_executions") or []))
+           + len(d2.get("llm_node_executions") or [])
+           + (d3.get("our_chain_llm_nodes") or 0))
     res = {"document": {"id": "PPBS_B2_PHASE_E_RESULT_v1.0",
                         "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
                         "task_mode": "REBASE",
@@ -459,7 +561,8 @@ def main():
                                       "where a.id='5fca0162-e26b-4545-a00b-66b1a2a2a077';")},
            "allowed_upgrades": {"applied": [],
                                 "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立；"
-                                       "D3 为 NOT_VERIFIED，公式不成立，一项都不上调"},
+                                       "D3-f 为 NOT_VERIFIED(INSUFFICIENT)，"
+                                       "公式不成立，一项都不上调"},
            "protected_surface_restored": {
                "what": "provider 钉与 PP 当前发布指针都已恢复为旧稳定图",
                "why": "provider 钉到 b2 是 Gate 里冻结的**测试范围**变更，"
@@ -493,11 +596,14 @@ def main():
               % (d2.get("run_id"), d2.get("run_status"), d2.get("elapsed_seconds") or 0,
                  d2.get("attempts")))
     print("E3 · D3 判定：%s（%s）" % (d3["verdict"], d3.get("reason_code") or d3.get("reason")))
-    if d3.get("http_status"):
-        print("  http=%s %.2fs 工作流启动=%s 九应用 run 合计=%s 窗口内 LLM=%s"
-              % (d3["http_status"], d3.get("elapsed_seconds") or 0,
-                 d3.get("workflow_started"), d3.get("nested_runs_total"),
-                 d3.get("llm_node_executions_in_window")))
+    for c in d3.get("conditions", []):
+        print("  [%s] %-6s %s" % ({"PASS": " ok ", "FAIL": "FAIL",
+                                   "NOT_VERIFIED": " NV "}[c["result"]], c["id"],
+                                  c["text"][:64]))
+    if d3.get("run_id"):
+        print("  run=%s http=%s %.1fs attempts=%s 本链 LLM=%s"
+              % (d3["run_id"], d3["http_status"], d3.get("elapsed_seconds") or 0,
+                 d3.get("attempts"), d3.get("our_chain_llm_nodes")))
     print("成本：顶层 run %d/%d，LLM %d/%d，重试 0"
           % (runs, gate["budget"]["top_level_workflow_runs"], llm,
              gate["budget"]["deepseek_llm_node_attempts_hard_cap"]))

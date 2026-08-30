@@ -295,3 +295,75 @@ b2 在两次正式点测里都通过了。
 2. **恢复动作是否越权。** 冻结的回退条件字面只写「D3 FAIL」，没写「D3 未执行」。
    我把本次归入该条并恢复了 provider 钉与发布指针，理由与依据写在
    `unified-app/docs/PPBS_B2_FAILURE_TRIAGE_003_D3_TRANSPORT.md`。如认为越权，请指出。
+
+### 九、D3 重跑（Founder 2026-08-30 授权）
+
+**harness 修复（零模型）**：新建 `PPBS_B2_D_RUNNER_v1.1.py`，v1.0 原样保留作为 TRIAGE 003 的证据。
+只改 TRIAGE 003 认定的 `mutation_target`：D3 分支的夹具上传调用——用与 chat 同一把 app key、
+解包 `(status, body)`、上传不成功即中止不发起顶层调用。
+D1/D2 分支同区段 sha256 相同，逐字节未动。判据、输入、b2 实现一律未改。
+
+**重新绑定（零模型）**：重新发布 b2，`graph_md5_after = 8366328b`，与 Phase C 验证过的 b2 图逐位相同；
+provider 重钉到该版本；Seam graph md5 未变。
+Preflight（不发起对话、不消耗 run 预算）：上传 HTTP 201，`file_id c9709b33`。
+
+**D3 结果：`NOT_VERIFIED(INSUFFICIENT)`**（run `217f8e2d`，HTTP 200，111.3s，本链 5 个 LLM）
+
+| 条 | 结果 | 依据 |
+|---|---|---|
+| D3-a 自然语言入口、零 envelope | **PASS** | query 与冻结 sha 一致；`inputs = {}` |
+| D3-b 不伪造前置状态 | **PASS** | 零 `UPDATE`/`DELETE`；沿用 T7 已存在会话；两处写入是 Gate 冻结的测试范围绑定变更，已披露 |
+| D3-c 实际路由到 PP | **PASS** | PP run `c9c9f16b` succeeded；`modules_actually_run` 含「M4 统一能力接缝 → 发布包装」 |
+| D3-d 其余五能力零暗跑 | **PASS** | MATRIX/CAMPAIGN/CB/CS/PD 各 0 次 |
+| D3-e 绑定可回指到 b2 | **PASS** | `workflow_runs.workflow_id → workflows 行 → graph md5 = 8366328b`，只用 b2，不看名字不看时间 |
+| **D3-f 交付正文满足事实与 CTA 边界** | **NOT_VERIFIED(INSUFFICIENT)** | 交付正文是输入不足升级，九个对外输出面一个都没产生——边界没被真正考到 |
+
+D3-f 是「**有但不够**」：字面上 D1-b / D1-c 都不被违反，但那是**空过**。
+按内核反查四态独立成态，不得填成「有」。填成 PASS 就等于断言
+「CTA 边界经统一应用路径已验证」——而这条路径这轮没产出任何可检验的包装正文。
+
+**根因不在 PP**（`FAILURE TRIAGE 004`）：PP 真实输入缺 `content_body_or_beats`，
+`hop_gaps` 也是它；PP 输出 `branch_result = INPUT_INSUFFICIENT` ＋ 七项齐全的
+`COMPONENT_RETURN`，`is_task_terminal_state=false`、`triggers_downstream_invalidation=false`。
+**b2 的行为是对的**——输入不足不编造、精确升级、不把局部缺口升成任务终态。
+缺口在画布/Hop 的跨轮状态绑定，与已登记 `NOT_VERIFIED(NOT_CHECKED)` 的
+`CROSS_TURN_CORRECTION_PROPAGATION` 是同一片区域。
+按 Gate 停止规则停在 CHECKPOINT，不动画布、不动 Hop、不动 b2，**不建 b3**。
+
+### 十、最终成本与受保护面
+
+```yaml
+top_level_workflow_runs: 3 / 3      # D1、D2、D3 各一次；第一次 D3 尝试零 run 零模型输出，不计
+llm_node_attempts:       7 / 10     # D1 1 + D2 1 + D3 本链 5
+retries: 0    repeat_sampling: 0    ab_tests: 0    reviewer_calls: 0
+```
+
+按执行 Prompt 第九节（三项全 PASS 才允许把 b2 保持为当前版本、才允许正式钉 provider），
+两项都退回旧稳定图：PP 当前发布图与 provider 钉住的图都是 `788c8555`；
+workflow 行 8，**b1、b2、原始旧稳定行全部保留**；
+Seam `db49a3da`、候选画布 `99c3edf7`、其余八应用、`hop_pin` 零漂移。
+
+### 十一、终态
+
+```yaml
+PP_BOUNDARY_SUCCESSOR_b2:
+  D1_positive:          PASS / CURRENT
+  D2_conflict_negative: PASS / CURRENT
+  D3_unified_entry:     NOT_VERIFIED (INSUFFICIENT)   # a–e PASS，f 空过
+  overall:              NOT_VERIFIED
+V-08B_FACT_TRACEABILITY: NOT_VERIFIED       # 未上调
+V-08C_CTA_FIDELITY:      NOT_VERIFIED       # 未上调
+CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED (NOT_CHECKED)
+S4_OVERALL_ACCEPTANCE:   NOT_VERIFIED
+S5:                      NOT_STARTED
+main_merge:              NOT_ALLOWED
+terminal_state:          UNSET
+next_state:              CHECKPOINT
+```
+
+**b2 本身没有已知缺陷**：两次正式点测通过，第三次的缺口在它上游。
+不建 b3——第三次修复迭代 FORBIDDEN，且没有证据指向 b2 需要改。
+
+补齐 D3-f 需要的是：让统一画布这一轮能把 `content_body_or_beats` 绑上来，
+再跑一次并对**真实包装正文**施加 D1-b / D1-c。那是画布/Hop 侧的跨轮绑定问题，
+需要单独授权与单独范围。
