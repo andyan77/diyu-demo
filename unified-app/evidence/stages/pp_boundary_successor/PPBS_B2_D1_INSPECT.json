@@ -1,0 +1,109 @@
+{
+ "case": "D1",
+ "evidence_locator_only": true,
+ "NOT_A_CHECKER": true,
+ "run_id": "07d5ca02-969f-4f43-b56f-10e950f581a3",
+ "run_status": "succeeded",
+ "elapsed_seconds": 160.44,
+ "attempts": 1,
+ "pp_graph_md5_at_run": "8366328bf827bd0f460455d750d45c4f",
+ "pp_published_version_at_run": "2026-08-30 09:51:55.613459",
+ "pp_provider_pin_at_run": "2026-08-29 03:34:58.999575",
+ "output_keys": [
+  "artifact",
+  "artifact_status",
+  "binding_json",
+  "conditionalized",
+  "delivery_outcome",
+  "entry",
+  "goal_family",
+  "local_block",
+  "raw_preserved",
+  "recovery_used",
+  "reference_projection",
+  "reference_projection_text",
+  "returns_json",
+  "returns_parse_note",
+  "returns_raw",
+  "returns_status",
+  "run_mode",
+  "sufficiency_status",
+  "user_delivery",
+  "user_delivery_leaks",
+  "user_delivery_status"
+ ],
+ "artifact_len": 3901,
+ "user_delivery_len": 719,
+ "question_sentences": {
+  "artifact": [],
+  "user_delivery": []
+ },
+ "history_probe_hits": {},
+ "hedge_probe_hits": {},
+ "action_probe_hits": {
+  "收藏": {
+   "artifact": 1,
+   "user_delivery": 0
+  },
+  "转发": {
+   "artifact": 1,
+   "user_delivery": 0
+  },
+  "购买": {
+   "artifact": 6,
+   "user_delivery": 0
+  },
+  "到店": {
+   "artifact": 3,
+   "user_delivery": 0
+  },
+  "私信": {
+   "artifact": 3,
+   "user_delivery": 0
+  },
+  "领取": {
+   "artifact": 3,
+   "user_delivery": 0
+  }
+ },
+ "new_rule_trace": {
+  "strict_cta_closed": {
+   "artifact": 2,
+   "user_delivery": 0
+  },
+  "闭合": {
+   "artifact": 1,
+   "user_delivery": 0
+  },
+  "权威顺序": {
+   "artifact": 0,
+   "user_delivery": 0
+  },
+  "要求受众": {
+   "artifact": 0,
+   "user_delivery": 0
+  },
+  "NOT_APPLICABLE": {
+   "artifact": 2,
+   "user_delivery": 0
+  },
+  "被动答复": {
+   "artifact": 2,
+   "user_delivery": 0
+  },
+  "只保留内容本身": {
+   "artifact": 2,
+   "user_delivery": 0
+  }
+ },
+ "surface_slices": {
+  "cta_surface": "cta_surface: NOT_APPLICABLE（cta_contract 为闭合表达「不做购买、到店、私信或领取引导，只保留内容本身」→ strict_cta_closed = true）。\n  author_share_line: 「一件单品好不好看，和它能不能进你的衣橱，是两回事。」（陈述句，不提问）\nplatform_spec_status: PLATFORM_SPEC_UNVERIFIED（平台未锁定，不输出平台数字规格；数值型参数均改为定性制作要求）\nplatform_variants[]: 平台未锁定 → 不输出平台变体。母版仅一份。\nrelease_check:\n- 静音播放（对照「只看图不看字」）：PRE 阶段不可执行 → 留待成片后执行\n- 只看首帧 1 秒：PRE 阶段不可执行 → 首帧文字先保证「衣橱/试衣镜」核心可读\n- 只看封面＋标题：可执行——「好看 ≠ 能进衣橱」＋推荐标题共同构成「知道是讲什么」的最小信息\n- 看完之后会存吗：PRE 阶段不可执行 → 判断方法类内容预期收藏动机来自「三问」可复述性，成片后复查\n- 会转给谁：PRE 阶段不可执行 → 社交带出型平台未锁定，转发动机成片后复查\nsingle_distribution_promise: 提供衣橱搭配判断方法（≤ content_promise「提供衣橱搭配判断」，且不涉及任何 SKU 声明）——PRE 模式下标注为草案。\nreturn_to_script[]: NONE\nreturn_to_production[]: NONE\nfact_check_status: NOT_VERIFIED（无成片可核验；事实映射全部来自登记来源，无真实行为主张）\nstale_set[]: 无上游实质变化；本次产出不使任何上游判断失效。\nfailure_case:\n- 成片无任何画面（纯口播+文字卡）：包装仍成立，但封面若按「画面建议」落空，文字卡封面会显得单薄\n- 素材检索后 B3 段配了强化画面：违反 PD 硬门槛（主观强化）→ 需要回改剪辑，不回改则包装承诺「判断方法」与画面语气冲突\nassumptions[]:\n- platform 未锁定：只出母版型封面/首帧/标题；平台锁定后按该平台入口形态决定资源压封面或首帧。\n- subject_domain 未登记五个行业之一：未套用行业惯例。\n- objective.goal_family UNDECLARED：未代为推断，未按任何具体目标改写包装方向。\n- 素材模式为已有素材剪辑：严格按「待检索」状态处理，不假设任何单元有画面支撑；包装不依赖任何具体画面成立。\n- 「熟客卡点」为任务登记假设，不作真实顾客统计引用。\nmissing[]:\n- 锁定平台（非阻断：锁定后决定封面 vs 首帧资源分配、字幕规格）\n- 具体载体选定（非阻断：选定后把「这件新品」替换为具体款式，其余不变）\n- 素材检索结果与 beat 级 manifest（阻断定稿：出成片后按实际画面核验标题/封面兑现，再定稿）",
+  "comment_design": "comment_design` 被动答复边界\n  factual_claim: 不引导购买/不引导互动（NO_CTA）\n  fact_id: cta_contract「不做购买、到店、私信或领取引导，只保留内容本身」\n- output_location: `final_publish_copy` 末句「不劝买，也不劝退」\n  factual_claim: 不构成购买引导，也不制造对不买的焦虑\n  fact_id: `expression_boundary`「制造年龄、身材和身份焦虑」「闭眼入」「谁穿谁高级」等无依据话术被禁止\n\npackaging_routes[]:\n- 路线 A（推荐）「冲突定位」：标题/封面以「好看 ≠ 能进衣橱」这对矛盾建立点击动机；失效条件：观众没有「买回单品后不知道怎么搭」的切身顾虑，或不觉得这是一条关于判断方法的内容。\n- 路线 B「方法定位」：标题/封面以「三个问题」作为判断工具建立点击动机；失效条件：观众已有完整衣橱判断习惯，觉得「三问」已知。\n\nmaster_package:\n  cover: 画面描述：衣橱内悬挂单品或苏禾手持/指向衣橱单品的画面（素材待检索；无可用画面则纯文字卡成立）。文字层级：第一行（大）「好看 ≠ 能进衣橱」；第二行（小）「搭不搭，先看三个问题」。\n  first_frame: 衣橱/悬挂衣物画面（同素材池；无则纯口播）+ 文字「你衣橱里已经有的，才是真正的试衣镜」。与封面关系：分工——封面抛矛盾，首帧给框架。\n  titles[]:\n    - entry_type: CONTRADICTION ——「单品好不好看，和能不能进你的衣橱，是两回事」\n    - entry_type: INFORMATION ——「判断一件新衣服要不要收，只看三个问题」\n    - entry_type: SITUATION ——「你衣橱里，可能早有一件能顶它」\n  recommended_title: 「单品好不好看，和能不能进你的衣橱，是两回事」。理由：输入方案第 2 段转折句「单品好看，和进了衣橱能搭，是两回事」直接兑现标题缺口；B2 三问随后给出判断路径。\n  publish_copy: 开头三行单列：\n    「你衣橱里已经有的，才是这件新品真正的试衣镜。」\n    「单品好看，和进了衣橱能搭，是两回事。」\n    「判断标准只有三个问题：能不能搭成完整一套；能不能覆盖一个你真会去的场合；你衣橱里有没有一件已经能顶它的位置。」\n    正文：展开三问＋主观区「我自己的感觉」保留不上升普适；收束「不用急着多买一件」。不复制口播稿字句。\n  caption_rules: 按呼吸断句（不按标点）；三问各单独一屏文字卡；允许省略语气词。单屏字数：平台未锁定，不填数字；定性要求：一屏一个意思、首屏完整可读、定稿前在目标平台实测。\n  sound_placement: 口播全程；环境声保留（若自带且无版权问题，影响口播清晰度才压）；不铺音乐；不加音效/转场。\n  comment_design: NOT_APPLICABLE（strict_cta_closed = true）。仅被动答复边界：如有人就三问某一条提问，回答只解释该方法本身，不引向购买/到店/私信/领取。\n  cta_surface: NOT_APPL",
+  "author_share_line": "author_share_line: 「一件单品好不好看，和它能不能进你的衣橱，是两回事。」（陈述句，不提问）\nplatform_spec_status: PLATFORM_SPEC_UNVERIFIED（平台未锁定，不输出平台数字规格；数值型参数均改为定性制作要求）\nplatform_variants[]: 平台未锁定 → 不输出平台变体。母版仅一份。\nrelease_check:\n- 静音播放（对照「只看图不看字」）：PRE 阶段不可执行 → 留待成片后执行\n- 只看首帧 1 秒：PRE 阶段不可执行 → 首帧文字先保证「衣橱/试衣镜」核心可读\n- 只看封面＋标题：可执行——「好看 ≠ 能进衣橱」＋推荐标题共同构成「知道是讲什么」的最小信息\n- 看完之后会存吗：PRE 阶段不可执行 → 判断方法类内容预期收藏动机来自「三问」可复述性，成片后复查\n- 会转给谁：PRE 阶段不可执行 → 社交带出型平台未锁定，转发动机成片后复查\nsingle_distribution_promise: 提供衣橱搭配判断方法（≤ content_promise「提供衣橱搭配判断」，且不涉及任何 SKU 声明）——PRE 模式下标注为草案。\nreturn_to_script[]: NONE\nreturn_to_production[]: NONE\nfact_check_status: NOT_VERIFIED（无成片可核验；事实映射全部来自登记来源，无真实行为主张）\nstale_set[]: 无上游实质变化；本次产出不使任何上游判断失效。\nfailure_case:\n- 成片无任何画面（纯口播+文字卡）：包装仍成立，但封面若按「画面建议」落空，文字卡封面会显得单薄\n- 素材检索后 B3 段配了强化画面：违反 PD 硬门槛（主观强化）→ 需要回改剪辑，不回改则包装承诺「判断方法」与画面语气冲突\nassumptions[]:\n- platform 未锁定：只出母版型封面/首帧/标题；平台锁定后按该平台入口形态决定资源压封面或首帧。\n- subject_domain 未登记五个行业之一：未套用行业惯例。\n- objective.goal_family UNDECLARED：未代为推断，未按任何具体目标改写包装方向。\n- 素材模式为已有素材剪辑：严格按「待检索」状态处理，不假设任何单元有画面支撑；包装不依赖任何具体画面成立。\n- 「熟客卡点」为任务登记假设，不作真实顾客统计引用。\nmissing[]:\n- 锁定平台（非阻断：锁定后决定封面 vs 首帧资源分配、字幕规格）\n- 具体载体选定（非阻断：选定后把「这件新品」替换为具体款式，其余不变）\n- 素材检索结果与 beat 级 manifest（阻断定稿：出成片后按实际画面核验标题/封面兑现，再定稿）",
+  "used_fact_refs": "used_fact_refs[]:\n- output_location: `recommended_title`「单品好不好看，和能不能进你的衣橱，是两回事」\n  factual_claim: 这条内容的落点是「单品外观与能否进入衣橱是两个判断标准」\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」；品牌事实「商品追求一件可以进入多个生活场景」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `cover`（大字行「好看 ≠ 能进衣橱」）\n  factual_claim: 判断标准不是单品是否好看\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」\n- output_location: `first_frame`（首帧文字「你衣橱里已经有的，才是真正的试衣镜」）\n  factual_claim: 以已有衣橱为判断基准\n  fact_id: 品牌价值「搭配不是增加购买数量，而是提高已有衣服的使用率」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `final_publish_copy` 开头三行\n  factual_claim: 用三个问题判断进入衣橱（可带走的判断方法）\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」；品牌价值「好衣服首先要解决真实穿着问题」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `comment_design` 被动答复边界\n  factual_claim: 不引导购买/不引导互动（NO_CTA）\n  fact_id: cta_contract「不做购买、到店、私信或领取引导，只保留内容本身」\n- output_location: `final_publish_copy` 末句「不劝买，也不劝退」\n  factual_claim: 不构成购买引导，也不制造对不买的焦虑\n  fact_id: `expression_boundary`「制造年龄、身材和身份焦虑」「闭眼入」「谁穿谁高级」等无依据话术被禁止\n\npackaging_routes[]:\n- 路线 A（推荐）「冲突定位」：标题/封面以「好看 ≠ 能进衣橱」这对矛盾建立点击动机；失效条件：观众没有「买回单品后不知道怎么搭」的切身顾虑，或不觉得这是一条关于判断方法的内容。\n- 路线 B「方法定位」：标题/封面以「三个问题」作为判断工具建立点击动机；失效条件：观众已有完整衣橱判断习惯，觉得「三问」已知。\n\nmaster_package:\n  cover: 画面描述：衣橱内悬挂单品或苏禾手持/指向衣橱单品的画面（素材待检索；无可用画面则纯文字卡成立）。文字层级：第一行（大）「好看 ≠ 能进衣橱」；第二行（小）「搭不搭，先看三个问题」。\n  first_frame: 衣橱/悬挂衣物画面（同素材池；无则纯口播）+ 文字「你衣橱里已经有的，才是真正的试衣镜」。与封面关系：分工——封面抛矛盾，首帧给框架。\n  titles[]:\n    - entry_type: CONTRADICTION ——「单品好不好看，和能不能进你的衣橱，是",
+  "titles": "titles[]:\n    - entry_type: CONTRADICTION ——「单品好不好看，和能不能进你的衣橱，是两回事」\n    - entry_type: INFORMATION ——「判断一件新衣服要不要收，只看三个问题」\n    - entry_type: SITUATION ——「你衣橱里，可能早有一件能顶它」\n  recommended_title: 「单品好不好看，和能不能进你的衣橱，是两回事」。理由：输入方案第 2 段转折句「单品好看，和进了衣橱能搭，是两回事」直接兑现标题缺口；B2 三问随后给出判断路径。\n  publish_copy: 开头三行单列：\n    「你衣橱里已经有的，才是这件新品真正的试衣镜。」\n    「单品好看，和进了衣橱能搭，是两回事。」\n    「判断标准只有三个问题：能不能搭成完整一套；能不能覆盖一个你真会去的场合；你衣橱里有没有一件已经能顶它的位置。」\n    正文：展开三问＋主观区「我自己的感觉」保留不上升普适；收束「不用急着多买一件」。不复制口播稿字句。\n  caption_rules: 按呼吸断句（不按标点）；三问各单独一屏文字卡；允许省略语气词。单屏字数：平台未锁定，不填数字；定性要求：一屏一个意思、首屏完整可读、定稿前在目标平台实测。\n  sound_placement: 口播全程；环境声保留（若自带且无版权问题，影响口播清晰度才压）；不铺音乐；不加音效/转场。\n  comment_design: NOT_APPLICABLE（strict_cta_closed = true）。仅被动答复边界：如有人就三问某一条提问，回答只解释该方法本身，不引向购买/到店/私信/领取。\n  cta_surface: NOT_APPLICABLE（cta_contract 为闭合表达「不做购买、到店、私信或领取引导，只保留内容本身」→ strict_cta_closed = true）。\n  author_share_line: 「一件单品好不好看，和它能不能进你的衣橱，是两回事。」（陈述句，不提问）\nplatform_spec_status: PLATFORM_SPEC_UNVERIFIED（平台未锁定，不输出平台数字规格；数值型参数均改为定性制作要求）\nplatform_variants[]: 平台未锁定 → 不输出平台变体。母版仅一份。\nrelease_check:\n- 静音播放（对照「只看图不看字」）：PRE 阶段不可执行 → 留待成片后执行\n- 只看首帧 1 秒：PRE 阶段不可执行 → 首帧文字先保证「衣橱/试衣镜」核心可读\n- 只看封面＋标题：可执行——「好看 ≠ 能进衣橱」＋推荐标题共同构成「知道是讲什么」的最小信息\n- 看完之后会存吗：PRE 阶段不可执行 → 判断方法类内容预期收藏动机来自「三问」可复述性，成片后复查\n- 会转给谁：PRE 阶段不可执行 → 社交带出型平台未锁定，转发动机成片后复查\nsingle_distribution_promise: 提供衣橱搭配判断方法（≤ content_promise「提供衣橱搭配判断」，且不涉及任何 SKU 声明）——PRE 模式下标注为草案。\nreturn_to_script[]: NONE\nreturn_to_production[]",
+  "recommended_title": "recommended_title`「单品好不好看，和能不能进你的衣橱，是两回事」\n  factual_claim: 这条内容的落点是「单品外观与能否进入衣橱是两个判断标准」\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」；品牌事实「商品追求一件可以进入多个生活场景」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `cover`（大字行「好看 ≠ 能进衣橱」）\n  factual_claim: 判断标准不是单品是否好看\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」\n- output_location: `first_frame`（首帧文字「你衣橱里已经有的，才是真正的试衣镜」）\n  factual_claim: 以已有衣橱为判断基准\n  fact_id: 品牌价值「搭配不是增加购买数量，而是提高已有衣服的使用率」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `final_publish_copy` 开头三行\n  factual_claim: 用三个问题判断进入衣橱（可带走的判断方法）\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」；品牌价值「好衣服首先要解决真实穿着问题」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `comment_design` 被动答复边界\n  factual_claim: 不引导购买/不引导互动（NO_CTA）\n  fact_id: cta_contract「不做购买、到店、私信或领取引导，只保留内容本身」\n- output_location: `final_publish_copy` 末句「不劝买，也不劝退」\n  factual_claim: 不构成购买引导，也不制造对不买的焦虑\n  fact_id: `expression_boundary`「制造年龄、身材和身份焦虑」「闭眼入」「谁穿谁高级」等无依据话术被禁止\n\npackaging_routes[]:\n- 路线 A（推荐）「冲突定位」：标题/封面以「好看 ≠ 能进衣橱」这对矛盾建立点击动机；失效条件：观众没有「买回单品后不知道怎么搭」的切身顾虑，或不觉得这是一条关于判断方法的内容。\n- 路线 B「方法定位」：标题/封面以「三个问题」作为判断工具建立点击动机；失效条件：观众已有完整衣橱判断习惯，觉得「三问」已知。\n\nmaster_package:\n  cover: 画面描述：衣橱内悬挂单品或苏禾手持/指向衣橱单品的画面（素材待检索；无可用画面则纯文字卡成立）。文字层级：第一行（大）「好看 ≠ 能进衣橱」；第二行（小）「搭不搭，先看三个问题」。\n  first_frame: 衣橱/悬挂衣物画面（同素材池；无则纯口播）+ 文字「你衣橱里已经有的，才是真正的试衣镜」。与封面关系：分工——封面抛矛盾，首帧给框架。\n  titles[]:\n    - entry_type: CONTRADICTION ——「单品好不好看，和能不能进你的衣橱，是两回事」\n    - entry_type: INFORMATION ——「",
+  "publish_copy": "publish_copy` 开头三行\n  factual_claim: 用三个问题判断进入衣橱（可带走的判断方法）\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」；品牌价值「好衣服首先要解决真实穿着问题」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `comment_design` 被动答复边界\n  factual_claim: 不引导购买/不引导互动（NO_CTA）\n  fact_id: cta_contract「不做购买、到店、私信或领取引导，只保留内容本身」\n- output_location: `final_publish_copy` 末句「不劝买，也不劝退」\n  factual_claim: 不构成购买引导，也不制造对不买的焦虑\n  fact_id: `expression_boundary`「制造年龄、身材和身份焦虑」「闭眼入」「谁穿谁高级」等无依据话术被禁止\n\npackaging_routes[]:\n- 路线 A（推荐）「冲突定位」：标题/封面以「好看 ≠ 能进衣橱」这对矛盾建立点击动机；失效条件：观众没有「买回单品后不知道怎么搭」的切身顾虑，或不觉得这是一条关于判断方法的内容。\n- 路线 B「方法定位」：标题/封面以「三个问题」作为判断工具建立点击动机；失效条件：观众已有完整衣橱判断习惯，觉得「三问」已知。\n\nmaster_package:\n  cover: 画面描述：衣橱内悬挂单品或苏禾手持/指向衣橱单品的画面（素材待检索；无可用画面则纯文字卡成立）。文字层级：第一行（大）「好看 ≠ 能进衣橱」；第二行（小）「搭不搭，先看三个问题」。\n  first_frame: 衣橱/悬挂衣物画面（同素材池；无则纯口播）+ 文字「你衣橱里已经有的，才是真正的试衣镜」。与封面关系：分工——封面抛矛盾，首帧给框架。\n  titles[]:\n    - entry_type: CONTRADICTION ——「单品好不好看，和能不能进你的衣橱，是两回事」\n    - entry_type: INFORMATION ——「判断一件新衣服要不要收，只看三个问题」\n    - entry_type: SITUATION ——「你衣橱里，可能早有一件能顶它」\n  recommended_title: 「单品好不好看，和能不能进你的衣橱，是两回事」。理由：输入方案第 2 段转折句「单品好看，和进了衣橱能搭，是两回事」直接兑现标题缺口；B2 三问随后给出判断路径。\n  publish_copy: 开头三行单列：\n    「你衣橱里已经有的，才是这件新品真正的试衣镜。」\n    「单品好看，和进了衣橱能搭，是两回事。」\n    「判断标准只有三个问题：能不能搭成完整一套；能不能覆盖一个你真会去的场合；你衣橱里有没有一件已经能顶它的位置。」\n    正文：展开三问＋主观区「我自己的感觉」保留不上升普适；收束「不用急着多买一件」。不复制口播稿字句。\n  caption_rules: 按呼吸断句（不按标点）；三问各单独一屏文字卡；允许省略语气词。单屏字数：平台未锁定，不填数字；定性要求：一屏一个意思、首屏完整可读、定稿前在目标平台实测。\n  sound_placement: 口播全程",
+  "platform_variants": "platform_variants[]: 平台未锁定 → 不输出平台变体。母版仅一份。\nrelease_check:\n- 静音播放（对照「只看图不看字」）：PRE 阶段不可执行 → 留待成片后执行\n- 只看首帧 1 秒：PRE 阶段不可执行 → 首帧文字先保证「衣橱/试衣镜」核心可读\n- 只看封面＋标题：可执行——「好看 ≠ 能进衣橱」＋推荐标题共同构成「知道是讲什么」的最小信息\n- 看完之后会存吗：PRE 阶段不可执行 → 判断方法类内容预期收藏动机来自「三问」可复述性，成片后复查\n- 会转给谁：PRE 阶段不可执行 → 社交带出型平台未锁定，转发动机成片后复查\nsingle_distribution_promise: 提供衣橱搭配判断方法（≤ content_promise「提供衣橱搭配判断」，且不涉及任何 SKU 声明）——PRE 模式下标注为草案。\nreturn_to_script[]: NONE\nreturn_to_production[]: NONE\nfact_check_status: NOT_VERIFIED（无成片可核验；事实映射全部来自登记来源，无真实行为主张）\nstale_set[]: 无上游实质变化；本次产出不使任何上游判断失效。\nfailure_case:\n- 成片无任何画面（纯口播+文字卡）：包装仍成立，但封面若按「画面建议」落空，文字卡封面会显得单薄\n- 素材检索后 B3 段配了强化画面：违反 PD 硬门槛（主观强化）→ 需要回改剪辑，不回改则包装承诺「判断方法」与画面语气冲突\nassumptions[]:\n- platform 未锁定：只出母版型封面/首帧/标题；平台锁定后按该平台入口形态决定资源压封面或首帧。\n- subject_domain 未登记五个行业之一：未套用行业惯例。\n- objective.goal_family UNDECLARED：未代为推断，未按任何具体目标改写包装方向。\n- 素材模式为已有素材剪辑：严格按「待检索」状态处理，不假设任何单元有画面支撑；包装不依赖任何具体画面成立。\n- 「熟客卡点」为任务登记假设，不作真实顾客统计引用。\nmissing[]:\n- 锁定平台（非阻断：锁定后决定封面 vs 首帧资源分配、字幕规格）\n- 具体载体选定（非阻断：选定后把「这件新品」替换为具体款式，其余不变）\n- 素材检索结果与 beat 级 manifest（阻断定稿：出成片后按实际画面核验标题/封面兑现，再定稿）"
+ }
+}

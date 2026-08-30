@@ -1,0 +1,290 @@
+{
+ "document": {
+  "id": "PPBS_B2_PHASE_E_RESULT_v1.0",
+  "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
+  "task_mode": "REBASE",
+  "criteria_ref": "unified-app/stages/PPBS_GATE_v2.0.json",
+  "criteria_sha256": "c172d9450568bef6396b0afbfadba396d1c1648a1b991d33c665f2b491619ac8",
+  "criteria_identical_to_v1_1": "phase_d_criteria 逐块取自 v1.1，未改一个字符",
+  "inputs_sha256": "f7a21d5d0fb03f90d027a9f272e50442e35ca80d25fcbbf0bbf0345b3dacfc67",
+  "model_calls_by_adjudicator": 0
+ },
+ "E1_D1": {
+  "verdict": "PASS",
+  "conditions": [
+   {
+    "id": "D1-a",
+    "text": "D1-a 产生完整、可用的 PP Artifact 与用户交付（两块都非空、非占位）",
+    "result": "PASS",
+    "observed": {
+     "artifact_len": 3901,
+     "user_delivery_len": 719,
+     "artifact_status": "OK",
+     "user_delivery_status": "OK",
+     "delivery_outcome": "DELIVERED",
+     "recovery_used": "false",
+     "sufficiency_status": "SUFFICIENT",
+     "output_schema_fields_present": "26/26",
+     "missing_fields": [],
+     "substantive_content": {
+      "titles": 3,
+      "packaging_routes": 2,
+      "used_fact_refs_entries": 6,
+      "release_check_items": 5
+     },
+     "disclosed_observation": "publish_copy 给出开头三行全文，正文部分写的是结构说明（展开三问＋主观区保留＋收束句）而非逐字全文。PRE 模式下正文标注为草案是 Skill 既有要求；该字段非空、非占位，但正文深度低于 FINAL 模式应有的水平——如实记录，不影响本条判定（判据要求的是『非空、非占位』）。"
+    }
+   },
+   {
+    "id": "D1-b",
+    "text": "D1-b 不出现无来源人物历史：产出中任何『某人过去/现在实际做过某事』的主张，其挂载来源必须自身陈述过该行为；只有职责/身份/一般经验的不算",
+    "result": "PASS",
+    "observed": {
+     "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+     "rubric": "b2 Skill「事实来源必须蕴含该主张」（继承自 b1，逐字未改）＋ Founder 裁决 2",
+     "habitual_behavior_claims_found": [],
+     "hedge_words_found": [],
+     "person_references_examined": [
+      {
+       "quote": "画面描述：衣橱内悬挂单品或苏禾手持/指向衣橱单品的画面（素材待检索…）",
+       "verdict": "不是真实行为主张——这是**提议的镜头**，不断言此人过去做过什么"
+      },
+      {
+       "quote": "「熟客卡点」为任务登记假设，不作真实顾客统计引用。",
+       "verdict": "主动标为登记假设，且明确拒绝当成真实统计"
+      }
+     ],
+     "used_fact_refs_entries": [
+      "recommended_title → FACT/THIS_ITEM_ONLY 上游卡点原文 ＋ 品牌事实",
+      "cover → FACT/THIS_ITEM_ONLY 上游卡点原文",
+      "first_frame → 品牌价值（一页纸夹具）",
+      "final_publish_copy 开头三行 → FACT/THIS_ITEM_ONLY ＋ 品牌价值",
+      "comment_design 被动答复边界 → cta_contract 原文",
+      "final_publish_copy 末句 → expression_boundary"
+     ],
+     "verbatim_finding": "六条 used_fact_refs 全部指向已登记来源（上游卡点原文、一页纸夹具品牌事实/价值、cta_contract、expression_boundary）；产出中不存在任何『某人过去或现在实际做过某事』的主张。",
+     "compare_to_b1_failing_run": "b1 之前同场景写出「教顾客挑衣服时一直在用这套判断方法」并加推断脚注；b1 D1 与本次 b2 D1 该类主张均为 0 处，事实修复在 b2 中保持成立、未回退。",
+     "evidence_locators_NOT_A_CHECKER": [
+      "一直在用",
+      "常用",
+      "长期以来",
+      "十年",
+      "历来",
+      "向来",
+      "一贯",
+      "多年来",
+      "一直以来",
+      "从来都",
+      "合理推断",
+      "基于职责",
+      "据说",
+      "印象中"
+     ]
+    }
+   },
+   {
+    "id": "D1-c",
+    "text": "D1-c 不要求受众采取动作：不得出现要求关注、评论、回复、收藏、转发、分享、点赞、参与话题、购买、到店、预约、咨询、私信、领取的表达",
+    "result": "PASS",
+    "observed": {
+     "adjudicator": "BOUNDED_JUDGMENT_UNDER_FROZEN_RUBRIC",
+     "rubric": "b2 Skill「strict_cta_closed：一次判定，全面适用」＋「CTA 权威顺序」＋ Founder 裁决 3",
+     "nine_surfaces_walked": {
+      "1 标题（3 候选）": [
+       "单品好不好看，和能不能进你的衣橱，是两回事",
+       "判断一件新衣服要不要收，只看三个问题",
+       "你衣橱里，可能早有一件能顶它"
+      ],
+      "2 封面文字": [
+       "第一行（大）「好看 ≠ 能进衣橱」；第二行（小）「搭不搭，先看三个问题」"
+      ],
+      "3 首帧": [
+       "文字「你衣橱里已经有的，才是真正的试衣镜」"
+      ],
+      "4 发布正文": [
+       "开头三行单列（三句均为陈述句）；正文收束「不用急着多买一件」"
+      ],
+      "5 cta_surface": [
+       "NOT_APPLICABLE（cta_contract 为闭合表达「不做购买、到店、私信或领取引导，只保留内容本身」→ strict_cta_closed = true）。"
+      ],
+      "6 comment_design": [
+       "NOT_APPLICABLE（strict_cta_closed = true）。仅被动答复边界：如有人就三问某一条提问，回答只解释该方法本身，不引向购买/到店/私信/领取。"
+      ],
+      "7 author_share_line": [
+       "「一件单品好不好看，和它能不能进你的衣橱，是两回事。」（陈述句，不提问）"
+      ],
+      "8 平台变体": [
+       "平台未锁定 → 不输出平台变体。母版仅一份。"
+      ],
+      "9 用户交付块": [
+       "「这里可以定两件事：标题选 1、2 还是 3；封面用画面还是纯文字。」——指向**用户**的待拍板事项，不是指向受众的动作"
+      ]
+     },
+     "audience_directed_question_sentences": {
+      "artifact": [],
+      "user_delivery": [],
+      "count": 0
+     },
+     "action_word_occurrences_and_context": {
+      "counts": {
+       "收藏": {
+        "artifact": 1,
+        "user_delivery": 0
+       },
+       "转发": {
+        "artifact": 1,
+        "user_delivery": 0
+       },
+       "购买": {
+        "artifact": 6,
+        "user_delivery": 0
+       },
+       "到店": {
+        "artifact": 3,
+        "user_delivery": 0
+       },
+       "私信": {
+        "artifact": 3,
+        "user_delivery": 0
+       },
+       "领取": {
+        "artifact": 3,
+        "user_delivery": 0
+       }
+      },
+      "every_occurrence_is": "否定式约束句（『不引向购买/到店/私信/领取』、『不做购买、到店、私信或领取引导』）或 Skill 既有的『发布前五条检查』内部自问（『看完之后会存吗』『会转给谁』）——后者是包装方自查，不是对外文案。",
+      "zero_audience_facing_action_asks": true
+     },
+     "new_rule_left_a_trace": {
+      "strict_cta_closed": 2,
+      "闭合": 1,
+      "NOT_APPLICABLE": 2,
+      "被动答复": 2,
+      "只保留内容本身": 2
+     },
+     "b1_failure_points_rechecked": [
+      {
+       "b1_failure": "cta_surface 逐字引用 cta_contract 后，自检面只剩四项业务动作，「只保留内容本身」被丢掉",
+       "b2_now": "cta_surface 明写「cta_contract 为闭合表达『…只保留内容本身』→ strict_cta_closed = true」，闭合表达进入了约束面",
+       "fixed": true
+      },
+      {
+       "b1_failure": "comment_design 置顶首条自述为「被追问的」，为引出留言而设计",
+       "b2_now": "comment_design = NOT_APPLICABLE（strict_cta_closed = true），只写被动答复边界",
+       "fixed": true
+      },
+      {
+       "b1_failure": "author_share_line 是句末指向受众等回答的问句",
+       "b2_now": "陈述句，产出自己标注「不提问」",
+       "fixed": true
+      },
+      {
+       "b1_failure": "comment_design 末行自我声明「均为判断方法的延伸，不构成 CTA」放行",
+       "b2_now": "无任何自我声明式放行；该类表达 0 处",
+       "fixed": true
+      },
+      {
+       "b1_failure": "交付块把边界复述成四项业务动作",
+       "b2_now": "交付块不复述边界清单，只交付内容与两项待拍板事项",
+       "fixed": true
+      }
+     ],
+     "evidence_locators_NOT_A_CHECKER": [
+      "关注",
+      "评论",
+      "回复",
+      "收藏",
+      "转发",
+      "分享",
+      "点赞",
+      "话题",
+      "购买",
+      "到店",
+      "预约",
+      "咨询",
+      "私信",
+      "领取",
+      "下单"
+     ]
+    }
+   },
+   {
+    "id": "D1-d",
+    "text": "D1-d 不因约束严格而空交付或整项拒绝",
+    "result": "PASS",
+    "observed": {
+     "delivery_outcome": "DELIVERED",
+     "user_delivery_len": 719,
+     "delivered": "3 个标题候选（各标 entry_type）＋ 推荐与理由 ＋ 封面两层文字 ＋ 首帧与封面分工 ＋ 发布文案开头三行 ＋ 两项待用户拍板事项",
+     "not_refused": "未出现整项拒绝、未出现『资料不足所以做不了』式空交付",
+     "constraint_effect": "comment_design 与 cta_surface 取 NOT_APPLICABLE 是上游闭合合同的正确执行结果，不是交付缺失"
+    }
+   },
+   {
+    "id": "D1-e",
+    "text": "D1-e used_fact_refs 中每一项真实行为主张均有直接来源",
+    "result": "PASS",
+    "observed": {
+     "section_present": true,
+     "entries": 6,
+     "every_entry_has_fact_id": true,
+     "habitual_claims_in_section": [],
+     "real_behavior_claims_in_section": 0,
+     "disclosed_observation": "fact_id 用的是来源原文引用（FACT/THIS_ITEM_ONLY、《一页纸夹具品牌事实 v0.1》条目、cta_contract、expression_boundary），不是 BRF-XXX-001-NNN 形式的登记全称。登记全称格式属 Skill 自检 8c，**不在冻结的 D1-e 判据内**——本条判据问的是『每一项真实行为主张均有直接来源』，而本次产出的真实行为主张为 0，列出的每一条都挂到了具体来源。不因看到结果就给判据加条件（A2）。",
+     "excerpt_head": "used_fact_refs[]:\n- output_location: `recommended_title`「单品好不好看，和能不能进你的衣橱，是两回事」\n  factual_claim: 这条内容的落点是「单品外观与能否进入衣橱是两个判断标准」\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」；品牌事实「商品追求一件可以进入多个生活场景」（《一页纸夹具品牌事实 v0.1》）\n- output_location: `cover`（大字行「好看 ≠ 能进衣橱」）\n  factual_claim: 判断标准不是单品是否好看\n  fact_id: FACT/THIS_ITEM_ONLY「她卡在的是『这件跟我衣橱里已经有的搭不搭』」\n- output_location: `first_frame`（首帧文字「你衣橱里已经有的，才是真正的试衣镜」）\n  factual_claim: 以已有衣橱为判断基准\n  fact_id: 品牌价值「搭配不是增加购买数量，而是提高已有衣服的使用率」（《一页纸夹具品牌事实 v0.1》）\n- outpu"
+    }
+   }
+  ],
+  "run_id": "07d5ca02-969f-4f43-b56f-10e950f581a3",
+  "elapsed_seconds": 160.44,
+  "attempts": 1,
+  "http_status": 200,
+  "run_status": "succeeded",
+  "pp_published_version_at_run": "2026-08-30 09:51:55.613459",
+  "pp_graph_md5_at_run": "8366328bf827bd0f460455d750d45c4f",
+  "pp_provider_pin_at_run": "2026-08-29 03:34:58.999575",
+  "llm_node_executions": [
+   {
+    "node_id": "skill_llm",
+    "status": "succeeded"
+   }
+  ]
+ },
+ "E2_D2": {
+  "verdict": "NOT_STARTED",
+  "reason": "待 D1 判定为 PASS 后执行"
+ },
+ "E3_D3": {
+  "verdict": "NOT_STARTED",
+  "reason": "仅在 D1、D2 都 PASS 且 provider 已重钉到 b2 之后执行"
+ },
+ "cost_account": {
+  "top_level_workflow_runs_used": 1,
+  "top_level_workflow_runs_budget": 3,
+  "llm_node_attempts_used": 1,
+  "llm_node_attempts_hard_cap": 10,
+  "retries": 0,
+  "repeat_sampling": 0,
+  "ab_tests": 0,
+  "reviewer_calls": 0
+ },
+ "protected_surface_now": {
+  "pp_current_graph_md5": "8366328bf827bd0f460455d750d45c4f",
+  "pp_current_version": "2026-08-30 09:51:55.613459",
+  "pp_provider_pin": "2026-08-29 03:34:58.999575",
+  "pin_is_old_stable": true,
+  "pp_workflow_rows": 5,
+  "seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+ },
+ "allowed_upgrades": {
+  "applied": [],
+  "why": "三项上调只在 D1、D2、D3 全部 PASS 之后成立"
+ },
+ "must_remain": {
+  "CROSS_TURN_CORRECTION_PROPAGATION": "NOT_VERIFIED(NOT_CHECKED)",
+  "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+  "S5": "NOT_STARTED",
+  "main_merge": "NOT_ALLOWED",
+  "why": "PP 修复不等于跨轮纠正传播已经验证。"
+ }
+}
