@@ -648,9 +648,21 @@ workflow:
         isInIteration: false
         isInLoop: false
         sourceType: code
-        targetType: assigner
-      id: uapp_delivery-source-uapp_save
+        targetType: code
+      id: uapp_delivery-source-uapp_persist
       source: uapp_delivery
+      sourceHandle: source
+      target: uapp_persist
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: uapp_persist-source-uapp_save
+      source: uapp_persist
       sourceHandle: source
       target: uapp_save
       targetHandle: target
@@ -4828,14 +4840,68 @@ workflow:
       width: 300
       zIndex: 0
     - data:
+        code: "\ndef main(new_artifact, new_capability, prev_artifact, prev_capability):\n\
+          \    new_a = (new_artifact or \"\").strip()\n    if new_a:\n        return\
+          \ {\"artifact_to_persist\": new_artifact or \"\",\n                \"capability_to_persist\"\
+          : new_capability or \"\",\n                \"persist_action\": \"WRITE_NEW\"\
+          }\n    return {\"artifact_to_persist\": prev_artifact or \"\",\n       \
+          \     \"capability_to_persist\": prev_capability or \"\",\n            \"\
+          persist_action\": \"KEEP_PREVIOUS\"}\n"
+        code_language: python3
+        desc: 能力停在缺口返回空产物时，保留上一轮已确认的产物与能力，不用空值覆盖
+        outputs:
+          artifact_to_persist:
+            children: null
+            type: string
+          capability_to_persist:
+            children: null
+            type: string
+          persist_action:
+            children: null
+            type: string
+        selected: false
+        title: 闸门｜只有真产出才写回
+        type: code
+        variables:
+        - value_selector:
+          - uapp_seam_merge
+          - artifact
+          - output
+          variable: new_artifact
+        - value_selector:
+          - uapp_route
+          - target_capability
+          variable: new_capability
+        - value_selector:
+          - conversation
+          - uapp_last_artifact
+          variable: prev_artifact
+        - value_selector:
+          - conversation
+          - uapp_last_capability
+          variable: prev_capability
+      height: 98
+      id: uapp_persist
+      position:
+        x: 6960
+        y: 620
+      positionAbsolute:
+        x: 6960
+        y: 620
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
         desc: 供下一跳作为上游产出使用；业务真源在 M2，不在会话里
         items:
         - input_type: variable
           operation: over-write
           value:
-          - uapp_seam_merge
-          - artifact
-          - output
+          - uapp_persist
+          - artifact_to_persist
           variable_selector:
           - conversation
           - uapp_last_artifact
@@ -4843,8 +4909,8 @@ workflow:
         - input_type: variable
           operation: over-write
           value:
-          - uapp_route
-          - target_capability
+          - uapp_persist
+          - capability_to_persist
           variable_selector:
           - conversation
           - uapp_last_capability

@@ -1,0 +1,306 @@
+{
+ "phase_b_offline": "PASS",
+ "checks": [
+  {
+   "check": "U-01 唯一一处连续插入，内容逐字等于补丁",
+   "result": "PASS",
+   "detail": "ops=['insert'] 插入行数=18 期望=18"
+  },
+  {
+   "check": "U-01b 原有每一行都还在",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "U-02 无案例专用字符串/经营事实",
+   "result": "PASS",
+   "detail": "[]"
+  },
+  {
+   "check": "U-03 补丁不产生新文本内容",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "U-04 重放：before 复现历史缺口（诊断一致）",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "U-05 修复只影响 facts_registered，其余缺口逐例不变",
+   "result": "PASS",
+   "detail": "[]"
+  },
+  {
+   "check": "U-06 历史抹除案例全部被修复",
+   "result": "PASS",
+   "detail": "[('continuation/S4-CO-T2.json', []), ('continuation/S4-CO-T3.json', ['objective.primary_goal', 'expected_change', 'content_promise', 'expression_subject', 'content_origin_mode', 'objective.goal_family(未声明，不代为推断)'])]"
+  },
+  {
+   "check": "U-07 负控制：registered_facts 为空仍精确停在 facts_registered",
+   "result": "PASS",
+   "detail": "[]"
+  },
+  {
+   "check": "U-08 抽取器已填时输出逐字节不变",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "U-09 合成来源标记为 DERIVED(registered_facts)",
+   "result": "PASS",
+   "detail": "DERIVED(registered_facts)"
+  },
+  {
+   "check": "U-10 外壳里的事实与来源逐字对应（不改写）",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "U-11 professional_input 仍原样照带来源",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "P-01 有真产出时写新值",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "P-02 空产出时保留上一轮产物与能力（成对保留）",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "P-03 纯空白产出等同空",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "P-04 首轮空产出不造值",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "P-05 不会出现产物与能力身份错配",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "P-06 真实链重放：5593 字 Brief 不再被抹掉",
+   "result": "PASS",
+   "detail": "[{'cap': 'CONTENT_BRIEF', 'artifact_len_in': 5593, 'persist': 'WRITE_NEW', 'upstream_delivery_len_next': 5593, 'upstream_capability_next': 'CONTENT_BRIEF'}, {'cap': 'CREATIVE_SCRIPT', 'artifact_len_in': 0, 'persist': 'KEEP_PREVIOUS', 'upstream_delivery_len_next': 5593, 'upstream_capability_next': 'CONTENT_BRIEF'}, {'cap': 'PRODUCTION_DIRECTOR', 'artifact_len_in': 0, 'persist': 'KEEP_PREVIOUS', 'up"
+  }
+ ],
+ "hop_replay": [
+  {
+   "case": "continuation/S4-CO-T1.json",
+   "capability": "CONTENT_BRIEF",
+   "registered_facts_len": 2367,
+   "gaps_before": [
+    "expression_subject_and_boundary"
+   ],
+   "gaps_after": [
+    "expression_subject_and_boundary"
+   ],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T2.json",
+   "capability": "CONTENT_BRIEF",
+   "registered_facts_len": 2459,
+   "gaps_before": [
+    "facts_registered"
+   ],
+   "gaps_after": [],
+   "facts_in_envelope_before": false,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T3.json",
+   "capability": "CREATIVE_SCRIPT",
+   "registered_facts_len": 2459,
+   "gaps_before": [
+    "objective.primary_goal",
+    "expected_change",
+    "content_promise",
+    "expression_subject",
+    "content_origin_mode",
+    "facts_registered",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "gaps_after": [
+    "objective.primary_goal",
+    "expected_change",
+    "content_promise",
+    "expression_subject",
+    "content_origin_mode",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "facts_in_envelope_before": false,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T4.json",
+   "capability": "CREATIVE_SCRIPT",
+   "registered_facts_len": 2541,
+   "gaps_before": [
+    "expected_change",
+    "content_promise",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "gaps_after": [
+    "expected_change",
+    "content_promise",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T5.json",
+   "capability": "PRODUCTION_DIRECTOR",
+   "registered_facts_len": 2541,
+   "gaps_before": [
+    "script_or_equivalent_beats",
+    "content_promise"
+   ],
+   "gaps_after": [
+    "script_or_equivalent_beats",
+    "content_promise"
+   ],
+   "facts_in_envelope_before": false,
+   "facts_in_envelope_after": false,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T6.json",
+   "capability": "PUBLISHING_PACKAGING",
+   "registered_facts_len": 2541,
+   "gaps_before": [
+    "content_body_or_beats",
+    "content_promise",
+    "explicit_non_promise",
+    "cta_contract"
+   ],
+   "gaps_after": [
+    "content_body_or_beats",
+    "content_promise",
+    "explicit_non_promise",
+    "cta_contract"
+   ],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-CAMPAIGN-POS.json",
+   "capability": "CAMPAIGN",
+   "registered_facts_len": 2521,
+   "gaps_before": [],
+   "gaps_after": [],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-CONTENT_BRIEF-POS.json",
+   "capability": "CONTENT_BRIEF",
+   "registered_facts_len": 2501,
+   "gaps_before": [],
+   "gaps_after": [],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-CREATIVE_SCRIPT-POS.json",
+   "capability": "CREATIVE_SCRIPT",
+   "registered_facts_len": 2576,
+   "gaps_before": [
+    "content_origin_mode"
+   ],
+   "gaps_after": [
+    "content_origin_mode"
+   ],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-PRODUCTION_DIRECTOR-POS.json",
+   "capability": "PRODUCTION_DIRECTOR",
+   "registered_facts_len": 2576,
+   "gaps_before": [
+    "script_or_equivalent_beats",
+    "content_origin_mode",
+    "production_profile",
+    "content_promise"
+   ],
+   "gaps_after": [
+    "script_or_equivalent_beats",
+    "content_origin_mode",
+    "production_profile",
+    "content_promise"
+   ],
+   "facts_in_envelope_before": false,
+   "facts_in_envelope_after": false,
+   "other_gaps_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-PUBLISHING_PACKAGING-POS.json",
+   "capability": "PUBLISHING_PACKAGING",
+   "registered_facts_len": 2576,
+   "gaps_before": [
+    "content_body_or_beats",
+    "content_promise",
+    "asset_publish_permission"
+   ],
+   "gaps_after": [
+    "content_body_or_beats",
+    "content_promise",
+    "asset_publish_permission"
+   ],
+   "facts_in_envelope_before": true,
+   "facts_in_envelope_after": true,
+   "other_gaps_unchanged": true
+  }
+ ],
+ "persist_chain_replay": [
+  {
+   "cap": "CONTENT_BRIEF",
+   "artifact_len_in": 5593,
+   "persist": "WRITE_NEW",
+   "upstream_delivery_len_next": 5593,
+   "upstream_capability_next": "CONTENT_BRIEF"
+  },
+  {
+   "cap": "CREATIVE_SCRIPT",
+   "artifact_len_in": 0,
+   "persist": "KEEP_PREVIOUS",
+   "upstream_delivery_len_next": 5593,
+   "upstream_capability_next": "CONTENT_BRIEF"
+  },
+  {
+   "cap": "PRODUCTION_DIRECTOR",
+   "artifact_len_in": 0,
+   "persist": "KEEP_PREVIOUS",
+   "upstream_delivery_len_next": 5593,
+   "upstream_capability_next": "CONTENT_BRIEF"
+  },
+  {
+   "cap": "PUBLISHING_PACKAGING",
+   "artifact_len_in": 0,
+   "persist": "KEEP_PREVIOUS",
+   "upstream_delivery_len_next": 5593,
+   "upstream_capability_next": "CONTENT_BRIEF"
+  }
+ ],
+ "model_calls": 0,
+ "dify_writes": 0
+}

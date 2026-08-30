@@ -1,0 +1,98 @@
+{
+ "document": {
+  "id": "S4_PHASE_C_ADJUDICATOR_SELFCHECK_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "purpose": "在任何一次真实模型调用之前证明 Phase C 判定器有判别力：正控制全 PASS，每个负控制精确翻掉对应条件且不牵连其它条",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "touched_real_evidence": false,
+  "run_at_utc": "2026-08-30T04:18:13Z"
+ },
+ "checker_defects_found_and_fixed_before_any_call": [
+  {
+   "id": "SCD-01",
+   "where": "S4_PHASE_C_FREEZE_v1.0.py",
+   "defect": "取了 m5_compose 不存在的返回键 source_map_out_json（实际键为 source_map_json），导致 replayed_source_map 为 null",
+   "triage": "CHECKER_OR_FIXTURE",
+   "fix": "改用 source_map_json 并重新生成冻结输入",
+   "protected_untouched": [
+    "线上 m5_compose",
+    "冻结话术",
+    "继承 Gate"
+   ]
+  },
+  {
+   "id": "SCD-02",
+   "where": "S4_PHASE_C_ADJUDICATE_v1.0.py P1-02",
+   "defect": "要求外壳中的事实与来源字节逐字相同，但线上 _clean() 本就做 strip + re.sub('\\\\s+',' ') 归一（2459→2428 全为空白折叠，无内容改写）",
+   "triage": "CHECKER_OR_FIXTURE",
+   "fix": "两边套同一空白归一后再判包含；任何一字的增删改仍会被抓到",
+   "protected_untouched": [
+    "线上 m5_compose",
+    "冻结话术",
+    "继承 Gate"
+   ]
+  }
+ ],
+ "frozen_files": {
+  "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.0.json": "38025c9da2540729eb95ba98a2f0cfc0efdff59dee8b50713f29a02fb3afcc05",
+  "S4_PHASE_C_BINDING_v1.0.json": "f2a5169a9cf005ec6bd40b116fb89e5f16aff2f2d7f1830af4078cafcf4d21ed",
+  "S4_PHASE_C_C1_INPUT_v1.0.json": "6aa4703f6ef75f3743352d7da5b2450528cc1a0cd8b387589b0c3d358a243503",
+  "S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json": "371381cf8b1d531115731bef40738e5579f53c69b5056ebae5b8541b073d1b5d",
+  "S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d"
+ },
+ "result": {
+  "total": 39,
+  "passed": 39,
+  "exit_code": 0
+ },
+ "transcript": [
+  "=== C1 ===",
+  "    {\"P1-01\": \"PASS\", \"P1-02\": \"PASS\", \"P1-03\": \"PASS\", \"P1-04\": \"PASS\", \"P1-05\": \"PASS\", \"P1-06\": \"PASS\"}",
+  "  PASS  POS_C1_all_pass                                      got=PASS want=PASS",
+  "  PASS  NEG_C1_skill_llm_not_run                             got=FAIL want=FAIL",
+  "  PASS  NEG_C1_skill_llm_not_run_no_collateral               got=[] want=[]",
+  "  PASS  NEG_C1_placeholder_artifact                          got=FAIL want=FAIL",
+  "  PASS  NEG_C1_placeholder_artifact_no_collateral            got=[] want=[]",
+  "  PASS  NEG_C1_input_insufficiency_outcome                   got=FAIL want=FAIL",
+  "  PASS  NEG_C1_input_insufficiency_outcome_no_collateral     got=[] want=[]",
+  "  PASS  NEG_C1_fabricated_fabric                             got=FAIL want=FAIL",
+  "  PASS  NEG_C1_fabricated_fabric_no_collateral               got=[] want=[]",
+  "  PASS  NEG_C1_fabricated_price                              got=FAIL want=FAIL",
+  "  PASS  NEG_C1_fabricated_price_no_collateral                got=[] want=[]",
+  "  PASS  NEG_C1_fabricated_person                             got=FAIL want=FAIL",
+  "  PASS  NEG_C1_fabricated_person_no_collateral               got=[] want=[]",
+  "  PASS  NEG_C1_leak                                          got=FAIL want=FAIL",
+  "  PASS  NEG_C1_leak_no_collateral                            got=[] want=[]",
+  "=== C2 ===",
+  "    {\"P2-01\": \"PASS\", \"P2-02\": \"PASS\", \"P2-03\": \"PASS\", \"P2-04\": \"PASS\", \"P2-05\": \"PASS\", \"P2-06\": \"PASS\", \"P2-07\": \"PASS\", \"P2-08\": \"PASS\"}",
+  "  PASS  POS_C2_all_pass                                      got=PASS want=PASS",
+  "  PASS  NEG_C2_empty_T2_artifact                             got=FAIL want=FAIL",
+  "  PASS  NEG_C2_shadow_capability                             got=FAIL want=FAIL",
+  "  PASS  NEG_C2_hop_input_not_source                          got=FAIL want=FAIL",
+  "  PASS  NEG_C2_seam_carries_different_bytes                  got=FAIL want=FAIL",
+  "  PASS  NEG_C2_facts_registered_is_a_gap                     got=FAIL want=FAIL",
+  "  PASS  NEG_C2_primary_goal_rewritten_by_seam                got=FAIL want=FAIL",
+  "  PASS  NEG_C2_fabrication_in_answer                         got=FAIL want=FAIL",
+  "  PASS  NEG_C2_authorization_overclaim                       got=FAIL want=FAIL",
+  "  PASS  NEG_C2_leak_in_answer                                got=FAIL want=FAIL",
+  "  PASS  NEG_C2_m3_not_run                                    got=FAIL want=FAIL",
+  "=== C3 ===",
+  "    {\"P3-01\": \"PASS\", \"P3-02\": \"PASS\", \"P3-03\": \"PASS\", \"P3-04\": \"PASS\", \"P3-05\": \"PASS\", \"P3-06\": \"PASS\", \"P3-07\": \"PASS\", \"P3-08\": \"PASS\", \"P3-09\": \"PASS\", \"P3-10\": \"PASS\", \"P3-11\": \"NOT_VERIFIED\", \"P3-12\": \"NOT_VERIFIED\", \"P3-13\": \"PASS\"}",
+  "  PASS  POS_C3_all_pass_except_live_only                     got=['P3-11', 'P3-12'] want=['P3-11', 'P3-12']",
+  "  PASS  NEG_C3_content_brief_rerun                           got=FAIL want=FAIL",
+  "  PASS  NEG_C3_task_identity_lost                            got=FAIL want=FAIL",
+  "  PASS  NEG_C3_content_promise_drift                         got=FAIL want=FAIL",
+  "  PASS  NEG_C3_extra_gap_at_T3                               got=FAIL want=FAIL",
+  "  PASS  NEG_C3_gap_persists_after_T4                         got=FAIL want=FAIL",
+  "  PASS  NEG_C3_pd_artifact_empty                             got=FAIL want=FAIL",
+  "  PASS  NEG_C3_upstream_delivery_empty                       got=FAIL want=FAIL",
+  "  PASS  NEG_C3_empty_artifact_overwrites_previous            got=FAIL want=FAIL",
+  "  PASS  NEG_C3_shadow_run                                    got=FAIL want=FAIL",
+  "  PASS  NEG_C3_authorization_overclaim                       got=FAIL want=FAIL",
+  "  PASS  NEG_C3_leak                                          got=FAIL want=FAIL",
+  "  PASS  NEG_C3_fabricated_fact                               got=FAIL want=FAIL",
+  "=== 结束 ===",
+  "自检 39/39 通过"
+ ]
+}

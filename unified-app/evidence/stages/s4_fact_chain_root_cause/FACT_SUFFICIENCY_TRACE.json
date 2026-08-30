@@ -1,0 +1,1518 @@
+{
+ "document": {
+  "id": "FACT_SUFFICIENCY_TRACE",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "produced_by": "unified-app/workflows/S4_FACT_CHAIN_DIAGNOSE_v1.0.py",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "sut_mutations": 0,
+  "rules_frozen_in_source": [
+   "R1",
+   "R2",
+   "R3",
+   "R4",
+   "R5",
+   "R6"
+  ],
+  "read_only": true
+ },
+ "hop_adapter_binding": {
+  "hop_app_graph_sha256": "969f211a3389d7e3271945b824773c45800dd564cab52e3ceff0c2cae004b0c2",
+  "m5_compose_code_sha256": "f444166c7beef5f78045a7708857698a51ba6c14623c06a48798dcb696c1e171",
+  "m5_extract_prompt_sha256": "1215796eee9ff06fde64c67f737cf911941735a9edff998be405b1fd363d9dc6",
+  "m5_extract_model": {
+   "mode": "chat",
+   "name": "deepseek-v4-flash",
+   "provider": "langgenius/deepseek/deepseek",
+   "completion_params": {
+    "top_p": 0.8,
+    "thinking": false,
+    "max_tokens": 32000,
+    "reasoning_effort": "low"
+   }
+  }
+ },
+ "t2_a_attempt03_chain_5593": {
+  "case_id": "S4-CAP-CONTENT_BRIEF-POS",
+  "turn_index": 2,
+  "conversation_id": "637ac1a6-d174-40ff-91cd-d74183f2426c",
+  "graph_sha256_at_run": null,
+  "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+  "query_sha256": "aa472c3c13268faa2648e202aa176f0a41e63c26c2d8fa60e101d4010d100f4c",
+  "nodes_executed": [
+   "uapp_start",
+   "m1_extract",
+   "m1_join",
+   "m1_shadow",
+   "m1_compiler",
+   "m1_save_snapshot",
+   "uapp_action",
+   "uapp_route",
+   "uapp_s2_branch",
+   "uapp_boot_gate",
+   "uapp_m2_cycle",
+   "uapp_m2_dec",
+   "uapp_m2_run",
+   "uapp_ctx",
+   "uapp_m3_gate",
+   "uapp_m3",
+   "uapp_op_gate",
+   "uapp_hop",
+   "uapp_seam",
+   "uapp_seam_merge",
+   "uapp_delivery",
+   "uapp_save",
+   "uapp_answer_main"
+  ],
+  "uapp_save_executed": true,
+  "deterministic_inputs": {
+   "uapp_ctx.registered_facts": {
+    "len": 2501,
+    "sha256": "9ccfd13144cd92bf2a7182f76f2f06e4311bd8c3753aca0452db641672ce48ec"
+   },
+   "uapp_hop.IN.registered_facts": {
+    "len": 2501,
+    "sha256": "9ccfd13144cd92bf2a7182f76f2f06e4311bd8c3753aca0452db641672ce48ec"
+   },
+   "carried_intact_ctx_to_hop": true,
+   "uapp_hop.IN.m3_judgment_len": 2604,
+   "uapp_hop.IN.upstream_capability": "CONTENT_BRIEF",
+   "uapp_hop.IN.upstream_delivery_len": 0,
+   "uapp_hop.IN.user_request_len": 155
+  },
+  "hop_gaps": [],
+  "hop_gaps_count_reported": 0,
+  "seam_artifact_len": 5593,
+  "seam_precise_gaps": [
+   "模型未输出用户交付块标记",
+   "已由一次有界用户投影补齐",
+   "RECOVERED"
+  ],
+  "professional_input_carries_fact_block": true,
+  "professional_input_len": 5606,
+  "six_field_matrix": {
+   "objective": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|633d710f741e21a1",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "audience_problem": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|71cd7390aa2222e0",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "expected_change": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|4649b3c5e6d018f1",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "content_promise": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|6d97c79c1bec57ab",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "facts_registered": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|091b6497b0d6167e",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false,
+    "deterministic_source_node": "uapp_ctx.registered_facts",
+    "deterministic_source_len": 2501,
+    "deterministic_source_sha256": "9ccfd13144cd92bf2a7182f76f2f06e4311bd8c3753aca0452db641672ce48ec",
+    "deterministic_source_present": true,
+    "erasure": "NONE"
+   },
+   "expression_subject_and_boundary": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|745229e09aeb7cab",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   }
+  },
+  "erased_fields": [],
+  "evidence_file": "S4-CAP-CONTENT_BRIEF-POS.json"
+ },
+ "t2_b_continuation_empty": {
+  "case_id": "S4-CO-T2",
+  "turn_index": 2,
+  "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+  "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+  "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+  "query_sha256": "aa472c3c13268faa2648e202aa176f0a41e63c26c2d8fa60e101d4010d100f4c",
+  "nodes_executed": [
+   "uapp_start",
+   "m1_extract",
+   "m1_join",
+   "m1_shadow",
+   "m1_compiler",
+   "m1_save_snapshot",
+   "uapp_action",
+   "uapp_route",
+   "uapp_s2_branch",
+   "uapp_boot_gate",
+   "uapp_m2_cycle",
+   "uapp_m2_dec",
+   "uapp_m2_run",
+   "uapp_ctx",
+   "uapp_m3_gate",
+   "uapp_m3",
+   "uapp_op_gate",
+   "uapp_hop",
+   "uapp_seam",
+   "uapp_seam_merge",
+   "uapp_delivery",
+   "uapp_save",
+   "uapp_answer_main"
+  ],
+  "uapp_save_executed": true,
+  "deterministic_inputs": {
+   "uapp_ctx.registered_facts": {
+    "len": 2459,
+    "sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363"
+   },
+   "uapp_hop.IN.registered_facts": {
+    "len": 2459,
+    "sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363"
+   },
+   "carried_intact_ctx_to_hop": true,
+   "uapp_hop.IN.m3_judgment_len": 1642,
+   "uapp_hop.IN.upstream_capability": "CONTENT_BRIEF",
+   "uapp_hop.IN.upstream_delivery_len": 0,
+   "uapp_hop.IN.user_request_len": 146
+  },
+  "hop_gaps": [
+   "facts_registered"
+  ],
+  "hop_gaps_count_reported": 1,
+  "seam_artifact_len": 0,
+  "seam_precise_gaps": [
+   "facts_registered"
+  ],
+  "professional_input_carries_fact_block": true,
+  "professional_input_len": 4593,
+  "six_field_matrix": {
+   "objective": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|455fe2f1d01e4c48",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "audience_problem": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|3b4863ee06ccb98a",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "expected_change": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|ed1c9c06362a2570",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "content_promise": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|731262d1f0565841",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   },
+   "facts_registered": {
+    "presence": "ABSENT",
+    "source_node": "",
+    "source_ref_or_hash": "d13e30d4bd6a5524",
+    "authorization": "确定性来源在场（uapp_ctx 代码节点拼装，非模型产出）",
+    "executor_authored": false,
+    "deterministic_source_node": "uapp_ctx.registered_facts",
+    "deterministic_source_len": 2459,
+    "deterministic_source_sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363",
+    "deterministic_source_present": true,
+    "erasure": "SOURCE_PRESENT_BUT_ERASED"
+   },
+   "expression_subject_and_boundary": {
+    "presence": "PRESENT",
+    "source_node": "uapp_hop.m5_extract",
+    "source_ref_or_hash": "M3|214361f5018aecbe",
+    "authorization": "已登记来源内抽取（M3）",
+    "executor_authored": false
+   }
+  },
+  "erased_fields": [
+   "facts_registered"
+  ]
+ },
+ "continuation_chain": [
+  {
+   "case_id": "S4-CO-T1",
+   "turn_index": 1,
+   "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+   "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "9efa67b6a7bd29b6259cedb67de6dd9c02b706122256aaa9ee75453b9c0e089c",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "boot_user",
+    "boot_p1",
+    "boot_ws",
+    "boot_p2",
+    "boot_acct",
+    "boot_p3",
+    "boot_cycle",
+    "boot_p4",
+    "boot_task",
+    "boot_p5",
+    "boot_assign",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2367,
+     "sha256": "dc5634a6a888ea79b9bd767645c3b88b9c1f709d62120c2fc6fa6811b52505b5"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2367,
+     "sha256": "dc5634a6a888ea79b9bd767645c3b88b9c1f709d62120c2fc6fa6811b52505b5"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 2177,
+    "uapp_hop.IN.upstream_capability": "",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 19
+   },
+   "hop_gaps": [
+    "expression_subject_and_boundary"
+   ],
+   "hop_gaps_count_reported": 1,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "expression_subject_and_boundary"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 4909,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|d4274604646398dc",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|ef88f25d841641e5",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|8151bd19fa20cb19",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|661239e6036e0154",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|048fc25842442302",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2367,
+     "deterministic_source_sha256": "dc5634a6a888ea79b9bd767645c3b88b9c1f709d62120c2fc6fa6811b52505b5",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": []
+  },
+  {
+   "case_id": "S4-CO-T2",
+   "turn_index": 2,
+   "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+   "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "aa472c3c13268faa2648e202aa176f0a41e63c26c2d8fa60e101d4010d100f4c",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2459,
+     "sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2459,
+     "sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 1642,
+    "uapp_hop.IN.upstream_capability": "CONTENT_BRIEF",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 146
+   },
+   "hop_gaps": [
+    "facts_registered"
+   ],
+   "hop_gaps_count_reported": 1,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "facts_registered"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 4593,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|455fe2f1d01e4c48",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|3b4863ee06ccb98a",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|ed1c9c06362a2570",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|731262d1f0565841",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "ABSENT",
+     "source_node": "",
+     "source_ref_or_hash": "d13e30d4bd6a5524",
+     "authorization": "确定性来源在场（uapp_ctx 代码节点拼装，非模型产出）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2459,
+     "deterministic_source_sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363",
+     "deterministic_source_present": true,
+     "erasure": "SOURCE_PRESENT_BUT_ERASED"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|214361f5018aecbe",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [
+    "facts_registered"
+   ]
+  },
+  {
+   "case_id": "S4-CO-T3",
+   "turn_index": 3,
+   "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+   "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "be8eed18cba2ad5d5e30845dbf6dc48ae8d45f27294c650470b019d36f38e478",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2459,
+     "sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2459,
+     "sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 432,
+    "uapp_hop.IN.upstream_capability": "CONTENT_BRIEF",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 13
+   },
+   "hop_gaps": [
+    "objective.primary_goal",
+    "expected_change",
+    "content_promise",
+    "expression_subject",
+    "content_origin_mode",
+    "facts_registered",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "hop_gaps_count_reported": 7,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "expected_change",
+    "content_promise",
+    "expression_subject",
+    "content_origin_mode",
+    "facts_registered"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 3250,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "ABSENT",
+     "source_node": "",
+     "source_ref_or_hash": "d13e30d4bd6a5524",
+     "authorization": "确定性来源在场（uapp_ctx 代码节点拼装，非模型产出）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2459,
+     "deterministic_source_sha256": "d13e30d4bd6a5524f792f01e2581c504be0aabd4f7476d9c08e0aba1e8602363",
+     "deterministic_source_present": true,
+     "erasure": "SOURCE_PRESENT_BUT_ERASED"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [
+    "facts_registered"
+   ]
+  },
+  {
+   "case_id": "S4-CO-T4",
+   "turn_index": 4,
+   "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+   "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "870e655cb67e7fd5e696bbcbadd8943b0af095da951fb849ff7860d6262a8835",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2541,
+     "sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2541,
+     "sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 833,
+    "uapp_hop.IN.upstream_capability": "CREATIVE_SCRIPT",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 74
+   },
+   "hop_gaps": [
+    "expected_change",
+    "content_promise",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "hop_gaps_count_reported": 3,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "expected_change",
+    "content_promise"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 3794,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "ASK|e14c7ce7eb80c616",
+     "authorization": "已登记来源内抽取（ASK）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|1b31c25b29cea02a",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2541,
+     "deterministic_source_sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "ASK|8c5b986ed8463a9c",
+     "authorization": "已登记来源内抽取（ASK）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": []
+  },
+  {
+   "case_id": "S4-CO-T5",
+   "turn_index": 5,
+   "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+   "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "1f837d0d81013758dcf00bec4318b92ebc4c9cb1641597fb2ece9b44374391d1",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2541,
+     "sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2541,
+     "sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 503,
+    "uapp_hop.IN.upstream_capability": "CREATIVE_SCRIPT",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 25
+   },
+   "hop_gaps": [
+    "script_or_equivalent_beats",
+    "content_promise"
+   ],
+   "hop_gaps_count_reported": 2,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "script_or_equivalent_beats",
+    "content_promise"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 3415,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|22623451791571b5",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2541,
+     "deterministic_source_sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|5a4e65d83f96234e",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": []
+  },
+  {
+   "case_id": "S4-CO-T6",
+   "turn_index": 6,
+   "conversation_id": "b0d6d9f0-fed4-48da-a630-11db235aa573",
+   "graph_sha256_at_run": "f75555c0d6552a0894975242ef3fad7a5351ca63ce4404915c0ee1f71d8f3927",
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "c4ff8b0398f8998bc628bf7dbffc05a513759e0dc7f9520bdff908f4eef56993",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2541,
+     "sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2541,
+     "sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 707,
+    "uapp_hop.IN.upstream_capability": "PRODUCTION_DIRECTOR",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 11
+   },
+   "hop_gaps": [
+    "content_body_or_beats",
+    "content_promise",
+    "explicit_non_promise",
+    "cta_contract"
+   ],
+   "hop_gaps_count_reported": 4,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "content_body_or_beats",
+    "content_promise",
+    "explicit_non_promise",
+    "cta_contract"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 3605,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|ed773e4624e0d4e7",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2541,
+     "deterministic_source_sha256": "4735ca8f1f426fc512b02898adee1ac4d8a5b65fef2d0cd3fc0db556981cd837",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|a89f36007109c534",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": []
+  }
+ ],
+ "attempt03_chain": [
+  {
+   "case_id": "S4-CAP-CAMPAIGN-POS",
+   "turn_index": 2,
+   "conversation_id": "3c6c82f9-b9dc-4e3f-9627-c19ab980645c",
+   "graph_sha256_at_run": null,
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "7982b8235c6bb90e8394b059da867f26352dfe71ea6c0c379130367f0cae5767",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": false,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2521,
+     "sha256": "75bd978ef0babe3b3f66c666db51a1d6a2e37b2675087e85e793b41d409b755e"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2521,
+     "sha256": "75bd978ef0babe3b3f66c666db51a1d6a2e37b2675087e85e793b41d409b755e"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 2456,
+    "uapp_hop.IN.upstream_capability": "",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 93
+   },
+   "hop_gaps": [],
+   "hop_gaps_count_reported": 0,
+   "seam_artifact_len": 13548,
+   "seam_precise_gaps": [],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 5416,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|c7755b4307f01b27",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|17254e3d4d42eb67",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|4c8dbf41f106a391",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|c273657fde9ea2fd",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|1dbdafe59a197f9a",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2521,
+     "deterministic_source_sha256": "75bd978ef0babe3b3f66c666db51a1d6a2e37b2675087e85e793b41d409b755e",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|950de6b741dada45",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [],
+   "evidence_file": "S4-CAP-CAMPAIGN-POS.json"
+  },
+  {
+   "case_id": "S4-CAP-CONTENT_BRIEF-POS",
+   "turn_index": 2,
+   "conversation_id": "637ac1a6-d174-40ff-91cd-d74183f2426c",
+   "graph_sha256_at_run": null,
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "aa472c3c13268faa2648e202aa176f0a41e63c26c2d8fa60e101d4010d100f4c",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2501,
+     "sha256": "9ccfd13144cd92bf2a7182f76f2f06e4311bd8c3753aca0452db641672ce48ec"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2501,
+     "sha256": "9ccfd13144cd92bf2a7182f76f2f06e4311bd8c3753aca0452db641672ce48ec"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 2604,
+    "uapp_hop.IN.upstream_capability": "CONTENT_BRIEF",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 155
+   },
+   "hop_gaps": [],
+   "hop_gaps_count_reported": 0,
+   "seam_artifact_len": 5593,
+   "seam_precise_gaps": [
+    "模型未输出用户交付块标记",
+    "已由一次有界用户投影补齐",
+    "RECOVERED"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 5606,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|633d710f741e21a1",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|71cd7390aa2222e0",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|4649b3c5e6d018f1",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|6d97c79c1bec57ab",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|091b6497b0d6167e",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2501,
+     "deterministic_source_sha256": "9ccfd13144cd92bf2a7182f76f2f06e4311bd8c3753aca0452db641672ce48ec",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|745229e09aeb7cab",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [],
+   "evidence_file": "S4-CAP-CONTENT_BRIEF-POS.json"
+  },
+  {
+   "case_id": "S4-CAP-CREATIVE_SCRIPT-POS",
+   "turn_index": 3,
+   "conversation_id": "637ac1a6-d174-40ff-91cd-d74183f2426c",
+   "graph_sha256_at_run": null,
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "be8eed18cba2ad5d5e30845dbf6dc48ae8d45f27294c650470b019d36f38e478",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2576,
+     "sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2576,
+     "sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 1011,
+    "uapp_hop.IN.upstream_capability": "CONTENT_BRIEF",
+    "uapp_hop.IN.upstream_delivery_len": 5593,
+    "uapp_hop.IN.user_request_len": 13
+   },
+   "hop_gaps": [
+    "content_origin_mode"
+   ],
+   "hop_gaps_count_reported": 1,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "content_origin_mode"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 9569,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "UP|27b5b7826ec09bdc",
+     "authorization": "已登记来源内抽取（UP）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "UP|3f8bf546e269f1a8",
+     "authorization": "已登记来源内抽取（UP）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "UP|dc69b014cb75b6e8",
+     "authorization": "已登记来源内抽取（UP）",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "UP|f9af98914fb2a503",
+     "authorization": "已登记来源内抽取（UP）",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "UP|f4d5d9a5cb4641d8",
+     "authorization": "已登记来源内抽取（UP）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2576,
+     "deterministic_source_sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "UP|8ecfc5f6f02efbe4",
+     "authorization": "已登记来源内抽取（UP）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [],
+   "evidence_file": "S4-CAP-CREATIVE_SCRIPT-POS.json"
+  },
+  {
+   "case_id": "S4-CAP-PRODUCTION_DIRECTOR-POS",
+   "turn_index": 4,
+   "conversation_id": "637ac1a6-d174-40ff-91cd-d74183f2426c",
+   "graph_sha256_at_run": null,
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "1f837d0d81013758dcf00bec4318b92ebc4c9cb1641597fb2ece9b44374391d1",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2576,
+     "sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2576,
+     "sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 1070,
+    "uapp_hop.IN.upstream_capability": "CREATIVE_SCRIPT",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 25
+   },
+   "hop_gaps": [
+    "script_or_equivalent_beats",
+    "content_origin_mode",
+    "production_profile",
+    "content_promise"
+   ],
+   "hop_gaps_count_reported": 4,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "script_or_equivalent_beats",
+    "content_origin_mode",
+    "production_profile",
+    "content_promise"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 4017,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "M3|08403b1d73742aeb",
+     "authorization": "已登记来源内抽取（M3）",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "ASK|cf6f24eac8f93374",
+     "authorization": "已登记来源内抽取（ASK）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|2398995f81618194",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2576,
+     "deterministic_source_sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "ASK|7a00ada93d3fbb2d",
+     "authorization": "已登记来源内抽取（ASK）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [],
+   "evidence_file": "S4-CAP-PRODUCTION_DIRECTOR-POS.json"
+  },
+  {
+   "case_id": "S4-CAP-PUBLISHING_PACKAGING-POS",
+   "turn_index": 5,
+   "conversation_id": "637ac1a6-d174-40ff-91cd-d74183f2426c",
+   "graph_sha256_at_run": null,
+   "fixture_sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+   "query_sha256": "c4ff8b0398f8998bc628bf7dbffc05a513759e0dc7f9520bdff908f4eef56993",
+   "nodes_executed": [
+    "uapp_start",
+    "m1_extract",
+    "m1_join",
+    "m1_shadow",
+    "m1_compiler",
+    "m1_save_snapshot",
+    "uapp_action",
+    "uapp_route",
+    "uapp_s2_branch",
+    "uapp_boot_gate",
+    "uapp_m2_cycle",
+    "uapp_m2_dec",
+    "uapp_m2_run",
+    "uapp_ctx",
+    "uapp_m3_gate",
+    "uapp_m3",
+    "uapp_op_gate",
+    "uapp_hop",
+    "uapp_seam",
+    "uapp_seam_merge",
+    "uapp_delivery",
+    "uapp_save",
+    "uapp_answer_main"
+   ],
+   "uapp_save_executed": true,
+   "deterministic_inputs": {
+    "uapp_ctx.registered_facts": {
+     "len": 2576,
+     "sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca"
+    },
+    "uapp_hop.IN.registered_facts": {
+     "len": 2576,
+     "sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca"
+    },
+    "carried_intact_ctx_to_hop": true,
+    "uapp_hop.IN.m3_judgment_len": 908,
+    "uapp_hop.IN.upstream_capability": "PRODUCTION_DIRECTOR",
+    "uapp_hop.IN.upstream_delivery_len": 0,
+    "uapp_hop.IN.user_request_len": 11
+   },
+   "hop_gaps": [
+    "content_body_or_beats",
+    "content_promise",
+    "asset_publish_permission"
+   ],
+   "hop_gaps_count_reported": 3,
+   "seam_artifact_len": 0,
+   "seam_precise_gaps": [
+    "content_body_or_beats",
+    "content_promise",
+    "asset_publish_permission"
+   ],
+   "professional_input_carries_fact_block": true,
+   "professional_input_len": 3841,
+   "six_field_matrix": {
+    "objective": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "audience_problem": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "ASK|cf6f24eac8f93374",
+     "authorization": "已登记来源内抽取（ASK）",
+     "executor_authored": false
+    },
+    "expected_change": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "content_promise": {
+     "presence": "INCONCLUSIVE",
+     "source_node": "",
+     "source_ref_or_hash": "",
+     "authorization": "",
+     "executor_authored": false
+    },
+    "facts_registered": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "FACT|8ea44cf817b28be2",
+     "authorization": "已登记来源内抽取（FACT）",
+     "executor_authored": false,
+     "deterministic_source_node": "uapp_ctx.registered_facts",
+     "deterministic_source_len": 2576,
+     "deterministic_source_sha256": "4588d986c8de2c6fc2db41c4a6ac3b51fdb9a7214773018f0070bbd65558ceca",
+     "deterministic_source_present": true,
+     "erasure": "NONE"
+    },
+    "expression_subject_and_boundary": {
+     "presence": "PRESENT",
+     "source_node": "uapp_hop.m5_extract",
+     "source_ref_or_hash": "ASK|09256d07bfe0e87b",
+     "authorization": "已登记来源内抽取（ASK）",
+     "executor_authored": false
+    }
+   },
+   "erased_fields": [],
+   "evidence_file": "S4-CAP-PUBLISHING_PACKAGING-POS.json"
+  }
+ ],
+ "overwrite_events": {
+  "continuation": [],
+  "attempt03_chain": [
+   {
+    "overwrote_turn": 2,
+    "overwrote_artifact_len": 5593,
+    "by_turn": 3,
+    "written_value_len": 0,
+    "next_turn_upstream_delivery_len": 0,
+    "confirmed_by_next_turn": true
+   }
+  ]
+ }
+}

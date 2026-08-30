@@ -41,6 +41,30 @@ HOP_APP = "6c46fdb1-5f49-4513-a0c0-29957b3dcee4"
 SEAM_APP = "5fca0162-e26b-4545-a00b-66b1a2a2a077"
 
 
+# 写回闸门源码。**本层自有，不改共享的 DELIVERY_SRC**——后者同时被旧 Canvas 建图脚本
+# 与 S3 复用，改它会把变化推到不该动的保护面上（A3：只沿依赖传播，不多算）。
+#
+# 为什么需要这个闸门：uapp_save 是无条件 assigner，能力停在缺口返回空 artifact 时
+# 同样写入，于是用空串覆盖上一轮已确认的有效产物。实测 conv 637ac1a6：
+# turn 2 的 5593 字 Content Brief 被 turn 3（CS 停在 content_origin_mode 缺口）抹掉，
+# turn 4 的 upstream_delivery 归零。见 S4_FACT_SUFFICIENCY_FAILURE_TRIAGE_FINAL_v1.0.md §2.4。
+#
+# 为什么 artifact 与 capability 必须一起动：只保产物不保身份，会让下一跳把
+# 「上一个能力是 CREATIVE_SCRIPT」和「上一个产物是 Content Brief 正文」配成一对，
+# hop 的 ARTIFACT_IS_FIELD 规则会据此把 Brief 正文当成脚本本体——那是编造。
+PERSIST_SRC = r"""
+def main(new_artifact, new_capability, prev_artifact, prev_capability):
+    new_a = (new_artifact or "").strip()
+    if new_a:
+        return {"artifact_to_persist": new_artifact or "",
+                "capability_to_persist": new_capability or "",
+                "persist_action": "WRITE_NEW"}
+    return {"artifact_to_persist": prev_artifact or "",
+            "capability_to_persist": prev_capability or "",
+            "persist_action": "KEEP_PREVIOUS"}
+"""
+
+
 def build_graph():
     graph, features, ref_digests = _S3.build_graph()
     nodes = {n["id"]: n for n in graph["nodes"]}
@@ -140,14 +164,25 @@ def build_graph():
     # 能力产出的 artifact 转手被丢弃——CREATIVE_SCRIPT / PRODUCTION_DIRECTOR /
     # PUBLISHING_PACKAGING 三项因此结构上永远拿不到上游产物（TRIAGE 004）。
     # 赋值项与继承参考建图 UAPP_BUILD_CANVAS_v1.0.py:655-658 逐字一致。
+    # 写回闸门：真有产出才覆盖；空产出保留上一轮已确认的产物与能力身份。
+    add.append(N("uapp_persist", X + 6920, Y + 320, code(
+        "闸门｜只有真产出才写回",
+        "能力停在缺口返回空产物时，保留上一轮已确认的产物与能力，不用空值覆盖",
+        PERSIST_SRC,
+        [V("new_artifact", ["uapp_seam_merge", "artifact", "output"]),
+         V("new_capability", ["uapp_route", "target_capability"]),
+         V("prev_artifact", ["conversation", "uapp_last_artifact"]),
+         V("prev_capability", ["conversation", "uapp_last_capability"])],
+        ["artifact_to_persist", "capability_to_persist", "persist_action"])))
     add.append(N("uapp_save", X + 7000, Y + 200, assigner(
         "记住｜本轮产物与能力", "供下一跳作为上游产出使用；业务真源在 M2，不在会话里",
-        [("variable", ["uapp_seam_merge", "artifact", "output"], "uapp_last_artifact"),
-         ("variable", ["uapp_route", "target_capability"], "uapp_last_capability")])))
+        [("variable", ["uapp_persist", "artifact_to_persist"], "uapp_last_artifact"),
+         ("variable", ["uapp_persist", "capability_to_persist"], "uapp_last_capability")])))
     add.append(N("uapp_answer_main", X + 7160, Y + 200,
                  answer("回复｜交付", "{{#uapp_delivery.final_text#}}")))
     edges.append(E("uapp_seam_merge", "uapp_delivery"))
-    edges.append(E("uapp_delivery", "uapp_save"))
+    edges.append(E("uapp_delivery", "uapp_persist"))
+    edges.append(E("uapp_persist", "uapp_save"))
     edges.append(E("uapp_save", "uapp_answer_main"))
 
     # 组件失败只影响这一支：Hop 与 Seam 各自的 fail-branch 归到同一个如实交代节点。
@@ -219,7 +254,7 @@ def main():
                                        .encode("utf-8")).hexdigest(),
         "dsl_sha256": hashlib.sha256(dsl_text.encode("utf-8")).hexdigest(),
         "new_this_layer": ["uapp_op_gate", "uapp_hop", "uapp_seam", "uapp_noseam",
-                           "uapp_seam_merge", "uapp_delivery", "uapp_save",
+                           "uapp_seam_merge", "uapp_delivery", "uapp_persist", "uapp_save",
                            "uapp_answer_main",
                            "uapp_cap_fail", "uapp_answer_capfail"],
         "removed_this_layer": ["uapp_s3_deliver", "uapp_answer_main(S3 薄交付版)"],

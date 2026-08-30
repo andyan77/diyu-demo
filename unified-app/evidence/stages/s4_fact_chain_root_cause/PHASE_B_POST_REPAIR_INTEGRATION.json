@@ -1,0 +1,294 @@
+{
+ "phase_b_post_repair_integration": "PASS",
+ "hop_provider_pinned_version": "2026-08-30 03:38:31.449618",
+ "pinned_m5_compose_sha256": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855",
+ "canvas_graph_sha256": "8c9788f293fa7750bea451bd2195ddfb4df7c2647ca00c383ec7c096a4cdc2d1",
+ "checks": [
+  {
+   "check": "I-01 hop provider 的钉与应用已发布版一致",
+   "result": "PASS",
+   "detail": "pin=2026-08-30 03:38:31.449618 published=2026-08-30 03:38:31.449618"
+  },
+  {
+   "check": "I-02 钉住那一版的 m5_compose 就是修复版",
+   "result": "PASS",
+   "detail": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855"
+  },
+  {
+   "check": "I-03 抽取器 prompt/模型/参数未被本轮改动",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "I-04 hop 图只有 m5_compose 一个节点变化",
+   "result": "PASS",
+   "detail": "['m5_compose']"
+  },
+  {
+   "check": "I-05 画布已发布图 == 干跑构建图",
+   "result": "PASS",
+   "detail": "8c9788f293fa7750bea451bd2195ddfb4df7c2647ca00c383ec7c096a4cdc2d1"
+  },
+  {
+   "check": "I-06 画布节点/边 = 47/49",
+   "result": "PASS",
+   "detail": "47/49"
+  },
+  {
+   "check": "I-07 uapp_save 现在读 uapp_persist，不再直读 seam_merge",
+   "result": "PASS",
+   "detail": "[{\"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"uapp_persist\", \"artifact_to_persist\"], \"variable_selector\": [\"conversation\", \"uapp_last_artifact\"], \"write_mode\": \"over-write\"}, {\"input_type\": \"variable\", \"operation\": \"over-write\", \"value\": [\"uapp_persist\", \"capability_to_persist\"],"
+  },
+  {
+   "check": "I-08 九个受保护对象零漂移",
+   "result": "PASS",
+   "detail": "{}"
+  },
+  {
+   "check": "I-09 历史抹除案例（T2/T3）在线上代码下全部消失",
+   "result": "PASS",
+   "detail": "[('continuation/S4-CO-T2.json', []), ('continuation/S4-CO-T3.json', ['objective.primary_goal', 'expected_change', 'content_promise', 'expression_subject', 'content_origin_mode', 'objective.goal_family(未声明，不代为推断)'])]"
+  },
+  {
+   "check": "I-10 其余字段判定逐例不变",
+   "result": "PASS",
+   "detail": "[]"
+  },
+  {
+   "check": "I-11 负控制：来源真空仍精确停在 facts_registered，且外壳不写该键",
+   "result": "PASS",
+   "detail": "[]"
+  },
+  {
+   "check": "I-12 合成来源可审计：DERIVED(registered_facts)",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "I-13 外壳中的事实与来源逐字对应，未改写",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "I-14 professional_input 仍原样照带来源",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "I-15 线上写回闸门：5593 字 Brief 不再被空产出抹掉",
+   "result": "PASS",
+   "detail": "[{'cap': 'CONTENT_BRIEF', 'artifact_len_in': 5593, 'persist': 'WRITE_NEW', 'next_upstream_delivery_len': 5593, 'next_upstream_capability': 'CONTENT_BRIEF'}, {'cap': 'CREATIVE_SCRIPT', 'artifact_len_in': 0, 'persist': 'KEEP_PREVIOUS', 'next_upstream_delivery_len': 5593, 'next_upstream_capability': 'CONTENT_BRIEF'}, {'cap': 'PRODUCTION_DIRECTOR', 'artifact_len_in': 0, 'persist': 'KEEP_PREVIOUS', 'ne"
+  },
+  {
+   "check": "I-16 有真产出时正常覆盖",
+   "result": "PASS",
+   "detail": ""
+  },
+  {
+   "check": "I-17 首轮空产出不造值",
+   "result": "PASS",
+   "detail": ""
+  }
+ ],
+ "hop_replay": [
+  {
+   "case": "continuation/S4-CO-T1.json",
+   "capability": "CONTENT_BRIEF",
+   "registered_facts_len": 2367,
+   "gaps_before": [
+    "expression_subject_and_boundary"
+   ],
+   "gaps_after": [
+    "expression_subject_and_boundary"
+   ],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T2.json",
+   "capability": "CONTENT_BRIEF",
+   "registered_facts_len": 2459,
+   "gaps_before": [
+    "facts_registered"
+   ],
+   "gaps_after": [],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T3.json",
+   "capability": "CREATIVE_SCRIPT",
+   "registered_facts_len": 2459,
+   "gaps_before": [
+    "objective.primary_goal",
+    "expected_change",
+    "content_promise",
+    "expression_subject",
+    "content_origin_mode",
+    "facts_registered",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "gaps_after": [
+    "objective.primary_goal",
+    "expected_change",
+    "content_promise",
+    "expression_subject",
+    "content_origin_mode",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T4.json",
+   "capability": "CREATIVE_SCRIPT",
+   "registered_facts_len": 2541,
+   "gaps_before": [
+    "expected_change",
+    "content_promise",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "gaps_after": [
+    "expected_change",
+    "content_promise",
+    "objective.goal_family(未声明，不代为推断)"
+   ],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T5.json",
+   "capability": "PRODUCTION_DIRECTOR",
+   "registered_facts_len": 2541,
+   "gaps_before": [
+    "script_or_equivalent_beats",
+    "content_promise"
+   ],
+   "gaps_after": [
+    "script_or_equivalent_beats",
+    "content_promise"
+   ],
+   "facts_in_envelope_after": false,
+   "others_unchanged": true
+  },
+  {
+   "case": "continuation/S4-CO-T6.json",
+   "capability": "PUBLISHING_PACKAGING",
+   "registered_facts_len": 2541,
+   "gaps_before": [
+    "content_body_or_beats",
+    "content_promise",
+    "explicit_non_promise",
+    "cta_contract"
+   ],
+   "gaps_after": [
+    "content_body_or_beats",
+    "content_promise",
+    "explicit_non_promise",
+    "cta_contract"
+   ],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-CAMPAIGN-POS.json",
+   "capability": "CAMPAIGN",
+   "registered_facts_len": 2521,
+   "gaps_before": [],
+   "gaps_after": [],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-CONTENT_BRIEF-POS.json",
+   "capability": "CONTENT_BRIEF",
+   "registered_facts_len": 2501,
+   "gaps_before": [],
+   "gaps_after": [],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-CREATIVE_SCRIPT-POS.json",
+   "capability": "CREATIVE_SCRIPT",
+   "registered_facts_len": 2576,
+   "gaps_before": [
+    "content_origin_mode"
+   ],
+   "gaps_after": [
+    "content_origin_mode"
+   ],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-PRODUCTION_DIRECTOR-POS.json",
+   "capability": "PRODUCTION_DIRECTOR",
+   "registered_facts_len": 2576,
+   "gaps_before": [
+    "script_or_equivalent_beats",
+    "content_origin_mode",
+    "production_profile",
+    "content_promise"
+   ],
+   "gaps_after": [
+    "script_or_equivalent_beats",
+    "content_origin_mode",
+    "production_profile",
+    "content_promise"
+   ],
+   "facts_in_envelope_after": false,
+   "others_unchanged": true
+  },
+  {
+   "case": "attempt03_chain/S4-CAP-PUBLISHING_PACKAGING-POS.json",
+   "capability": "PUBLISHING_PACKAGING",
+   "registered_facts_len": 2576,
+   "gaps_before": [
+    "content_body_or_beats",
+    "content_promise",
+    "asset_publish_permission"
+   ],
+   "gaps_after": [
+    "content_body_or_beats",
+    "content_promise",
+    "asset_publish_permission"
+   ],
+   "facts_in_envelope_after": true,
+   "others_unchanged": true
+  }
+ ],
+ "persist_chain_replay": [
+  {
+   "cap": "CONTENT_BRIEF",
+   "artifact_len_in": 5593,
+   "persist": "WRITE_NEW",
+   "next_upstream_delivery_len": 5593,
+   "next_upstream_capability": "CONTENT_BRIEF"
+  },
+  {
+   "cap": "CREATIVE_SCRIPT",
+   "artifact_len_in": 0,
+   "persist": "KEEP_PREVIOUS",
+   "next_upstream_delivery_len": 5593,
+   "next_upstream_capability": "CONTENT_BRIEF"
+  },
+  {
+   "cap": "PRODUCTION_DIRECTOR",
+   "artifact_len_in": 0,
+   "persist": "KEEP_PREVIOUS",
+   "next_upstream_delivery_len": 5593,
+   "next_upstream_capability": "CONTENT_BRIEF"
+  },
+  {
+   "cap": "PUBLISHING_PACKAGING",
+   "artifact_len_in": 0,
+   "persist": "KEEP_PREVIOUS",
+   "next_upstream_delivery_len": 5593,
+   "next_upstream_capability": "CONTENT_BRIEF"
+  }
+ ],
+ "model_calls": 0,
+ "dify_writes": 0,
+ "not_covered_here": "Seam → Content Brief 那一跳需要真实调用，属 Phase C"
+}
