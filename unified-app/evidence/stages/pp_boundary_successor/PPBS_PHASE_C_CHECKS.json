@@ -1,0 +1,165 @@
+{
+ "document": {
+  "id": "PPBS_PHASE_C_CHECKS_v1.0",
+  "task_id": "DIYU-V1-PP-BOUNDARY-SUCCESSOR-001",
+  "criteria_ref": "unified-app/stages/PPBS_GATE_v1.1.json",
+  "criteria_sha256": "ea79144a817b53bd2f4ed0da01d1ebdc13d53de2f3c0d62b04106c24031a287b",
+  "successor_skill_sha256": "62dfddbdfa8cd8e4f42892cb114a96cc591878789430d7c339966ed01ef3a0db",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "workflow_runs_started": 0
+ },
+ "summary": {
+  "pass": 9,
+  "total": 9,
+  "verdict": "PASS"
+ },
+ "checks": [
+  {
+   "id": "C-01",
+   "text": "后继 Skill 源码与 PP 已发布实际 system prompt 字节可回指：线上 system == 后继 SKILL.md + 与旧版逐字相同的固定注入尾",
+   "result": "PASS",
+   "observed": {
+    "live_len": 35055,
+    "successor_len": 34932,
+    "live_starts_with_successor": true,
+    "tail_sha256_live": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+    "tail_sha256_expected_from_old_version": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+    "tail_len": 123,
+    "successor_sha256": "62dfddbdfa8cd8e4f42892cb114a96cc591878789430d7c339966ed01ef3a0db"
+   }
+  },
+  {
+   "id": "C-02",
+   "text": "PP graph 除 skill_llm.system 之外无其它变化：节点集、边集、其余节点逐字节相同",
+   "result": "PASS",
+   "observed": {
+    "graph_identical_except_skill_llm_system": true,
+    "nodes_touched_at_apply": [
+     "skill_llm"
+    ],
+    "edges_unchanged": true,
+    "node_count": 15,
+    "edge_count": 15,
+    "md5_before": "788c8555aca09e6fa6d979f237f70157",
+    "md5_after": "7940dc009d0bba06e1b5ca99dac61e2e",
+    "_restored_probe": "bc60c01ecbb98eb47094fca2881ecf4f"
+   }
+  },
+  {
+   "id": "C-03",
+   "text": "其余八个受保护应用 graph md5 零漂移；候选画布 md5 与 hop_pin 不变",
+   "result": "PASS",
+   "observed": {
+    "other_eight_drift": {},
+    "other_eight_now": {
+     "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+     "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+     "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+     "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+     "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+     "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+     "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+     "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+    },
+    "candidate_md5_now": "99c3edf7bd12172a4fb011b588f25e57",
+    "candidate_md5_frozen": "99c3edf7bd12172a4fb011b588f25e57",
+    "hop_pin_now": "2026-08-30 03:38:31.449618"
+   }
+  },
+  {
+   "id": "C-04A",
+   "text": "**本轮新增文本**（后继 Skill 相对 M4 源的全部插入块 ＋ 本任务全部新增脚本）中不存在案例专用字符串：苏禾／SUHE／三问／序里集／XULI／本次违规句／针对本次夹具的关键词黑名单。零容忍。",
+   "result": "PASS",
+   "observed": {
+    "case_specific_hits_in_new_text": [],
+    "scanned": [
+     "inserted_skill_text",
+     "script:PPBS_APPLY_AND_PUBLISH_v1.0.py",
+     "script:PPBS_BUILD_SUCCESSOR_SKILL_v1.0.py",
+     "script:PPBS_FREEZE_INPUTS_v1.0.py",
+     "script:PPBS_PHASE_A_SITE_CHECK_v1.0.py",
+     "script:PPBS_PHASE_C_CHECKS_v1.0.py"
+    ],
+    "inserted_chars": 4055,
+    "excluded_self_definition": "PPBS_PHASE_C_CHECKS_v1.0.py 内的 CASE_STRINGS 禁止面常量表本身包含这些串，它是判据定义不是实现分支，共 16 处，已单列不计入"
+   }
+  },
+  {
+   "id": "C-04B",
+   "text": "后继 Skill 的**继承体**逐字等同 M4 源 SKILL.md：既有 `BRF-SUHE-001-XXX` 编号格式示例的出现次数与位置与源文件完全一致，本轮一处未增、未改、未删。",
+   "result": "PASS",
+   "observed": {
+    "inherited_body_byte_identical": true,
+    "BRF_SUHE_in_source": 3,
+    "BRF_SUHE_in_successor": 3,
+    "note": "两处均为源 Skill 既有的 used_fact_refs 编号格式示例，本轮未增未改未删"
+   }
+  },
+  {
+   "id": "C-05",
+   "text": "单点变异：删除「事实来源蕴含」规则后，事实控制在离线判定上失败",
+   "result": "PASS",
+   "observed": {
+    "baseline_fact_control": true,
+    "after_removing_fact_section": false,
+    "removed_chars": 1211,
+    "cta_control_unaffected": true,
+    "probes": [
+     "## 事实来源必须蕴含该主张",
+     "回指必须是蕴含关系，不是相关关系",
+     "这条来源自己有没有说这件事发生过",
+     "职责不蕴含行为",
+     "任何限定语都不把无来源变成有来源",
+     "改为不主张真实历史的当前内容表达",
+     "局部失效不升级为整任务拒绝"
+    ]
+   }
+  },
+  {
+   "id": "C-06",
+   "text": "单点变异：删除「cta_contract 原文优先」规则后，CTA 控制在离线判定上失败",
+   "result": "PASS",
+   "observed": {
+    "baseline_cta_control": true,
+    "after_removing_cta_section": false,
+    "removed_chars": 1149,
+    "fact_control_unaffected": true,
+    "probes": [
+     "### CTA 权威顺序",
+     "cta_contract 的用户／上游自然语言原文",
+     "上游闭合表达一旦出现，整份包装闭合",
+     "不得用「低风险互动」放宽上游更严格的边界",
+     "同样不得自造豁免类目",
+     "内容内部的问题不是 CTA",
+     "本节不删除低风险互动能力"
+    ]
+   }
+  },
+  {
+   "id": "C-07",
+   "text": "provider 与 Seam 在 D1/D2 之前仍指向旧版本 2026-08-29 03:34:58.999575",
+   "result": "PASS",
+   "observed": {
+    "pp_provider_pin_now": "2026-08-29 03:34:58.999575",
+    "must_stay": "2026-08-29 03:34:58.999575",
+    "seam_graph_md5_now": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+    "meaning": "Seam 与 M5 在 D1/D2 期间仍走旧 PP 版本，本次发布不改变它们看到的图"
+   }
+  },
+  {
+   "id": "C-08",
+   "text": "判据与输入哈希早于任何模型结果：Gate 与 Inputs 已提交，model_calls_so_far=0",
+   "result": "PASS",
+   "observed": {
+    "gate_v1_0_commit": "33318ff DIYU-V1-PP-BOUNDARY-SUCCESSOR-001 Phase A: 现场核验、Founder 三项裁决落盘、D1/D2/D3 输入与判据冻结（零模型调用，实现未动）",
+    "gate_v1_0_sha256": "ce244ccb6012b534a777fe22116d427b803dad1634e8d83fe3377958bfe19481",
+    "gate_v1_1_sha256": "ea79144a817b53bd2f4ed0da01d1ebdc13d53de2f3c0d62b04106c24031a287b",
+    "inputs_sha256": "f7a21d5d0fb03f90d027a9f272e50442e35ca80d25fcbbf0bbf0345b3dacfc67",
+    "adjudication_sha256": "32ae33c912c46ac877b5ec6b61286c36adfe6af5f4833e82645228cfc16b7fad",
+    "model_calls_so_far_at_freeze": 0,
+    "model_calls_so_far_now": 0
+   }
+  }
+ ]
+}
