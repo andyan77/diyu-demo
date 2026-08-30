@@ -1,0 +1,348 @@
+{
+  "stage": "S4_CANONICAL_TASK_STATE",
+  "gate_sha256": "a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79",
+  "manifest_sha256": "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468",
+  "model_calls_by_adjudicator": 0,
+  "verdict": "PASS",
+  "summary": {
+    "pass": 10,
+    "fail": 0,
+    "not_verified": 0,
+    "total": 10
+  },
+  "conditions": [
+    {
+      "id": "V-01",
+      "text": "T2 Content Brief 真实产出（artifact 非空、非占位）",
+      "result": "PASS",
+      "observed": {
+        "artifact_len": 6600,
+        "head": "# Content Brief Pack\n\n## 0. 运行结论\n- 顶层状态：READY_WITH_CONDITIONS\n- 适用 Campaign：NOT_APPLICABLE",
+        "seam": {
+          "tool_content_brief": "succeeded"
+        },
+        "sha256": "5912166572ff6e239278e00c0e14b934482a1d0811dbd6e8435bce94dac21dd0"
+      }
+    },
+    {
+      "id": "V-02",
+      "text": "T3 只询问真正阻塞的 content.origin_mode；不再缺 objective.goal_family；不使用缺失占位符补齐",
+      "result": "PASS",
+      "observed": {
+        "merged_gaps": [
+          "content_origin_mode"
+        ],
+        "hop_gaps": [
+          "content_origin_mode",
+          "content_promise"
+        ],
+        "goal_family": {
+          "v": "LONG_TERM_VALUE",
+          "lvl": "B",
+          "kind": "USER_UTTERANCE",
+          "ref": "TURN2.user_request",
+          "sc": "CONTENT_TASK",
+          "frev": 1,
+          "origin_turn": 2
+        },
+        "envelope_goal_family": "LONG_TERM_VALUE",
+        "carried": [
+          "content.promise"
+        ],
+        "carried_that_are_placeholders": [],
+        "对照旧轮": "旧版 T3 缺口是 {content_origin_mode, goal_family}，且用占位符补了 primary_goal"
+      }
+    },
+    {
+      "id": "V-03",
+      "text": "T4 回答后 Creative Script 真实产出",
+      "result": "PASS",
+      "observed": {
+        "artifact_len": 6016,
+        "head": "# Creative Script 专业产出（完整版）\n\n## 运行与来源\n\n- capability / entry / run_mode：CREATIVE_SCRIPT / E",
+        "seam": {
+          "tool_creative_script": "succeeded"
+        },
+        "user_answered": [
+          "content.origin_mode",
+          "facts.publish_permission"
+        ],
+        "sha256": "81635d887e13ef6e68280c6b388441c5a33d491b8531af67562b3d8d3360fef1"
+      }
+    },
+    {
+      "id": "V-04",
+      "text": "T5 只询问 production.profile 中真正缺失的制作条件；不重复询问 content.origin_mode",
+      "result": "PASS",
+      "observed": {
+        "T5_merged_gaps": [
+          "time_window"
+        ],
+        "T5_hop_gaps": [
+          "time_window"
+        ],
+        "gaps_all_in_production_scope": true,
+        "carrier_content_origin_mode": {
+          "v": "这条使用门店已有素材剪辑，不安排重新拍摄；具体素材仍按系统里的授权记录选择，未获授权的不要使用或发布",
+          "lvl": "B",
+          "kind": "USER_UTTERANCE",
+          "ref": "TURN4.user_request",
+          "sc": "CONTENT_TASK",
+          "frev": 1,
+          "origin_turn": 4
+        },
+        "later_gaps": {
+          "T5": [
+            "time_window"
+          ],
+          "T6": [],
+          "T7": []
+        },
+        "reask_token_hits": {
+          "T5": [],
+          "T6": [],
+          "T7": []
+        },
+        "判据说明": "『保留』判在任务载体与是否重复询问，不判在每个能力外壳里键是否在场"
+      }
+    },
+    {
+      "id": "V-05",
+      "text": "T6 回答后回到同一个 Production Director 任务并产出 PD artifact",
+      "result": "PASS",
+      "observed": {
+        "artifact_len": 10121,
+        "head": "## Production Director 产出 · 已有素材剪辑模式\n\n**运行状态：** 计划已排定，可执行。素材检索判据清单已逐 beat 写死；`realization_",
+        "seam": {
+          "tool_production_director": "succeeded"
+        },
+        "user_answered": [
+          "production.capacity_or_owner",
+          "production.profile",
+          "production.time_window"
+        ],
+        "sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+        "T5_produced_nothing": 0,
+        "同一任务": {
+          "T5_task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+          "T6_task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb"
+        }
+      }
+    },
+    {
+      "id": "V-06",
+      "text": "T7 的 PP：upstream_capability = PRODUCTION_DIRECTOR；upstream_delivery hash = T6 PD artifact hash；无真实成片／manifest 时按 PRE 边界交付，不声称 FINAL",
+      "result": "PASS",
+      "observed": {
+        "upstream_capability": "PRODUCTION_DIRECTOR",
+        "upstream_delivery_sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+        "T6_pd_artifact_sha256": "b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb",
+        "hash_equal": true,
+        "upstream_binding": [
+          {
+            "slot": "content_body_or_beats",
+            "upstream_capability": "PRODUCTION_DIRECTOR",
+            "fp": "099061257c9677bd",
+            "artifact_norm_len": 10053,
+            "produced_turn": 6,
+            "accepted_turn": 7,
+            "accepted_revision": 7,
+            "lineage": "BOUND"
+          }
+        ],
+        "pp_artifact_len": 14984,
+        "final_claim_hits": [],
+        "对照上一轮": "上一轮 PP 的上游是 CS artifact，属 PRE 短入口，不填完整链位"
+      }
+    },
+    {
+      "id": "V-07",
+      "text": "任一用户确认字段均有 source_ref；模型临时抽取值未成为跨轮硬事实",
+      "result": "PASS",
+      "observed": {
+        "missing_source_ref": [],
+        "level_ref_mismatch": [],
+        "placeholder_in_carrier": [],
+        "final_levels": {
+          "audience.expected_change": "B",
+          "audience.problem": "B",
+          "content.explicit_non_promise": "E",
+          "content.origin_mode": "B",
+          "content.promise": "B",
+          "cta.contract": "B",
+          "cta.level": "E",
+          "delivery.platform": "E",
+          "expression.boundary": "E",
+          "expression.subject": "E",
+          "expression.subject_and_boundary": "B",
+          "facts.publish_permission": "B",
+          "facts.registered": "E",
+          "objective.goal_family": "B",
+          "objective.primary_goal": "B",
+          "operation.time_window": "E",
+          "production.capacity_or_owner": "B",
+          "production.profile": "B",
+          "production.time_window": "B"
+        },
+        "E 级字段": []
+      }
+    },
+    {
+      "id": "V-08",
+      "text": "没有暗跑其它能力、没有泄漏、没有编造、没有未授权素材声明、没有重复 M2 副作用",
+      "result": "PASS",
+      "observed": {
+        "seam_per_turn": {
+          "T1": {
+            "tool_content_brief": "succeeded"
+          },
+          "T2": {
+            "tool_content_brief": "succeeded"
+          },
+          "T3": {
+            "tool_creative_script": "succeeded"
+          },
+          "T4": {
+            "tool_creative_script": "succeeded"
+          },
+          "T5": {
+            "tool_production_director": "succeeded"
+          },
+          "T6": {
+            "tool_production_director": "succeeded"
+          },
+          "T7": {
+            "tool_publishing_packaging": "succeeded"
+          }
+        },
+        "shadow_runs": [],
+        "overclaim": [],
+        "leaks": [],
+        "fabrication": [],
+        "unauthorized_material_claims": [],
+        "m2_rows": {
+          "workspaces": 1,
+          "accounts": 1,
+          "cycles": 1,
+          "tasks": 1,
+          "task_snapshots": 0,
+          "artifacts": 0,
+          "publish_instances": 0
+        },
+        "duplicate_idempotency_keys": [],
+        "boot_turns": [
+          1
+        ]
+      }
+    },
+    {
+      "id": "V-09",
+      "text": "九个受保护应用与钉住 provider 零漂移",
+      "result": "PASS",
+      "observed": {
+        "drift": {},
+        "candidate_graph_sha256_now": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+        "candidate_graph_sha256_frozen": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+        "hop_pin_now": "2026-08-30 03:38:31.449618"
+      }
+    },
+    {
+      "id": "S-01",
+      "text": "stop_rules.scope_intrusion：运行前后作用域快照一致，未触发隔离门",
+      "result": "PASS",
+      "observed": {
+        "scope_snapshot_identical_before_after": true,
+        "intrusion_file_present": false,
+        "concurrent_foreign_writers_disclosed_not_blocking": [
+          {
+            "app_id": "18dd7b02-b661-4cad-a8db-23058e1bcb48",
+            "name": "FCVSS",
+            "runs": 79
+          }
+        ]
+      }
+    }
+  ],
+  "cost_account": {
+    "window": [
+      "2026-08-30 07:18:39.924437+00",
+      "2026-08-30 07:43:00.281564+00"
+    ],
+    "scope_app_ids": [
+      "13cfabd5-f592-4354-a304-47098b765697",
+      "1f9d65ea-8af5-45f0-a1d0-a80223d354e2",
+      "44b55f9d-3792-40c3-b095-f2696464b4ec",
+      "5fca0162-e26b-4545-a00b-66b1a2a2a077",
+      "6c46fdb1-5f49-4513-a0c0-29957b3dcee4",
+      "85c01f85-a081-43e9-ab09-9993289cc200",
+      "a4c3b19b-243f-490b-9aca-3aa19767d6a5",
+      "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+      "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+      "fd25ebfa-db67-40c3-82e5-202e1254facf"
+    ],
+    "canvas_workflow_runs": 7,
+    "budget_canvas_runs": 7,
+    "nested_app_runs": 28,
+    "llm_node_executions_by_status": [
+      {
+        "status": "succeeded",
+        "c": 39
+      }
+    ],
+    "llm_total": 39,
+    "hard_cap_llm": 48,
+    "turn_attempts": {
+      "T1": 1,
+      "T2": 1,
+      "T3": 1,
+      "T4": 1,
+      "T5": 1,
+      "T6": 1,
+      "T7": 1
+    },
+    "retries": 0,
+    "fixture_uploads": 7,
+    "http_status": {
+      "T1": 200,
+      "T2": 200,
+      "T3": 200,
+      "T4": 200,
+      "T5": 200,
+      "T6": 200,
+      "T7": 200
+    },
+    "elapsed_seconds": {
+      "T1": 121.68,
+      "T2": 321.94,
+      "T3": 100.5,
+      "T4": 226.22,
+      "T5": 205.1,
+      "T6": 204.58,
+      "T7": 238.99
+    },
+    "m2_rows": {
+      "workspaces": 1,
+      "accounts": 1,
+      "cycles": 1,
+      "tasks": 1,
+      "task_snapshots": 0,
+      "artifacts": 0,
+      "publish_instances": 0
+    },
+    "duplicate_idempotency_keys": []
+  },
+  "allowed_upgrades_if_all_pass": [
+    "CANONICAL_TASK_STATE_CARRIER = PASS / CURRENT",
+    "CROSS_TURN_CORRECTION_PROPAGATION = PASS / CURRENT",
+    "CS_PD_PP_NARROW_CHAIN = PASS / CURRENT",
+    "TD-UAPP-23 = CLOSED / CURRENT",
+    "S4_CONTENT_ORIGIN_CONTINUATION = PASS / CURRENT"
+  ],
+  "what_pass_does_not_imply": [
+    "不等于 UAPP 全部验收完成",
+    "不等于 M1–M5 全部生产就绪",
+    "不等于所有 UAPP-AC 已全绿",
+    "不等于可以自动合并 main",
+    "不等于可以进入 S5"
+  ]
+}

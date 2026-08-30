@@ -534,3 +534,118 @@ enter_s5: NOT_AUTHORIZED
 ```
 
 **唯一下一动作：等规划侧对五件事裁定**（`uapp_fields` 字段识别范围、N-05 判据改写、`production_profile` 归属、N-15 负控制选轮、`TD-UAPP-23`）。执行侧不自选。
+
+---
+
+# ATT-UAPP-CANON-01 · 规范任务状态载体与真实 CS→PD→PP 连续链根修复（2026-08-30）
+
+授权：CONTINUE EXECUTION PROMPT v1.0（Founder 注入）。本段只追加，不改写上文任何既有 FAIL 记录。
+
+## Phase A｜零模型根因复核
+
+九条规划侧事实与现场逐条一致（9/9），零模型调用。
+`confirmed_origin = SYSTEM_UNDER_TEST`：`uapp_fields` 把一行文本当作字段，同时缺身份、来源、作用域、可信等级。
+证据：`unified-app/evidence/stages/s4_canonical_state/S4_PHASE_A_ROOT_CAUSE_RECHECK.json`；
+归因：`unified-app/docs/S4_CANONICAL_STATE_FAILURE_TRIAGE_004.md`；commit `4034924`。
+
+## Phase B｜模型调用之前冻结的新版判据
+
+| 文件 | sha256 |
+|---|---|
+| `stages/S4_CANONICAL_TASK_STATE_INPUTS_v1.0.json` | `f19f5d1bc1dcba3061c578b42c43188484706eaa6e9dd265f3f5c37987ee17a6` |
+| `stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json` | `724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19` |
+| `stages/S4_CANONICAL_TASK_STATE_GATE_v1.1.json` | `a7986e477edc9f8c46a71983fd51fb7e358efa5442e0c1186fe3ebf98ca14e79` |
+| `stages/S4_CANONICAL_TASK_STATE_CANDIDATE_MANIFEST_v1.0.json` | `3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468` |
+
+v1.0 原样保留；v1.1 为后继版本，登记两处**发生在任何模型调用之前**的判据自纠（R-01 过度限定 `lvl=="D"`；R-02 误设矛盾集恒非空），归因均为 `ORACLE_OR_CRITERION`。commit `1f5004c` / `0355004`。
+
+## Phase C｜一次最高失效节点根修复
+
+`unified-app/workflows/S4_CANONICAL_STATE_NODES_v1.0.py`：显式 `SPEC` 规范字段表（20 项，每项带 `canonical_id / value / source_kind / source_ref / authority_level / scope / revision`），artifact 血缘账本节点 `uapp_state` 取代零消费者的 `stale_downstream`。
+未做：未改 Hop Prompt、未写案例专用分支、未复制六能力规则、未建通用状态服务或数据库。
+
+确定性正负控制 **14/14 PASS**（P-01..P-11 各带单变量负控制，R-01..R-03 用旧 T1–T6 真实载荷离线重放）：
+`unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY.json`。
+
+候选发布：`graph_sha256 = 6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852`，49 节点 / 51 边，版本 `2026-08-30 07:11:27.885795`。发布图与通过静态检查的离线构建图逐字节一致。
+
+## Phase D｜唯一一次七轮真实运行
+
+`end_user = s4ct-20260830001839`，`conversation_id = 5cfcaf57-8808-4fc7-8c66-d661e515d05a`，同一会话，每轮挂同一冻结夹具，每条输入只发一次。
+证据目录：`unified-app/evidence/stages/s4_canonical_state/run/`（T1–T7 + `RUN_META.json`）。
+
+| 轮 | 目标能力 | HTTP | 耗时 | Attempt | artifact 长度 | artifact sha256 |
+|---|---|---|---|---|---|---|
+| T1 | CONTENT_BRIEF | 200 | 121.68s | 1 | —（提问） | — |
+| T2 | CONTENT_BRIEF | 200 | 321.94s | 1 | 6600 | `5912166572ff6e239278e00c0e14b934482a1d0811dbd6e8435bce94dac21dd0` |
+| T3 | CREATIVE_SCRIPT | 200 | 100.50s | 1 | —（提问） | — |
+| T4 | CREATIVE_SCRIPT | 200 | 226.22s | 1 | 6016 | `81635d887e13ef6e68280c6b388441c5a33d491b8531af67562b3d8d3360fef1` |
+| T5 | PRODUCTION_DIRECTOR | 200 | 205.10s | 1 | —（提问） | — |
+| T6 | PRODUCTION_DIRECTOR | 200 | 204.58s | 1 | 10121 | `b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb` |
+| T7 | PUBLISHING_PACKAGING | 200 | 238.99s | 1 | 14984 | `88909e875b0c4c692ddbb9453daf1150b5a6a9f25976a7073a36ffd5644b2de4` |
+
+判定 **10/10 PASS**（V-01..V-09 + S-01，零模型调用）：`unified-app/stages/S4_CANONICAL_TASK_STATE_RESULT_v1.0.json`。
+成本：画布 7/7，嵌套 28，LLM 节点 39 / 硬上限 48，重试 0，夹具上传 7。
+
+### 完整链关键位（V-06）
+
+T7 `uapp_hop.inputs.upstream_capability = PRODUCTION_DIRECTOR`；
+`sha256(upstream_delivery) = b032cfd7cb6f1862cd207808caed52f2addb86b2f2679d454a1331880b3ac1bb`，与 T6 PD artifact sha256 **完全相等**；
+`upstream_binding = [{slot: content_body_or_beats, upstream_capability: PRODUCTION_DIRECTOR, produced_turn: 6, accepted_turn: 7, lineage: BOUND}]`。
+上一轮 PP 上游为 CS artifact（PRE 短入口），其证据原样保留，未被本轮改写。
+
+### 作用域隔离（本轮活体证据）
+
+终态载体同时持有 `operation.time_window = "四周内"`（E / MODEL_EXTRACTION / `TURN3.uapp_hop.CREATIVE_SCRIPT` / OPERATION）与 `production.time_window = "今天半天内"`（B / USER_UTTERANCE / `TURN6.user_request` / PRODUCTION`）。同名键未串。T5 因此正确把 `time_window` 留为缺口并追问。
+
+### 等级纪律
+
+终态 19 字段：12 项 B（`USER_UTTERANCE`，`ref` 均为 `TURNn.user_request`），7 项 E（`MODEL_EXTRACTION`，`ref` 均为 `TURNn.uapp_hop.<CAP>`）。
+`missing_source_ref = []`，`level_ref_mismatch = []`，`placeholder_in_carrier = []`。无任何 E 值在没有用户轮次的情况下升为 B。
+
+### 纠正与失效传播（如实记录，未完全验到）
+
+真实运行发生两次纠正：T4 `facts.publish_permission`、T6 `production.profile`。两次 `stale_artifacts` 均为空，经查是**正确**行为——纠正时刻账本中已有 artifact 的 `dep` 集合都不含被纠正字段（`facts.publish_permission` 在 T3 才登记，T2 CB 不依赖它；`production.profile` 在 T5 才登记，T2/T4 均不依赖）。符合 A3「不多算」。
+**但这意味着「纠正 → 依赖 artifact 置 STALE」这条通路在本次真实模型运行中没有被走到。** 其证据目前只到确定性正负控制层（P-xx / R-xx 离线），真实运行层记为 `NOT_VERIFIED (NOT_CHECKED)`，不上调。
+
+### 判定器显示缺陷（不影响判定）
+
+`S4_CANONICAL_STATE_ADJUDICATE_v1.0.py` 的 V-07 展示行 `sorted(k for k, v in last.items() if v == "E")` 把字段字典与字符串比较，恒为空。PASS 谓词为 `not bad_ref and not bad_kind and not ph`，不含该项，判定不受影响。真实 E 级字段 7 个：`content.explicit_non_promise`、`cta.level`、`delivery.platform`、`expression.boundary`、`expression.subject`、`facts.registered`、`operation.time_window`。
+
+### 保护面
+
+运行前后作用域快照逐项一致：候选 `graph_sha256` 未变，九个受保护应用 md5 零漂移，`hop_pin = 2026-08-30 03:38:31.449618` 未变，钉住的 `m5_compose sha256 = 6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855` 未变。隔离门未触发。
+`M2 diyu_business`：`workspaces/accounts/cycles/tasks` 各 1，`task_snapshots/artifacts/publish_instances` 各 0，重复幂等键 0。
+第三方并发写入者登记披露、不阻断：`FCVSS 18dd7b02-b661-4cad-a8db-23058e1bcb48`，79 runs，不在本任务十个 app 范围内。
+`main` / `origin/main` 未动，停在 `01a42b0ed97344a67302ecb6778ae4a772eb28b2`。
+
+## COMPLETION CHECK
+
+- `real_behavior_verified`：是。七轮真实模型运行，CB/CS/PD/PP 四份真实产物，PP 上游哈希等于本轮 PD 产物。
+- `validator_discrimination_verified`：是。P-01..P-11 每项带单变量负控制，14/14；判定器零模型调用、只按冻结 Gate 重算。
+- `core_problem_solved`：**部分**。规范字段身份、来源、作用域、可信等级四项与完整链均在真实运行中成立；「纠正传播失效」只在离线控制层成立，真实运行未走到该分支。
+- `protected_targets_unchanged_or_authorized`：是。运行前后快照逐项一致。
+- `evidence_refs`：见上各 sha256、`RUN_META.json`、`COST_ACCOUNT.json`、`S4_CANONICAL_TASK_STATE_RESULT_v1.0.json`。
+- `unnecessary_complexity_remaining`：`stale_downstream` 已被 `uapp_state` 取代；未发现其它删除后不影响 P0 的复杂度。
+
+## 本轮允许上调的最窄结论
+
+```yaml
+CANONICAL_TASK_STATE_CARRIER: PASS/CURRENT
+CS_PD_PP_NARROW_CHAIN: PASS/CURRENT
+S4_CONTENT_ORIGIN_CONTINUATION: PASS/CURRENT
+TD-UAPP-23: CLOSED/CURRENT
+CROSS_TURN_CORRECTION_PROPAGATION: NOT_VERIFIED(NOT_CHECKED)   # 真实运行未走到；不上调
+```
+
+未声明、也不成立：UAPP 全部验收完成；M1–M5 全部生产就绪；所有 UAPP-AC 已全绿；可以自动合并 main。
+旧 `N-04 / N-05 / N-07 / N-15` FAIL 原样保留，本轮 PASS 只作 successor 证据，不追溯改写历史。
+
+```yaml
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: UNSET
+next_state: CHECKPOINT
+main_merge: NOT_ALLOWED
+enter_s5: NOT_AUTHORIZED
+```

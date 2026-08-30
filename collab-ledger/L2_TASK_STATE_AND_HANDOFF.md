@@ -578,3 +578,19 @@ Phase A 根因 **PASS**、Phase B 最小修复 **PASS**、Phase C 的 C1 **PASS 
 TD-UAPP-20 的跨轮字段载体已上线并**验证生效**：T4 用户回答 `content_origin_mode` 后，T5 由载体补齐、用户未被重复询问；CS 6843 字、PP 9031 字均产出（修复前同场景 T4/T5/T6 全为 0）。受影响连续链整体 **FAIL 13/17**：PD 停在 `production_profile`（`INSUFFICIENT_EVIDENCE`），载体不覆盖非反引号声明字段 `goal_family`（`SYSTEM_UNDER_TEST`），另两条在判据与检查器侧。五项允许上调的结论一项都未上调。
 
 详见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 末节与 [`unified-app/docs/S4_NARROW_CHAIN_FAILURE_TRIAGE_003.md`](../unified-app/docs/S4_NARROW_CHAIN_FAILURE_TRIAGE_003.md)。
+
+---
+
+## `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` · 2026-08-30 CHECKPOINT 三（非终态）
+
+规范任务状态载体根修复完成并经**唯一一次七轮真实运行**验证：判定 **10/10 PASS**（V-01..V-09 + S-01，零模型调用），LLM 节点 39 / 上限 48，重试 0，七轮全部 `http=200`。
+
+真实连续链成立：CB(T2, 6600) → CS(T4, 6016) → **PD(T6, 10121)** → PP(T7, 14984)。T7 的 `upstream_capability = PRODUCTION_DIRECTOR`，`sha256(upstream_delivery)` 与 T6 PD 产物 `b032cfd7…3ac1bb` 完全相等，`lineage = BOUND`，不是 CS→PP 的 PRE 短入口。
+
+作用域隔离活体成立：`operation.time_window="四周内"`（E）与 `production.time_window="今天半天内"`（B）同时在册未串；T5 因此正确追问而非默认填充。等级纪律成立：终态 19 字段中 12 B / 7 E，`missing_source_ref`、`level_ref_mismatch`、`placeholder_in_carrier` 三项全空。
+
+**一项如实未上调**：`CROSS_TURN_CORRECTION_PROPAGATION` 记 `NOT_VERIFIED(NOT_CHECKED)`。真实运行两次纠正（T4 `facts.publish_permission`、T6 `production.profile`）时刻，账本内已有 artifact 的依赖集都不含被纠正字段，`stale_artifacts` 为空属 A3 正确的「不多算」；但也因此该通路只有离线确定性控制证据，无真实运行证据。
+
+九受保护应用零漂移，hop 钉住与 `m5_compose` 钉住未变，`main` / `origin/main` 停在 `01a42b0`。未合并 main，未进入 S5，未填根任务终态。
+
+详见 [`collab-ledger/tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md`](tasks/DIYU-V1-UNIFIED-DIFY-APPLICATION-001.md) 的 `ATT-UAPP-CANON-01` 段。
