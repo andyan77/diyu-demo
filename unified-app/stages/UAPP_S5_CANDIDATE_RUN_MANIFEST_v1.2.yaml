@@ -1,0 +1,52 @@
+document:
+  id: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.2
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  authority_event: S5_AUTONOMOUS_BOUNDED_CONVERGENCE_v1.0
+  parent: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.1
+contract:
+  task_contract_sha256: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  semantic_delta: NONE
+  acceptance_delta: NONE
+candidate:
+  source_git_head_before_repair_freeze: edca132
+  UAPP:
+    app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+    graph_md5: 02610a77c3ce86f46f7a80de6d47ac2e
+    graph_canonical_sha256: 726b1d196717bb4e68b43fe9e6a3b9b85734a5db4611cf4d10bac19ee213dad5
+  M3: cd93757bcf8ad322f3b32fc43b2da3ff
+  HOP: e38378c3c2a66b75aa7e645368c9e1ce
+  SEAM: db49a3da8973d4fdcbe9ecf63bdf7e2a
+  PP_provider: 8366328bf827bd0f460455d750d45c4f
+repair:
+  repair_node: 1
+  repair_iteration: 1
+  highest_failing_node: UAPP_OWNED_APPLICABILITY_PROJECTION
+  mutation_target: uapp_fields
+  nodes_touched: [uapp_fields]
+  conversation_variables_added: []
+  candidate_build_sha256: b952ab9c0c094da9e4c0a31fa04333f1f4dd1d7e2bf8fd5cfa1368a1564adcdc
+  post_publish_controls_sha256: 93a1a33fdf5f98a7c260efae4ce09a4e3834072736af52db1fff1a6c16c7f2be
+frozen_files:
+  scenarios:
+    path: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.1.json
+    sha256: 896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577
+  executor:
+    path: unified-app/workflows/UAPP_S5_EXEC_v1.3.py
+    sha256: dbfbdf59462ec0d55c2c6c3017448b6b7792aae38fd93fd5ee574cc0afbcfe7b
+  checker:
+    path: unified-app/workflows/UAPP_S5_VERIFY_v1.1.py
+    sha256: 410ad4edc9d2e22b02455f6db09923c72d3edcc1295b10db1326e46e95be59e0
+budget:
+  previously_used_top_level_runs: 1
+  previously_used_llm_attempts: 5
+  remaining_new_top_level_runs_max: 19
+  remaining_new_llm_attempts_max: 115
+  transient_replay_remaining_max: 1
+  blind_resampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+scope:
+  founder_ac_12: NOT_AUTHORIZED
+  main_merge: NOT_ALLOWED
+  terminal_state: unset
+
