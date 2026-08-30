@@ -5,7 +5,7 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | IN_PROGRESS | G1 preflight PASS；等待唯一正式运行 | 0/2 | 0/90 | NONE | 运行 G1 一次 |
+| C2 G1/G2 | IN_PROGRESS | G1 PASS；G2 待同会话运行 | 1/2 | 2/90 | NONE | 运行 G2 一次 |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
@@ -22,6 +22,9 @@
   `65f46389f8f1a1334050427acee5788769f9032342e4423ec03878af4b59bcf2`；保护图及 M2 基线零漂移。
 - 后继 Checker 只判真实问题语义与连续性，不再冻结物理提问节点；正负控制 `5/5 PASS`。
 - `GAP01_SUCCESSOR_GATE_v1.0` 已形成，G1 零模型 preflight 全项 PASS；模型调用仍为 `0`。
+- G1 run `d352c979-9caf-454a-b59a-a951a0385adf` 正式 PASS：只问“整体发布节奏”与
+  “具体商品或内容方向”的一个分叉问题，冻结 G2 可直接回答；六项专业能力均 0，artifact 0，
+  DeepSeek 节点 `2`，重试/重放/副作用均 0。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

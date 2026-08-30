@@ -1263,3 +1263,8 @@ canonical sha256 `65f46389f8f1a1334050427acee5788769f9032342e4423ec03878af4b59bc
 56 nodes / 58 edges；只改变 `uapp_action` / `uapp_route`，保护应用、M2 schema 与非测试计数零漂移。
 后继产品语义 Checker 控制 `5/5 PASS`；Gate/Manifest/Executor 已在正式调用前形成，G1 preflight
 PASS。当前模型调用 `0`；下一动作是冻结提交并普通 push，随后只运行冻结 G1 一次。
+
+GAP-01 G1 successor run `d352c979-9caf-454a-b59a-a951a0385adf` 正式 PASS：系统只问一个
+“一周整体节奏 vs 具体商品/内容方向”的决定性问题，冻结 G2 可直接回答；六项专业能力全为 0，
+未生成 artifact。实际顶层运行 `1`、LLM 节点 `2`，重试、重放、真实发布和非测试变化均为 0。
+下一动作是在同一 conversation `55411bec-87ed-442f-a524-bc489e9438df` 运行冻结 G2 一次。
