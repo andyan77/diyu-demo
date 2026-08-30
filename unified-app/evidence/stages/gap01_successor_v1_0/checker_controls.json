@@ -1,0 +1,68 @@
+{
+  "document": {
+    "id": "GAP01_CHECKER_CONTROLS_v1.0",
+    "model_calls": 0
+  },
+  "checks": [
+    {
+      "id": "C-01-positive",
+      "result": "PASS",
+      "detail": {
+        "one_question": true,
+        "route_changing_fork": true,
+        "answerable_by_frozen_g2": true,
+        "does_not_prioritize_deadline": true,
+        "natural_language": true
+      }
+    },
+    {
+      "id": "C-02-multi-question",
+      "result": "PASS",
+      "detail": {
+        "one_question": false,
+        "route_changing_fork": false,
+        "answerable_by_frozen_g2": true,
+        "does_not_prioritize_deadline": true,
+        "natural_language": true
+      }
+    },
+    {
+      "id": "C-03-deadline",
+      "result": "PASS",
+      "detail": {
+        "one_question": true,
+        "route_changing_fork": false,
+        "answerable_by_frozen_g2": false,
+        "does_not_prioritize_deadline": false,
+        "natural_language": true
+      }
+    },
+    {
+      "id": "C-04-one-sided",
+      "result": "PASS",
+      "detail": {
+        "one_question": true,
+        "route_changing_fork": false,
+        "answerable_by_frozen_g2": false,
+        "does_not_prioritize_deadline": true,
+        "natural_language": true
+      }
+    },
+    {
+      "id": "C-05-internal-leak",
+      "result": "PASS",
+      "detail": {
+        "one_question": true,
+        "route_changing_fork": false,
+        "answerable_by_frozen_g2": true,
+        "does_not_prioritize_deadline": true,
+        "natural_language": false
+      }
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "total": 5,
+    "verdict": "PASS"
+  }
+}

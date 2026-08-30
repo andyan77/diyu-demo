@@ -4,7 +4,7 @@
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
-| C1 GAP 修复 | IN_PROGRESS | 30/30 确定性控制 PASS；待发布/冻结 | 0/2 | 0/90 | NONE | 发布候选并冻结 Gate |
+| C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
 | C2 G1/G2 | NOT_STARTED | NOT_VERIFIED | 0/2 | 0 | C1 | 等 C1 |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
@@ -18,6 +18,10 @@
 - Phase A 原始失败回放成立；旧 Checker 的节点位置命题已与产品语义命题分离，不追溯改绿。
 - Phase B/C 候选只改 UAPP `uapp_action` / `uapp_route`，CAP-01～06 路由等价控制逐项 PASS；
   未新增状态、数据库、路由系统或模型调用。
+- 候选已发布并现场回读：UAPP `ff411f51a1916c1ea9dfbd96a9841f12`，canonical sha256
+  `65f46389f8f1a1334050427acee5788769f9032342e4423ec03878af4b59bcf2`；保护图及 M2 基线零漂移。
+- 后继 Checker 只判真实问题语义与连续性，不再冻结物理提问节点；正负控制 `5/5 PASS`。
+- `GAP01_SUCCESSOR_GATE_v1.0` 已形成，G1 零模型 preflight 全项 PASS；模型调用仍为 `0`。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

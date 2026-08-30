@@ -1,0 +1,90 @@
+{
+  "document": {
+    "id": "GAP01_SUCCESSOR_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority": "DIYU_V1_UAPP_S5_GAP01_FINAL_TECHNICAL_REBASE_v1.0",
+    "frozen_before_formal_results": true
+  },
+  "candidate": {
+    "graph_md5": {
+      "UAPP": "ff411f51a1916c1ea9dfbd96a9841f12",
+      "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+      "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+      "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+      "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+      "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+      "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+      "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+      "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+      "PUBLISHING_PACKAGING": "99287feadcd784e86bf4c298bea555fc",
+      "PP_provider": "99287feadcd784e86bf4c298bea555fc"
+    },
+    "uapp_graph_canonical_sha256": "65f46389f8f1a1334050427acee5788769f9032342e4423ec03878af4b59bcf2"
+  },
+  "frozen_files": {
+    "scenarios_sha256": "896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577",
+    "manifest_sha256": "deb3f488fde30643079a525e0b5a190f95502e6a328d0483c171904a40bfe3ae",
+    "executor_sha256": "1de340aa01aee66cad1835c36e1f1aa54e7f13ce1bb0ba317cf608fa4216ef0e",
+    "checker_sha256": "cbfef40b5f468ee73ad84b8bff23e39807799d73e766cf1dcb92381534baa0c6",
+    "checker_controls_result_sha256": "631623130ed3523bc245172a97a15e980092a499a43a9398e8458c75cde622bb",
+    "deterministic_controls_result_sha256": "46c654d5b10dae464208001c140d93a64704d9f57492de7c543146f5b738752c"
+  },
+  "inherited_current_evidence": {
+    "UAPP-CAP-01": "49ed38d5c9b80141e81a55daf1f7d56bd30dc84f0c543afa4be2bcda3577e83c",
+    "UAPP-CAP-02": "3c99d17c55cfe57117462577dd40802eaa248f988ccb3831b0f99dcaec6d08c6",
+    "UAPP-CAP-03": "a17abedd1c533616a83c6282134ec6058d276a78dfbe17cd674d4db3b04e6d1e",
+    "UAPP-CAP-04": "01edd4f69a0a8f9f18359b5208f0d34003925a218c08e2671bd98024f001962c",
+    "UAPP-CAP-05": "2bb6e95a5e9c8006d91c7f5e7b9054706cad18bb1fe046ec2c9986589333cb5c",
+    "UAPP-CAP-06": "cd0864c07f206902cba10731531c6a3fb179ed6b685301808ff41761237293d8",
+    "route_equivalence_control": "PASS_6_OF_6",
+    "cross_turn_correction_propagation": {
+      "result": "PASS",
+      "freshness": "CURRENT"
+    }
+  },
+  "protected_surface": {
+    "global_m2_before": {
+      "non_test_publish_instances": 1568,
+      "non_test_feedback_records": 117,
+      "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+    },
+    "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2"
+  },
+  "budget": {
+    "formal_top_level_turn_count": 19,
+    "current_candidate_remaining_turn_count": 13,
+    "authorized_top_level_runs_max": 15,
+    "per_turn_static_reachable_llm_nodes": 6,
+    "authorized_llm_node_attempts_max": 90,
+    "manual_retries": 0,
+    "conditional_pure_transport_replay_max": 1,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "gap01_criteria": {
+    "G1": [
+      "Ask exactly one natural decisive question.",
+      "The question must expose the whole-week-plan versus concrete-product-or-content fork and be answerable by frozen G2.",
+      "Do not prioritize a deadline already bounded by this week.",
+      "Do not choose a product, direction, or Campaign for the user.",
+      "Run no professional capability and create no artifact."
+    ],
+    "G2": [
+      "Continue the exact same conversation and accept the supplied product and content direction.",
+      "Do not repeat G1 or request already supplied information.",
+      "Enter the legal CONTENT_BRIEF path, execute Seam, and run only that capability.",
+      "Create a real non-placeholder task-scoped artifact without unauthorized side effects."
+    ]
+  },
+  "decision_rules": {
+    "inputs_and_order": "VERBATIM_FROM_UAPP_S5_FROZEN_SCENARIOS_v1.1",
+    "criteria": "VERBATIM_UAPP_AC_01_TO_11_WITH_VERSIONED_GAP01_PRODUCT_SEMANTIC_CHECKER",
+    "each_current_candidate_input_once": true,
+    "first_failure": "Preserve RAW and perform FAILURE TRIAGE before any mutation; continue only independent branches.",
+    "founder_ac_12": "NOT_AUTHORIZED",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset"
+  }
+}
