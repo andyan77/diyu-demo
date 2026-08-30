@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.1 冻结 | COMPLETED | PASS / CURRENT | 0 | NONE | N3 |
-| N3 正式验收 | IN_PROGRESS | NOT_VERIFIED | 1/20；LLM 5/120 | NONE | CAP-01 Gate v1.2 定向复验 |
+| N3 正式验收 | IN_PROGRESS | NOT_VERIFIED(CHECKER_OR_FIXTURE) | 2/20；LLM 10/120 | Checker 证据路径/产物 Oracle | 唯一 Checker 后继冻结 |
 | N4 有界修复 | COMPLETED | 修复节点 1/2、迭代 1/2；控制 10/10 PASS | 0 | NONE | N3 定向复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -38,6 +38,12 @@ canonical sha256 `726b1d196717bb4e68b43fe9e6a3b9b85734a5db4611cf4d10bac19ee213da
 `a5e5170092267cfc101e91c003058af1850623a8fca73dbef491c8c5420b5dd5`。
 发布标签首次因长度限制被 Dify 在发布前拒绝，已按工具失败留证；该次没有模型调用、
 workflow run、数据写入或发布图变化。
+
+Gate v1.3 CAP-01 run `7d88a44f-6fc4-44ac-b51f-a664d16b546e`：MATRIX 运行 1 次，
+其他五能力 0 次，平台重放 0，失败节点 0；`uapp_seam` 产生 5,868 字 artifact，
+并逐字保存到 `conversation.uapp_last_artifact`。Checker v1.1 却读取旧 run/旧图并要求
+非合同化的 M2 artifact/content_version 行，故该运行保持 NOT_VERIFIED，不追溯改绿；
+当前启动本 Prompt 唯一一次 post-result Checker rebase（1/1）。
 
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
