@@ -956,4 +956,4 @@ Founder 事件 `UAPP-S5-FINAL-TECHNICAL-ACCEPTANCE-2026-08-30` 在原 task_id �
 
 F1 将合同来源场景逐字编译成 19 个冻结自然语言输入，计划上限 19 个顶层 run、114 个静态可达 DeepSeek 节点尝试。Checker 首轮暗跑负例错误加入了本例允许能力，独立归因 `CHECKER_OR_FIXTURE`；未调用模型、未改被测对象，只修该夹具后 19 个正例与 190 个逐判据单变量负例全部通过。该控制结果不构成任何 UAPP AC 的功能 PASS。
 
-当前技术债主表升级为 v1.6；正式 Gate 尚待最终现场预检、冻结 commit 与 push 后才允许 F2 开跑。
+当前技术债主表升级为 v1.6。F1 最终 10/10 完成：Gate sha256 `d27254ff95ba47d4cd056c3697d658e463956382faa5cdbec0d07b187e3b358a`，冻结提交 `b1ff8ed7866b6dfb3cd29ca361d1585a34f178e4`（`2026-08-30T12:01:20-07:00`），已非 force push 且远端一致。F2 现在获准按冻结顺序开始；首个硬失败立即停止。
