@@ -734,30 +734,29 @@ PP 返回 `INPUT_INSUFFICIENT` ＋ 七项齐全的精确升级。**b2 的行为�
 
 ## `DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001`（2026-08-30）
 
-**修好了，离线控制 12/12，但正式集成验证跑不了——预算给 2 个回合，最短链要 3 个。**
+**正式链 T1 PASS、T2 FAIL、T3 未启动；已自动恢复稳定发布面并停在 CHECKPOINT。**
 
-根因锁死（零模型、可复算）：`uapp_persist` + `uapp_save` 单槽位无条件覆盖，
-任何能力产出非空 artifact 就整体覆盖 `conversation.uapp_last_artifact`，
-不看 accepted、不看 stale。T7 未被接受的 PP 产物因此覆盖了 T6 已接受的 PD 正文。
-账本仍记着 PD `accepted=true / stale=false`——**知道有，拿不到**。
-M2 有 artifact API 但两张表都没有正文列，且本任务 0 行；要它当真源得改 schema，不做。
+Gate v1.1 在模型调用前冻结，sha256 `069a5af02cfcd173e024c4cfd66c38f74005c1c6d26afdf8e7b19ba81d74d6a6`。
+零模型预检 12/12 PASS。T1 只运行 CS，产生 3497 字 artifact，sha256
+`65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938`。
 
-最小实现（只同步 draft，**未发布**）：`uapp_last_artifact` 改为按指纹分格的产物存储；
-新增 `uapp_pick_upstream` 确定性选择器（同 task／已接受／非 STALE／能力兼容／
-正文可取回且摘要现场复算一致，任一不成立 fail-closed 只问一个问题）；
-`uapp_hop` 改接选择器。节点 49→50，边 51→52，其余节点逐字节未动，未新增会话变量。
+T2 选择器正确取回同一份已接受、CURRENT、非 STALE 的 CS；但 Hop 把完整正文改写成
+较短的 `script_or_equivalent_beats`，`uapp_fields` 现场复算得到不同指纹并正确
+`REJECTED / NO_LEDGER_MATCH`。PD 实际运行但未获得合法绑定正文，未产生 PD artifact。
+同时观察到 DeepSeek SSL EOF 与 Dify 一次平台内部重放；人工／顶层重试为 0。
 
-Phase E 没跑，原因是现场证据推翻了 2 回合的前提：PD 硬性要求
-`script_or_equivalent_beats`，而本会话 CB 与 CS **都已 STALE**（D3 上传夹具触发的
-`facts.registered` 更正）。CS/CB 本身不依赖 artifact 槽位，所以最短链是
-CS → 接受+PD → 接受+PP，**三个回合**。三句自然语言原文已冻结在 Gate 里。
-场景 A 也排除了：候选画布全部会话逐个枚举，没有一个 `uapp_last_capability` 是 PD。
+首个失败后没有 T3、没有重跑、没有修改实现。E-01…E-11 均未完成，所有允许上调项
+保持 NOT_VERIFIED；跨轮纠正传播仍 NOT_VERIFIED(NOT_CHECKED)，S4 未验证，S5 未启动，
+main 不合并，terminal 未设置。成本：2 个顶层 run、12 次 LLM 节点尝试、1 次失败、
+1 次平台内部重放。
 
-成本 0/2 顶层 run、0/12 LLM。候选画布已发布图仍 `99c3edf7`；
-PP 与 provider 都在旧稳定图；八应用、`hop_pin`、M2 零漂移；`main` 仍 `01a42b0`。
+发布面已恢复：UAPP `99c3edf7`，PP / provider `788c8555`；Seam `db49a3da`、
+Hop `e38378c3` 未变，活动 workflow 为 0，候选和 b1/b2 历史行保留。测试会话保留
+CS 正文但没有 PD；`uapp_last_capability=PRODUCTION_DIRECTOR` 与正文缺失的不一致原样留证。
 
-**下一步只有一件：** 把顶层回合预算从 2 提到 3，按已冻结的三句原文与 E-01…E-10 跑一次。
-判据、输入、实现全部已冻结并提交，不需要其它改动。
+**唯一下一步：** Founder 裁定是否授权新的版本化续行，修复
+`uapp_hop → uapp_fields` 完整产物绑定不一致，并明确平台内部重放规则；当前合同不授权
+第二次修复或再次运行。
 
 详见 [`collab-ledger/tasks/DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001.md`](tasks/DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001.md)
-与 [`unified-app/docs/UAAB_FAILURE_TRIAGE_001_ARTIFACT_SLOT.md`](../unified-app/docs/UAAB_FAILURE_TRIAGE_001_ARTIFACT_SLOT.md)。
+与 [`unified-app/stages/UAAB_RESULT_v1.1.json`](../unified-app/stages/UAAB_RESULT_v1.1.json)。

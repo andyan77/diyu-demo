@@ -1,0 +1,39 @@
+{
+ "document": {
+  "id": "UAAB_RESULT_v1.1",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "gate_ref": "unified-app/stages/UAAB_GATE_v1.1.json",
+  "gate_sha256": "069a5af02cfcd173e024c4cfd66c38f74005c1c6d26afdf8e7b19ba81d74d6a6",
+  "failure_evidence_ref": "unified-app/evidence/stages/uapp_artifact_binding/UAAB_T2_FAILURE_AND_REVERT_v1.1.json"
+ },
+ "turn_results": {"T1": "PASS / CURRENT", "T2": "FAIL / CURRENT", "T3": "NOT_STARTED"},
+ "phase_e_criteria": [
+  {"id": "E-01", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: T3 was not started"},
+  {"id": "E-02", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: no T2 PD artifact existed"},
+  {"id": "E-03", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: T3 was not started"},
+  {"id": "E-04", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: T3 was not started"},
+  {"id": "E-05", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: T3 was not started"},
+  {"id": "E-06", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: no packaging product existed"},
+  {"id": "E-07", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: no packaging product existed"},
+  {"id": "E-08", "result": "NOT_VERIFIED", "reason": "T1 scoped check PASS; T2 scoped check PASS; T3 NOT_CHECKED"},
+  {"id": "E-09", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: T3 was not started"},
+  {"id": "E-10", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: T3 was not started"},
+  {"id": "E-11", "result": "NOT_VERIFIED", "reason": "NOT_CHECKED: no T2 PD or T3 PP record existed"}
+ ],
+ "status_projection": {
+  "UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING": "NOT_VERIFIED(INSUFFICIENT)",
+  "D3_SUCCESSOR": "NOT_VERIFIED(NOT_CHECKED)",
+  "PP_BOUNDARY_SUCCESSOR_b2": "NOT_VERIFIED",
+  "V-08B_FACT_TRACEABILITY": "NOT_VERIFIED",
+  "V-08C_CTA_FIDELITY": "NOT_VERIFIED",
+  "CROSS_TURN_CORRECTION_PROPAGATION": "NOT_VERIFIED(NOT_CHECKED)",
+  "S4_OVERALL_ACCEPTANCE": "NOT_VERIFIED",
+  "S5": "NOT_STARTED",
+  "main_merge": "NOT_ALLOWED",
+  "terminal_state": "unset"
+ },
+ "overall_result": "FAIL",
+ "published_surfaces_restored": true,
+ "next_state": "CHECKPOINT",
+ "unique_next_step": "Founder must decide whether to authorize a new versioned continuation that repairs the uapp_hop -> uapp_fields full-artifact binding mismatch and explicitly governs retry behavior. No repair or rerun is authorized by the current contract."
+}

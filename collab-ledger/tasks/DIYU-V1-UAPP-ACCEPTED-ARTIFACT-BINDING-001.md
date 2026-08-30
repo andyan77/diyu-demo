@@ -172,3 +172,44 @@ T1 判定：`PASS / CURRENT`。累计成本：顶层 run `1 / 3`，LLM 节点 `6
 `unified-app/evidence/UAPP_RUN_UAAB_V11_T1.json`、
 `unified-app/evidence/stages/uapp_artifact_binding/UAAB_T1_VERIFY_v1.1.json`。
 下一动作：只运行冻结 T2 原句一次；T2 未通过即停止，不进入 T3。
+
+## 十二、REBASE v1.1 · T2 正式失败与停止
+
+T2 顶层 run `499acf64-4a71-48f1-9a7f-449b3d5a4fef` 只发起一次，原句、同一
+conversation / end_user、`inputs={}`、无上传。选择器正确选中 T1 CS：同 task、
+本轮原话「可以」构成接受、非 STALE，正文长 3497，sha256
+`65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938`。
+
+正式失败发生在 `uapp_hop → uapp_fields` 绑定接缝：Hop 把完整 CS 正文抽取成较短的
+`script_or_equivalent_beats`，指纹从 `3d7342e36d939c31` 变成
+`95acca37e2df6679`；`uapp_fields` 按完整产物血缘门正确 fail-closed 为
+`REJECTED / NO_LEDGER_MATCH`。因此 PD 虽真实运行一次，却没有收到合法绑定正文，
+未产生 PD artifact，`uapp_persist` 为 `NO_NEW_ARTIFACT`。
+
+同一工具节点第一次嵌套运行 `e8567fbd-b5dd-44cd-a098-84791579926d` 还发生 DeepSeek
+SSL EOF；Dify 随后内部重放为 `0b411c1e-0698-4cb3-afd4-8a047e392057` 并成功。
+人工／顶层重试为 0，但平台内部重放为 1，故冻结的 `retries=0` 也未满足。
+
+按首个失败停止：T3 未启动，不重跑、不改 Gate / Checker / Fixture / 输入 / 实现，
+E-01…E-11 均不得上调。累计成本：顶层 run `2 / 3`，LLM 节点 `12 / 18`，失败 1，
+平台内部重放 1，重复采样 0。
+
+## 十三、自动恢复与 CHECKPOINT
+
+测试发布面已恢复并回读确认：UAPP `99c3edf7bd12172a4fb011b588f25e57`，PP 与 provider
+均为 `788c8555aca09e6fa6d979f237f70157`；Seam `db49a3da`、Hop `e38378c3` 未变，
+活动 workflow 为 0，候选与 b1/b2 历史 workflow 行保留。
+
+T2 后测试会话存储只含旧 PP 正文与 T1 CS 正文，没有 PD，也没有 T3 PP；账本中的
+T1 CS 已接受且非 STALE。`uapp_last_capability` 已推进为 `PRODUCTION_DIRECTOR`，但没有
+对应正文；本合同不授权直接改写会话状态，故原样留证，不再复用该状态继续正式链。
+
+当前状态：`FAIL → CHECKPOINT`。`UAPP_ACCEPTED_UPSTREAM_ARTIFACT_BINDING` 维持
+`NOT_VERIFIED(INSUFFICIENT)`；D3 successor、PP b2、V-08B/C、S4 均不上调；
+S5 未启动，main 不合并，terminal 未设置。完整证据见
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_T2_FAILURE_AND_REVERT_v1.1.json`
+与 `unified-app/stages/UAAB_RESULT_v1.1.json`。
+
+**唯一下一步：** Founder 裁定是否建立新的版本化续行，授权修复
+`uapp_hop → uapp_fields` 完整产物绑定不一致，并明确平台内部重放的处置规则；
+当前合同不授权第二次修复或再次运行。

@@ -1,0 +1,136 @@
+{
+ "document": {
+  "id": "UAAB_T2_FAILURE_AND_REVERT_v1.1",
+  "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+  "gate_sha256": "069a5af02cfcd173e024c4cfd66c38f74005c1c6d26afdf8e7b19ba81d74d6a6",
+  "recorded_at": "2026-08-30T09:01:38-07:00",
+  "raw_refs": {
+   "T1": {"file": "unified-app/evidence/UAPP_RUN_UAAB_V11_T1.json", "sha256": "43e07d5e41679673608ae628b318c5a830aea823b13ec29db312a1e2a2e4daa4"},
+   "T2": {"file": "unified-app/evidence/UAPP_RUN_UAAB_V11_T2.json", "sha256": "41c4a15384f57ff5ff0dcf3e0ffa2451bde74f1e13b20c39ab000dc3bfeebb2f"}
+  }
+ },
+ "formal_chain": {
+  "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+  "end_user": "s4ct-20260830001839",
+  "inputs": {},
+  "uploaded_files": 0,
+  "T1": {"workflow_run_id": "ec4b6bfe-2bc7-49f3-963b-7ffcf06dd376", "result": "PASS", "only_professional_capability": "CREATIVE_SCRIPT"},
+  "T2": {
+   "query": "这版口播稿可以，基于它告诉我这条该怎么制作。",
+   "workflow_run_id": "499acf64-4a71-48f1-9a7f-449b3d5a4fef",
+   "workflow_status": "partial-succeeded",
+   "result": "FAIL",
+   "only_professional_capability": "PRODUCTION_DIRECTOR",
+   "professional_run_id": "f4fe71eb-dd65-4025-a919-32f4319ac15c"
+  },
+  "T3": {"workflow_run_id": null, "result": "NOT_STARTED", "why": "T2 did not produce the expected real PD artifact; first-failure stop rule applied."}
+ },
+ "T2_upstream_selection": {
+  "selection_status": "SELECTED",
+  "selected_capability": "CREATIVE_SCRIPT",
+  "selected_fp": "3d7342e36d939c31",
+  "selected_bfp": "4af627e012e74e3a",
+  "task_key": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+  "artifact_length": 3497,
+  "artifact_sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938",
+  "accepted_by_current_user_utterance": true,
+  "accepted_turn": 10,
+  "stale": false,
+  "body_hash_recomputed_from_store": true,
+  "selector_verdict": "PASS"
+ },
+ "observed_failure": {
+  "hop_tool_node": {
+   "first_nested_run_id": "e8567fbd-b5dd-44cd-a098-84791579926d",
+   "first_run_result": "FAIL",
+   "first_run_error": "DeepSeek HTTPS SSL unexpected EOF / Server Unavailable",
+   "platform_internal_replay_run_id": "0b411c1e-0698-4cb3-afd4-8a047e392057",
+   "replay_result": "SUCCEEDED",
+   "replay_transformed_full_artifact_to_script_or_equivalent_beats": true
+  },
+  "binding_check": {
+   "expected_full_artifact_fp": "3d7342e36d939c31",
+   "hop_transformed_body_fp": "95acca37e2df6679",
+   "uapp_fields_decision": "REJECTED / NO_LEDGER_MATCH",
+   "fail_closed_behavior": "PASS",
+   "pd_received_bound_artifact": false
+  },
+  "pd_result": {
+   "artifact_created": false,
+   "artifact_length": 0,
+   "artifact_sha256": null,
+   "persist_action": "NO_NEW_ARTIFACT",
+   "user_delivery_kind": "INPUT_INSUFFICIENT",
+   "expected_real_behavior_met": false
+  }
+ },
+ "conversation_state_after_T2": {
+  "ledger_rev": 10,
+  "store_item_count": 2,
+  "records": [
+   {"kind": "LEGACY_PUBLISHING_PACKAGING", "length": 14984, "sha256": "88909e875b0c4c692ddbb9453daf1150b5a6a9f25976a7073a36ffd5644b2de4", "is_T3_output": false},
+   {"kind": "CREATIVE_SCRIPT_T1", "fp": "3d7342e36d939c31", "length": 3497, "sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938", "accepted": true, "stale": false}
+  ],
+  "production_director_record_present": false,
+  "T3_publishing_packaging_record_present": false,
+  "uapp_last_capability": "PRODUCTION_DIRECTOR",
+  "state_warning": "The capability marker advanced although no PD body was appended. This retained test-conversation state was not rewritten or repaired under the current contract."
+ },
+ "cost_and_stop": {
+  "top_level_workflow_runs": 2,
+  "llm_node_attempts": 12,
+  "llm_node_failures": 1,
+  "manual_or_top_level_retries": 0,
+  "platform_internal_replays": 1,
+  "repeat_sampling": 0,
+  "ab_tests": 0,
+  "reviewer_calls": 0,
+  "T3_started": false,
+  "frozen_retries_zero_satisfied": false
+ },
+ "failure_triage": {
+  "observed_failure": "T2 selected the exact accepted CURRENT CS body, but the Hop output transformed it; uapp_fields recomputed a different fingerprint and correctly rejected it, so no PD artifact was produced. The first Hop execution also failed with a provider SSL EOF and Dify internally replayed it once.",
+  "frozen_target": "CS real output -> user accepts -> PD reads the same CS body and emits a real PD artifact, with no retry.",
+  "candidate_sources": ["INPUT_ENVIRONMENT_OR_TOOL", "SYSTEM_UNDER_TEST"],
+  "confirmed_origin": "SYSTEM_UNDER_TEST · uapp_hop → uapp_fields full-artifact binding contract mismatch; INPUT_ENVIRONMENT_OR_TOOL · DeepSeek SSL EOF and platform-internal replay also observed",
+  "evidence": [
+   "selector fp=3d7342e36d939c31, body sha256=65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938",
+   "Hop transformed fp=95acca37e2df6679",
+   "uapp_fields=REJECTED/NO_LEDGER_MATCH",
+   "PD artifact length=0",
+   "raw T2 sha256=41c4a15384f57ff5ff0dcf3e0ffa2451bde74f1e13b20c39ab000dc3bfeebb2f"
+  ],
+  "mutation_target": "NONE under the current authorization",
+  "protected_targets": ["Gate v1.1", "inputs", "Checker and fixtures", "candidate implementation", "M1/M2/M3", "Seam", "Hop published graph", "PP b2 body"],
+  "next_reverification": "NONE under current contract; requires a new versioned Founder decision before any repair or rerun."
+ },
+ "automatic_restore": {
+  "status": "CONFIRMED",
+  "uapp": {
+   "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+   "workflow_id": "08744ac8-fbb7-40b7-9286-83f42bbd061b",
+   "published_version": "2026-08-30 15:58:59.126506",
+   "graph_md5": "99c3edf7bd12172a4fb011b588f25e57",
+   "node_count": 49,
+   "edge_count": 51,
+   "candidate_workflow_rows_preserved": 1
+  },
+  "pp": {
+   "app_id": "c9cdea24-9df3-400b-9ecd-1d740e8c96df",
+   "workflow_id": "45134a51-90a2-4d4f-ab89-d8ebacd31fc7",
+   "published_version": "2026-08-30 15:59:12.483360",
+   "graph_md5": "788c8555aca09e6fa6d979f237f70157",
+   "b2_workflow_rows_preserved": 3
+  },
+  "provider": {
+   "provider_id": "21a000b1-5d14-42e9-b380-64c2c2aa16a0",
+   "version": "2026-08-30 15:59:12.483360",
+   "pinned_graph_md5": "788c8555aca09e6fa6d979f237f70157"
+  },
+  "seam_graph_md5": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+  "hop_graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+  "active_workflow_runs": 0
+ },
+ "result": "FAIL",
+ "next_state": "CHECKPOINT"
+}
