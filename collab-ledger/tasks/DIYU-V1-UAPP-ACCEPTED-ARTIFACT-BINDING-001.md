@@ -145,3 +145,16 @@ Founder 已授权把三轮正式链预算版本化为 `3 / 18 / 0 retries`，任
 
 外部副作用状态：`PLANNED`——下一动作仅为发布 UAPP `1aba8d45`、重新发布 PP b2
 `8366328b`、把 PP provider 对齐 b2；任一正式验收非 PASS 按 Gate v1.1 自动恢复稳定图。
+
+## 十、REBASE v1.1 发布记录（模型调用前）
+
+测试候选发布与重钉均已 `CONFIRMED`：UAPP 发布版 `1aba8d45`（50 节点 / 52 边），
+PP 发布版 `8366328b`（15 节点 / 15 边），PP provider 实际钉住同一 `8366328b`；
+Seam `db49a3da`、Hop `e38378c3` 未变。首次 UAPP 发布请求因标记名超过 20 字符返回
+HTTP 400，现场回读证明 `FAILED_NO_EFFECT` 后仅缩短发布元数据再次提交，未改图、Gate、
+Checker 或输入。完整回读见
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_REBASE_PUBLISH_v1.1.json`。
+
+当前成本仍为：顶层 workflow `0 / 3`，DeepSeek LLM 节点 `0 / 18`，模型重试 `0`。
+下一动作：在冻结 conversation / end_user 下只运行 T1 原句一次，随后先判定 T1，
+未满足预期即停止，不进入 T2。
