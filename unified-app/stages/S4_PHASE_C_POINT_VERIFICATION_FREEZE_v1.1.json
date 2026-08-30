@@ -1,0 +1,475 @@
+{
+ "document": {
+  "id": "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "phase": "C｜点对点真实行为验证",
+  "frozen_before_any_model_run": true,
+  "authority": "DIYU_V1_UAPP_FACT_SUFFICIENCY_ROOT_CAUSE_AND_MINIMAL_REPAIR_CONTINUE_EXECUTION_PROMPT_v1.0.md（sha256 5d4fcbe0d5e6915314e098dd41d251d61b58bc9575106dec7e42d8e1a97496f3）Phase C；Founder 于本轮给出的三层判据与预算指令",
+  "narrow_question": "hop 事实下限修复之后，M3 → Hop → Seam → Content Brief 这一跳的事实是否真的抵达能力并产出非空专业产物，且补齐 content_origin_mode 后的 CS→PD→PP 窄链能被一次有效测试真正覆盖。",
+  "not_a_second_state_table": "本文件只是 Phase C 的判据与预算冻结，不是新的状态主表。任务状态仍以 collab-ledger 任务分区账本为准。",
+  "what_pass_does_not_imply": [
+   "不等于 S4 全部通过",
+   "不等于统一 Dify 应用全部验收完成",
+   "不等于 UAPP-AC-01..12 全绿",
+   "不等于可以进入 S5",
+   "不等于可以合并 main"
+  ],
+  "supersedes": {
+   "file": "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.0.json",
+   "sha256": "38025c9da2540729eb95ba98a2f0cfc0efdff59dee8b50713f29a02fb3afcc05",
+   "authority": "Founder 于 2026-08-30 明确授权：建立 FB-07 后继版本，并允许对已落盘的同一份 C1 证据做零模型调用的定向重判",
+   "what_changed": "只重写 fabrication_probes.name_whitelist_check（FB-07）一条。其余全部判据、预算、停止规则、绑定与继承 Gate 一字未改。",
+   "old_not_overwritten": "v1.0 文件与 S4_PHASE_C_RESULT_v1.0.json 原样保留，不覆盖、不改绿。",
+   "why": "v1.0 的 FB-07 抓『职务词前后 2–3 个汉字』，把夹具自身的多字职务名（零售搭配负责人）切成不存在的人名。证据见 S4_PHASE_C_C1_FAILURE_TRIAGE_001.md。"
+  }
+ },
+ "binding": {
+  "file": "unified-app/stages/S4_PHASE_C_BINDING_v1.0.json",
+  "sha256": "f2a5169a9cf005ec6bd40b116fb89e5f16aff2f2d7f1830af4078cafcf4d21ed",
+  "candidate_app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "candidate_published_graph_sha256": "8c9788f293fa7750bea451bd2195ddfb4df7c2647ca00c383ec7c096a4cdc2d1",
+  "node_count": 47,
+  "edge_count": 49,
+  "hop_provider_pinned_version": "2026-08-30 03:38:31.449618",
+  "pinned_m5_compose_sha256": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855",
+  "graph_mutation_during_phase_c": "FORBIDDEN",
+  "provider_repin_during_phase_c": "FORBIDDEN",
+  "recheck_before_first_call": [
+   "git worktree clean（除本冻结提交外无未提交改动）",
+   "候选已发布图 sha256 与本文件一致",
+   "hop provider 钉与应用已发布版一致，且钉住那一版的 m5_compose 指纹与本文件一致",
+   "九个受保护应用 graph md5 与 S4_PHASE_C_BINDING_v1.0.json 一致",
+   "运行窗口内没有其它写入者（Dify workflows 表在冻结提交之后无新版本）"
+  ]
+ },
+ "inherited_criteria": {
+  "gate_file": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json",
+  "gate_sha256": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d",
+  "inherited_verbatim": "pass_conditions C01–C12、authorization_overclaim_tokens、leak_forbidden_tokens、forbidden_input_tokens、undecidable_rule",
+  "identity_block_superseded": "该 Gate 的 identity.graph_sha256=f75555c0…（46/48）是 Phase B 修复之前的候选身份。Phase B 已按本轮 Prompt 授权对候选图做了唯一一处连通改动（uapp_persist 写回闸门），因此身份绑定改由本文件 binding 段给出。判据本身一字未改、未放松。",
+  "no_downgrade": "本冻结不删除、不弱化任何一条继承判据；下面的分层只是把它们绑到具体层级，并追加 Founder 本轮列出的补充判据。",
+  "historical_records_untouched": "S4_CONTENT_ORIGIN_CONTINUATION_RESULT_v1.0.json 的历史 6 FAIL 原样保留，不覆盖、不追溯改绿。"
+ },
+ "fixture": {
+  "path": "decision-chain/fixtures/一页纸夹具品牌事实 v0.1.md",
+  "sha256": "8c21d41d471deed8e169055a37288e1f29b769fe5f7a7296dff4274b8bb6d53a",
+  "attach_policy": "C2/C3 每一轮都附同一份夹具（上传是轮次作用域）；不附任何其它文件"
+ },
+ "layers": [
+  {
+   "id": "C1",
+   "title": "Content Brief 受影响模块单点",
+   "why_this_layer_first": "修复点在 hop 的 m5_compose，它的下游第一个消费者就是 Content Brief。先用 Phase B 确定性证明字段完整、来源合法的那份外壳直接打 Content Brief，一次调用就能判断修复产出的字节能否被能力真正接受；失败则不必再花整条链。",
+   "target": {
+    "app_id": "b1dcf784-540e-4b3f-8ba2-3812f477f3ce",
+    "endpoint": "/v1/workflows/run",
+    "response_mode": "blocking"
+   },
+   "frozen_input": {
+    "file": "unified-app/stages/S4_PHASE_C_C1_INPUT_v1.0.json",
+    "sha256": "6aa4703f6ef75f3743352d7da5b2450528cc1a0cd8b387589b0c3d358a243503",
+    "how_produced": "把 provider 钉住的 hop m5_compose 在冻结载荷 S4-CO-T2 的真实 uapp_hop 入参上确定性重放一次，零模型调用；entry/run_mode/example_reference_requested 逐字取自 T2 真实运行 51c0b815 的 entry_resolver 与 tool_content_brief 入参",
+    "executor_authored_business_content": "无"
+   },
+   "must_run_nodes": [
+    "skill_llm"
+   ],
+   "must_not_run_nodes": [],
+   "pass_conditions": [
+    {
+     "id": "P1-01",
+     "text": "Content Brief 真实运行",
+     "how": "该次 workflow_run.status=succeeded，且 workflow_node_executions 中 skill_llm 真实执行成功"
+    },
+    {
+     "id": "P1-02",
+     "text": "facts_registered 进入能力输入且来源可回指",
+     "how": "该次 run 的 inputs.capability_call 含 `facts_registered` 键；其取值与 S4-CO-T2 的 uapp_ctx.registered_facts 前 6000 字在同一空白归一下逐字相同；重放的 source_map 中该字段标记为 DERIVED(registered_facts)",
+     "normalization_note": "线上 m5_compose 的 _clean 本就做 strip + re.sub('\\s+',' ')，因此两边套同一归一。空白折叠不算改写，任何一字的增删改仍会被这条抓到。"
+    },
+    {
+     "id": "P1-03",
+     "text": "六个必要字段无缺失",
+     "how": "重放输出 extraction_gaps_text 为空；capability_call 中 CONTENT_BRIEF 必填清单六项全部在场且非空"
+    },
+    {
+     "id": "P1-04",
+     "text": "产生非空、非占位专业 artifact",
+     "how": "run.outputs 的业务产物非空，且不以占位串「这一步没有产出可以交给你的内容」开头，且 business_delivery_outcome 不是输入不足类停止"
+    },
+    {
+     "id": "P1-05",
+     "text": "没有编造夹具未提供的事实",
+     "how": "对产物全文跑 fabrication_probes，任一命中即 FAIL"
+    },
+    {
+     "id": "P1-06",
+     "text": "没有内部状态泄漏",
+     "how": "对产物全文跑继承的 leak_forbidden_tokens 确定性匹配"
+    }
+   ],
+   "negative_control": {
+    "runs_this_layer": 0,
+    "source": "缺项负控制沿用 Phase B 的确定性证据：PHASE_B_POST_REPAIR_INTEGRATION.json 的 I-11（来源真空时仍精确停在 facts_registered，且外壳不写该键）与 I-17（首轮空产出不造值）",
+    "rule": "不为增加模型调用再跑负例"
+   }
+  },
+  {
+   "id": "C2",
+   "title": "M3 → Hop → Seam → Content Brief 相邻接缝点测",
+   "conversation": {
+    "fresh": true,
+    "turns": [
+     1,
+     2
+    ],
+    "samples_per_turn": 1
+   },
+   "frozen_input": {
+    "file": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json",
+    "sha256": "371381cf8b1d531115731bef40738e5579f53c69b5056ebae5b8541b073d1b5d",
+    "turns_used": "conversation.turns idx 1 与 idx 2，逐字不改"
+   },
+   "must_run_nodes": {
+    "canvas": [
+     "uapp_ctx",
+     "uapp_m3",
+     "uapp_route",
+     "uapp_hop",
+     "uapp_seam",
+     "uapp_seam_merge",
+     "uapp_delivery",
+     "uapp_persist",
+     "uapp_save"
+    ],
+    "seam": [
+     "tool_content_brief"
+    ]
+   },
+   "must_not_run_nodes": {
+    "seam": [
+     "tool_matrix",
+     "tool_campaign",
+     "tool_creative_script",
+     "tool_production_director",
+     "tool_publishing_packaging"
+    ]
+   },
+   "pass_conditions": [
+    {
+     "id": "P2-01",
+     "text": "M3、Hop、Seam、Content Brief 均有真实节点执行证据",
+     "how": "T1/T2 两轮的 canvas nodes_executed 均含 uapp_m3、uapp_hop、uapp_seam 且 succeeded；Seam 自身 workflow_node_executions 含 tool_content_brief 且 succeeded；Content Brief 应用自身在该轮窗口内有 workflow_run"
+    },
+    {
+     "id": "P2-02",
+     "text": "其余五个专业能力没有暗跑",
+     "how": "两轮 Seam latest_run_nodes 中 tool_* 恰为 tool_content_brief 一个；其余五个能力应用在该轮窗口内 runs_during_case 为空"
+    },
+    {
+     "id": "P2-03",
+     "text": "facts_registered 从来源到 Content Brief 逐跳保持",
+     "how": "uapp_ctx.registered_facts 非空 → uapp_hop 入参 registered_facts 与之逐字相同 → uapp_hop 输出的 capability_call 含 `facts_registered` 且不在 extraction_gaps 中 → Seam 传给 tool_content_brief 的 capability_call 含同一段字节"
+    },
+    {
+     "id": "P2-04",
+     "text": "主目标、受众问题、内容承诺和表达边界没有被接缝改写",
+     "how": "uapp_hop.extracted_json 的 primary_goal / audience_problem / content_promise / expression_boundary 四项，与 Seam 传给 tool_content_brief 的 capability_call 中同名字段逐字相同"
+    },
+    {
+     "id": "P2-05",
+     "text": "T2 的 Content Brief 产生非空 artifact",
+     "how": "uapp_seam_merge.artifact.output 非空且非占位"
+    },
+    {
+     "id": "P2-06",
+     "text": "不以模型自述或用户正文声称代替节点输入输出证据",
+     "how": "以上五项全部只读 workflow_node_executions 的 inputs/outputs 与 workflow_runs；不读 answer 正文，不读模型自述"
+    },
+    {
+     "id": "P2-07",
+     "text": "继承判据 C01 成立",
+     "how": "按 S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json 的 C01 原文重算"
+    },
+    {
+     "id": "P2-08",
+     "text": "T1/T2 交付零编造、零授权越界、零内部状态泄漏",
+     "how": "对 T1/T2 的 answer 跑 fabrication_probes + 继承的 authorization_overclaim_tokens + leak_forbidden_tokens"
+    }
+   ],
+   "note_on_T1": "T1 只给出『先把制作依据定下来』，此时受众与目标尚未提供。T1 停在缺口是正确行为，不构成本层失败；本层对 T1 只要求真实执行链路与零泄漏，非空 artifact 只对 T2 要求。"
+  },
+  {
+   "id": "C3",
+   "title": "原窄链点测：Content Brief → Creative Script → 补 content_origin_mode → Production Director → Publishing & Packaging",
+   "conversation": {
+    "continues": "C2 的同一会话",
+    "turns": [
+     3,
+     4,
+     5,
+     6
+    ],
+    "samples_per_turn": 1
+   },
+   "why_same_conversation": "C3 的第一条判据就是『Content Brief 在前序轮真实完成』。C2 的 T2 正是这一轮，复用同一会话既满足该前提，又避免为同一件事重复采样。",
+   "frozen_input": {
+    "file": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json",
+    "sha256": "371381cf8b1d531115731bef40738e5579f53c69b5056ebae5b8541b073d1b5d",
+    "turns_used": "conversation.turns idx 3/4/5/6，逐字不改",
+    "T4_authority": "FOUNDER｜UAPP-FOUNDER-ADJUDICATION-002，不是执行侧代拟"
+   },
+   "must_run_nodes": {
+    "seam": {
+     "T3": "tool_creative_script",
+     "T4": "tool_creative_script",
+     "T5": "tool_production_director",
+     "T6": "tool_publishing_packaging"
+    }
+   },
+   "must_not_run_nodes": {
+    "seam": {
+     "T3-T6": "tool_content_brief 及其余非目标能力一律不得出现"
+    }
+   },
+   "pass_conditions": [
+    {
+     "id": "P3-01",
+     "text": "Content Brief 在前序轮真实完成",
+     "how": "C2 的 P2-05 成立（T2 artifact 非空非占位）"
+    },
+    {
+     "id": "P3-02",
+     "text": "回答素材来源后没有重跑 Content Brief",
+     "how": "继承 C08：T3–T6 的 Seam 记录均不出现 tool_content_brief"
+    },
+    {
+     "id": "P3-03",
+     "text": "回到原 Creative Script 任务，而不是新建或重启",
+     "how": "继承 C03：T4 的 Seam 含 tool_creative_script 且不含 tool_content_brief；T4 与 T3 的 uapp_hop.extracted_json 中 primary_goal 与 audience_problem 逐字相同"
+    },
+    {
+     "id": "P3-04",
+     "text": "primary_goal、audience_problem、content_promise、表达和权限边界保持",
+     "how": "T3–T6 的 uapp_hop.extracted_json 中 primary_goal / audience_problem / content_promise / expression_subject / expression_boundary 相对 T3 无漂移（继承 C08 的三项，另加 content_promise 与 expression_boundary 两项）"
+    },
+    {
+     "id": "P3-05",
+     "text": "T3 精确提出 content_origin_mode，T4 后不再是缺口，CS 产生非空非占位 artifact",
+     "how": "继承 C02 与 C04 原文重算"
+    },
+    {
+     "id": "P3-06",
+     "text": "CS、PD、PP 分别产生非空、非占位 artifact",
+     "how": "继承 C04/C05/C06 原文重算"
+    },
+    {
+     "id": "P3-07",
+     "text": "空返回没有抹除上一个已成功 artifact",
+     "how": "逐轮读 uapp_persist.persist_action 与 conversation 变量 uapp_last_artifact 的长度：任一轮 uapp_seam_merge.artifact.output 为空时，persist_action 必须是 KEEP_PREVIOUS 且 uapp_last_artifact 长度不减"
+    },
+    {
+     "id": "P3-08",
+     "text": "只运行当前目标能力，无暗跑",
+     "how": "继承 C07 原文重算，范围覆盖 T1–T6"
+    },
+    {
+     "id": "P3-09",
+     "text": "未获授权素材不被声称为已授权",
+     "how": "继承 C09 原文重算"
+    },
+    {
+     "id": "P3-10",
+     "text": "用户交付零内部状态/字段泄漏",
+     "how": "继承 C10 原文重算"
+    },
+    {
+     "id": "P3-11",
+     "text": "M2 没有重复写入或虚假完成态",
+     "how": "继承 C12 原文重算"
+    },
+    {
+     "id": "P3-12",
+     "text": "受保护面零漂移",
+     "how": "继承 C11，图身份改用本文件 binding 段的 8c9788f2…"
+    },
+    {
+     "id": "P3-13",
+     "text": "交付中没有编造夹具未提供的事实",
+     "how": "对 T3–T6 的 answer 与各轮 artifact 跑 fabrication_probes"
+    }
+   ]
+  }
+ ],
+ "fabrication_probes": {
+  "rationale": "夹具本身写明『不得根据图片补写面料成分、价格、库存、功能或具体适穿人群』。以下探针只判定确定性可查的编造，不对文风或专业质量做判断。",
+  "regex_hit_is_fail": [
+   {
+    "id": "FB-01",
+    "name": "面料成分百分比",
+    "pattern": "\\d+\\s*%\\s*(棉|羊毛|涤纶|真丝|羊绒|锦纶|氨纶|莫代尔|粘纤|亚麻|醋酸|天丝)"
+   },
+   {
+    "id": "FB-02",
+    "name": "库存与销量断言",
+    "pattern": "(库存\\s*[:：]?\\s*\\d+|已售\\s*\\d+|销量\\s*\\d+|售罄|仅剩\\s*\\d+\\s*件)"
+   },
+   {
+    "id": "FB-03",
+    "name": "具体货号 SKU",
+    "pattern": "(货号\\s*[:：]?\\s*[A-Za-z0-9\\-]{3,}|SKU\\s*[:：]?\\s*[A-Za-z0-9\\-]{3,})"
+   },
+   {
+    "id": "FB-04",
+    "name": "编造顾客口碑主体",
+    "pattern": "(顾客|客户|会员)\\s*[张王李刘陈杨黄赵周吴徐孙马朱胡林郭何高罗郑梁谢宋唐许韩冯邓曹彭曾肖田董袁潘于蒋蔡余杜叶程苏魏吕丁任沈姚卢姜崔钟谭陆汪范金石廖贾夏韦付方白邹孟熊秦邱江尹薛闫段雷侯龙史陶黎贺顾毛郝龚邵万钱严覃武戴莫孔向汤]\\s*(小姐|女士|先生|姐|太太)"
+   },
+   {
+    "id": "FB-05",
+    "name": "承诺具体预约时段",
+    "pattern": "预约\\s*(时段|时间)\\s*[:：]?\\s*(周[一二三四五六日天]|\\d{1,2}\\s*[:：点])"
+   }
+  ],
+  "price_subset_check": {
+   "id": "FB-06",
+   "name": "价格数字必须在夹具原文中出现过",
+   "how": "从被检文本中抽出全部匹配 (\\d[\\d,]*)\\s*元 的数字串；每一个都必须在夹具原文中逐字出现，否则 FAIL",
+   "fail_is": "出现夹具未提供的价格数字"
+  },
+  "name_whitelist_check": {
+   "id": "FB-07",
+   "version": "1.1",
+   "name": "人物只能来自夹具",
+   "whitelist": [
+    "林序",
+    "周宁",
+    "苏禾",
+    "陈晚"
+   ],
+   "role_vocabulary": [
+    "创始人",
+    "商品负责人",
+    "零售搭配负责人",
+    "旗舰店店长",
+    "店长",
+    "门店导购团队",
+    "导购团队",
+    "导购",
+    "负责人",
+    "主理人"
+   ],
+   "rule": "候选人名必须以姓氏起头（单字姓氏表 + 复姓表），长度 2–3 字，且与职务词直接相邻（职务词在前或人名在前，中间只允许空白与「（(、，,：:」）。候选若在白名单内，或在夹具原文中逐字出现，或本身是某个职务词的一部分，即为夹具提供的人物，不计命中；否则 FAIL。",
+   "why_surname_anchor": "中文职务名本身是多字复合词（零售搭配负责人＝零售搭配＋负责人）。只有『必须以姓氏起头』这一条能把人名与职务称谓的切片区分开：售、推、的 都不是姓氏，赵、李、张 是。",
+   "discrimination_required_before_use": [
+    "正控制必须包含夹具自身的全部多字职务名，且零命中",
+    "负控制必须在两个方向（职务词在前 / 人名在前）都精确翻 FAIL",
+    "历史失败证据回放：v1.0 在真实 S4-PC-C1 产物上误报的四条必须消失",
+    "反过拟合对照：同一份真实产物注入一个编造人名后必须仍然 FAIL",
+    "复姓负控制：创始人欧阳明必须 FAIL"
+   ],
+   "compound_surnames_required": "复姓必须单列。只有单字姓氏表时，『创始人欧阳明』会被漏判——这条缺口由 v1.1 自身的单点负控制在任何继续调用之前抓到并补掉。"
+  }
+ },
+ "cost_budget": {
+  "basis": "按当前已发布图静态计算：每个 canvas 轮次确定性经过 uapp_action、m1_shadow、operating_one_account_llm、gate_repair_llm、m5_extract 五个 DeepSeek 节点（与 s4_continuation01 六轮实测逐轮 5 次完全一致）；能力真实产出时另加该能力应用的 skill_llm 1 次，解析失败时最多再加 recovery_llm 1 次。",
+  "per_layer": [
+   {
+    "layer": "C1",
+    "dify_workflow_runs": 1,
+    "which": "Content Brief 应用直接调用",
+    "nested_app_runs": 0,
+    "deepseek_llm_node_attempts_expected": 1,
+    "deepseek_llm_node_attempts_max": 2
+   },
+   {
+    "layer": "C2",
+    "dify_workflow_runs": 2,
+    "which": "候选画布 T1、T2 各一次",
+    "nested_app_runs_max": 8,
+    "nested_which": "每轮 M3 宿主 / HOP / SEAM / 目标能力 FP 各 1",
+    "deepseek_llm_node_attempts_expected": 11,
+    "deepseek_llm_node_attempts_max": 14,
+    "expected_breakdown": "T1 = 5（停在缺口，skill_llm 不跑）；T2 = 6（5 + skill_llm）"
+   },
+   {
+    "layer": "C3",
+    "dify_workflow_runs": 4,
+    "which": "候选画布 T3、T4、T5、T6 各一次",
+    "nested_app_runs_max": 16,
+    "deepseek_llm_node_attempts_expected": 23,
+    "deepseek_llm_node_attempts_max": 28,
+    "expected_breakdown": "T3 = 5（停在 content_origin_mode 缺口）；T4/T5/T6 各 6"
+   }
+  ],
+  "total": {
+   "dify_workflow_runs": 7,
+   "nested_app_runs_max": 24,
+   "deepseek_llm_node_attempts_expected": 35,
+   "deepseek_llm_node_attempts_max": 44
+  },
+  "hard_cap": "实际 DeepSeek LLM 节点尝试数超过 44 即视为预算越界，立即停止并登记，不得继续。",
+  "retry": {
+   "allowed_only": "纯传输失败且该轮没有任何模型输出时，最多重试一次",
+   "not_allowed": "任何有模型输出的失败一律不重试；不得为追 PASS 重采样",
+   "evidence": "原 Attempt 与重试 Attempt 均落盘保留"
+  },
+  "record_actuals": "运行结束后必须登记实际 Dify runs、nested app runs、DeepSeek 成功/失败尝试数与重试数。"
+ },
+ "stop_rules": {
+  "order": "C1 → C2 → C3，严格串行",
+  "C1_fail": "立即停止，不运行 C2/C3",
+  "C2_fail": "立即停止，不运行 C3",
+  "C3_fail": "立即停止",
+  "on_any_fail_forbidden": [
+   "改冻结输入",
+   "改 Checker 或判定器",
+   "改任何 Dify 图、prompt、模型或参数",
+   "换模型",
+   "调参数",
+   "追加轮次或追加话术",
+   "第二次修复"
+  ],
+  "executor_side_defect_after_call": "若调用之后才发现 Runner、冻结输入、Fixture 或 Checker 有错：本轮不得重跑求 PASS。登记执行侧缺陷（含证据），把该层判为 NOT_VERIFIED，停在 CHECKPOINT，等规划侧裁决。",
+  "on_new_gap_after_T4": "保留原文与最高失效节点，立即停止；不追加话术、不重采样。"
+ },
+ "roles": {
+  "runner": "unified-app/workflows/S4_PHASE_C_RUN_v1.1.py —— 只发起、只记录、不判定；层间硬门读 v1.1 判定书",
+  "adjudicator": "unified-app/workflows/S4_PHASE_C_ADJUDICATE_v1.1.py —— 零模型调用；v1.0 单点覆盖 FB-07，其余逐字复用",
+  "separation": "运行器不读通过条件，判定器不发起调用。",
+  "selfcheck": "unified-app/workflows/S4_PHASE_C_SELFCHECK_v1.1.py"
+ },
+ "evidence_paths": {
+  "dir": "unified-app/evidence/stages/s4_phase_c/",
+  "c1": "S4-PC-C1.json",
+  "c2": "S4-PC-T1.json、S4-PC-T2.json",
+  "c3": "S4-PC-T3.json … S4-PC-T6.json",
+  "result": "unified-app/stages/S4_PHASE_C_RESULT_v1.1.json（v1.0 判定书原样保留）",
+  "no_overwrite": "运行器与判定器均拒绝覆盖任何已存在的证据文件"
+ },
+ "allowed_upgrades_if_all_three_pass": [
+  "FACT_SUFFICIENCY_CHAIN_REPAIR = PASS / CURRENT",
+  "S4_CONTENT_ORIGIN_CONTINUATION = PASS / CURRENT"
+ ],
+ "not_authorized_by_this_freeze": [
+  "second_repair_iteration",
+  "graph_mutation",
+  "provider_repin",
+  "checker_or_fixture_mutation_after_run",
+  "old_evidence_overwrite",
+  "ab_comparison",
+  "repeated_sampling",
+  "full_formal_round",
+  "enter_s5",
+  "main_merge"
+ ],
+ "c1_evidence_reuse": {
+  "authorized_by": "Founder 2026-08-30",
+  "what": "对已落盘的 unified-app/evidence/stages/s4_phase_c/S4-PC-C1.json 做零模型调用的定向重判",
+  "not_authorized": [
+   "重跑 C1 调用",
+   "改冻结输入",
+   "改被测对象",
+   "改 P1-01…P1-04、P1-06 任一条"
+  ]
+ }
+}

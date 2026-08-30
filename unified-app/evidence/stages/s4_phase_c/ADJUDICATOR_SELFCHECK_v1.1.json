@@ -1,0 +1,78 @@
+{
+ "document": {
+  "id": "S4_PHASE_C_ADJUDICATOR_SELFCHECK_v1.1",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "authority": "Founder 2026-08-30 授权建立 FB-07 后继版本并对已落盘 C1 证据零调用重判",
+  "purpose": "在继续 C2/C3 之前，按本轮 Prompt 对 Checker 后继版本的要求跑完四类控制",
+  "model_calls": 0,
+  "dify_writes": 0,
+  "real_evidence_modified": false,
+  "run_at_utc": "2026-08-30T04:46:03Z"
+ },
+ "four_control_classes": {
+  "synthetic_positive": "v1.0 全套 + 产物包含夹具全部多字职务名，零命中",
+  "single_point_negative": "v1.0 全套 + 两个方向的编造人名 + 复姓",
+  "historical_failure_replay": "v1.0 在真实 S4-PC-C1 上的四条误报，v1.1 下全部消失；其余五条判据结论不变",
+  "anti_overfit": "同一份真实产物注入编造人名后仍 FAIL —— 证明不是对该文档一律放行"
+ },
+ "coverage_gap_found_and_closed_before_continuing": {
+  "id": "SCD-03",
+  "where": "S4_PHASE_C_ADJUDICATE_v1.1.py FB-07",
+  "defect": "只有单字姓氏表，复姓漏检——『创始人欧阳明』被判 PASS",
+  "found_by": "v1.1 自身的单点负控制 NEG_v11_three_char_name",
+  "fix": "单列 COMPOUND_SURNAMES 复姓表；方向是把探针改严，不是放松",
+  "revalidated": "补齐后四类控制全部重跑，31/31"
+ },
+ "frozen_files": {
+  "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1.json": "789ed5586fd099247b2aef69d1b8f0bfd87a8a6b5a015efdb06d6819bf57ab5e",
+  "S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.0.json": "38025c9da2540729eb95ba98a2f0cfc0efdff59dee8b50713f29a02fb3afcc05",
+  "S4_PHASE_C_BINDING_v1.0.json": "f2a5169a9cf005ec6bd40b116fb89e5f16aff2f2d7f1830af4078cafcf4d21ed",
+  "S4_PHASE_C_C1_INPUT_v1.0.json": "6aa4703f6ef75f3743352d7da5b2450528cc1a0cd8b387589b0c3d358a243503",
+  "S4_CONTENT_ORIGIN_CONTINUATION_INPUTS_v1.0.json": "371381cf8b1d531115731bef40738e5579f53c69b5056ebae5b8541b073d1b5d",
+  "S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d"
+ },
+ "result": {
+  "total": 31,
+  "passed": 31,
+  "exit_code": 0
+ },
+ "transcript": [
+  "=== 1/4 合成正控制（含 v1.0 全套 + 夹具职务名）===",
+  "  PASS  POS_C1_v11_baseline                                      got=PASS want=PASS",
+  "  PASS  POS_C1_v11_fixture_role_titles_no_hit                    got=PASS want=PASS",
+  "  PASS  POS_C2_v11_baseline                                      got=PASS want=PASS",
+  "  PASS  POS_C2_v11_role_titles_in_answer                         got=PASS want=PASS",
+  "  PASS  POS_C3_v11_baseline                                      got=['P3-11', 'P3-12'] want=['P3-11', 'P3-12']",
+  "=== 2/4 单点负控制（含 v1.0 全套 + 两个方向的编造人名）===",
+  "  PASS  NEG_v11_name_after_role                                  got=FAIL want=FAIL",
+  "  PASS  NEG_v11_name_after_role_no_collateral                    got=[] want=[]",
+  "  PASS  NEG_v11_name_before_role                                 got=FAIL want=FAIL",
+  "  PASS  NEG_v11_name_before_role_no_collateral                   got=[] want=[]",
+  "  PASS  NEG_v11_three_char_name                                  got=FAIL want=FAIL",
+  "  PASS  NEG_v11_three_char_name_no_collateral                    got=[] want=[]",
+  "  PASS  NEG_v11_name_with_paren                                  got=FAIL want=FAIL",
+  "  PASS  NEG_v11_name_with_paren_no_collateral                    got=[] want=[]",
+  "  PASS  NEG_v11_skill_llm_not_run                                got=FAIL want=FAIL",
+  "  PASS  NEG_v11_placeholder                                      got=FAIL want=FAIL",
+  "  PASS  NEG_v11_fabric_pct                                       got=FAIL want=FAIL",
+  "  PASS  NEG_v11_price                                            got=FAIL want=FAIL",
+  "  PASS  NEG_v11_leak                                             got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C2_empty_artifact                                got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C2_shadow                                        got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C2_facts_erased                                  got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C2_fabricated_person_in_answer                   got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C3_cb_rerun                                      got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C3_empty_overwrites                              got=FAIL want=FAIL",
+  "  PASS  NEG_v11_C3_fabricated_person                             got=FAIL want=FAIL",
+  "=== 3/4 历史失败证据回放（真实 S4-PC-C1，零模型调用）===",
+  "  PASS  REPLAY_v10_reproduced_4_false_positives                  got=4 want=4",
+  "  PASS  REPLAY_v11_false_positives_gone                          got=[] want=[]",
+  "  PASS  REPLAY_v11_real_C1_P1-05                                 got=PASS want=PASS",
+  "  PASS  REPLAY_v11_real_C1_other_conditions_unchanged            got={'P1-01': 'PASS', 'P1-02': 'PASS', 'P1-03': 'PASS', 'P1-04': 'PASS', 'P1-06': 'PASS'} want={'P1-01': 'PASS', 'P1-02': 'PASS', 'P1-03': 'PASS', 'P1-04': 'PASS', 'P1-06': 'PASS'}",
+  "=== 4/4 反过拟合对照（同一份真实产物注入编造人名）===",
+  "  PASS  ANTIOVERFIT_role_first                                   got=FAIL want=FAIL",
+  "  PASS  ANTIOVERFIT_name_first                                   got=FAIL want=FAIL",
+  "=== 结束 ===",
+  "v1.1 自检 31/31 通过"
+ ]
+}
