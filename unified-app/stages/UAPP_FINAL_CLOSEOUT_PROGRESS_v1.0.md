@@ -45,6 +45,11 @@ Gate v1.3 CAP-01 run `7d88a44f-6fc4-44ac-b51f-a664d16b546e`：MATRIX 运行 1 �
 非合同化的 M2 artifact/content_version 行，故该运行保持 NOT_VERIFIED，不追溯改绿；
 当前启动本 Prompt 唯一一次 post-result Checker rebase（1/1）。
 
+Checker v1.2 已完成 7/7 判别力控制；当前正式 Gate v1.4 sha256
+`a5660c3c3d7d9a6d26b6d39dab6df28d510f3f103ff0d1f4744a3ceaf8d601e5`。
+该 Gate 继续使用原 19 条自然语言输入和 UAPP-AC-01..11，仅把 AC-04 编译回根合同的
+“最小可执行 smoke + 真实产物可回指”，并保留场景实际要求的 M2 副作用检查。
+
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
 current_node: F2

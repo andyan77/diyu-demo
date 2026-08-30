@@ -1,0 +1,128 @@
+{
+  "document": {
+    "id": "UAPP_S5_CHECKER_CONTROLS_v1.2",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "model_calls": 0,
+    "post_result_checker_rebase": "1/1"
+  },
+  "source_raw_sha256": "af03740cc2a10345a0878f7477f12beef05a74d26c6cae6acd97ce40c4c39953",
+  "positive": {
+    "checks": {
+      "seam_artifact_nonempty": true,
+      "seam_artifact_nonplaceholder": true,
+      "store_exact_body_and_capability": true,
+      "store_length_identity": true,
+      "store_fingerprint_identity": true,
+      "task_ledger_identity": true,
+      "last_capability_identity": true
+    },
+    "artifact_len": 5868,
+    "artifact_sha256": "03291e2e792daf0bf23452fb6a5f2923edbec69f1336735763f31f3c3427cfc5",
+    "record_fp": "17f9be4abfadf14d",
+    "record_bfp": "b402b93041e74539"
+  },
+  "negative_cases": {
+    "negative_empty_seam_body": {
+      "checks": {
+        "seam_artifact_nonempty": false,
+        "seam_artifact_nonplaceholder": false,
+        "store_exact_body_and_capability": false,
+        "store_length_identity": false,
+        "store_fingerprint_identity": false,
+        "task_ledger_identity": false,
+        "last_capability_identity": true
+      },
+      "artifact_len": 0,
+      "artifact_sha256": "",
+      "record_fp": null,
+      "record_bfp": null
+    },
+    "negative_placeholder": {
+      "checks": {
+        "seam_artifact_nonempty": true,
+        "seam_artifact_nonplaceholder": false,
+        "store_exact_body_and_capability": false,
+        "store_length_identity": false,
+        "store_fingerprint_identity": false,
+        "task_ledger_identity": false,
+        "last_capability_identity": true
+      },
+      "artifact_len": 3,
+      "artifact_sha256": "a35ef95361b84d05bea3d3e423be31a1982047be889593470a4427289d9f86ea",
+      "record_fp": null,
+      "record_bfp": null
+    },
+    "negative_store_body_mismatch": {
+      "checks": {
+        "seam_artifact_nonempty": true,
+        "seam_artifact_nonplaceholder": true,
+        "store_exact_body_and_capability": false,
+        "store_length_identity": false,
+        "store_fingerprint_identity": false,
+        "task_ledger_identity": false,
+        "last_capability_identity": true
+      },
+      "artifact_len": 5868,
+      "artifact_sha256": "03291e2e792daf0bf23452fb6a5f2923edbec69f1336735763f31f3c3427cfc5",
+      "record_fp": null,
+      "record_bfp": null
+    },
+    "negative_fingerprint_mismatch": {
+      "checks": {
+        "seam_artifact_nonempty": true,
+        "seam_artifact_nonplaceholder": true,
+        "store_exact_body_and_capability": true,
+        "store_length_identity": true,
+        "store_fingerprint_identity": false,
+        "task_ledger_identity": true,
+        "last_capability_identity": true
+      },
+      "artifact_len": 5868,
+      "artifact_sha256": "03291e2e792daf0bf23452fb6a5f2923edbec69f1336735763f31f3c3427cfc5",
+      "record_fp": "17f9be4abfadf14d",
+      "record_bfp": "0000000000000000"
+    },
+    "negative_ledger_mismatch": {
+      "checks": {
+        "seam_artifact_nonempty": true,
+        "seam_artifact_nonplaceholder": true,
+        "store_exact_body_and_capability": true,
+        "store_length_identity": true,
+        "store_fingerprint_identity": true,
+        "task_ledger_identity": false,
+        "last_capability_identity": true
+      },
+      "artifact_len": 5868,
+      "artifact_sha256": "03291e2e792daf0bf23452fb6a5f2923edbec69f1336735763f31f3c3427cfc5",
+      "record_fp": "17f9be4abfadf14d",
+      "record_bfp": "b402b93041e74539"
+    },
+    "negative_last_capability": {
+      "checks": {
+        "seam_artifact_nonempty": true,
+        "seam_artifact_nonplaceholder": true,
+        "store_exact_body_and_capability": true,
+        "store_length_identity": true,
+        "store_fingerprint_identity": true,
+        "task_ledger_identity": true,
+        "last_capability_identity": false
+      },
+      "artifact_len": 5868,
+      "artifact_sha256": "03291e2e792daf0bf23452fb6a5f2923edbec69f1336735763f31f3c3427cfc5",
+      "record_fp": "17f9be4abfadf14d",
+      "record_bfp": "b402b93041e74539"
+    }
+  },
+  "checks": {
+    "positive_all_predicates": true,
+    "negative_empty_discriminated": true,
+    "negative_placeholder_discriminated": true,
+    "negative_store_body_discriminated": true,
+    "negative_fingerprint_discriminated": true,
+    "negative_ledger_discriminated": true,
+    "negative_last_capability_discriminated": true
+  },
+  "pass_count": 7,
+  "total": 7,
+  "result": "PASS"
+}
