@@ -1188,3 +1188,12 @@ canonical sha256 为 `8034ddba…cb544`，但 published UAPP 仍为 `f7d98573…
 0，模型/正式 run/业务副作用均 0。归因 `INPUT_ENVIRONMENT_OR_TOOL`，见
 `UAPP_S5_INLINE_ARTIFACT_SUCCESSOR_PUBLICATION_TRIAGE_001.md`。下一动作只版本化缩短发布标签，
 不改候选图或冻结判据。
+
+版本化发布器 v1.1 已发布完全相同的 frozen draft：UAPP graph md5
+`07ea334bfcbe6e87ba8c5cd5d5dac380`，canonical sha256 `8034ddba…cb544`，56 nodes / 58
+edges。M3/Hop/Seam/六能力/PP/provider 零漂移，active workflow 0。
+
+successor Manifest v1.8 / Executor v1.9 / Gate v1.8 已在模型调用前形成；哈希依次为
+`4e57aad6…9420` / `ed1aa91a…26a2` / `6c89f42a…88d3`。CAP-05 preflight exit 0。
+下一 Git push 只冻结上述发布证据和正式载体，状态 `PLANNED`；远端确认后才使用唯一
+successor CAP-05 槽位。

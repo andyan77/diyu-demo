@@ -21,8 +21,8 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.5 冻结 | COMPLETED | PASS / CURRENT；commit `adc6ff1` | 0 | NONE | 15 项零模型预检 |
-| N3 正式验收 | IN_PROGRESS | CAP-05 Gate v1.7 FAIL；历史 Attempt 保留 | 本 REBASE 1/21；5/126 LLM | inline companion fields | 唯一 successor 修复 |
-| N4 有界修复 | IN_PROGRESS | successor 1/1 实现完成；28/28 机器硬门 PASS | 0 | NONE | 冻结并发布 successor |
+| N3 正式验收 | IN_PROGRESS | successor Gate v1.8 已预检；当前图正式 PASS 0/19 | 本 REBASE 1/21；5/126 LLM | NONE | CAP-05 successor 唯一调用 |
+| N4 有界修复 | COMPLETED | successor 1/1 发布；28/28 机器硬门 PASS | 0 | NONE | N3 复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
 当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
@@ -231,6 +231,15 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 归因 `INPUT_ENVIRONMENT_OR_TOOL`；模型调用、正式 run、业务状态和外部副作用均为 0。
 - 只允许版本化缩短发布标签；候选图、场景、判据和 Checker 不变。
 - 唯一下一动作：封存 Triage 后，用 v1.1 发布器回读 draft 并发布同一候选。
+
+#### successor 发布与 Gate v1.8
+
+- v1.1 发布器成功发布同一 frozen draft；UAPP graph md5 `07ea334b…c380`，canonical sha256
+  `8034ddba…cb544`，56 节点/58 边。
+- M3/Hop/Seam/六能力/PP/provider 全部保持冻结图；active workflow 0。
+- Manifest v1.8 sha256 `4e57aad6…9420`；Executor v1.9 sha256 `ed1aa91a…26a2`；
+  Gate v1.8 sha256 `6c89f42a…88d3`。CAP-05 零模型 preflight exit 0。
+- 唯一下一动作：Gate/Manifest/Executor/发布证据提交并普通 push 后，执行唯一 successor CAP-05。
 
 ## 激活现场
 

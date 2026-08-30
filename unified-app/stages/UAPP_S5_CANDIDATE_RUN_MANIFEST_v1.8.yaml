@@ -1,0 +1,55 @@
+document:
+  id: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.8
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  authority_event: UAPP_S5_INLINE_ARTIFACT_REBASE_2026_08_30
+  parent: UAPP_S5_CANDIDATE_RUN_MANIFEST_v1.7
+contract:
+  task_contract_sha256: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  semantic_delta: NONE
+  acceptance_delta: NONE
+candidate:
+  source_git_head_before_gate_freeze: 85d209f8bd9238ce7ce180359a90b51466a155c0
+  UAPP:
+    app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+    workflow_id: a96f4b64-9da0-446c-832a-f24b1da9d0e3
+    graph_md5: 07ea334bfcbe6e87ba8c5cd5d5dac380
+    graph_canonical_sha256: 8034ddba7c2db320d31d301aadb1e88411542950dc9352d3d637f917706cb544
+    node_count: 56
+    edge_count: 58
+  M3: cd93757bcf8ad322f3b32fc43b2da3ff
+  HOP: e38378c3c2a66b75aa7e645368c9e1ce
+  SEAM: db49a3da8973d4fdcbe9ecf63bdf7e2a
+  PP_provider: 8366328bf827bd0f460455d750d45c4f
+repair:
+  package: UAPP_CURRENT_TURN_INLINE_ARTIFACT_SOURCE_TO_BINDING_AND_DELIVERY
+  successor_iteration: 1/1
+  third_candidate_iteration: PROHIBITED
+  post_result_oracle_or_checker_rebase: 0
+frozen_files:
+  scenarios_sha256: 896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577
+  phase_a_result_sha256: 034a9a6e15d476d31130471f5e98d17a5ba2fe5f4229b3ddefdbcd804c22752e
+  successor_nodes_sha256: a06698070534f8f4a9105e29b4524e80ac7ea69525df8ec4c53aec856eae1c2e
+  successor_builder_v1_0_sha256: ec9e15de716e5b4fdb85b6f825b877f3978fa9cb149eb38ba3b39e3251c6a2e3
+  successor_controls_v1_1_sha256: 9430e12b643f33e12eb858c91be37248c8535ae03630a878f23d04777ac4f4d0
+  successor_controls_result_sha256: 0870d45ac4d6a8038fabe52accb664e0080055085a9b6b0d31326471c50697c8
+  publication_evidence_sha256: 89001991c53f738e4a1f8eb51ab86ea163f16f374dd8000f877493fa9e69d9bf
+budget:
+  historical_before_this_rebase: {top_level_runs: 8, llm_attempts: 44}
+  current_rebase_used_before_successor_gate: {top_level_runs: 1, llm_attempts: 5}
+  current_rebase_total_limits: {top_level_runs: 21, llm_attempts: 126}
+  lifetime_used_before_successor_gate: {top_level_runs: 9, llm_attempts: 49}
+  lifetime_max: {top_level_runs: 29, llm_attempts: 170}
+  same_scope_cap05_successor_runs_remaining: 1
+  pure_transport_replay_runs_max: 1
+  manual_retries: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+execution_order:
+  - UAPP-CAP-05 successor
+  - UAPP-CAP-06
+  - remaining Scenario v1.1 formal_order entries, each once
+scope:
+  founder_ac_12: NOT_AUTHORIZED
+  main_merge: NOT_ALLOWED
+  terminal_state: unset
