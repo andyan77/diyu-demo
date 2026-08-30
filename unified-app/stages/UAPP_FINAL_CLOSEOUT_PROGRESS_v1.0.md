@@ -21,9 +21,15 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.1 冻结 | COMPLETED | PASS / CURRENT | 0 | NONE | N3 |
-| N3 正式验收 | IN_PROGRESS | NOT_VERIFIED | 0/20 | NONE | CAP-01 |
-| N4 有界修复 | NOT_STARTED | NOT_APPLICABLE | 0 | N3 | 按需 |
+| N3 正式验收 | IN_PROGRESS | NOT_VERIFIED | 1/20；LLM 5/120 | CAP-01 缺少适用理由投影 | 等 N4 定向复验 |
+| N4 有界修复 | IN_PROGRESS | SUT 修复节点 1/2、迭代 1/2 | 0 | UAPP 投影接缝 | 最小修复与零模型控制 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
+
+当前正式 Attempt：`f40f6779-c115-41cb-be06-e819aa848af5`。路由只命中
+`MATRIX`，其他五能力零暗跑，但 UAPP 转交的 capability call 漏掉已有用户原话支持的
+`applicability_reason`，MATRIX 因而精确 Return、未生成 artifact。该 Attempt 保留为 FAIL；
+最高失效节点已由真实节点输入输出独立确认在 UAPP 自身投影接缝，受保护的 M3、Hop、
+Seam 与 MATRIX 不修改。
 
 ```yaml
 final_closeout_progress: F0 and F1 completed; F2 stopped at CHECKPOINT after confirmed SUT failure
