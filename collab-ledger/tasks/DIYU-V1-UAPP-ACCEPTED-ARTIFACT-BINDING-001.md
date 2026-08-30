@@ -256,3 +256,26 @@ PP b2 已原样重发为 workflow `da7311a2-76b3-4077-8024-1537f803cd76`，图 m
 
 当前 successor 正式成本仍为顶层 run `0 / 2`、LLM 节点尝试 `0 / 12`、人工重试 0、
 平台内部重放 0。下一动作只运行冻结 T2 原句一次；逐轮判定非 PASS 时立即停止并恢复稳定发布面。
+
+## 十六、Successor REBASE v1.2 · T2 正式运行与判定
+
+T2 顶层 run `4ed195b6-048a-4add-96c0-6043ddd9e0f8` 只发起一次，HTTP 200，
+原句、同 conversation / end_user、`inputs={}`、`files=[]`，无上传、无人工重试。
+六个专业能力中仅 Production Director 运行一次：run
+`f733f050-fea4-4399-aa0c-93767bf4f441`；其余五个均为 0。
+
+选择器取回继承的 T1 CS：3497 字，sha256
+`65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938`，
+fp `3d7342e36d939c31`，bfp `4af627e012e74e3a`。`uapp_fields` 为 `BOUND`，
+fields 解码正文、PD 实际输入解码正文与 selector 原文三者逐字相同，sha256 全等。
+
+PD 产物 9304 字，sha256
+`8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b`，
+fp `559a204d7c4f1f2a`，bfp `846c1f3833180c11`。存储中 CS 与 PD 独立存在，CS
+正文 hash 未变；`uapp_last_capability=PRODUCTION_DIRECTOR` 与最新真实非空产物一致。
+
+T2 判定：`PASS / CURRENT`。本轮 LLM 节点尝试 6，失败 0，平台内部重放 0；
+successor 累计顶层 run `1 / 2`、LLM `6 / 12`。原始与复算证据：
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_SUCCESSOR_RAW_T2_v1.2.json`、
+`unified-app/evidence/stages/uapp_artifact_binding/UAAB_SUCCESSOR_T2_VERIFY_v1.2.json`。
+下一动作只运行冻结 T3 原句一次；任一 T3 项非 PASS 即停止并恢复稳定发布面。

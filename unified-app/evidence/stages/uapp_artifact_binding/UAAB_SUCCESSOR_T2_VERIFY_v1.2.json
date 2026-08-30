@@ -1,0 +1,181 @@
+{
+  "document": {
+    "id": "UAAB_SUCCESSOR_T2_VERIFY_v1.2",
+    "task_id": "DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001",
+    "gate_sha256": "dbe4c023256e378d93827094b5c762f7c1b67b1c7528fff92fbbb84b219ea622",
+    "inputs_sha256": "f669c5163533807e47c827f9c08792f014ce4743e0df35ef23adb9b9b3ac29ca",
+    "model_calls": 0,
+    "dify_writes": 0
+  },
+  "result": {
+    "turn": "T2",
+    "workflow_run_id": "4ed195b6-048a-4add-96c0-6043ddd9e0f8",
+    "production_run_id": "f733f050-fea4-4399-aa0c-93767bf4f441",
+    "artifact": {
+      "length": 9304,
+      "sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+      "fp": "559a204d7c4f1f2a",
+      "bfp": "846c1f3833180c11"
+    },
+    "checks": [
+      {
+        "id": "T2-01",
+        "result": "PASS",
+        "observed": {
+          "professional_runs": {
+            "MATRIX": 0,
+            "CAMPAIGN": 0,
+            "CONTENT_BRIEF": 0,
+            "CREATIVE_SCRIPT": 0,
+            "PRODUCTION_DIRECTOR": 1,
+            "PUBLISHING_PACKAGING": 0
+          },
+          "production_run_id": "f733f050-fea4-4399-aa0c-93767bf4f441"
+        }
+      },
+      {
+        "id": "T2-02",
+        "result": "PASS",
+        "observed": {
+          "selection_status": "SELECTED",
+          "selected_fp": "3d7342e36d939c31",
+          "selected_bfp": "4af627e012e74e3a",
+          "selected_capability": "CREATIVE_SCRIPT"
+        }
+      },
+      {
+        "id": "T2-03",
+        "result": "PASS",
+        "observed": {
+          "selector_length": 3497,
+          "selector_sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938"
+        }
+      },
+      {
+        "id": "T2-04",
+        "result": "PASS",
+        "observed": {
+          "artifact_binding_status": "BOUND",
+          "binding": [
+            {
+              "slot": "script_or_equivalent_beats",
+              "upstream_capability": "CREATIVE_SCRIPT",
+              "fp": "3d7342e36d939c31",
+              "bfp": "4af627e012e74e3a",
+              "artifact_norm_len": 3441,
+              "artifact_raw_len": 3497,
+              "produced_turn": 9,
+              "accepted_turn": 10,
+              "accepted_revision": 10,
+              "lineage": "BOUND",
+              "identity_source": "SELECTOR_DIRECT"
+            }
+          ]
+        }
+      },
+      {
+        "id": "T2-05",
+        "result": "PASS",
+        "observed": {
+          "fields_decoded_sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938",
+          "production_input_decoded_sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938",
+          "expected_sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938"
+        }
+      },
+      {
+        "id": "T2-06",
+        "result": "PASS",
+        "observed": {
+          "artifact_length": 9304,
+          "artifact_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+          "artifact_status": "OK"
+        }
+      },
+      {
+        "id": "T2-07",
+        "result": "PASS",
+        "observed": {
+          "store_item_count": 3,
+          "CS": {
+            "fp": "3d7342e36d939c31",
+            "sha256": "65f58acb09de20b77ff1deb669e2210e5f128a4b06fbaab14fbf31cf9955b938"
+          },
+          "PD": {
+            "fp": "559a204d7c4f1f2a",
+            "sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b"
+          },
+          "persist_action": "APPENDED"
+        }
+      },
+      {
+        "id": "T2-08",
+        "result": "PASS",
+        "observed": {
+          "uapp_last_capability": "PRODUCTION_DIRECTOR",
+          "latest_real_artifact_capability": "PRODUCTION_DIRECTOR",
+          "CS_accepted_stale": [
+            true,
+            false
+          ],
+          "PD_accepted_stale": [
+            false,
+            false
+          ]
+        }
+      },
+      {
+        "id": "T2-COST",
+        "result": "PASS",
+        "observed": {
+          "llm_node_attempts": [
+            {
+              "app": "UAPP",
+              "workflow_run_id": "4ed195b6-048a-4add-96c0-6043ddd9e0f8",
+              "node_id": "m1_shadow",
+              "status": "succeeded",
+              "error": null
+            },
+            {
+              "app": "UAPP",
+              "workflow_run_id": "4ed195b6-048a-4add-96c0-6043ddd9e0f8",
+              "node_id": "uapp_action",
+              "status": "succeeded",
+              "error": null
+            },
+            {
+              "app": "M3",
+              "workflow_run_id": "ea5e7823-23c2-470c-a79c-5e6fbe933cd2",
+              "node_id": "operating_one_account_llm",
+              "status": "succeeded",
+              "error": null
+            },
+            {
+              "app": "M3",
+              "workflow_run_id": "ea5e7823-23c2-470c-a79c-5e6fbe933cd2",
+              "node_id": "gate_repair_llm",
+              "status": "succeeded",
+              "error": null
+            },
+            {
+              "app": "HOP",
+              "workflow_run_id": "4b54e31b-001c-4e16-ac3e-5840af0bdf39",
+              "node_id": "m5_extract",
+              "status": "succeeded",
+              "error": null
+            },
+            {
+              "app": "PRODUCTION_DIRECTOR",
+              "workflow_run_id": "f733f050-fea4-4399-aa0c-93767bf4f441",
+              "node_id": "skill_llm",
+              "status": "succeeded",
+              "error": null
+            }
+          ],
+          "platform_internal_replays": 0,
+          "runner_attempts": 1
+        }
+      }
+    ],
+    "result": "PASS"
+  }
+}
