@@ -1,0 +1,154 @@
+{
+ "document": {
+  "id": "S4_CANONICAL_TASK_STATE_CANDIDATE_MANIFEST_v1.0",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "frozen_before_any_model_run": true,
+  "authority": "CONTINUE EXECUTION PROMPT v1.0 第五节第 5 步：Candidate Manifest 冻结",
+  "criteria_ref": {
+   "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+   "sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19"
+  },
+  "inputs_ref": {
+   "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_INPUTS_v1.0.json",
+   "sha256": "f19f5d1bc1dcba3061c578b42c43188484706eaa6e9dd265f3f5c37987ee17a6"
+  },
+  "supersedes_for_drift_check_only": "unified-app/evidence/UAPP_R1_PROTECTED_BASELINE_v1.0.json（db1b7a74…，原样保留、不覆盖）。本 Manifest 只是本轮漂移判据，不等于 S4 已验收。",
+  "git_head": "1f5004cd15b10fd8a28375ba022a717ca7d3105a",
+  "git_branch": "codex/v1-uapp-progressive-canvas-001",
+  "git_porcelain": "M unified-app/dsl/S4_PROGRESSIVE_CANVAS_v1.0.yml\n M unified-app/workflows/S4_BUILD_v1.0.py\n?? unified-app/evidence/S4_BUILD_07.json\n?? unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY.json\n?? unified-app/workflows/S4_CANONICAL_STATE_NODES_v1.0.py\n?? unified-app/workflows/S4_CANONICAL_STATE_VERIFY_v1.0.py",
+  "model_calls_so_far": 0
+ },
+ "repair": {
+  "authorized_once": "唯一一次根修复（second/third repair 均不再授权）",
+  "changed_nodes": [
+   "uapp_fields（重写为规范任务状态载体 + 上游接受闸门）",
+   "uapp_state（新增：artifact 血缘账本唯一写入者）",
+   "uapp_save（第三项赋值改由 uapp_state 提供）"
+  ],
+  "unchanged_protected": [
+   "M1",
+   "M2",
+   "最终 FP M3",
+   "Hop 目标应用与已钉 provider",
+   "最终 FP Seam",
+   "六个专业能力应用及其 Skill/Prompt/模型参数",
+   "旧 Gate 旧输入旧结果",
+   "main"
+  ],
+  "node_source_file": "unified-app/workflows/S4_CANONICAL_STATE_NODES_v1.0.py",
+  "node_source_sha256": "6c350c6a4e721b85a531d48fff13afefbe4f6a5218e334c1f191ca3aaba6f3fe",
+  "verifier_file": "unified-app/workflows/S4_CANONICAL_STATE_VERIFY_v1.0.py",
+  "verifier_sha256": "4722325a363d43d5fe3690f551b1419ea977edbd428dc8d535609a6a90dfe61f",
+  "pre_run_controls": {
+   "file": "unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY.json",
+   "sha256": "78004a8fa3512b96b548e3502f5b58ae1f111cde99f0853fbe48e26467893355",
+   "result": "14/14 PASS（B5 十一条正负控制 + 三条真实载荷重放）"
+  },
+  "phase_a_recheck": {
+   "file": "unified-app/evidence/stages/s4_canonical_state/S4_PHASE_A_ROOT_CAUSE_RECHECK.json",
+   "sha256": "71f37d9dccb02dd2359e70494beec8ac8964f4abd6574e606414c2b28bc07956",
+   "result": "9/9 PASS"
+  }
+ },
+ "candidate_canvas": {
+  "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+  "name": "DIYU V1 · Unified Founder Canvas · Progressive Candidate",
+  "published_version": "2026-08-30 07:11:27.885795",
+  "graph_md5": "99c3edf7bd12172a4fb011b588f25e57",
+  "graph_sha256": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+  "node_count": 49,
+  "edge_count": 51,
+  "model_hashes": {
+   "m1_shadow": {
+    "provider": "langgenius/deepseek/deepseek",
+    "name": "deepseek-v4-flash",
+    "completion_params_sha256": "2d542d4f4460b3e7e8b5578a0e362c1dcac1d6684cba59c726c699b97eb362b2"
+   },
+   "uapp_action": {
+    "provider": "langgenius/deepseek/deepseek",
+    "name": "deepseek-v4-flash",
+    "completion_params_sha256": "6e59cd85bb6773244948f877c49d377f199c41a7bfb5976c23ddeedf00c01b77"
+   },
+   "m1_chat_llm": {
+    "provider": "langgenius/deepseek/deepseek",
+    "name": "deepseek-v4-flash",
+    "completion_params_sha256": "96186934dfd215349154c3c944f4b0081264fc89806052d475023a65045cdcb4"
+   }
+  },
+  "prompt_hashes": {
+   "m1_shadow": "119eee8ddc883030b417457ccb3fe8ffdfdf2cc2e98dc1187188610663211639",
+   "uapp_action": "a77423e1d5136ab7b660f154bdf7a5d7a9e79dbc1df3575f4fdceff1d04b888f",
+   "m1_chat_llm": "51f26ea0061cc08d425ab140aa7e5c073d6a93f08bdb510b621c7954180dfbe1"
+  },
+  "tool_parameter_hashes": {
+   "uapp_m3": "8f71811fa0b0e996e465a0e97ec347d7a4e9ade0014f589687598ef99ba68dd8",
+   "uapp_hop": "db0d565d36964a2ba0d799f0ccc475ded56598957926a522286f5fc5580ba4a2",
+   "uapp_seam": "c49f66666dae7d3436d0b5cdf522ee667c074fcc69b371a2ab38f30388bc91e8"
+  },
+  "code_node_hashes": {
+   "m1_join": "ccc228f2614567610f33fc63e4e217526f1ee7795800b9b7fcbf56d3924dfff3",
+   "m1_compiler": "326d08880b3520b93b70edd68b67d8ea3986364325787b57b2b270c2f29f1e3b",
+   "uapp_route": "0abc7d46583bc5f91bfdf9d90ba1ada8f4bc6687a4b2a7fb5800d90f2726f376",
+   "uapp_ask_one": "a86673a389798bd3a2baacb8bc5bdcb698798d16b1525c224551b9aee5162ed6",
+   "boot_p1": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p2": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p3": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p4": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "boot_p5": "5de72d9bd8d97711c20de5e005c66c28ef19ac3dcb805e305123c71882da156b",
+   "uapp_ctx": "5efb4adc7b8ec4afc8ac706f253c5734c007fae19774a04c3a5ddd08118ec508",
+   "uapp_s2_pending": "41d971bb5c538b7977edb3e87f96a5004a65b414d03faf3deb59c720fb235793",
+   "uapp_chat_guard": "3c0aad20e118c89a3591eaf4d1bb4067eb9af2c85d7f65a924a12ab5e429b9f2",
+   "uapp_m3_fail": "5b6ac36e1f71dd20f53a1375e590e377e6a4ff551410528f3384181b6cedfd76",
+   "uapp_fields": "d8d9d1c3ce8dea98ba68635876706897ae8933d0ff00dc520546ffa241cc3518",
+   "uapp_noseam": "3a5dbbf66061098e7b9220a697f73d2ff68ca1197c3df528fd2383e65363dbc2",
+   "uapp_delivery": "8856fe9d1726fe0f200d149a0380fce432e8e55768ab9ded4e3c94831561382f",
+   "uapp_persist": "9d986b01ad79bbd3ed9ebc01d94c930f1c75b2ccc796a72135e9a3dc6791b7d3",
+   "uapp_state": "3368eb53d45311c382563801713cd86e93b22b0976238d0569b6a8af4582a1d1",
+   "uapp_cap_fail": "5b6ac36e1f71dd20f53a1375e590e377e6a4ff551410528f3384181b6cedfd76"
+  }
+ },
+ "candidate_before_repair": {
+  "graph_sha256": "8998088ed9fa06d5b3582778eeaf535f67fc112d5e1a41aed0800be913df4a99",
+  "node_count": 48,
+  "edge_count": 50,
+  "note": "上一轮受影响连续链所用版本，Dify 版本历史中原样保留"
+ },
+ "protected_apps_graph_md5": {
+  "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+  "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+  "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+  "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+  "M1_HOST": "cd93757bcf8ad322f3b32fc43b2da3ff",
+  "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+  "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+  "PUBLISHING_PACKAGING": "788c8555aca09e6fa6d979f237f70157",
+  "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a"
+ },
+ "protected_zero_drift_vs_R1": true,
+ "hop_provider": {
+  "name": "diyu_uapp_hop",
+  "pinned_version": "2026-08-30 03:38:31.449618",
+  "pinned_m5_compose_sha256": "6474b902c81c7d91fe8f6143c0a3ece9bbde55dc58b64a822e595b088f2ee855",
+  "unchanged_by_this_repair": true
+ },
+ "conversation_variables": [
+  "snapshot_json",
+  "uapp_ws",
+  "uapp_account",
+  "uapp_cycle",
+  "uapp_task",
+  "uapp_actor",
+  "uapp_last_artifact",
+  "uapp_last_capability",
+  "uapp_last_material",
+  "uapp_last_version",
+  "uapp_last_publish",
+  "uapp_task_fields"
+ ],
+ "run_binding": {
+  "graph_mutation_during_run": "FORBIDDEN",
+  "provider_repin_during_run": "FORBIDDEN",
+  "canvas_workflow_runs": 7,
+  "hard_cap_llm_node_attempts": 48
+ }
+}

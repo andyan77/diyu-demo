@@ -1,0 +1,514 @@
+{
+ "document": {
+  "id": "S4_CANONICAL_TASK_STATE_GATE_v1.1",
+  "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+  "stage": "规范任务状态载体与真实 CS→PD→PP 连续链根修复",
+  "frozen_before_any_model_run": true,
+  "frozen_before_any_implementation_change": true,
+  "authority": "CONTINUE EXECUTION PROMPT v1.0（规划侧，2026-08-30）第四、六节",
+  "not_an_inplace_edit": "新建版本。不修改 S4_NARROW_CHAIN_GATE_v1.0.json（7ccb7e66…）、S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json（01405ebf…）与两份 Phase C 冻结件。旧 N-04/N-05/N-07/N-15 的 FAIL 原样保留，不覆盖、不改绿。",
+  "narrow_question": "建立具有规范身份、来源、作用域和可信等级的任务内状态载体之后，已确认字段能否跨轮保持、模型抽取不能升级为已确认事实、用户纠正能使依赖产物失效；并且 CB → CS →（精确询问 production_profile）→ 用户补齐 → PD 产出 → PP 基于该 PD 产出进入 PRE 包装，这条真实连续链能否一次走通。",
+  "phase_a_precondition": {
+   "file": "unified-app/evidence/stages/s4_canonical_state/S4_PHASE_A_ROOT_CAUSE_RECHECK.json",
+   "result": "A-01…A-09 全部 PASS（9/9），九条现场事实与规划侧描述一致",
+   "model_calls": 0
+  },
+  "what_pass_does_not_imply": [
+   "不等于 UAPP 全部验收完成",
+   "不等于 M1–M5 全部生产就绪",
+   "不等于所有 UAPP-AC 已全绿",
+   "不等于可以自动合并 main",
+   "不等于可以进入 S5"
+  ],
+  "supersedes": {
+   "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_GATE_v1.0.json",
+   "sha256": "724aace11b0a82213683c4dcb70b89090837b0db50ea09b7195b5d8937eefa19",
+   "kind": "新建版本，不原地修改。v1.0 原样保留。",
+   "when": "Phase C 实现之后、**任何模型调用之前**。本版不放宽任何业务含义，只把实现期必须确定下来的三条判定细则写清楚，并登记两条判据的自我改写。"
+  }
+ },
+ "B1_canonical_field_spec": {
+  "principle": "字段身份由本表**显式登记**。禁止『把所有 key: value 行都抓进来』的泛化正则：外壳里出现但本表未登记的键，一律只登记披露，不入载体、不回填。",
+  "record_shape": [
+   "canonical_id",
+   "value",
+   "source_kind",
+   "source_ref",
+   "authority_level",
+   "scope",
+   "revision",
+   "origin_turn"
+  ],
+  "scopes": {
+   "CONTENT_TASK": "当前这一条内容任务内有效",
+   "PRODUCTION": "当前这一条内容的制作执行条件",
+   "OPERATION": "账号运营周期级，不是单条内容的制作条件",
+   "DELIVERY": "发布侧条件"
+  },
+  "cross_scope_rule": "不同 scope 的规范身份互不顶替。同一外壳键在不同能力下解析到不同规范身份时，按 only_for_capabilities / not_for_capabilities 决定，绝不按字符串相同就通用。",
+  "fields": {
+   "objective.primary_goal": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "primary_goal",
+    "style": "BACKTICK",
+    "nest_under": "objective",
+    "structured_source": {
+     "kind": "M1_SNAPSHOT",
+     "path": "goal_structure.primary_goal",
+     "level": "D"
+    }
+   },
+   "objective.goal_family": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "goal_family",
+    "style": "PLAIN",
+    "nest_under": "objective",
+    "structured_source": {
+     "kind": "M1_SNAPSHOT",
+     "path": "business_goal_categories",
+     "level": "D",
+     "list_join": ","
+    },
+    "why_plain": "Hop 外壳里 goal_family 一直是裸键写法（证据：14 次出现全为裸键，0 次反引号）。旧载体只认反引号，因此结构上永远收不到它——这是 N-04 的根因。本版不靠放宽正则解决，而是从 M1 结构化真源取值。"
+   },
+   "audience.problem": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "audience_problem",
+    "style": "BACKTICK"
+   },
+   "audience.expected_change": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "expected_change",
+    "style": "BACKTICK"
+   },
+   "content.promise": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "content_promise",
+    "style": "BACKTICK"
+   },
+   "content.explicit_non_promise": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "explicit_non_promise",
+    "style": "BACKTICK"
+   },
+   "content.origin_mode": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "content_origin_mode",
+    "style": "BACKTICK"
+   },
+   "production.profile": {
+    "scope": "PRODUCTION",
+    "envelope_key": "production_profile",
+    "style": "BACKTICK"
+   },
+   "production.time_window": {
+    "scope": "PRODUCTION",
+    "envelope_key": "time_window",
+    "style": "BACKTICK",
+    "only_for_capabilities": [
+     "PRODUCTION_DIRECTOR"
+    ],
+    "why_split": "内容生产运行合同 v0.1 §4.1：生产时间窗口「缺 → 问／默认半天」，「不拍摄的档位，时间窗口的单位是检索工时不是拍摄时长」。运营周期的『四周内目标』是另一个量纲，两者不得互相顶替（A-06 已实测被顶替）。"
+   },
+   "operation.time_window": {
+    "scope": "OPERATION",
+    "envelope_key": "time_window",
+    "style": "BACKTICK",
+    "not_for_capabilities": [
+     "PRODUCTION_DIRECTOR"
+    ]
+   },
+   "production.capacity_or_owner": {
+    "scope": "PRODUCTION",
+    "envelope_key": "capacity_or_owner",
+    "style": "BACKTICK"
+   },
+   "cta.contract": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "cta_contract",
+    "style": "BACKTICK"
+   },
+   "cta.level": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "cta_level",
+    "style": "PLAIN"
+   },
+   "delivery.platform": {
+    "scope": "DELIVERY",
+    "envelope_key": "platform",
+    "style": "PLAIN"
+   },
+   "expression.subject": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "expression_subject",
+    "style": "BACKTICK"
+   },
+   "expression.subject_and_boundary": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "expression_subject_and_boundary",
+    "style": "BACKTICK",
+    "not_merged_with": "expression.subject",
+    "why": "两个槽位由两份能力合同各自声明，执行侧无权把它们合并或互相替代；登记为两个规范身份，是把 A-05 的『同义槽位并存』从事故变成显式事实。"
+   },
+   "expression.boundary": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "expression_boundary",
+    "style": "BACKTICK"
+   },
+   "facts.registered": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "facts_registered",
+    "style": "BACKTICK"
+   },
+   "facts.publish_permission": {
+    "scope": "CONTENT_TASK",
+    "envelope_key": "asset_publish_permission",
+    "style": "BACKTICK"
+   }
+  },
+  "artifact_slots_never_enter_field_carrier": {
+   "script_or_equivalent_beats": "上游脚本或等价 beats",
+   "content_body_or_beats": "上游内容正文或 beats"
+  },
+  "why_artifacts_excluded": "整篇 artifact 不是决策字段。旧载体把 6843 字 CS 正文当成 E 级字段存了两轮（A-03/A-04 实测），既污染缺失语义判定，也让 artifact 绕开血缘规则。artifact 一律走 B4 的接受与血缘账本。",
+  "unspecified_keys_policy": "DISCLOSE_ONLY"
+ },
+ "B2_authority_and_missing": {
+  "levels_high_to_low": [
+   "A_USER_THIS_TURN",
+   "B_USER_EARLIER_THIS_TASK",
+   "C_ACCEPTED_UPSTREAM_ARTIFACT",
+   "D_STRUCTURED_SOURCE",
+   "E_MODEL_EXTRACTION"
+  ],
+  "source_kinds": [
+   "USER_UTTERANCE",
+   "ACCEPTED_ARTIFACT",
+   "M1_SNAPSHOT",
+   "M2_PROJECTION",
+   "MODEL_EXTRACTION"
+  ],
+  "source_ref_required": "每一条载体记录必须带非空 source_ref，指向具体的已记录事件（轮次 + 节点 + 能力，或 artifact 的 sha256，或 M1 快照 revision + 路径）。无 source_ref 的值不得入载体，也不得用于关闭任何硬缺口。",
+  "A_detection": {
+   "rule_1": "该规范身份在上一轮结束时处于系统未决提问集合（asked）中 ⇒ 本轮的值即用户回答",
+   "rule_2": "本轮用户原话与该值的最长公共子串 ≥ 8 个中日韩汉字或字母数字字符 ⇒ 用户本轮主动给出／纠正",
+   "why_rule_2": "B3 要求『用户可主动纠正字段，不以系统上一轮是否刚好问过为前提』。rule_2 是不依赖模型的判定，且不针对任何具体字符串。",
+   "lcs_threshold_chars": 8
+  },
+  "E_cannot_upgrade": "模型抽取值一律记 E 级，永不自动升级。载体自己上一轮注入回外壳的值，在本轮被 Hop 回读时仍按 E 级处理，不得据此提升等级或改写 origin_turn（防止洗白）。",
+  "E_vs_E": "同为 E 级且值不同 ⇒ 维持旧值（不churn）。C/D 级同级值变化视为来源事件，更新并传播失效。",
+  "weaker_never_overwrites": "L_new 弱于 L_old ⇒ 一律维持旧值，登记 held，不静默采纳也不丢弃记录。",
+  "missing_semantics": {
+   "rule": "对整值（去掉首尾括号、引号、空白后）做**完整匹配**，命中即判为缺失语义，不入载体、不关闭缺口。",
+   "not_substring_search": "必须整值匹配。子串搜索会把正文里提到 UNDECLARED 的合法长文本误判为缺失（Phase A 复核自身踩到过这个误报，已登记）。",
+   "tokens": [
+    "未明确写出",
+    "未明确说明",
+    "未明确",
+    "未声明",
+    "未提供",
+    "未给出",
+    "未确认",
+    "未指定",
+    "未锁定",
+    "无法确定",
+    "尚未确定",
+    "尚未给出",
+    "待确定",
+    "待确认",
+    "待补充",
+    "暂无",
+    "不详",
+    "UNDECLARED",
+    "UNKNOWN",
+    "UNSPECIFIED",
+    "NOT_GIVEN",
+    "N/A",
+    "NA",
+    "TBD",
+    "无",
+    "-",
+    "—"
+   ],
+   "wrapper_max_chars": 24,
+   "legal_enums_never_missing": [
+    "NO_CTA",
+    "NOT_LOCKED",
+    "NOT_APPLICABLE",
+    "NONE_REQUIRED"
+   ],
+   "why_legal_enums": "NO_CTA 是明确的『无 CTA』裁决，NOT_LOCKED 是明确的『平台中立母版』状态，两者都是决定，不是缺失。误判会让系统重复索要已经给过的决定。"
+  },
+  "empty_never_erases": "空值、未提及、模型漏抽取，一律不擦除已确认字段。",
+  "A_correction_scope": {
+   "rule": "A 级新值与**已确认**（A/B）旧值不同时：该字段本身在未决提问集合中，或本轮不存在任何未决提问 ⇒ 成立为纠正；本轮存在未决提问且该字段不在其中 ⇒ 登记 deferred_conflict，维持旧值。",
+   "why": "本轮存在未决提问时，用户原话首先是对那个问题的回答。若允许回答对**其它**已确认字段构成纠正，一句回答会连带把上游产物置 STALE 并阻断下游——用一个偶然的字面重合推翻用户此前明确给过的决定。B3『不以系统上一轮是否刚好问过为前提』在无未决提问时完整成立。",
+   "empirical_check": "对本次冻结的七轮话术做零模型体检：与已确认值存在 >=8 字重合的只有 T2 与 T4，两轮都正是回答未决提问的轮次；T1/T3/T5/T6/T7 无任何重合。因此本细则在本场景内不改变任何判定，只在一般情形下防止误纠正。"
+  }
+ },
+ "B3_correction_and_invalidation": {
+  "correction": "用户本轮给出与已确认值不同的新值（A 级）⇒ 以新值更新，revision+1，并把依赖该字段的 artifact 置 STALE。不以『系统刚好问过』为前提。",
+  "withdrawal": "字段处于系统未决提问集合，且本轮解析出的值命中缺失语义 ⇒ 该字段被撤回，从载体移除，revision+1，依赖产物置 STALE。",
+  "erasure_requires_reason": "任何移除必须带 reason ∈ {USER_CORRECTION, WITHDRAWAL, TASK_KEY_CHANGE}。无 reason 的移除是 FAIL。",
+  "monotonicity_retired": "不再使用『字段集合永远单调不减』作为验收判据（旧 N-06 的写法）。改为：不得无原因擦除；合法纠正与撤回必须传播失效。",
+  "stale_must_block": "被置 STALE 的 artifact 不得再作为上游进入下一个专业能力。旧版 stale_downstream 只产出、无任何下游消费者（A-08 实测），本版必须真正阻断。",
+  "task_scope": "载体按 task_key 作用域。task_key 变化即新内容任务，不继承任何内容级字段。只有已合法写入 M2 的长期／账号事实与用户明确引用的合法历史产物才可跨任务。",
+  "intra_turn_refinement": {
+   "rule": "同一轮内先由较低权威登记、随后被更高权威给出不同值 ⇒ 记 REFINED，不算纠正、frev 不加、不传播 STALE。纠正只在旧值的 origin_turn < 当前轮时成立。",
+   "why": "T2 的实测：M1 快照先以 D 级登记 objective.primary_goal，同一轮用户回答又以 A 级给出更准确的一句。这是**首次确认**的两个步骤，不是对已确认值的推翻。若记成纠正，会凭空产生 STALE。"
+  }
+ },
+ "B4_artifact_acceptance_and_lineage": {
+  "ledger_record": [
+   "hash",
+   "producing_capability",
+   "task_key",
+   "produced_turn",
+   "length",
+   "accepted",
+   "accepted_turn",
+   "accepted_revision",
+   "depends_on",
+   "stale",
+   "stale_reason"
+  ],
+  "acceptance_event": "本次自然语言中的『这版可以，接着……』视为对当前任务上一份 artifact 的明确接受事件。",
+  "acceptance_tokens": [
+   "可以",
+   "行",
+   "没问题",
+   "通过",
+   "认可",
+   "就按这个",
+   "照这个",
+   "就这个",
+   "定了",
+   "OK",
+   "ok"
+  ],
+  "negation_guard": "接受词前紧邻 不 / 别 / 未 / 没 / 无 时不算接受。",
+  "no_acceptance_no_downstream": "未明确接受时，不得自动把该 artifact 送入下一专业能力。未接受或已 STALE 的上游 artifact 必须从外壳中摘除并重新计为缺口。",
+  "identity_pairing": "artifact 的 hash 与 producing_capability 必须成对保持；同一 hash 不得在账本中出现两个不同能力身份。",
+  "full_chain_slot": {
+   "criterion": "PP 的完整链验收位成立当且仅当 upstream_capability == PRODUCTION_DIRECTOR 且 upstream_delivery 的 sha256 == 本轮真实 PD artifact 的 sha256",
+   "pre_short_entry": "从 Creative Script 直接进入 PP 是**合法的 PRE 短入口**，单独登记，但不得填入完整链验收位。上一轮 9031 字 PP 正属此类（A-01 实测）。"
+  },
+  "single_char_token_boundary": {
+   "rule": "单字接受词（『行』）只有落在句读边界上才算接受词，前后必须是标点或串首尾。",
+   "why": "否则『执行』『进行』『银行』『一行』都会误判为用户接受了上一份产物。"
+  }
+ },
+ "B5_pre_run_deterministic_controls": {
+  "gate": "以下 11 条全部通过才允许调用模型。任何一项不通过：停止，不调用模型。",
+  "every_positive_has_a_negative": "第 11 条要求每条正控制至少配一个单点负控制；负控制必须是只改一个变量的最小反例，不是整体重写。",
+  "controls": [
+   {
+    "id": "P-01",
+    "name": "M1 business_goal_categories 规范映射到 objective.goal_family",
+    "pos": "快照 business_goal_categories 非空 ⇒ objective.goal_family 取到值，来源记 M1_SNAPSHOT、等级 D",
+    "neg": "快照 business_goal_categories 为空列表 ⇒ objective.goal_family 不产生值，仍为缺口"
+   },
+   {
+    "id": "P-02",
+    "name": "缺失 primary_goal 不会因占位文本被填满",
+    "pos": "外壳给出『（已登记来源中未明确写出）』⇒ 不入载体，objective.primary_goal 仍是缺口",
+    "neg": "外壳给出真实一句话目标 ⇒ 正常入载体并可回填"
+   },
+   {
+    "id": "P-03",
+    "name": "运营周期时间不会填入 production.time_window",
+    "pos": "载体持有 operation.time_window=四周内，PD 轮 time_window 缺口 ⇒ 不被回填，仍是缺口",
+    "neg": "载体持有 production.time_window ⇒ PD 轮同一缺口被正常回填"
+   },
+   {
+    "id": "P-04",
+    "name": "低权威值不能覆盖用户确认值",
+    "pos": "A 级已确认值遇到本轮 E 级不同值 ⇒ 维持旧值，登记 held",
+    "neg": "E 级已有值遇到本轮 A 级新值 ⇒ 以新值更新"
+   },
+   {
+    "id": "P-05",
+    "name": "用户主动纠正能更新值并使依赖 artifact STALE",
+    "pos": "用户本轮原话与新值 LCS≥8 且字段未被系统询问 ⇒ 更新、revision+1、依赖 artifact 置 STALE",
+    "neg": "本轮原话与新值无 8 字重合 ⇒ 按 E 级处理，不更新、不产生 STALE"
+   },
+   {
+    "id": "P-06",
+    "name": "真正跨轮字段在清空载体后重新成为缺口",
+    "pos": "选一个 origin_turn < 当前轮且本轮在缺口列表中的字段，清空载体重放 ⇒ 该字段重新出现在缺口里",
+    "neg": "同轮自填字段（origin_turn == 当前轮）不得被选为该控制的样本",
+    "fixes": "旧 N-15 负控制误选 T1 同轮自填字段"
+   },
+   {
+    "id": "P-07",
+    "name": "新 task_key 不继承上一任务内容字段",
+    "pos": "换 task_key 重放 ⇒ 载体清空，内容级字段一个不继承",
+    "neg": "同 task_key 重放 ⇒ 字段正常继承"
+   },
+   {
+    "id": "P-08",
+    "name": "同一规范身份不能同时非空又出现在缺口里；发生即 fail-closed",
+    "pos": "外壳中 F 非空且 F 在 gaps 中 ⇒ 该外壳值不入载体，F 保持缺口，登记 contradiction",
+    "neg": "F 非空且不在 gaps 中 ⇒ 正常入载体",
+    "registers": "TD-UAPP-23"
+   },
+   {
+    "id": "P-09",
+    "name": "PP 直接读取 CS 时只登记 PRE 短入口，不算完整链",
+    "pos": "PP 上游是 CS artifact ⇒ lineage = PRE_SHORT_ENTRY，完整链位不成立",
+    "neg": "PP 上游是本轮 PD artifact 且 hash 一致 ⇒ lineage = FULL_CHAIN"
+   },
+   {
+    "id": "P-10",
+    "name": "artifact 与 capability 身份必须成对保持",
+    "pos": "同一 hash 二次出现且能力身份不同 ⇒ 判定冲突并拒绝",
+    "neg": "同一 hash 二次出现且能力身份一致 ⇒ 正常合并，不重复计数"
+   },
+   {
+    "id": "P-11",
+    "name": "未接受或已 STALE 的上游 artifact 不得进入下一能力",
+    "pos": "上游 artifact 未被接受 ⇒ 从外壳摘除并计为缺口",
+    "neg": "上游 artifact 已被接受且非 STALE ⇒ 保留在外壳中"
+   }
+  ],
+  "criteria_self_corrections": [
+   {
+    "id": "R-01",
+    "was": "要求 objective.goal_family / primary_goal 在重放末态必须是 D 级",
+    "now": "要求两者取到真实值、非占位、有 source_ref、且**不是 E 级**",
+    "why": "规范权威顺序是 A > B > C > D > E。系统在 T1 由 M1 快照以 D 级登记、T2 被用户回答升为 A，是正确的升级路径。原判据把某一个具体等级写死，属判据侧过度指定（ORACLE_OR_CRITERION）。",
+    "when": "模型调用之前"
+   },
+   {
+    "id": "R-02",
+    "was": "要求真实载荷重放里出现非空 contradictions",
+    "now": "要求占位值确实被拦在载体之外并保持缺口；矛盾检测的可触发性由 P-08 单点负控制证明",
+    "why": "缺失语义整值匹配先于矛盾检测生效，占位值在进入候选集合之前就被拦掉，因此 contradictions 恒空。这是两道防线的正确先后，不是漏检。原判据假设错了执行顺序。",
+    "when": "模型调用之前"
+   }
+  ],
+  "result": {
+   "file": "unified-app/evidence/stages/s4_canonical_state/S4_CANONICAL_STATE_VERIFY.json",
+   "verdict": "14/14 PASS",
+   "model_calls": 0
+  }
+ },
+ "phase_d_run_criteria": {
+  "note": "逐条对应 CONTINUE EXECUTION PROMPT v1.0 第六节『必须验证』九项，业务含义不放宽。",
+  "checks": [
+   {
+    "id": "V-01",
+    "text": "T2 Content Brief 真实产出（artifact 非空、非占位）"
+   },
+   {
+    "id": "V-02",
+    "text": "T3 只询问真正阻塞的 content.origin_mode；不再缺 objective.goal_family；不使用缺失占位符补齐"
+   },
+   {
+    "id": "V-03",
+    "text": "T4 回答后 Creative Script 真实产出"
+   },
+   {
+    "id": "V-04",
+    "text": "T5 只询问 production.profile 中真正缺失的制作条件；不重复询问 content.origin_mode"
+   },
+   {
+    "id": "V-05",
+    "text": "T6 回答后回到同一个 Production Director 任务并产出 PD artifact"
+   },
+   {
+    "id": "V-06",
+    "text": "T7 的 PP：upstream_capability = PRODUCTION_DIRECTOR；upstream_delivery hash = T6 PD artifact hash；无真实成片／manifest 时按 PRE 边界交付，不声称 FINAL"
+   },
+   {
+    "id": "V-07",
+    "text": "任一用户确认字段均有 source_ref；模型临时抽取值未成为跨轮硬事实"
+   },
+   {
+    "id": "V-08",
+    "text": "没有暗跑其它能力、没有泄漏、没有编造、没有未授权素材声明、没有重复 M2 副作用"
+   },
+   {
+    "id": "V-09",
+    "text": "九个受保护应用与钉住 provider 零漂移"
+   }
+  ],
+  "inherited_verbatim": {
+   "from": "unified-app/stages/S4_CONTENT_ORIGIN_CONTINUATION_GATE_v1.0.json",
+   "sha256": "01405ebfdc24f106b2673465002c307360e31ed4cc89a5793ac8776f1099996d",
+   "items": [
+    "authorization_overclaim_tokens",
+    "leak_forbidden_tokens",
+    "undecidable_rule"
+   ]
+  },
+  "fabrication_probes": {
+   "from": "unified-app/stages/S4_PHASE_C_POINT_VERIFICATION_FREEZE_v1.1.json",
+   "sha256": "789ed5586fd099247b2aef69d1b8f0bfd87a8a6b5a015efdb06d6819bf57ab5e",
+   "items": "FB-01…FB-07 v1.1 逐字沿用（四类控制 31/31）"
+  },
+  "final_not_claimed_tokens": [
+   "已定稿",
+   "定稿完成",
+   "FINAL",
+   "final_cut",
+   "成片已确认",
+   "母版已完成"
+  ],
+  "acceptance_events_expected": {
+   "T3": "『刚才的制作依据可以』⇒ 接受 Content Brief",
+   "T5": "『这版口播稿可以』⇒ 接受 Creative Script",
+   "T7": "『刚才的制作方案可以』⇒ 接受 Production Director",
+   "T6_disclosure": "T6『就按这个制作方式做』会命中接受词，但当轮不存在未接受产物 ⇒ 空操作。此事先登记，避免事后解释。"
+  }
+ },
+ "budget": {
+  "canvas_workflow_runs": 7,
+  "expected_llm_node_attempts": 39,
+  "hard_cap_llm_node_attempts": 48,
+  "resampling": 0,
+  "ab_tests": 0,
+  "retry_policy": "任何产生了模型输出的失败不得重试；纯传输失败且零模型输出最多重试 1 次并保留 Attempt 1",
+  "fixture_uploads": 7
+ },
+ "stop_rules": {
+  "b5_fail": "B5 任一控制不通过 ⇒ 停止，不调用模型",
+  "first_formal_fail": "Phase D 第一项正式 FAIL ⇒ 立即停止；不改实现、不改判据、不补输入、不重跑求 PASS",
+  "executor_side_defect_after_call": "若调用后才发现 Runner、输入、Fixture 或 Checker 有错，本轮不得重跑求 PASS；登记执行侧缺陷并停 CHECKPOINT",
+  "scope_intrusion": "作用域隔离预检 fail-closed：触碰候选图、九个保护应用、provider 钉、本任务 M2 作用域或证据目标 ⇒ 立即停止",
+  "graph_mutation_during_run": "FORBIDDEN",
+  "second_implementation_change_after_first_model_call": "FORBIDDEN"
+ },
+ "impact_and_inheritance": {
+  "no_blanket_stale": "不得 blanket STALE。",
+  "preserved": [
+   "S1–S3 已验证结果",
+   "已成立的能力路由证据",
+   "content_origin_mode 不重复询问的历史证据（T4→T5 载体补齐，hop 仍报缺口但用户未被再问）",
+   "Content Brief 与 Creative Script 的真实产出",
+   "PP 从 CS 直达形成 PRE 包的合法短入口证据",
+   "九个保护应用零漂移证据"
+  ],
+  "stale_set": [
+   "依赖旧字段载体的结论",
+   "依赖旧 artifact 接受规则的结论",
+   "依赖旧连续链血缘的结论"
+  ],
+  "old_fails_preserved": "旧 N-04 / N-05 / N-07 / N-15 的 FAIL 原样保留；新版 PASS 只作 successor 证据，不追溯改写历史。"
+ },
+ "allowed_upgrades_if_all_pass": [
+  "CANONICAL_TASK_STATE_CARRIER = PASS / CURRENT",
+  "CROSS_TURN_CORRECTION_PROPAGATION = PASS / CURRENT",
+  "CS_PD_PP_NARROW_CHAIN = PASS / CURRENT",
+  "TD-UAPP-23 = CLOSED / CURRENT",
+  "S4_CONTENT_ORIGIN_CONTINUATION = PASS / CURRENT"
+ ],
+ "candidate_manifest": {
+  "file": "unified-app/stages/S4_CANONICAL_TASK_STATE_CANDIDATE_MANIFEST_v1.0.json",
+  "sha256": "3b8a7e9a59b56b9b6b93868bf762942ba343c789bec6bb8c3da044e277a3e468",
+  "candidate_published_graph_sha256": "6bf7c8f5f050e0e831d0b4afe29b2835fb08f48da344a2df898d7ca081590852",
+  "node_count": 49,
+  "edge_count": 51,
+  "published_version": "2026-08-30 07:11:27.885795"
+ }
+}

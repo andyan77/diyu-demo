@@ -86,9 +86,6 @@ workflow:
   - description: 本内容任务已确认字段的结构化载体（JSON）。业务真源在 M2 与上游产物，这里只存本任务作用域内已确认过的字段与其权威等级，供确定性合成使用。
     id: 1fc225d3-6301-5a3d-b0cc-e5cd53e2429a
     name: uapp_task_fields
-    selector:
-    - conversation
-    - uapp_task_fields
     value: ''
     value_type: string
   environment_variables: []
@@ -680,9 +677,21 @@ workflow:
         isInIteration: false
         isInLoop: false
         sourceType: code
-        targetType: assigner
-      id: uapp_persist-source-uapp_save
+        targetType: code
+      id: uapp_persist-source-uapp_state
       source: uapp_persist
+      sourceHandle: source
+      target: uapp_state
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: uapp_state-source-uapp_save
+      source: uapp_state
       sourceHandle: source
       target: uapp_save
       targetHandle: target
@@ -4550,82 +4559,285 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        code: "\nimport json\nimport re\n\n# 任务作用域已确认字段的确定性合成。规划侧裁决 TD-UAPP-20 的工程编译。\n\
-          #\n# 权威顺序 A > B > C/D > E：\n#   A 用户当前轮明确补充/确认/纠正的字段——判定依据是\"系统上一轮就是问的这一项\"\
-          \n#   B 当前内容任务已确认字段（载体）\n#   C/D 成功上游产物与 M2 投影中已锁定的字段——它们进入载体的通道与 B 相同\n\
-          #   E 当前轮模型抽取结果，只能补空缺，不能覆盖 A–D\n#\n# 三条确定性规则：\n#   1 空值、未提及、模型漏抽取，一律不擦除已确认字段\n\
-          #   2 用户明确纠正（系统问过的那一项这一轮有了新值）以新值更新，并登记依赖下游 STALE\n#   3 载体按 task_key 作用域。task_key\
-          \ 变了就是新内容任务，一律不继承内容级决定\n#\n# 本节点不制造事实：载体里的每一个值，都来自本任务此前某一轮真实发出的能力外壳。\n#\
-          \ 载体为空时（首轮），本节点是恒等变换——外壳与缺口原样透传。\n\nFIELD_LINE = re.compile(r\"^(\\s*)`([A-Za-z_][A-Za-z0-9_]*)`\\\
-          s*:\\s*(.*)$\")\nNESTED_UNDER_OBJECTIVE = (\"primary_goal\",)\n\n\ndef _norm_gap(g):\n\
-          \    \"\"\"objective.primary_goal -> primary_goal；去掉括号里的说明。\"\"\"\n    g\
-          \ = (g or \"\").strip()\n    g = re.split(r\"[（(]\", g)[0].strip()\n   \
-          \ if \".\" in g:\n        g = g.rsplit(\".\", 1)[-1]\n    return g\n\n\n\
-          def _split_gaps(text):\n    out = []\n    for x in re.split(r\"[；;]\", text\
-          \ or \"\"):\n        x = _norm_gap(x)\n        if x and x != \"无\":\n  \
-          \          out.append(x)\n    return out\n\n\ndef _parse(env):\n    \"\"\
-          \"把外壳拆成行，并取出全部反引号字段。值是单行的（上游 _clean 已折叠空白）。\"\"\"\n    lines = (env or \"\
-          \").split(\"\\n\")\n    found = {}\n    for i, ln in enumerate(lines):\n\
-          \        m = FIELD_LINE.match(ln)\n        if m:\n            found[m.group(2)]\
-          \ = {\"i\": i, \"indent\": m.group(1), \"v\": m.group(3).strip()}\n    return\
-          \ lines, found\n\n\ndef _set(lines, found, key, value):\n    \"\"\"已有该行就原地替换；没有就按正确缩进插入。不动其它任何一行。\"\
-          \"\"\n    if key in found:\n        e = found[key]\n        lines[e[\"i\"\
-          ]] = \"%s`%s`: %s\" % (e[\"indent\"], key, value)\n        e[\"v\"] = value\n\
-          \        return\n    if key in NESTED_UNDER_OBJECTIVE:\n        for i, ln\
-          \ in enumerate(lines):\n            if ln.strip() == \"objective:\":\n \
-          \               lines.insert(i + 1, \"  `%s`: %s\" % (key, value))\n   \
-          \             for e in found.values():\n                    if e[\"i\"]\
-          \ > i:\n                        e[\"i\"] += 1\n                found[key]\
-          \ = {\"i\": i + 1, \"indent\": \"  \", \"v\": value}\n                return\n\
-          \    last = -1\n    for e in found.values():\n        if e[\"indent\"] ==\
-          \ \"\" and e[\"i\"] > last:\n            last = e[\"i\"]\n    at = last\
-          \ + 1 if last >= 0 else len(lines)\n    lines.insert(at, \"`%s`: %s\" %\
-          \ (key, value))\n    for e in found.values():\n        if e[\"i\"] >= at:\n\
-          \            e[\"i\"] += 1\n    found[key] = {\"i\": at, \"indent\": \"\"\
-          , \"v\": value}\n\n\ndef main(prev_fields_json, task_key, capability_call,\
-          \ gaps_text, target_capability):\n    tk = (task_key or \"\").strip()\n\
-          \    try:\n        prev = json.loads(prev_fields_json) if (prev_fields_json\
-          \ or \"\").strip() else {}\n    except Exception:\n        prev = {}\n \
-          \   if not isinstance(prev, dict) or prev.get(\"task_key\") != tk or not\
-          \ tk:\n        # 新内容任务不继承上一任务的内容级决定\n        prev = {\"task_key\": tk, \"\
-          rev\": 0, \"fields\": {}, \"asked\": [], \"stale\": []}\n\n    fields =\
-          \ prev.get(\"fields\") or {}\n    asked_prev = set(prev.get(\"asked\") or\
-          \ [])\n    rev = int(prev.get(\"rev\") or 0) + 1\n\n    lines, found = _parse(capability_call)\n\
-          \    gaps = _split_gaps(gaps_text)\n\n    carried, held, answered, stale\
-          \ = [], [], [], []\n\n    # 1. 本轮抽取值入账。系统上一轮问过的那一项按 A 处理，其余按 E。\n    for\
-          \ key in sorted(found):\n        v = found[key][\"v\"].strip()\n       \
-          \ if not v:\n            continue\n        if key in asked_prev:\n     \
-          \       if key in fields and fields[key].get(\"v\") != v:\n            \
-          \    stale.append(key)\n            fields[key] = {\"v\": v, \"lvl\": \"\
-          A\", \"turn\": rev}\n            answered.append(key)\n        elif key\
-          \ in fields:\n            if fields[key].get(\"v\") != v:\n            \
-          \    # B/A 不被本轮模型抽取改写；不静默采纳新值，也不丢弃它，只登记\n                _set(lines, found,\
-          \ key, fields[key][\"v\"])\n                held.append(key)\n        else:\n\
-          \            fields[key] = {\"v\": v, \"lvl\": \"E\", \"turn\": rev}\n\n\
-          \    # 2. 用载体补本轮缺口。只补，不造。\n    remaining = []\n    for g in gaps:\n    \
-          \    cur = (fields.get(g) or {}).get(\"v\") or \"\"\n        if cur:\n \
-          \           _set(lines, found, g, cur)\n            carried.append(g)\n\
-          \        else:\n            remaining.append(g)\n\n    merged_env = \"\\\
-          n\".join(lines)\n    merged_gaps = \"；\".join(remaining) if remaining else\
-          \ \"无\"\n    carrier = {\"task_key\": tk, \"rev\": rev, \"fields\": fields,\n\
-          \               \"asked\": remaining, \"stale\": sorted(set((prev.get(\"\
-          stale\") or []) + stale))}\n\n    note = \"任务=%s rev=%d 目标=%s｜补齐=%s｜维持=%s｜用户本轮确认=%s｜本轮仍缺=%s\"\
-          \ % (\n        tk[:8] or \"(空)\", rev, target_capability or \"\",\n    \
-          \    \",\".join(carried) or \"无\", \",\".join(held) or \"无\",\n        \"\
-          ,\".join(answered) or \"无\", \",\".join(remaining) or \"无\")\n    return\
-          \ {\"capability_call\": merged_env,\n            \"gaps_text\": merged_gaps,\n\
-          \            \"task_fields_json\": json.dumps(carrier, ensure_ascii=False),\n\
+        code: "\nimport json\nimport re\n\n# ============ B1 规范字段表 ============\n\
+          # 字段身份**显式登记**。外壳里出现但本表未登记的键只披露、不入载体、不回填。\n#   k    外壳键          st  BT=反引号\
+          \ / PL=裸键\n#   nest 写回时的嵌套块   only/notfor 按目标能力决定同名键解析到哪个规范身份\n#   src \
+          \ 结构化真源（M1 快照路径），等级 D\nSPEC = {\n    \"objective.primary_goal\": {\"k\"\
+          : \"primary_goal\", \"st\": \"BT\", \"nest\": \"objective\",\n         \
+          \                      \"sc\": \"CONTENT_TASK\", \"src\": \"goal_structure.primary_goal\"\
+          },\n    \"objective.goal_family\": {\"k\": \"goal_family\", \"st\": \"PL\"\
+          , \"nest\": \"objective\",\n                              \"sc\": \"CONTENT_TASK\"\
+          , \"src\": \"business_goal_categories\"},\n    \"audience.problem\": {\"\
+          k\": \"audience_problem\", \"st\": \"BT\", \"sc\": \"CONTENT_TASK\"},\n\
+          \    \"audience.expected_change\": {\"k\": \"expected_change\", \"st\":\
+          \ \"BT\", \"sc\": \"CONTENT_TASK\"},\n    \"content.promise\": {\"k\": \"\
+          content_promise\", \"st\": \"BT\", \"sc\": \"CONTENT_TASK\"},\n    \"content.explicit_non_promise\"\
+          : {\"k\": \"explicit_non_promise\", \"st\": \"BT\", \"sc\": \"CONTENT_TASK\"\
+          },\n    \"content.origin_mode\": {\"k\": \"content_origin_mode\", \"st\"\
+          : \"BT\", \"sc\": \"CONTENT_TASK\"},\n    \"production.profile\": {\"k\"\
+          : \"production_profile\", \"st\": \"BT\", \"sc\": \"PRODUCTION\"},\n   \
+          \ \"production.time_window\": {\"k\": \"time_window\", \"st\": \"BT\", \"\
+          sc\": \"PRODUCTION\",\n                               \"only\": [\"PRODUCTION_DIRECTOR\"\
+          ]},\n    \"operation.time_window\": {\"k\": \"time_window\", \"st\": \"\
+          BT\", \"sc\": \"OPERATION\",\n                              \"notfor\":\
+          \ [\"PRODUCTION_DIRECTOR\"]},\n    \"production.capacity_or_owner\": {\"\
+          k\": \"capacity_or_owner\", \"st\": \"BT\", \"sc\": \"PRODUCTION\"},\n \
+          \   \"cta.contract\": {\"k\": \"cta_contract\", \"st\": \"BT\", \"sc\":\
+          \ \"CONTENT_TASK\"},\n    \"cta.level\": {\"k\": \"cta_level\", \"st\":\
+          \ \"PL\", \"sc\": \"CONTENT_TASK\"},\n    \"delivery.platform\": {\"k\"\
+          : \"platform\", \"st\": \"PL\", \"sc\": \"DELIVERY\"},\n    \"expression.subject\"\
+          : {\"k\": \"expression_subject\", \"st\": \"BT\", \"sc\": \"CONTENT_TASK\"\
+          },\n    \"expression.subject_and_boundary\": {\"k\": \"expression_subject_and_boundary\"\
+          , \"st\": \"BT\",\n                                        \"sc\": \"CONTENT_TASK\"\
+          },\n    \"expression.boundary\": {\"k\": \"expression_boundary\", \"st\"\
+          : \"BT\", \"sc\": \"CONTENT_TASK\"},\n    \"facts.registered\": {\"k\":\
+          \ \"facts_registered\", \"st\": \"BT\", \"sc\": \"CONTENT_TASK\"},\n   \
+          \ \"facts.publish_permission\": {\"k\": \"asset_publish_permission\", \"\
+          st\": \"BT\", \"sc\": \"CONTENT_TASK\"},\n}\n# 整篇 artifact 不是决策字段：走 B4 的接受与血缘账本，永不进字段载体。\n\
+          ARTIFACT_SLOTS = [\"script_or_equivalent_beats\", \"content_body_or_beats\"\
+          ]\nPLAIN_KEYS = set(s[\"k\"] for s in SPEC.values() if s[\"st\"] == \"PL\"\
+          )\n\nLEVELS = [\"A\", \"B\", \"C\", \"D\", \"E\"]\nMISS = [\"未明确写出\", \"\
+          未明确说明\", \"未明确\", \"未声明\", \"未提供\", \"未给出\", \"未确认\", \"未指定\",\n       \
+          \ \"未锁定\", \"无法确定\", \"尚未确定\", \"尚未给出\", \"待确定\", \"待确认\", \"待补充\", \"暂无\"\
+          , \"不详\",\n        \"UNDECLARED\", \"UNKNOWN\", \"UNSPECIFIED\", \"NOT_GIVEN\"\
+          , \"N/A\", \"TBD\"]\nLEGAL_ENUM = [\"NO_CTA\", \"NOT_LOCKED\", \"NOT_APPLICABLE\"\
+          , \"NONE_REQUIRED\"]\nACCEPT = [\"可以\", \"行\", \"没问题\", \"通过\", \"认可\",\
+          \ \"就按这个\", \"照这个\", \"就这个\", \"定了\", \"OK\", \"ok\"]\nNEGATE = \"不别未没无\"\
+          \nLCS_K = 8\nWRAP_MAX = 24\n\nBT_LINE = re.compile(r\"^(\\s*)`([A-Za-z_][A-Za-z0-9_]*)`\\\
+          s*:\\s*(.*)$\")\nPL_LINE = re.compile(r\"^(\\s*)([A-Za-z_][A-Za-z0-9_]*)\\\
+          s*:\\s*(.*)$\")\nPUNCT = re.compile(r\"[\\s，。；、：？！,.;:?!（）()\\[\\]「」『』“”\\\
+          \"'’‘…—–\\-]\")\nTAIL_PAREN = re.compile(r\"[（(【\\[].*?[)）】\\]]\\s*$\")\n\
+          \n\ndef _norm(s):\n    return re.sub(r\"\\s+\", \" \", s or \"\").strip()\n\
+          \n\ndef _np(s):\n    return PUNCT.sub(\"\", s or \"\")\n\n\ndef _fp(s):\n\
+          \    \"\"\"纯 Python FNV-1a 64。沙箱里不依赖 hashlib；离线判定器可逐位复算。\"\"\"\n    h =\
+          \ 0xcbf29ce484222325\n    for b in (s or \"\").encode(\"utf-8\"):\n    \
+          \    h = ((h ^ b) * 0x100000001b3) & 0xFFFFFFFFFFFFFFFF\n    return \"%016x\"\
+          \ % h\n\n\ndef _missing(v):\n    \"\"\"缺失语义**整值匹配**。子串搜索会把正文里提到 UNDECLARED\
+          \ 的合法长文本误判为缺失。\"\"\"\n    s = _norm(v).strip(\" \\t（）()【】[]「」\\\"'“”‘’\"\
+          )\n    if not s:\n        return True\n    if s.upper() in LEGAL_ENUM:\n\
+          \        return False\n    s2 = TAIL_PAREN.sub(\"\", s).strip(\" \\t（）()【】[]「」\\\
+          \"'“”‘’\") or s\n    if s2.upper() in LEGAL_ENUM:\n        return False\n\
+          \    if s2 in (\"无\", \"-\", \"—\", \"–\", \"NA\"):\n        return True\n\
+          \    up = s2.upper()\n    for tok in MISS:\n        i = up.find(tok.upper())\n\
+          \        if i < 0:\n            continue\n        pre, post = s2[:i], s2[i\
+          \ + len(tok):]\n        if len(pre) <= WRAP_MAX and len(post) <= WRAP_MAX\
+          \ \\\n                and not re.search(r\"[，。；;,\\n]\", pre + post):\n\
+          \            return True\n    return False\n\n\ndef _supported(v, uq):\n\
+          \    \"\"\"本轮用户原话是否支持这个值：存在 >=8 字的公共连续片段。不依赖模型，不针对具体字符串。\"\"\"\n    a, b\
+          \ = _np(v), _np(uq)\n    if not a or not b:\n        return False\n    if\
+          \ len(a) < LCS_K:\n        return a in b\n    for i in range(len(a) - LCS_K\
+          \ + 1):\n        if a[i:i + LCS_K] in b:\n            return True\n    return\
+          \ False\n\n\ndef _accepts(uq):\n    \"\"\"接受事件：『这版可以，接着……』。接受词紧邻否定词时不算。\"\
+          \"\"\n    s = _norm(uq)\n    bound = \"，。；！？,.;!? \\u3001\\uff1a:\"\n  \
+          \  for t in ACCEPT:\n        i = 0\n        while True:\n            i =\
+          \ s.find(t, i)\n            if i < 0:\n                break\n         \
+          \   pre_ok = (i == 0) or (s[i - 1] not in NEGATE)\n            if len(t)\
+          \ == 1:\n                # 单字接受词只在句读边界成立，否则\"执行\"\"进行\"\"银行\"都会误命中\n   \
+          \             pre_ok = pre_ok and (i == 0 or s[i - 1] in bound)\n      \
+          \          nxt = s[i + 1:i + 2]\n                pre_ok = pre_ok and (nxt\
+          \ == \"\" or nxt in bound)\n            if pre_ok:\n                return\
+          \ t\n            i += 1\n    return \"\"\n\n\ndef _resolve_key(k, cap):\n\
+          \    cands = [c for c in SPEC if SPEC[c][\"k\"] == k]\n    for c in cands:\n\
+          \        if cap and cap in (SPEC[c].get(\"only\") or []):\n            return\
+          \ c\n    for c in cands:\n        if SPEC[c].get(\"only\"):\n          \
+          \  continue\n        if cap and cap in (SPEC[c].get(\"notfor\") or []):\n\
+          \            continue\n        return c\n    return None\n\n\ndef _resolve_gap(g,\
+          \ cap):\n    g = re.split(r\"[（(]\", (g or \"\").strip())[0].strip()\n \
+          \   if not g or g == \"无\":\n        return None, None\n    if g in SPEC:\n\
+          \        return g, g\n    cid = _resolve_key(g, cap)\n    if cid:\n    \
+          \    return cid, g\n    if \".\" in g:\n        cid = _resolve_key(g.rsplit(\"\
+          .\", 1)[-1], cap)\n        if cid:\n            return cid, g\n    return\
+          \ None, g\n\n\ndef _parse(env):\n    lines = (env or \"\").split(\"\\n\"\
+          )\n    found = {}\n    for i, ln in enumerate(lines):\n        m = BT_LINE.match(ln)\n\
+          \        if m:\n            found[m.group(2)] = {\"i\": i, \"ind\": m.group(1),\
+          \ \"v\": m.group(3).strip(), \"st\": \"BT\"}\n            continue\n   \
+          \     m = PL_LINE.match(ln)\n        if m and m.group(2) in PLAIN_KEYS:\n\
+          \            found[m.group(2)] = {\"i\": i, \"ind\": m.group(1), \"v\":\
+          \ m.group(3).strip(), \"st\": \"PL\"}\n    return lines, found\n\n\ndef\
+          \ _render(cid, ind, value):\n    s = SPEC[cid]\n    return \"%s`%s`: %s\"\
+          \ % (ind, s[\"k\"], value) if s[\"st\"] == \"BT\" \\\n        else \"%s%s:\
+          \ %s\" % (ind, s[\"k\"], value)\n\n\ndef _shift(found, at, d=1):\n    for\
+          \ e in found.values():\n        if e[\"i\"] >= at:\n            e[\"i\"\
+          ] += d\n\n\ndef _set(lines, found, cid, value):\n    \"\"\"有行原地替换；无行按登记的样式与嵌套插入。不动其它任何一行。\"\
+          \"\"\n    s = SPEC[cid]\n    e = found.get(s[\"k\"])\n    if e is not None:\n\
+          \        lines[e[\"i\"]] = _render(cid, e[\"ind\"], value)\n        e[\"\
+          v\"] = value\n        return\n    nest = s.get(\"nest\")\n    if nest:\n\
+          \        at = None\n        for i, ln in enumerate(lines):\n           \
+          \ if ln.strip() == nest + \":\":\n                at = i + 1\n         \
+          \       break\n        if at is None:\n            top = -1\n          \
+          \  for x in found.values():\n                if x[\"ind\"] == \"\" and x[\"\
+          i\"] > top:\n                    top = x[\"i\"]\n            at = top +\
+          \ 1 if top >= 0 else len(lines)\n            lines.insert(at, nest + \"\
+          :\")\n            _shift(found, at)\n            at += 1\n        lines.insert(at,\
+          \ _render(cid, \"  \", value))\n        _shift(found, at)\n        found[s[\"\
+          k\"]] = {\"i\": at, \"ind\": \"  \", \"v\": value, \"st\": s[\"st\"]}\n\
+          \        return\n    top = -1\n    for x in found.values():\n        if\
+          \ x[\"ind\"] == \"\" and x[\"i\"] > top:\n            top = x[\"i\"]\n \
+          \   at = top + 1 if top >= 0 else len(lines)\n    lines.insert(at, _render(cid,\
+          \ \"\", value))\n    _shift(found, at)\n    found[s[\"k\"]] = {\"i\": at,\
+          \ \"ind\": \"\", \"v\": value, \"st\": s[\"st\"]}\n\n\ndef _drop(lines,\
+          \ found, key):\n    e = found.get(key)\n    if e is None:\n        return\n\
+          \    lines.pop(e[\"i\"])\n    at = e[\"i\"]\n    found.pop(key, None)\n\
+          \    for x in found.values():\n        if x[\"i\"] > at:\n            x[\"\
+          i\"] -= 1\n\n\ndef _fresh(tk):\n    return {\"task_key\": tk, \"rev\": 0,\
+          \ \"fields\": {}, \"asked\": [], \"artifacts\": [], \"events\": []}\n\n\n\
+          def main(prev_state_json, task_key, capability_call, gaps_text, target_capability,\n\
+          \         user_request, snapshot_json):\n    tk = (task_key or \"\").strip()\n\
+          \    cap = (target_capability or \"\").strip()\n    uq = user_request or\
+          \ \"\"\n    try:\n        st = json.loads(prev_state_json) if (prev_state_json\
+          \ or \"\").strip() else {}\n    except Exception:\n        st = {}\n   \
+          \ reset = \"\"\n    if not isinstance(st, dict) or st.get(\"task_key\")\
+          \ != tk or not tk:\n        st = _fresh(tk)\n        reset = \"TASK_KEY_CHANGE\"\
+          \n    for key in (\"fields\", \"artifacts\", \"events\", \"asked\"):\n \
+          \       st.setdefault(key, {} if key == \"fields\" else [])\n    rev = int(st.get(\"\
+          rev\") or 0) + 1\n    F = st[\"fields\"]\n    # 本轮开始前：上一轮的 A 级降为 B（用户更早说过的），本轮的\
+          \ A 才是\"用户本轮说的\"\n    for e in F.values():\n        if e.get(\"lvl\") ==\
+          \ \"A\":\n            e[\"lvl\"] = \"B\"\n    asked_prev = [c for c in (st.get(\"\
+          asked\") or []) if c in SPEC]\n\n    lines, found = _parse(capability_call)\n\
+          \    gaps, unresolved, gap_raw = [], [], {}\n    for g in re.split(r\"[；;]\"\
+          , gaps_text or \"\"):\n        cid, raw = _resolve_gap(g, cap)\n       \
+          \ if cid:\n            if cid not in gaps:\n                gaps.append(cid)\n\
+          \            gap_raw[cid] = raw\n        elif raw:\n            unresolved.append(raw)\n\
+          \n    env_vals, env_missing, unspecified = {}, [], []\n    for k, e in found.items():\n\
+          \        if k in ARTIFACT_SLOTS:\n            continue\n        cid = _resolve_key(k,\
+          \ cap)\n        if not cid:\n            unspecified.append(k)\n       \
+          \     continue\n        if not e[\"v\"]:\n            continue\n       \
+          \ if _missing(e[\"v\"]):\n            env_missing.append(cid)\n        else:\n\
+          \            env_vals[cid] = e[\"v\"]\n\n    # P-08 fail-closed：同一规范身份不能同时非空又出现在缺口里\n\
+          \    contradictions = [c for c in list(env_vals) if c in gaps]\n    for\
+          \ c in contradictions:\n        env_vals.pop(c, None)\n\n    held, answered,\
+          \ updated, newly, deferred, restated, refined = ([], [], [], [],\n     \
+          \                                                             [], [], [])\n\
+          \n    def offer(cid, val, lvl, kind, ref):\n        if _missing(val):\n\
+          \            return \"MISSING\"\n        old = F.get(cid)\n        rec =\
+          \ {\"v\": val, \"lvl\": lvl, \"kind\": kind, \"ref\": ref,\n           \
+          \    \"sc\": SPEC[cid][\"sc\"], \"frev\": 1, \"origin_turn\": rev}\n   \
+          \     if not old:\n            F[cid] = rec\n            newly.append(cid)\n\
+          \            return \"NEW\"\n        if _norm(old[\"v\"]) == _norm(val):\n\
+          \            if LEVELS.index(lvl) < LEVELS.index(old.get(\"lvl\", \"E\"\
+          )):\n                old.setdefault(\"ref0\", old.get(\"ref\"))\n      \
+          \          old.setdefault(\"kind0\", old.get(\"kind\"))\n              \
+          \  old[\"lvl\"], old[\"kind\"], old[\"ref\"] = lvl, kind, ref\n        \
+          \    restated.append(cid)\n            return \"SAME\"\n        lo, ln =\
+          \ LEVELS.index(old.get(\"lvl\", \"E\")), LEVELS.index(lvl)\n        if ln\
+          \ > lo or (ln == lo and lvl == \"E\"):\n            held.append(cid)\n \
+          \           return \"HELD\"\n        if lvl == \"A\" and old.get(\"lvl\"\
+          ) in (\"A\", \"B\") and asked_prev and cid not in asked_prev:\n        \
+          \    # 本轮存在未决提问时，用户回答不外溢成对其它已确认字段的纠正。\n            # 无未决提问时，主动纠正照常成立——B3\
+          \ 不以\"系统刚好问过\"为前提。\n            deferred.append(cid)\n            held.append(cid)\n\
+          \            return \"DEFERRED_CONFLICT\"\n        rec[\"frev\"] = int(old.get(\"\
+          frev\") or 1) + 1\n        if int(old.get(\"origin_turn\") or 0) >= rev:\n\
+          \            # 本轮首次登记的值在本轮被更高权威细化：是首次确认的一部分，\n            # 不是对\"已确认值\"\
+          的纠正，不触发依赖产物 STALE。\n            rec[\"frev\"] = int(old.get(\"frev\") or\
+          \ 1)\n            rec[\"ref0\"] = old.get(\"ref\")\n            F[cid] =\
+          \ rec\n            refined.append(cid)\n            return \"REFINED\"\n\
+          \        F[cid] = rec\n        updated.append(cid)\n        return \"UPDATED\"\
+          \n\n    # 1. D 级：M1 结构化真源\n    try:\n        snap = json.loads(snapshot_json)\
+          \ if (snapshot_json or \"\").strip() else {}\n    except Exception:\n  \
+          \      snap = {}\n    srev = snap.get(\"revision\")\n    for cid, s in SPEC.items():\n\
+          \        p = s.get(\"src\")\n        if not p or not isinstance(snap, dict):\n\
+          \            continue\n        cur = snap\n        for seg in p.split(\"\
+          .\"):\n            cur = cur.get(seg) if isinstance(cur, dict) else None\n\
+          \        if isinstance(cur, list):\n            cur = \",\".join(str(x).strip()\
+          \ for x in cur if str(x).strip())\n        if not isinstance(cur, str) or\
+          \ not cur.strip():\n            continue\n        offer(cid, cur.strip(),\
+          \ \"D\", \"M1_SNAPSHOT\", \"M1_SNAPSHOT.rev%s.%s\" % (srev, p))\n\n    #\
+          \ 2. A/E 级：本轮外壳抽取\n    for cid in sorted(env_vals):\n        val = env_vals[cid]\n\
+          \        if cid in asked_prev or _supported(val, uq):\n            r = offer(cid,\
+          \ val, \"A\", \"USER_UTTERANCE\", \"TURN%d.user_request\" % rev)\n     \
+          \       if r in (\"NEW\", \"UPDATED\", \"SAME\"):\n                answered.append(cid)\n\
+          \        else:\n            offer(cid, val, \"E\", \"MODEL_EXTRACTION\"\
+          ,\n                  \"TURN%d.uapp_hop.%s\" % (rev, cap or \"-\"))\n\n \
+          \   # 3. 撤回：系统问过的那一项，本轮解析出的是缺失语义\n    withdrawn = []\n    for cid in asked_prev:\n\
+          \        if cid in env_missing and cid in F:\n            F.pop(cid, None)\n\
+          \            withdrawn.append(cid)\n\n    # 4. 接受事件：标记最近一份未接受的产物\n    tok\
+          \ = _accepts(uq)\n    accepted_now = None\n    if tok:\n        for a in\
+          \ reversed(st[\"artifacts\"]):\n            if not a.get(\"accepted\"):\n\
+          \                a[\"accepted\"] = True\n                a[\"accepted_turn\"\
+          ] = rev\n                a[\"accepted_rev\"] = rev\n                accepted_now\
+          \ = a\n                break\n\n    # 5. 失效传播：被纠正或撤回的字段，使依赖它的产物 STALE\n\
+          \    changed = sorted(set(updated + withdrawn))\n    staled = []\n    for\
+          \ a in st[\"artifacts\"]:\n        if a.get(\"stale\"):\n            continue\n\
+          \        dep = a.get(\"dep\") or {}\n        hit = [c for c in changed if\
+          \ c in dep]\n        if hit:\n            a[\"stale\"] = True\n        \
+          \    a[\"stale_reason\"] = \"FIELD_CHANGED:\" + \",\".join(hit)\n      \
+          \      staled.append(\"%s@t%s\" % (a.get(\"cap\"), a.get(\"turn\")))\n\n\
+          \    # 6. 上游 artifact 接受闸门：未接受或已 STALE 的不得进入下一能力\n    binding, rejected\
+          \ = [], []\n    for slot in ARTIFACT_SLOTS:\n        e = found.get(slot)\n\
+          \        if e is None or not e[\"v\"]:\n            continue\n        fp\
+          \ = _fp(_norm(e[\"v\"])[:256])\n        rec = None\n        for a in st[\"\
+          artifacts\"]:\n            if a.get(\"fp\") == fp:\n                rec\
+          \ = a\n                break\n        if rec and rec.get(\"accepted\") and\
+          \ not rec.get(\"stale\"):\n            binding.append({\"slot\": slot, \"\
+          upstream_capability\": rec.get(\"cap\"),\n                            \"\
+          fp\": fp, \"artifact_norm_len\": rec.get(\"nlen\"),\n                  \
+          \          \"produced_turn\": rec.get(\"turn\"),\n                     \
+          \       \"accepted_turn\": rec.get(\"accepted_turn\"),\n               \
+          \             \"accepted_revision\": rec.get(\"accepted_rev\"),\n      \
+          \                      \"lineage\": \"BOUND\"})\n        else:\n       \
+          \     why = \"NO_LEDGER_MATCH\" if not rec else (\n                \"STALE\"\
+          \ if rec.get(\"stale\") else \"NOT_ACCEPTED\")\n            _drop(lines,\
+          \ found, slot)\n            rejected.append(slot)\n            binding.append({\"\
+          slot\": slot, \"fp\": fp, \"lineage\": \"REJECTED\", \"reason\": why})\n\
+          \n    # 7. 用载体补本轮缺口。只补同一规范身份，且值必须有 source_ref。\n    carried, remaining =\
+          \ [], []\n    for cid in gaps:\n        e = F.get(cid)\n        if e and\
+          \ e.get(\"v\") and e.get(\"ref\") and not _missing(e[\"v\"]):\n        \
+          \    _set(lines, found, cid, e[\"v\"])\n            carried.append(cid)\n\
+          \        else:\n            remaining.append(cid)\n    # 被维持的字段：外壳里写回已确认值，保证外壳与载体一致\n\
+          \    for cid in sorted(set(held)):\n        e = F.get(cid)\n        if e:\n\
+          \            _set(lines, found, cid, e[\"v\"])\n    remaining_names = [gap_raw.get(c,\
+          \ c) for c in remaining] + unresolved + rejected\n    merged_gaps = \"；\"\
+          .join(remaining_names) if remaining_names else \"无\"\n\n    env_fields =\
+          \ {}\n    for cid, s in SPEC.items():\n        e = found.get(s[\"k\"])\n\
+          \        if e and e[\"v\"] and not _missing(e[\"v\"]) and cid in F:\n  \
+          \          env_fields[cid] = F[cid].get(\"frev\", 1)\n\n    st[\"rev\"]\
+          \ = rev\n    st[\"asked\"] = remaining\n    ev = {\"t\": rev, \"cap\": cap,\
+          \ \"new\": newly, \"upd\": updated, \"ref\": refined,\n          \"held\"\
+          : sorted(set(held)),\n          \"wd\": withdrawn, \"carried\": carried,\
+          \ \"contra\": contradictions,\n          \"accept_token\": tok, \"staled\"\
+          : staled, \"reset\": reset}\n    st[\"events\"] = (st.get(\"events\") or\
+          \ [])[-59:] + [ev]\n\n    note = (\"任务=%s rev=%d 目标=%s｜补齐=%s｜维持=%s｜用户本轮确认=%s｜新登记=%s｜\"\
+          \n            \"纠正=%s｜撤回=%s｜矛盾=%s｜上游=%s｜置STALE=%s｜本轮仍缺=%s\") % (\n     \
+          \   (tk[:8] or \"(空)\"), rev, cap or \"-\",\n        \",\".join(carried)\
+          \ or \"无\", \",\".join(sorted(set(held))) or \"无\",\n        \",\".join(sorted(set(answered)))\
+          \ or \"无\", \",\".join(newly) or \"无\",\n        \",\".join(updated) or\
+          \ \"无\", \",\".join(withdrawn) or \"无\",\n        \",\".join(contradictions)\
+          \ or \"无\",\n        \",\".join(\"%s:%s\" % (b[\"slot\"], b[\"lineage\"\
+          ]) for b in binding) or \"无\",\n        \",\".join(staled) or \"无\", \"\
+          ,\".join(remaining_names) or \"无\")\n\n    return {\"capability_call\":\
+          \ \"\\n\".join(lines),\n            \"gaps_text\": merged_gaps,\n      \
+          \      \"pending_state_json\": json.dumps(st, ensure_ascii=False),\n   \
+          \         \"envelope_fields_json\": json.dumps(env_fields, ensure_ascii=False),\n\
+          \            \"upstream_binding_json\": json.dumps(binding, ensure_ascii=False),\n\
           \            \"carried_fields\": \",\".join(carried),\n            \"held_fields\"\
-          : \",\".join(held),\n            \"user_answered_fields\": \",\".join(answered),\n\
-          \            \"stale_downstream\": \",\".join(carrier[\"stale\"]),\n   \
-          \         \"merge_note\": note}\n"
+          : \",\".join(sorted(set(held))),\n            \"user_answered_fields\":\
+          \ \",\".join(sorted(set(answered))),\n            \"corrected_fields\":\
+          \ \",\".join(updated),\n            \"withdrawn_fields\": \",\".join(withdrawn),\n\
+          \            \"contradiction_fields\": \",\".join(contradictions),\n   \
+          \         \"deferred_conflict_fields\": \",\".join(deferred),\n        \
+          \    \"refined_fields\": \",\".join(refined),\n            \"unspecified_keys\"\
+          : \",\".join(sorted(unspecified)),\n            \"stale_artifacts\": \"\
+          ,\".join(staled),\n            \"merge_note\": note}\n"
         code_language: python3
-        desc: 已确认字段不被空值擦除；用户答过的那一项以新值更新并登记下游 STALE；新任务不继承上一任务的内容级决定。载体为空时是恒等变换。
+        desc: 字段身份、来源、作用域、可信等级四样都显式登记：模型抽取不自动升级为已确认事实；缺失占位符不入载体；运营周期时间窗不顶替生产时间窗；用户纠正使依赖产物
+          STALE；未接受或已 STALE 的上游产物不得进入下一个专业能力。
         outputs:
           capability_call:
             children: null
             type: string
           carried_fields:
+            children: null
+            type: string
+          contradiction_fields:
+            children: null
+            type: string
+          corrected_fields:
+            children: null
+            type: string
+          deferred_conflict_fields:
+            children: null
+            type: string
+          envelope_fields_json:
             children: null
             type: string
           gaps_text:
@@ -4637,23 +4849,35 @@ workflow:
           merge_note:
             children: null
             type: string
-          stale_downstream:
+          pending_state_json:
             children: null
             type: string
-          task_fields_json:
+          refined_fields:
+            children: null
+            type: string
+          stale_artifacts:
+            children: null
+            type: string
+          unspecified_keys:
+            children: null
+            type: string
+          upstream_binding_json:
             children: null
             type: string
           user_answered_fields:
             children: null
             type: string
+          withdrawn_fields:
+            children: null
+            type: string
         selected: false
-        title: 合成｜本任务已确认字段
+        title: 合成｜规范任务状态载体与上游接受闸门
         type: code
         variables:
         - value_selector:
           - conversation
           - uapp_task_fields
-          variable: prev_fields_json
+          variable: prev_state_json
         - value_selector:
           - conversation
           - uapp_task
@@ -4670,6 +4894,14 @@ workflow:
           - uapp_route
           - target_capability
           variable: target_capability
+        - value_selector:
+          - uapp_route
+          - user_request
+          variable: user_request
+        - value_selector:
+          - m1_compiler
+          - snapshot_json
+          variable: snapshot_json
       height: 98
       id: uapp_fields
       position:
@@ -5050,6 +5282,90 @@ workflow:
       width: 244
       zIndex: 0
     - data:
+        code: "\nimport json\nimport re\n\n\ndef _norm(s):\n    return re.sub(r\"\\\
+          s+\", \" \", s or \"\").strip()\n\n\ndef _fp(s):\n    h = 0xcbf29ce484222325\n\
+          \    for b in (s or \"\").encode(\"utf-8\"):\n        h = ((h ^ b) * 0x100000001b3)\
+          \ & 0xFFFFFFFFFFFFFFFF\n    return \"%016x\" % h\n\n\ndef main(pending_state_json,\
+          \ envelope_fields_json, new_artifact, new_capability):\n    \"\"\"artifact\
+          \ 血缘账本的唯一写入者。字段侧的判断已在 uapp_fields 做完，这里只登记产物。\n\n    为什么写在接缝之后：接受信号来自本轮用户原话（接缝之前就知道），\n\
+          \    但本轮产物要到接缝之后才存在。两者写同一个会话变量会造成双写入者，\n    所以字段侧只产出 pending 状态，产物侧在这里合并成最终状态，由\
+          \ uapp_save 单点赋值。\n    \"\"\"\n    try:\n        st = json.loads(pending_state_json)\
+          \ if (pending_state_json or \"\").strip() else {}\n    except Exception:\n\
+          \        st = {}\n    if not isinstance(st, dict):\n        st = {}\n  \
+          \  st.setdefault(\"artifacts\", [])\n    st.setdefault(\"fields\", {})\n\
+          \    rev = int(st.get(\"rev\") or 0)\n    try:\n        dep = json.loads(envelope_fields_json)\
+          \ if (envelope_fields_json or \"\").strip() else {}\n    except Exception:\n\
+          \        dep = {}\n\n    a = (new_artifact or \"\").strip()\n    cap = (new_capability\
+          \ or \"\").strip()\n    action = \"NO_NEW_ARTIFACT\"\n    conflict = \"\"\
+          \n    if a and cap:\n        n = _norm(a)\n        fp = _fp(n[:256])\n \
+          \       prev = None\n        for r in st[\"artifacts\"]:\n            if\
+          \ r.get(\"fp\") == fp:\n                prev = r\n                break\n\
+          \        if prev is None:\n            st[\"artifacts\"].append({\n    \
+          \            \"fp\": fp, \"nlen\": len(n), \"len\": len(a), \"cap\": cap,\n\
+          \                \"task_key\": st.get(\"task_key\"), \"turn\": rev,\n  \
+          \              \"accepted\": False, \"accepted_turn\": None, \"accepted_rev\"\
+          : None,\n                \"dep\": dep, \"stale\": False, \"stale_reason\"\
+          : None})\n            action = \"APPENDED\"\n        elif prev.get(\"cap\"\
+          ) != cap:\n            # B4：同一 hash 不得挂两个能力身份。冲突登记，不合并、不改写。\n          \
+          \  conflict = \"%s!=%s\" % (prev.get(\"cap\"), cap)\n            action\
+          \ = \"IDENTITY_CONFLICT\"\n        else:\n            action = \"ALREADY_PRESENT\"\
+          \n    st[\"artifacts\"] = st[\"artifacts\"][-24:]\n    note = \"账本 rev=%d\
+          \ 动作=%s 能力=%s 长度=%d 依赖字段=%d 冲突=%s 累计=%d\" % (\n        rev, action, cap\
+          \ or \"-\", len(a), len(dep), conflict or \"无\", len(st[\"artifacts\"]))\n\
+          \    return {\"task_state_json\": json.dumps(st, ensure_ascii=False),\n\
+          \            \"ledger_action\": action,\n            \"ledger_conflict\"\
+          : conflict,\n            \"ledger_note\": note}\n"
+        code_language: python3
+        desc: 登记本轮产物的指纹、能力身份、依赖字段与接受状态；同一指纹不得挂两个能力身份
+        outputs:
+          ledger_action:
+            children: null
+            type: string
+          ledger_conflict:
+            children: null
+            type: string
+          ledger_note:
+            children: null
+            type: string
+          task_state_json:
+            children: null
+            type: string
+        selected: false
+        title: 账本｜artifact 血缘与接受状态
+        type: code
+        variables:
+        - value_selector:
+          - uapp_fields
+          - pending_state_json
+          variable: pending_state_json
+        - value_selector:
+          - uapp_fields
+          - envelope_fields_json
+          variable: envelope_fields_json
+        - value_selector:
+          - uapp_seam_merge
+          - artifact
+          - output
+          variable: new_artifact
+        - value_selector:
+          - uapp_route
+          - target_capability
+          variable: new_capability
+      height: 98
+      id: uapp_state
+      position:
+        x: 7000
+        y: 740
+      positionAbsolute:
+        x: 7000
+        y: 740
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 0
+    - data:
         desc: 供下一跳作为上游产出使用；业务真源在 M2，不在会话里
         items:
         - input_type: variable
@@ -5073,8 +5389,8 @@ workflow:
         - input_type: variable
           operation: over-write
           value:
-          - uapp_fields
-          - task_fields_json
+          - uapp_state
+          - task_state_json
           variable_selector:
           - conversation
           - uapp_task_fields
