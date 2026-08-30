@@ -1,0 +1,230 @@
+{
+  "document": {
+    "id": "UAPP_TD24_CONTROLS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "model_calls": 0,
+    "dify_writes": 0,
+    "m2_writes": 0,
+    "raw_predecessor_sha256": "cc2b0c9aed9d28ef440182bc5c32290f660dae4774f1cbdc5ead11e81a2642dc",
+    "builder_sha256": "8af9ebe09de78cd1264127c4ca84c12e35d9ea0a1e18dfc050e6b3ecd9049dbe"
+  },
+  "summary": {
+    "pass": 10,
+    "total": 11,
+    "positive_controls": 11,
+    "single_variable_negative_controls": 11,
+    "verdict": "FAIL"
+  },
+  "candidate": {
+    "document": {
+      "id": "UAPP_TD24_BUILD_v1.0",
+      "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+      "model_calls": 0,
+      "direct_db_writes": 0
+    },
+    "base_graph_md5": "91a3984b2c3797d6741165b116fa3cb1",
+    "nodes_touched": [
+      "uapp_action",
+      "uapp_fields",
+      "uapp_pick_upstream",
+      "uapp_state",
+      "uapp_td24_binding_gate(NEW)",
+      "uapp_td24_block(NEW)",
+      "uapp_td24_block_answer(NEW)",
+      "uapp_td24_block_save(NEW)",
+      "uapp_td24_correction(NEW)"
+    ],
+    "protected_nodes_equal": {
+      "m1_shadow": true,
+      "m1_compiler": true,
+      "uapp_m3": true,
+      "uapp_hop": true,
+      "uapp_seam": true,
+      "uapp_persist": true,
+      "uapp_delivery": true,
+      "uapp_save": true
+    },
+    "node_count": {
+      "before": 50,
+      "after": 55
+    },
+    "edge_count": {
+      "before": 52,
+      "after": 57
+    },
+    "conversation_variables_added": [],
+    "correction_code_sha256": "b63280c2e332cedfd0413e233ce5e2176096cb9674015871e58d2ee01145a4d6",
+    "block_code_sha256": "3dfb576da46374b75c241223b04ad9bfaa2b5831f013db557db988b10b516d5c",
+    "candidate_graph_canonical_sha256": "a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1",
+    "applied_to_draft": false
+  },
+  "checks": [
+    {
+      "id": "A-01",
+      "text": "明确用户纠正更新规范字段且同值重复不制造 revision",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "status": "APPLIED",
+        "state_rev": 14
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "new value -> same value",
+        "status": "REJECTED"
+      }
+    },
+    {
+      "id": "A-02",
+      "text": "模型只提议；逐字用户证据成立才升级为 USER_UTTERANCE",
+      "result": "FAIL",
+      "positive_control": {
+        "pass": true,
+        "valid_quote": true
+      },
+      "single_variable_negative_control": {
+        "pass": false,
+        "mutated": "source_quote",
+        "status": "APPLIED"
+      }
+    },
+    {
+      "id": "A-03",
+      "text": "模糊表达不写入；task identity 单变量不一致时 fail-closed",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "fuzzy_status": "NONE"
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "task_key",
+        "status": "REJECTED"
+      }
+    },
+    {
+      "id": "A-04",
+      "text": "同 scope/同来源的相关字段保持一致；facts 与制作时间不产生伪 revision",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "corrected_fields": "production.profile,production.capacity_or_owner",
+        "facts_frev": 4,
+        "time_frev": 1
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "capacity source_ref",
+        "contradiction_detected": true
+      }
+    },
+    {
+      "id": "B-01",
+      "text": "真实失败形态回放：M3 已识别、Hop 不含字段时 UAPP 仍形成规范 delta",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "old_run": "592ba2d3-c6a4-41a7-a8e9-f33818be98c4",
+        "m3_recognized": true,
+        "hop_has_production_profile": false
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "remove correction semantics",
+        "status": "NONE"
+      }
+    },
+    {
+      "id": "C-01",
+      "text": "依赖纠正字段的 PD 直接失效；删除唯一依赖边时 Validator 翻转",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "direct_stale": "PRODUCTION_DIRECTOR@t6:099061257c9677bd,PRODUCTION_DIRECTOR@t11:559a204d7c4f1f2a,PUBLISHING_PACKAGING@t13:a7bf609e2dc9eecb"
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "PD dependency edges",
+        "pd_stale": false
+      }
+    },
+    {
+      "id": "C-02",
+      "text": "依赖旧 PD 的 PP 记录具有直接血缘并收到传递失效",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "pp_upstream_fp": "559a204d7c4f1f2a",
+        "transitive": "PUBLISHING_PACKAGING@t7:757af4204cc42fb3,PUBLISHING_PACKAGING@t12:df85e97cb07cd0df,PUBLISHING_PACKAGING@t13:a7bf609e2dc9eecb"
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "PP upstream_fp",
+        "missing_detected": true
+      }
+    },
+    {
+      "id": "C-03",
+      "text": "不受影响 artifact 的既有状态与原因逐条保留，不 blanket STALE",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "unaffected_checked": [
+          "2e41c4b7629a081d",
+          "95ecee48bdb1357a",
+          "3d7342e36d939c31"
+        ]
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "one unrelated stale_reason",
+        "detected": true
+      }
+    },
+    {
+      "id": "C-04",
+      "text": "selector 读纠正后状态；即使预选旧 PD，后置门仍按 STALE 拒绝",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "selector": "NO_LEGAL_UPSTREAM",
+        "post_gate": "REJECTED"
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "selector state -> pre-correction",
+        "status": "SELECTED"
+      }
+    },
+    {
+      "id": "C-05",
+      "text": "无合法上游时 Seam/PP 前停支，不追加 PP artifact，并生成自然说明",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "artifact_count": 8,
+        "final_text": "你刚才说的“把制作规模从一人改为两人”已经记下。这个变化会影响刚才的制作方案，所以我先不继续用旧方案做标题和封面。需要先更新制作方案，之后才能可靠继续；其他已经确认且不受影响的内容会保留。"
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "blocked edge target",
+        "seam_bypass_detected": true
+      }
+    },
+    {
+      "id": "D-01",
+      "text": "构建影响面、节点参数与 0/0/NOT_CHECKED 防误绿",
+      "result": "PASS",
+      "positive_control": {
+        "pass": true,
+        "candidate_graph_sha256": "a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1",
+        "function_arity_ok": true
+      },
+      "single_variable_negative_control": {
+        "pass": true,
+        "mutated": "one result -> NOT_CHECKED",
+        "rejected": true
+      }
+    }
+  ]
+}

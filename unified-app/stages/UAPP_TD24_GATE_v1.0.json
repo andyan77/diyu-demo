@@ -1,0 +1,233 @@
+{
+  "document": {
+    "id": "UAPP_TD24_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "execution_mode": "REBASE_TASK",
+    "authority": "Founder TD-UAPP-24 Execution Prompt v1.0 / GRANTED_2026-08-30",
+    "frozen_at_utc": "2026-08-30T18:22:53Z",
+    "model_results_observed_before_freeze": false,
+    "model_calls_before_freeze": 0,
+    "parent_failure_gate": {
+      "path": "unified-app/stages/UAPP_CORRECTION_GATE_v1.0.json",
+      "sha256": "9220a7bd587ec030fa340892609addab15cb70432199924285e1b1fa634a95d7"
+    }
+  },
+  "contract": {
+    "task_contract_sha256": "279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f",
+    "semantic_delta": "NONE",
+    "mutation_target": "UAPP correction-to-canonical-state-to-artifact-invalidation seam only",
+    "formal_criteria": [
+      "C-01 user correction enters canonical state with one revision and user source",
+      "C-02 related production fields are consistent",
+      "C-03 unrelated fields and facts.registered revision are unchanged",
+      "C-04 directly dependent PD artifacts become STALE",
+      "C-05 PP depending on the current PD becomes transitively STALE",
+      "C-06 unrelated artifact records retain their prior status and reason",
+      "C-07 stale PD is rejected after correction and is not bound",
+      "C-08 no Seam or PP call and no new PP artifact",
+      "C-09 user-visible answer is natural, accurate, and non-technical",
+      "C-10 no M2 or publish side effect",
+      "C-11 call discipline, no dark professional capability, no retry",
+      "C-12 protected surfaces, artifact body store, and main are unchanged"
+    ],
+    "stop_rule": "Any criterion failure, transport error, internal replay, zero-output anomaly, or insufficient evidence stops without retry or second repair."
+  },
+  "base": {
+    "UAPP": {
+      "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+      "workflow_id": "28059850-1745-4e6d-bfac-0fbe278c5615",
+      "graph_md5": "91a3984b2c3797d6741165b116fa3cb1",
+      "node_count": 50,
+      "edge_count": 52
+    }
+  },
+  "candidate": {
+    "UAPP": {
+      "app_id": "85c01f85-a081-43e9-ab09-9993289cc200",
+      "graph_canonical_sha256": "a39b72d5291ccdbc2d74837ec9041e4a2d9d7142cac0ccfcf808a6205d141ad1",
+      "node_count": 55,
+      "edge_count": 57
+    },
+    "builder_v1_0_sha256": "8af9ebe09de78cd1264127c4ca84c12e35d9ea0a1e18dfc050e6b3ecd9049dbe",
+    "builder_v1_1_sha256": "8fc77c67e2f3acc375be7f0aedd298ded7d5168c8ac8cf62f142db8b7e41900e",
+    "nodes_source_sha256": "2223a62b217eb39b57f5c1f655e2c7a06f7888d7b8bc918befc7a461bad43bff"
+  },
+  "formal_turn": {
+    "conversation_id": "5cfcaf57-8808-4fc7-8c66-d661e515d05a",
+    "end_user": "s4ct-20260830001839",
+    "task_identity": "ec666086-dce5-4e79-ba0f-6ac88f04a0bb",
+    "inputs": {},
+    "query": "把制作规模从一人改为两人，制作时间和其他已经确认的内容都不变。先别重做制作方案，继续基于刚才那份制作方案给我出标题和封面。",
+    "query_utf8_bytes": 183,
+    "query_sha256": "949f7474a6ad5c0d57955c01c9b1daf03052fd5b1a7a5d08a871c1301785af2f",
+    "expected_turn": 14,
+    "source_ref": "TURN14.user_request"
+  },
+  "state_before": {
+    "revision": 13,
+    "state_sha256": "1ab76c1521ab46a48dbcafedcbcddd0325f73b6abb838151d06521a913caf8c8",
+    "store_sha256": "8f8499a1594276ca8ae0e29428e4e3059f97411f244badcae3ccab042c843224",
+    "artifact_count": 8,
+    "fields": {
+      "production.profile": {
+        "v": "只用门店已有素材、不补拍，由一人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备",
+        "lvl": "B",
+        "kind": "USER_UTTERANCE",
+        "ref": "TURN6.user_request",
+        "sc": "PRODUCTION",
+        "frev": 2,
+        "origin_turn": 6
+      },
+      "production.capacity_or_owner": {
+        "v": "由一人完成素材检索和基础剪辑",
+        "lvl": "B",
+        "kind": "USER_UTTERANCE",
+        "ref": "TURN6.user_request",
+        "sc": "PRODUCTION",
+        "frev": 1,
+        "origin_turn": 6
+      },
+      "production.time_window": {
+        "v": "今天半天内",
+        "lvl": "B",
+        "kind": "USER_UTTERANCE",
+        "ref": "TURN6.user_request",
+        "sc": "PRODUCTION",
+        "frev": 1,
+        "origin_turn": 6
+      },
+      "facts.registered": {
+        "v": "这条使用门店已有素材剪辑，不安排重新拍摄；由一人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备；还没拿到真实成片的部分不要说成已经定稿；基于刚才那份制作方案；这版口播稿可以；刚才那份制作方案可以",
+        "lvl": "A",
+        "kind": "USER_UTTERANCE",
+        "ref": "TURN13.user_request",
+        "sc": "CONTENT_TASK",
+        "frev": 4,
+        "origin_turn": 13
+      }
+    },
+    "direct_affected_pd_fps": [
+      "099061257c9677bd",
+      "559a204d7c4f1f2a"
+    ],
+    "current_pd_fp": "559a204d7c4f1f2a",
+    "current_pd_body_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+    "current_pp_fp": "a7bf609e2dc9eecb",
+    "unaffected_artifacts": {
+      "2e41c4b7629a081d": {
+        "capability": "CONTENT_BRIEF",
+        "stale": true,
+        "stale_reason": "FIELD_CHANGED:facts.registered"
+      },
+      "95ecee48bdb1357a": {
+        "capability": "CREATIVE_SCRIPT",
+        "stale": true,
+        "stale_reason": "FIELD_CHANGED:facts.registered"
+      },
+      "3d7342e36d939c31": {
+        "capability": "CREATIVE_SCRIPT",
+        "stale": true,
+        "stale_reason": "FIELD_CHANGED:facts.registered"
+      }
+    }
+  },
+  "expected_after": {
+    "source_ref": "TURN14.user_request",
+    "fields": {
+      "production.profile": {
+        "value": "只用门店已有素材、不补拍，由两人完成素材检索和基础剪辑，今天半天内先出母版，不新增人员和设备",
+        "frev": 3
+      },
+      "production.capacity_or_owner": {
+        "value": "由两人完成素材检索和基础剪辑",
+        "frev": 2
+      }
+    },
+    "direct_affected_pd_fps": [
+      "099061257c9677bd",
+      "559a204d7c4f1f2a"
+    ],
+    "current_pd_fp": "559a204d7c4f1f2a",
+    "current_pd_body_sha256": "8f91984b628da1c65250c7bb2f90e9a31c86233826ceee9271bcc46b77b2c21b",
+    "current_pp_fp": "a7bf609e2dc9eecb",
+    "new_pp_artifact_count": 0
+  },
+  "protected_surface_before": {
+    "graph_md5": {
+      "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+      "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+      "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+      "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+      "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+      "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+      "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+      "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+      "PUBLISHING_PACKAGING": "8366328bf827bd0f460455d750d45c4f",
+      "PP_provider": "8366328bf827bd0f460455d750d45c4f"
+    },
+    "m2": {
+      "task_snapshots": 0,
+      "artifacts": 0,
+      "task_run_states": 0,
+      "account_publish_instances": 0,
+      "non_test_publish_instances": 1568,
+      "non_test_feedback_records": 117,
+      "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+    }
+  },
+  "protected_surface_after": {
+    "graph_md5": {
+      "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+      "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+      "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+      "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+      "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+      "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+      "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+      "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+      "PUBLISHING_PACKAGING": "8366328bf827bd0f460455d750d45c4f",
+      "PP_provider": "8366328bf827bd0f460455d750d45c4f"
+    }
+  },
+  "deterministic_controls": {
+    "checker": "unified-app/workflows/UAPP_TD24_CONTROLS_v1.1.py",
+    "checker_sha256": "c75a33f08b48c48f564797bc09da6e21415a7e220fffd9c293faece34d777ab9",
+    "evidence": "unified-app/evidence/stages/uapp_td24/UAPP_TD24_CONTROLS_v1.1.json",
+    "evidence_sha256": "d4deeff72cccdae159a0648b05a34a8222debca1dd9274c380f504316e35d02c",
+    "positive_controls": 11,
+    "single_variable_negative_controls": 11,
+    "result": "PASS"
+  },
+  "formal_tools": {
+    "runner": {
+      "path": "unified-app/workflows/UAPP_TD24_RUN_v1.0.py",
+      "sha256": "516b727371b865f6fc373ecae41a297a05d460f8b34b2e90be6cbfca5073a948"
+    },
+    "checker": {
+      "path": "unified-app/workflows/UAPP_TD24_VERIFY_v1.0.py",
+      "sha256": "6c3e91eb66a92d59a578d5ce95c58a66e17c7b09121addb3f04daea5bc44c5c5"
+    },
+    "publisher": {
+      "path": "unified-app/workflows/UAPP_TD24_PUBLISH_v1.0.py",
+      "sha256": "7f3dc9b917f623d0fed743a6df796b30ed4d71cf6ea1dbdba2921235b678e896"
+    }
+  },
+  "budget": {
+    "top_level_workflow_runs": 1,
+    "expected_reachable_llm_attempts": 5,
+    "deepseek_llm_node_attempts_max": 8,
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "git": {
+    "branch": "codex/v1-uapp-progressive-canvas-001",
+    "parent_head": "2d0668c723d49fa377a23722cdb7bd0af3c925ca",
+    "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "main_merge": "NOT_ALLOWED"
+  },
+  "non_zero_fixture_statement": "Formal preservation covers three exact pre-existing unrelated artifact records; deterministic control C-03 separately provides an actual positive and single-variable negative discriminator."
+}

@@ -1,0 +1,31 @@
+{
+  "document": {
+    "id": "UAPP_TD24_TOOL_AUDIT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "model_calls": 0,
+    "dify_writes": 0,
+    "m2_writes": 0
+  },
+  "gate_sha256": "fb040eb9fd3a27cdbe0a047fbd360055d0287baa335c12d1971092c61ea5ddb0",
+  "runner_sha256": "516b727371b865f6fc373ecae41a297a05d460f8b34b2e90be6cbfca5073a948",
+  "checker_sha256": "6c3e91eb66a92d59a578d5ce95c58a66e17c7b09121addb3f04daea5bc44c5c5",
+  "publisher_sha256": "7f3dc9b917f623d0fed743a6df796b30ed4d71cf6ea1dbdba2921235b678e896",
+  "checks": {
+    "python_compile": "PASS",
+    "ruff": "PASS",
+    "git_diff_check": "PASS",
+    "runner_parameter_and_http_unwrap": "PASS",
+    "database_columns_reused_from_proven_runner": "PASS",
+    "evidence_paths_absent_and_exclusive_create": "PASS",
+    "gate_tool_hash_bindings": "PASS",
+    "expected_reachable_llm_attempts": 5,
+    "deepseek_llm_attempt_cap": 8,
+    "zero_or_not_checked_cannot_pass": "PASS",
+    "api_key_policy": "Preflight checks presence only; plaintext is never emitted"
+  },
+  "typing_tool": {
+    "mypy": "NOT_AVAILABLE(INPUT_ENVIRONMENT_OR_TOOL)",
+    "detail": "The existing mypy launcher cannot import its module. No package was installed and this did not change the frozen runtime checks."
+  },
+  "result": "PASS"
+}
