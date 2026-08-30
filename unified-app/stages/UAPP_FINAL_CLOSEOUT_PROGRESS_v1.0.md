@@ -21,7 +21,7 @@
 |---|---|---:|---:|---|---|
 | N1 场景合同审计 | COMPLETED | PASS / CURRENT | 0 | NONE | N2 冻结 |
 | N2 Gate v1.1 冻结 | COMPLETED | PASS / CURRENT | 0 | NONE | N3 |
-| N3 正式验收 | IN_PROGRESS | CAP-01..02 PASS / CURRENT | 4/20；LLM 22/120 | NONE | CAP-03 |
+| N3 正式验收 | IN_PROGRESS | CAP-01..03 PASS / CURRENT | 5/20；LLM 28/120 | NONE | CAP-04 |
 | N4 有界修复 | COMPLETED | 修复节点 1/2、迭代 1/2；控制 10/10 PASS | 0 | NONE | N3 定向复验 |
 | N5 S5 收口 | NOT_STARTED | NOT_VERIFIED | 0 | N3/N4 | AC 矩阵 |
 
@@ -58,6 +58,11 @@ LLM 6，失败节点 0，平台重放 0，真实发布 0，保护面零漂移。
 CAP-02 正式 run `77aae6ad-817f-4a15-ac8a-d01c6f35dabe`：`PASS / CURRENT`；
 CAMPAIGN 1 次，其他五能力 0 次；artifact length `8250`，sha256
 `4ac7c0fc4880f97b06e35a97b6a4763ab7630067dfa29952ad8471807b736ae6`；
+LLM 6，失败节点 0，平台重放 0。
+
+CAP-03 正式 run `670ec687-d216-4c6e-b15d-a83eed7abd4a`：`PASS / CURRENT`；
+CONTENT_BRIEF 1 次，其他五能力 0 次；artifact length `4727`，sha256
+`a30d8614c6f06560edd680fa527acca237b85d8ddea96ce2b7d21a4f832e1b78`；
 LLM 6，失败节点 0，平台重放 0。
 
 ```yaml
