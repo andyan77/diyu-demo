@@ -5,7 +5,7 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | IN_PROGRESS | G1 PASS；G2 待同会话运行 | 1/2 | 2/90 | NONE | 运行 G2 一次 |
+| C2 G1/G2 | IN_PROGRESS | G1 PASS；G2 FAIL，已确认同范围 successor | 2/2 | 7/90 | G2 重复追问已给承诺 | 零模型 successor 修复 |
 | C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
@@ -25,6 +25,9 @@
 - G1 run `d352c979-9caf-454a-b59a-a951a0385adf` 正式 PASS：只问“整体发布节奏”与
   “具体商品或内容方向”的一个分叉问题，冻结 G2 可直接回答；六项专业能力均 0，artifact 0，
   DeepSeek 节点 `2`，重试/重放/副作用均 0。
+- G2 run `217fee1f-b6f1-4c1d-b189-f6c510564e31`：同会话、CONTENT_BRIEF 唯一运行、Seam
+  执行均成立，但重复询问 G2 已表达的 content promise，正式 FAIL；LLM `5`。Checker 同时把
+  “必须立即生成 artifact”额外写成硬门，已分别归因。原 RAW/FAIL 保留，启动授权内唯一 successor。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

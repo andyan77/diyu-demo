@@ -1268,3 +1268,9 @@ GAP-01 G1 successor run `d352c979-9caf-454a-b59a-a951a0385adf` 正式 PASS：系
 “一周整体节奏 vs 具体商品/内容方向”的决定性问题，冻结 G2 可直接回答；六项专业能力全为 0，
 未生成 artifact。实际顶层运行 `1`、LLM 节点 `2`，重试、重放、真实发布和非测试变化均为 0。
 下一动作是在同一 conversation `55411bec-87ed-442f-a524-bc489e9438df` 运行冻结 G2 一次。
+
+G2 run `217fee1f-b6f1-4c1d-b189-f6c510564e31` 在同一 conversation 正确接上，唯一运行
+CONTENT_BRIEF 且 Seam 真实执行，但 UAPP 外壳漏掉用户已说出的 content promise，最终重复追问
+“她能拿到什么”，故正式 FAIL。Checker v1.0 同时额外要求 G2 立即产生 artifact，属于冻结判据外
+的 Oracle 过编译。两项已在修改前分别确认；本轮使用 Prompt 预留的唯一同范围 successor，
+mutation 仅限 UAPP `uapp_fields` 用户支持等价投影及 Checker 后继，不改任何保护模块。
