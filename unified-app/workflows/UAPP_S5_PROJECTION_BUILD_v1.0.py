@@ -172,7 +172,7 @@ def publish(candidate: dict[str, Any], report: dict[str, Any]) -> None:
     if canonical(readback["graph"]) != canonical(candidate):
         raise RuntimeError("Draft readback differs")
     response = call(console, "POST", f"/console/api/apps/{UAPP_APP_ID}/workflows/publish", {
-        "marked_name": "uapp-s5-projection-repair-1",
+        "marked_name": "uapp-s5-repair-1",
         "marked_comment": "S5 bounded repair 1: user-supported MATRIX applicability projection",
     })
     if canonical(published_graph()) != canonical(candidate):
@@ -208,4 +208,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
