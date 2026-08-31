@@ -6,7 +6,7 @@
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
 | C2 G1/G2 | COMPLETED | successor G1/G2 PASS / CURRENT | 4/4 | 15/90 | NONE | C3 |
-| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV/FULL Fixture 不充分；WITHDRAW W0 FAIL(SUT)；仅 RECOVERY 独立待运行 | 4/11 | 35/90 | AC-03/07/08 未通过 | RECOVERY R1 |
+| C3 S5 AC-01～11 | IN_PROGRESS | 8/19 PASS；AC-07 FAIL；AC-03/08/09/11 未验证 | 4/11 | 35/90 | 撤回 SUT + 两组 Fixture | 最窄后继 REBASE |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
 
@@ -56,6 +56,10 @@
   精确缺口为冻结输入未给出的表达主体；未编造 artifact。T2 也不补该缺口，故 T2/T3/T4
   `NOT_RUN_DEPENDENT`。归因正例 Fixture 与专业能力最小前置条件不一致，不修改 SUT/输入/Checker。
   累计 `8 runs / 35 LLM`，只剩独立 RECOVERY-01:R1。
+- RECOVERY-01:R1 与 FULL-01:T4 属同一冻结 conversation，零模型 preflight 因 T4 不可用而正确
+  阻止运行；它不是独立场景。最终仍为 `8 runs / 35 LLM`，没有新 RAW、重试或副作用。
+- 当前 S5：`FAIL / CURRENT`。19 项中 8 PASS/CURRENT、1 SUT FAIL、3 个已执行但因 Oracle
+  不充分为 NOT_VERIFIED、7 个依赖前序而未运行。Founder AC-12 不可开始。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

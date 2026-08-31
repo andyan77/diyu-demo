@@ -1309,3 +1309,9 @@ FULL-01:T1 run `f05a4a30-91bf-4c1b-89da-2c5bbbda2c1a` 只运行 CONTENT_BRIEF，
 输入未说明表达主体而精确 Return；没有 artifact、暗跑或非测试副作用。T2 只说“已经发出去了”，
 也不补该缺口，因此完整故事 Fixture 与能力最小前置条件不一致；归因 `CHECKER_OR_FIXTURE`，
 T2/T3/T4 均 `NOT_RUN_DEPENDENT`。累计 `8 runs / 35 LLM`，继续唯一独立 RECOVERY-01:R1。
+
+RECOVERY-01:R1 的零模型 preflight 证明它依赖同一 conversation 的 FULL-01:T4；T4 因 T1
+失败不可用，故 Runner 正确阻止调用，没有新 RAW、模型调用或副作用。当前最终投影为：19 项中
+8 PASS/CURRENT、1 SUT FAIL、3 NOT_VERIFIED(ORACLE)、7 NOT_RUN_DEPENDENT；AC-07 FAIL，
+S5 `FAIL / CURRENT`，Founder AC-12 `NOT_READY / NOT_AUTHORIZED`。唯一下一步是版本化最窄后继：
+修复上传资料登记接缝，并消解 EQUIV/FULL 冻结 Fixture 与能力前置条件冲突。

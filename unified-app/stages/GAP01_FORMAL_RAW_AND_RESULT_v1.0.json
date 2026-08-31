@@ -1,0 +1,47 @@
+{
+  "document": {
+    "id": "GAP01_FORMAL_RAW_AND_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "result": "PASS",
+    "freshness": "CURRENT"
+  },
+  "candidate": {
+    "UAPP_graph_md5": "aa32b6385de0024d270ec9f85bd78179",
+    "UAPP_graph_canonical_sha256": "e1f01f082ef30788cb290a53c6432f4d844b8943d85319312fe0ff29e4718768",
+    "gate": "GAP01_SUCCESSOR_GATE_v1.1",
+    "gate_sha256": "11d6ed2556e2ddbf2a82cc402467d66267efb2a75f3d146c36bdc9a157fa0d60"
+  },
+  "deterministic_controls": {
+    "implementation": "8/8 PASS",
+    "checker": "5/5 PASS",
+    "refs": [
+      "unified-app/evidence/stages/gap01_successor_v1_1/controls.json",
+      "unified-app/evidence/stages/gap01_successor_v1_1/checker_controls.json"
+    ]
+  },
+  "formal": {
+    "G1": {
+      "run_id": "52f7f504-1e02-4d65-8fe3-5dc63b765e3f",
+      "result": "PASS / CURRENT",
+      "question": "你这次是想先安排一周的整体发布节奏，还是先围绕一个具体商品或内容方向做一条内容？",
+      "llm_attempts": 2
+    },
+    "G2": {
+      "run_id": "306c2e7f-2f8b-4eec-9b73-418ffca1ff86",
+      "result": "PASS / CURRENT",
+      "same_conversation": true,
+      "only_capability": "CONTENT_BRIEF",
+      "artifact_length": 7433,
+      "artifact_sha256": "1e91c208e32a6e54607d26c263ef32086b9f050902fd4b9a4775db1ad6d40b29",
+      "llm_attempts": 6
+    }
+  },
+  "discipline": {
+    "manual_retries": 0,
+    "platform_internal_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "real_publish": 0
+  }
+}
