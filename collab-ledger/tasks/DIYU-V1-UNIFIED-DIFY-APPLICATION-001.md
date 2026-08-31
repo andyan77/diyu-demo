@@ -1304,3 +1304,8 @@ WITHDRAW-01 W0 run `c97d9b12-931b-473a-af43-f08507f01db1`：上传 HTTP 201，�
 确认最高失效节点为当前 UAPP 上传资料登记接缝；它不在本 GAP-01 Prompt 的允许修改面，故
 `mutation_target=NONE`，W1 标 `NOT_RUN_DEPENDENT`。无真实发布、非测试变化、重试或重放。
 累计 `7 runs / 30 LLM`，继续不依赖该失败的 FULL-01 / RECOVERY-01。
+
+FULL-01:T1 run `f05a4a30-91bf-4c1b-89da-2c5bbbda2c1a` 只运行 CONTENT_BRIEF，并因冻结
+输入未说明表达主体而精确 Return；没有 artifact、暗跑或非测试副作用。T2 只说“已经发出去了”，
+也不补该缺口，因此完整故事 Fixture 与能力最小前置条件不一致；归因 `CHECKER_OR_FIXTURE`，
+T2/T3/T4 均 `NOT_RUN_DEPENDENT`。累计 `8 runs / 35 LLM`，继续唯一独立 RECOVERY-01:R1。

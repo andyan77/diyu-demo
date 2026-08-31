@@ -6,7 +6,7 @@
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
 | C2 G1/G2 | COMPLETED | successor G1/G2 PASS / CURRENT | 4/4 | 15/90 | NONE | C3 |
-| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV 组 NOT_VERIFIED(ORACLE)；WITHDRAW W0 FAIL(SUT)，W1 依赖暂停；5 个独立输入待运行 | 3/11 | 30/90 | AC-07/08 未通过 | FULL T1 |
+| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV/FULL Fixture 不充分；WITHDRAW W0 FAIL(SUT)；仅 RECOVERY 独立待运行 | 4/11 | 35/90 | AC-03/07/08 未通过 | RECOVERY R1 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
 
@@ -52,6 +52,10 @@
   真实读取文件，但 UAPP 未执行素材登记写入，task-scoped M2 `materials=[]`；归因当前 UAPP
   上传资料登记接缝 `SYSTEM_UNDER_TEST`。该接缝不在 GAP-01 授权修改面，故不修改；W1
   `NOT_RUN_DEPENDENT`。累计 `7 runs / 30 LLM`，继续独立 FULL/RECOVERY 分支。
+- FULL-01:T1 run `f05a4a30-91bf-4c1b-89da-2c5bbbda2c1a`：只运行 CONTENT_BRIEF，
+  精确缺口为冻结输入未给出的表达主体；未编造 artifact。T2 也不补该缺口，故 T2/T3/T4
+  `NOT_RUN_DEPENDENT`。归因正例 Fixture 与专业能力最小前置条件不一致，不修改 SUT/输入/Checker。
+  累计 `8 runs / 35 LLM`，只剩独立 RECOVERY-01:R1。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 
