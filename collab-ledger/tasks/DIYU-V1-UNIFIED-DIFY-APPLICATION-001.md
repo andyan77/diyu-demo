@@ -1640,3 +1640,20 @@ platform_internal_replays: 0/1
 manual_retries: 0
 next_action: frozen G1 once
 ```
+
+### 2026-08-31 · AC-12 最终批次 GAP G1 正式结果（只追加）
+
+```yaml
+run_id: 20bd900e-1d11-4cd6-b8b9-2ca716bf683b
+conversation_id: 246da831-b194-40ac-8e2c-b0bef930979e
+result: PASS / CURRENT
+route_mode: ASK_ONE
+question_count: 1
+g2_can_answer: true
+target_capability_runs: 0
+other_capability_runs: 0
+unauthorized_choice: false
+top_level_runs: 2/4
+deepseek_node_attempts: 8/30
+next_action: frozen G2 once in same conversation
+```

@@ -588,3 +588,8 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - `YAML = PASS / CURRENT`：顶层 `c96a26d8…`，Content Brief `0232dc78…` 成功，实际 DeepSeek 节点尝试 `6`，内部重放与人工重试均为 `0`。
 - 用户明确的 `content_promise` 与 `expected_change` 均以 `A / USER_UTTERANCE` 保存；系统只问未给出的业务主目标，未重复索取已回答的内容承诺。
 - 批次累计：顶层 `1/4`，DeepSeek `6/30`；唯一下一步：冻结 G1 原文运行一次。
+
+## AC-12 语义承接 · 最终批次 GAP G1
+
+- `G1 = PASS / CURRENT`：顶层 `20bd900e…`；只提出一个可由冻结 G2 回答的自然语言分叉问题，没有选择商品、内容方向或 Campaign，也没有运行专业能力。
+- 批次累计：顶层 `2/4`，DeepSeek `8/30`，内部重放 `0/1`；唯一下一步：同一会话运行 G2。
