@@ -1288,3 +1288,8 @@ successor G2 run `306c2e7f-2f8b-4eec-9b73-418ffca1ff86` 正式 PASS：同 conver
 `b99eb7ef-4b80-47f8-bed8-af2e0e05f4c7`，Seam 与 CONTENT_BRIEF 唯一运行，其他五能力 0；
 artifact `7433` 字 / sha256 `1e91c208…40b29`。未重复询问 G1 或已表达的内容承诺；重试、重放、
 非测试变化均 0。GAP-01 successor 累计 `4 runs / 15 LLM`，进入剩余 11 项正式顺序。
+
+EQUIV-01a run `f033b774-f343-4070-acdb-6e350346b9e1` 正确路由、只运行 CONTENT_BRIEF，
+但冻结输入没有给表达主体，能力精确询问该一项并未编造 artifact。Checker 的正例成品门因此 FAIL；
+确认原因为 Fixture 与能力前置条件不等价，不修改 SUT、输入、Checker 或专业合同。EQUIV-01b/c
+同依赖暂停；只版本化收窄 Runner 的依赖阻断，继续不依赖的 8 个冻结输入。累计 `5 runs / 20 LLM`。
