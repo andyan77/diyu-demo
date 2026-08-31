@@ -1,0 +1,33 @@
+{
+  "document": {
+    "id": "UAPP_S5_AC_MATRIX_v1.8",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "parent": "UAPP_S5_AC_MATRIX_v1.7",
+    "candidate_graph_md5": "6ac5a45f3953683339f4ea77ebcc00c6"
+  },
+  "criteria": {
+    "UAPP-AC-01": "PASS / CURRENT",
+    "UAPP-AC-02": "NOT_VERIFIED(INSUFFICIENT:16/19_EXECUTED)",
+    "UAPP-AC-03": "FAIL / CURRENT",
+    "UAPP-AC-04": "PASS / CURRENT",
+    "UAPP-AC-05": "PASS / CURRENT",
+    "UAPP-AC-06": "PASS / CURRENT",
+    "UAPP-AC-07": "PASS / CURRENT",
+    "UAPP-AC-08": "FAIL / CURRENT",
+    "UAPP-AC-09": "NOT_VERIFIED(INCOMPLETE_FULL_AND_RECOVERY_CHAIN)",
+    "UAPP-AC-10": "NOT_VERIFIED(INSUFFICIENT:16/19_EXECUTED)",
+    "UAPP-AC-11": "NOT_VERIFIED(INCOMPLETE_FORMAL_SET)"
+  },
+  "formal_scenarios": {
+    "pass_current": 14,
+    "fail_current": 2,
+    "not_run_dependent": 3,
+    "total": 19
+  },
+  "applicable_p0_failures": 2,
+  "notes": [
+    "AC-07 is now PASS: W0 registered one exact test-scoped material and W1 withdrew the same material without deleting history.",
+    "AC-08 fails because YAML-like EQUIV-01b diverged while plain and JSON-like positives passed and the single-variable negative passed.",
+    "AC-03 fails because FULL-01:T2 recognized RECORD_PUBLISH but created no test publish instance; T3/T4/R1 were not run."
+  ]
+}

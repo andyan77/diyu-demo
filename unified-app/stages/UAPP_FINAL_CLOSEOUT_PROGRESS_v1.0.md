@@ -1,5 +1,22 @@
 # UAPP Final Closeout Progress v1.0
 
+## 2026-08-30 · 最终技术收敛结果
+
+| Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
+|---|---|---|---:|---:|---|---|
+| C1 Track A 素材登记与撤回 | COMPLETED | W0/W1 PASS / CURRENT | 3 | 9 | NONE | 已完成 |
+| C2 Track B Fixture 与控制 | COMPLETED | Fixture 9/9；Checker 控制有效 | 0 | 0 | NONE | 已完成 |
+| C3 剩余 11 项正式验证 | COMPLETED | 6 PASS、2 FAIL、3 NOT_RUN_DEPENDENT；连同既有为 14/19 PASS | 9/13 | 41/78 | EQUIV-b、FULL-T2 | C4 收口 |
+| C4 S5 AC-01～11 收口 | COMPLETED | FAIL / CURRENT；AC-03/08 FAIL | 0 | 0 | 2 个 P0 | Founder 后继 REBASE |
+| C5 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 不可开始 |
+
+- W0/W1 已证明同一测试素材可登记、可精确撤回、历史保留、无真实发布。
+- EQUIV a/c/n PASS；b 的 YAML-like 表达在 M3 首先丢失主目标/承诺/目标类别，正式 FAIL。
+- FULL T1 PASS；T2 虽识别 `RECORD_PUBLISH`，但未写入测试 content version / publish instance，正式 FAIL；T3/T4/R1 依赖停止。
+- 本包实际 `9` 个顶层 run、`41` 次 LLM 节点尝试；重试、内部重放、重复采样、A/B、Reviewer 均为 0。
+- 当前 UAPP `6ac5a45f3953683339f4ea77ebcc00c6`；保护计数 `1568/117`，schema `25192c…b4fd`，保护应用与 main 零漂移。
+- 当前 S5 `FAIL / CURRENT`，Founder AC-12 不可开始；唯一下一步是 Founder 对 TD-UAPP-33/34 做一个版本化后继 REBASE。
+
 ## 2026-08-30 · S5 最终技术收敛 REBASE
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |

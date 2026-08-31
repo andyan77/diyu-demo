@@ -1347,3 +1347,20 @@ Track A 清理后复算确定性控制 `15/15 PASS`；上传登记候选已发�
 Scenario v1.2 的格式等价控制 `9/9 PASS`，最终 Checker 对 11 个正控制和 119 个单变量负控制
 全部判别成立。`UAPP_S5_GATE_v2.0` 与 `UAPP_S5_FINAL_MANIFEST_v1.0` 已在任何新模型调用前
 冻结；本阶段模型调用仍为 0。下一动作是冻结提交并普通 push，随后从 W0 依序执行 11 项。
+
+## 2026-08-30 — S5 final convergence result
+
+W0 run `b3e44f33-b383-43a8-bd30-bacc271376be` 登记唯一测试素材；首次 W1 run
+`e135f463-00a5-4d47-a3d4-fadf91194e96` 暴露 UAPP 缺失撤回分支。授权内唯一 successor
+发布为 UAPP `6ac5a45f3953683339f4ea77ebcc00c6`，W1 `1bf080f3-a7d4-45e9-9fbe-c10dffa05fa8`
+真实撤回同一 material，历史保留且无外部副作用。旧 W1 FAIL 原样保留。
+
+EQUIV-01a/01c/01n 当前 PASS；Checker 字段 schema 与负例物理节点过约束均通过版本化
+Triage 后对同一 RAW 重裁，没有模型重跑。EQUIV-01b run `c4a7cd78-8da0-4f97-b5a1-5beb89100041`
+在 M3 首先丢失主目标、内容承诺和目标类别，未产生成品，保持 FAIL。
+
+FULL T1 run `2e5b9488-96d6-4167-88dc-5e0561e232c9` 生成 6348 字 Content Brief；T2 run
+`14d66ec7-09aa-4fd9-85ba-2dce90ec7c67` 识别 `RECORD_PUBLISH` 但未创建测试发布记录，保持 FAIL。
+T3/T4/RECOVERY 按依赖停止。最终 19 项为 14 PASS、2 FAIL、3 NOT_RUN_DEPENDENT；实际
+`9 runs / 41 LLM`，重试/重放/A-B/Reviewer 均 0。保护计数 `1568/117`、schema 与 main 无漂移。
+S5 `FAIL / CURRENT`，Founder AC-12 不可开始，terminal_state 继续 unset。
