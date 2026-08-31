@@ -576,3 +576,9 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 
 - `850d2b64…` 已终结但不构成业务交付；`cd1cc6d2…` 的语义结果仅为 `EXPLORATORY`。
 - 已记录 ChunkedEncodingError、SSL EOF、内部重放和后继 Content Brief 成功；归因 `INPUT_ENVIRONMENT_OR_TOOL`，未修改 SUT。
+
+## AC-12 语义承接 · Gate v1.1 冻结
+
+- Gate SHA-256：`cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb`；输入 SHA-256：`cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d`。
+- 批次仅含 YAML、G1、G2、FULL T1；顶层上限 `4`、DeepSeek 节点上限 `30`、全批平台内部透明传输重试上限 `1`，人工重试/重复采样/A-B/Reviewer 均为 `0`。
+- Gate 与 Runner 已冻结但尚未执行模型调用；唯一下一步：在提交后运行零模型环境预检。

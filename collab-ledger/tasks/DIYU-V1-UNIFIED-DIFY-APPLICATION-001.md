@@ -1603,3 +1603,23 @@ semantic_readback:
   phrase_按你定的: ABSENT
 next_action: freeze Gate v1.1 before any new formal model call
 ```
+
+### 2026-08-31 · AC-12 最终四轮 Gate v1.1（只追加）
+
+```yaml
+gate: UAPP_AC12_SEMANTIC_HANDOFF_GATE_v1.1.json
+gate_sha256: cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb
+frozen_inputs_sha256: cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d
+formal_order: [YAML, G1, G2, FULL_T1]
+budget:
+  top_level_runs_max: 4
+  deepseek_node_attempts_max: 30
+  platform_internal_transparent_transport_replays_total_max: 1
+  manual_retries: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+historical_run_identity_changed: false
+model_calls_since_gate_freeze: 0
+next_action: commit then zero-model environment preflight
+```
