@@ -1,0 +1,10 @@
+{
+  "document": {"id": "UAPP_AC12_SEMANTIC_HANDOFF_GATE_v1.0", "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001", "frozen_before_formal_model_calls": true},
+  "candidate": {"uapp_app_id": "dbb14eec-a935-445c-9764-280c8fd3375b", "published_graph_md5": "db49ac79449899a8eeedfa3b0b01bf2b", "canonical_sha256": "74712a02ed5b1a837440f7650f82a11adc284e84c2effb3ad564f59e9264f6ec", "touched_nodes": ["uapp_fields"]},
+  "protected_nodes": ["uapp_route", "uapp_m3", "uapp_hop", "uapp_seam", "m1_compiler"],
+  "frozen_files": {"inputs_sha256": "cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d", "builder_sha256": "8f23388421626db04fcb840c53100ea862e380e8f2533d50301000f39393ca51", "controls_sha256": "8aabaf8c99b8f2848733956a77e75b95dec3321dcd1cb6ba3587e7136c2f3a26", "controls_result_sha256": "fb4c358fa70aea06bdb29a22bec5fb4c76343b5e97b392bed86afb18e2bbd3cc"},
+  "formal_order": ["YAML", "G1", "G2", "FULL_T1"],
+  "budget": {"top_level_workflow_runs_initial_max": 4, "deepseek_llm_node_attempts_initial_max": 28, "manual_retries": 0, "repeat_sampling": 0, "ab_tests": 0, "reviewer_calls": 0, "successor_lifetime_runs_max": 8, "successor_lifetime_llm_attempts_max": 52},
+  "acceptance": {"YAML": "user outcome reaches content_promise; no repeat question", "G1_G2": "same conversation; G2 does not repeat answered outcome", "FULL_T1": "unsupported commercial goal is not user-attributed"},
+  "stop_rule": "First formal failure stops dependent calls; only one successor repair when independently confirmed as in-scope UAPP SUT."
+}
