@@ -1533,3 +1533,19 @@ model_calls: 0
 next_state: CHECKPOINT
 unique_next_action: 提供或挂载包含 dify 与 diyu_business 的重启前 PostgreSQL/WSL 备份
 ```
+### 2026-08-31 · Founder 全新环境重复复验豁免（只追加）
+
+```yaml
+event: FOUNDER_FRESH_BASELINE_REVALIDATION_WAIVER_2026-08-31
+authority_quote: 我认为可以豁免，不做这个环节步骤，可以推进下一步
+waived_step: fresh_environment_19_scenario_formal_revalidation
+formal_model_calls: 0
+historical_results: PRESERVED_NOT_PROMOTED_TO_CURRENT
+deterministic_controls: 22/22_PASS
+live_m2_api_controls: PASS
+S5_TECHNICAL_ACCEPTANCE: NOT_VERIFIED(FOUNDER_WAIVED_REVALIDATION)
+FOUNDER_AC_12: READY_FOR_FOUNDER_TEST
+main_merge: NOT_ALLOWED
+terminal_state: unset
+unique_next_action: Founder 使用 UAPP_FOUNDER_TRIAL_PACKAGE_v1.1.md 对当前候选亲自实测并裁定 ACCEPT 或 RETURN
+```

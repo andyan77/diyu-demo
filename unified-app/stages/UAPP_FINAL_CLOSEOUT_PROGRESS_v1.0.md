@@ -1,5 +1,20 @@
 # UAPP Final Closeout Progress v1.0
 
+## 2026-08-31 · Founder 豁免全新环境重复复验
+
+| Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
+|---|---|---|---:|---:|---|---|
+| P0 新环境重建 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | 已完成 |
+| P1 零模型预检 | COMPLETED | 22/22 + M2 API 控制 PASS | 0 | 0 | NONE | 已完成 |
+| P2 双阻断候选 | COMPLETED | 新候选已发布并绑定 | 0 | 0 | NONE | 已完成 |
+| P3 19 项正式复验 | COMPLETED | NOT_APPLICABLE_BY_FOUNDER_DECISION | 0 | 0 | NONE | P5 |
+| P4 S5 技术验收 | COMPLETED | NOT_VERIFIED(FOUNDER_WAIVED_REVALIDATION) | 0 | 0 | Founder 接受不重新取证 | P5 |
+| P5 Founder AC-12 | READY | NOT_VERIFIED | 0 | 0 | 等 Founder 亲自实测 | 使用 v1.1 实测包 |
+
+- 本裁决不把未运行场景改写为 PASS；历史证据全部保留。
+- 当前候选 UAPP `dbb14eec-a935-445c-9764-280c8fd3375b` / `3ac6d9187f27e0f656417de119155480`。
+- 正式模型调用、重试、内部重放、A/B、Reviewer 均为 0；main 未合并，terminal unset。
+
 ## 2026-08-31 · Founder 授权全新环境重建与新基线
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
