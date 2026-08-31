@@ -1,0 +1,71 @@
+{
+  "document": {
+    "id": "UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_FORMAL_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "execution_package_id": "UAPP-AC12-CANONICAL-FIELDS-AND-FINAL-DELIVERY-SUCCESSOR-001",
+    "gate_sha256": "4761da15c199a05492e2b3e548c842c6439fc2a8abf5d561f491976f9835c089",
+    "candidate_graph_md5": "c2b447544d1374409c99c78fe1e94bd2",
+    "result": "FAIL / CURRENT"
+  },
+  "scenes": {
+    "YAML": {
+      "workflow_run_id": "e0abfd61-131f-4189-a605-f7706756d284",
+      "conversation_id": "38f41f53-50e8-46b5-bd80-8dce1cc8b75c",
+      "raw_sha256": "cde7c820fd39bd84c75e78edbcf441477569e75b7dc1358380b764329f6cf1dc",
+      "result": "FAIL / CURRENT",
+      "passed": ["expected_change/content_promise/expression subject/expression boundary retain USER_UTTERANCE source", "objective.primary_goal physically absent", "internal English title absent", "target Content Brief only; other five capabilities zero"],
+      "failed": ["delivered content says four items must be confirmed before publishing", "the four platform/fact/presentation adaptations are not all current blockers", "therefore zero blocking questions criterion fails"]
+    },
+    "G1": {
+      "workflow_run_id": "2da11dbc-1733-4300-b92c-c957ef822b1d",
+      "conversation_id": "707c6384-0243-4401-b689-1369185e0049",
+      "raw_sha256": "bc94bbd78c17ccfe55f673cbdc153252e9e817dd2e8ac01e42e95826282e3620",
+      "result": "FAIL / CURRENT",
+      "passed": ["one route-changing question", "no professional capability run", "no unauthorized business choice"],
+      "failed": ["ASK_ONE answer path bypasses uapp_delivery and retains the old fixed opening '这一步我先确认一件事，确认完直接往下做'", "natural delivery outlet is therefore not unified"]
+    },
+    "G2": {
+      "result": "NOT_RUN_DEPENDENT / CURRENT",
+      "reason": "G1 did not satisfy its frozen acceptance; Gate forbids G2 when G1 is not successful."
+    },
+    "FULL_T1": {
+      "workflow_run_id": "45bafd97-b60a-4c20-b897-d85695f00c8f",
+      "raw_sha256": "9cc2cdbdb650624f2375f587d592123381c719a24ddbabf493e264e94739ee6b",
+      "result": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) / CURRENT",
+      "failure_node": "uapp_inline_artifact",
+      "error": "operation not permitted",
+      "reason": "The node is protected and was not modified by this package. The failure occurred before uapp_fields/seam/delivery verification; no retry is authorized."
+    }
+  },
+  "accounting": {
+    "top_level_workflow_runs": 3,
+    "top_level_workflow_runs_cap": 4,
+    "deepseek_llm_node_attempts": 12,
+    "deepseek_llm_node_attempts_cap": 28,
+    "manual_retries": 0,
+    "platform_automatic_transparent_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "active_workflows_after": 0
+  },
+  "protection": {
+    "changed_uapp_nodes": ["uapp_fields", "uapp_delivery"],
+    "m1_m2_m3_hop_seam_route_provider_professional_skills": "UNCHANGED",
+    "professional_input_safe": "UNCHANGED / CURRENT",
+    "real_publish": 0,
+    "non_test_data_write": "NOT_OBSERVED (fresh baseline guard 0/0)",
+    "main_merge": "NOT_ALLOWED"
+  },
+  "disposition": {
+    "CANONICAL_USER_FIELDS": "FAIL / CURRENT",
+    "PRIMARY_GOAL_SOURCE_GUARD": "PASS / CURRENT for YAML; FULL not verified because of environment failure",
+    "FINAL_USER_DELIVERY_PROJECTION": "FAIL / CURRENT",
+    "SEMANTIC_HANDOFF_AND_SUFFICIENCY": "FAIL / CURRENT",
+    "READY_FOR_FOUNDER_RETEST": false,
+    "FOUNDER_AC_12": "RETURN / CURRENT",
+    "S5_TECHNICAL_ACCEPTANCE": "FAIL / CURRENT",
+    "terminal_state": "unset",
+    "next_state": "CHECKPOINT"
+  }
+}

@@ -1803,3 +1803,51 @@ next_action: commit_and_push_frozen_candidate_then_run_YAML_once
 main_merge: NOT_ALLOWED
 terminal_state: unset
 ```
+
+### 2026-08-31 · Canonical Fields 与最终交付后继正式结果（只追加）
+
+```yaml
+execution_package_id: UAPP-AC12-CANONICAL-FIELDS-AND-FINAL-DELIVERY-SUCCESSOR-001
+gate_sha256: 4761da15c199a05492e2b3e548c842c6439fc2a8abf5d561f491976f9835c089
+candidate_uapp_graph: c2b447544d1374409c99c78fe1e94bd2
+formal_results:
+  YAML:
+    run_id: e0abfd61-131f-4189-a605-f7706756d284
+    result: FAIL / CURRENT
+    first_failure: 成功内容把四项后续适配错误写成发布前必答项
+  G1:
+    run_id: 2da11dbc-1733-4300-b92c-c957ef822b1d
+    result: FAIL / CURRENT
+    first_failure: ASK_ONE 交付路径绕过最终自然语言投影，保留旧固定外壳
+  G2:
+    result: NOT_RUN_DEPENDENT / CURRENT
+    reason: G1 未通过冻结验收，Gate 禁止继续运行
+  FULL_T1:
+    run_id: 45bafd97-b60a-4c20-b897-d85695f00c8f
+    result: NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) / CURRENT
+    failure_node: uapp_inline_artifact
+    error: operation not permitted
+accounting:
+  top_level_workflow_runs: 3/4
+  deepseek_llm_node_attempts: 12/28
+  failed_llm_nodes: 0
+  manual_retries: 0
+  platform_automatic_transparent_replays: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+confirmed_origins:
+  - SYSTEM_UNDER_TEST: 成功 artifact 的非阻塞适配分类未统一；ASK_ONE 绕过最终用户交付出口
+  - INPUT_ENVIRONMENT_OR_TOOL: 受保护且未改的 uapp_inline_artifact 发生 operation not permitted
+mutation_target: NONE
+ready_for_founder_retest: false
+founder_ac12: RETURN / CURRENT
+s5_technical_acceptance: FAIL / CURRENT
+main_merge: NOT_ALLOWED
+terminal_state: unset
+next_state: CHECKPOINT
+evidence:
+  result: unified-app/stages/UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_FORMAL_RESULT_v1.0.json
+  triage: unified-app/docs/UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_FORMAL_FAILURE_TRIAGE_001.md
+  completion_check: unified-app/docs/UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_COMPLETION_CHECK_v1.0.md
+```

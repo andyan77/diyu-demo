@@ -9,15 +9,17 @@
 | N2 来源守卫正负控制 | COMPLETED | 14/14 PASS | 0 | 0 | NONE | N3 |
 | N3 最终用户投影控制 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N4 |
 | N4 候选构建与冻结 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N5 YAML |
-| N5 四场景正式验证 | NOT_STARTED | NOT_VERIFIED | 0/4 | 0/28 | N4 | YAML |
-| N6 证据与 Git 收口 | NOT_STARTED | NOT_VERIFIED | 0 | 0 | N5 | 正式结果 |
+| N5 四场景正式验证 | COMPLETED | FAIL / CURRENT | 3/4 | 12/28 | YAML/G1 交付出口；FULL 环境错误；G2 依赖停止 | N6 |
+| N6 证据与 Git 收口 | IN_PROGRESS | NOT_VERIFIED | 0 | 0 | 待提交失败证据 | commit/push |
 
 - 当前 UAPP 基线：`5720ddf6e0daef0bc82818bb53b95ff4`；仅拟改 `uapp_fields`、`uapp_delivery`。
 - YAML、G2、FULL T1 原始失败载荷已离线重放；来源守卫和交付出口 14/14 正负控制通过。
 - 继承：G1、意图、路由、Content Brief 可达、其他五能力零暗跑和 `professional_input_safe` 仍为 CURRENT；历史 FAIL 不改绿。
 - 候选已发布并回读：UAPP 图 `c2b447544d1374409c99c78fe1e94bd2`，只改 `uapp_fields` 与 `uapp_delivery`；受保护图与 Provider 未漂移。
 - Gate `UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_GATE_v1.0.json` sha256 `4761da15c199a05492e2b3e548c842c6439fc2a8abf5d561f491976f9835c089` 已冻结，模型调用仍为 0。
-- 唯一下一步：提交并普通 push 冻结候选，然后按 Gate 运行 YAML 一次。
+- YAML 字段来源通过，但把四个后续适配写成当前必答项，正式 FAIL；G1 仍走固定缺口回复，正式 FAIL。
+- G2 因 G1 FAIL 未运行；FULL T1 在未改的 `uapp_inline_artifact` 收到 `operation not permitted`，记 `NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)`，无手工重试。
+- 唯一下一步：提交并普通 push 本批 FAILURE TRIAGE 和原始证据；不再发起模型调用。
 
 ## 2026-08-31 · Founder AC-12 RETURN 与只读路径审计
 
@@ -624,3 +626,18 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - `FULL T1 = PASS / CURRENT`：顶层 `14dc81fa…` 成功；没有“按你定的”，没有把购买或 GMV 写成用户已经确定的目标。
 - Content Brief `56f873e2…` 发生 SSL EOF、零输出零业务写入，Dify 作了本批唯一透明重放 `61c28113…` 并成功；人工重试为 `0`。
 - 四轮全部通过：顶层 `4/4`，DeepSeek `21/30`，内部重放 `1/1`。状态为 `READY_FOR_FOUNDER_RETEST`，不代表完整 S5 或 main 可合并。
+
+## AC-12 Canonical Fields 与最终交付后继 · 正式结果
+
+| Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
+|---|---|---|---:|---|---|
+| N0–N4 冻结、实现与机器控制 | COMPLETED | PASS / CURRENT | 0 | — | 正式定向验证 |
+| N5 四场景正式验证 | COMPLETED | FAIL / CURRENT | 3/4，12/28 | YAML/G1 交付出口未统一；FULL 环境权限错误 | 结束本授权包 |
+| N6 交付与账本 | IN_PROGRESS | NOT_VERIFIED | 0 | 落盘、提交、推送 | 提交并核验远端 |
+
+- YAML `e0abfd61-131f-4189-a605-f7706756d284`：字段来源守卫成立，但把四项后续适配误设为当前硬门，`FAIL / CURRENT`。
+- G1 `2da11dbc-1733-4300-b92c-c957ef822b1d`：路线问题正确，但 ASK_ONE 绕过最终投影并保留旧固定外壳，`FAIL / CURRENT`；因此 G2 按 Gate 为 `NOT_RUN_DEPENDENT / CURRENT`。
+- FULL T1 `45bafd97-b60a-4c20-b897-d85695f00c8f`：受保护未改节点 `uapp_inline_artifact` 报 `operation not permitted`，`NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) / CURRENT`；未重试。
+- 累计：顶层运行 `3/4`，DeepSeek 节点尝试 `12/28`，手工重试、平台重放、重复采样、A/B、Reviewer 全为 `0`；活动 workflow 为 `0`。
+- `READY_FOR_FOUNDER_RETEST=false`，Founder AC-12 仍为 `RETURN / CURRENT`；S5 仍为 `FAIL / CURRENT`，main 不合并、根任务终态保持 unset。
+- 唯一下一步：在新版本化授权下，修复 UAPP 的统一最终用户交付出口，并独立诊断 FULL 的环境权限错误。
