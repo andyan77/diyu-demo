@@ -1,0 +1,36 @@
+{
+  "document": {
+    "id": "WITHDRAW_SUCCESSOR_BUILD_v1.0",
+    "model_calls": 0
+  },
+  "base_graph_md5": "40a436cdbc11823eca16d2f1c5ecb037",
+  "candidate_canonical_sha256": "1dd9f77466533724536e83837c66f906ca94b6b39e90869e7172b90948517e36",
+  "node_count": 69,
+  "edge_count": 74,
+  "added_nodes": [
+    "uapp_withdraw_fail_answer",
+    "uapp_withdraw_gate",
+    "uapp_withdraw_ok_answer",
+    "uapp_withdraw_parse",
+    "uapp_withdraw_post",
+    "uapp_withdraw_result_gate"
+  ],
+  "added_edges": [
+    "uapp_material_gate-false-uapp_withdraw_gate",
+    "uapp_withdraw_gate-false-uapp_m3_gate",
+    "uapp_withdraw_gate-withdraw-uapp_withdraw_post",
+    "uapp_withdraw_parse-source-uapp_withdraw_result_gate",
+    "uapp_withdraw_post-source-uapp_withdraw_parse",
+    "uapp_withdraw_result_gate-false-uapp_withdraw_fail_answer",
+    "uapp_withdraw_result_gate-ok-uapp_withdraw_ok_answer"
+  ],
+  "removed_edges": [
+    "uapp_material_gate-false-uapp_m3_gate"
+  ],
+  "response": {
+    "result": "success",
+    "created_at": 1788141245
+  },
+  "published_graph_md5": "6ac5a45f3953683339f4ea77ebcc00c6",
+  "published_canonical_sha256": "1dd9f77466533724536e83837c66f906ca94b6b39e90869e7172b90948517e36"
+}
