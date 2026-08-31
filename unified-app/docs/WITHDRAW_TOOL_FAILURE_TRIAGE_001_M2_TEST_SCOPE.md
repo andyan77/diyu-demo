@@ -44,3 +44,21 @@ candidate_published: `false`
 当前授权不包含修改被标记为非测试的数据。建议 Founder 仅授权对上述 10 个唯一可定位的测试
 fixture workspace 做一次可审计清理；若不授权清理，则本次 S5 不能满足“非测试数据零变化”硬门。
 
+### Exact cleanup candidate set
+
+以下集合由 `created_at >= 2026-08-31T01:15:50Z`、测试生成的 `ws-<uuidhex>` 名称和本次两次
+pytest 时间窗三重绑定；不包含激活前 workspace：
+
+| workspace id | workspace name | materials | tasks | artifacts | versions | publishes |
+|---|---|---:|---:|---:|---:|---:|
+| `94810adf-8429-4a13-b732-4d960db42267` | `ws-1b7de80f77144c0988168449ba2e6dd9` | 1 | 1 | 1 | 2 | 1 |
+| `55dea141-7d27-488c-a498-06a0979d5c22` | `ws-304e9b70206f493e85a90fb6e725610a` | 1 | 1 | 1 | 0 | 0 |
+| `e99346f8-d2ab-44f1-b2f0-ae94ecd559c1` | `ws-5d53c2af7a4f4afcab59337f3980afc1` | 1 | 1 | 1 | 0 | 0 |
+| `99af9ef2-9afa-4839-be88-22d37cbc4f59` | `ws-f4ca2aef565d43269d5a9e19a3612ed7` | 1 | 1 | 1 | 1 | 0 |
+| `008be683-9af2-4528-afde-9e6ef47be6cb` | `ws-1c0246ca0ae74f8ca6e5a3531c4aa780` | 1 | 1 | 1 | 0 | 0 |
+| `7901c68c-a580-4a51-8dbe-47717668af37` | `ws-8d1c84525d594e7e9691b93e03450ebf` | 1 | 1 | 1 | 2 | 1 |
+| `e90f3460-be8e-4490-827a-31ca7cd16312` | `ws-f5aed2c401864df8b965fae987755142` | 1 | 1 | 1 | 0 | 0 |
+| `1b22bb7d-1f9b-49ea-8fe8-4e2b2e0968c2` | `ws-0ba81e9d485e49dcb05d3ed8eecf74bb` | 1 | 1 | 1 | 0 | 0 |
+| `9a95cbe7-aa95-463a-8112-f15f235e8cc3` | `ws-9190d65ec52944eca4d06c3299963b20` | 1 | 1 | 1 | 1 | 0 |
+| `8479b71e-59e1-43f3-80d3-a18a6fb6e7bc` | `ws-27a83567f08d41fea96eb04a416e75d9` | 1 | 1 | 1 | 0 | 0 |
+
