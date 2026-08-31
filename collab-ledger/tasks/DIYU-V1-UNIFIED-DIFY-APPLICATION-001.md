@@ -1062,6 +1062,20 @@ model_calls: 0
 main_write: 0
 ```
 
+```yaml
+event: UAPP_S5_FINAL_TWO_BLOCKER_P0_P1_CHECKPOINT_PUSH_CONFIRMED
+state: CONFIRMED
+commit: ed49166f8e75bfc34899471bf8896e6a32dc2018
+target: origin/codex/v1-uapp-progressive-canvas-001
+method: fast-forward, non-force
+remote_before: 8f6476231c04652f0de271b841bf013929ab7fbb
+remote_after: ed49166f8e75bfc34899471bf8896e6a32dc2018
+dify_write: 0
+m2_write: 0
+model_calls: 0
+main_write: 0
+```
+
 Phase A 冻结 push 已确认：`origin/codex/v1-uapp-progressive-canvas-001` 从 `7af7293` 快进到
 `8fe6e056f534a036dc616ae7f2182e15a61595e2`，非 force，本地与远端一致。
 
