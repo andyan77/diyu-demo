@@ -1770,3 +1770,36 @@ evidence:
   triage: unified-app/docs/UAPP_AC12_SEMANTIC_AUTHORITY_FORMAL_FAILURE_TRIAGE_001.md
   completion_check: unified-app/docs/UAPP_AC12_SEMANTIC_AUTHORITY_COMPLETION_CHECK_v1.0.md
 ```
+
+### 2026-08-31 · Canonical Fields 与最终交付后继冻结（只追加）
+
+```yaml
+execution_package_id: UAPP-AC12-CANONICAL-FIELDS-AND-FINAL-DELIVERY-SUCCESSOR-001
+role: EXECUTION
+model_calls: 0
+confirmed_origin: SYSTEM_UNDER_TEST
+mutation_target:
+  - uapp_fields
+  - uapp_delivery
+controls:
+  source_and_delivery: 14/14 PASS
+candidate:
+  uapp_graph_md5: c2b447544d1374409c99c78fe1e94bd2
+  changed_nodes: [uapp_fields, uapp_delivery]
+  protected_nodes_and_provider: UNCHANGED
+gate:
+  path: unified-app/stages/UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_GATE_v1.0.json
+  sha256: 4761da15c199a05492e2b3e548c842c6439fc2a8abf5d561f491976f9835c089
+  frozen_before_model_calls: true
+formal_order: [YAML, G1, G2, FULL_T1]
+budget:
+  top_level_runs: 4
+  deepseek_llm_attempts: 28
+  manual_retries: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+next_action: commit_and_push_frozen_candidate_then_run_YAML_once
+main_merge: NOT_ALLOWED
+terminal_state: unset
+```

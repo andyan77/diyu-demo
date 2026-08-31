@@ -1,23 +1,23 @@
 # UAPP Final Closeout Progress v1.0
 
-## 2026-08-31 · AC-12 语义权威与自然交付 REBASE
+## 2026-08-31 · AC-12 Canonical Fields 与最终交付后继
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
-| N0 证据与根因绑定 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N1/N2 控制 |
-| N1 语义权威控制 | COMPLETED | 11/11 PASS | 0 | 0 | NONE | N3 |
-| N2 共享交付控制 | COMPLETED | 六能力 6/6 PASS | 0 | 0 | NONE | N3 |
-| N3 候选部署与 Gate | COMPLETED | 候选已发布、Gate v1.2 已冻结 | 0 | 0 | NONE | N4 YAML |
-| N4 四场景真实验证 | COMPLETED | FAIL / CURRENT | 4/4 | 18/32 | 语义来源投影与已交付成果脱敏失败 | 停止并判定 |
-| N5 判定与交付 | COMPLETED | FAIL / CURRENT | 0 | 0 | N4 的三个硬门失败 | CHECKPOINT |
+| N0 激活与锚定 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N1 |
+| N1 真实输入离线重放 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N2 |
+| N2 来源守卫正负控制 | COMPLETED | 14/14 PASS | 0 | 0 | NONE | N3 |
+| N3 最终用户投影控制 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N4 |
+| N4 候选构建与冻结 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N5 YAML |
+| N5 四场景正式验证 | NOT_STARTED | NOT_VERIFIED | 0/4 | 0/28 | N4 | YAML |
+| N6 证据与 Git 收口 | NOT_STARTED | NOT_VERIFIED | 0 | 0 | N5 | 正式结果 |
 
-- 当前 UAPP 图：`5720ddf6e0daef0bc82818bb53b95ff4`；M3/Hop/Seam 路由绑定未改。
-- 六个能力仅更新共享用户交付后继，并已刷新 provider；专业 Skill、Prompt 与业务规则未改。
-- Gate `UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json` 先于本包任何模型调用冻结；v1.0/v1.1 只读保留为其父版本。
-- 四次冻结输入均已只运行一次：YAML、G1、G2、FULL T1；人工重试、平台重放、重复采样、A/B、Reviewer 均为 0。
-- G1 PASS；YAML 因内部能力标题和两项并列确认 FAIL；G2 因未确认 primary goal 写入 FAIL；FULL T1 因遗漏已给表达主体/边界并重复追问 FAIL。
-- 当前结果：`UAPP_SEMANTIC_AUTHORITY_HANDOFF = FAIL / CURRENT`，`SHARED_USER_DELIVERY_PROJECTION = FAIL / CURRENT`，`READY_FOR_FOUNDER_RETEST = false`。
-- 唯一下一步：提交并普通 push 本批失败证据；不再发起模型调用。
+- 当前 UAPP 基线：`5720ddf6e0daef0bc82818bb53b95ff4`；仅拟改 `uapp_fields`、`uapp_delivery`。
+- YAML、G2、FULL T1 原始失败载荷已离线重放；来源守卫和交付出口 14/14 正负控制通过。
+- 继承：G1、意图、路由、Content Brief 可达、其他五能力零暗跑和 `professional_input_safe` 仍为 CURRENT；历史 FAIL 不改绿。
+- 候选已发布并回读：UAPP 图 `c2b447544d1374409c99c78fe1e94bd2`，只改 `uapp_fields` 与 `uapp_delivery`；受保护图与 Provider 未漂移。
+- Gate `UAPP_AC12_CANONICAL_FIELDS_FINAL_DELIVERY_GATE_v1.0.json` sha256 `4761da15c199a05492e2b3e548c842c6439fc2a8abf5d561f491976f9835c089` 已冻结，模型调用仍为 0。
+- 唯一下一步：提交并普通 push 冻结候选，然后按 Gate 运行 YAML 一次。
 
 ## 2026-08-31 · Founder AC-12 RETURN 与只读路径审计
 
