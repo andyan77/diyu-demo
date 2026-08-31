@@ -1,0 +1,41 @@
+{
+  "document": {
+    "id": "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.1",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "execution_package_id": "UAPP-AC12-SEMANTIC-AUTHORITY-AND-HUMAN-DELIVERY-REBASE-001",
+    "parent_gate": "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.0.json",
+    "parent_gate_sha256": "243813b9f8de30d454b6533d9c2e821e3b46c0e908344b39fa18f02a6ba7dd5e",
+    "freeze_reason": "freeze the final repeatable builder/control identities after a zero-model idempotence repair",
+    "frozen_before_model_calls": true
+  },
+  "input_freeze": {
+    "path": "UAPP_AC12_SEMANTIC_HANDOFF_FROZEN_INPUTS_v1.0.json",
+    "sha256": "cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d",
+    "formal_order": ["YAML", "G1", "G2", "FULL_T1"],
+    "text_changed": false
+  },
+  "candidate_binding": "unified-app/stages/UAPP_AC12_SEMANTIC_AUTHORITY_CANDIDATE_BINDING_v1.0.json",
+  "candidate_binding_sha256": "c622ab569da337f085e6a74e93fb297abbd2c50ff7736c49422b5d704a230b74",
+  "new_formal_identities": {
+    "YAML": {"end_user": "uapp-ac12-authority-v12-yaml-20260831", "conversation": "new"},
+    "GAP": {"end_user": "uapp-ac12-authority-v12-gap-20260831", "conversation": "new at G1; same at G2"},
+    "FULL_T1": {"end_user": "uapp-ac12-authority-v12-full-20260831", "conversation": "new"}
+  },
+  "frozen_tools": {
+    "uapp_builder_sha256": "56a626d25409d8bb4d89ca9d2089ca2a16c614d659192767343831dca7696b50",
+    "authority_controls_sha256": "8877c2f6cbd1d4db5a8c6184375ac6b47bff8b17f5dd1ced33ce758c31c3f80b",
+    "delivery_builder_sha256": "3fc37c571b48edbdcd72de1d11e46417986eb9d6dd68c056a3f6c86aab8a0ff5",
+    "delivery_controls_sha256": "717c85481fe2c656bb9361d34bbdd1069129996b44809ef1db967a3317daa537",
+    "formal_runner": "unified-app/workflows/UAPP_AC12_SEMANTIC_AUTHORITY_FORMAL_RUNNER_v1.0.py",
+    "formal_runner_sha256": "0b872af86d2ede845669538aee4050699926efa346bdc956cda7b6f3bc572a53"
+  },
+  "acceptance": {
+    "YAML": "expected_change and content_promise preserve direct user value; expression fields remain separate; at most one real gap; no internal leakage",
+    "G1": "one natural route-changing question without deciding for the user",
+    "G2": "same conversation consumes G1 and does not repeat answered outcome or direction",
+    "FULL_T1": "one requested content by default; no unsupported purchase goal or user-attribution; recommendations remain recommendations",
+    "common": ["intent and route correct", "target component executes", "other capabilities do not run", "canonical source traceable", "professional_input has no authority bypass", "no non-test or real-publish side effect"]
+  },
+  "budget": {"top_level_workflow_runs_max": 4, "deepseek_llm_node_attempts_max": 32, "manual_retries": 0, "repeat_sampling": 0, "ab_tests": 0, "reviewer_calls": 0, "platform_automatic_transparent_replays_max": 1},
+  "stop_rules": {"business_failure": "preserve raw evidence; do not modify frozen inputs, gate, checker, fixture or implement a second batch", "transport_failure": "mark only affected scene NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL), with no manual retry", "g1_failure": "do not run G2", "main_merge": "NOT_ALLOWED", "terminal_state": "unset"}
+}

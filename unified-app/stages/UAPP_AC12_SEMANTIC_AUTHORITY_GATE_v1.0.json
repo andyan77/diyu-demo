@@ -1,0 +1,54 @@
+{
+  "document": {
+    "id": "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "execution_package_id": "UAPP-AC12-SEMANTIC-AUTHORITY-AND-HUMAN-DELIVERY-REBASE-001",
+    "frozen_before_model_calls": true,
+    "parent_gate": "UAPP_AC12_SEMANTIC_HANDOFF_GATE_v1.1.json",
+    "parent_gate_sha256": "cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb"
+  },
+  "input_freeze": {
+    "path": "UAPP_AC12_SEMANTIC_HANDOFF_FROZEN_INPUTS_v1.0.json",
+    "sha256": "cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d",
+    "formal_order": ["YAML", "G1", "G2", "FULL_T1"],
+    "text_changed": false
+  },
+  "candidate": {
+    "uapp_app_id": "dbb14eec-a935-445c-9764-280c8fd3375b",
+    "uapp_graph_md5": "5720ddf6e0daef0bc82818bb53b95ff4",
+    "m3_graph_md5": "26582e477afd458d4a4835df98257a56",
+    "hop_graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "seam_graph_md5": "2dd0d046cb99cfef20182a9002798598",
+    "capability_graph_md5": {
+      "MATRIX": "c3222b7846c67e8fdf6f9049299d4333",
+      "CAMPAIGN": "05e2ac1bce94c7ef2a0c68c9fb131170",
+      "CONTENT_BRIEF": "79200c7544453c049630534508367111",
+      "CREATIVE_SCRIPT": "5affe278c61c30e0f35cb3b1a737ca92",
+      "PRODUCTION_DIRECTOR": "fb2cc13b817768f5a7e9b17ef971663a",
+      "PUBLISHING_PACKAGING": "8f04f0d01deb7060c2886be52de69284"
+    }
+  },
+  "acceptance": {
+    "YAML": "expected_change and content_promise keep the user value; expression fields remain separate; one real gap at most; no internal leakage",
+    "G1": "one natural route-changing question without deciding for the user",
+    "G2": "same conversation consumes G1 and does not repeat answered outcome or direction",
+    "FULL_T1": "one requested content by default; no unsupported purchase goal or user-attribution; recommendations remain recommendations",
+    "common": ["intent and route correct", "target component executes", "other capabilities do not run", "canonical source traceable", "professional_input has no authority bypass", "no non-test or real-publish side effect"]
+  },
+  "budget": {
+    "top_level_workflow_runs_max": 4,
+    "deepseek_llm_node_attempts_max": 32,
+    "manual_retries": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "platform_automatic_transparent_replays_max": 1
+  },
+  "stop_rules": {
+    "business_failure": "preserve raw evidence; do not change frozen inputs, gate, checker, or fixture; no second implementation batch",
+    "transport_failure": "mark affected scene NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL), with no manual retry",
+    "g1_failure": "do not run G2",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset"
+  }
+}

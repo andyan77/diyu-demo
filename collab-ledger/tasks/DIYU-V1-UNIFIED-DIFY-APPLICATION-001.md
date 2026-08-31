@@ -1702,3 +1702,27 @@ disposition: READY_FOR_FOUNDER_RETEST
 not_authorized: [full_S5, main_merge, terminal_state]
 next_action: Founder AC-12 semantic retest
 ```
+
+### 2026-08-31 · AC-12 语义权威与自然交付 REBASE（只追加）
+
+```yaml
+execution_package_id: UAPP-AC12-SEMANTIC-AUTHORITY-AND-HUMAN-DELIVERY-REBASE-001
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+role: EXECUTION
+N0: COMPLETED / PASS / CURRENT
+N1: COMPLETED / 11_of_11_DETERMINISTIC_CONTROLS_PASS
+N2: COMPLETED / SIX_SHARED_DELIVERY_CONTROLS_PASS
+N3: COMPLETED / CANDIDATE_DEPLOYED_AND_GATE_FROZEN
+N4: NOT_STARTED / NOT_VERIFIED
+model_calls_this_package: 0
+uapp_graph_md5: 5720ddf6e0daef0bc82818bb53b95ff4
+protected_bindings:
+  m3: 26582e477afd458d4a4835df98257a56
+  hop: e38378c3c2a66b75aa7e645368c9e1ce
+  seam: 2dd0d046cb99cfef20182a9002798598
+failure_triage: unified-app/docs/UAPP_AC12_SEMANTIC_AUTHORITY_FAILURE_TRIAGE_v1.0.md
+gate: unified-app/stages/UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.1.json
+next_action: commit_and_push_frozen_candidate_then_run_frozen_YAML_once
+main_merge: NOT_ALLOWED
+terminal_state: unset
+```
