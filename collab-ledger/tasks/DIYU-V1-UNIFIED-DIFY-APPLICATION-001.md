@@ -1315,3 +1315,22 @@ RECOVERY-01:R1 的零模型 preflight 证明它依赖同一 conversation 的 FUL
 8 PASS/CURRENT、1 SUT FAIL、3 NOT_VERIFIED(ORACLE)、7 NOT_RUN_DEPENDENT；AC-07 FAIL，
 S5 `FAIL / CURRENT`，Founder AC-12 `NOT_READY / NOT_AUTHORIZED`。唯一下一步是版本化最窄后继：
 修复上传资料登记接缝，并消解 EQUIV/FULL 冻结 Fixture 与能力前置条件冲突。
+
+## S5 最终技术收敛 REBASE 激活
+
+Founder 授权在同一 task_id 下分账处理：Track A 修复 UAPP 上传资料到 M2 素材登记接缝；
+Track B 只版本化修正 EQUIV/FULL Fixture 与判据。激活 HEAD/upstream
+`8bf1ec5c270ed3e78474cb481a27bfa2b58c9538`，main/origin-main `01a42b0…28b2`，worktree
+clean，UAPP `aa32b6385de0024d270ec9f85bd78179`，active workflow 0，M2 非测试计数与 schema 未变。
+
+Track A 零模型 Triage 确认当前发布图缺失 material registration 子图：W0 的 M1 读取真实成立，
+但 `uapp_ctx → uapp_m3_gate` 直接相连。mutation 只允许在该处增加上传识别、幂等准备、M2 POST、
+结果复核、绑定保存与 fail-closed；M1/M2/M3/Hop/Seam/专业能力/PP/main 均受保护。模型调用 0。
+
+## 2026-08-30 — Track A zero-model tool failure
+
+- UAPP 候选构建通过，现有 56 个节点逐字节不变，仅增加上传登记支路；尚未发布，模型调用 0。
+- M2 受保护回归在共享数据库执行两次，测试均 `5/5 PASS`，但 fixture 默认把两条发布记录标为
+  非测试，使保护计数 `1568 → 1570`；确认归因 `INPUT_ENVIRONMENT_OR_TOOL`。
+- 10 个新建测试 workspace 和两条 publish row 已唯一定位；未删除、未改标、未覆盖。
+- 当前 Gate 不冻结、Dify 不调用；唯一下一步是 Founder 裁决是否授权对这批测试夹具数据做可审计清理。
