@@ -442,6 +442,25 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 当前唯一下一动作：Founder 裁决是否把 `REGISTER_FEEDBACK` 与 `CLOSE_CYCLE/OPEN_NEXT_CYCLE`
   两个 UAPP 最小写回接缝纳入本 REBASE；正式输入、判据和 10/60 预算保持不变。
 
+## 2026-08-30 · Final two-blocker REBASE · ERRATA 001
+
+| Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
+|---|---|---|---:|---|---|
+| P0 激活完成 | COMPLETED | PASS / CURRENT（继承） | 0 | NONE | 不重跑 |
+| P1 零模型预检 | IN_PROGRESS | 权限缺口已由 ERRATA 001 关闭 | 0 | NONE | 完成发布/反馈/周期/幂等控制 |
+| P2 候选实现 | NOT_STARTED | NOT_VERIFIED | 0 | P1 | 实现两个阻断的完整 UAPP 接缝 |
+| P3 点测 | NOT_STARTED | NOT_VERIFIED | 0/60 | P2 | EQUIV-01b |
+| P4 正式收敛 | NOT_STARTED | NOT_VERIFIED | 0/60 | P3 | 完成九项正式顺序 |
+| P5 S5 技术收口/Founder交接 | NOT_STARTED | NOT_VERIFIED | 0 | P4 | AC-01..11 重算 |
+
+- 权威事件 `FOUNDER_S5_FULL_CHAIN_WRITEBACK_SCOPE_CONFIRMATION_001` 已把 `REGISTER_FEEDBACK`、
+  `CLOSE_CYCLE`、`OPEN_NEXT_CYCLE` 及重复动作幂等纳入同一 Active Work Package。
+- 产品语义、验收、冻结输入与模型预算均未变化；前序 P0/P1 证据及 FAIL 记录完整继承。
+- Manifest v1.1 绑定 Errata sha256 `ddb48132472398204c5bc5b2865216d410e3377ed073abf6b14dbd2d7b0faceb`；
+  活动合同组合哈希 `7c9265dfc2e1d16cd2c3746bc3e04dd5bdf59ff28269ed434fe47fbe62855fe5`。
+- 本 REBASE 实际顶层运行 `0/10`，DeepSeek 尝试 `0/60`；当前无治理阻断。
+- 唯一下一动作：完成 P1 全链零模型正负控制并冻结候选前硬门。
+
 ## 激活现场
 
 - branch / HEAD / upstream: `codex/v1-uapp-progressive-canvas-001` / `e1ef78fa9637e7859598f2a453c3e0152a368caf` / 相同

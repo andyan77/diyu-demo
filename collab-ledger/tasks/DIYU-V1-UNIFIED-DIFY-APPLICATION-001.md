@@ -1414,3 +1414,45 @@ m2_write: 0
 model_calls: 0
 main_write: 0
 ```
+
+## UAPP S5 final two-blocker REBASE · ERRATA 001（2026-08-30）
+
+```yaml
+event: FOUNDER_S5_FULL_CHAIN_WRITEBACK_SCOPE_CONFIRMATION_001
+record_kind: AUTHORITY_EVENT
+task_entry_mode: REBASE_TASK_CONTINUATION
+new_product_semantics: NONE
+acceptance_change: NONE
+frozen_input_change: NONE
+model_budget_change: NONE
+errata_sha256: ddb48132472398204c5bc5b2865216d410e3377ed073abf6b14dbd2d7b0faceb
+previous_task_contract_hash: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+task_contract_hash: 7c9265dfc2e1d16cd2c3746bc3e04dd5bdf59ff28269ed434fe47fbe62855fe5
+P0: COMPLETED / PASS / CURRENT / INHERITED
+P1: IN_PROGRESS
+scope_gap: CLOSED
+allowed_writeback_seams:
+  - RECORD_PUBLISH
+  - REGISTER_FEEDBACK
+  - CLOSE_CYCLE
+  - OPEN_NEXT_CYCLE
+  - RECOVERY_IDEMPOTENCY
+formal_runs_this_rebase: 0/10
+deepseek_attempts_this_rebase: 0/60
+main_merge: NOT_ALLOWED
+unique_next_action: 完成 P1 全链零模型正负控制并冻结候选前硬门
+```
+
+### L5 · Errata/Manifest v1.1 freeze push
+
+```yaml
+event: UAPP_S5_FINAL_TWO_BLOCKER_ERRATA_001_FREEZE_PUSH
+state: PLANNED
+target: origin/codex/v1-uapp-progressive-canvas-001
+method: ordinary non-force push
+content: versioned Errata, Manifest v1.1, authority ledger and progress snapshot
+dify_write: 0
+m2_write: 0
+model_calls: 0
+main_write: 0
+```

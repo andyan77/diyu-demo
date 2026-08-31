@@ -1,0 +1,109 @@
+document:
+  id: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.1
+  version: v1.1
+  parent: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.0
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  task_entry_mode: REBASE_TASK_CONTINUATION
+  prompt_id: UAPP_S5_FINAL_TWO_BLOCKER_BOUNDED_CONVERGENCE_REBASE_EXECUTION_PROMPT_v1.0
+  authority: FOUNDER_S5_FULL_CHAIN_WRITEBACK_SCOPE_CONFIRMATION_001
+  risk_level: HIGH
+  frozen_before_model_calls: true
+
+authority_refs:
+  base_prompt:
+    id: UAPP_S5_FINAL_TWO_BLOCKER_BOUNDED_CONVERGENCE_REBASE_EXECUTION_PROMPT_v1.0
+    manifest: unified-app/stages/UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.0.yaml
+  errata:
+    id: UAPP_S5_FINAL_TWO_BLOCKER_BOUNDED_CONVERGENCE_REBASE_EXECUTION_PROMPT_v1.0_ERRATA_001
+    path: unified-app/docs/UAPP_S5_FINAL_TWO_BLOCKER_BOUNDED_CONVERGENCE_REBASE_EXECUTION_PROMPT_v1.0_ERRATA_001.md
+    sha256: ddb48132472398204c5bc5b2865216d410e3377ed073abf6b14dbd2d7b0faceb
+  new_product_semantics: NONE
+  acceptance_change: NONE
+  frozen_input_change: NONE
+  model_budget_change: NONE
+
+contract_binding:
+  previous_task_contract_hash: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  task_contract_hash: 7c9265dfc2e1d16cd2c3746bc3e04dd5bdf59ff28269ed434fe47fbe62855fe5
+  derivation: sha256(previous_task_contract_hash + LF + errata_sha256 + LF)
+  semantic_delta: NONE
+  authorization_scope_correction: true
+
+activation_baseline:
+  inherit_from: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.0
+  p0_status: COMPLETED_PASS_CURRENT
+  p1_status: IN_PROGRESS
+  p0_reexecution: PROHIBITED
+  external_model_calls: 0
+  current_task_branch_head: dbc7b82782b4bb5e10861eac84774d71f583b1d0
+  current_task_branch_upstream: dbc7b82782b4bb5e10861eac84774d71f583b1d0
+
+active_work_package:
+  phase: P1_ZERO_MODEL_PREFLIGHT
+  continuation_order:
+    - P1_ZERO_MODEL_PREFLIGHT
+    - P2_MINIMAL_CANDIDATE_IMPLEMENTATION
+    - P3_THREE_LAYER_POINT_TEST
+    - P4_NINE_AFFECTED_FORMAL_SCENARIOS
+    - P5_S5_TECHNICAL_CLOSEOUT_AND_FOUNDER_HANDOFF
+  scope_gap_status: CLOSED_BY_ERRATA_001
+  allowed_delta:
+    equivalence_seam:
+      - UAPP format-neutral structured-expression normalization before M3
+      - deterministic assembly that preserves only user-expressed business semantics
+    writeback_seams:
+      - RECORD_PUBLISH accepted-content selection and M2 test publish registration
+      - REGISTER_FEEDBACK binding to the current test publish and M2 simulated feedback registration
+      - CLOSE_CYCLE current-cycle lawful closeout
+      - OPEN_NEXT_CYCLE minimum recoverable next-cycle creation
+      - RECOVERY_IDEMPOTENCY for repeated publish, feedback and cycle actions
+    support:
+      - UAPP builder, deterministic selectors, controls, Gate, Runner, Checker and evidence
+      - reversible test-candidate publication and rollback
+  required_flags:
+    is_test: true
+    is_simulated: true
+    real_publish: false
+
+protected_assets:
+  - M1 implementation and accepted behavior
+  - M2 service semantics, schema and non-test data
+  - M3, Hop and Seam
+  - six professional capability applications and PP professional rules
+  - frozen FULL and RECOVERY inputs and acceptance criteria
+  - non-test publish and feedback rows
+  - real publish credentials and endpoints
+  - all historical RAW and FAIL records
+  - main and origin/main
+
+zero_model_additional_controls:
+  publish:
+    - explicit already-published event creates exactly one test publish row
+    - preparing-to-publish event creates zero publish rows
+    - no lawful current content creates zero publish rows
+  feedback:
+    - lawful test publish creates exactly one simulated feedback row
+    - no lawful publish creates zero feedback rows and one precise gap
+    - duplicate feedback does not increase the feedback-row count
+  cycle:
+    - closable current cycle closes once and opens exactly one next cycle
+    - repeated close after closure does not create another cycle
+    - insufficient predecessor state fails closed without fabricating a cycle
+
+formal_plan:
+  inherit_order_and_inputs_from: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.0
+  planned_top_level_workflow_runs: 9
+  top_level_workflow_runs_hard_cap: 10
+  deepseek_llm_node_attempts_hard_cap: 60
+  manual_retry_hard_cap: 1
+  platform_internal_replay_plus_manual_retry_hard_cap: 1
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+  candidate_publication_versions_max: 2
+
+completion:
+  acceptance: INHERITED_UNCHANGED
+  founder_ac_12: READY_ONLY_AFTER_TECHNICAL_SUCCESS
+  main_merge: NOT_ALLOWED
+  terminal_state: unset
