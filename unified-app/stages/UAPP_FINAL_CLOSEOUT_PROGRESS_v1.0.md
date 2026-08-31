@@ -633,11 +633,11 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 |---|---|---|---:|---|---|
 | N0–N4 冻结、实现与机器控制 | COMPLETED | PASS / CURRENT | 0 | — | 正式定向验证 |
 | N5 四场景正式验证 | COMPLETED | FAIL / CURRENT | 3/4，12/28 | YAML/G1 交付出口未统一；FULL 环境权限错误 | 结束本授权包 |
-| N6 交付与账本 | IN_PROGRESS | NOT_VERIFIED | 0 | 落盘、提交、推送 | 提交并核验远端 |
+| N6 交付与账本 | COMPLETED | FAIL / CURRENT | 0 | 本授权包已停止 | 新版本化授权或环境诊断 |
 
 - YAML `e0abfd61-131f-4189-a605-f7706756d284`：字段来源守卫成立，但把四项后续适配误设为当前硬门，`FAIL / CURRENT`。
 - G1 `2da11dbc-1733-4300-b92c-c957ef822b1d`：路线问题正确，但 ASK_ONE 绕过最终投影并保留旧固定外壳，`FAIL / CURRENT`；因此 G2 按 Gate 为 `NOT_RUN_DEPENDENT / CURRENT`。
 - FULL T1 `45bafd97-b60a-4c20-b897-d85695f00c8f`：受保护未改节点 `uapp_inline_artifact` 报 `operation not permitted`，`NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) / CURRENT`；未重试。
 - 累计：顶层运行 `3/4`，DeepSeek 节点尝试 `12/28`，手工重试、平台重放、重复采样、A/B、Reviewer 全为 `0`；活动 workflow 为 `0`。
 - `READY_FOR_FOUNDER_RETEST=false`，Founder AC-12 仍为 `RETURN / CURRENT`；S5 仍为 `FAIL / CURRENT`，main 不合并、根任务终态保持 unset。
-- 唯一下一步：在新版本化授权下，修复 UAPP 的统一最终用户交付出口，并独立诊断 FULL 的环境权限错误。
+- 本包结果已提交；唯一下一步：在新版本化授权下，修复 UAPP 的统一最终用户交付出口，并独立诊断 FULL 的环境权限错误。
