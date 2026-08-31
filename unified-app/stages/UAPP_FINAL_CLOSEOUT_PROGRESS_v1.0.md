@@ -5,8 +5,8 @@
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
-| C2 G1/G2 | IN_PROGRESS | successor G1 PASS；等待同会话 G2 | 3/4 | 9/90 | NONE | successor G2 一次 |
-| C3 S5 AC-01～11 | NOT_STARTED | NOT_VERIFIED | 0/11 | 0 | C2 | 等 C2 |
+| C2 G1/G2 | COMPLETED | successor G1/G2 PASS / CURRENT | 4/4 | 15/90 | NONE | C3 |
+| C3 S5 AC-01～11 | IN_PROGRESS | 6 CAP + GAP 当前有效；剩余 11 项待运行 | 0/11 | 15/90 | NONE | EQUIV-01a |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
 
@@ -37,6 +37,10 @@
   G1 preflight PASS；无进一步候选额度。
 - successor G1 run `52f7f504-1e02-4d65-8fe3-5dc63b765e3f` PASS：仍只问一个可由 G2
   回答的分叉问题；专业能力 0、artifact 0、LLM `2`、重试/重放/副作用 0。
+- successor G2 run `306c2e7f-2f8b-4eec-9b73-418ffca1ff86` PASS：同 conversation，Seam
+  与 CONTENT_BRIEF 唯一运行，artifact length `7433` / sha256
+  `1e91c208e32a6e54607d26c263ef32086b9f050902fd4b9a4775db1ad6d40b29`；没有重复追问，
+  其他五能力 0，LLM `6`，重试/重放/非测试变化 0。GAP-01 当前证据成立。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 
