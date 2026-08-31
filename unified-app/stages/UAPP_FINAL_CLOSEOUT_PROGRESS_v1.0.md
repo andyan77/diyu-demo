@@ -6,7 +6,7 @@
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
 | C2 G1/G2 | COMPLETED | successor G1/G2 PASS / CURRENT | 4/4 | 15/90 | NONE | C3 |
-| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV-01a fixture FAIL；b/c 依赖跳过；8 个独立输入待运行 | 1/11 | 20/90 | EQUIV 正例 Fixture 不充分 | 冻结依赖感知 Runner |
+| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV-01a fixture FAIL；b/c 依赖跳过；独立 Runner 冻结 | 1/11 | 20/90 | EQUIV 正例 Fixture 不充分 | EQUIV-01n |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
 
@@ -44,6 +44,8 @@
 - EQUIV-01a run `f033b774-f343-4070-acdb-6e350346b9e1`：只运行 CONTENT_BRIEF 并精确询问
   未提供的表达主体，未编造 artifact；冻结正例却要求成品，归因 Fixture 前置条件不充分而非 SUT。
   EQUIV-01b/01c 同依赖不运行；Runner 的全局前序 PASS 阻断将版本化收窄到真实会话依赖。
+- 依赖感知 Gate v1.2 sha256 `c8d5c34d2b37fb34cd623c976293ce5ccfa36a00844b66650b176bed473eb623`：
+  输入、Checker、候选均不变，只要求同 conversation 的直接前序 PASS；EQUIV-01n preflight PASS。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

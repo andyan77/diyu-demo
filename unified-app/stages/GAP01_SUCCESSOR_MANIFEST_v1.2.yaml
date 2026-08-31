@@ -1,0 +1,34 @@
+document:
+  id: GAP01_SUCCESSOR_MANIFEST_v1.2
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  authority: DIYU_V1_UAPP_S5_GAP01_FINAL_TECHNICAL_REBASE_v1.0
+  parent: GAP01_SUCCESSOR_MANIFEST_v1.1
+contract:
+  task_contract_sha256: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  semantic_delta: NONE
+candidate:
+  UAPP_graph_md5: aa32b6385de0024d270ec9f85bd78179
+  UAPP_canonical_sha256: e1f01f082ef30788cb290a53c6432f4d844b8943d85319312fe0ff29e4718768
+  M3: cd93757bcf8ad322f3b32fc43b2da3ff
+  HOP: e38378c3c2a66b75aa7e645368c9e1ce
+  SEAM: db49a3da8973d4fdcbe9ecf63bdf7e2a
+  PP_provider: 99287feadcd784e86bf4c298bea555fc
+runner_rebase:
+  confirmed_origin: GLOBAL_PRIOR_PASS_OVERBLOCKS_INDEPENDENT_BRANCHES
+  behavior_change: require only same-conversation direct predecessors
+  scenario_change: NONE
+  checker_change: NONE
+  candidate_change: NONE
+affected_status:
+  UAPP-EQUIV-01a: FAIL_PRESERVED_FIXTURE
+  UAPP-EQUIV-01b: NOT_RUN_DEPENDENT
+  UAPP-EQUIV-01c: NOT_RUN_DEPENDENT
+  independent_remaining: 8
+budget:
+  used_before_gate: {top_level_runs: 5, llm_attempts: 20}
+  total_limits: {top_level_runs: 15, llm_attempts: 90}
+  planned_independent_remaining: {top_level_runs: 8, llm_attempts_max: 48}
+scope:
+  founder_ac_12: NOT_AUTHORIZED
+  main_merge: NOT_ALLOWED
+  terminal_state: unset
