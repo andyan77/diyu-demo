@@ -7,13 +7,13 @@
 | N0 证据与根因绑定 | COMPLETED | PASS / CURRENT | 0 | 0 | NONE | N1/N2 控制 |
 | N1 语义权威控制 | COMPLETED | 11/11 PASS | 0 | 0 | NONE | N3 |
 | N2 共享交付控制 | COMPLETED | 六能力 6/6 PASS | 0 | 0 | NONE | N3 |
-| N3 候选部署与 Gate | COMPLETED | 候选已发布、Gate v1.1 已冻结 | 0 | 0 | NONE | N4 YAML |
+| N3 候选部署与 Gate | COMPLETED | 候选已发布、Gate v1.2 已冻结 | 0 | 0 | NONE | N4 YAML |
 | N4 四场景真实验证 | NOT_STARTED | NOT_VERIFIED | 0/4 | 0/32 | Gate 后尚未调用 | YAML |
 | N5 判定与交付 | NOT_STARTED | NOT_VERIFIED | 0 | 0 | N4 | 四场景判定 |
 
 - 当前 UAPP 图：`5720ddf6e0daef0bc82818bb53b95ff4`；M3/Hop/Seam 路由绑定未改。
 - 六个能力仅更新共享用户交付后继，并已刷新 provider；专业 Skill、Prompt 与业务规则未改。
-- Gate `UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.1.json` 先于本包任何模型调用冻结；v1.0 只读保留为其父版本。
+- Gate `UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json` 先于本包任何模型调用冻结；v1.0/v1.1 只读保留为其父版本。
 - 唯一下一步：提交并普通 push 冻结候选，再按 Gate 运行 YAML 一次。
 
 ## 2026-08-31 · Founder AC-12 RETURN 与只读路径审计

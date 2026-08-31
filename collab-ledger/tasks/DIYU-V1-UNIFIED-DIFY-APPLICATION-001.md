@@ -1721,7 +1721,7 @@ protected_bindings:
   hop: e38378c3c2a66b75aa7e645368c9e1ce
   seam: 2dd0d046cb99cfef20182a9002798598
 failure_triage: unified-app/docs/UAPP_AC12_SEMANTIC_AUTHORITY_FAILURE_TRIAGE_v1.0.md
-gate: unified-app/stages/UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.1.json
+gate: unified-app/stages/UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json
 next_action: commit_and_push_frozen_candidate_then_run_frozen_YAML_once
 main_merge: NOT_ALLOWED
 terminal_state: unset

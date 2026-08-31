@@ -16,7 +16,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 REPO = ROOT.parent
 ENV = Path("/home/faye/diyu-demo-worktrees/m3-account-content-operator-v1/.env")
-GATE = ROOT / "stages" / "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.1.json"
+GATE = ROOT / "stages" / "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json"
 INPUTS = ROOT / "stages" / "UAPP_AC12_SEMANTIC_HANDOFF_FROZEN_INPUTS_v1.0.json"
 BINDING = ROOT / "stages" / "UAPP_AC12_SEMANTIC_AUTHORITY_CANDIDATE_BINDING_v1.0.json"
 RAW_DIR = ROOT / "evidence" / "stages" / "uapp_ac12_semantic_authority_v1_0"
@@ -59,6 +59,19 @@ def graph_md5(app_id: str) -> str:
     return psql("select md5(w.graph) from workflows w join apps a on a.workflow_id=w.id where a.id='%s';" % app_id)
 
 
+def clean_or_own_raw_only() -> bool:
+    """Require a clean start, while allowing only this runner's prior RAW files.
+
+    The first formal turn legitimately creates its immutable record.  Treating
+    that record as unrelated drift would make the required G1→G2 chain
+    impossible.  Any other edited or untracked path still fails closed.
+    """
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=REPO,
+                            capture_output=True, text=True, check=True).stdout.splitlines()
+    prefix = "unified-app/evidence/stages/uapp_ac12_semantic_authority_v1_0/"
+    return all(len(line) >= 4 and line[3:].strip().startswith(prefix) for line in status)
+
+
 def preflight(turn: str) -> dict[str, Any]:
     gate, frozen, binding = load(GATE), load(INPUTS), load(BINDING)
     turns = {str(item["id"]): item for item in frozen["turns"]}
@@ -69,7 +82,7 @@ def preflight(turn: str) -> dict[str, Any]:
     key_exists = bool(console.app_api_key(app_id, create_if_missing=False))
     out = RAW_DIR / (turn + ".json")
     checks = {
-        "gate_identity": gate["document"]["id"] == "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.1",
+        "gate_identity": gate["document"]["id"] == "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2",
         "input_freeze": sha(INPUTS) == gate["input_freeze"]["sha256"],
         "binding_freeze": sha(BINDING) == gate["candidate_binding_sha256"],
         "candidate_graph": graph_md5(app_id) == binding["uapp"]["graph_md5"],
@@ -77,7 +90,7 @@ def preflight(turn: str) -> dict[str, Any]:
         "api_key_present": key_exists,
         "fresh_raw_slot": not out.exists(),
         "same_task_branch": subprocess.run(["git", "branch", "--show-current"], cwd=REPO, capture_output=True, text=True, check=True).stdout.strip() == "codex/v1-uapp-progressive-canvas-001",
-        "clean_worktree": subprocess.run(["git", "status", "--porcelain"], cwd=REPO, capture_output=True, text=True, check=True).stdout.strip() == "",
+        "clean_worktree_or_immutable_own_raw_only": clean_or_own_raw_only(),
     }
     return {"turn": turn, "gate_sha256": sha(GATE), "input_sha256": hashlib.sha256(str(turns[turn]["query"]).encode()).hexdigest(), "checks": checks, "verdict": "PASS" if all(checks.values()) else "FAIL"}
 
