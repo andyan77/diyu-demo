@@ -1,5 +1,15 @@
 # UAPP Final Closeout Progress v1.0
 
+## 2026-08-31 · Founder AC-12 RETURN 与只读路径审计
+
+| Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
+|---|---|---|---:|---:|---|---|
+| Founder AC-12 | COMPLETED | RETURN / CURRENT | 7 个既有 run | 0 | 用户语义承接与目标权威越界 | 仅修 UAPP 语义边界 |
+| 路由/组件只读审计 | COMPLETED | 意图、路由、组件可达 PASS；语义交接 FAIL | 0 | 0 | NONE | 冻结最小后继修复合同 |
+
+- M2 写回已只读确认：测试发布、反馈与周期转换真实存在且关联正确；非测试发布/反馈仍为 `0/0`。
+- `UAPP-AC-12 = RETURN`，`S5_TECHNICAL_ACCEPTANCE = FAIL / CURRENT`，main 未合并，terminal unset。
+
 ## 2026-08-31 · Founder 豁免全新环境重复复验
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |

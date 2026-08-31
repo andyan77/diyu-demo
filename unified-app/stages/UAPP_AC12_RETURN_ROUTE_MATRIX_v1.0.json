@@ -1,0 +1,125 @@
+{
+  "document": {
+    "id": "UAPP_AC12_RETURN_ROUTE_MATRIX_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "method": "read-only Dify workflow_runs and workflow_node_executions audit",
+    "model_calls_added": 0,
+    "founder_decision": "UAPP-AC-12 = RETURN"
+  },
+  "binding": {
+    "uapp_app_id": "dbb14eec-a935-445c-9764-280c8fd3375b",
+    "workflow_id": "b97e8a07-175c-4c74-862e-27c799a063af",
+    "graph_md5": "3ac6d9187f27e0f656417de119155480",
+    "m3_provider": "ef7cc805-3c2d-4d41-948c-6c1051ef7551",
+    "hop_provider": "4b892451-5fcd-4ba6-9213-3ea71677fc28",
+    "seam_provider": "990079dc-4eac-454c-965d-2146ab607878",
+    "content_brief_provider": "f09a5d02-db07-4697-aae1-482bff0db972"
+  },
+  "runs": [
+    {
+      "scenario": "AC12-01 YAML-like Content Brief",
+      "run_id": "9da91e61-adf2-46a2-b6a0-2493bc492963",
+      "input_sha256": "cd38b72f83bb1aa722e8e82c56f4c22ee49ec0cc683cdd3d739782d23a62f6e5",
+      "intent": "CONTENT_BRIEF",
+      "action": "NONE",
+      "route_mode": "CAPABILITY",
+      "target_capability": "CONTENT_BRIEF",
+      "target_execution_count": 1,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "PRECISE_GAP",
+      "result": "SEMANTIC_HANDOFF_AND_SUFFICIENCY_FAIL",
+      "root_observation": "Hop output carries expected_change but omits content_promise; Content Brief correctly requests the omitted promise."
+    },
+    {
+      "scenario": "AC12-02 FULL T1",
+      "run_id": "0c603685-8a4e-4b50-bf97-92c71049cb79",
+      "input_sha256": "aba02871dfaefbdb05b82691380162cc76eb35bff8baca87e68b592b685b8990",
+      "intent": "CONTENT_BRIEF",
+      "action": "NONE",
+      "route_mode": "CAPABILITY",
+      "target_capability": "CONTENT_BRIEF",
+      "target_execution_count": 1,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "ARTIFACT_DELIVERED",
+      "result": "SEMANTIC_HANDOFF_FAIL_AUTHORITY_ESCALATION",
+      "root_observation": "M1 stored the user's content outcome; M3 rewrote it into a purchase-decision primary goal, then Hop and delivery attributed that goal to the user."
+    },
+    {
+      "scenario": "AC12-02 FULL T2",
+      "run_id": "d9a7b92b-2ed8-4764-84a3-c5b669088df3",
+      "input_sha256": "3b6aa843f9e14fa777c113baf39b655013f6ebe2a2139603e0c158d4c6375ac3",
+      "intent": "WRITEBACK_OR_STATUS",
+      "action": "RECORD_PUBLISH",
+      "route_mode": "WRITEBACK",
+      "target_capability": null,
+      "target_execution_count": 0,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CONTENT_BRIEF": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "WRITEBACK_RECEIPT",
+      "result": "WRITEBACK_READBACK_PASS",
+      "root_observation": "M2 contains exactly one test/simulated publish bound to the accepted Content Brief version."
+    },
+    {
+      "scenario": "AC12-02 FULL T3",
+      "run_id": "2e6ae350-a7fd-4c86-8004-2801dc362e09",
+      "input_sha256": "9a0f5326be1e1ffbc74f1153d12a30b554b6de0f936597728ae934e9e4059e49",
+      "intent": "WRITEBACK_OR_STATUS",
+      "action": "RECORD_FEEDBACK",
+      "route_mode": "WRITEBACK",
+      "target_capability": null,
+      "target_execution_count": 0,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CONTENT_BRIEF": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "WRITEBACK_RECEIPT",
+      "result": "WRITEBACK_READBACK_PASS",
+      "root_observation": "M2 feedback is test/simulated and is bound to the T2 publish instance."
+    },
+    {
+      "scenario": "AC12-02 FULL T4",
+      "run_id": "060072e8-c7a2-45f0-855e-d12f069ef698",
+      "input_sha256": "1223abc60d6baae9dc8c70bf007a71d03949f4b4f184c8179e47aa8fd7f56904",
+      "intent": "SINGLE_ACCOUNT_OPERATION",
+      "action": "NEXT_CYCLE",
+      "route_mode": "WRITEBACK",
+      "target_capability": null,
+      "target_execution_count": 0,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CONTENT_BRIEF": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "WRITEBACK_RECEIPT",
+      "result": "WRITEBACK_READBACK_PASS",
+      "root_observation": "M2 has one prior cycle superseded by exactly one current next cycle."
+    },
+    {
+      "scenario": "AC12-03 GAP G1",
+      "run_id": "219aa2f6-a34f-4721-886e-cedbbf23a546",
+      "input_sha256": "7b1d9517e0655867bbeea11931862669cf3e86de2e447aeb21de2e97707de26a",
+      "intent": "AMBIGUOUS",
+      "action": "NONE",
+      "route_mode": "ASK_ONE",
+      "target_capability": null,
+      "target_execution_count": 0,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CONTENT_BRIEF": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "PRECISE_GAP",
+      "result": "PASS",
+      "root_observation": "One route-changing question; no professional capability ran."
+    },
+    {
+      "scenario": "AC12-03 GAP G2",
+      "run_id": "03871811-eb66-45e6-a496-e6764e203463",
+      "input_sha256": "df951d1f14390610f2ccdcd5de94022405389f55f8c14549c45453dd33d87e7a",
+      "intent": "CONTENT_BRIEF",
+      "action": "NONE",
+      "route_mode": "CAPABILITY",
+      "target_capability": "CONTENT_BRIEF",
+      "target_execution_count": 1,
+      "other_capability_execution_counts": {"MATRIX": 0, "CAMPAIGN": 0, "CREATIVE_SCRIPT": 0, "PRODUCTION_DIRECTOR": 0, "PUBLISHING_PACKAGING": 0},
+      "exit_type": "PRECISE_GAP",
+      "result": "SEMANTIC_HANDOFF_AND_SUFFICIENCY_FAIL",
+      "root_observation": "The current user turn supplies the desired viewer change, but Hop passes neither expected_change nor content_promise to Content Brief."
+    }
+  ],
+  "layered_verdict": {
+    "INTENT_CLASSIFICATION_FOR_TESTED_CASES": "PASS / CURRENT",
+    "ROUTE_TARGET_MATCH": "PASS / CURRENT",
+    "TARGET_COMPONENT_REACHABILITY": "PASS / CURRENT",
+    "SEMANTIC_HANDOFF_AND_SUFFICIENCY": "FAIL / CURRENT",
+    "FOUNDER_AC12": "RETURN"
+  }
+}

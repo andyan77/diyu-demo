@@ -1549,3 +1549,27 @@ main_merge: NOT_ALLOWED
 terminal_state: unset
 unique_next_action: Founder 使用 UAPP_FOUNDER_TRIAL_PACKAGE_v1.1.md 对当前候选亲自实测并裁定 ACCEPT 或 RETURN
 ```
+### 2026-08-31 · Founder AC-12 RETURN 与只读语义路径审计（只追加）
+
+```yaml
+founder_ac12: RETURN / CURRENT
+audit_model_calls: 0
+audit_replays: 0
+intent_classification_for_tested_cases: PASS / CURRENT
+route_target_match: PASS / CURRENT
+target_component_reachability: PASS / CURRENT
+semantic_handoff_and_sufficiency: FAIL / CURRENT
+authority_escalation: FAIL / CURRENT
+writeback_readback: PASS / CURRENT
+confirmed_first_failure_nodes:
+  - uapp_hop content_promise projection (YAML and GAP G2)
+  - uapp_m3 primary-goal rewrite (FULL T1)
+protected_targets:
+  - uapp_action and uapp_route
+  - workflow provider bindings
+  - Seam and six professional capability applications
+  - M1/M2/M3/Hop implementation during this audit
+next_state: CHECKPOINT_FOR_VERSIONED_SEMANTIC_SEAM_REPAIR
+main_merge: NOT_ALLOWED
+terminal_state: unset
+```
