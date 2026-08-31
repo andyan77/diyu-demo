@@ -1,0 +1,32 @@
+{
+  "document": {"id": "UAPP_AC12_SEMANTIC_HANDOFF_FINAL_BATCH_RAW_v1.1", "turn": "G2", "formal": true, "recovered_read_only_from_dify": true},
+  "gate_sha256": "cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb",
+  "input_sha256": "df951d1f14390610f2ccdcd5de94022405389f55f8c14549c45453dd33d87e7a",
+  "runner_request_attempts": 1,
+  "top_level_run_id": "9228d157-c198-496c-93dd-05c0f1c08c52",
+  "top_level_final_status": "partial-succeeded",
+  "conversation_id": "246da831-b194-40ac-8e2c-b0bef930979e",
+  "message_id": "2be053a4-4245-4868-b52e-37643eaa5062",
+  "nested_runs": [
+    {"id": "cb1dc2d9-3c6c-4bb5-9bee-1d1a29f1ffd3", "role": "M3", "status": "succeeded", "llm_nodes": 2},
+    {"id": "b950f707-c25f-4571-814c-270409a70e88", "role": "Hop", "status": "succeeded", "llm_nodes": 1},
+    {"id": "843c41cc-d51f-41b9-9771-3a207d775e9a", "role": "Seam", "status": "succeeded"},
+    {"id": "0bbe8a03-834b-4cff-9aed-b18223d14a42", "role": "Content Brief", "status": "succeeded", "llm_nodes": 1}
+  ],
+  "observed": {
+    "same_conversation_as_g1": true,
+    "route_mode": "CAPABILITY",
+    "target_capability": "CONTENT_BRIEF",
+    "g1_gap_repeated": false,
+    "g2_values_consumed": ["秋冬新款廓形西装外套", "28到38岁城市通勤女性", "怎么把一件外套穿得更精神"],
+    "seam_executed": true,
+    "new_precise_gap": "expression_subject_and_boundary",
+    "new_gap_was_not_answered_by_g2": true,
+    "professional_artifact_delivered": false,
+    "unauthorized_side_effects": []
+  },
+  "acceptance": {"result": "PASS / CURRENT", "basis": "G2 consumed the G1 answer in the same conversation and reached the legal Content Brief path. Its single follow-up is a distinct missing expression-subject/boundary field, not a repeated G1 gap or a fabricated artifact."},
+  "llm_node_attempts": 6,
+  "platform_internal_replays_observed": 0,
+  "manual_retries": 0
+}

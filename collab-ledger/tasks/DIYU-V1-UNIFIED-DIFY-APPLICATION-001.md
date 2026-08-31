@@ -1657,3 +1657,22 @@ top_level_runs: 2/4
 deepseek_node_attempts: 8/30
 next_action: frozen G2 once in same conversation
 ```
+
+### 2026-08-31 · AC-12 最终批次 GAP G2 正式结果（只追加）
+
+```yaml
+run_id: 9228d157-c198-496c-93dd-05c0f1c08c52
+conversation_id: 246da831-b194-40ac-8e2c-b0bef930979e
+result: PASS / CURRENT
+route_mode: CAPABILITY
+target_capability: CONTENT_BRIEF
+same_conversation: true
+g1_gap_repeated: false
+seam_executed: true
+new_precise_gap: expression_subject_and_boundary
+artifact_delivered: false
+reason: the new gap was not answered by frozen G2; no fabricated artifact
+top_level_runs: 3/4
+deepseek_node_attempts: 14/30
+next_action: frozen FULL_T1 once
+```

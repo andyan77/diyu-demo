@@ -593,3 +593,9 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 
 - `G1 = PASS / CURRENT`：顶层 `20bd900e…`；只提出一个可由冻结 G2 回答的自然语言分叉问题，没有选择商品、内容方向或 Campaign，也没有运行专业能力。
 - 批次累计：顶层 `2/4`，DeepSeek `8/30`，内部重放 `0/1`；唯一下一步：同一会话运行 G2。
+
+## AC-12 语义承接 · 最终批次 GAP G2
+
+- `G2 = PASS / CURRENT`：顶层 `9228d157…` 在 G1 的同一会话中消费了商品、受众和内容目标，实际路由到 Content Brief 并执行 Seam；未重复 G1。
+- Content Brief 只返回 G2 未提供的表达主体/边界这一精确新缺口，没有伪造成品；这不改变 G2 的承接判据通过。
+- 批次累计：顶层 `3/4`，DeepSeek `14/30`，内部重放 `0/1`；唯一下一步：新会话运行 FULL T1。
