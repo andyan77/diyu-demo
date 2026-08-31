@@ -80,6 +80,31 @@ TD-UAPP-03（是否改 M1 已接受的对话语义）。**TD-UAPP-03 本轮是�
 
 ---
 
+### 2026-08-31 · 全新环境基线后继（只追加）
+
+```yaml
+authority_event: FOUNDER_FRESH_ENVIRONMENT_REBUILD_AND_REBASE_2026-08-30
+task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+task_progress: IN_PROGRESS
+terminal_state: unset
+fresh_baseline:
+  UAPP: dbb14eec-a935-445c-9764-280c8fd3375b / 3ac6d9187f27e0f656417de119155480
+  PP_provider: d4ba5e89baccfd494cd430a7b79f2684
+  M3: 26582e477afd458d4a4835df98257a56
+  Hop: e38378c3c2a66b75aa7e645368c9e1ce
+  Seam: 2dd0d046cb99cfef20182a9002798598
+  M2_schema: 25192c11562827efedfc3b2c22c3b4fd
+  non_test_guard: 0/0
+deterministic_controls: 22/22 PASS
+formal_model_calls: 0
+historical_14_of_19: STALE_NEW_ENVIRONMENT_IDENTITY
+checkpoint: PRE_MODEL_BUDGET_CONFLICT
+reason: fresh identity requires 19 current runs; inherited hard cap is 10
+S5_TECHNICAL_ACCEPTANCE: NOT_VERIFIED
+FOUNDER_AC_12: NOT_AUTHORIZED
+main_merge: NOT_ALLOWED
+```
+
 ### 2026-08-29 · 渐进候选 S4 后继窄验证前登记（当前投影，取代上一块；上一块原文保留不改）
 
 > 上一块投影绑定的是**旧候选** `2448e4f9`／图 `40e45858…`。自 `657004c` 起本任务转入

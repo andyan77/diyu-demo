@@ -1,0 +1,71 @@
+document:
+  id: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.2
+  version: v1.2
+  parent: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.1
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  task_entry_mode: REBASE_TASK_CONTINUATION
+  authority: FOUNDER_FRESH_ENVIRONMENT_REBUILD_AND_REBASE_2026-08-30
+  frozen_before_model_calls: true
+
+authority_refs:
+  authority_text_sha256: 1a085fbf29c1b986d23ffbd7a063cbeda31eeb1ca263e2c48c8ada04b78535dc
+  prior_manifest_sha256: 9c46a2a1ac096f763f954717c8cbd84cac4bc17675ace1755810f973592c9456
+  errata_sha256: ddb48132472398204c5bc5b2865216d410e3377ed073abf6b14dbd2d7b0faceb
+  product_semantic_delta: NONE
+  acceptance_delta: NONE
+  environment_identity_delta: FULL_FRESH_REBUILD
+
+fresh_baseline:
+  baseline_file: unified-app/stages/UAPP_S5_FRESH_ENVIRONMENT_BASELINE_v1.0.json
+  uapp_app_id: dbb14eec-a935-445c-9764-280c8fd3375b
+  uapp_graph_md5: 3ac6d9187f27e0f656417de119155480
+  pp_graph_md5: d4ba5e89baccfd494cd430a7b79f2684
+  seam_graph_md5: 2dd0d046cb99cfef20182a9002798598
+  hop_graph_md5: e38378c3c2a66b75aa7e645368c9e1ce
+  m3_graph_md5: 26582e477afd458d4a4835df98257a56
+  m2_schema_md5: 25192c11562827efedfc3b2c22c3b4fd
+  non_test_publish_guard: 0
+  non_test_feedback_guard: 0
+
+implementation:
+  builder: unified-app/workflows/UAPP_S5_FRESH_FINAL_BUILD_v1.0.py
+  builder_sha256: 8595a4e65b7627511a36a429ead39d676a8632dc10c1afc96c50f621b94c245b
+  controls: unified-app/workflows/UAPP_S5_FRESH_FINAL_CONTROLS_v1.0.py
+  controls_sha256: cde3cccc21f37382a95a7d067bb0d3fc765237dca6e0faf440be37547e7de3d9
+  deterministic_result: 22/22_PASS
+  live_m2_api_result: PASS
+  formal_model_calls: 0
+
+frozen_acceptance:
+  scenarios: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.2.json
+  scenarios_sha256: 7cef6cca903a9ea464ac860a59a64c5cdde85ea774a7d57a7e1028501e5b862a
+  checker: unified-app/workflows/UAPP_S5_FINAL_CHECKER_v1.2.py
+  checker_sha256: 46bcc38343d2cd9ed4ac19e639a18e1e888bc6882e6ac4fb2aa6d0d39fbef73b
+  historical_results: STALE_NEW_ENVIRONMENT_IDENTITY
+  required_current_scenarios: 19
+
+budget_effect:
+  inherited_top_level_hard_cap: 10
+  inherited_llm_attempt_hard_cap: 60
+  minimum_new_runs_after_fresh_identity: 19
+  result: PRE_MODEL_BUDGET_CONFLICT
+  model_calls_must_remain_zero_until_resolved: true
+
+protected_assets:
+  - M1 and M2 service semantics and schema
+  - M3, Hop and Seam professional behavior
+  - six professional capability applications and PP professional rules
+  - frozen scenario text and UAPP-AC-01..11
+  - historical RAW, PASS and FAIL records
+  - non-test data and real publish endpoints
+  - main and origin/main
+
+status:
+  P0_activation: COMPLETED
+  P1_zero_model_preflight: COMPLETED
+  P2_candidate_implementation: COMPLETED
+  P3_formal_point_test: NOT_STARTED
+  S5_technical_acceptance: NOT_VERIFIED
+  founder_ac_12: NOT_AUTHORIZED
+  main_merge: NOT_ALLOWED
+  terminal_state: unset

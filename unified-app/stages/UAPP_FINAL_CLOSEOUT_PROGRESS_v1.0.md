@@ -1,5 +1,28 @@
 # UAPP Final Closeout Progress v1.0
 
+## 2026-08-31 · Founder 授权全新环境重建与新基线
+
+| Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
+|---|---|---|---:|---:|---|---|
+| P0 新环境重建 | COMPLETED | Dify/M2/能力图/Provider 新基线已建立 | 0 | 0 | NONE | P1 |
+| P1 零模型预检 | COMPLETED | 22/22 控制 + M2 API 幂等控制 PASS | 0 | 0 | NONE | P2 |
+| P2 双阻断候选 | COMPLETED | UAPP 新图已发布并回读 | 0 | 0 | NONE | P3 |
+| P3 正式点测 | NOT_STARTED | NOT_VERIFIED | 0/19 | 0/60 | 19 个当前证据需要 19 次运行，但硬上限为 10 | 预算合同版本化裁决 |
+| P4 正式收敛 | NOT_STARTED | NOT_VERIFIED | 0/19 | 0/60 | P3 | 等 P3 |
+| P5 S5/Founder 交接 | NOT_STARTED | NOT_VERIFIED | 0 | 0 | P4 | 等 P4 |
+
+- 当前 UAPP `dbb14eec-a935-445c-9764-280c8fd3375b` / 图
+  `3ac6d9187f27e0f656417de119155480`；正式模型调用 `0`。
+- PP/provider `d4ba5e89baccfd494cd430a7b79f2684`；M3 `26582e47…a56`；
+  Hop `e38378c3…e1ce`；Seam `2dd0d046…8598`。
+- M2 schema `25192c…b4fd`；新环境非测试 publish/feedback 保护计数 `0/0`；
+  历史 `1568/117` 明确未恢复，没有伪造占位数据。
+- 两个 UAPP 接缝的确定性控制 `22/22 PASS`；M2 实际 API 控制证明测试发布、反馈、周期
+  均幂等，错误内容身份返回 404；没有真实发布。
+- 新应用/provider/workflow/M2 身份使历史 14/19 结论按 A3 置 `STALE`。当前最低需 19 次
+  顶层正式运行，而继承硬上限为 10；Gate 已在模型调用前 fail-closed。
+- 当前状态：`S5_TECHNICAL_ACCEPTANCE = NOT_VERIFIED`，Founder AC-12 未授权，main 未合并。
+
 ## 2026-08-30 · 最终技术收敛结果
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |

@@ -1,0 +1,51 @@
+{
+  "document": {
+    "id": "UAPP_S5_FRESH_ENVIRONMENT_BASELINE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority_event": "FOUNDER_FRESH_ENVIRONMENT_REBUILD_AND_REBASE_2026-08-30",
+    "authority_text_sha256": "1a085fbf29c1b986d23ffbd7a063cbeda31eeb1ca263e2c48c8ada04b78535dc",
+    "model_calls": 0
+  },
+  "reason": "The pre-restart Dify and M2 volumes were absent. Founder authorized a fresh rebuild and a new baseline; no historical database count or application identity is reconstructed as if preserved.",
+  "dify": {
+    "setup": "finished",
+    "active_workflow_runs": 0,
+    "deepseek_plugin": "langgenius/deepseek:0.0.20@850efe73fb62bbe7ab2229116086596596297a77174fb86f73e1363b99a24116",
+    "provider_credential_exists": true,
+    "formal_model_calls": 0,
+    "apps": {
+      "UAPP": {"app_id": "dbb14eec-a935-445c-9764-280c8fd3375b", "graph_md5": "3ac6d9187f27e0f656417de119155480", "nodes": 109, "edges": 115},
+      "MATRIX": {"app_id": "011b5f4b-916e-46a1-96f4-8b1d60cc4bc5", "graph_md5": "40281a7ee7fa42c4e2ccf5e67bc89e80"},
+      "CAMPAIGN": {"app_id": "888403ca-6db4-42e8-a4f8-9ebe96fe026b", "graph_md5": "446133525104e297ff4e07ce6d871180"},
+      "CONTENT_BRIEF": {"app_id": "c1e91d88-4674-4d2f-8192-ea01b1e63acf", "graph_md5": "248df0afbd44be58ec553c1566205ef8"},
+      "CREATIVE_SCRIPT": {"app_id": "66dba14d-3c89-4129-9744-0cf23652b5ee", "graph_md5": "4b5986b665d228c20998e69bb7444148"},
+      "PRODUCTION_DIRECTOR": {"app_id": "c373a213-3aac-481c-b2cb-4de0f1734af1", "graph_md5": "695cb2d5e3224e50d72e103e22aadf98"},
+      "PUBLISHING_PACKAGING": {"app_id": "2f211b7e-3e8a-412b-9d53-35705c65e68e", "graph_md5": "d4ba5e89baccfd494cd430a7b79f2684", "accepted_layers": ["PP b2", "CAP06 sufficiency shell"]},
+      "M3": {"app_id": "746bdd5a-e33f-47e0-a03b-70f4faeb16e0", "graph_md5": "26582e477afd458d4a4835df98257a56"},
+      "Hop": {"app_id": "3dbdca78-ab08-46b3-a4be-97412e16fd97", "graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce"},
+      "Seam": {"app_id": "886772a6-8c0a-4b34-b1f8-9151106c2fdd", "graph_md5": "2dd0d046cb99cfef20182a9002798598"}
+    },
+    "pp_provider": {
+      "provider_id": "35811b65-6c10-4193-ad47-4347c857dfce",
+      "app_id": "2f211b7e-3e8a-412b-9d53-35705c65e68e",
+      "bound_graph_md5": "d4ba5e89baccfd494cd430a7b79f2684"
+    }
+  },
+  "m2": {
+    "database": "diyu_business",
+    "alembic_head": "17368b750d3b",
+    "schema_md5": "25192c11562827efedfc3b2c22c3b4fd",
+    "new_non_test_publish_guard": 0,
+    "new_non_test_feedback_guard": 0,
+    "historical_guard_1568_117": "HISTORICAL_NOT_RECOVERED",
+    "deterministic_test_rows": {"publish_instances": 1, "feedback_records": 1},
+    "non_test_data_drift": "none_on_fresh_baseline",
+    "dify_database_access_by_m2_role": "DENIED"
+  },
+  "evidence_freshness": {
+    "historical_14_of_19": "STALE_NEW_ENVIRONMENT_IDENTITY",
+    "historical_failures": "PRESERVED",
+    "new_formal_results": "NOT_RUN",
+    "s5_technical_acceptance": "NOT_VERIFIED"
+  }
+}

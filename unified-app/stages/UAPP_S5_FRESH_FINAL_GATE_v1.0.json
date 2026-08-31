@@ -1,0 +1,68 @@
+{
+  "document": {
+    "id": "UAPP_S5_FRESH_FINAL_GATE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "parent_manifest": "UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.2",
+    "parent_manifest_sha256": "70b344fe464b7d655d15f19f361d48f72632c0d9b43568c1abb4c7c33459c100",
+    "frozen_before_model_calls": true,
+    "model_calls_at_freeze": 0
+  },
+  "candidate": {
+    "UAPP": {"app_id": "dbb14eec-a935-445c-9764-280c8fd3375b", "graph_md5": "3ac6d9187f27e0f656417de119155480", "canonical_sha256": "1739ac8681d8f236ebb042bb9e51e3979bdd9632558b67e0bc165dea750e1c99"},
+    "PP": {"app_id": "2f211b7e-3e8a-412b-9d53-35705c65e68e", "graph_md5": "d4ba5e89baccfd494cd430a7b79f2684"},
+    "M3": {"app_id": "746bdd5a-e33f-47e0-a03b-70f4faeb16e0", "graph_md5": "26582e477afd458d4a4835df98257a56"},
+    "Hop": {"app_id": "3dbdca78-ab08-46b3-a4be-97412e16fd97", "graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce"},
+    "Seam": {"app_id": "886772a6-8c0a-4b34-b1f8-9151106c2fdd", "graph_md5": "2dd0d046cb99cfef20182a9002798598"},
+    "PP_provider_id": "35811b65-6c10-4193-ad47-4347c857dfce",
+    "PP_provider_graph_md5": "d4ba5e89baccfd494cd430a7b79f2684"
+  },
+  "frozen_files": {
+    "scenarios": "unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.2.json",
+    "scenarios_sha256": "7cef6cca903a9ea464ac860a59a64c5cdde85ea774a7d57a7e1028501e5b862a",
+    "checker": "unified-app/workflows/UAPP_S5_FINAL_CHECKER_v1.2.py",
+    "checker_sha256": "46bcc38343d2cd9ed4ac19e639a18e1e888bc6882e6ac4fb2aa6d0d39fbef73b",
+    "builder": "unified-app/workflows/UAPP_S5_FRESH_FINAL_BUILD_v1.0.py",
+    "builder_sha256": "8595a4e65b7627511a36a429ead39d676a8632dc10c1afc96c50f621b94c245b",
+    "controls": "unified-app/workflows/UAPP_S5_FRESH_FINAL_CONTROLS_v1.0.py",
+    "controls_sha256": "cde3cccc21f37382a95a7d067bb0d3fc765237dca6e0faf440be37547e7de3d9",
+    "controls_result_sha256": "5dbca436aec7525170f0390d18f18e206cb887f74adf778e196891b031f7d784",
+    "baseline_sha256": "547abc2a6fd75708b02bbaf01ec347f19eb5e81b3e00625ef1ffa45494447bac"
+  },
+  "acceptance": {
+    "scenario_count": 19,
+    "criteria": "UAPP-AC-01..11 inherited without semantic change",
+    "workflow_succeeded_is_not_pass": true,
+    "model_self_report_is_not_evidence": true,
+    "real_target_behavior_required": true
+  },
+  "protected_surface": {
+    "m2_schema_md5": "25192c11562827efedfc3b2c22c3b4fd",
+    "non_test_publish_guard": 0,
+    "non_test_feedback_guard": 0,
+    "real_publish": 0,
+    "main_merge": "NOT_ALLOWED"
+  },
+  "budget": {
+    "inherited_top_level_hard_cap": 10,
+    "inherited_deepseek_attempt_hard_cap": 60,
+    "new_identity_required_top_level_runs": 19,
+    "manual_retry_hard_cap": 1,
+    "platform_internal_replay_plus_manual_retry_hard_cap": 1,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0
+  },
+  "preflight": {
+    "deterministic_controls": "22/22 PASS",
+    "live_m2_api_controls": "PASS",
+    "active_workflows": 0,
+    "formal_model_calls": 0,
+    "budget_sufficient_for_current_evidence_set": false
+  },
+  "stop_rule": {
+    "result": "CHECKPOINT_BEFORE_MODEL_CALL",
+    "reason": "Fresh application and database identities make all 19 historical conclusions stale, while the inherited hard cap permits only 10 top-level runs.",
+    "implementation_mutation_allowed_while_stopped": false,
+    "formal_model_call_allowed_while_stopped": false
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "document": {
+    "id": "UAPP_S5_FRESH_FINAL_CONTROLS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "model_calls": 0
+  },
+  "result": "PASS",
+  "summary": {"total": 22, "pass": 22, "fail": 0},
+  "control_ids": [
+    "A-01_plain_byte_preserved",
+    "A-02_yaml_values_preserved",
+    "A-03_json_values_preserved",
+    "A-04_missing_expected_change_not_invented",
+    "A-05_format_variant_not_hardcoded",
+    "A-06_single_colon_sentence_stays_plain",
+    "B-01_explicit_publish_selects_current_content",
+    "B-02_test_flags_fail_closed",
+    "B-03_planned_publish_rejected",
+    "B-04_no_content_rejected",
+    "B-05_stale_content_rejected",
+    "B-06_cross_task_rejected",
+    "B-07_publish_idempotent_reuse",
+    "B-08_feedback_bound_to_publish",
+    "B-09_feedback_idempotency_stable",
+    "B-10_feedback_without_publish_rejected",
+    "B-11_cycle_requires_full_chain",
+    "B-12_cycle_without_feedback_rejected",
+    "B-13_cycle_repeat_reuses",
+    "G-01_graph_ids_unique",
+    "G-02_protected_tools_unchanged",
+    "G-03_no_real_publish_endpoint"
+  ],
+  "live_m2_api_control": {
+    "workspace_id": "5725ab00-c28d-44a9-a13d-987f8fc98403",
+    "task_kind": "test",
+    "version_current": true,
+    "publish_idempotent": true,
+    "feedback_idempotent": true,
+    "cycle_idempotent": true,
+    "invalid_content_version_status": 404,
+    "publish_flags": {"is_test": true, "is_simulated": true},
+    "feedback_flags": {"is_test": true, "is_simulated": true},
+    "real_publish_calls": 0
+  },
+  "candidate": {
+    "base_graph_md5": "32c02eb1b960c7d9b1e13a8bde23f2c1",
+    "published_graph_md5": "3ac6d9187f27e0f656417de119155480",
+    "canonical_sha256": "1739ac8681d8f236ebb042bb9e51e3979bdd9632558b67e0bc165dea750e1c99",
+    "nodes": 109,
+    "edges": 115,
+    "protected_m3_hop_seam_nodes_equal": true
+  },
+  "commands": [
+    "python3 unified-app/workflows/UAPP_S5_FRESH_FINAL_CONTROLS_v1.0.py",
+    "python3 unified-app/workflows/UAPP_S5_FRESH_FINAL_BUILD_v1.0.py --publish"
+  ]
+}
