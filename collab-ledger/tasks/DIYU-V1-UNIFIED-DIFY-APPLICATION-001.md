@@ -1623,3 +1623,20 @@ historical_run_identity_changed: false
 model_calls_since_gate_freeze: 0
 next_action: commit then zero-model environment preflight
 ```
+
+### 2026-08-31 · AC-12 最终批次 YAML 正式结果（只追加）
+
+```yaml
+run_id: c96a26d8-cc1d-4d75-9b45-e50c3c0b74f0
+content_brief_run_id: 0232dc78-8006-41db-ba4b-a2332bedf7d1
+result: PASS / CURRENT
+content_promise: PRESENT / A / USER_UTTERANCE
+expected_change: PRESENT / A / USER_UTTERANCE
+repeat_of_answered_content_promise: false
+remaining_question: objective.primary_goal (distinct true gap)
+top_level_runs: 1/4
+deepseek_node_attempts: 6/30
+platform_internal_replays: 0/1
+manual_retries: 0
+next_action: frozen G1 once
+```

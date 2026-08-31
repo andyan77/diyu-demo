@@ -1,0 +1,31 @@
+{
+  "document": {"id": "UAPP_AC12_SEMANTIC_HANDOFF_FINAL_BATCH_RAW_v1.1", "turn": "YAML", "formal": true, "recovered_read_only_from_dify": true},
+  "gate_sha256": "cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb",
+  "input_sha256": "cd38b72f83bb1aa722e8e82c56f4c22ee49ec0cc683cdd3d739782d23a62f6e5",
+  "runner_request_attempts": 1,
+  "top_level_run_id": "c96a26d8-cc1d-4d75-9b45-e50c3c0b74f0",
+  "top_level_final_status": "succeeded",
+  "conversation_id": "30bdec29-adc3-43e6-9c8e-ad189ee11f7e",
+  "message_id": "872715c9-7c3a-4bf1-9130-cf3a9f4bc219",
+  "nested_runs": [
+    {"id": "48a33b70-381b-4b56-bd62-499ae8033667", "role": "M3", "status": "succeeded", "llm_nodes": 2},
+    {"id": "d9ed4536-54bf-40b4-82e2-dc6f9731d0d6", "role": "Hop", "status": "succeeded", "llm_nodes": 1},
+    {"id": "de541a7d-00ed-4cd8-9fe2-6b7616192ff6", "role": "Seam", "status": "succeeded"},
+    {"id": "0232dc78-8006-41db-ba4b-a2332bedf7d1", "role": "Content Brief", "status": "succeeded", "llm_nodes": 1}
+  ],
+  "observed_semantics": {
+    "content_promise": "缺的不是衣服数量，是一件能压住整套的外套，并且会用它三天不重样",
+    "content_promise_source": "A / USER_UTTERANCE",
+    "expected_change": "缺的不是衣服数量，是一件能压住整套的外套，并且会用它三天不重样",
+    "expected_change_source": "A / USER_UTTERANCE",
+    "semantic_projection_status": "PROJECTED_DIRECT_USER_VIEWER_OUTCOME",
+    "uapp_fields_gaps": ["objective.primary_goal", "objective.goal_family"],
+    "seam_business_delivery_outcome": "DELIVERED",
+    "target_component": "CONTENT_BRIEF",
+    "other_professional_capabilities": []
+  },
+  "acceptance": {"result": "PASS / CURRENT", "basis": "The required user outcome reached content_promise, was retained in state, and no repeated content-promise question was asked. The remaining primary-goal question is a distinct, true gap."},
+  "runner_note": "The first client-side runner process was cut short by the execution tool while Dify continued the single request. This file is a read-only reconstruction from that same Dify run; no second request was made.",
+  "platform_internal_replays_observed": 0,
+  "manual_retries": 0
+}

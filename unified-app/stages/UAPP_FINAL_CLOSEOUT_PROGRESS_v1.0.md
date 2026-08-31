@@ -582,3 +582,9 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - Gate SHA-256：`cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb`；输入 SHA-256：`cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d`。
 - 批次仅含 YAML、G1、G2、FULL T1；顶层上限 `4`、DeepSeek 节点上限 `30`、全批平台内部透明传输重试上限 `1`，人工重试/重复采样/A-B/Reviewer 均为 `0`。
 - Gate 与 Runner 已冻结但尚未执行模型调用；唯一下一步：在提交后运行零模型环境预检。
+
+## AC-12 语义承接 · 最终批次 YAML
+
+- `YAML = PASS / CURRENT`：顶层 `c96a26d8…`，Content Brief `0232dc78…` 成功，实际 DeepSeek 节点尝试 `6`，内部重放与人工重试均为 `0`。
+- 用户明确的 `content_promise` 与 `expected_change` 均以 `A / USER_UTTERANCE` 保存；系统只问未给出的业务主目标，未重复索取已回答的内容承诺。
+- 批次累计：顶层 `1/4`，DeepSeek `6/30`；唯一下一步：冻结 G1 原文运行一次。
