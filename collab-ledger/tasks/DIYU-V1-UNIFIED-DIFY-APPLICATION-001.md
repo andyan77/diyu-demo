@@ -1298,3 +1298,9 @@ EQUIV-01n run `b9bb4797-0d0f-4a20-bc11-a03bd43766b1` 同样只问一个真实缺
 缺 expected change 与 expression subject，不是单变量 Fixture；旧 Checker 还冻结了 Seam 前停止的
 物理位置。归因 `CHECKER_OR_FIXTURE`，不修改任何对象；AC-08 留 NOT_VERIFIED，继续 WITHDRAW/
 FULL/RECOVERY。累计 `6 runs / 25 LLM`。
+
+WITHDRAW-01 W0 run `c97d9b12-931b-473a-af43-f08507f01db1`：上传 HTTP 201，文件正文由
+`m1_extract` 真实读取，但 UAPP 没有执行 M2 素材登记分支，task-scoped `materials=[]`。
+确认最高失效节点为当前 UAPP 上传资料登记接缝；它不在本 GAP-01 Prompt 的允许修改面，故
+`mutation_target=NONE`，W1 标 `NOT_RUN_DEPENDENT`。无真实发布、非测试变化、重试或重放。
+累计 `7 runs / 30 LLM`，继续不依赖该失败的 FULL-01 / RECOVERY-01。

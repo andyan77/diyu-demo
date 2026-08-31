@@ -6,7 +6,7 @@
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
 | C2 G1/G2 | COMPLETED | successor G1/G2 PASS / CURRENT | 4/4 | 15/90 | NONE | C3 |
-| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV 组 NOT_VERIFIED(ORACLE)；7 个独立输入待运行 | 2/11 | 25/90 | AC-08 Fixture 不充分 | WITHDRAW W0 |
+| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV 组 NOT_VERIFIED(ORACLE)；WITHDRAW W0 FAIL(SUT)，W1 依赖暂停；5 个独立输入待运行 | 3/11 | 30/90 | AC-07/08 未通过 | FULL T1 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
 
@@ -48,6 +48,10 @@
   输入、Checker、候选均不变，只要求同 conversation 的直接前序 PASS；EQUIV-01n preflight PASS。
 - EQUIV-01n run `b9bb4797-0d0f-4a20-bc11-a03bd43766b1` 只问表达主体这一真实缺口，但 Fixture
   同时缺 expected change 与表达主体，无法作为单变量负例；AC-08 保持 NOT_VERIFIED，继续独立场景。
+- WITHDRAW-01 W0 run `c97d9b12-931b-473a-af43-f08507f01db1`：上传 HTTP 201，`m1_extract`
+  真实读取文件，但 UAPP 未执行素材登记写入，task-scoped M2 `materials=[]`；归因当前 UAPP
+  上传资料登记接缝 `SYSTEM_UNDER_TEST`。该接缝不在 GAP-01 授权修改面，故不修改；W1
+  `NOT_RUN_DEPENDENT`。累计 `7 runs / 30 LLM`，继续独立 FULL/RECOVERY 分支。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 
