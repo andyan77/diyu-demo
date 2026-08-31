@@ -418,6 +418,30 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 当前 S5 `FAIL / CURRENT`；Founder AC-12 不授权，main 不允许，terminal unset。
 - 唯一下一动作：Founder 对 CAP-06 CTA normalization 建立新的最窄 REBASE 授权。
 
+## 2026-08-30 · Final two-blocker REBASE
+
+| Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
+|---|---|---|---:|---|---|
+| P0 激活完成 | COMPLETED | PASS / CURRENT | 0 | NONE | P1 零模型预检 |
+| P1 零模型预检 | IN_PROGRESS | NOT_VERIFIED(CONTRACT_SCOPE_GAP) | 0 | 缺反馈/周期写回授权 | Founder 单项裁决 |
+| P2 候选实现 | NOT_STARTED | NOT_VERIFIED | 0 | P1 | 实现两个最小接缝 |
+| P3 点测 | NOT_STARTED | NOT_VERIFIED | 0/60 | P2 | EQUIV-01b |
+| P4 正式收敛 | NOT_STARTED | NOT_VERIFIED | 0/60 | P3 | 完成九项正式顺序 |
+| P5 S5 技术收口/Founder交接 | NOT_STARTED | NOT_VERIFIED | 0 | P4 | AC-01..11 重算 |
+
+- P0 现场：HEAD/upstream `8f6476231c04652f0de271b841bf013929ab7fbb`，main/origin-main
+  `01a42b0ed97344a67302ecb6778ae4a772eb28b2`，worktree 写入前 clean，active workflow `0`。
+- UAPP `6ac5a45f3953683339f4ea77ebcc00c6`；M3/Hop/Seam/PP/provider 与 Founder 锚点一致。
+- M2 非测试 publish/feedback `1568/117`，schema md5 `25192c11562827efedfc3b2c22c3b4fd`。
+- 历史 19 项投影保持 `14 PASS / 2 FAIL / 3 NOT_RUN_DEPENDENT`，未覆盖旧 FAIL。
+- 两个第一差异点：YAML-like 在 M3 语义入口丢主目标/目标类别/内容承诺；RECORD_PUBLISH 已正确
+  分诊为 WRITEBACK，但 UAPP 不存在测试发布写回执行分支。
+- 本 REBASE 实际顶层运行 `0/10`，DeepSeek 尝试 `0/60`，重试/内部重放/重复采样/A-B/Reviewer 均 `0`。
+- P1 只读图硬门确认：除授权点名的发布写回外，当前图也没有反馈登记和周期收口/下一周期写回；
+  因此 T3/T4/R1 在当前允许变化面内不可达。该结论不是模型自述，也没有调用模型。
+- 当前唯一下一动作：Founder 裁决是否把 `REGISTER_FEEDBACK` 与 `CLOSE_CYCLE/OPEN_NEXT_CYCLE`
+  两个 UAPP 最小写回接缝纳入本 REBASE；正式输入、判据和 10/60 预算保持不变。
+
 ## 激活现场
 
 - branch / HEAD / upstream: `codex/v1-uapp-progressive-canvas-001` / `e1ef78fa9637e7859598f2a453c3e0152a368caf` / 相同

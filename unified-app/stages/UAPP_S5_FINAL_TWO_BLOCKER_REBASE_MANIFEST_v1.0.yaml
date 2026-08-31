@@ -1,0 +1,105 @@
+document:
+  id: UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.0
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  task_entry_mode: REBASE_TASK
+  prompt_id: UAPP_S5_FINAL_TWO_BLOCKER_BOUNDED_CONVERGENCE_REBASE_EXECUTION_PROMPT_v1.0
+  authority: FOUNDER_EXPLICIT_START_2026-08-30
+  risk_level: HIGH
+  frozen_before_model_calls: true
+
+protocol:
+  execution: DIYU-BOUNDED-EXECUTION-OWNER-PROTOCOL_v1.3
+  governance: UNIVERSAL-BOUNDED-EVIDENCE-AI-COLLABORATION_v0.3.1-kernel_revision_2
+  task_contract_sha256: 279f80ba09f9ec4fea53c71c829054276b4baa30071df7305f2f3fbf921e869f
+  root_prompt_sha256: 4b72d4ec84814fff9bf7a861f75f63c7351af01bb64bb81ea0d8dd296e11a893
+
+activation_baseline:
+  observed_at: "2026-08-30T20:54:49-07:00"
+  repository: /home/faye/diyu-demo-worktrees/v1-uapp-progressive-canvas
+  branch: codex/v1-uapp-progressive-canvas-001
+  head: 8f6476231c04652f0de271b841bf013929ab7fbb
+  upstream: 8f6476231c04652f0de271b841bf013929ab7fbb
+  main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2
+  origin_main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2
+  worktree: CLEAN
+  active_workflow_runs: 0
+  graphs:
+    UAPP: 6ac5a45f3953683339f4ea77ebcc00c6
+    M3: cd93757bcf8ad322f3b32fc43b2da3ff
+    Hop: e38378c3c2a66b75aa7e645368c9e1ce
+    Seam: db49a3da8973d4fdcbe9ecf63bdf7e2a
+    PP: 99287feadcd784e86bf4c298bea555fc
+    PP_provider: 99287feadcd784e86bf4c298bea555fc
+  m2:
+    publish_guard: 1568
+    feedback_guard: 117
+    schema_md5: 25192c11562827efedfc3b2c22c3b4fd
+
+inherited_evidence:
+  scenarios:
+    path: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.2.json
+    sha256: 7cef6cca903a9ea464ac860a59a64c5cdde85ea774a7d57a7e1028501e5b862a
+  result:
+    path: unified-app/stages/UAPP_S5_FINAL_TECHNICAL_RESULT_v1.1.json
+    sha256: c74bb6dd38665737a0c5c2f562f3d3adf651bb6c1238ce1e45a0313d4f102fdd
+  ac_matrix:
+    path: unified-app/stages/UAPP_S5_AC_MATRIX_v1.8.json
+    sha256: 934dd28837622a863a9451b0a9e9c2c08bd8dec4af5f401f38d5239d745cafd5
+  evidence_index:
+    path: unified-app/stages/UAPP_S5_FINAL_CONVERGENCE_EVIDENCE_INDEX_v1.0.json
+    sha256: 6b24fc95590af5618a1fc7dae049e1053db98413fdbc3032948b81438beccaa4
+  current_projection:
+    total: 19
+    pass_current: 14
+    fail_current: 2
+    not_run_dependent: 3
+    failures: [UAPP-EQUIV-01b, UAPP-FULL-01:T2]
+    dependent_not_run: [UAPP-FULL-01:T3, UAPP-FULL-01:T4, UAPP-RECOVERY-01:R1]
+
+contract:
+  core_problem: >-
+    Close the format-equivalence seam and the test-only publish writeback seam without
+    changing product semantics or protected professional modules, then establish current
+    evidence for all 19 S5 scenarios and UAPP-AC-01..11.
+  allowed_delta:
+    - UAPP pre-M3 format-neutral semantic normalization and assembly
+    - UAPP RECORD_PUBLISH accepted-content selection, M2 test publish call, result and session binding
+    - versioned builders, deterministic controls, Gate, Runner, Checker and evidence
+  protected_assets:
+    - M1, M2 schema/service semantics, Hop, Seam and six professional capability applications
+    - PP professional rules, non-test data, real publish credentials/endpoints
+    - historical RAW, FAIL records, main and origin/main
+  non_goals:
+    - Founder AC-12 execution
+    - main merge or terminal-state completion
+    - A/B, blind resampling, Reviewer, full unaffected rerun
+
+formal_plan:
+  order:
+    - UAPP-EQUIV-01b
+    - UAPP-EQUIV-01n
+    - UAPP-FULL-01:T1
+    - UAPP-FULL-01:T2
+    - UAPP-EQUIV-01a
+    - UAPP-EQUIV-01c
+    - UAPP-FULL-01:T3
+    - UAPP-FULL-01:T4
+    - UAPP-RECOVERY-01:R1
+  rule: each frozen input runs at most once on the final candidate; the point-test prefix is not rerun
+  top_level_workflow_runs_hard_cap: 10
+  deepseek_llm_node_attempts_hard_cap: 60
+  manual_retry_hard_cap: 1
+  platform_internal_replay_plus_manual_retry_hard_cap: 1
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+  candidate_publication_versions_max: 2
+
+completion:
+  technical_success: >-
+    nine affected scenarios PASS/CURRENT, the other ten remain PASS/CURRENT under exact
+    dependency binding, UAPP-AC-01..11 all PASS/CURRENT, guards remain 1568/117, schema
+    and protected applications do not drift, real_publish=0, task branch is pushed and clean.
+  founder_ac_12: READY_ONLY_AFTER_TECHNICAL_SUCCESS
+  main_merge: NOT_ALLOWED
+  terminal_state: unset

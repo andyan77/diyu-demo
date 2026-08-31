@@ -768,3 +768,14 @@ CS 正文但没有 PD；`uapp_last_capability=PRODUCTION_DIRECTOR` 与正文缺�
 
 详见 [`collab-ledger/tasks/DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001.md`](tasks/DIYU-V1-UAPP-ACCEPTED-ARTIFACT-BINDING-001.md)
 与 [`unified-app/stages/UAAB_RESULT_v1.1.json`](../unified-app/stages/UAAB_RESULT_v1.1.json)。
+
+---
+
+## `DIYU-V1-UNIFIED-DIFY-APPLICATION-001` · S5 two-blocker REBASE P1 CHECKPOINT（2026-08-30，非终态）
+
+P0 现场身份全部与 Founder 锚点一致，模型调用 0。P1 只读图硬门发现：当前 UAPP 除
+`RECORD_PUBLISH` 写回缺失外，也没有 `REGISTER_FEEDBACK` 与 `CLOSE_CYCLE/OPEN_NEXT_CYCLE`
+写回分支；后两项不在本 REBASE 明列的允许变化面中，因此冻结 FULL T3/T4/R1 在当前授权内不可达。
+
+当前没有修改候选，没有 Dify/M2 写入，非测试保护计数仍为 `1568/117`。唯一下一动作：Founder
+裁决是否把这两个 UAPP 最小写回接缝纳入同一 REBASE；正式输入、判据和 10/60 预算保持不变。

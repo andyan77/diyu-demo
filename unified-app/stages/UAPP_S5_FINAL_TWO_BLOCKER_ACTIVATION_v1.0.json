@@ -1,0 +1,60 @@
+{
+  "document": {
+    "id": "UAPP_S5_FINAL_TWO_BLOCKER_ACTIVATION_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "phase": "P0",
+    "model_calls": 0
+  },
+  "activation": {
+    "repo_root": "/home/faye/diyu-demo-worktrees/v1-uapp-progressive-canvas",
+    "branch": "codex/v1-uapp-progressive-canvas-001",
+    "head": "8f6476231c04652f0de271b841bf013929ab7fbb",
+    "upstream": "8f6476231c04652f0de271b841bf013929ab7fbb",
+    "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "worktree_before_writes": "CLEAN",
+    "active_workflow_runs": 0,
+    "delta_from_prompt_anchor": "NONE"
+  },
+  "bindings": {
+    "UAPP": "6ac5a45f3953683339f4ea77ebcc00c6",
+    "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+    "Hop": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "Seam": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+    "PP": "99287feadcd784e86bf4c298bea555fc",
+    "PP_provider": "99287feadcd784e86bf4c298bea555fc"
+  },
+  "m2": {
+    "publish_guard": 1568,
+    "feedback_guard": 117,
+    "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+  },
+  "historical_failure_replay": {
+    "UAPP-EQUIV-01b": {
+      "run_id": "c4a7cd78-8da0-4f97-b5a1-5beb89100041",
+      "raw_sha256": "0247a5b127b1e9b15ecd39a12d7efdca89ef166d21c01ae7c73e0eef961b34ba",
+      "first_difference": "M3 semantic judgment omitted primary_goal, goal_family and content_promise for the YAML-like form",
+      "highest_failing_seam": "UAPP_PRE_M3_FORMAT_NORMALIZATION_OR_M3_ENTRY_ASSEMBLY"
+    },
+    "UAPP-FULL-01:T2": {
+      "run_id": "14d66ec7-09aa-4fd9-85ba-2dce90ec7c67",
+      "raw_sha256": "63796e15729c6640ad187818059802ee781c424fe644be75d3d710fa30f1f701",
+      "first_difference": "uapp_action and uapp_route produced RECORD_PUBLISH/WRITEBACK but no publish writeback branch executed",
+      "highest_failing_seam": "UAPP_RECORD_PUBLISH_WRITEBACK"
+    }
+  },
+  "prompt_freeze_check": {
+    "core_problem": "Close the two actual S5 seams without changing product meaning or rerunning unaffected evidence.",
+    "p0_implies_core_solved": "YES",
+    "goal_substitution": "NONE",
+    "how_leakage": "NONE",
+    "complexity_removed": [
+      "No full rerun of ten unaffected scenarios",
+      "No second runtime or state authority",
+      "No A/B, repeat sampling or reviewer",
+      "Point tests are the prefix of the nine-run formal sequence, not duplicate runs"
+    ],
+    "result": "PASS"
+  }
+}
+

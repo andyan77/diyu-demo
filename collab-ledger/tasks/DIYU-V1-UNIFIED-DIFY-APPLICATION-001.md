@@ -1364,3 +1364,39 @@ FULL T1 run `2e5b9488-96d6-4167-88dc-5e0561e232c9` 生成 6348 字 Content Brief
 T3/T4/RECOVERY 按依赖停止。最终 19 项为 14 PASS、2 FAIL、3 NOT_RUN_DEPENDENT；实际
 `9 runs / 41 LLM`，重试/重放/A-B/Reviewer 均 0。保护计数 `1568/117`、schema 与 main 无漂移。
 S5 `FAIL / CURRENT`，Founder AC-12 不可开始，terminal_state 继续 unset。
+
+## UAPP S5 final two-blocker REBASE · P0/P1 CHECKPOINT（2026-08-30）
+
+Founder 已启动 `UAPP_S5_FINAL_TWO_BLOCKER_BOUNDED_CONVERGENCE_REBASE_EXECUTION_PROMPT_v1.0`。
+P0 现场全部一致：HEAD/upstream `8f6476231c04652f0de271b841bf013929ab7fbb`，UAPP
+`6ac5a45f3953683339f4ea77ebcc00c6`，active workflow 0，M2 保护计数 `1568/117`、schema 无漂移。
+
+P1 零模型 RAW 重放确认两个历史根因，但也确认当前图缺少 `REGISTER_FEEDBACK` 与
+`CLOSE_CYCLE/OPEN_NEXT_CYCLE` 写回分支。本 Prompt 的允许变化面只明确列出
+`RECORD_PUBLISH` 写回；因此即使补完 T2，T3/T4/R1 仍无法按冻结标准成立。未修改候选、未调用模型、
+未写 Dify/M2。
+
+```yaml
+task_progress: IN_PROGRESS
+terminal_state: unset
+P0: COMPLETED / PASS / CURRENT
+P1: IN_PROGRESS / NOT_VERIFIED(CONTRACT_SCOPE_GAP)
+formal_runs_this_rebase: 0/10
+deepseek_attempts_this_rebase: 0/60
+main_merge: NOT_ALLOWED
+unique_next_action: Founder 裁决是否把两个缺失的 UAPP 写回接缝纳入本 REBASE
+```
+
+### L5 · P0/P1 checkpoint push
+
+```yaml
+event: UAPP_S5_FINAL_TWO_BLOCKER_P0_P1_CHECKPOINT_PUSH
+state: PLANNED
+target: origin/codex/v1-uapp-progressive-canvas-001
+method: ordinary non-force push
+content: activation manifest, read-only preflight, scope-gap triage, ledgers and progress snapshot
+dify_write: 0
+m2_write: 0
+model_calls: 0
+main_write: 0
+```
