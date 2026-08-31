@@ -478,6 +478,18 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 本 REBASE 正式运行 `0/10`、DeepSeek `0/60`，检测后 Dify/M2 写入与真实发布均为 0。
 - 唯一下一动作：从可验证备份恢复准确 pre-restart Dify/M2 volumes，再重算 P1 身份与保护门。
 
+#### P1 环境恢复授权执行结果
+
+- Dify 网关、代理与 M2 后台进程已启动；Dify HTTP 可达。
+- Dify setup 状态为 `not_started`，数据库仍为 `apps/workflows/tenants=0`；
+  `diyu_business` 仍不存在。
+- 已检查活动 bind mount、Docker PostgreSQL volumes、常见数据库备份位置及仓库导出；
+  未找到可验证的 pre-restart Dify/M2 数据库副本。
+- 仓库 DSL 与 RAW 可恢复代码和部分图内容，但不能恢复原 app/provider 身份、凭据、历史运行、
+  会话和 M2 `1568/117` 数据，因此未执行会制造新基线的 fresh import。
+- 恢复动作只启动服务；数据库写入、候选修改、模型调用和真实发布均为 0。
+- 唯一下一动作：提供或挂载包含 `dify` 与 `diyu_business` 的重启前 PostgreSQL/WSL 备份。
+
 ## 激活现场
 
 - branch / HEAD / upstream: `codex/v1-uapp-progressive-canvas-001` / `e1ef78fa9637e7859598f2a453c3e0152a368caf` / 相同

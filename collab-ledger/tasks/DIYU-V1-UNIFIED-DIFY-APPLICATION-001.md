@@ -1482,3 +1482,29 @@ real_publish: 0
 next_state: CHECKPOINT
 unique_next_action: 从可验证备份恢复准确 pre-restart Dify/M2 volumes，然后重算 P1 身份与保护门
 ```
+
+### P1 environment recovery authorization result
+
+```yaml
+event: UAPP_S5_P1_ENVIRONMENT_RECOVERY_ATTEMPT
+authority: FOUNDER_EXPLICIT_ENVIRONMENT_RECOVERY_AUTHORIZATION
+services_started:
+  - docker-nginx-1
+  - docker-ssrf_proxy-1
+  - docker-agent_ssrf_proxy-1
+  - diyu-m2-app
+dify_http: reachable
+dify_setup_step: not_started
+dify_apps: 0
+dify_workflows: 0
+dify_tenants: 0
+diyu_business_database_exists: false
+verified_backup_found: false
+fresh_reconstruction_attempted: false
+reason: fresh import cannot preserve protected identity, credentials, history or M2 guards
+database_writes: 0
+candidate_changes: 0
+model_calls: 0
+next_state: CHECKPOINT
+unique_next_action: 提供或挂载包含 dify 与 diyu_business 的重启前 PostgreSQL/WSL 备份
+```

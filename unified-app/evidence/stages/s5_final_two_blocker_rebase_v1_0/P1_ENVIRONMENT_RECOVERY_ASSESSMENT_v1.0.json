@@ -1,0 +1,49 @@
+{
+  "document": {
+    "id": "P1_ENVIRONMENT_RECOVERY_ASSESSMENT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority": "FOUNDER_EXPLICIT_ENVIRONMENT_RECOVERY_AUTHORIZATION",
+    "model_calls": 0
+  },
+  "service_recovery": {
+    "dify_api": "RUNNING_HEALTHY",
+    "dify_web": "RUNNING",
+    "dify_nginx": "RUNNING",
+    "dify_ssrf_proxy": "RUNNING",
+    "dify_agent_ssrf_proxy": "RUNNING",
+    "diyu_m2_app": "RUNNING",
+    "dify_http": 307,
+    "dify_setup_step": "not_started"
+  },
+  "data_recovery_sources_checked": {
+    "active_bind_mount": "REINITIALIZED_EMPTY_CLUSTER",
+    "docker_postgres_volumes": "NO_MATCHING_DIFY_OR_DIYU_BUSINESS_DATABASE",
+    "filesystem_database_backups": "NO_CURRENT_MATCHING_BACKUP_FOUND",
+    "repository_dsl_and_evidence": "PRESENT_BUT_NOT_A_DATABASE_BACKUP"
+  },
+  "current_database": {
+    "dify_apps": 0,
+    "dify_workflows": 0,
+    "dify_tenants": 0,
+    "diyu_business_exists": false
+  },
+  "restore_decision": {
+    "exact_restore_completed": false,
+    "fresh_reconstruction_attempted": false,
+    "reason": "A fresh DSL import would change protected identities and cannot recover provider credentials, historical runs, conversations, or M2 protection data.",
+    "required_source": "A pre-restart PostgreSQL dump, copied pgdata directory, Docker/WSL disk snapshot, or equivalent verified backup containing both dify and diyu_business."
+  },
+  "side_effects": {
+    "services_started": [
+      "docker-nginx-1",
+      "docker-ssrf_proxy-1",
+      "docker-agent_ssrf_proxy-1",
+      "diyu-m2-app"
+    ],
+    "database_writes_by_recovery": 0,
+    "candidate_changes": 0,
+    "model_calls": 0,
+    "real_publish": 0
+  },
+  "result": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)"
+}
