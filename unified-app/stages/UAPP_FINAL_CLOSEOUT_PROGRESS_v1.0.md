@@ -6,7 +6,7 @@
 |---|---|---|---:|---:|---|---|
 | C1 GAP 修复 | COMPLETED | 30/30 实现控制、5/5 Checker 控制、发布与 Gate 冻结 PASS | 0/2 | 0/90 | NONE | G1 正式运行 |
 | C2 G1/G2 | COMPLETED | successor G1/G2 PASS / CURRENT | 4/4 | 15/90 | NONE | C3 |
-| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV-01a fixture FAIL；b/c 依赖跳过；独立 Runner 冻结 | 1/11 | 20/90 | EQUIV 正例 Fixture 不充分 | EQUIV-01n |
+| C3 S5 AC-01～11 | IN_PROGRESS | EQUIV 组 NOT_VERIFIED(ORACLE)；7 个独立输入待运行 | 2/11 | 25/90 | AC-08 Fixture 不充分 | WITHDRAW W0 |
 | C4 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C3 | 等待 Founder |
 | C5 Final Closeout | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待 Founder |
 
@@ -46,6 +46,8 @@
   EQUIV-01b/01c 同依赖不运行；Runner 的全局前序 PASS 阻断将版本化收窄到真实会话依赖。
 - 依赖感知 Gate v1.2 sha256 `c8d5c34d2b37fb34cd623c976293ce5ccfa36a00844b66650b176bed473eb623`：
   输入、Checker、候选均不变，只要求同 conversation 的直接前序 PASS；EQUIV-01n preflight PASS。
+- EQUIV-01n run `b9bb4797-0d0f-4a20-bc11-a03bd43766b1` 只问表达主体这一真实缺口，但 Fixture
+  同时缺 expected change 与表达主体，无法作为单变量负例；AC-08 保持 NOT_VERIFIED，继续独立场景。
 
 ## 2026-08-30 · CAP-06 语义合同 REBASE 激活与零模型硬门
 

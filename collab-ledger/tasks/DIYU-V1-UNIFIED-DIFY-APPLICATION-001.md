@@ -1293,3 +1293,8 @@ EQUIV-01a run `f033b774-f343-4070-acdb-6e350346b9e1` 正确路由、只运行 CO
 但冻结输入没有给表达主体，能力精确询问该一项并未编造 artifact。Checker 的正例成品门因此 FAIL；
 确认原因为 Fixture 与能力前置条件不等价，不修改 SUT、输入、Checker 或专业合同。EQUIV-01b/c
 同依赖暂停；只版本化收窄 Runner 的依赖阻断，继续不依赖的 8 个冻结输入。累计 `5 runs / 20 LLM`。
+
+EQUIV-01n run `b9bb4797-0d0f-4a20-bc11-a03bd43766b1` 同样只问一个真实缺口，但该负例同时
+缺 expected change 与 expression subject，不是单变量 Fixture；旧 Checker 还冻结了 Seam 前停止的
+物理位置。归因 `CHECKER_OR_FIXTURE`，不修改任何对象；AC-08 留 NOT_VERIFIED，继续 WITHDRAW/
+FULL/RECOVERY。累计 `6 runs / 25 LLM`。
