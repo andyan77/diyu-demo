@@ -1573,3 +1573,33 @@ next_state: CHECKPOINT_FOR_VERSIONED_SEMANTIC_SEAM_REPAIR
 main_merge: NOT_ALLOWED
 terminal_state: unset
 ```
+
+### 2026-08-31 · AC-12 语义承接环境结果对账（只追加）
+
+```yaml
+mode: READ_ONLY_RECONCILIATION
+model_calls: 0
+active_workflows: 0
+historical_triage: PRESERVED
+run_850d2b64:
+  final_status: succeeded
+  acceptance: NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)
+run_cd1cc6d2:
+  final_status: partial-succeeded
+  semantic_result: EXPLORATORY
+  acceptance: NOT_PROMOTED_TO_FORMAL_PASS
+environment_chain:
+  - Content Brief ChunkedEncodingError
+  - Content Brief SSL EOF
+  - platform internal replay
+  - later Content Brief success in separate successor run
+confirmed_origin: INPUT_ENVIRONMENT_OR_TOOL
+mutation_target: NONE
+semantic_readback:
+  content_promise: USER_UTTERANCE / A / PRESENT
+  expected_change: USER_UTTERANCE / A / PRESENT
+  primary_goal: M1_SNAPSHOT / D / NOT_USER_ATTRIBUTED
+  unsupported_purchase_goal: NOT_LOCKED_OR_USER_ATTRIBUTED
+  phrase_按你定的: ABSENT
+next_action: freeze Gate v1.1 before any new formal model call
+```

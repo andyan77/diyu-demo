@@ -1,0 +1,57 @@
+{
+  "document": {
+    "id": "UAPP_AC12_SEMANTIC_HANDOFF_ENVIRONMENT_RECONCILIATION_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "observed_at": "2026-08-31T00:55:34-07:00",
+    "mode": "READ_ONLY_RECONCILIATION"
+  },
+  "historical_records_preserved": [
+    "UAPP_AC12_SEMANTIC_HANDOFF_FORMAL_FAILURE_TRIAGE_001.md",
+    "UAPP_AC12_SEMANTIC_HANDOFF_GATE_v1.0.json",
+    "UAPP_AC12_SEMANTIC_HANDOFF_YAML_SUCCESSOR_SLOT_v1.0.json"
+  ],
+  "top_level_runs": [
+    {
+      "id": "850d2b64-8bf4-4c20-b52d-4e51c86de72f",
+      "final_status": "succeeded",
+      "started_at": "2026-08-31T07:13:21.805948Z",
+      "finished_at": "2026-08-31T07:17:59.871528Z",
+      "acceptance_status": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)",
+      "reason": "UAPP returned a safe non-delivery after the nested Content Brief transport failures; top-level success is not business delivery."
+    },
+    {
+      "id": "cd1cc6d2-31d7-4ca4-b6f2-80fb11305db1",
+      "final_status": "partial-succeeded",
+      "started_at": "2026-08-31T07:22:30.080740Z",
+      "finished_at": "2026-08-31T07:29:22.988947Z",
+      "semantic_result": "EXPLORATORY",
+      "acceptance_status": "NOT_PROMOTED_TO_FORMAL_PASS",
+      "reason": "It is a separately authorized successor YAML slot under the old no-internal-replay validity rule; its successful delivery may inform diagnosis but cannot rewrite an earlier formal Attempt or become a final PASS."
+    }
+  ],
+  "nested_runs": [
+    {"parent": "850d2b64-8bf4-4c20-b52d-4e51c86de72f", "id": "9c8be66a-24e3-4758-a8fa-7123cafb7ebe", "role": "M3", "final_status": "succeeded"},
+    {"parent": "850d2b64-8bf4-4c20-b52d-4e51c86de72f", "id": "e6e05e9a-b563-406a-a1db-85a89d4a9b8b", "role": "Hop", "final_status": "succeeded"},
+    {"parent": "850d2b64-8bf4-4c20-b52d-4e51c86de72f", "id": "aa0b1d20-cd51-467a-8059-401a269d4205", "role": "Seam", "final_status": "partial-succeeded"},
+    {"parent": "850d2b64-8bf4-4c20-b52d-4e51c86de72f", "id": "81cb3a7f-70bd-4819-82af-affb7c7f2a11", "role": "Content Brief", "final_status": "failed", "error_class": "ChunkedEncodingError", "error": "Response ended prematurely"},
+    {"parent": "850d2b64-8bf4-4c20-b52d-4e51c86de72f", "id": "22f7cf2e-319c-4eb8-8907-b44cca7b29db", "role": "Content Brief internal replay", "final_status": "failed", "error_class": "SSLEOFError"},
+    {"parent": "cd1cc6d2-31d7-4ca4-b6f2-80fb11305db1", "id": "b93a07e4-ea19-44ff-8a38-7c690437920b", "role": "M3", "final_status": "succeeded"},
+    {"parent": "cd1cc6d2-31d7-4ca4-b6f2-80fb11305db1", "id": "df70a68f-c0fa-4c5c-a580-72c314654f96", "role": "Hop", "final_status": "succeeded"},
+    {"parent": "cd1cc6d2-31d7-4ca4-b6f2-80fb11305db1", "id": "ed7efa58-d911-4207-984a-a311597e1d1e", "role": "Seam", "final_status": "succeeded"},
+    {"parent": "cd1cc6d2-31d7-4ca4-b6f2-80fb11305db1", "id": "b6afa4d3-849f-43c0-8d53-65025457f450", "role": "Content Brief", "final_status": "succeeded"}
+  ],
+  "semantic_readback": {
+    "content_promise": {"present": true, "value_matches_user_expected_change": true, "source_level": "A", "source_kind": "USER_UTTERANCE"},
+    "expected_change": {"present": true, "value_matches_frozen_user_text": true, "source_level": "A", "source_kind": "USER_UTTERANCE"},
+    "primary_goal": {"source_level": "D", "source_kind": "M1_SNAPSHOT", "not_user_attributed": true},
+    "unsupported_purchase_goal": {"locked_or_user_attributed": false, "notes": "Delivery mentions direct purchase only as an unconfirmed alternative and explicitly does not set it as the current goal."},
+    "phrase_an_ni_ding_de": {"present_in_uapp_fields_or_delivery": false}
+  },
+  "transport_event": {
+    "classification": "INPUT_ENVIRONMENT_OR_TOOL",
+    "observed": ["Content Brief ChunkedEncodingError", "Content Brief SSLEOFError", "one platform-internal replay in the original chain", "later Content Brief success in the separate successor run"],
+    "sut_mutation": "NONE"
+  },
+  "active_workflow_runs_at_readback": 0,
+  "next_action": "Freeze a new Gate v1.1 before any further formal model call."
+}
