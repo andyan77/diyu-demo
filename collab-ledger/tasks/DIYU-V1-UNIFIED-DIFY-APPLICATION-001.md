@@ -1726,3 +1726,47 @@ next_action: commit_and_push_frozen_candidate_then_run_frozen_YAML_once
 main_merge: NOT_ALLOWED
 terminal_state: unset
 ```
+
+### 2026-08-31 · AC-12 语义权威与自然交付正式批次结果（只追加）
+
+```yaml
+execution_package_id: UAPP-AC12-SEMANTIC-AUTHORITY-AND-HUMAN-DELIVERY-REBASE-001
+gate: UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json
+gate_sha256: d497d7afde69dfacf695139d366371be81ff4c1f1def8f666189b64ac52291fa
+candidate_uapp_graph: 5720ddf6e0daef0bc82818bb53b95ff4
+formal_runs:
+  YAML: aea42816-4296-4230-8f9b-fcbfc469d429
+  G1: 89ad3031-4fc8-42ba-8f91-ee487eec72ba
+  G2: 0ca83c8f-e0ed-4f60-9538-7eef51cb5a12
+  FULL_T1: fa13182d-f9e5-43f1-9f5b-abe8657df1d0
+results:
+  YAML: FAIL / CURRENT
+  G1: PASS / CURRENT
+  G2: FAIL / CURRENT
+  FULL_T1: FAIL / CURRENT
+confirmed_origin: SYSTEM_UNDER_TEST
+first_failure_nodes:
+  - uapp_fields natural-language source projection and primary-goal source guard
+  - UAPP delivered-artifact final user projection
+route_and_component_reachability: PASS / CURRENT for tested cases
+professional_input_raw_authority_bypass: NOT_OBSERVED
+model_accounting:
+  top_level_workflow_runs: 4/4
+  deepseek_llm_node_attempts: 18/32
+  manual_retries: 0
+  platform_internal_replays: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+mutation_target: NONE
+next_state: CHECKPOINT
+ready_for_founder_retest: false
+founder_ac12: RETURN / CURRENT
+s5_technical_acceptance: FAIL / CURRENT
+main_merge: NOT_ALLOWED
+terminal_state: unset
+evidence:
+  result: unified-app/stages/UAPP_AC12_SEMANTIC_AUTHORITY_FORMAL_RESULT_v1.0.json
+  triage: unified-app/docs/UAPP_AC12_SEMANTIC_AUTHORITY_FORMAL_FAILURE_TRIAGE_001.md
+  completion_check: unified-app/docs/UAPP_AC12_SEMANTIC_AUTHORITY_COMPLETION_CHECK_v1.0.md
+```

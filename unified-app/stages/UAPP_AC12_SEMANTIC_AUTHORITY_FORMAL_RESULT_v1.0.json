@@ -1,0 +1,104 @@
+{
+  "document": {
+    "id": "UAPP_AC12_SEMANTIC_AUTHORITY_FORMAL_RESULT_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "execution_package_id": "UAPP-AC12-SEMANTIC-AUTHORITY-AND-HUMAN-DELIVERY-REBASE-001",
+    "gate": "UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json",
+    "gate_sha256": "d497d7afde69dfacf695139d366371be81ff4c1f1def8f666189b64ac52291fa",
+    "input_freeze_sha256": "cba511dc8796c96349cc09f8fe6b146af0ea66a9a7dfc8998729301ee912a59d",
+    "candidate_binding_sha256": "c622ab569da337f085e6a74e93fb297abbd2c50ff7736c49422b5d704a230b74",
+    "result": "FAIL",
+    "freshness": "CURRENT"
+  },
+  "candidate": {
+    "uapp_graph_md5": "5720ddf6e0daef0bc82818bb53b95ff4",
+    "m3_graph_md5": "26582e477afd458d4a4835df98257a56",
+    "hop_graph_md5": "e38378c3c2a66b75aa7e645368c9e1ce",
+    "seam_graph_md5": "2dd0d046cb99cfef20182a9002798598"
+  },
+  "formal_runs": {
+    "YAML": {
+      "workflow_run_id": "aea42816-4296-4230-8f9b-fcbfc469d429",
+      "message_id": "e96aee61-01c2-414f-84f3-c9bdb5702eab",
+      "conversation_id": "a7539c1f-c100-4f50-bcdf-e9be52a43344",
+      "raw_sha256": "d163a47bfee5c8326370cbeb414db74313908ef28a28b35d4a3d933d405afaa3",
+      "target_capability": "CONTENT_BRIEF",
+      "other_capabilities": 0,
+      "result": "FAIL / CURRENT",
+      "observed": [
+        "用户的期望改变、内容承诺、表达主体和边界均以用户来源进入 canonical state。",
+        "最终交付直接透传专业成果，出现内部能力标题“Content Brief Pack”。",
+        "一次性提出发布平台和三天呈现方式两个待确认事项。"
+      ]
+    },
+    "G1": {
+      "workflow_run_id": "89ad3031-4fc8-42ba-8f91-ee487eec72ba",
+      "message_id": "39b41cc0-d4ba-4c34-b590-e544d4a2b411",
+      "conversation_id": "f0225edc-b58f-4ef9-bf74-5e53e7cc1b4d",
+      "raw_sha256": "5ceadedc1ac5e03902b607ed2b030a2369035407041b1f9ae0acef115b80d913",
+      "target_capability": null,
+      "other_capabilities": 0,
+      "result": "PASS / CURRENT",
+      "observed": [
+        "只提出一个可由冻结 G2 回答的运营分叉问题。",
+        "没有替用户选择商品、内容方向或整体活动。"
+      ]
+    },
+    "G2": {
+      "workflow_run_id": "0ca83c8f-e0ed-4f60-9538-7eef51cb5a12",
+      "message_id": "e35d6c9d-0a9c-4f32-8360-d1b4e1fc0be5",
+      "conversation_id": "f0225edc-b58f-4ef9-bf74-5e53e7cc1b4d",
+      "raw_sha256": "e9725b015042bf20c768affbd8a02ef66edf0e46c206c4be7e8b6aa42b4c2164",
+      "target_capability": "CONTENT_BRIEF",
+      "other_capabilities": 0,
+      "result": "FAIL / CURRENT",
+      "observed": [
+        "同会话承接 G1；不重复询问已给出的商品、受众和期望改变。",
+        "只提出新的表达主体与表达边界问题。",
+        "canonical state 却将“主推秋冬新款廓形西装外套”以 M1_SNAPSHOT/D 写入 objective.primary_goal；该商品事实不是用户确认的经营主目标。"
+      ]
+    },
+    "FULL_T1": {
+      "workflow_run_id": "fa13182d-f9e5-43f1-9f5b-abe8657df1d0",
+      "message_id": "a7f92773-c0cf-47bc-ae43-035b2ae451f4",
+      "conversation_id": "ee5a1065-abc5-4cfe-8418-b369199c00e7",
+      "raw_sha256": "c751119f386528a718696cce911d5c0ae8583fa7189f2cf0fd50230ef2ed32fa",
+      "target_capability": "CONTENT_BRIEF",
+      "other_capabilities": 0,
+      "result": "FAIL / CURRENT",
+      "observed": [
+        "冻结原文已说明由品牌搭配师真实出镜、只讲真实穿搭方法、不做剧情且不承诺改变身材。",
+        "uapp_fields 没有将这些内容投影为 expression.subject / expression.boundary；目标组件因而重复询问它们。",
+        "canonical state 又把用户期望改变以 M1_SNAPSHOT/D 写为 objective.primary_goal。",
+        "professional_input_safe 生效：未发现 raw professional_input 直接覆盖 canonical capability contract。"
+      ]
+    }
+  },
+  "accounting": {
+    "top_level_workflow_runs": 4,
+    "deepseek_llm_node_attempts": 18,
+    "manual_retries": 0,
+    "platform_automatic_transparent_replays": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "active_workflows_after": 0
+  },
+  "protected_surface": {
+    "m1_m2_m3_hop_seam_route_provider_and_professional_skills": "UNCHANGED",
+    "main_and_origin_main": "UNCHANGED",
+    "real_publish": 0,
+    "non_test_data_write": "NOT_OBSERVED",
+    "m2_fresh_environment_non_test_guard": "0/0 (historical 1568/117 was not reconstructed)"
+  },
+  "disposition": {
+    "UAPP_SEMANTIC_AUTHORITY_HANDOFF": "FAIL / CURRENT",
+    "SHARED_USER_DELIVERY_PROJECTION": "FAIL / CURRENT",
+    "READY_FOR_FOUNDER_RETEST": false,
+    "FOUNDER_AC_12": "RETURN / CURRENT",
+    "S5_TECHNICAL_ACCEPTANCE": "FAIL / CURRENT",
+    "main_merge": "NOT_ALLOWED",
+    "terminal_state": "unset",
+    "next_state": "CHECKPOINT"
+  }
+}

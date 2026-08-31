@@ -8,13 +8,16 @@
 | N1 语义权威控制 | COMPLETED | 11/11 PASS | 0 | 0 | NONE | N3 |
 | N2 共享交付控制 | COMPLETED | 六能力 6/6 PASS | 0 | 0 | NONE | N3 |
 | N3 候选部署与 Gate | COMPLETED | 候选已发布、Gate v1.2 已冻结 | 0 | 0 | NONE | N4 YAML |
-| N4 四场景真实验证 | NOT_STARTED | NOT_VERIFIED | 0/4 | 0/32 | Gate 后尚未调用 | YAML |
-| N5 判定与交付 | NOT_STARTED | NOT_VERIFIED | 0 | 0 | N4 | 四场景判定 |
+| N4 四场景真实验证 | COMPLETED | FAIL / CURRENT | 4/4 | 18/32 | 语义来源投影与已交付成果脱敏失败 | 停止并判定 |
+| N5 判定与交付 | COMPLETED | FAIL / CURRENT | 0 | 0 | N4 的三个硬门失败 | CHECKPOINT |
 
 - 当前 UAPP 图：`5720ddf6e0daef0bc82818bb53b95ff4`；M3/Hop/Seam 路由绑定未改。
 - 六个能力仅更新共享用户交付后继，并已刷新 provider；专业 Skill、Prompt 与业务规则未改。
 - Gate `UAPP_AC12_SEMANTIC_AUTHORITY_GATE_v1.2.json` 先于本包任何模型调用冻结；v1.0/v1.1 只读保留为其父版本。
-- 唯一下一步：提交并普通 push 冻结候选，再按 Gate 运行 YAML 一次。
+- 四次冻结输入均已只运行一次：YAML、G1、G2、FULL T1；人工重试、平台重放、重复采样、A/B、Reviewer 均为 0。
+- G1 PASS；YAML 因内部能力标题和两项并列确认 FAIL；G2 因未确认 primary goal 写入 FAIL；FULL T1 因遗漏已给表达主体/边界并重复追问 FAIL。
+- 当前结果：`UAPP_SEMANTIC_AUTHORITY_HANDOFF = FAIL / CURRENT`，`SHARED_USER_DELIVERY_PROJECTION = FAIL / CURRENT`，`READY_FOR_FOUNDER_RETEST = false`。
+- 唯一下一步：提交并普通 push 本批失败证据；不再发起模型调用。
 
 ## 2026-08-31 · Founder AC-12 RETURN 与只读路径审计
 
