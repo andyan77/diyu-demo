@@ -1,0 +1,22 @@
+{
+  "document": {"id": "UAPP_AC12_SEMANTIC_HANDOFF_FINAL_BATCH_RAW_v1.1", "turn": "FULL_T1", "formal": true, "recovered_read_only_from_dify": true},
+  "gate_sha256": "cae55b524bc91b8193038009bd4338bc927735a2e4b413896ebb33247896f9fb",
+  "input_sha256": "aba02871dfaefbdb05b82691380162cc76eb35bff8baca87e68b592b685b8990",
+  "runner_request_attempts": 1,
+  "top_level_run_id": "14dc81fa-3a28-4456-98ad-4c1fb1a6ac7b",
+  "top_level_final_status": "succeeded",
+  "conversation_id": "b65695c1-4462-42f3-b233-e0ff5b30811d",
+  "message_id": "f1e3b216-84eb-4539-aff6-a67a59c2df2d",
+  "nested_runs": [
+    {"id": "4bedcdd1-cbb6-4153-8a82-33e2b3a2480f", "role": "M3", "status": "succeeded", "llm_nodes": 2},
+    {"id": "1e2f15f4-e26c-405b-b344-2248305f3853", "role": "Hop", "status": "succeeded", "llm_nodes": 1},
+    {"id": "a83c7301-43ad-40dd-b97a-0bf1d31b84bb", "role": "Seam", "status": "partial-succeeded"},
+    {"id": "56f873e2-d2b2-45ef-8560-c23f16869909", "role": "Content Brief internal first attempt", "status": "failed", "llm_nodes": 1, "error_class": "SSLEOFError", "model_output": false, "business_state_write": false},
+    {"id": "61c28113-832c-4341-860b-107be930a5d0", "role": "Content Brief platform internal transparent replay", "status": "succeeded", "llm_nodes": 1}
+  ],
+  "observed": {"target_capability": "CONTENT_BRIEF", "seam_business_delivery_outcome": "DELIVERED_AFTER_RECOVERY", "phrase_an_ni_ding_de": false, "direct_purchase_or_gmv_claimed_as_user_goal": false, "delivery_explicitly_declines_purchase_guidance": true, "manual_retry": 0, "real_publish": 0},
+  "acceptance": {"result": "PASS / CURRENT", "basis": "The user-supplied content goal was handled without claiming that a commercial purchase/GMV goal had been set by the user; the delivery contains neither the forbidden attribution nor an unsupported purchase objective."},
+  "llm_node_attempts": 7,
+  "platform_internal_replays_observed": 1,
+  "manual_retries": 0
+}

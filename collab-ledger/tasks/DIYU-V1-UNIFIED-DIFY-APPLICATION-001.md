@@ -1676,3 +1676,29 @@ top_level_runs: 3/4
 deepseek_node_attempts: 14/30
 next_action: frozen FULL_T1 once
 ```
+
+### 2026-08-31 · AC-12 最终批次 FULL T1 与交接（只追加）
+
+```yaml
+run_id: 14dc81fa-3a28-4456-98ad-4c1fb1a6ac7b
+result: PASS / CURRENT
+phrase_按你定的: ABSENT
+unsupported_purchase_or_gmv_as_user_goal: ABSENT
+platform_internal_replay:
+  failed_run: 56f873e2-d2b2-45ef-8560-c23f16869909
+  confirmed_origin: INPUT_ENVIRONMENT_OR_TOOL
+  error: SSLEOFError
+  zero_model_output: true
+  zero_business_state_write: true
+  replay_run: 61c28113-832c-4341-860b-107be930a5d0
+  replay_result: succeeded
+budget:
+  top_level_runs: 4/4
+  deepseek_node_attempts: 21/30
+  platform_internal_replays: 1/1
+  manual_retries: 0
+batch_result: PASS / CURRENT
+disposition: READY_FOR_FOUNDER_RETEST
+not_authorized: [full_S5, main_merge, terminal_state]
+next_action: Founder AC-12 semantic retest
+```

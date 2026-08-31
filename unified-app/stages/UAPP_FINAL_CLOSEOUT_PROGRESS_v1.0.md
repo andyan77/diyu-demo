@@ -599,3 +599,9 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - `G2 = PASS / CURRENT`：顶层 `9228d157…` 在 G1 的同一会话中消费了商品、受众和内容目标，实际路由到 Content Brief 并执行 Seam；未重复 G1。
 - Content Brief 只返回 G2 未提供的表达主体/边界这一精确新缺口，没有伪造成品；这不改变 G2 的承接判据通过。
 - 批次累计：顶层 `3/4`，DeepSeek `14/30`，内部重放 `0/1`；唯一下一步：新会话运行 FULL T1。
+
+## AC-12 语义承接 · 最终批次 FULL T1 与交接
+
+- `FULL T1 = PASS / CURRENT`：顶层 `14dc81fa…` 成功；没有“按你定的”，没有把购买或 GMV 写成用户已经确定的目标。
+- Content Brief `56f873e2…` 发生 SSL EOF、零输出零业务写入，Dify 作了本批唯一透明重放 `61c28113…` 并成功；人工重试为 `0`。
+- 四轮全部通过：顶层 `4/4`，DeepSeek `21/30`，内部重放 `1/1`。状态为 `READY_FOR_FOUNDER_RETEST`，不代表完整 S5 或 main 可合并。
