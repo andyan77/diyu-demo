@@ -1,0 +1,15 @@
+{
+  "document": "M2_EXACT_FIXTURE_CLEANUP_SQL_TRIAGE_v1.0",
+  "observed_failure": "transaction rolled back at non-target data drift postcondition",
+  "confirmed_origin": "CHECKER_OR_FIXTURE",
+  "evidence": {
+    "target_workspaces_after_rollback": 10,
+    "publish_guard_after_rollback": 1570,
+    "feedback_guard_after_rollback": 117,
+    "old_sql_sha256": "99c70b3f1e9d4cf9e72fa57d02cf6873689452d5df4a329797757569bc435af8"
+  },
+  "root_cause": "EXCEPT consumed an unparenthesized UNION ALL chain left-associatively, making unchanged later table fingerprints appear as drift",
+  "mutation_target": "post-delete fingerprint comparison only",
+  "new_sql_sha256": "288ba28111bf88dc4756a737a9e7a1ec9e5fb7af627160e26d9b89d4b7d09584",
+  "protected_targets_unchanged": true
+}

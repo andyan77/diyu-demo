@@ -1,0 +1,100 @@
+{
+  "document": "UAPP_S5_FINAL_FIXTURE_CONTROLS_v1.0",
+  "model_calls": 0,
+  "checks": [
+    {
+      "id": "FSC-01_formal_order_unchanged",
+      "result": "PASS",
+      "detail": [
+        "UAPP-CAP-01",
+        "UAPP-CAP-02",
+        "UAPP-CAP-03",
+        "UAPP-CAP-04",
+        "UAPP-CAP-05",
+        "UAPP-CAP-06",
+        "UAPP-GAP-01:G1",
+        "UAPP-GAP-01:G2",
+        "UAPP-EQUIV-01a",
+        "UAPP-EQUIV-01b",
+        "UAPP-EQUIV-01c",
+        "UAPP-EQUIV-01n",
+        "UAPP-WITHDRAW-01:W0",
+        "UAPP-WITHDRAW-01:W1",
+        "UAPP-FULL-01:T1",
+        "UAPP-FULL-01:T2",
+        "UAPP-FULL-01:T3",
+        "UAPP-FULL-01:T4",
+        "UAPP-RECOVERY-01:R1"
+      ]
+    },
+    {
+      "id": "FSC-02_protected_queries_byte_equal",
+      "result": "PASS",
+      "detail": [
+        "UAPP-CAP-01",
+        "UAPP-CAP-02",
+        "UAPP-CAP-03",
+        "UAPP-CAP-04",
+        "UAPP-CAP-05",
+        "UAPP-CAP-06",
+        "UAPP-GAP-01:G1",
+        "UAPP-GAP-01:G2",
+        "UAPP-WITHDRAW-01:W0",
+        "UAPP-WITHDRAW-01:W1",
+        "UAPP-FULL-01:T2",
+        "UAPP-FULL-01:T3",
+        "UAPP-FULL-01:T4",
+        "UAPP-RECOVERY-01:R1"
+      ]
+    },
+    {
+      "id": "FSC-03_equiv_subject_present_in_all_formats",
+      "result": "PASS",
+      "detail": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": "FSC-04_negative_is_single_variable_deletion",
+      "result": "PASS",
+      "detail": {
+        "removed": [
+          "希望她看完明白: \"缺的不是衣服数量，是一件能压住整套的外套，并且会用它三天不重样\""
+        ],
+        "added": []
+      }
+    },
+    {
+      "id": "FSC-05_negative_retains_expression_subject",
+      "result": "PASS",
+      "detail": "这周的内容我按条列一下：\n受众: \"28-38 岁城市通勤女性\"\n她卡在哪: \"早上要试好几套，还是觉得穿出去不够精神\"\n表达主体: \"由品牌搭配师真实出镜表达\"\n表达边界: \"只讲穿搭方法和真实上身效果，不做剧情、不碰争议、不承诺改变身材\"\n主推商品: \"秋冬新款廓形西装外套，库存充足，可以出镜\"\n帮我把这周的内容制作依据定下来。"
+    },
+    {
+      "id": "FSC-06_full_t1_only_adds_subject",
+      "result": "PASS",
+      "detail": {
+        "subject": "由品牌搭配师真实出镜表达"
+      }
+    },
+    {
+      "id": "FSC-07_full_t2_t3_t4_recovery_queries_unchanged",
+      "result": "PASS",
+      "detail": "T2/T3/T4/R1"
+    },
+    {
+      "id": "FSC-08_negative_control_detects_second_missing_variable",
+      "result": "PASS",
+      "detail": "remove expression subject"
+    },
+    {
+      "id": "FSC-09_equivalence_control_detects_semantic_format_drift",
+      "result": "PASS",
+      "detail": "JSON-like subject changed alone"
+    }
+  ],
+  "all_pass": true,
+  "parent_sha256": "896c5b0240f1e9c828889e38f7bad643bf523a451d5e3257318e70f54bf7c577",
+  "scenario_sha256": "7cef6cca903a9ea464ac860a59a64c5cdde85ea774a7d57a7e1028501e5b862a"
+}

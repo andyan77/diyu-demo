@@ -4,9 +4,9 @@
 
 | Node | 状态 | 结果 | 正式输入 | LLM | 阻断 | 下一步 |
 |---|---|---|---:|---:|---|---|
-| C1 Track A 素材登记 | IN_PROGRESS | NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) | 0/2 | 0/78 | M2 测试夹具误写非测试记录 | Founder 裁决夹具清理 |
-| C2 Track B Fixture successor | NOT_STARTED | NOT_VERIFIED | 0/4 | 0/78 | C1 保护面漂移 | 等 C1 |
-| C3 剩余 11 项正式验证 | NOT_STARTED | 8/19 既有 PASS 保留 | 0/11 | 0/78 | C1/C2 | W0 |
+| C1 Track A 素材登记 | COMPLETED | 15/15 控制 PASS；候选已发布 | 0/2 | 0/78 | NONE | C3 W0 |
+| C2 Track B Fixture successor | COMPLETED | 9/9 Fixture、11 正例/119 负例 Checker 控制 PASS | 0/4 | 0/78 | NONE | C3 W0 |
+| C3 剩余 11 项正式验证 | IN_PROGRESS | 8/19 既有 PASS 保留；Gate v2.0 已冻结 | 0/11 | 0/78 | NONE | W0 零模型预检 |
 | C4 S5 AC-01～11 收口 | NOT_STARTED | NOT_VERIFIED | 0 | 0 | C3 | AC 矩阵 |
 | C5 Founder AC-12 | NOT_AUTHORIZED | NOT_VERIFIED | 0 | 0 | C4 | 等待技术验收 |
 
@@ -17,11 +17,19 @@
   Seam `db49a3…f7e2a`；Hop `e38378…e1ce`；受保护专业应用与预期一致。
 - M2 激活基线非测试 publish/feedback `1568/117`，schema md5 `25192c…b4fd`。
 - 零模型 M2 撤回回归本身 `5/5 PASS`，但测试 fixture 两次误以 `is_test=false` 创建发布记录，
-  当前非测试 publish/feedback 为 `1570/117`。已确认是 `INPUT_ENVIRONMENT_OR_TOOL`，不是 UAPP；
-  候选未发布、模型调用 0。10 个 fixture workspace 与两条 publish row 已只读定位，未擅自清理。
+  当时非测试 publish/feedback 变为 `1570/117`。已确认是 `INPUT_ENVIRONMENT_OR_TOOL`，不是
+  UAPP；候选未发布、模型调用 0。10 个 fixture workspace 与两条 publish row 均被唯一定位。
+- Founder 精确授权后，仅按 10 个字面 workspace UUID 清理。完整备份、恢复 SQL和 dry-run 已落盘；
+  首个事务因 Checker 的 `EXCEPT/UNION ALL` 优先级错误按门回滚，修正后单一事务提交。
+  当前目标 workspace `0`，publish/feedback `1568/117`，schema md5 `25192c…b4fd`，
+  事务内非目标数据指纹逐表一致。
 - 当前证据投影 `8 PASS / 1 FAIL / 3 NOT_VERIFIED / 7 NOT_RUN`；本轮新模型调用 `0/78`。
 - Track A 最高失效节点已确认：当前 UAPP 发布图在 `uapp_ctx` 后缺少 material registration
-  子图，直接进入 `uapp_m3_gate`。Track B 仍按 Oracle/Fixture 独立版本化，不混入 SUT 修复。
+  子图，直接进入 `uapp_m3_gate`。最小候选确定性控制 `15/15 PASS`，已发布为 UAPP
+  `40a436cdbc11823eca16d2f1c5ecb037`；PP/provider、Seam、Hop、M1–M3 与六能力零漂移。
+- Track B Scenario v1.2 仅补 EQUIV/FULL 所缺表达主体，并把 EQUIV 负例机械化为只删除
+  expected change；Fixture 控制 `9/9 PASS`。最终 Checker 对 11 个正例和 119 个单变量负例
+  全部有判别力。Gate v2.0 与 Manifest v1.0 已在新模型调用前冻结，模型调用仍为 `0`。
 
 ## 2026-08-30 · GAP-01 与最终技术验收 REBASE
 

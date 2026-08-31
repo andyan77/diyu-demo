@@ -1,0 +1,66 @@
+document:
+  id: UAPP_S5_FINAL_MANIFEST_v1.0
+  task_id: DIYU-V1-UNIFIED-DIFY-APPLICATION-001
+  authority: DIYU_V1_UAPP_S5_FINAL_TECHNICAL_CONVERGENCE_REBASE_v1.0
+  frozen_before_new_model_calls: true
+
+candidate:
+  uapp_app_id: 85c01f85-a081-43e9-ab09-9993289cc200
+  uapp_graph_md5: 40a436cdbc11823eca16d2f1c5ecb037
+  uapp_graph_canonical_sha256: 54a1fcf5694882c9cdf48382268e509106063f3b4bcac1aca5836fc5e5a5e589
+  publishing_packaging_provider_graph_md5: 99287feadcd784e86bf4c298bea555fc
+  seam_graph_md5: db49a3da8973d4fdcbe9ecf63bdf7e2a
+  hop_graph_md5: e38378c3c2a66b75aa7e645368c9e1ce
+  m3_graph_md5: cd93757bcf8ad322f3b32fc43b2da3ff
+
+frozen_scenarios:
+  path: unified-app/stages/UAPP_S5_FROZEN_SCENARIOS_v1.2.json
+  sha256: 7cef6cca903a9ea464ac860a59a64c5cdde85ea774a7d57a7e1028501e5b862a
+  new_formal_order:
+    - UAPP-WITHDRAW-01:W0
+    - UAPP-WITHDRAW-01:W1
+    - UAPP-EQUIV-01a
+    - UAPP-EQUIV-01b
+    - UAPP-EQUIV-01c
+    - UAPP-EQUIV-01n
+    - UAPP-FULL-01:T1
+    - UAPP-FULL-01:T2
+    - UAPP-FULL-01:T3
+    - UAPP-FULL-01:T4
+    - UAPP-RECOVERY-01:R1
+
+inherited_current_scenarios:
+  - UAPP-CAP-01
+  - UAPP-CAP-02
+  - UAPP-CAP-03
+  - UAPP-CAP-04
+  - UAPP-CAP-05
+  - UAPP-CAP-06
+  - UAPP-GAP-01:G1
+  - UAPP-GAP-01:G2
+inheritance_basis: >-
+  The added material-registration branch is unreachable when sys.files is empty;
+  deterministic no-file equivalence controls passed, so the eight current scenarios
+  keep their existing evidence rather than being rerun.
+
+budget:
+  formal_top_level_runs_max: 13
+  planned_frozen_runs: 11
+  bounded_successor_reserve: 2
+  llm_node_attempts_max: 78
+  manual_retries: 0
+  repeat_sampling: 0
+  ab_tests: 0
+  reviewer_calls: 0
+  real_publish: 0
+
+protected_surface:
+  main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2
+  origin_main: 01a42b0ed97344a67302ecb6778ae4a772eb28b2
+  non_test_publish_instances: 1568
+  non_test_feedback_records: 117
+  schema_md5: 25192c11562827efedfc3b2c22c3b4fd
+  historical_raw_overwrite: forbidden
+  production_publish: forbidden
+  founder_ac_12_execution: not_authorized
+  main_merge: not_allowed

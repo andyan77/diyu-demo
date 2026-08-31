@@ -1,0 +1,120 @@
+{
+  "document": {
+    "id": "UAPP_S5_GATE_v2.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "authority": "DIYU_V1_UAPP_S5_FINAL_TECHNICAL_CONVERGENCE_REBASE_v1.0",
+    "parent_s5_gate": "UAPP_S5_GATE_v1.5",
+    "frozen_before_new_model_calls": true
+  },
+  "candidate": {
+    "UAPP_graph_canonical_sha256": "54a1fcf5694882c9cdf48382268e509106063f3b4bcac1aca5836fc5e5a5e589",
+    "graph_md5": {
+      "UAPP": "40a436cdbc11823eca16d2f1c5ecb037",
+      "M3": "cd93757bcf8ad322f3b32fc43b2da3ff",
+      "HOP": "e38378c3c2a66b75aa7e645368c9e1ce",
+      "SEAM": "db49a3da8973d4fdcbe9ecf63bdf7e2a",
+      "MATRIX": "6cdaeac9cacf69fbeea4bd25e1536ace",
+      "CAMPAIGN": "4876dacc43a73741b41c5a3083796347",
+      "CONTENT_BRIEF": "0c841642a71feedfb327ffb76aec0ddd",
+      "CREATIVE_SCRIPT": "a1cd859d5b88d0d025f336665ca94e51",
+      "PRODUCTION_DIRECTOR": "964e9a947dc9790d1de82496469689ad",
+      "PUBLISHING_PACKAGING": "99287feadcd784e86bf4c298bea555fc",
+      "PP_provider": "99287feadcd784e86bf4c298bea555fc"
+    },
+    "node_count": 63,
+    "edge_count": 68
+  },
+  "formal_execution": {
+    "order": [
+      "UAPP-WITHDRAW-01:W0",
+      "UAPP-WITHDRAW-01:W1",
+      "UAPP-EQUIV-01a",
+      "UAPP-EQUIV-01b",
+      "UAPP-EQUIV-01c",
+      "UAPP-EQUIV-01n",
+      "UAPP-FULL-01:T1",
+      "UAPP-FULL-01:T2",
+      "UAPP-FULL-01:T3",
+      "UAPP-FULL-01:T4",
+      "UAPP-RECOVERY-01:R1"
+    ],
+    "each_input_exactly_once": true,
+    "dependency_stop": {
+      "UAPP-WITHDRAW-01:W1": ["UAPP-WITHDRAW-01:W0"],
+      "UAPP-FULL-01:T2": ["UAPP-FULL-01:T1"],
+      "UAPP-FULL-01:T3": ["UAPP-FULL-01:T2"],
+      "UAPP-FULL-01:T4": ["UAPP-FULL-01:T3"],
+      "UAPP-RECOVERY-01:R1": ["UAPP-FULL-01:T4"]
+    },
+    "independent_failures_do_not_block_other_groups": true
+  },
+  "acceptance": {
+    "withdraw": "W0 registers exactly one uploaded test material through UAPP with reproducible file identity and no publish permission; W1 withdraws that exact material without deleting history or claiming external effects.",
+    "equivalence": "The three complete format variants run only Content Brief and yield usable artifacts; the mechanically derived negative creates no artifact and asks only for expected change.",
+    "full_and_recovery": "T1 creates a real Content Brief artifact; T2 creates one simulated publish; T3 binds one feedback row; T4 opens the next cycle; R1 remains idempotent in the same conversation.",
+    "common": "Exact frozen input, one request, actual node evidence, no internal leakage, no protected graph or non-test data drift, and bounded LLM attempts are mandatory.",
+    "workflow_succeeded_alone_is_insufficient": true
+  },
+  "inherited_current_evidence": {
+    "scenarios": [
+      "UAPP-CAP-01",
+      "UAPP-CAP-02",
+      "UAPP-CAP-03",
+      "UAPP-CAP-04",
+      "UAPP-CAP-05",
+      "UAPP-CAP-06",
+      "UAPP-GAP-01:G1",
+      "UAPP-GAP-01:G2"
+    ],
+    "result": "PASS",
+    "freshness": "CURRENT_BY_NO_FILE_BRANCH_EQUIVALENCE",
+    "deterministic_control": "WDC-14_no_file_protected_paths_equivalent",
+    "cross_turn_correction_propagation": {
+      "path": "unified-app/stages/UAPP_TD24_RESULT_v1.0.json",
+      "sha256": "3284ce2be889041c8cec6d3cd9973c95f17a8efc649e2d89ac35d41b70aeadd2",
+      "result": "PASS"
+    }
+  },
+  "protected_surface": {
+    "global_m2_before": {
+      "non_test_publish_instances": 1568,
+      "non_test_feedback_records": 117,
+      "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+    },
+    "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "historical_evidence": "APPEND_ONLY",
+    "real_publish": "FORBIDDEN",
+    "mutation_target_after_freeze": "NONE_UNLESS_BOUNDED_SUCCESSOR_TRIGGERED"
+  },
+  "budget": {
+    "formal_top_level_runs_max": 13,
+    "planned_frozen_runs": 11,
+    "bounded_successor_reserve": 2,
+    "llm_node_attempts_max": 78,
+    "per_turn_static_reachable_llm_nodes": 6,
+    "manual_retries": 0,
+    "repeat_sampling": 0,
+    "ab_tests": 0,
+    "reviewer_calls": 0,
+    "pure_transport_replay_total_max": 1
+  },
+  "frozen_files": {
+    "scenarios_sha256": "7cef6cca903a9ea464ac860a59a64c5cdde85ea774a7d57a7e1028501e5b862a",
+    "manifest_sha256": "2d5f4df56ceeef1318831606f9718a9fc5840090b32bb3f41373f80df399d45f",
+    "executor_sha256": "05829095bd85a3749f71fe734d9b947bfc4f78779cd06d96859f68da35a3c8eb",
+    "checker_sha256": "4a31bf82f2bfdaecd14fa2f64c32e40af5c300da485fe0fffc9fde288258f297",
+    "checker_controls_sha256": "d149bbab7cac8248d4ce414713b290dd9b283039f6e5b46e233754d95afa1949",
+    "checker_controls_result_sha256": "f64311d5d945d9553f2dd3afceda7927590b17f0eee5f39415966595661cdeba",
+    "track_a_controls_result_sha256": "a18281f1acb2dbe171b91dd1de2abcb22db50d65e232d43bdc038f4500820120",
+    "track_a_publication_sha256": "191a00d2cb5973afd096dc89dbfd836767643dd28a7f03142af10fe648948c31"
+  },
+  "stop_rules": {
+    "first_dependent_failure_stops_only_that_chain": true,
+    "preserve_raw_before_triage": true,
+    "no_result_driven_gate_or_checker_edit": true,
+    "founder_ac_12_not_authorized": true,
+    "main_merge_not_allowed": true,
+    "terminal_state": "unset"
+  }
+}

@@ -1334,3 +1334,16 @@ Track A 零模型 Triage 确认当前发布图缺失 material registration 子�
   非测试，使保护计数 `1568 → 1570`；确认归因 `INPUT_ENVIRONMENT_OR_TOOL`。
 - 10 个新建测试 workspace 和两条 publish row 已唯一定位；未删除、未改标、未覆盖。
 - 当前 Gate 不冻结、Dify 不调用；唯一下一步是 Founder 裁决是否授权对这批测试夹具数据做可审计清理。
+
+Founder 随后只授权处理 Triage 列明的 10 个精确 workspace UUID。执行侧先导出 21 张表的完整
+关联行与恢复 SQL，再完成零跨域引用 dry-run。首次事务因后置非目标指纹 Checker 的 SQL 集合运算
+优先级错误正确回滚；修正 Checker 后，单一事务按精确 UUID 删除 10 workspace、10 users、10
+memberships、10 accounts、10 tasks、10 materials、10 artifacts、6 versions、4 dependencies 和 2
+publish rows。事务硬门与现场复核均为：target workspace `0`、publish/feedback `1568/117`、
+schema md5 `25192c…b4fd`、non-target drift `none`。没有重放清理事务，模型调用仍为 0。
+
+Track A 清理后复算确定性控制 `15/15 PASS`；上传登记候选已发布为 UAPP graph md5
+`40a436cdbc11823eca16d2f1c5ecb037`，canonical sha256 `54a1fcf5…5e589`。Track B
+Scenario v1.2 的格式等价控制 `9/9 PASS`，最终 Checker 对 11 个正控制和 119 个单变量负控制
+全部判别成立。`UAPP_S5_GATE_v2.0` 与 `UAPP_S5_FINAL_MANIFEST_v1.0` 已在任何新模型调用前
+冻结；本阶段模型调用仍为 0。下一动作是冻结提交并普通 push，随后从 W0 依序执行 11 项。

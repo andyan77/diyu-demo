@@ -1,0 +1,40 @@
+{
+  "document": {
+    "id": "WITHDRAW_MATERIAL_REGISTRATION_PUBLICATION_v1.0",
+    "model_calls": 0
+  },
+  "response": {
+    "result": "success",
+    "created_at": 1788140029
+  },
+  "published_graph_md5": "40a436cdbc11823eca16d2f1c5ecb037",
+  "canonical_sha256": "54a1fcf5694882c9cdf48382268e509106063f3b4bcac1aca5836fc5e5a5e589",
+  "conversation_variables_sha256": "84b7bd66e1a69d3230296dd63e9d0440803ce52955406e1b874f8230d6cfdefc",
+  "node_count": 63,
+  "edge_count": 68,
+  "added_nodes": [
+    "uapp_material_assign",
+    "uapp_material_fail_answer",
+    "uapp_material_gate",
+    "uapp_material_parse",
+    "uapp_material_post",
+    "uapp_material_prepare",
+    "uapp_material_result_gate"
+  ],
+  "added_edges": [
+    "uapp_ctx-source-uapp_material_prepare",
+    "uapp_material_assign-source-uapp_m3_gate",
+    "uapp_material_gate-false-uapp_m3_gate",
+    "uapp_material_gate-invalid-uapp_material_fail_answer",
+    "uapp_material_gate-register-uapp_material_post",
+    "uapp_material_gate-reuse-uapp_m3_gate",
+    "uapp_material_parse-source-uapp_material_result_gate",
+    "uapp_material_post-source-uapp_material_parse",
+    "uapp_material_prepare-source-uapp_material_gate",
+    "uapp_material_result_gate-false-uapp_material_fail_answer",
+    "uapp_material_result_gate-ok-uapp_material_assign"
+  ],
+  "conversation_variables_added": [
+    "uapp_material_binding"
+  ]
+}

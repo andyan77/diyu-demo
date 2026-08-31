@@ -1,0 +1,221 @@
+{
+  "document": {
+    "id": "WITHDRAW_DETERMINISTIC_CONTROLS_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001"
+  },
+  "model_calls": 0,
+  "positive_and_negative_controls": 15,
+  "all_pass": true,
+  "m2_protected_state": {
+    "activation_baseline": {
+      "publish": 1568,
+      "feedback": 117
+    },
+    "current": {
+      "non_test_publish_instances": 1568,
+      "non_test_feedback_records": 117,
+      "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+    }
+  },
+  "checks": [
+    {
+      "id": "WDC-00_published_predecessor_identity",
+      "result": "PASS",
+      "evidence": {
+        "expected": "aa32b6385de0024d270ec9f85bd78179",
+        "actual": "aa32b6385de0024d270ec9f85bd78179"
+      }
+    },
+    {
+      "id": "WDC-01_existing_nodes_byte_equivalent",
+      "result": "PASS",
+      "evidence": {
+        "existing_nodes": 56,
+        "added_nodes": [
+          "uapp_material_assign",
+          "uapp_material_fail_answer",
+          "uapp_material_gate",
+          "uapp_material_parse",
+          "uapp_material_post",
+          "uapp_material_prepare",
+          "uapp_material_result_gate"
+        ]
+      }
+    },
+    {
+      "id": "WDC-02_no_file_path_preserves_downstream",
+      "result": "PASS",
+      "evidence": {
+        "added_edges": [
+          "uapp_ctx-source-uapp_material_prepare",
+          "uapp_material_assign-source-uapp_m3_gate",
+          "uapp_material_gate-false-uapp_m3_gate",
+          "uapp_material_gate-invalid-uapp_material_fail_answer",
+          "uapp_material_gate-register-uapp_material_post",
+          "uapp_material_gate-reuse-uapp_m3_gate",
+          "uapp_material_parse-source-uapp_material_result_gate",
+          "uapp_material_post-source-uapp_material_parse",
+          "uapp_material_prepare-source-uapp_material_gate",
+          "uapp_material_result_gate-false-uapp_material_fail_answer",
+          "uapp_material_result_gate-ok-uapp_material_assign"
+        ]
+      }
+    },
+    {
+      "id": "WDC-03_single_bounded_binding_variable",
+      "result": "PASS",
+      "evidence": {
+        "added": [
+          "uapp_material_binding"
+        ]
+      }
+    },
+    {
+      "id": "WDC-04_no_file_no_registration",
+      "result": "PASS",
+      "evidence": {
+        "decision": "NONE",
+        "request_body": "{}",
+        "binding_seed": "{}",
+        "idempotency_key": "",
+        "file_hash": "",
+        "file_name": "",
+        "upload_id": "",
+        "detail": ""
+      }
+    },
+    {
+      "id": "WDC-05_one_file_one_scoped_registration",
+      "result": "PASS",
+      "evidence": {
+        "decision": "REGISTER",
+        "scope_ref": {
+          "account_id": "account-test",
+          "dify_upload_id": "upload-001",
+          "extracted_text_sha256": "ca260f20e9412d1ac5e1e30014e8592c75e07ad93446586497e04863084b52a3",
+          "file_name": "brand-facts.md",
+          "idempotency_key": "afd679c4f05644b17aff2847dd78cd56feeecbf753e8f4e6e38e5675b0e0ce5d",
+          "is_simulated": true,
+          "is_test": true,
+          "task_id": "task-test"
+        }
+      }
+    },
+    {
+      "id": "WDC-06_upload_identity_and_hash_recomputable",
+      "result": "PASS",
+      "evidence": {
+        "account_id": "account-test",
+        "dify_upload_id": "upload-001",
+        "extracted_text_sha256": "ca260f20e9412d1ac5e1e30014e8592c75e07ad93446586497e04863084b52a3",
+        "file_name": "brand-facts.md",
+        "idempotency_key": "afd679c4f05644b17aff2847dd78cd56feeecbf753e8f4e6e38e5675b0e0ce5d",
+        "is_simulated": true,
+        "is_test": true,
+        "task_id": "task-test"
+      }
+    },
+    {
+      "id": "WDC-07_upload_never_grants_publish",
+      "result": "PASS",
+      "evidence": {
+        "analysis_authorized": true,
+        "generation_authorized": true,
+        "publish_authorized": false
+      }
+    },
+    {
+      "id": "WDC-08_incomplete_or_ambiguous_upload_fails_closed",
+      "result": "PASS",
+      "evidence": {
+        "missing_text": "INVALID",
+        "missing_file": "INVALID",
+        "two_files": "INVALID",
+        "missing_task": "INVALID",
+        "missing_account": "INVALID",
+        "missing_actor": "INVALID",
+        "missing_upload_id": "INVALID",
+        "missing_file_name": "INVALID"
+      }
+    },
+    {
+      "id": "WDC-09_exact_response_confirms_binding",
+      "result": "PASS",
+      "evidence": {
+        "ok": "true",
+        "material_id": "material-test",
+        "binding_json": "{\"account_id\": \"account-test\", \"content_ref\": \"dify-upload:upload-001#sha256=ca260f20e9412d1ac5e1e30014e8592c75e07ad93446586497e04863084b52a3\", \"dify_upload_id\": \"upload-001\", \"extracted_text_sha256\": \"ca260f20e9412d1ac5e1e30014e8592c75e07ad93446586497e04863084b52a3\", \"file_name\": \"brand-facts.md\", \"idempotency_key\": \"afd679c4f05644b17aff2847dd78cd56feeecbf753e8f4e6e38e5675b0e0ce5d\", \"is_simulated\": true, \"is_test\": true, \"material_id\": \"material-test\", \"owner_ref\": \"founder-test\", \"publish_authorized\": false, \"registration_status\": \"200\", \"task_id\": \"task-test\", \"workspace_id\": \"workspace-test\"}",
+        "detail": ""
+      }
+    },
+    {
+      "id": "WDC-10_single_variable_negative_controls_discriminate",
+      "result": "PASS",
+      "evidence": {
+        "http_status": "false",
+        "missing_id": "false",
+        "workspace": "false",
+        "task": "false",
+        "account": "false",
+        "idempotency": "false",
+        "hash": "false",
+        "upload_id": "false",
+        "is_test": "false",
+        "is_simulated": "false",
+        "publish_authorized": "false"
+      }
+    },
+    {
+      "id": "WDC-11_same_file_task_idempotency_reuses_material",
+      "result": "PASS",
+      "evidence": {
+        "decision": "REUSE",
+        "request_body": "{}",
+        "binding_seed": "{}",
+        "idempotency_key": "afd679c4f05644b17aff2847dd78cd56feeecbf753e8f4e6e38e5675b0e0ce5d",
+        "file_hash": "ca260f20e9412d1ac5e1e30014e8592c75e07ad93446586497e04863084b52a3",
+        "file_name": "brand-facts.md",
+        "upload_id": "upload-001",
+        "detail": ""
+      }
+    },
+    {
+      "id": "WDC-12_task_or_upload_change_does_not_reuse",
+      "result": "PASS",
+      "evidence": {
+        "changed_task": "REGISTER",
+        "changed_upload": "REGISTER"
+      }
+    },
+    {
+      "id": "WDC-13_withdrawal_contract_regression",
+      "result": "PASS",
+      "evidence": {
+        "accepted_m2_evidence": "business-persistence/M2_ACCEPTANCE_EVIDENCE.md#M2-AC-11",
+        "required_tests_present": [
+          "test_withdrawal_invalidates_only_unpublished_dependents",
+          "test_withdrawal_is_idempotent",
+          "test_withdrawn_material_content_not_servable",
+          "test_unaffected_artifact_not_touched_by_unrelated_withdrawal",
+          "test_withdrawn_material_cannot_be_attached_to_a_new_version"
+        ],
+        "execution_note": "M2 is protected; accepted behavior is inherited read-only."
+      }
+    },
+    {
+      "id": "WDC-14_schema_and_non_test_data_unchanged",
+      "result": "PASS",
+      "evidence": {
+        "activation_baseline": {
+          "publish": 1568,
+          "feedback": 117
+        },
+        "current": {
+          "non_test_publish_instances": 1568,
+          "non_test_feedback_records": 117,
+          "schema_md5": "25192c11562827efedfc3b2c22c3b4fd"
+        }
+      }
+    }
+  ]
+}
