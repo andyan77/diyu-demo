@@ -461,6 +461,23 @@ next_action: Founder 查看合并收敛证据包；本 Active Work Package 不�
 - 本 REBASE 实际顶层运行 `0/10`，DeepSeek 尝试 `0/60`；当前无治理阻断。
 - 唯一下一动作：完成 P1 全链零模型正负控制并冻结候选前硬门。
 
+### P1 运行环境重建事件
+
+| Node | 状态 | 结果 | 模型调用 | 当前阻断 | 下一动作 |
+|---|---|---|---:|---|---|
+| P0 激活完成 | COMPLETED | PASS / CURRENT（历史继承） | 0 | NONE | 不重跑 |
+| P1 零模型预检 | IN_PROGRESS | NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL) | 0 | Dify/M2 冻结数据库缺失 | 恢复准确 pre-restart volumes |
+| P2 候选实现 | NOT_STARTED | NOT_VERIFIED | 0 | P1 | 等 P1 身份门 |
+| P3 点测 | NOT_STARTED | NOT_VERIFIED | 0/60 | P1 | 等 P2 |
+| P4 正式收敛 | NOT_STARTED | NOT_VERIFIED | 0/60 | P1 | 等 P3 |
+| P5 S5 技术收口/Founder交接 | NOT_STARTED | NOT_VERIFIED | 0 | P1 | 等 P4 |
+
+- Dify PostgreSQL 于 `2026-08-31T04:08:50Z` 初始化；当前 `apps/workflows/tenants=0`。
+- `diyu_business` 数据库不存在，M2 容器退出；保护计数 `1568/117` 当前不可观察。
+- 归因 `INPUT_ENVIRONMENT_OR_TOOL`，不归因 SUT；候选、Gate、Runner、Checker 均未修改。
+- 本 REBASE 正式运行 `0/10`、DeepSeek `0/60`，检测后 Dify/M2 写入与真实发布均为 0。
+- 唯一下一动作：从可验证备份恢复准确 pre-restart Dify/M2 volumes，再重算 P1 身份与保护门。
+
 ## 激活现场
 
 - branch / HEAD / upstream: `codex/v1-uapp-progressive-canvas-001` / `e1ef78fa9637e7859598f2a453c3e0152a368caf` / 相同

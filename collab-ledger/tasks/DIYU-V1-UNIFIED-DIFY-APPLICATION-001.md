@@ -1456,3 +1456,29 @@ m2_write: 0
 model_calls: 0
 main_write: 0
 ```
+
+## UAPP S5 final two-blocker · P1 environment reinitialization（2026-08-30）
+
+```yaml
+event: UAPP_S5_FINAL_TWO_BLOCKER_P1_ENVIRONMENT_REINITIALIZED
+classification: INPUT_ENVIRONMENT_OR_TOOL
+observed:
+  postgres_initialized_at_utc: 2026-08-31T04:08:50Z
+  dify_apps: 0
+  dify_workflows: 0
+  dify_tenants: 0
+  diyu_business_database_exists: false
+  diyu_m2_app_status: exited
+frozen_baseline_unavailable:
+  UAPP: 6ac5a45f3953683339f4ea77ebcc00c6
+  publish_guard: 1568
+  feedback_guard: 117
+mutation_target: NONE
+formal_runs_this_rebase: 0/10
+deepseek_attempts_this_rebase: 0/60
+dify_writes_after_detection: 0
+m2_writes_after_detection: 0
+real_publish: 0
+next_state: CHECKPOINT
+unique_next_action: 从可验证备份恢复准确 pre-restart Dify/M2 volumes，然后重算 P1 身份与保护门
+```

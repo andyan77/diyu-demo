@@ -1,0 +1,63 @@
+{
+  "document": {
+    "id": "P1_ENVIRONMENT_REINITIALIZATION_EVIDENCE_v1.0",
+    "task_id": "DIYU-V1-UNIFIED-DIFY-APPLICATION-001",
+    "observed_at": "2026-08-30T21:20:00-07:00",
+    "model_calls": 0
+  },
+  "frozen_predecessor": {
+    "uapp_graph_md5": "6ac5a45f3953683339f4ea77ebcc00c6",
+    "m2_non_test_publish_guard": 1568,
+    "m2_non_test_feedback_guard": 117,
+    "active_workflow_runs": 0,
+    "source": "UAPP_S5_FINAL_TWO_BLOCKER_REBASE_MANIFEST_v1.0"
+  },
+  "current_observation": {
+    "postgres_container": "docker-db_postgres-1",
+    "postgres_started_at": "2026-08-31T04:08:48.974659525Z",
+    "postgres_mount": "/home/faye/dify/docker/volumes/db/data",
+    "postgres_log": "PostgreSQL init process complete; ready for start up",
+    "dify": {
+      "apps": 0,
+      "workflows": 0,
+      "workflow_runs": 0,
+      "tenants": 0,
+      "active_workflow_runs": 0
+    },
+    "m2": {
+      "container": "diyu-m2-app",
+      "status": "exited",
+      "finished_at": "2026-08-31T04:08:45.714547332Z",
+      "exit_code": 255,
+      "database_diyu_business_exists": false,
+      "publish_guard": "NOT_OBSERVABLE",
+      "feedback_guard": "NOT_OBSERVABLE"
+    }
+  },
+  "git": {
+    "branch": "codex/v1-uapp-progressive-canvas-001",
+    "head_before_evidence_commit": "0bdc360199136e1c25e82224b206f526b5428a26",
+    "upstream_before_evidence_commit": "0bdc360199136e1c25e82224b206f526b5428a26",
+    "main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2",
+    "origin_main": "01a42b0ed97344a67302ecb6778ae4a772eb28b2"
+  },
+  "classification": "INPUT_ENVIRONMENT_OR_TOOL",
+  "candidate_or_product_failure": false,
+  "writes_after_detection": {
+    "dify": 0,
+    "m2": 0,
+    "model_calls": 0,
+    "real_publish": 0
+  },
+  "recovery_search": {
+    "bind_mount_contains_reinitialized_cluster": true,
+    "docker_volume_candidates_checked": 2,
+    "matching_frozen_dify_or_m2_database_found": false,
+    "direct_database_reconstruction_attempted": false
+  },
+  "gate": {
+    "result": "NOT_VERIFIED(INPUT_ENVIRONMENT_OR_TOOL)",
+    "reason": "The frozen Dify applications and M2 protection database are absent from the active runtime.",
+    "required_next_action": "Restore the exact pre-restart Dify and M2 database volumes, then rerun the P1 identity and protection gates."
+  }
+}
