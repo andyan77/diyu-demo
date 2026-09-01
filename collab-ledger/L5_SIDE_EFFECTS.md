@@ -716,3 +716,20 @@ push_2:
   method: git merge --ff-only + non-force push
 verification: git ls-remote + git fetch；origin/main 与本地 main、任务分支三方一致
 ```
+
+### SE-044 · PP 盲评：新建 Dify 应用（勘误 001 §2 授权），Service API Key 创建，26–32 次真实 workflow/模型调用
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001` |
+| 触发 | 母 Prompt + 勘误 001 §2「新增授权（有界）」：原 `PP 已发布应用` 不存在，Founder 裁决"基于 DSL 文件在 Dify 中重建" |
+| 目标 | 本机自建 Docker 内 Dify（`/home/faye/dify/docker/`，与既有任务同一实例，非远程/共享基础设施） |
+| 操作 1：新建应用 | `POST /console/api/apps/imports`（`mode: yaml-content`，DSL 取自 `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`，**未传 `app_id`**，确保不复用/不导入任何既有应用）→ 新 `app_id = 8deeefed-0f2d-4ebe-b917-263cda473cb6`；`POST /console/api/apps/{id}/workflows/publish`。写入前后各查一次 `select id from apps`，差集恰为该一项，确认零覆盖 |
+| 操作 2：创建 Service API Key | `Console.app_api_key(new_app_id)`；key 只写入会话 scratchpad（`/tmp/claude-1000/.../scratchpad/pp_app_key.txt`，不在仓库任何路径下），未打印、未写入任何证据文件或本账本 |
+| 保护性核验 | 只读参照应用 `2f211b7e-3e8a-412b-9d53-35705c65e68e`（勘误 001 明示「只作模型参数比对参照，只读，不要碰」）graph md5 写前 `8f04f0d01deb7060c2886be52de69284`、写后同值，零变化；`skill_llm` 现场读出的 `model/provider/completion_params` 与 DSL 声明逐项一致 |
+| 操作 3：模型调用 | 走本文件既有惯例（`docker exec` 只读复核 + Service API Key 调用 `/v1/workflows/run`），另加对照侧对 `https://api.deepseek.com/v1/chat/completions` 的直接调用（凭据取自 `m3-account-content-operator-v1` worktree 根 `.env` 的 `DEEPSEEK_API_KEY`，同样只在内存中使用）；13 组 × 2 侧 = 26 次基线 + 0–3 组同源对照 × 2（数量已封存，见 [pp-blind-review/sealed/](../pp-blind-review/sealed/)，本条不登记具体值）；逐次原始响应与状态落盘于 [pp-blind-review/runs/RUN_LOG.jsonl](../pp-blind-review/runs/RUN_LOG.jsonl) |
+| 幂等/重试披露 | 首次对照侧调用因请求体 `thinking` 字段类型错误（布尔值，API 要求 `{"type":"enabled"}` 结构体）被 API 拒绝（HTTP 400，非传输层失败），诊断后修正请求构造，非结果导向的重试；批量脚本首次以 shell `for` 循环调用时观测到变量替换异常（`$GROUPS` 展开为字面量 `1000`，根因未定位，归类 `INPUT_ENVIRONMENT_OR_TOOL`，产生 2 次针对不存在分组 `1000` 的调用，均在读取输入文件阶段失败，从未触达任何模型/应用），改用纯 Python 驱动脚本规避后恢复正常，如实记录不隐藏 |
+| 受控状态 | 可逆——新建应用与既有应用完全隔离，不覆盖任何 ID；模型调用为只读式生成（不写入任何生产数据、不发布任何真实内容） |
+| 最终调用统计 | `total_calls_including_retries = 33`（≤ 64）；有效首次成功产出 = 30（13 组基线 26 ＋ 0–3 组同源对照 × 2 中的 4，≤ 32）；1 次因请求体 `thinking` 字段类型错误的 400（已修正，未计入有效产出）；1 次真实传输层失败——PP 侧 `workflow_run_id` 对应的容器内出站 HTTPS 调 DeepSeek 时报 `SSLEOFError: UNEXPECTED_EOF_WHILE_READING`（与 `diyu-infra` skill 记录的 WSL2↔Docker MTU 症状一致），外层 Dify API 仍返回 HTTP 200 但内层 `data.status=failed`——**runner.py 原判据只看外层 200，把这次失败误记为成功**，已现场发现、修正判据、对 X-01/pp 原 attempt 追加 `RETROACTIVE_INVALIDATION` 更正行（不覆盖原行）、重新跑出真实首次成功，并对全部 26 条基线记录逐条复核内层状态，确认仅此一条曾受影响 |
+| 交付组装期间两处需要披露的问题 | ①**泄漏自查遗漏后补上**：PP 侧 `user_delivery` 常带 `status: READY/BLOCKED_LOCAL/NEEDS_DECISION` 内部技术状态头，其中一条被模型自己包成 `**加粗**` 形式，首版剥离正则未命中，人工逐条抽查发现后修正正则、清空交付包与封存映射重新组装，机械扫描与人工复查均确认修正后零命中；详见 `pp-blind-review/freeze/DELIVERY_LEAK_SELF_CHECK_v1.0.json`。②**执行侧操作失误，需向 Founder 明确披露**：为核验 P0-5 随机分配不退化，执行侧在本会话工具调用里打印了（当时那一版、现已作废重排的）封存映射的部分内容——15 个交付位里"甲"对应的真实来源序列（pp/control/same_source）及其汇总计数，这段内容进入了本次会话的可见记录。Founder 本人正是本轮评审人，若在评分前读到该记录，会破坏对应交付位的盲态。**处置**：发现后立即清空 `delivery/` 与旧封存映射、用全新随机种子重新组装整份交付包（新排列与旧排列无关联），使已打印的旧序列不再对应任何实际交付内容；此后未再打印/回显封存映射的任何内容。此项按宪法 A4"披露包括会改变原结论或合同前提的异常"要求，在最终回执与本条一并如实记录，不淡化、不省略 |
+| **状态** | **`CONFIRMED`** |

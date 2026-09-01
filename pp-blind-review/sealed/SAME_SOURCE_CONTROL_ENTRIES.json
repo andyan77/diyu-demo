@@ -1,0 +1,16 @@
+{
+  "design_correction_note": "首版封存文件把「同源」误设计成把 13 组中某组的甲乙都换成同一侧——重读规格 v1.1 §5 与预算公式「13组×2侧=26，加 0-3 组对照×2」后更正：同源对照条目是额外插入的交付位（总交付位数 = 13 + count），不占用、不替换该组本身真实的 PP vs 对照比较位。本文件替代首版，更正发生在任何额外调用之前，不受任何结果影响。",
+  "decided_before_any_extra_model_call": true,
+  "count": 2,
+  "extra_slots": [
+    {
+      "based_on_input_group": "F-07",
+      "side_run_twice": "pp"
+    },
+    {
+      "based_on_input_group": "N-02",
+      "side_run_twice": "pp"
+    }
+  ],
+  "note": "每个 extra_slot 需要对 based_on_input_group 的（capability_call+professional_input，若 side=pp；或 control_user_message，若 side=control）用同一侧独立跑两次，取两次产出分别作为该额外交付位的甲/乙。该组本身在 13 个正式交付位中的位置仍然是一次 PP 输出对一次对照输出的真实比较，不受影响。额外交付位插入交付包的具体编号位置在组装交付包时另行随机决定并一并封存。本文件只封存于 pp-blind-review/sealed/，不写进任何其它文档，不告知任何人，本任务内不打开、不引用。"
+}

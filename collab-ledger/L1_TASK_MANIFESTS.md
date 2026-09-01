@@ -1576,3 +1576,84 @@ Founder 就 T-011.9 执行侧三项存疑逐一说明，并以第一手见证补
 | `M2-PDR-01～15` | 全部 `PASS` |
 | 终态（正式 `DONE`，不登记 `execution_disposition`——该字段专用于非终态 Checkpoint，与已进入的正式终态同时出现属无效组合，不重复 T-011.7 已纠偏过的失误） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`；`main_merge_authorized = true`（Founder 条件授权：任务分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`M2-PDR-01～15` 均完成；执行侧合并前逐项现场核验，见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)） |
 | Git 收口 | 任务分支收口 commit `4f57a32e61e2612f7f3de3699f5f5253fe270d5c` 推送后，核验通过，以真实二亲合并（`git merge --no-ff`，无冲突）合并 commit `17ca3f70212f38048b37f739edffba8bf7cf8f85` 进 `main` 并推送 `origin/main`；详见 [L5 SE-027～SE-029](L5_SIDE_EFFECTS.md) |
+
+## §T-012 · `DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001`
+
+### T-012.1 Task Contract（稳定合同）
+
+> Task Contract 正文位于规则仓库（只读）：
+> `PP_盲评素材生成_EXECUTION_PROMPT_v1.0.md`（`task_contract_hash` 现场复算 = `c45deec0f3087f18e34e305c4007cb30426a3bb073297f8f181a554c527d27f6`，
+> 取 `re.finditer(r'\`\`\`yaml\n(.*?)\n\`\`\`', content, re.DOTALL)` 第一个匹配块 UTF-8 SHA-256），
+> sha256 `d9b812f81f97e3203b94a9d0d0db75d8beda4a45539df34b3a1ead75c9fa9f03`（母 Prompt 未改动，此哈希与勘误 001 声明一致）
+> ＋ `PP_盲评素材生成_EXECUTION_PROMPT_v1.0_ERRATA_001.md`（sha256 `e3f27d947f04e7173df7a1c759775abe30ffcb07f2da380b15777d763b7d498a`）。
+> 治理输入四份（构造规格 v1.1 / 对照提示词 v1.1 / 评审说明 v1.1 / 场景原文 S01-S06 v1.0）sha256 逐一现场核对，见
+> [freeze 清单](../pp-blind-review/freeze/TESTED_SURFACE_FREEZE_v1.0.yaml)。
+
+| 项 | 值 |
+|---|---|
+| `task_id` | `DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001` |
+| `task_type` | `EVIDENCE_GENERATION` |
+| `risk_level` | `MEDIUM` |
+| 起算基线 | `main @ 01a42b0ed97344a67302ecb6778ae4a772eb28b2`，任务分支 `task/pp-blind-review-material-generation-v1`（新建），0 个已跟踪脏文件 |
+| core_problem | 内容发布包装（PUBLISHING_PACKAGING）相对认真写的提示词是否有专业增量，至今无独立证据；本任务只产出可供盲评的隔离素材，不产出结论 |
+| allowed_delta（母 Prompt + 勘误 001） | 新建 `pp-blind-review/` 及其全部内容；collab-ledger 五本账追加式登记；新建任务分支；在 Dify 中新建一个应用（从指定 DSL 导入，仅新增不改既有应用）；为新建应用创建 Service API key（不进仓库） |
+| protected_assets | 六份专业 Skill 正文（只读）；八个既有 Dify 应用（含 `2f211b7e-…` 只作模型参数比对参照）；M1–M5 既有实现与证据；`decision-chain/evidence/m5/` 既有 A/B 素材；`main` 分支；规则仓库全部文件（只读） |
+| explicitly_not_authorized | 修改任何 Skill 正文/Dify graph/数据库/运行环境；真实对外发布；给分/给评审意见/作任何质量判断；打开封存映射或泄漏来源；在多次成功产出中挑选结果；合并 main |
+| model_call_budget | `successful_outputs_max: 32`（13组×2侧=26，加 0–3 组同源对照×2）；`total_calls_including_retries_max: 64`；仅环境/传输层失败可重跑，同一条目取第一次成功产出 |
+| remote_target | `branch: task/pp-blind-review-material-generation-v1`；`push: AUTHORIZED`；`merge_main: NOT_AUTHORIZED` |
+
+### T-012.2 勘误 001 更正的两处阻塞（Founder 2026-09-01 裁决）
+
+| 阻塞 | 更正 |
+|---|---|
+| S01–S06 原文缺失 | 规划侧落盘遗漏，非执行侧误判；补落盘 `PP_盲评场景原文_S01-S06_v1.0.md`，追加为 governance_refs 第四份，唯一素材真源 |
+| `PP 已发布应用` 不存在（M5 候选清单指向的 app_id 在活库中不存在，Founder 独立只读复核确认 2026-08-30 前应用数为 0，10 个应用均建于 2026-08-31——已授权的环境重建，非事故） | 新增授权：按指定 DSL（`content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`，sha256 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`）新建应用；冻结清单如实登记 `relation_to_m5_frozen_candidate: DIFFERENT_INSTANCE_SAME_DSL_LINEAGE` |
+
+### T-012.3 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| P0-1 冻结被测面 | `DONE`——见 [freeze 清单](../pp-blind-review/freeze/TESTED_SURFACE_FREEZE_v1.0.yaml)：六份 Skill 正文 sha256 独立复算一致；新建 Dify 应用 `8deeefed-0f2d-4ebe-b917-263cda473cb6`（从冻结 DSL 导入并发布，published_graph_sha256 `f3f0ed03e665be5738db6ce3acdcd31bad5ce347194537154b5779da6fff6f65`）；`skill_llm` 模型参数现场读出与 DSL 声明逐项一致；只读参照应用 `2f211b7e-…` graph 写前写后 md5 均 `8f04f0d01deb7060c2886be52de69284`，零变化 |
+| P0-2 构造 13 组输入 | `DONE`——[pp-blind-review/inputs/](../pp-blind-review/inputs/) 13 个 JSON 文件，事实逐字取自场景原文 v1.0 与构造规格 v1.1 §3/§4，缺项显式标注"用户未提供"，未补写任何源文件之外的事实 |
+| P0-4 同源对照条目数量 | `DONE`——已封存，仅存于 [pp-blind-review/sealed/](../pp-blind-review/sealed/)，本文件不登记具体数值与位置（登记具体值即等于泄漏） |
+| P0-3／P0-8 逐组跑两侧＋运行台账 | `DONE`——13 组 × 2 侧 = 26 条基线首次成功 ＋ 同源对照额外 4 条，全部独立复核内层状态与文本长度；`total_calls_including_retries = 33`（≤64）；过程中发现并现场修正一处 runner 成功判据缺陷（外层 200 掩盖内层 `data.status=failed`，详见 [L5 SE-044](L5_SIDE_EFFECTS.md)），已对受影响的一条记录追加更正行并重新取得真实首次成功；见 [pp-blind-review/runs/RUN_LOG.jsonl](../pp-blind-review/runs/RUN_LOG.jsonl) |
+| P0-5～P0-7 随机分配/封存映射/交付包/泄漏自查 | `DONE`——[pp-blind-review/delivery/](../pp-blind-review/delivery/) 15 个交付位（13 真实 ＋ 2 同源对照），机械 + 人工两轮泄漏自查零命中（详见 [DELIVERY_LEAK_SELF_CHECK_v1.0.json](../pp-blind-review/freeze/DELIVERY_LEAK_SELF_CHECK_v1.0.json)，含一处人工发现的 `status:` 内部标记泄漏及修正）；封存映射已生成且此后未再打开 |
+| **需向 Founder 披露的执行失误** | 组装过程中执行侧曾在本会话工具调用输出里打印了（当时那一版、已作废重排的）封存映射片段——15 个交付位"甲"对应真实来源序列及汇总计数，进入了本次会话可见记录。**Founder 本人是本轮评审人**，若评分前读到会破坏对应交付位盲态。发现后立即清空交付包与旧封存映射、以全新随机种子重新组装（新旧排列无关联），此后未再打印/回显封存映射任何内容。详见 [L5 SE-044](L5_SIDE_EFFECTS.md) 完整记录，此处按 A4 要求不淡化、不省略 |
+| Checkpoint | 任务已完整跑完 P0-1～P0-8；终态判定见母 Prompt §5，最终回执见本节之后的 T-012.4（若已写） |
+
+### T-012.4 COMPLETION CHECK ＋ 终态判定
+
+```yaml
+real_behavior_verified:
+  - 13 组输入均已落盘，与规格 v1.1 逐组一致: PASS
+  - 每组两侧均有第一次成功产出，且同模型同参数同输入: PASS（含一次成功判据缺陷的现场发现与修正，见上）
+  - delivery/ 泄漏自查全项零命中: PASS（机械 + 人工两轮，含一处人工发现并修正的遗漏）
+protected_targets_unchanged:
+  - 六份 Skill 正文 sha256 与冻结清单一致: PASS（独立复算）
+  - 参照应用 2f211b7e-… graph md5 写前写后一致，零变化: PASS
+  - 规则仓库零写入: PASS（全程只读）
+  - main 未动: PASS（全部写入在任务分支）
+side_effects_registered:
+  - 模型调用总次数/成功次数/重试次数/失败原因已登记 L5: PASS（SE-044）
+  - 非测试数据写入 0，真实对外发布 0: PASS
+evidence_refs:
+  - pp-blind-review/freeze/TESTED_SURFACE_FREEZE_v1.0.yaml
+  - pp-blind-review/runs/RUN_LOG.jsonl
+  - pp-blind-review/freeze/DELIVERY_LEAK_SELF_CHECK_v1.0.json
+  - pp-blind-review/freeze/LEAK_CHECK_RESULT.json
+  - collab-ledger/L5_SIDE_EFFECTS.md#SE-044
+not_claimed:
+  - 本任务不产生任何质量结论: 成立，执行侧全程未给分/未作质量判断
+  - 不改变 TD-M5-04、M5-AC-05、M5-AC-06 的现有状态: 成立
+  - 不构成对 Q-COMM-04 的裁决: 成立
+disclosed_anomalies_not_hidden:
+  - runner 成功判据缺陷（外层 200 掩盖内层 failed），已修正并重新复核全部记录
+  - delivery 泄漏自查遗漏一种 status: 标记包裹形式，已修正并重新组装
+  - 执行侧操作失误：曾在会话工具输出里打印旧版封存映射片段（Founder 本人是评审人），
+    已通过整份重新随机组装使其作废，完整披露于 L5 SE-044，不淡化不省略
+```
+
+**终态判定**：P0-1～P0-8 全部成立 ＋ 完成检查全项 PASS ＋ 任务分支待推送（见下方 Git 收口）。
+
+`task_final_status: DONE`
+`execution_disposition`: 不适用（本任务正常走完全部步骤，非中断态，不使用 `CHECKPOINT` 语义）

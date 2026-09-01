@@ -1997,3 +1997,37 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 
 `CLOSE-AC-01..06` 逐条成立（依据见证据索引 v1.2 的 `v1_2_hard_gates`）；
 `CLOSE-AC-07` 待 Git／远端真实收口后更新。
+
+## 十五、`DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001`
+
+### ATT-001（一次直达，`DONE`；纯证据生成任务，不产生质量结论）
+
+- **输入与授权**：母 Prompt `PP_盲评素材生成_EXECUTION_PROMPT_v1.0.md`（sha256 `d9b812f8...9a9f03`）＋
+  勘误 001（sha256 `e3f27d94...b7d498a`）；四份治理输入（构造规格/对照提示词/评审说明 v1.1 ＋
+  场景原文 S01-S06 v1.0）sha256 现场逐一核对一致，见 [L1 §T-012.1](L1_TASK_MANIFESTS.md)。
+- **P0-1 冻结**：六份 Skill 正文 sha256 独立复算一致；因勘误 001 §2 披露的目标系统整体重建
+  （2026-08-30 前应用数为 0），按指定 DSL 新建 Dify 应用 `8deeefed-…`（只新增，参照应用
+  `2f211b7e-…` graph md5 写前写后一致，零变化），`skill_llm` 模型参数现场读出与 DSL 声明逐项一致。
+- **P0-2～P0-4**：13 组输入（N-01～07／F-01/02/04/07／X-01/02）逐字取自场景原文与构造规格 §3/§4
+  落盘；0–3 组同源对照条目数量与位置在任何调用前封存决定（一次设计更正——首版把"同源"误设计成
+  替换某组本身的比较位，重读规格 §5 与预算公式后更正为"额外插入的交付位"，更正发生在任何额外
+  调用之前，不受结果影响）。
+- **P0-3／P0-8**：13 组 × 2 侧基线 26 次首次成功 ＋ 同源对照额外 4 次，`total_calls_including_retries
+  = 33`（≤64，successful_outputs_max 30 ≤32）。**过程中现场发现并修正一处 runner 判据缺陷**：
+  PP 侧外层 HTTP 200 会掩盖 Dify workflow 内层 `data.status=failed`（本轮实测撞上一次容器出站
+  HTTPS 调 DeepSeek 的 `SSLEOFError`，与 `diyu-infra` skill 记录的 WSL2↔Docker MTU 症状一致）；
+  发现后修正判据、对受影响记录追加 `RETROACTIVE_INVALIDATION` 更正行（不覆盖原行）、重新取得
+  真实首次成功、对全部 26 条基线记录逐条复核内层状态确认仅此一条曾受影响。完整证据：
+  [pp-blind-review/runs/RUN_LOG.jsonl](../pp-blind-review/runs/RUN_LOG.jsonl)。
+- **P0-5～P0-7**：随机分配甲乙、随机排序、组装 15 个交付位、生成并封存最终映射。**泄漏自查两轮**
+  （机械脚本 + 人工逐条抽查）：人工抽查发现机械正则遗漏一种 `**status: READY**` 加粗包裹形式，
+  修正后清空交付包与封存映射整份重新组装，复查零命中。见
+  [DELIVERY_LEAK_SELF_CHECK_v1.0.json](../pp-blind-review/freeze/DELIVERY_LEAK_SELF_CHECK_v1.0.json)。
+- **需要向 Founder 披露的执行失误**（不淡化、不省略）：组装期间执行侧曾把（当时那一版、已作废
+  重排的）封存映射片段——15 个交付位"甲"对应真实来源序列及汇总计数——打印进本次会话的工具调用
+  输出。**Founder 本人是本轮评审人**，若评分前读到会破坏对应交付位的盲态。发现后立即清空交付包
+  与旧封存映射、以全新随机种子整份重新组装（新旧排列无关联），此后未再打印/回显封存映射任何
+  内容。完整记录见 [L5 SE-044](L5_SIDE_EFFECTS.md)。
+- **终态**：`task_final_status = DONE`。COMPLETION CHECK 全项 PASS，见
+  [L1 §T-012.4](L1_TASK_MANIFESTS.md)。不产生任何质量结论，不改变 `TD-M5-04`／`M5-AC-05`／
+  `M5-AC-06`，不构成对 `Q-COMM-04` 的裁决。

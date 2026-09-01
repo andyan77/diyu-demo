@@ -1,0 +1,32 @@
+{
+  "task_id": "DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001",
+  "mechanical_scan": {
+    "script": "leak_check.py (临时脚本，不进仓库)",
+    "scope": "pp-blind-review/delivery/ 全部文件",
+    "markers_covered": [
+      "A/B 来源键", "模型名 deepseek/langgenius", "skill_llm", "Dify 字样",
+      "新建/参照 App ID", "workflow_run_id/run_id", "API key 前缀",
+      "elapsed_seconds", "内部 entry/run_mode 枚举值", "PP 内部契约字段名",
+      "内部分隔符（---M4_ARTIFACT--- 等）", "字数统计", "耗时描述",
+      "ISO 时间戳", "内部条目编号（N-0x/F-0x/X-0x）", "status: READY 类内部状态头"
+    ],
+    "result": { "files_scanned": 46, "total_hits": 0 },
+    "result_file": "pp-blind-review/freeze/LEAK_CHECK_RESULT.json"
+  },
+  "manual_review": {
+    "method": "逐条人工读取全部 15 组 甲.md/乙.md 首行与部分全文，脚本之外的独立核验",
+    "finding": {
+      "location": "delivery/02/乙.md（首版组装，重建前）",
+      "issue": "首行为 **status: READY** —— PP 侧 user_delivery 自带的内部技术状态头，被模型自己包成 Markdown 加粗，原有纯文本正则 ^status:\\s*\\S+\\s*\\n\\n 未命中该包裹形式。对照侧自然人设不会产生这种开头格式，属来源标识泄漏，机械扫描当时也未覆盖。",
+      "fix": "扩展 strip_internal_status_header() 正则，兼容纯文本／**加粗**／`反引号` 三种包裹形式；清空 delivery/ 与 sealed/FINAL_MAPPING_SEALED.json 后用修正脚本重新提取、重新随机分配与排序、重新生成封存映射。旧随机排列作废，不影响任何一次模型调用或产出内容本身。",
+      "reverification": "grep -rniE \"status.{0,3}(ready|blocked|needs_decision)\" 对重建后全部 甲.md/乙.md 复查，0 命中；机械扫描重跑 total_hits: 0"
+    },
+    "additional_checks_zero_hits": [
+      "<think>/</think> 残留", "MODEL_OUTPUT_NO_FINAL 占位符",
+      "platforms.md/industry-conditions.md/reference_projection 等内部引用文件名",
+      "统一能力/外壳/Skill 正文/笛语/Founder 等治理层或项目内部措辞",
+      "wc -c 抽查无空文件、无异常巨大文件"
+    ]
+  },
+  "conclusion": "delivery/ 全项目零命中（机械 + 人工两轮）。不构成任务自我宣称——以上均为可复算的命令与差异，供独立重跑核验。"
+}

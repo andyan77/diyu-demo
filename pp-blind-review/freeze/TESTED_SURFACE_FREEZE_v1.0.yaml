@@ -1,0 +1,103 @@
+# PP 盲评素材生成 · 冻结清单（P0-1）
+# task_id: DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001
+# 冻结时间（UTC）: 2026-09-01T22:38:35Z
+# 依据：母 Prompt PP_盲评素材生成_EXECUTION_PROMPT_v1.0.md（sha256 d9b812f8...9a9f03）
+#       ＋ 勘误 001（sha256 e3f27d94...b7d498a）§2 / §3 / §4(2a-2f)
+#
+# 本文件落盘之前，未发起任何模型调用。
+
+governance_refs_verified:
+  - doc: PP_盲评素材构造规格_v1.1.md
+    sha256: 440ef3bd758097c514b87ad58133c9711c8d0c4bcc3ab71a150e82699c2664ac
+    match: true
+  - doc: PP_对照提示词_v1.1.md
+    sha256: 2eede53889a40c8ac41c9d833f0430af83f0fcf312e60ecfa212fea574bc067a
+    match: true
+  - doc: PP_盲评评审说明_自然语言版_v1.1.md
+    sha256: f9c86e5909d8c4e60d987614766ef949d63cc6f8bcb0adb699293b4cd42527bf
+    match: true
+  - doc: PP_盲评场景原文_S01-S06_v1.0.md
+    sha256: c5c3be09405871334f671c21f3be4515153740382db80e742e32b6d2a9c44a4a
+    match: true
+    role: 唯一素材真源（勘误 001 §1 追加）
+  - doc: PP_盲评素材生成_EXECUTION_PROMPT_v1.0_ERRATA_001.md
+    sha256: e3f27d947f04e7173df7a1c759775abe30ffcb07f2da380b15777d763b7d498a
+    match: true
+
+# ---------------------------------------------------------------- 六份专业 Skill 正文
+skill_texts:
+  - capability: Matrix Architect
+    path: decision-chain/skills/Matrix_Architect_v0.1.2.md
+    sha256: 7a6afa3cf1a7b2e4793bd2b3dde6edddf20f75a5b8ed9f7aeb6a456d06acd838
+  - capability: Campaign Orchestrator
+    path: decision-chain/skills/Campaign_Orchestrator_v0.1.md
+    sha256: c7ef284e40e7c4cd0d4081632fca7df17bd1a80fbd3f3b5267be4aea1040a0fb
+  - capability: Content Brief Architect
+    path: decision-chain/skills/Content_Brief_Architect_v0.1.md
+    sha256: a0268a211a235b5b4df5e517f085db1f3b4948ae5add3346f2c15a426b63395f
+  - capability: Creative Script
+    path: content-production/skills/writing-creative-scripts/SKILL.md
+    sha256: d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a
+  - capability: Production Director
+    path: content-production/skills/directing-content-production/SKILL.md
+    sha256: 87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c
+  - capability: Publishing & Packaging (被测能力本体)
+    path: content-production/skills/packaging-content-for-release/SKILL.md
+    sha256: 0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07
+  independently_recomputed_by_executor: true
+  drift: []
+
+# ---------------------------------------------------------------- 被测面（目标应用）
+# 勘误 001 §3 写死的如实登记口径 —— 不得写成「M5 已发布应用」或「M4 冻结候选」
+tested_surface:
+  identity: REBUILT_FROM_DSL_2026-09-01
+  source_dsl: content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml
+  source_dsl_sha256: daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e
+  new_app_id: 8deeefed-0f2d-4ebe-b917-263cda473cb6
+  published_graph_sha256: f3f0ed03e665be5738db6ce3acdcd31bad5ce347194537154b5779da6fff6f65
+  relation_to_m5_frozen_candidate: DIFFERENT_INSTANCE_SAME_DSL_LINEAGE
+  m5_frozen_apps_still_live: false
+  environment_note: >-
+    目标 Dify 环境于 2026-08-31 整体重建，2026-08-30 之前创建的应用为 0
+    （执行侧独立复核：select count(*) from apps where created_at < '2026-08-30' → 0；
+    select count(*) from apps → 10，全部建于 2026-08-31 05:07–05:16）。
+    本轮被测面是本次按 DSL 新建的实例（app_id 8deeefed-...，创建于 2026-09-01），
+    不是 M1–M5 收口所绑定的那些实例。
+
+  creation_method: >-
+    POST /console/api/apps/imports {mode: yaml-content, yaml_content: <DSL 全文>}（未传 app_id，
+    确保生成全新 app_id，不复用/不导入既有应用）→
+    POST /console/api/apps/{new_app_id}/workflows/publish。
+    写入前后各查一次 `select id from apps`，差集恰为 {8deeefed-...} 一项，确认无其它应用被新建或改动。
+
+  reference_only_app:
+    app_id: 2f211b7e-3e8a-412b-9d53-35705c65e68e
+    name: "DIYU M4 v1.3 TEST · Publishing & Packaging"
+    role: 只作模型参数比对参照，只读，未做任何写入
+    graph_md5_before: 8f04f0d01deb7060c2886be52de69284
+    graph_md5_after: 8f04f0d01deb7060c2886be52de69284
+    unchanged: true
+
+# ---------------------------------------------------------------- skill_llm 模型标识与全部参数
+# 现场从已发布 graph 读出，与 DSL 内声明逐项比对一致（勘误 001 §2 2d）
+skill_llm_model:
+  provider: langgenius/deepseek/deepseek
+  name: deepseek-v4-flash
+  mode: chat
+  completion_params:
+    max_tokens: 384000
+    reasoning_effort: low
+    thinking: true
+    top_p: 0.8
+  temperature: NOT_SET
+  matches_dsl_declaration: true
+  matches_reference_only_app: true
+
+service_api_key:
+  created: true
+  stored_in_repo: false
+  location: session scratchpad only (not committed, gitignored path not applicable — never touches repo)
+
+freeze_scope_note: >-
+  本清单冻结的是「Skill 正文 + PP 目标应用（新建实例）+ skill_llm 模型参数」。
+  冻结后至交付完成，以上对象零变更（下一步任何一次模型调用之前，先以此清单为准完成 P0-1）。
