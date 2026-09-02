@@ -28,6 +28,7 @@
 | `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001` | **已终结 `DONE`**（见 §一.17；纯静态架构审查，零模型调用，不改变任何 M1–M5 既有状态） | [L1 §T-012](L1_TASK_MANIFESTS.md) · [L3 §十五](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `main @ 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；任务分支 `task/pp-architecture-verification-v1` |
 | `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`——字节级确定性不可得，降级为结果稳定性判据，已排入阶段三） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
 | `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001` | **已终结 `DONE`**（见 §一.19；独立复验非复读，B-01~B-06 全部状态标签独立确认与 BLOCKER_CLOSURE 一致，但 B-01 根因诊断存在实质分歧；判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项，须在阶段三之前解决） | [L1 §T-014](L1_TASK_MANIFESTS.md) · [L3 §十七](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `task/pp-blocker-remediation-s1-s4-v1` 分支起分支；任务分支 `task/pp-architecture-reverification-v1` |
+| `DIYU-V1-THREE-SKU-EXTRACTION-001` | **已终结 `DONE`**（见 §一.20；P0/P1/P1.5 三 SKU 统一摘取完成，共用件清单 6/0/2 分布，三张产品合同对齐表各自差距已登记，CF-05 在三 SKU 上呈现完全一致的缺口分布） | [L1 §T-015](L1_TASK_MANIFESTS.md) · [L3 §十八](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-extraction/](../sku-extraction/) | `task/pp-architecture-reverification-v1` 分支起分支；任务分支 `task/three-sku-extraction-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -268,6 +269,26 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | 不构成 | 任何产品/商业结论；不评价 PP 效果好坏；不代表 CF-05 承载机制已建立（本任务受零改动约束，只做检查登记，不顺手建） |
 | Checkpoint | 无。任务已终结，全程未被中断 |
 | 下一步（不在本任务内） | ① CF-05 承载机制须在"S5 判定之后、阶段三之前"建立，需独立 Execution Prompt 与授权；② CF-01/02/03 的判据设计推迟到阶段三测试协议设计；③ CF-04 防陈旧机制排入阶段二目录重构（S6）；④ 若 CF-05 建立后确认无新增阻断，下一步是进入 Q-COMM-04 §21 的实测阶段 |
+
+### 一.20 `DIYU-V1-THREE-SKU-EXTRACTION-001`（`DONE`；三 SKU 统一摘取与语义对齐完成）
+
+完整过程见 [L1 §T-015](L1_TASK_MANIFESTS.md)（Task Contract、E1-1~E1-5 逐项完成、COMPLETION CHECK）与
+[L3 §十八 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)。本条只登记收尾事实。
+
+| 项 | 值 |
+|---|---|
+| 性质 | 一次摘三个（P0/P1/P1.5），按"每个 SKU 卖的是哪一种判断"摘出三个独立产品目录 + 一个共用 `core`；用复制不用移动，原树保留为只读证据；不改任何 DSL/SKILL/references 内容，发现差距登记不修 |
+| 交付物 | [`sku-extraction/`](../sku-extraction/) 六份：`THREE_WAY_COMPARISON_v1.0.md`（E1-1 三方比对与共用件清单）、`CONTRACT_ALIGNMENT_P0_v1.0.md`／`_P1_v1.0.md`／`_P1_5_v1.0.md`（E1-2 三张产品合同对齐表）、`EXTRACTION_MANIFEST_v1.0.json`（E1-3 复制清单）、`P2_STATIC_ASSESSMENT_v1.0.md`（E1-4）、`CF_DISPOSITION_v1.0.md`（E1-5，CF-01~06）；新目录树 [`core/`](../core/)（`guards/`、`context-compiler/`）、[`eval/`](../eval/)（顶层，暂空）、[`products/`](../products/)（三个 SKU 各自目录）、[`adapters/`](../adapters/)（顶层，暂空） |
+| E1-1 共用件清单 | `SHARED_BY_ALL_THREE` 6 项（外壳校验／充分性闸／参考文件投影／交付适配／交付缺失判定与交付收口／保真绑定记录）、`SHARED_BY_TWO` 0 项、`SKU_SPECIFIC` 2 项（事实核验／市场断言检测，均为"P0 已建、另两个未建但设计上可复用"）。三方图骨架在 S1-S4 之前完全同构（程序化字符串相等性比较确认，非按节点名假设） |
+| E1-2 产品合同对齐 | P0：`MATCH`13/`PARTIAL`2/`MISSING`0/`OUT_OF_CONTRACT`3；P1：5/4/2/3；P1.5：12/4/1/3。P1/P1.5 在事实核验/市场断言检测两项硬门上的架构缺口与 P0 修复前状态一致（印证"未走修复流程"，非"天然不需要"） |
+| E1-3 建新树 | 19 个文件逐个 `cp` 后现场复算 sha256 与源比对全部一致；**未建** `core/expert-core/`（无三方共用专业真源可复制——两问框架虽被声明共用但只以散文形式分散存在，未材料化为可复制文件）；**未建** `adapters/douyin`、`xiaohongshu`（platforms.md 是单一统一表格，未比出可分离平台适配层）；`eval/` 已建在顶层、与 `core/` 平级（满足补丁一/二/CF-06 要求） |
+| E1-4 P2 静态评估（不摘） | 与 Q-COMM-07 差距：Mode A 诊断职能与证据分级纪律已成熟，但两态未分 Gate 验收、无 M4 tool DSL；重建 M4 形态／另起两条路径各自代价已列，不做取舍 |
+| E1-5 结转清单 | CF-01/02/03 不适用推迟阶段三；CF-04 推迟 S6；**CF-05 三 SKU 完全一致的缺口分布**（①③无承载，②窄范围共用局部承载，非各自独立现象），推迟到"S5 判定之后、阶段三之前"，应按三 SKU 共用方式统一设计承载机制；CF-06 确认 `eval/` 已在顶层 |
+| v1_3 冻结基线 | 开工前/任务结束两次复算均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变；全部 8 份被摘原始对象同样复算确认未变 |
+| 任务终态 | `task_final_status = DONE`；`checkpoint = null`；`execution_disposition` 不适用（一次直达；母 Prompt 中途三处补丁均在同一轮次内完整消化） |
+| 不构成 | 任何产品/商业结论；不评价三 SKU 质量；不代表任何差距已修复（全部登记不修，修复属阶段二之后） |
+| Checkpoint | 无。任务已终结，全程未被中断 |
+| 下一步（不在本任务内） | ① 阶段二：对摘出的三个 SKU 各自跑一遍 P0-1~P0-8 静态验证（P0 只做摘取后等价复验，P1/P1.5 走完整八项）；② CF-05 承载机制建设需独立 Execution Prompt；③ P2 的路径选择（重建 M4 形态 / 另起）需 Founder 裁决后另立任务；④ `core/expert-core/`、`adapters/` 子目录若未来比出可复制的共用真源或可分离适配层，需另行补建，本任务不预留空壳 |
 
 ---
 

@@ -1,0 +1,184 @@
+{
+  "task_id": "DIYU-V1-THREE-SKU-EXTRACTION-001",
+  "extraction_date": "2026-09-02",
+  "method": "cp（不用 git mv），逐文件复制后立即复算 sha256 与源比对，逐字节一致才算完成",
+  "governance_bound_inputs": {
+    "Q-COMM-04_P0": {"sha256": "55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397", "verified": true},
+    "Q-COMM-05_P1": {"sha256": "ec6871f011651d282eafab8e55f50229e102cf4234957dfaeee1dbb4be9b69e6", "verified": true},
+    "Q-COMM-06_P1.5": {"sha256": "9a063c6ddb92e7c78494ef38dd0427a6a8fc070b62be8dd683f27e7a93a9a772", "verified": true}
+  },
+  "frozen_baseline_not_extracted": {
+    "path": "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml",
+    "reason": "P0 唯一例外：v1_4 已修 6 条阻断，代表当前真源；v1_3 留原位作冻结基线，不摘",
+    "sha256_at_task_open": "daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e",
+    "sha256_at_task_close": "daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e"
+  },
+  "copies": [
+    {
+      "sku": "P0",
+      "source": "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml",
+      "dest": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml",
+      "sha256": "82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3",
+      "bytes": 205504,
+      "verified_identical": true
+    },
+    {
+      "sku": "P0",
+      "source": "content-production/skills/packaging-content-for-release-m4/SKILL_v1.4.md",
+      "dest": "products/p0-publishing-packaging/SKILL_v1.4.md",
+      "sha256": "1e7a9f1a633b4fa216b55e115ad2aec45dc6822d518ff528a22ad05f734b776e",
+      "bytes": 66761,
+      "verified_identical": true
+    },
+    {
+      "sku": "P0",
+      "source": "content-production/skills/packaging-content-for-release/references/platforms.md",
+      "dest": "products/p0-publishing-packaging/references/platforms.md",
+      "sha256": "86fc2cc7231e4f0457253668900e99fbc03fd0bfabe9219902ee849502405727",
+      "verified_identical": true
+    },
+    {
+      "sku": "P0",
+      "source": "content-production/skills/packaging-content-for-release/references/industry-conditions.md",
+      "dest": "products/p0-publishing-packaging/references/industry-conditions.md",
+      "sha256": "b085f1218a561adb500980464325c4356413187ee6e45be5430d5d1334fb7f6d",
+      "verified_identical": true
+    },
+    {
+      "sku": "P0",
+      "source": "content-production/skills/packaging-content-for-release/references/examples.md",
+      "dest": "products/p0-publishing-packaging/references/examples.md",
+      "sha256": "635c86e11ab9bd4e6e1b1fb721b2e3929f8a57c8a18c64f57dc81d743228f3e5",
+      "verified_identical": true
+    },
+    {
+      "sku": "P1",
+      "source": "content-production/workflows/DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml",
+      "dest": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml",
+      "sha256": "99e8ae5c0eab1a8751160f554e3ecd8d103a385c7a39823692cc45c5c5a574b6",
+      "bytes": 117956,
+      "verified_identical": true
+    },
+    {
+      "sku": "P1",
+      "source": "content-production/skills/writing-creative-scripts-m4/SKILL.md",
+      "dest": "products/p1-creative-director/SKILL.md",
+      "sha256": "442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa",
+      "bytes": 47221,
+      "verified_identical": true
+    },
+    {
+      "sku": "P1",
+      "source": "content-production/skills/writing-creative-scripts/references/platforms.md",
+      "dest": "products/p1-creative-director/references/platforms.md",
+      "sha256": "86fc2cc7231e4f0457253668900e99fbc03fd0bfabe9219902ee849502405727",
+      "verified_identical": true
+    },
+    {
+      "sku": "P1",
+      "source": "content-production/skills/writing-creative-scripts/references/industry-conditions.md",
+      "dest": "products/p1-creative-director/references/industry-conditions.md",
+      "sha256": "b085f1218a561adb500980464325c4356413187ee6e45be5430d5d1334fb7f6d",
+      "verified_identical": true
+    },
+    {
+      "sku": "P1",
+      "source": "content-production/skills/writing-creative-scripts/references/examples.md",
+      "dest": "products/p1-creative-director/references/examples.md",
+      "sha256": "635c86e11ab9bd4e6e1b1fb721b2e3929f8a57c8a18c64f57dc81d743228f3e5",
+      "verified_identical": true
+    },
+    {
+      "sku": "P1.5",
+      "source": "content-production/workflows/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml",
+      "dest": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml",
+      "sha256": "a25788a3a28108e15511142e06e822eca36a466459e7f30a8b1581412faa1c4d",
+      "bytes": 117523,
+      "verified_identical": true
+    },
+    {
+      "sku": "P1.5",
+      "source": "content-production/skills/directing-content-production-m4/SKILL.md",
+      "dest": "products/p1_5-production-director/SKILL.md",
+      "sha256": "b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02",
+      "bytes": 46649,
+      "verified_identical": true
+    },
+    {
+      "sku": "P1.5",
+      "source": "content-production/skills/directing-content-production/references/platforms.md",
+      "dest": "products/p1_5-production-director/references/platforms.md",
+      "sha256": "86fc2cc7231e4f0457253668900e99fbc03fd0bfabe9219902ee849502405727",
+      "verified_identical": true
+    },
+    {
+      "sku": "P1.5",
+      "source": "content-production/skills/directing-content-production/references/industry-conditions.md",
+      "dest": "products/p1_5-production-director/references/industry-conditions.md",
+      "sha256": "b085f1218a561adb500980464325c4356413187ee6e45be5430d5d1334fb7f6d",
+      "verified_identical": true
+    },
+    {
+      "sku": "P1.5",
+      "source": "content-production/skills/directing-content-production/references/examples.md",
+      "dest": "products/p1_5-production-director/references/examples.md",
+      "sha256": "635c86e11ab9bd4e6e1b1fb721b2e3929f8a57c8a18c64f57dc81d743228f3e5",
+      "verified_identical": true
+    },
+    {
+      "sku": "SHARED",
+      "source": "content-production/shared/fact-and-market-guards/MARKET_CLAIM_PATTERNS_v1.0.json",
+      "dest": "core/guards/MARKET_CLAIM_PATTERNS_v1.0.json",
+      "sha256": "dbdda0ac2395aa909e5d648f78a04a55b9ae0035fae95743e987ee3a0874abbc",
+      "verified_identical": true,
+      "note": "唯一放进 core/guards/ 的文件——B-02 事实核验的代码目前完全内嵌在 P0 v1_4.yml 的 fact_verification 节点里，没有独立文件可复制；只有 B-04 市场断言检测的模式清单本就已经是独立文件，因此 guards/ 目前只承接后者"
+    },
+    {
+      "sku": "SHARED",
+      "source": "content-production/skills/packaging-content-for-release/references/platforms.md",
+      "dest": "core/context-compiler/references/platforms.md",
+      "sha256": "86fc2cc7231e4f0457253668900e99fbc03fd0bfabe9219902ee849502405727",
+      "verified_identical": true,
+      "note": "三方 diff 已确认三处源文件逐字节相同，此处以 packaging-content-for-release 一份作为代表复制"
+    },
+    {
+      "sku": "SHARED",
+      "source": "content-production/skills/packaging-content-for-release/references/industry-conditions.md",
+      "dest": "core/context-compiler/references/industry-conditions.md",
+      "sha256": "b085f1218a561adb500980464325c4356413187ee6e45be5430d5d1334fb7f6d",
+      "verified_identical": true,
+      "note": "同上"
+    },
+    {
+      "sku": "SHARED",
+      "source": "content-production/skills/packaging-content-for-release/references/examples.md",
+      "dest": "core/context-compiler/references/examples.md",
+      "sha256": "635c86e11ab9bd4e6e1b1fb721b2e3929f8a57c8a18c64f57dc81d743228f3e5",
+      "verified_identical": true,
+      "note": "同上"
+    }
+  ],
+  "total_files_copied": 19,
+  "all_sha256_verified_identical": true,
+  "directories_created_empty": [
+    {"path": "eval/", "reason": "补丁一/二：Private Eval，顶层，与 core/ 平级，本轮只建目录暂空，不放东西；.gitkeep 仅为 git 可追踪空目录的机制性占位，非内容"},
+    {"path": "adapters/", "reason": "E1-1 未比出可分离的平台适配层（platforms.md 是单一统一表格，各平台是表内列而非独立模块/文件；DSL 内无 per-platform 分支代码），douyin/xiaohongshu 子目录未建；顶层目录本身按补丁二落盘要求建出，暂空"}
+  ],
+  "directories_not_created": [
+    {"path": "core/expert-core/", "reason": "未比出三方共用的、可复制的独立专业真源文件——PP-1~5/CS-1~7/PD-1~7 核心判断逐条为各 SKU 专有内容；'事实/素材'两问框架虽被 P1 SKILL.md 明文声明为'三份 Skill 共用'，但只以各自独立措辞的散文形式存在于每份 SKILL.md 内，未材料化为任何独立文件，摘取只能复制既有文件，不能重新撰写提炼——如实登记为'无三方共用专业真源可复制'，不构成'没有共用概念'"}
+  ],
+  "post_copy_verification": {
+    "original_tree_files_spot_checked": [
+      "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml",
+      "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml",
+      "content-production/skills/packaging-content-for-release-m4/SKILL_v1.4.md",
+      "content-production/workflows/DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml",
+      "content-production/skills/writing-creative-scripts-m4/SKILL.md",
+      "content-production/workflows/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml",
+      "content-production/skills/directing-content-production-m4/SKILL.md",
+      "content-production/shared/fact-and-market-guards/MARKET_CLAIM_PATTERNS_v1.0.json"
+    ],
+    "git_status_shows_no_modifications_to_originals": true,
+    "note": "git status --short 在拷贝后立即核对，只出现新增（??/A）条目，未出现对上述任一原文件的 M（modified）标记"
+  }
+}

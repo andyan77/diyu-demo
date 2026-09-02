@@ -1772,3 +1772,74 @@ disclosed_anomalies_not_hidden:
 
 `task_final_status: DONE`
 `execution_disposition`: 不适用（一次直达，非中断态；母 Prompt 中途两次更正在同一轮次内完整消化）
+
+## §T-015 · `DIYU-V1-THREE-SKU-EXTRACTION-001`
+
+### T-015.1 Task Contract（稳定合同）
+
+| 项 | 值 |
+|---|---|
+| `task_id` | `DIYU-V1-THREE-SKU-EXTRACTION-001` |
+| `task_type` | `STATIC_EXTRACTION_AND_SEMANTIC_ALIGNMENT`（三 SKU 统一摘取，用复制不用移动；产出共用件清单与产品合同对齐表；零调用） |
+| `risk_level` | `LOW`（只读源树、只复制不修改、零模型调用、零平台写操作） |
+| 起算基线 | 从 `task/pp-architecture-reverification-v1` 分支起分支，新建任务分支 `task/three-sku-extraction-v1` |
+| core_problem | 按"每个 SKU 卖的是哪一种判断"把 P0/P1/P1.5 三个结构对称的 M4 tool 摘成三个独立产品目录 + 一个共用 core，逐个登记与各自验收标准的差距；不修，修在阶段二之后 |
+| 治理绑定 | `Q-COMM-04`（sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397`）／`Q-COMM-05`（sha256 `ec6871f011651d282eafab8e55f50229e102cf4234957dfaeee1dbb4be9b69e6`）／`Q-COMM-06`（sha256 `9a063c6ddb92e7c78494ef38dd0427a6a8fc070b62be8dd683f27e7a93a9a772`）三份验收标准均现场复算一致；8 份被摘对象（P0/P1/P1.5 各一份 DSL + 一份 SKILL + references 三件套）sha256/bytes 全部现场复算与授权值一致 |
+| allowed_delta | 新目录树 `core/`（`guards/`、`context-compiler/`）、`eval/`（顶层，暂空）、`products/`（三个 SKU 各自目录）、`adapters/`（顶层，暂空）；新目录 `sku-extraction/` 六份交付物；collab-ledger 三本账追加式登记；新建任务分支 |
+| protected_assets | 全部被摘原始文件（8 份 P0/P1/P1.5 对象 + `MARKET_CLAIM_PATTERNS_v1.0.json`）只读，任务结束复算确认逐字节未变；`content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml` 冻结基线留原位不摘；规则仓库（只读）；`main` |
+| explicitly_not_authorized | 修改任何 DSL/SKILL/references 内容（含路径引用修正，属阶段二构建等价工作）；用 `git mv` 代替 `cp`；任何模型调用；评价任何 SKU 质量、给商业结论、打分；合并 main；force push；改写历史 |
+| model_call_budget | `0`——本任务全程不调 LLM |
+| remote_target | `branch: task/three-sku-extraction-v1`；`push: AUTHORIZED`；`merge_main: NOT_AUTHORIZED` |
+
+### T-015.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| E1-1 三方结构比对 | `DONE`——节点骨架对照表、共用件清单（`SHARED_BY_ALL_THREE` 6／`SHARED_BY_TWO` 0／`SKU_SPECIFIC` 2）、差异性质分类（真实专业差异 vs 历史偶然），P0 的 S1-S4 delta 已单独标出不计入分类，见 [sku-extraction/THREE_WAY_COMPARISON_v1.0.md](../sku-extraction/THREE_WAY_COMPARISON_v1.0.md) |
+| E1-2 产品合同对齐 | `DONE`——三张表：P0（`MATCH`13/`PARTIAL`2/`MISSING`0/`OUT_OF_CONTRACT`3）、P1（5/4/2/3）、P1.5（12/4/1/3），见 [sku-extraction/CONTRACT_ALIGNMENT_P0_v1.0.md](../sku-extraction/CONTRACT_ALIGNMENT_P0_v1.0.md)／`_P1_`／`_P1_5_` 三份文件 |
+| E1-3 建新树并复制 | `DONE`——19 个文件逐个 `cp` 后现场复算 sha256 与源比对全部一致；未建 `core/expert-core/`（无三方共用专业真源可复制）；未建 `adapters/douyin`、`xiaohongshu`（未比出可分离平台适配层）；`eval/` 建在顶层与 `core/` 平级；见 [sku-extraction/EXTRACTION_MANIFEST_v1.0.json](../sku-extraction/EXTRACTION_MANIFEST_v1.0.json) |
+| E1-4 P2 静态评估（不摘） | `DONE`——与 Q-COMM-07 差距已列（专业判断成熟但两态未分 Gate、无 M4 tool DSL）；重建 M4 形态／另起两条路各自代价已列，不做取舍，见 [sku-extraction/P2_STATIC_ASSESSMENT_v1.0.md](../sku-extraction/P2_STATIC_ASSESSMENT_v1.0.md) |
+| E1-5 结转清单 CF-01~06 | `DONE`——CF-01/02/03 不适用推迟阶段三；CF-04 推迟 S6（范围因新增 core/ 副本扩大，处置不变）；CF-05 三 SKU 完全一致的缺口分布（①③无承载，②窄范围共用局部承载），推迟到"S5 判定之后、阶段三之前"；CF-06 确认 `eval/` 已在顶层，完整禁带清单推迟到真正拆分时，见 [sku-extraction/CF_DISPOSITION_v1.0.md](../sku-extraction/CF_DISPOSITION_v1.0.md) |
+| v1_3 冻结基线复算 | 开工前/任务结束两次复算均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变 |
+| Checkpoint | 无。任务一次直达，未被中断（含母 Prompt 中途三处补丁，均在同一轮次内完整消化） |
+
+### T-015.3 COMPLETION CHECK
+
+```yaml
+real_behavior_verified:
+  - 三份验收标准 + 8 份被摘对象 sha256/bytes 现场复算与授权值逐字节一致: PASS
+  - 三份 DSL 全部节点/边通过 yaml.safe_load 结构化解析并做程序化字符串相等性比较
+    （非按节点名假设相同）: PASS
+  - 19 个复制文件逐个复制后立即复算 sha256 与源比对，全部一致: PASS
+  - 原树全部被摘文件 + v1_3 冻结基线任务结束时复算，逐字节未变: PASS
+validator_discrimination_verified:
+  - 共用件清单同时给出 SHARED_BY_ALL_THREE / SHARED_BY_TWO / SKU_SPECIFIC 三档且非全部落入
+    同一档: PASS（6/0/2 分布，非平均或武断分类）
+  - 三张合同对齐表同时出现 MATCH/PARTIAL/MISSING/OUT_OF_CONTRACT 四种判定，非全绿或全红: PASS
+core_problem_solved:
+  - 三个结构对称的 M4 tool 已按"卖的是哪一种判断"摘成三个产品目录 + 一个共用 core: DONE
+  - 共用件是比出来的（程序化相等性比较），不是猜出来的（未按节点名或直觉假定共用）: 成立
+protected_targets_unchanged_or_authorized:
+  - 全部 8 份被摘原始对象 + MARKET_CLAIM_PATTERNS_v1.0.json: 只读未修改，任务结束复算确认
+  - v1_3_TEST.yml 冻结基线: 未摘，两次复算一致
+  - 规则仓库: 全程只读
+evidence_refs:
+  - sku-extraction/THREE_WAY_COMPARISON_v1.0.md
+  - sku-extraction/CONTRACT_ALIGNMENT_P0_v1.0.md / _P1_v1.0.md / _P1_5_v1.0.md
+  - sku-extraction/EXTRACTION_MANIFEST_v1.0.json
+  - sku-extraction/P2_STATIC_ASSESSMENT_v1.0.md
+  - sku-extraction/CF_DISPOSITION_v1.0.md
+unnecessary_complexity_remaining:
+  - 未发现。未强造 expert-core/ 或 adapters 子目录（比不出就不建，已如实登记）；
+    未新增评分器/知识库/RAG/第二套工作流引擎
+disclosed_anomalies_not_hidden:
+  - P1/P1.5 在事实核验/市场断言检测两项硬门上的架构缺口与 P0 修复前状态一致，已如实披露，
+    未因"这是另一个 SKU"而重新评估为可接受
+  - CF-05 在三个 SKU 上的缺口分布完全一致（非各自独立现象），已指出应按三 SKU 共用方式统一设计
+    承载机制，未分别提出三套方案掩盖这一共性
+```
+
+**终态判定**：E1-1~E1-5 全部完成，COMPLETION CHECK 全项 PASS。
+
+`task_final_status: DONE`
+`execution_disposition`: 不适用（一次直达，非中断态；母 Prompt 中途三处补丁在同一轮次内完整消化）
