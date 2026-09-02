@@ -29,7 +29,7 @@
 | `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`——字节级确定性不可得，降级为结果稳定性判据，已排入阶段三） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
 | `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001` | **已终结 `DONE`**（见 §一.19；独立复验非复读，B-01~B-06 全部状态标签独立确认与 BLOCKER_CLOSURE 一致，但 B-01 根因诊断存在实质分歧；判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项，须在阶段三之前解决） | [L1 §T-014](L1_TASK_MANIFESTS.md) · [L3 §十七](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `task/pp-blocker-remediation-s1-s4-v1` 分支起分支；任务分支 `task/pp-architecture-reverification-v1` |
 | `DIYU-V1-THREE-SKU-EXTRACTION-001` | **已终结 `DONE`**（见 §一.20；P0/P1/P1.5 三 SKU 统一摘取完成，共用件清单 6/0/2 分布，三张产品合同对齐表各自差距已登记，CF-05 在三 SKU 上呈现完全一致的缺口分布） | [L1 §T-015](L1_TASK_MANIFESTS.md) · [L3 §十八](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-extraction/](../sku-extraction/) | `task/pp-architecture-reverification-v1` 分支起分支；任务分支 `task/three-sku-extraction-v1` |
-| `DIYU-V1-THREE-SKU-PRODUCTIZATION-001` | **已终结 `DONE`**（见 §一.21；P0/P1/P1.5 三 SKU 产品化改造完成，E2-P 补丁已续接并关闭 P-2）。**E3 Static Gate 已续接并按 Founder 裁决重跑**：A-1/A-2 已执行；SG5 阻断项经裁决——被 deepseek 插件剥离的 `temperature`/`top_p` 声明（六处）已删除，声明与实际生效值一致，`thinking:true` 保留不变；三 SKU 重跑终态均为 `READY_FOR_EMPIRICAL_TESTING`，`blockers: []`——见 §一.21 E3 段与 `sku-productization/STATIC_GATE_REPORT.json` | [L1 §T-016.5](L1_TASK_MANIFESTS.md) · [L3 §十九 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-productization/STATIC_GATE_REPORT.json](../sku-productization/STATIC_GATE_REPORT.json) | `task/three-sku-extraction-v1` 分支起分支；任务分支 `task/three-sku-productization-v1` |
+| `DIYU-V1-THREE-SKU-PRODUCTIZATION-001` | **已终结 `DONE`**（见 §一.21；P0/P1/P1.5 三 SKU 产品化改造完成，E2-P 补丁已续接并关闭 P-2）。**E5 独立静态审查已推翻 E3 对 P0 的 READY 判定**：`p0_static_audit_verdict: BLOCKED_BY_STATIC_VALIDITY_DEFECT`，32 条 P0 级确定性缺陷（24 已确认），E4 继续暂停——见 §一.21 E5 段与唯一产物 `p0-static-audit/STATIC_AUDIT_REPORT.md` | [L1 §T-016.6](L1_TASK_MANIFESTS.md) · [p0-static-audit/STATIC_AUDIT_REPORT.md](../p0-static-audit/STATIC_AUDIT_REPORT.md) | `task/three-sku-extraction-v1` 分支起分支；任务分支 `task/three-sku-productization-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -325,6 +325,10 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 重跑（整体重跑，非单项）后终态：**P0 `READY_FOR_EMPIRICAL_TESTING`、P1 `READY_FOR_EMPIRICAL_TESTING`、P1_5 `READY_FOR_EMPIRICAL_TESTING`**，三者 `blockers: []`；INV-1/INV-2 仍 `PASS`，SG6 三检测器三控仍全绿，`DYNAMIC_ONLY` 仍为 0。
 
 **规划侧独立复核纠正（同日）**：SG6 此前遗漏了对本轮唯一实际触发 BLOCKING 的检测器 `SG5.plugin_normalization_mismatch` 本身做三控自测——按 §13 硬合同要求，任何能判 BLOCKING 的检测器都必须证明自身有区分力，此前"人工读源码确认这次判断正确"不能替代该自测，此前的 READY 判定依据不完整。修复：把该检测器的判定逻辑抽成共享函数（`run_sg5` 生产判定与 `run_sg6` 自测共用同一实现），补齐三控（正例：无剥离参数声明→不阻断；负例：声明 `top_p`→阻断；off-list：声明同一剥离参数集合中未在负例出现的 `presence_penalty`→阻断，防止实现退化为只特判一两个参数名）。整体重跑：三 SKU 终态不变，仍全部 `READY_FOR_EMPIRICAL_TESTING`、`blockers: []`；SG6 现为四个检测器、三控全绿、无自身判 BLOCKING。改动仅限 Gate 脚本与其重算报告，无新流程、无新文档。
+
+**E5 P0 静态全链路独立审查（`DIYU-V1-P0-STATIC-AUDIT-001`，2026-09-02，同分支续接）**：Founder 下达独立审查指令，明确本轮 E3 的 `STATIC_GATE_REPORT.json` 与三个 `READY_FOR_EMPIRICAL_TESTING` 一律降级为"待验证声明"，不得作 PASS 证据；E4 暂停。独立重建 P0 完整静态运行系统后，13 维度调查 + 未知盲区扫描共产出 167 条发现，其中 87 条严重级逐条经双人对抗复核（默认倾向推翻）。**结果：`DIYU-V1-STATIC-GATE-001` 给出的 P0 READY 判定被推翻**——32 条 P0 级确定性缺陷（24 条经复核确认，1 条裁定降级为 P1，7 条因复核撞会话额度限制未完成、按未验证处理），核心是"检测到但不拦截"这一模式反复出现：准入门槛拒真实输入收占位符、CTA 分级算而不用且可被内容篡改、多项交付前安全阀（事实自评不一致、局部阻断、发布结论矛盾、标记注入）检测正确但不影响交付结果、补救路径 `recovery_llm` 从未被此前的 Gate 检查过且明显弱于主路径、引用文件哈希锁绑定了错误的对象（源文件而非真正喂给模型的字节）、Static Gate 自身 16 个可判 BLOCKING 的检测项里 12 个从无自测、其中 9 个被本轮现场构造的变异测试证实可直接绕过。详见唯一产物 `p0-static-audit/STATIC_AUDIT_REPORT.md`。E4 继续暂停，等 Founder 就报告"最小修复顺序"裁决。
+
+**审查过程本身的一次事故（已收口）**：本轮编排的一个审查子任务违反"只审不改"，在游离 HEAD 上做过一次未授权提交（`62f43ca`），从未挂上 `task/three-sku-productization-v1` 分支、从未推送远程；已确认分支与远程指针全程未变，已清理并确认仓库现状与远程一致。详见报告开头"〇"节。
 
 ---
 

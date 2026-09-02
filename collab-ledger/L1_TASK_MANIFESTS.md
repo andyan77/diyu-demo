@@ -1951,3 +1951,18 @@ Founder 对 T-016 交付做独立复核（E2）后确认通过，但另指出两
 **重跑终态**：`p0_state: READY_FOR_EMPIRICAL_TESTING` / `p1_state: READY_FOR_EMPIRICAL_TESTING` / `p1_5_state: READY_FOR_EMPIRICAL_TESTING`，三者 `blockers: []`。证据：`sku-productization/STATIC_GATE_REPORT.json`（`sku-productization/static_gate.py` 整体重跑，非单项重跑）。
 
 **规划侧独立复核发现的遗留缺口（同日续裁）**：SG6 三控自测原只覆盖 `schema_and_dangling_defects`/`sg2_execution_path`/`tautological_gate_scan` 三个检测器，**遗漏了本轮唯一实际产出 BLOCKING 的检测器 `SG5.plugin_normalization_mismatch` 本身**——按 §13 硬合同"每个能判 BLOCKING 的检测器都须三控"，此前的 READY 终态判定依据不完整。已修复：抽出共享判定函数 `_plugin_normalization_mismatch`，令 `run_sg5`（生产判定）与 `run_sg6`（自测）调用同一函数；三控中 off-list 用固定剥离参数集合里未出现在负控的另一成员（`presence_penalty` vs 负控 `top_p`），防止实现退化为只判其中一两个参数名的 if/elif 特判。整体重跑（非单项）：三 SKU 仍全部 `READY_FOR_EMPIRICAL_TESTING`，`blockers: []`；SG6 四个检测器三控全绿，无自身判 BLOCKING。改动仅限 `sku-productization/static_gate.py` 与其重算产物 `STATIC_GATE_REPORT.json`，无新增机制、无新增文档、无独立复验报告。
+
+### T-016.6 · E5 P0 静态全链路独立审查（`DIYU-V1-P0-STATIC-AUDIT-001`，2026-09-02）
+
+依据 Founder 下达、规则侧 `E5_P0_Skill静态全链路独立审查_EXECUTION_PROMPT_v1.0.md`（commit `9b27ca3`）。只审不改，零外部 LLM 调用，同分支续接（`task/three-sku-productization-v1` @ `5ccc8e2`），本条只登记任务号与终态，逐条发现见唯一产物 `p0-static-audit/STATIC_AUDIT_REPORT.md`（可由原始审查数据重算），不另立 TRACE 清单。
+
+`p0_static_audit_verdict: BLOCKED_BY_STATIC_VALIDITY_DEFECT`
+`model_call_budget: 0`
+
+本轮**推翻** `DIYU-V1-STATIC-GATE-001`（T-016.5）此前给出的 P0 `READY_FOR_EMPIRICAL_TESTING` 判定——独立复算发现 32 条 P0 级确定性缺陷（24 条经双人对抗复核确认，1 条经裁定降级为 P1，7 条因复核阶段撞上外部会话额度限制未完成复核、按 `NOT_VERIFIED` 处理不计入已确认数），核心缺陷类别：准入门槛与产品合同倒挂（真实用户输入被拒、占位符输入被放行）、CTA/风险分级算而不用且可被内容注入篡改、交付前多项安全阀"检测到但不拦截"、补救路径（`recovery_llm`）弱于主路径且从未被检查、引用文件哈希校验绑定错误对象、Static Gate 自身 16 个可判 BLOCKING 检测项中 12 个无自测、其中 9 个经本轮构造的变异测试证实可被绕过。
+
+**E4（P0 实测首轮推理档位对照）继续暂停**，等 Founder 就本报告"最小修复顺序"裁决后再定是否及何时重启。
+
+**审查过程事故（已收口，无需 Founder处置）**：本轮编排的一个子任务违反"只审不改"，在游离 HEAD 上做过一次未授权本地提交（`62f43ca`），从未挂上任何分支、从未推送；已确认分支与远程全程未受影响，已切回 `5ccc8e2` 并清理工作区残留，仓库现状与远程一致。详见报告开头"〇"节。
+
+`task_final_status`（T-016 整体）：维持 `DONE`——E5 是审后独立复验，其"推翻"针对的是 E3/T-016.5 的 Gate 判定本身，不是 T1~T5 或 E2-P 的产品化改造工作；产品化改造的既有结论未被推翻，只是"是否已就绪进入实测"这一层判断被证明依据不足。
