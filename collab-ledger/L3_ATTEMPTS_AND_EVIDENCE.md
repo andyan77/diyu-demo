@@ -1997,3 +1997,35 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 
 `CLOSE-AC-01..06` 逐条成立（依据见证据索引 v1.2 的 `v1_2_hard_gates`）；
 `CLOSE-AC-07` 待 Git／远端真实收口后更新。
+
+## 十五、`DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001`
+
+### ATT-001（一次直达，`DONE`；纯静态架构审查，零模型调用，零 DSL/代码改动）
+
+- **输入与授权**：治理绑定两份 —— 对标基准 `Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md`
+  （sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397` 现场复算一致，只读）；
+  被测源 `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`
+  （sha256 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e` 现场复算一致）。
+- **方法**：对 DSL 全文（1616 行）逐节点、逐边人工读取，穷举核对全部 15 个节点的 `type`/`title`/
+  `code`/`template`/`prompt_template`/`completion_params`/`variables` 字段与全部 14 条边的
+  `source`/`target`/`sourceHandle`，并对 `temperature`/`UNKNOWN`/`references/platforms.md` 等
+  关键词做全文穷举 grep（零命中即穷举确认，非抽样、非模型摘要）。
+- **P0-1～P0-8**：全部完成，见 [pp-architecture/ARCHITECTURE_VERIFICATION_REPORT_v1.0.md](../pp-architecture/ARCHITECTURE_VERIFICATION_REPORT_v1.0.md)
+  与 [pp-architecture/BLOCKING_LIST_v1.0.json](../pp-architecture/BLOCKING_LIST_v1.0.json) 全文，
+  [pp-architecture/FROZEN_SOURCE_v1.0.yaml](../pp-architecture/FROZEN_SOURCE_v1.0.yaml) 为冻结清单。
+  P0-8 判定 `NOT_READY`，阻断清单 6 条（配置 1／结构 2／契约 2／依赖 1）。
+- **主要发现（摘要，完整依据见报告正文）**：(1) 六项外壳必填在 `envelope_check`/`gate_sufficiency`
+  是真实代码硬闸，校验不通过时短路到 `component_return`，不触达 `skill_llm`；(2) `returns_adapter`
+  只做输出**格式**校验（标记块/长度/回指/内部术语泄漏），不解析 ARTIFACT 内部字段，事实核验
+  （`fact_check_status`）完全靠模型自报、无独立代码校验；(3) `temperature` 全文档零命中，未钉死；
+  (4) `references/platforms.md` 等三份参考文件从未被任何节点实际读取（全图无检索/HTTP/工具节点），
+  Layer A 硬契约的数据通路未接入运行图；(5) UNKNOWN（事实缺失）在代码层不是可追踪的第一等状态；
+  (6) 12 项标准输出对象里"标签/话题"一项在输出契约里完全缺失。
+- **需要披露但不计入阻断清单的两点**：①`delivery_finalize` 代码注释自述的历史缺陷 M4-FND-029
+  （recovery_llm 内部推理段曾被当成用户正文交付）——经核对当前版本 `_strip_thinking()` 已实现与
+  `final_extract` 等价的剥离逻辑，判定为已解决的历史缺陷，不计入本次阻断清单；②`returns_adapter`
+  计算出的 `local_block` 字段只在 `end_ok` 输出里被透出，图内无任何节点用它做路由或阻断决策，但
+  `delivery_finalize.delivery_outcome`（`DELIVERED`/`DELIVERED_AFTER_RECOVERY`/`NOT_DELIVERED`）
+  已承担实际的业务成功判定，属信号冗余而非误导，不计入阻断清单。
+- **终态**：`task_final_status = DONE`。不产生任何产品/商业结论，不评价 PP 效果好坏，不代表已修复
+  报告登记的任何缺口。

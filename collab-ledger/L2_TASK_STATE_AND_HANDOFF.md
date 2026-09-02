@@ -25,6 +25,7 @@
 | `V1-M1-M4-PHASE0-PREAMBLE-ADOPTION-AND-DESKTOP-PACK-001` | 首次尝试 `BLOCKED`（§一.8），附件补齐后 P0-A `DONE`（§一.9），采用进 `main` 与桌面包见最终回执 | [L1 §T-006](L1_TASK_MANIFESTS.md) · [L3 §八 ATT-001～002](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ cba3a30`（起算；P0-A 完成见 §一.9） |
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.10） | [L1 §T-007](L1_TASK_MANIFESTS.md) · [L3 §九 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ c085eb3`（起算；终态见 §一.10） |
 | `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（起算基线；已经 `DIYU-V1-M1-MODULE-LANDING-001` 合并进 `main`，不再是"未合入 main"，见 [L1 新增行](L1_TASK_MANIFESTS.md) 与 `decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md`） |
+| `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001` | **已终结 `DONE`**（见 §一.17；纯静态架构审查，零模型调用，不改变任何 M1–M5 既有状态） | [L1 §T-012](L1_TASK_MANIFESTS.md) · [L3 §十五](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `main @ 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；任务分支 `task/pp-architecture-verification-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -216,6 +217,20 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | 合并执行 | 任务分支收口 commit `4f57a32e61e2612f7f3de3699f5f5253fe270d5c`（推送 `ec77bfd..4f57a32`）；真实二亲合并 commit `17ca3f70212f38048b37f739edffba8bf7cf8f85`（`git merge --no-ff`，内容层面无冲突）；`git push origin main` 推送 `df2c595..17ca3f7`；合并后核验 `git diff main origin/task/...` 为空、受保护资产 diff 为空、迁移/运行代码身份不漂移，详见 [L5 SE-027～SE-029](L5_SIDE_EFFECTS.md) 与 `M2_POST_DONE_REBASE_v1.2_RECORD.md` §15 |
 | 任务终态（正式 `DONE`，不登记 `execution_disposition`） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`M2_MODULE_LANDING = CLOSED`；`checkpoint = null`；`active_work_package = null`。`DONE` 不额外授权 M5、真实社交平台发布、生产采用或任何经营结果结论——Founder 本次授权明确排除这些项 |
 | Checkpoint | **无**（`null`）。原 §四 记录的 Checkpoint 已解除，从此移出 §四 |
+
+### 一.17 `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001`（`DONE`）
+
+完整过程见 [L1 §T-012](L1_TASK_MANIFESTS.md)（Task Contract、P0-1～P0-8 逐项完成、COMPLETION CHECK）与
+[L3 §十五 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)。本条只登记收尾事实。
+
+| 项 | 值 |
+|---|---|
+| 交付物 | [`pp-architecture/`](../pp-architecture/)：`FROZEN_SOURCE_v1.0.yaml`（P0-1 冻结清单）、`ARCHITECTURE_VERIFICATION_REPORT_v1.0.md`（P0-2～P0-8 全文）、`BLOCKING_LIST_v1.0.json`（P0-8 结构化阻断清单） |
+| P0-8 判定 | `NOT_READY`——阻断清单 6 条（配置 1／结构 2／契约 2／依赖 1），逐条含缺什么/在哪/属于哪一类/不修的话实测会得到什么假信号，见报告 §P0-8 与 `BLOCKING_LIST_v1.0.json` |
+| 任务终态 | `task_final_status = DONE`；`checkpoint = null`；`execution_disposition` 不适用（一次直达，非中断态） |
+| 不构成 | 任何产品/商业结论；不评价 PP 效果好坏；不代表已修复报告中登记的任何缺口（母 Prompt 约束第 4 条：发现缺口如实登记，不顺手修，修是下一个任务） |
+| Checkpoint | 无。任务已终结，全程未被中断 |
+| 下一步（不在本任务内） | 若要推进到 §21 的实测阶段，需先针对阻断清单 6 条中至少涉及硬性判据的几条（B-01/B-02/B-03/B-04）做工程修复，修复本身是新任务，需独立 Execution Prompt 与授权 |
 
 ---
 

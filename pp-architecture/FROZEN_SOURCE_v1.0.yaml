@@ -1,0 +1,106 @@
+task_id: DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001
+p0: P0-1
+title: 冻结被测源
+frozen_at: "2026-09-01"
+zero_model_calls: true
+
+tested_source:
+  path: content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml
+  sha256_expected: daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e
+  sha256_recomputed: daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e
+  match: true
+
+acceptance_baseline:
+  path: /mnt/c/Users/Administrator/Documents/Codex/Diyu-V1-Planning/projects/APP-DIYU-DEMO/Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md
+  sha256_expected: 55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397
+  sha256_recomputed: 55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397
+  match: true
+  read_only: true
+  note: 规则仓库只读，本任务未对该路径做任何写入。
+
+dsl_meta:
+  app_name: "DIYU M4 v1.3 TEST · Publishing & Packaging"
+  app_mode: workflow
+  dsl_version: "0.7.0"
+  marketplace_dependency: "langgenius/deepseek:0.0.20@850efe73fb62bbe7ab2229116086596596297a77174fb86f73e1363b99a24116"
+  environment_variables: []
+  conversation_variables: []
+  file_upload_enabled: false
+  vision_enabled: false
+
+graph_node_inventory:
+  total_nodes: 15
+  nodes:
+    - id: "1788000000001"
+      title: 输入
+      type: start
+    - id: envelope_check
+      title: 外壳校验
+      type: code
+    - id: gate_sufficiency
+      title: 充分性闸
+      type: if-else
+    - id: ref_projection
+      title: Reference Projection
+      type: template-transform
+    - id: projection_record
+      title: Projection Record
+      type: template-transform
+    - id: skill_llm
+      title: "DIYU M4 v1.3 TEST · Publishing & Packaging"
+      type: llm
+      model: deepseek-v4-flash
+      provider: langgenius/deepseek/deepseek
+    - id: final_extract
+      title: Final Extract
+      type: template-transform
+    - id: returns_adapter
+      title: Returns / 交付适配器
+      type: code
+    - id: projection_gate
+      title: 交付缺失判定
+      type: if-else
+    - id: recovery_llm
+      title: 用户交付投影（一次有界恢复）
+      type: llm
+      model: deepseek-v4-flash（与 skill_llm 共用同一 completion_params，YAML anchor &id001/*id001）
+      provider: langgenius/deepseek/deepseek
+    - id: delivery_finalize
+      title: 交付收口
+      type: code
+    - id: binding_record
+      title: 保真绑定记录
+      type: code
+    - id: component_return
+      title: 组件级 Return
+      type: code
+    - id: end_ok
+      title: 结束
+      type: end
+    - id: end_component_return
+      title: 组件级 Return 结束
+      type: end
+  node_type_absent_check:
+    retrieval_or_knowledge_base_node: absent
+    http_request_node: absent
+    tool_node: absent
+    note: 已逐节点核对全部 15 个节点的 type 字段，图中不存在任何检索/HTTP/工具类节点。
+
+graph_edge_summary:
+  total_edges: 14
+  linear_and_branch_structure: |
+    start(1788000000001)
+      -> envelope_check
+      -> gate_sufficiency
+         [false] -> component_return -> end_component_return
+         [run]   -> ref_projection -> projection_record -> skill_llm -> final_extract
+                    -> returns_adapter -> projection_gate
+                       [false]   -> delivery_finalize
+                       [recover] -> recovery_llm -> delivery_finalize
+                    -> delivery_finalize -> binding_record -> end_ok
+
+verification_method: |
+  sha256sum 现场复算两份治理绑定文件；node/edge 清单通过对 DSL YAML 的
+  `graph.nodes[].id` / `graph.nodes[].data.type` / `graph.nodes[].data.title` 与
+  `graph.edges[].source` / `graph.edges[].target` 字段做穷举读取与计数得出，
+  非抽样、非模型摘要。

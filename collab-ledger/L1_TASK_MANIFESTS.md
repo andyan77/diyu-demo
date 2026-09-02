@@ -1576,3 +1576,58 @@ Founder 就 T-011.9 执行侧三项存疑逐一说明，并以第一手见证补
 | `M2-PDR-01～15` | 全部 `PASS` |
 | 终态（正式 `DONE`，不登记 `execution_disposition`——该字段专用于非终态 Checkpoint，与已进入的正式终态同时出现属无效组合，不重复 T-011.7 已纠偏过的失误） | `task_final_status = DONE`；`historical_m2_task_status = DONE`；`post_done_rebase_progress = COMPLETED`；`checkpoint = null`；`active_work_package = null`；`main_merge_authorized = true`（Founder 条件授权：任务分支干净、本地/远程一致、受保护资产未改变、无真实合并冲突、`M2-PDR-01～15` 均完成；执行侧合并前逐项现场核验，见 [L5 本节新增 SE 条目](L5_SIDE_EFFECTS.md)） |
 | Git 收口 | 任务分支收口 commit `4f57a32e61e2612f7f3de3699f5f5253fe270d5c` 推送后，核验通过，以真实二亲合并（`git merge --no-ff`，无冲突）合并 commit `17ca3f70212f38048b37f739edffba8bf7cf8f85` 进 `main` 并推送 `origin/main`；详见 [L5 SE-027～SE-029](L5_SIDE_EFFECTS.md) |
+
+## §T-012 · `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001`
+
+### T-012.1 Task Contract（稳定合同）
+
+| 项 | 值 |
+|---|---|
+| `task_id` | `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001` |
+| `task_type` | `STATIC_ARCHITECTURE_REVIEW` |
+| `risk_level` | `LOW`（只读、零模型调用、零写平台） |
+| 起算基线 | `main @ 01a42b0ed97344a67302ecb6778ae4a772eb28b2`，任务分支 `task/pp-architecture-verification-v1`（新建） |
+| core_problem | PP（内容发布包装助手）从架构工程角度看，是否达到"可以进入 LLM 实测"的标准；不判断效果好坏 |
+| 治理绑定 | 对标基准 `Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md`（只读，sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397` 现场复算一致）；被测源 `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`（sha256 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e` 现场复算一致） |
+| allowed_delta | 新建 `pp-architecture/` 及其全部内容；collab-ledger 三本账（L1/L2/L3）追加式登记；新建任务分支 |
+| protected_assets | 被测 DSL 本身（只读）；规则仓库全部文件（只读）；任何既有 Dify 应用；`main` 分支 |
+| explicitly_not_authorized | 任何模型调用；修改 DSL/代码/既有 Dify 应用；产品判断、商业结论、PP 效果评价；顺手修复发现的缺口；合并 main |
+| model_call_budget | `0`——本任务存在的理由是"先看图，再花钱" |
+| remote_target | `branch: task/pp-architecture-verification-v1`；`push: AUTHORIZED`；`merge_main: NOT_AUTHORIZED` |
+
+### T-012.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| P0-1 冻结被测源 | `DONE`——两份治理绑定文件 sha256 现场复算与授权值逐字节一致，见 [pp-architecture/FROZEN_SOURCE_v1.0.yaml](../pp-architecture/FROZEN_SOURCE_v1.0.yaml) |
+| P0-2 可抽取性清单 | `DONE`——判定 `EXTRACTABLE_WITH_DELTA`，见 [pp-architecture/ARCHITECTURE_VERIFICATION_REPORT_v1.0.md](../pp-architecture/ARCHITECTURE_VERIFICATION_REPORT_v1.0.md) §P0-2 |
+| P0-3 架构一致性矩阵 | `DONE`——12 项标准输出对象、三层平台适配、六项外壳必填闸逐项核对，见同报告 §P0-3 |
+| P0-4 确定性配置审计 | `DONE`——`temperature`/`frequency_penalty`/`presence_penalty`/`seed` 全文档零命中，未钉死，见同报告 §P0-4 |
+| P0-5 事实溯源链路审计 | `DONE`——架构缺口已如实登记（无代码级事实核验），未修复，见同报告 §P0-5 |
+| P0-6 UNKNOWN 传播审计 | `DONE`——架构缺口已如实登记（UNKNOWN 非第一等可追踪状态），未修复，见同报告 §P0-6 |
+| P0-7 裸入口结构判定 | `DONE`——静态判定，零模型调用，见同报告 §P0-7 |
+| P0-8 判定与阻断清单 | `DONE`——判定 `NOT_READY`，阻断清单 6 条（配置1/结构2/契约2/依赖1），见 [pp-architecture/BLOCKING_LIST_v1.0.json](../pp-architecture/BLOCKING_LIST_v1.0.json) |
+| Checkpoint | 无。任务一次直达，未被中断 |
+
+### T-012.3 COMPLETION CHECK
+
+```yaml
+real_behavior_verified:
+  - 两份治理绑定文件 sha256 现场复算与授权值逐字节一致: PASS
+  - DSL 全部 15 个节点、14 条边逐一读取核对，未抽样: PASS
+protected_targets_unchanged:
+  - DSL 文件未修改: PASS（`git diff` 为空，见下方 Git 收口）
+  - 未新建/修改任何 Dify 应用: PASS（零模型调用，零平台写操作）
+  - 规则仓库零写入: PASS
+not_claimed:
+  - 本任务不产生任何产品/商业结论: 成立
+  - 不代表已修复任何发现的缺口: 成立，全部登记为缺口，未做代码/DSL 改动
+disclosed_anomalies_not_hidden:
+  - 已解决的历史缺陷 M4-FND-029（recovery_llm 内部推理段泄漏）经核对当前版本已修复，如实登记为
+    "历史缺陷已解决"，不计入 P0-8 阻断清单，见报告 COMPLETION CHECK 一节
+```
+
+**终态判定**：P0-1～P0-8 全部完成，COMPLETION CHECK 全项 PASS。
+
+`task_final_status: DONE`
+`execution_disposition`: 不适用（一次直达，非中断态）

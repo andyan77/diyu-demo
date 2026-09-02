@@ -1,0 +1,75 @@
+{
+  "task_id": "DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001",
+  "report_date": "2026-09-01",
+  "tested_source": "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml",
+  "tested_source_sha256": "daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e",
+  "acceptance_baseline": "Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md",
+  "acceptance_baseline_sha256": "55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397",
+  "verdict": "NOT_READY",
+  "blocking_items": [
+    {
+      "id": "B-01",
+      "category": "配置",
+      "missing": "temperature（及 frequency_penalty/presence_penalty/seed）未钉死，全文档零命中",
+      "location": "skill_llm/recovery_llm 共用的 completion_params（YAML 锚点 &id001）",
+      "false_signal_if_unfixed": "同一输入多次实测会出现分数/胜率波动；评审可能把这种波动误判为素材本身难判，也可能恰好一次采样运气好的输出通过评审，从而掩盖系统本身不能稳定复现这一事实——直接让 §21 的是否能够稳定产生这一最终问题变得无法被回答",
+      "standard_ref": "§21"
+    },
+    {
+      "id": "B-02",
+      "category": "结构",
+      "missing": "returns_adapter 只做输出格式校验（标记块/长度/回指/内部术语泄漏），不解析 fact_check_status/used_fact_refs[]/fact_refs[] 等字段内容，无法核验模型自报的事实核验结果是否真实",
+      "location": "returns_adapter 节点 + skill_llm 系统提示词『语义事实核验』章节",
+      "false_signal_if_unfixed": "如果测试这批素材恰好没诱发编造，会被读成系统不会编造事实；但这只证明这次没编，不证明编了会被拦下来——换一批素材或换一个模型版本，同样的编造可能直接流到用户面前而不被任何代码挡住",
+      "standard_ref": "§6.1"
+    },
+    {
+      "id": "B-03",
+      "category": "依赖",
+      "missing": "Layer A 数据源（references/platforms.md 等）从未被任何节点实际读取；ref_projection 只产出该不该加载的规则文字，不含文件真实内容；context.enabled: false；全图无检索/HTTP/工具节点",
+      "location": "ref_projection 模板节点 + skill_llm 的 context 配置",
+      "false_signal_if_unfixed": "实测中模型会稳定按提示词指令输出 PLATFORM_SPEC_UNVERIFIED 并用定性要求兜底，评审容易把每次都规规矩矩降级读成优点，而忽略更根本的问题：Layer A 在这套图里从来没有机会被真正满足过，因为承载它的数据通路根本没接进图里，不是测试素材没给够数据",
+      "standard_ref": "§7 Layer A"
+    },
+    {
+      "id": "B-04",
+      "category": "契约",
+      "missing": "对『当前最热』『现在最少』『最佳发布时间』一类无依据当前市场断言（G0-04 明文列为 Critical Failure），returns_adapter 的 LEAK_PATTERNS 不含这类措辞检测",
+      "location": "returns_adapter 的 LEAK_PATTERNS 列表",
+      "false_signal_if_unfixed": "若测试 Case 恰好没诱发这类断言，会被记成零命中，但这只是这批 Case 没诱发它说，不是系统结构性地不会说；标准 §14 明确要求边界 Case 覆盖用户要求声称当前趋势，等真正跑到这类 Case 时才会发现——那已经是进入商业判断阶段之后，发现得太晚",
+      "standard_ref": "§7 Layer C / G0-04"
+    },
+    {
+      "id": "B-05",
+      "category": "契约",
+      "missing": "标准 §1.3 的 12 项标准输出对象里，第 9 项『标签/话题等平台元素』在 master_package 输出契约里完全没有对应字段（全文穷举 grep 零命中），无从谈 APPLICABLE/NOT_APPLICABLE 判定",
+      "location": "skill_llm 系统提示词内的 master_package 字段清单",
+      "false_signal_if_unfixed": "评审打 M2/M4 分时可能发现这份产出没给标签，如果不知道这是架构层面本来就没建这个字段，容易把这个空缺算成模型这次漏做了（可归因为执行偏差），而不是这项能力这次评测范围里结构性地不产出",
+      "standard_ref": "§1.3 第9项"
+    },
+    {
+      "id": "B-06",
+      "category": "结构",
+      "missing": "标准 §1.3 第 12 项『发布条件/不应发布条件』没有单一显式输出字段，判断结果分散在 release_check/fact_check_status/missing[]/component_return 分支等多处，没有汇聚点",
+      "location": "returns_adapter/delivery_finalize/component_return 等多个节点共同构成，无单一承载字段",
+      "false_signal_if_unfixed": "评审若只读 master_package 正文，容易漏看这条不该发的结论（该结论可能只体现在 Return 分支或 fact_check_status=FAIL，不在用户能直接读到的正文里），把系统其实判断了不该发但没讲清楚误记成系统没有判断能力",
+      "standard_ref": "§1.3 第12项"
+    }
+  ],
+  "category_distribution": {
+    "配置": 1,
+    "结构": 2,
+    "契约": 2,
+    "依赖": 1
+  },
+  "total_blocking_items": 6,
+  "known_resolved_defect_not_counted": {
+    "id": "M4-FND-029",
+    "description": "recovery_llm 内部推理段曾被当成用户正文交付；delivery_finalize 的 _strip_thinking() 已实现与 final_extract 等价的剥离逻辑，当前版本已修复",
+    "reason_not_in_blocking_list": "已解决的历史缺陷，非当前架构缺口"
+  },
+  "observation_not_counted_as_blocker": {
+    "description": "returns_adapter 计算出的 local_block 字段只在 end_ok 的输出里被透出，未被图内任何节点用于路由或阻断决策",
+    "reason_not_in_blocking_list": "已有替代信号通路（delivery_finalize.delivery_outcome: DELIVERED/DELIVERED_AFTER_RECOVERY/NOT_DELIVERED）承担实际的业务成功判定，local_block 冗余但不构成误导性假信号"
+  }
+}
