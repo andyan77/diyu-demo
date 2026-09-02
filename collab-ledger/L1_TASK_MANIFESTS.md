@@ -1657,3 +1657,15 @@ disclosed_anomalies_not_hidden:
 
 `task_final_status: DONE`
 `execution_disposition`: 不适用（本任务正常走完全部步骤，非中断态，不使用 `CHECKPOINT` 语义）
+
+### T-012.5 重排与桌面交付（收尾步，`DONE`；同一 `task_id`，追加于 T-012.4 之后，不覆盖 T-012.4）
+
+| 项 | 值 |
+|---|---|
+| 触发 | 追加语句 `PP_盲评_重排与桌面交付_追加语句_v1.0.md`；母 Prompt sha256 `d9b812f8…9f03`／勘误 001 sha256 `e3f27d94…d498a` 现场复算一致，两份边界继续有效；Founder 2026-09-01「先重排再取件」＋「把仅需盲审的文档放到桌面」 |
+| allowed_delta（本收尾步新增，有界） | 重新分配 15 个交付位甲／乙与两个同源对照位位置、重新生成封存映射；在 `/mnt/c/Users/Administrator/Desktop/` 下新建单一文件夹「笛语盲评_内容发布包装」并写入交付件 |
+| model_call_budget | `0`——本步零模型调用，不占用母 Prompt 预算 |
+| 终结依据 | [L3 §十五 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md#十五-diyu-v1-pp-blind-review-material-generation-001) |
+| 最终交付引用 | 仓库内 `pp-blind-review/delivery/` 与 `pp-blind-review/sealed/FINAL_MAPPING_SEALED.json`（已整份重排覆盖）；桌面 `笛语盲评_内容发布包装/`（[L5 SE-045](L5_SIDE_EFFECTS.md)） |
+| `task_final_status` | `DONE`（收尾步完成，不改变 T-012.4 已登记的本任务终态，也不新增评分/开封/合并 main 授权） |
+| Checkpoint | 无。本步一次直达，未被中断 |

@@ -733,3 +733,19 @@ verification: git ls-remote + git fetch；origin/main 与本地 main、任务分
 | 最终调用统计 | `total_calls_including_retries = 33`（≤ 64）；有效首次成功产出 = 30（13 组基线 26 ＋ 0–3 组同源对照 × 2 中的 4，≤ 32）；1 次因请求体 `thinking` 字段类型错误的 400（已修正，未计入有效产出）；1 次真实传输层失败——PP 侧 `workflow_run_id` 对应的容器内出站 HTTPS 调 DeepSeek 时报 `SSLEOFError: UNEXPECTED_EOF_WHILE_READING`（与 `diyu-infra` skill 记录的 WSL2↔Docker MTU 症状一致），外层 Dify API 仍返回 HTTP 200 但内层 `data.status=failed`——**runner.py 原判据只看外层 200，把这次失败误记为成功**，已现场发现、修正判据、对 X-01/pp 原 attempt 追加 `RETROACTIVE_INVALIDATION` 更正行（不覆盖原行）、重新跑出真实首次成功，并对全部 26 条基线记录逐条复核内层状态，确认仅此一条曾受影响 |
 | 交付组装期间两处需要披露的问题 | ①**泄漏自查遗漏后补上**：PP 侧 `user_delivery` 常带 `status: READY/BLOCKED_LOCAL/NEEDS_DECISION` 内部技术状态头，其中一条被模型自己包成 `**加粗**` 形式，首版剥离正则未命中，人工逐条抽查发现后修正正则、清空交付包与封存映射重新组装，机械扫描与人工复查均确认修正后零命中；详见 `pp-blind-review/freeze/DELIVERY_LEAK_SELF_CHECK_v1.0.json`。②**执行侧操作失误，需向 Founder 明确披露**：为核验 P0-5 随机分配不退化，执行侧在本会话工具调用里打印了（当时那一版、现已作废重排的）封存映射的部分内容——15 个交付位里"甲"对应的真实来源序列（pp/control/same_source）及其汇总计数，这段内容进入了本次会话的可见记录。Founder 本人正是本轮评审人，若在评分前读到该记录，会破坏对应交付位的盲态。**处置**：发现后立即清空 `delivery/` 与旧封存映射、用全新随机种子重新组装整份交付包（新排列与旧排列无关联），使已打印的旧序列不再对应任何实际交付内容；此后未再打印/回显封存映射的任何内容。此项按宪法 A4"披露包括会改变原结论或合同前提的异常"要求，在最终回执与本条一并如实记录，不淡化、不省略 |
 | **状态** | **`CONFIRMED`** |
+
+### SE-045 · PP 盲评：重排与桌面交付收尾步（零模型调用），Desktop 写入 + 任务分支提交推送
+
+| 项 | 值 |
+|---|---|
+| 所属 task_id | `DIYU-V1-PP-BLIND-REVIEW-MATERIAL-GENERATION-001` |
+| 触发 | 追加语句 `PP_盲评_重排与桌面交付_追加语句_v1.0.md`；Founder 2026-09-01「先重排再取件」＋「把仅需盲审的文档放到桌面」 |
+| 操作 1：仓库内重排 | `pp-blind-review/sealed/FINAL_MAPPING_SEALED.json` 与 `pp-blind-review/delivery/01-15` 以全新随机种子整份覆盖重写；产出层（`freeze/`／`inputs/`／`runs/`／`sealed/EXTRA_SLOTS_RAW.json`／`sealed/SAME_SOURCE_CONTROL_ENTRIES.json`）零改动；零模型调用 |
+| 操作 2：Desktop 写入 | 目标 `/mnt/c/Users/Administrator/Desktop/笛语盲评_内容发布包装/`（不在本仓库沙盒默认可写路径内，写入前已现场证实沙盒对该路径拒绝写入——`mkdir` 报 `Read-only file system`，随后以显式扩权执行，仅限该一个新建文件夹子树内的写操作）；新建 15 个槽位子目录 ＋ 3 类文件，共 47 个文件；写入前后各核验一次桌面根目录，仅新增该文件夹一项，既有 `FASHION_COMMERCIAL_VISUAL_CORE_MODULE_v1.0`／`SKILL商业化`／`管理`／`desktop.ini` 零变化 |
+| 保护性核验 | 桌面交付内容取自**重排之后**的仓库 `delivery/`（先重排、后拷贝，顺序核验：拷贝脚本读取时重排脚本已完成写入）；一致性自查脚本确认桌面 47 个文件与重排后仓库 `delivery/` 逐字节一致（同一来源直接 `shutil.copyfile`） |
+| 幂等/重试披露 | 无重试；无失败调用（本步不涉及任何模型/网络调用） |
+| 受控状态 | 可逆——桌面新建文件夹可整体删除且不影响仓库任何内容；仓库内改动均已提交至任务分支，`main` 未动 |
+| 泄漏自查 | 机械扫描（桌面 47 文件 + 仓库 46 文件）`total_hits = 0`；人工抽查 3 文件零命中；`status` 一词全量字面统计 `0`。详见 [L3 §十五 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md#十五-diyu-v1-pp-blind-review-material-generation-001) |
+| 需向 Founder 披露的操作瑕疵 | 执行侧在核验重排前后交付包结构时，把一份按"任务描述内容是否重复"分组的槽位编号明细打印进了本次会话的工具调用输出——不含任何真实来源信息，但暴露了旧一版（即将覆盖）映射的同源对照条目位置分布，与本步约束第 1 条字面冲突。发现后立即停止同类打印、改为仅输出布尔值/总数，并以本条记录的整份重排作为补救，使该段输出对最终交付内容失效。完整记录见 [L3 §十五 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md#十五-diyu-v1-pp-blind-review-material-generation-001)，不淡化、不省略 |
+| 操作 3：Git | 任务分支 `task/pp-blind-review-material-generation-v1` 提交本次仓库内变更（`collab-ledger/` 三本账 + `pp-blind-review/delivery/` + `pp-blind-review/sealed/FINAL_MAPPING_SEALED.json`）并 `git push`（非 force）；`main` 未动；分支历史未改写 |
+| **状态** | **`CONFIRMED`** |
