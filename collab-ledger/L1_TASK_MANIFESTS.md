@@ -1942,6 +1942,10 @@ Founder 对 T-016 交付做独立复核（E2）后确认通过，但另指出两
 
 依据 `RULESIDE-2026-09-02-014` + 索引 §13。同 `task_id`、同分支续接，不新开任务，不产出 TRACE 四件套——`sku-productization/STATIC_GATE_REPORT.json`（由 `sku-productization/static_gate.py` 现场重算）是本轮唯一证据，本条只登记任务号与终态。
 
-`p0_state: NOT_READY` / `p1_state: NOT_READY` / `p1_5_state: NOT_READY`
+`p0_state: NOT_READY` / `p1_state: NOT_READY` / `p1_5_state: NOT_READY`（首轮，`SG5.plugin_normalization_mismatch` 阻断）
 `model_call_budget: 0`
-`task_final_status`（T-016 整体）：维持 `DONE`——E3 是审后续接的静态门禁，未推翻 T1~T5 或 E2-P 任何结论；`PENDING_FOUNDER_DECISION` 项见 STATIC_GATE_REPORT.json 的 `SG5.plugin_normalization_mismatch`。
+`task_final_status`（T-016 整体）：维持 `DONE`——E3 是审后续接的静态门禁，未推翻 T1~T5 或 E2-P 任何结论。
+
+**Founder 裁决（`RULESIDE-2026-09-02-014` 续裁）**：SG5 阻断项非二选一——`temperature: 0` 在 `thinking: true` 下已被插件剥离、系无效声明，与保留 `thinking` 之间无需取舍；六处（P0 两处含 `temperature`+`top_p`，P1/P1.5 各两处含 `top_p`）已删除被剥离参数声明，保留 `max_tokens`/`reasoning_effort`/`thinking`，使声明与实际生效值一致；运行时行为不变。裁决另确认：同输入多次运行的输出变异问题已由该权威裁定为 k≥3 次评分门属实测运行参数，不作为 Gate 输入，不登记 `DYNAMIC_ONLY`；`reasoning_effort: low`（六处皆为最低档）按索引 §五「不影响考试信号的不得阻断」放行，记入报告备注，不阻断。
+
+**重跑终态**：`p0_state: READY_FOR_EMPIRICAL_TESTING` / `p1_state: READY_FOR_EMPIRICAL_TESTING` / `p1_5_state: READY_FOR_EMPIRICAL_TESTING`，三者 `blockers: []`。证据：`sku-productization/STATIC_GATE_REPORT.json`（`sku-productization/static_gate.py` 整体重跑，非单项重跑）。

@@ -858,11 +858,20 @@ def main():
         "was not an option; this is disclosed rather than silently avoided."
     )
 
+    reasoning_effort_note = (
+        "All six skill_llm/component_return completion_params blocks (two per SKU) declare "
+        "reasoning_effort: low. This is a product tuning choice, not a determinism defect: "
+        "per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort "
+        "setting does not by itself corrupt the empirical scoring signal, so it is not raised "
+        "as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only."
+    )
+
     report = {
         "gate": "STATIC_GATE",
         "task_id": "DIYU-V1-STATIC-GATE-001",
         "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13",
         "dynamic_only_scope_note": dynamic_only_scope_note,
+        "reasoning_effort_note": reasoning_effort_note,
         "invariants": {"INV-1": inv1, "INV-2": inv2},
         "skus": results,
     }

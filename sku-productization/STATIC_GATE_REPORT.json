@@ -3,6 +3,7 @@
   "task_id": "DIYU-V1-STATIC-GATE-001",
   "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13",
   "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings. Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. Separately and factually: no empirical_case_ref manifest exists yet for these three SKUs to bind to even if such placeholders were registered — eval/ holds only .gitkeep, and the only populated holdout on this machine (diyu-demo-holdout-custody/) belongs to the unrelated, already-closed M5 task. Per §13.3 any DYNAMIC_ONLY without a real ref counts as BLOCKING, so inventing refs was not an option; this is disclosed rather than silently avoided.",
+  "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
   "invariants": {
     "INV-1": {
       "invariant": "INV-1",
@@ -77,30 +78,8 @@
       "sku": "P0",
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
-      "state": "NOT_READY",
-      "blockers": [
-        {
-          "id": "SG5.plugin_normalization_mismatch",
-          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'temperature', 'thinking', 'top_p'] but the deepseek plugin silently strips ['temperature', 'top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
-          "evidence": {
-            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
-            "node": "skill_llm",
-            "line": null,
-            "declared_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "temperature": 0,
-              "thinking": true,
-              "top_p": 1
-            },
-            "actual_effective_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true
-            }
-          }
-        }
-      ],
+      "state": "READY_FOR_EMPIRICAL_TESTING",
+      "blockers": [],
       "dynamic_only": [],
       "findings": [
         {
@@ -218,20 +197,12 @@
         },
         {
           "id": "SG5.plugin_normalization_mismatch",
-          "verdict": "BLOCKING",
-          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'temperature', 'thinking', 'top_p'] but the deepseek plugin silently strips ['temperature', 'top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "verdict": "PASS",
+          "summary": "declared completion_params survive deepseek plugin normalization unchanged",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
             "node": "skill_llm",
-            "line": null,
-            "declared_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "temperature": 0,
-              "thinking": true,
-              "top_p": 1
-            },
-            "actual_effective_completion_params": {
+            "completion_params": {
               "max_tokens": 384000,
               "reasoning_effort": "low",
               "thinking": true
@@ -302,29 +273,8 @@
       "sku": "P1",
       "capability": "CREATIVE_SCRIPT",
       "q_comm_doc": "Q-COMM-05",
-      "state": "NOT_READY",
-      "blockers": [
-        {
-          "id": "SG5.plugin_normalization_mismatch",
-          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
-          "evidence": {
-            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
-            "node": "skill_llm",
-            "line": null,
-            "declared_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true,
-              "top_p": 0.8
-            },
-            "actual_effective_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true
-            }
-          }
-        }
-      ],
+      "state": "READY_FOR_EMPIRICAL_TESTING",
+      "blockers": [],
       "dynamic_only": [],
       "findings": [
         {
@@ -442,19 +392,12 @@
         },
         {
           "id": "SG5.plugin_normalization_mismatch",
-          "verdict": "BLOCKING",
-          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "verdict": "PASS",
+          "summary": "declared completion_params survive deepseek plugin normalization unchanged",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
             "node": "skill_llm",
-            "line": null,
-            "declared_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true,
-              "top_p": 0.8
-            },
-            "actual_effective_completion_params": {
+            "completion_params": {
               "max_tokens": 384000,
               "reasoning_effort": "low",
               "thinking": true
@@ -525,29 +468,8 @@
       "sku": "P1_5",
       "capability": "PRODUCTION_DIRECTOR",
       "q_comm_doc": "Q-COMM-06",
-      "state": "NOT_READY",
-      "blockers": [
-        {
-          "id": "SG5.plugin_normalization_mismatch",
-          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
-          "evidence": {
-            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
-            "node": "skill_llm",
-            "line": null,
-            "declared_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true,
-              "top_p": 0.8
-            },
-            "actual_effective_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true
-            }
-          }
-        }
-      ],
+      "state": "READY_FOR_EMPIRICAL_TESTING",
+      "blockers": [],
       "dynamic_only": [],
       "findings": [
         {
@@ -665,19 +587,12 @@
         },
         {
           "id": "SG5.plugin_normalization_mismatch",
-          "verdict": "BLOCKING",
-          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "verdict": "PASS",
+          "summary": "declared completion_params survive deepseek plugin normalization unchanged",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
             "node": "skill_llm",
-            "line": null,
-            "declared_completion_params": {
-              "max_tokens": 384000,
-              "reasoning_effort": "low",
-              "thinking": true,
-              "top_p": 0.8
-            },
-            "actual_effective_completion_params": {
+            "completion_params": {
               "max_tokens": 384000,
               "reasoning_effort": "low",
               "thinking": true
