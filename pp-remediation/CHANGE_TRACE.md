@@ -107,4 +107,25 @@ skill_llm.prompt_template[0].text  ==  SKILL_v1.4.md 全文 + "\n---\n\n" + 原�
 2. **`skill_llm` 节点自身的显示标题**（同上，从 `v1.3 TEST` 改成 `v1.4`）——同一顾虑，纯 UI 标签。
 3. **`binding_record.RECORD` 新增 `remediation_task_id` / `remediates_blockers` / `v1_3_frozen_baseline_path` / `v1_3_frozen_baseline_sha256` 四个字段**。理由：这四个字段服务的是"这份自报绑定记录本身能不能被追溯回本次任务与冻结基线"，间接服务全部六条 B-xx 的可审计性，但不是任何单一一条明确要求的产物字段。
 
+---
+
+## 勘误 001 裁定与后续（2026-09-02）
+
+裁定文件：`PP_阻断修复_S1-S4_EXECUTION_PROMPT_v1.0_ERRATA_001.md`
+（sha256 `cd07b33843b09752dd63626f97a41ed3f1717dec70b0e074c0a9db00a5f4c72b`，现场复算一致）。
+
+**上述 3 处越界嫌疑：全部判定不越界，保留，不必回退。** 裁定理由：三处均派生自母 Prompt 绝对约束
+第 1 条（冻结基线不动、修改写进新文件），且是主动列出请求裁定而非默默纳入——这正是该规则想要
+产生的行为。使用边界：`binding_record.RECORD.v1_3_frozen_baseline_sha256` 是**自报值**，
+**不得**作为"基线未改动"的证据；该证据只能来自现场复算（本任务开工前/收尾两次复算均为
+`daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，规则侧亦已独立复算确认一致）。
+
+**S4／B-03 构建期快照：规则侧认定已满足 B-03，不必改。** 防陈旧机制列为跟进项 `FU-01`
+（比对图内 `reference_provenance` 记录的 sha256 与仓库源文件当前 sha256，不一致即构建失败或
+显式告警），排入阶段二目录重构（S6）随参考文件加载器搬进 `core/` 一并做，不阻断本任务，
+不影响本轮实测读数可信度。
+
+**B-01 empirical 冒烟结果**：见 `DETERMINISM_SMOKE_v1.0.md` 勘误 001 补验部分；结论与差异性质
+描述均登记在该文件，本文件不重复。
+
 以上三处如果判定越界，撤销方式很直接：`app.name`/`app.description`/`skill_llm.title` 三处回退成 v1.3 原文；`binding_record.RECORD` 删除这四个新增字段（不影响其余任何逻辑，因为它们只是自报声明，不参与任何路由或阻断判断）。

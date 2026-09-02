@@ -199,6 +199,40 @@ class Console:
         assert st in (200, 201), (st, k)
         return k["token"]
 
+    def import_dsl(self, yaml_content, name, description=None):
+        """从 DSL 字节内容新建一个独立应用（`mode=yaml-content`，不传 `app_id`）。
+
+        路由与 payload 字段核实自本机 `docker-api-1` 容器内
+        `controllers/console/app/app_import.py`（Dify 1.16.1 实际源码，非文档推测）：
+        `POST /console/api/apps/imports`，`AppImportPayload{mode, yaml_content, name, ...}`。
+        `mode` 取值核实自 `services/entities/dsl_entities.py::ImportMode.YAML_CONTENT = "yaml-content"`。
+        返回值含 `app_id` 与 `status`；`status == "pending"` 时需要再调
+        `confirm_import` 才会真正建库，本方法在返回前自动做这一步，调用方拿到的
+        始终是终态结果。**只建新应用，不接受 `app_id` 参数——不提供改动既有应用的能力。**
+        """
+        body = {"mode": "yaml-content", "yaml_content": yaml_content, "name": name}
+        if description is not None:
+            body["description"] = description
+        st, result = self.call("POST", "/console/api/apps/imports", body=body, timeout=120)
+        assert st in (200, 202), (st, result)
+        if result.get("status") == "pending":
+            import_id = result["id"]
+            st2, result2 = self.call("POST", f"/console/api/apps/imports/{import_id}/confirm", body={})
+            assert st2 == 200, (st2, result2)
+            return result2
+        return result
+
+    def publish_workflow(self, app_id, marked_name="", marked_comment=""):
+        """`POST /console/api/apps/{app_id}/workflows/publish`。核实自
+        `controllers/console/app/workflow.py::PublishedWorkflowApi.post`——
+        body 只接受 `marked_name`/`marked_comment`，均可为空，无需传 draft 内容
+        （发布的是该应用当前已保存的草稿图，即刚导入 DSL 时写入的图）。"""
+        st, result = self.call(
+            "POST", f"/console/api/apps/{app_id}/workflows/publish",
+            body={"marked_name": marked_name, "marked_comment": marked_comment}, timeout=60)
+        assert st == 200, (st, result)
+        return result
+
 
 # ------------------------------------------------------------------ Service API
 

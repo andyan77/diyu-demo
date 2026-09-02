@@ -2092,3 +2092,40 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
 - **模型调用实际使用**：`0 / 3`（budget 未用，因 B-01 empirical 冒烟被环境访问阻断，未挪作它用）。
 - **终态**：`task_final_status = DONE`。5/6 条阻断真实关闭，1 条如实登记为 `PARTIALLY_CLOSED`
   并给出复验所需的最小动作，未通过放宽判据或自我声明让它显示为已关闭。
+
+### ATT-002（勘误 001 补验，`DONE`；B-01 由 `PARTIALLY_CLOSED` 转 `CLOSED_AT_CONFIG_LAYER_ONLY`，不重开任务）
+
+- **触发与授权**：`PP_阻断修复_S1-S4_EXECUTION_PROMPT_v1.0_ERRATA_001.md`（sha256
+  `cd07b33843b09752dd63626f97a41ed3f1717dec70b0e074c0a9db00a5f4c72b`，现场复算一致）。母 Prompt
+  逐字节未改，本勘误为追加授权，不构成新 `task_id`。
+- **3 处越界嫌疑裁定**：全部判定不越界，保留，不必回退；同时写死使用边界——
+  `binding_record.RECORD.v1_3_frozen_baseline_sha256` 是自报值，不得作为基线未改动的证据，
+  该证据只能来自现场复算（本任务两次现场复算均为 `daa8365d...b635e`，规则侧独立复算一致）。
+- **S4/B-03 构建期快照**：规则侧认定已满足 B-03，不必改；防陈旧机制列为跟进项 `FU-01`，
+  排入阶段二目录重构（S6），不阻断本任务。
+- **B-01 收尾**：`account-operations/tools/dify_client.py` 新增 `Console.import_dsl`/
+  `Console.publish_workflow`（路由核实自本机 `docker-api-1` 容器内实际源码
+  `controllers/console/app/app_import.py`/`workflow.py`，非文档推测）。用其从
+  `DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`（导入前现场复算 sha256
+  `82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3`，与交付版本一致）新建
+  **一个**独立测试应用（`app_id: 06a7cde6-9462-41b5-a4fd-f44c90740445`）并发布，未改动/删除/
+  发布任何既有应用；建 Service API key，只存在于驱动脚本进程内存，未写入任何文件、未提交仓库。
+  同一输入 `response_mode=blocking` 连跑 3 次：
+  - 第 1 次：`workflow.status=failed`，`api.deepseek.com` 传输层 SSL 故障，`total_tokens=0`，
+    未产出可比较内容——`FAILURE TRIAGE` 归因 `INPUT_ENVIRONMENT_OR_TOOL`，非 `SYSTEM_UNDER_TEST`。
+  - 第 2、3 次：均 `succeeded`，四对标记块结构良好、门控结论（`sufficiency_status`/
+    `artifact_status`/`user_delivery_status`/`returns_status`/`delivery_outcome`/`recovery_used`/
+    `local_block`）完全一致，但正文字节不相同：`raw_preserved` 长度相差 1495 字节（约 31%），
+    `artifact`/`user_delivery` 三份 sha256 两两不同。
+  - **未发起第 4 次调用补样本**：情形 A（三次逐字节相同）已被第 2/3 次互相不一致在数学上排除，
+    与是否补第 3 组无关；且 `model_calls_max: 3` 已用满，无授权可用的第 4 次。
+- **处置（按勘误 001 §3 预先写死的判据，未事后放宽）**：`b01_status: CLOSED_AT_CONFIG_LAYER_ONLY`，
+  `byte_determinism: NOT_ACHIEVABLE_ON_THIS_STACK`，`downgraded_criterion: OUTCOME_STABILITY`——
+  判据从字节一致降级为结果稳定性，稳定性判据的真正收尾方式是搬到阶段三（每 Case 跑 k≥3 次，
+  要求硬门结论一致），已写入 `P0_推进路线图_v1.0.md` 阶段三 S7/S8。**不回改为 `CLOSED`**。
+  差异位置与性质的结构性描述（不贴输出正文）完整记录于
+  [pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md)。
+- **模型调用实际使用**：`3 / 3`（budget 用满；第 1 次为环境故障零 token，第 2、3 次为真实生成，
+  未用于评价输出好坏，只用于比对是否逐字节相同）。
+- **终态**：`task_final_status` 维持 `DONE`；`checkpoint: null`。6 条阻断最终分布：`CLOSED` 5 条、
+  `CLOSED_AT_CONFIG_LAYER_ONLY` 1 条（B-01）；无 `PARTIALLY_CLOSED`、无 `NOT_CLOSED`。

@@ -2,13 +2,16 @@
 task_id: DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001
 blocker: B-01
 model_calls_budget: 3
-model_calls_used: 0
-status: CONFIG_DONE_EMPIRICAL_SMOKE_NOT_EXECUTED
+model_calls_used: 3
+status: CLOSED_AT_CONFIG_LAYER_ONLY
+byte_determinism: NOT_ACHIEVABLE_ON_THIS_STACK
+downgraded_criterion: OUTCOME_STABILITY
+authorized_by: PP_阻断修复_S1-S4_EXECUTION_PROMPT_v1.0_ERRATA_001.md (sha256 cd07b33843b09752dd63626f97a41ed3f1717dec70b0e074c0a9db00a5f4c72b)
 ---
 
 # S1 确定性冒烟 · 结果记录
 
-## 配置层（已完成）
+## 配置层（已完成，勘误 001 前即已就绪，未变）
 
 `skill_llm` / `recovery_llm` 共用的 `completion_params`（YAML 锚点 `&id001`）：
 
@@ -26,27 +29,81 @@ status: CONFIG_DONE_EMPIRICAL_SMOKE_NOT_EXECUTED
 **核实方法**：直接读取本机真实运行的 Docker Dify 实例（`docker-plugin_daemon-1`，`langgenius/dify-plugin-daemon:0.6.3-local`）挂载的插件包文件
 `.../langgenius/deepseek-0.0.20@850efe73.../models/llm/deepseek-v4-flash.yaml`，其 `parameter_rules` 字段只列出六项：`temperature`/`max_tokens`/`top_p`/`thinking`/`reasoning_effort`/`response_format`。不是猜测、不是查文档，是这台机器上实际部署的插件包字节本身。
 
-**可复现性的真实边界（如实登记，不假装钉死了）**：`frequency_penalty`/`presence_penalty`/`seed` 在这个 provider/model 组合下**根本不是合法的 Dify 节点配置项**——不是"钉了但可能不生效"，是"写进去 Dify 大概率会在校验层拒绝或静默丢弃"。可复现性因此只能靠 `temperature=0`（贪心解码）+ `top_p=1`（消除额外核采样带来的截断不确定性）实现，且这本身依赖 provider 推理栈在贪心解码下具有确定性——这一点不是本任务能从配置层单方面保证的（大批量 GPU 推理的浮点非结合性是行业内已知的、贪心解码仍可能非严格逐字节确定的成因，与本次改动无关，是外部约束）。S1 的三次同输入连跑冒烟，就是用来实测这层边界在实践中够不够稳，不是走个形式。
+## 勘误 001 §2 授权的 empirical 冒烟（已执行）
 
-## 确定性冒烟（S1 唯一允许的模型调用）—— 未执行
+**执行路径**：`account-operations/tools/dify_client.py` 新增 `Console.import_dsl` / `Console.publish_workflow`
+（方法体内注明了路由核实来源：本机 `docker-api-1` 容器内 `controllers/console/app/app_import.py` 与
+`controllers/console/app/workflow.py` 的实际源码，不是查文档）。用这两个方法从
+`content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`（导入前现场复算 sha256
+`82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3`，与本任务交付的 v1.4 文件一致）
+新建**一个**独立测试应用并发布，未改动、未删除、未发布任何既有应用（含 v1.3 已发布应用）。
 
-**model_calls_used: 0 / model_calls_budget: 3**
+| 项 | 值 |
+|---|---|
+| 新建测试应用 `app_id` | `06a7cde6-9462-41b5-a4fd-f44c90740445` |
+| 应用名 | `DIYU-M4-PP-v1_4-DETERMINISM-SMOKE-B01-20260902` |
+| 传输路径 | `direct`（本次宿主到 nginx 的端口代理可用，未走 `docker exec` relay） |
+| Service API key | 仅存在于本次驱动脚本进程内存，未写入任何文件、未提交仓库 |
+| 同一输入 | 一组合法输入（`content_body_or_beats`/`content_promise`/`explicit_non_promise`/`facts_registered`/`cta_contract`/`asset_publish_permission` 六项必需字段齐全，另含 `FACT-001`/`FACT-002` 两条可解析事实登记），`response_mode=blocking` |
 
-尝试的执行路径与结果：
+### 三次调用结果
 
-1. `docker exec docker-api-1 curl ... /console/api/setup`（只读 GET，探测当前 Dify 控制台状态）
-   → 被本次会话的 auto-mode 权限分类器拒绝："Blocked by classifier"，未给出可绕过的替代工具。
-2. `python3 account-operations/tools/dify_client.py`（仓库既有、此前任务已验证可用的 Console 登录 + Service API 客户端，只读探测 + 列出应用）
-   → 同样被 auto-mode 权限分类器拒绝，理由相同。
+| 次序 | HTTP 状态 | workflow 状态 | 耗时(s) | 说明 |
+|---|---|---|---|---|
+| 第 1 次 | 200 | `failed` | 3.04 | **传输层故障，非模型行为**：`[models] Server Unavailable Error, HTTPSConnectionPool(host='api.deepseek.com', ...): SSLError(SSLEOFError(...))`。`total_tokens: 0`——模型从未接到请求，未产出任何可比较内容。 |
+| 第 2 次 | 200 | `succeeded` | 144.81 | 正常产出，四对标记块（ARTIFACT/USER_DELIVERY/RETURNS/FACT_LEDGER）各恰好出现一次，结构良好 |
+| 第 3 次 | 200 | `succeeded` | 271.56 | 正常产出，四对标记块同样各恰好出现一次，结构良好 |
 
-两条路径均指向同一个判断：**触达本机真实 Docker Dify 实例（哪怕是只读探测）在当前会话权限模式下需要人工显式批准，不是"重试几次就能绕过"的技术性故障**。按分类器自身的提示："如果你确信这个能力对完成用户请求是必需的，应当停下来向用户说明你想做什么、为什么需要这个权限，让用户决定如何处理"——因此这里停下，未强行寻找绕过方式（包括未尝试改用其它 shell 技巧掩饰同一操作）。
+**`model_calls_used` 记为 `3`**：三次 HTTP 调用均已发出，用满勘误 001 授权的 `3` 次上限。第 1 次
+在到达模型前即因外部网络故障失败（`total_tokens: 0`），**不产出可比较的输出**——这不是本次改动
+造成的，是 `docker-api-1` 到 `api.deepseek.com` 之间的一次瞬时 TLS 故障（`FAILURE TRIAGE` 归因：
+`INPUT_ENVIRONMENT_OR_TOOL`，非 `SYSTEM_UNDER_TEST`）。因此实际可比较的成功产出只有 **2 组**（第 2、3 次），
+不是勘误 001 §3 预设判据表所假定的 3 组——这是判据表未覆盖的情形，如实登记，不强行凑成"3 组都比过"。
 
-**未执行的后果**：无法给出"同一输入连跑 3 次、逐字节比对"的实测结果。**B-01 因此只能记为 `PARTIALLY_CLOSED`**——配置层已经按 provider 真实支持范围做到了能做的最大值，但"配置钉死了" ≠ "实测过确实稳定"，这两件事不能互相顶替，本文件不假装后者已经发生。
+**为什么这不影响"情形 A / 情形 B"的判定，因此未消耗第 4 次调用去补第 3 组**：
+情形 A（三次逐字节相同）要求**全部**样本互相一致；但第 2、3 次已经互相不一致（见下表），
+即"至少存在两组不同的样本"这一事实已经成立，无论假设中的第三个成功样本长什么样，
+都不可能让"全部三组相同"重新成立。因此第 2、3 次的比较结果已足以排除情形 A、
+直接进入情形 B 的处置，一次额外调用不会改变结论，遂未发起（也已用满 `3` 次上限，
+无授权可用的第 4 次）。
 
-## 复验所需的最小动作（供 Founder 授权后执行）
+### 字节级比对（第 2 次 vs 第 3 次，唯二可比较的成功产出）
 
-1. 任取一组合法输入（不含商业敏感信息即可）。
-2. 用同一输入、同一份 `DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`（可通过 `account-operations/tools/dify_client.py` 的 `import_dsl` 能力发布为一个新的、独立于 v1.3 已发布应用的测试应用）连跑 3 次，`response_mode=blocking`。
-3. 比较三次 `outputs`（或至少 `---M4_ARTIFACT---` 块）是否逐字节相同。
-4. 完全相同 → 把比较结果（**只贴哈希或字节数是否一致，不贴输出正文**）补进本文件，`status` 改为 `CLOSED`，`model_calls_used` 改为 `3`。
-5. 不完全相同 → 定位剩余随机源，如实登记为新的阻断项，不得回改 `status` 为 `CLOSED`。
+| 字段 | 第 2 次 | 第 3 次 | 是否相同 |
+|---|---|---|---|
+| `raw_preserved`（完整原文，四块合一） | 4777 字节 | 6272 字节 | **否**（长度相差 1495 字节，sha256 不同） |
+| `artifact`（`---M4_ARTIFACT---` 块） | 3482 字节 | 4566 字节 | **否**（长度相差 1084 字节，约 31%，sha256 不同） |
+| `user_delivery`（`---M4_USER_DELIVERY---` 块） | 818 字节 | 934 字节 | **否**（长度相差 116 字节，约 14%，sha256 不同） |
+
+**结论：三次逐字节相同 —— 不成立。`temperature=0` 的贪心解码在这套 provider/model 栈上不保证字节级确定性，与开工前已如实登记的边界判断一致（浮点非结合性 + `thinking` 推理段的已知成因，非本次改动引入）。**
+
+### 差异位置与差异性质（结构性描述，不贴输出正文，供阶段三设计 k 次判据使用）
+
+- **结构骨架完全一致**：两次都恰好产出四对标记块（`M4_ARTIFACT`/`M4_USER_DELIVERY`/`M4_RETURNS`/`M4_FACT_LEDGER`），各闭合一次，无缺失、无重复。
+- **门控结论完全一致**：`sufficiency_status=SUFFICIENT`、`artifact_status=OK`、`user_delivery_status=OK`、`returns_status=NONE`、`delivery_outcome=DELIVERED`、`recovery_used=false`、`local_block=false`——两次都通过了 B-02（事实核验）与 B-04（市场断言检测）两道代码判定关，未触发任何阻断分支，说明本次差异**不是**来自 B-02/B-04 新增节点的行为不一致，两次走的是完全相同的路由路径。
+- **差异出现在正文内容本身，且不是"仅措辞不同、字段值全同"这一较轻量级**：`ARTIFACT` 块与 `USER_DELIVERY` 块两次的字节长度都有实质性差异（分别约 31% 与 14%），说明模型两次生成的**内容详略程度不同**（例如候选点位、支撑细节的展开量不同），不是同一段内容的同义改写。这一差异幅度比勘误 001 §3 举例的"仅 USER_DELIVERY 块措辞不同、ARTIFACT 块字段值全同"更大，如实登记，不淡化。
+- `M4_RETURNS` 块两次均为 `NONE`（无回改）——这一项在两次运行中保持一致。
+
+## 处置（按勘误 001 §3 预先写死的判据，事后未放宽）
+
+```yaml
+b01_status: CLOSED_AT_CONFIG_LAYER_ONLY
+byte_determinism: NOT_ACHIEVABLE_ON_THIS_STACK
+downgraded_criterion: OUTCOME_STABILITY
+```
+
+判据从"字节一致"降为"结果一致"：验收标准 §21 要的是能否**稳定产生**用户愿意付费的专业增量，
+是结果稳定，不是字节相同。B-01 的真实收尾方式是把稳定性判据搬到阶段三——每 Case 跑 k≥3 次，
+要求硬门结论（本次冒烟里即 `sufficiency_status`/`artifact_status`/`user_delivery_status`/
+`returns_status`/`delivery_outcome` 这一组）在 k 次上一致（全过或全不过），而非字节一致。
+该要求已写在 `P0_推进路线图_v1.0.md` 阶段三 S7/S8——本次两组样本的门控结论恰好就是"全过一致"的
+一个正例数据点，可作为阶段三设计该判据时的参考，但两组不构成统计意义上的验证，不据此宣称阶段三判据已验证。
+
+**不回改为 `CLOSED`**——按勘误 001 预先写死的规则，此结果不允许改判为字节级 `CLOSED`。
+
+## 未使用的补充动作（不擅自执行）
+
+第 1 次调用的传输层失败使实际可比较样本少于协议假设的 3 组；如 Founder 认为需要补一组成功样本
+以获得更完整的三方对比数据（用于阶段三 k 次判据设计，而非改变本文件已给出的处置结论——
+该结论在数学上已被第 2/3 次的不一致锁定，见上文），需另行授权第 4 次调用（超出勘误 001
+`model_calls_max: 3` 的既有上限），执行侧不擅自视为已获授权。

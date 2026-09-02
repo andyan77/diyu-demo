@@ -26,7 +26,7 @@
 | `V1-M1-M4-PHASE0-DECISION-STATE-CLOSEOUT-001` | **已终结 `DONE`**（见 §一.10） | [L1 §T-007](L1_TASK_MANIFESTS.md) · [L3 §九 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) | `main @ c085eb3`（起算；终态见 §一.10） |
 | `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（起算基线；已经 `DIYU-V1-M1-MODULE-LANDING-001` 合并进 `main`，不再是"未合入 main"，见 [L1 新增行](L1_TASK_MANIFESTS.md) 与 `decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md`） |
 | `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001` | **已终结 `DONE`**（见 §一.17；纯静态架构审查，零模型调用，不改变任何 M1–M5 既有状态） | [L1 §T-012](L1_TASK_MANIFESTS.md) · [L3 §十五](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `main @ 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；任务分支 `task/pp-architecture-verification-v1` |
-| `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 `PARTIALLY_CLOSED`——empirical 冒烟待 Founder 授权后补验） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
+| `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`——字节级确定性不可得，降级为结果稳定性判据，已排入阶段三） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -233,20 +233,20 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | Checkpoint | 无。任务已终结，全程未被中断 |
 | 下一步（不在本任务内） | 若要推进到 §21 的实测阶段，需先针对阻断清单 6 条中至少涉及硬性判据的几条（B-01/B-02/B-03/B-04）做工程修复，修复本身是新任务，需独立 Execution Prompt 与授权 |
 
-### 一.18 `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001`（`DONE`；5/6 条阻断关闭，B-01 `PARTIALLY_CLOSED`）
+### 一.18 `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001`（`DONE`；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`）
 
-完整过程见 [L1 §T-013](L1_TASK_MANIFESTS.md)（Task Contract、S1～S5 逐项完成、COMPLETION CHECK）与
-[L3 §十六 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)。本条只登记收尾事实。
+完整过程见 [L1 §T-013](L1_TASK_MANIFESTS.md)（Task Contract、S1～S5 逐项完成、COMPLETION CHECK、§T-013.4 勘误 001 处置）与
+[L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md)（ATT-001 原始执行 + ATT-002 勘误 001 补验）。本条只登记收尾事实。
 
 | 项 | 值 |
 |---|---|
-| 交付物 | [`pp-remediation/`](../pp-remediation/)：`CHANGE_TRACE.md`（15 条改动逐条追溯到 B-xx + 3 处越界嫌疑待裁定）、`BLOCKER_CLOSURE_v1.0.json`（6 条阻断的关闭状态与证据）、`DETERMINISM_SMOKE_v1.0.md`（B-01 配置证据 + 未执行 empirical 冒烟的完整披露）；新文件 [`content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`](../content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml)（sha256 见 CHANGE_TRACE）；新文件 `content-production/skills/packaging-content-for-release-m4/SKILL_v1.4.md`；新文件 `content-production/shared/fact-and-market-guards/MARKET_CLAIM_PATTERNS_v1.0.json` |
-| 关闭状态 | `CLOSED`：B-02／B-03／B-04／B-05／B-06（5 条）。`PARTIALLY_CLOSED`：B-01——配置层已钉到 provider 真实支持范围的最大可复现性，S1 唯一允许的模型调用（同输入连跑 3 次字节比对）因触达本机真实 Docker Dify 实例的两条路径均被 auto-mode 权限分类器拒绝而未执行，如实登记未冒充关闭 |
-| 冻结基线 | `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml` 开工前/收尾各复算一次 sha256，均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变。`packaging-content-for-release-m4/SKILL.md`（m4-v1.3 后继版）与 `packaging-content-for-release/SKILL.md`（源 Skill）同样逐字节未变——均按 CLAUDE.md §6「冻结资产零改动」以新文件承接变化 |
-| 任务终态 | `task_final_status = DONE`；`checkpoint = null`；`execution_disposition` 不适用（一次直达，非中断态）——`PARTIALLY_CLOSED` 的 B-01 是需要新授权的**后续任务的输入**，不构成本任务自身的未完成 |
+| 交付物 | [`pp-remediation/`](../pp-remediation/)：`CHANGE_TRACE.md`（15 条改动逐条追溯到 B-xx + 勘误 001 越界裁定章节）、`BLOCKER_CLOSURE_v1.0.json`（6 条阻断的关闭状态与证据 + `errata_001`/`followups` 段）、`DETERMINISM_SMOKE_v1.0.md`（B-01 配置证据 + 3 次 empirical 冒烟的完整结果与结构性差异描述）；新文件 [`content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`](../content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml)（sha256 见 CHANGE_TRACE）；新文件 `content-production/skills/packaging-content-for-release-m4/SKILL_v1.4.md`；新文件 `content-production/shared/fact-and-market-guards/MARKET_CLAIM_PATTERNS_v1.0.json`；[`account-operations/tools/dify_client.py`](../account-operations/tools/dify_client.py) 新增 `Console.import_dsl`/`Console.publish_workflow`（B-01 补验所需，可复用能力） |
+| 关闭状态 | `CLOSED`：B-02／B-03／B-04／B-05／B-06（5 条）。`CLOSED_AT_CONFIG_LAYER_ONLY`：B-01——配置层已钉到 provider 真实支持范围的最大可复现性；勘误 001 §2 授权后用新建独立测试应用连跑 3 次同输入，第 1 次因 `api.deepseek.com` 传输层 SSL 故障未产出可比较内容（`total_tokens=0`），第 2、3 次成功但不逐字节相同（长度相差约 31%）；按勘误 001 §3 预先写死的判据，判据从字节一致降级为结果稳定性（`downgraded_criterion: OUTCOME_STABILITY`），不得回改为 `CLOSED` |
+| 冻结基线 | `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml` 开工前/收尾各复算一次 sha256，均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变；`v1_3_frozen_baseline_sha256` 字段本身系自报值，不作为基线未改动的独立证据（勘误 001 §1 明文写死的使用边界）。`packaging-content-for-release-m4/SKILL.md`（m4-v1.3 后继版）与 `packaging-content-for-release/SKILL.md`（源 Skill）同样逐字节未变——均按 CLAUDE.md §6「冻结资产零改动」以新文件承接变化 |
+| 任务终态 | `task_final_status = DONE`；`checkpoint = null`；`execution_disposition` 不适用（一次直达，非中断态）——勘误 001 是原任务的追加授权，不构成新 `task_id`，也未重开任务 |
 | 不构成 | 任何产品/商业结论；提升文案质量或改 Skill 专业判断内容（未做）；对 6 条以外任何内容的改动（CHANGE_TRACE 逐条可核） |
-| 待 Founder 裁定 | CHANGE_TRACE.md 末节列出的 3 处越界嫌疑（`app.name`/`app.description`/`skill_llm` 节点标题改名；`binding_record.RECORD` 新增 4 个纯自报追溯字段）——均不追溯到单一 B-xx，已给出撤销方式，未自行判定合规 |
-| 下一步（不在本任务内） | ① B-01 的 empirical 3 次连跑冒烟需 Founder 显式授权触达本机 Docker Dify 实例后单独执行，结果补进 `DETERMINISM_SMOKE_v1.0.md`；② 3 处越界嫌疑的裁定；③ 若 6 条全部确认关闭，下一步是进入 Q-COMM-04 §21 的实测阶段，同样需要独立 Execution Prompt 与授权 |
+| 已裁定（勘误 001） | CHANGE_TRACE.md 原列出的 3 处越界嫌疑（`app.name`/`app.description`/`skill_llm` 节点标题改名；`binding_record.RECORD` 新增 4 个纯自报追溯字段）——**全部判定不越界，保留，不必回退**；S4/B-03 构建期快照认定满足标准，不必改，防陈旧机制列为跟进项 `FU-01`（排入阶段二 S6，不阻断） |
+| 下一步（不在本任务内） | ① 若需为阶段三 k 次判据设计补一组 empirical 样本，需另行授权第 4 次模型调用（本任务 `model_calls_max: 3` 已用满）；② `FU-01` 防陈旧机制排入阶段二目录重构（S6）；③ 若 6 条确认关闭已足够，下一步是进入 Q-COMM-04 §21 的实测阶段，同样需要独立 Execution Prompt 与授权 |
 
 ---
 

@@ -1654,7 +1654,7 @@ disclosed_anomalies_not_hidden:
 
 | 项 | 值 |
 |---|---|
-| S1 · B-01 配置层 | `PARTIALLY_CLOSED`——`completion_params` 已按 provider 真实支持范围钉到最大可复现性（`temperature=0`/`top_p=1`；`frequency_penalty`/`presence_penalty`/`seed` 经核实该 provider/model 不支持，如实登记不冒充钉死）；S1 唯一允许的模型调用（同输入连跑 3 次字节比对）**未执行**——两条触达本机真实 Docker Dify 实例的路径均被本次会话 auto-mode 权限分类器拒绝，需 Founder 显式授权后补做，见 [pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md) |
+| S1 · B-01 配置层 | `CLOSED_AT_CONFIG_LAYER_ONLY`（勘误 001 §2/§3 补验后终态）——`completion_params` 已按 provider 真实支持范围钉到最大可复现性（`temperature=0`/`top_p=1`；`frequency_penalty`/`presence_penalty`/`seed` 经核实该 provider/model 不支持，如实登记不冒充钉死）；勘误 001 授权后用 `dify_client.py` 新增的 `import_dsl`/`publish_workflow` 新建独立测试应用连跑 3 次：第 1 次因 `api.deepseek.com` 传输层 SSL 故障失败（`total_tokens=0`，未产出可比较内容）；第 2、3 次成功但不逐字节相同（长度相差约 31%）；按勘误 001 预先写死的判据降级为 `byte_determinism: NOT_ACHIEVABLE_ON_THIS_STACK` / `downgraded_criterion: OUTCOME_STABILITY`，不回改为 `CLOSED`，见 [pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md) |
 | S2 · B-02 事实核验代码判定 | `CLOSED`——新增独立 code 节点 `fact_verification`；4 组静态单测（合法引用/非法引用/缺失登记块/自报与代码不一致）全部按预期通过，代码判定并覆写 `fact_check_status`，Critical Error 时改写用户交付块并强制 `delivery_outcome`，见 [pp-remediation/BLOCKER_CLOSURE_v1.0.json](../pp-remediation/BLOCKER_CLOSURE_v1.0.json) |
 | S2 · B-04 市场断言检测 | `CLOSED`——新增独立 code 节点 `market_claim_scan`；模式清单外置为独立带版本文件（中文 54 条+英文 16 条），70 条构造用例全部命中；受 Dify 沙箱无仓库文件系统访问限制，节点内嵌入该文件已知版本号的字节快照，已如实登记同步纪律 |
 | S3 · B-05 标签/话题字段 | `CLOSED`——`SKILL_v1.4.md`（`packaging-content-for-release-m4/SKILL.md` 后继版本，逐字节保留原文）新增 `hashtags_topics` 字段，`APPLICABLE \| NOT_APPLICABLE` 判定可产出 |
@@ -1695,3 +1695,16 @@ unnecessary_complexity_remaining:
 
 `task_final_status: DONE`（任务在被授权动作范围内已完整终结；B-01 的 empirical 复验是需要新授权的后续动作，不构成本任务的未完成）
 `execution_disposition`: 不适用（一次直达，非中断态）
+
+### T-013.4 勘误 001 处置（2026-09-02，不重开任务，`task_final_status` 仍为 `DONE`）
+
+`PP_阻断修复_S1-S4_EXECUTION_PROMPT_v1.0_ERRATA_001.md`（sha256 `cd07b33843b09752dd63626f97a41ed3f1717dec70b0e074c0a9db00a5f4c72b`，现场复算一致）对本任务做了三件事：
+
+1. **3 处越界嫌疑裁定**：全部判定不越界，保留，不必回退；同时写死一条使用边界——`binding_record.RECORD.v1_3_frozen_baseline_sha256` 是自报值，不得作为基线未改动的证据，该证据只能来自现场复算。
+2. **B-01 收尾有界新增授权**：用 `dify_client.py` 新增的 `import_dsl`/`publish_workflow` 从 `v1_4.yml` 新建一个独立测试应用并发布（不改动/删除/发布任何既有应用），建 Service API key（不进仓库），同一输入连跑 3 次。结果：第 1 次传输层 SSL 故障（`total_tokens=0`，不计入可比较样本，`FAILURE TRIAGE` 归因 `INPUT_ENVIRONMENT_OR_TOOL`）；第 2、3 次成功但不逐字节相同。按勘误 001 §3 预先写死的判据，`B-01` 终态为 `CLOSED_AT_CONFIG_LAYER_ONLY`，`byte_determinism: NOT_ACHIEVABLE_ON_THIS_STACK`，`downgraded_criterion: OUTCOME_STABILITY`，未回改为 `CLOSED`。差异位置与性质的结构性描述见 `DETERMINISM_SMOKE_v1.0.md`。
+3. **S4/B-03 构建期快照认定**：接受，不必改；防陈旧机制列为跟进项 `FU-01`，排入阶段二（S6），不阻断本任务。
+
+`model_calls_used`（本次补验）：`3 / 3`（budget 用满，第 1 次为环境故障零 token，第 2、3 次为真实生成）。
+`evidence_refs`：[pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md)、[pp-remediation/BLOCKER_CLOSURE_v1.0.json](../pp-remediation/BLOCKER_CLOSURE_v1.0.json)、[pp-remediation/CHANGE_TRACE.md](../pp-remediation/CHANGE_TRACE.md) 勘误 001 章节、[account-operations/tools/dify_client.py](../account-operations/tools/dify_client.py)（新增 `import_dsl`/`publish_workflow`）。
+
+**终态判定（复核）**：6 条阻断中 5 条 `CLOSED`、1 条 `CLOSED_AT_CONFIG_LAYER_ONLY`（结果稳定性判据已按勘误 001 预先写死的规则记录，未事后放宽）。`task_final_status` 维持 `DONE`；`checkpoint: null`。

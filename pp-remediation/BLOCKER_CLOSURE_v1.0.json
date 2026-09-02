@@ -19,8 +19,8 @@
     {
       "id": "B-01",
       "category": "配置",
-      "status": "PARTIALLY_CLOSED",
-      "closure_note": "配置层已按 provider 真实支持范围钉到最大可复现性（temperature=0, top_p=1；thinking/reasoning_effort 本已显式设值不变）。frequency_penalty/presence_penalty/seed 经核实 langgenius/deepseek:0.0.20 的 deepseek-v4-flash parameter_rules 不含这三项，属于该 provider/model 不支持，如实登记，不假装钉死。S1 唯一允许的模型调用（同输入连跑 3 次比对字节）因环境访问被拒未能执行，empirical 证据缺失——不得据此宣称已关闭，见 DETERMINISM_SMOKE_v1.0.md 与本文件 open_items。",
+      "status": "CLOSED_AT_CONFIG_LAYER_ONLY",
+      "closure_note": "配置层已按 provider 真实支持范围钉到最大可复现性（temperature=0, top_p=1；thinking/reasoning_effort 本已显式设值不变）。frequency_penalty/presence_penalty/seed 经核实 langgenius/deepseek:0.0.20 的 deepseek-v4-flash parameter_rules 不含这三项，属于该 provider/model 不支持，如实登记，不假装钉死。勘误 001 §2 授权后，用 dify_client.py 新增的 import_dsl/publish_workflow 新建独立测试应用并执行 3 次同输入 blocking 调用：第 1 次因 api.deepseek.com 传输层 SSL 故障失败（total_tokens=0，未产出可比较内容，FAILURE TRIAGE 归因 INPUT_ENVIRONMENT_OR_TOOL）；第 2、3 次成功但输出不逐字节相同（raw_preserved 长度相差约 31%，sha256 不同）。按勘误 001 §3 预先写死的判据，三次不逐字节相同 ⇒ 判据从字节一致降级为结果一致，不得回改为 CLOSED。",
       "evidence": {
         "completion_params_after": {
           "max_tokens": 384000,
@@ -30,8 +30,18 @@
           "top_p": 1
         },
         "unsupported_params_verified_against": "本机 /models/llm/deepseek-v4-flash.yaml（langgenius/deepseek 插件包实际文件，parameter_rules 六项：temperature/max_tokens/top_p/thinking/reasoning_effort/response_format）",
-        "empirical_3run_identical_output": "NOT_EXECUTED",
-        "empirical_3run_blocker": "docker exec 与既有 dify_client.py 两条路径均被 auto-mode classifier 拒绝，需要 Founder 显式授权后重试"
+        "empirical_smoke_authorized_by": "PP_阻断修复_S1-S4_EXECUTION_PROMPT_v1.0_ERRATA_001.md §2",
+        "empirical_smoke_test_app_id": "06a7cde6-9462-41b5-a4fd-f44c90740445",
+        "empirical_smoke_test_app_dsl_sha256_at_import": "82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3",
+        "model_calls_used": 3,
+        "run1_status": "TRANSPORT_FAILURE_ZERO_TOKENS",
+        "run2_vs_run3_byte_identical": false,
+        "run2_raw_preserved_sha256": "51b75663c65d6f3cc7aba4bd6030f206b79737c170c51d1fe8361f85f55b96f6",
+        "run3_raw_preserved_sha256": "7f27dfdfb349236d76e64a339b1dca327c937a0dcb6743ea59c2e01279ec2413",
+        "run2_vs_run3_gate_conclusions_identical": true,
+        "byte_determinism": "NOT_ACHIEVABLE_ON_THIS_STACK",
+        "downgraded_criterion": "OUTCOME_STABILITY",
+        "full_result_ref": "pp-remediation/DETERMINISM_SMOKE_v1.0.md"
       }
     },
     {
@@ -129,15 +139,32 @@
   ],
   "closure_summary": {
     "CLOSED": 5,
-    "PARTIALLY_CLOSED": 1,
+    "CLOSED_AT_CONFIG_LAYER_ONLY": 1,
+    "PARTIALLY_CLOSED": 0,
     "NOT_CLOSED": 0,
     "total": 6
   },
   "open_items_not_papered_over": [
     {
-      "item": "B-01 的 empirical 3 次同输入连跑字节级比对未执行",
-      "reason": "S1 唯一允许的模型调用需要通过本机真实 Docker Dify 实例执行；直接 docker exec curl 与仓库既有 account-operations/tools/dify_client.py 两条已知可行路径，均被本次会话的 auto-mode 权限分类器拒绝（判定为需要人工确认的动作，未给出可绕过的替代工具）",
-      "disposition": "已完整实现配置层修复并如实登记 provider 支持边界；不冒充已完成 empirical 验证。需要 Founder 显式授权（例如放行 docker exec 到 docker-api-1 的只读/受限调用，或在交互模式下亲自批准）后，用同一份 v1_4.yml、同一组合法输入连跑 3 次并比对，把结果补进 DETERMINISM_SMOKE_v1.0.md。"
+      "item": "B-01 的 empirical 冒烟已执行，但可比较成功样本为 2 组而非协议假设的 3 组",
+      "reason": "第 1 次调用在到达模型前因 api.deepseek.com 传输层 SSL 故障失败，total_tokens=0，未产出可比较内容；勘误 001 §3 的判据表未覆盖'其中一次未产出可比较输出'这一情形",
+      "disposition": "情形 A（三次逐字节相同）在数学上已被第 2/3 次互相不一致排除，与是否补第 3 组无关，因此未消耗额外模型调用去补样本（且已用满 3 次授权上限）。若需补一组数据用于阶段三 k 次判据设计（不改变本文件已给出的处置结论），需另行授权第 4 次调用，执行侧不擅自视为已获授权。"
+    }
+  ],
+  "errata_001": {
+    "file": "PP_阻断修复_S1-S4_EXECUTION_PROMPT_v1.0_ERRATA_001.md",
+    "sha256": "cd07b33843b09752dd63626f97a41ed3f1717dec70b0e074c0a9db00a5f4c72b",
+    "boundary_suspicion_ruling": "全部 3 处判定不越界，保留，不必回退（母 Prompt 第 2 条的目的是杜绝未披露的范围蔓延，三处均派生自绝对约束第 1 条且已主动列出请求裁定）",
+    "usage_boundary": "binding_record.RECORD.v1_3_frozen_baseline_sha256 是自报值，不得作为基线未改动的证据，该证据只能来自现场复算",
+    "b03_acceptance": "构建期字节快照嵌入认定满足 B-03，不必改；防陈旧机制列为跟进项 FU-01，不阻断本任务"
+  },
+  "followups": [
+    {
+      "followup_id": "FU-01",
+      "requirement": "在 DSL 构建/更新流程中加入一步：比对图内 reference_provenance 记录的 sha256 与仓库源文件当前 sha256，不一致即构建失败或显式告警",
+      "scheduled_at": "阶段二目录重构（S6），与参考文件加载器搬进 core/ 一并做",
+      "blocking_for_empirical_testing": false,
+      "related_blocker": "B-03"
     }
   ]
 }
