@@ -324,6 +324,8 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 
 重跑（整体重跑，非单项）后终态：**P0 `READY_FOR_EMPIRICAL_TESTING`、P1 `READY_FOR_EMPIRICAL_TESTING`、P1_5 `READY_FOR_EMPIRICAL_TESTING`**，三者 `blockers: []`；INV-1/INV-2 仍 `PASS`，SG6 三检测器三控仍全绿，`DYNAMIC_ONLY` 仍为 0。
 
+**规划侧独立复核纠正（同日）**：SG6 此前遗漏了对本轮唯一实际触发 BLOCKING 的检测器 `SG5.plugin_normalization_mismatch` 本身做三控自测——按 §13 硬合同要求，任何能判 BLOCKING 的检测器都必须证明自身有区分力，此前"人工读源码确认这次判断正确"不能替代该自测，此前的 READY 判定依据不完整。修复：把该检测器的判定逻辑抽成共享函数（`run_sg5` 生产判定与 `run_sg6` 自测共用同一实现），补齐三控（正例：无剥离参数声明→不阻断；负例：声明 `top_p`→阻断；off-list：声明同一剥离参数集合中未在负例出现的 `presence_penalty`→阻断，防止实现退化为只特判一两个参数名）。整体重跑：三 SKU 终态不变，仍全部 `READY_FOR_EMPIRICAL_TESTING`、`blockers: []`；SG6 现为四个检测器、三控全绿、无自身判 BLOCKING。改动仅限 Gate 脚本与其重算报告，无新流程、无新文档。
+
 ---
 
 ## 二、项目当前可执行动作（Current Handoff）

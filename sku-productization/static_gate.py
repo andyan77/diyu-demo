@@ -606,6 +606,15 @@ def _actual_completion_params(declared):
     return dict(declared)
 
 
+def _plugin_normalization_mismatch(declared):
+    """True iff declared completion_params would be silently altered by the
+    deepseek plugin at send time (declared != actual effective params).
+    Shared by run_sg5 (production check) and run_sg6 (self-test) so the
+    self-test exercises the real detector, not a reimplementation of it."""
+    actual = _actual_completion_params(declared)
+    return sorted(set(declared) - set(actual)) != []
+
+
 def run_sg5(sku, yml_data, skill_md_text, skill_md_path):
     findings = []
 
@@ -628,7 +637,7 @@ def run_sg5(sku, yml_data, skill_md_text, skill_md_path):
     declared = dict(model["completion_params"])
     actual = _actual_completion_params(declared)
     stripped = sorted(set(declared) - set(actual))
-    if stripped:
+    if _plugin_normalization_mismatch(declared):
         findings.append(finding(
             "SG5.plugin_normalization_mismatch", "BLOCKING",
             "provider=%s thinking=%s declares %s but the deepseek plugin silently strips "
@@ -758,6 +767,23 @@ def run_sg6(sku, yml_data):
     offlist3_caught = len(find_tautologies(offlist3)) > 0
 
     findings.append(_sg6_verdict("tautological_gate_scan", pos3, neg3, offlist3_caught))
+
+    # --- detector: plugin_normalization_mismatch (same function SG5 runs in
+    # production — the self-test must exercise the real detector). The
+    # detector's rule is a set-difference over DEEPSEEK_THINKING_STRIPPED_KEYS,
+    # not a per-key special case, so the off-list control uses a different
+    # member of that same fixed set than the negative control does — this
+    # catches the plausible bug of only checking one or two of the four keys
+    # (e.g. an if/elif chain that special-cases temperature/top_p and forgets
+    # presence_penalty/frequency_penalty) instead of diffing the whole set.
+    pos4 = not _plugin_normalization_mismatch(
+        {"max_tokens": 384000, "reasoning_effort": "low", "thinking": True})
+    neg4 = _plugin_normalization_mismatch(
+        {"max_tokens": 384000, "reasoning_effort": "low", "thinking": True, "top_p": 0.8})
+    offlist4 = _plugin_normalization_mismatch(
+        {"max_tokens": 384000, "reasoning_effort": "low", "thinking": True, "presence_penalty": 0.1})
+
+    findings.append(_sg6_verdict("plugin_normalization_mismatch", pos4, neg4, offlist4))
 
     return findings
 
