@@ -1937,3 +1937,11 @@ Founder 对 T-016 交付做独立复核（E2）后确认通过，但另指出两
 **终态判定**：P-1 `DONE`；P-2 `PARTIAL_CLOSED`（专业输入哈希已清，`return_id`/`envelope_hash` 链确认有读者后主动停止并转交 Founder 裁决，不视为遗留缺陷，视为按指令正确执行的"停"）。T-016 整体 `task_final_status` 维持 `DONE`——E2-P 是审后发现的收尾补丁，未推翻 T1~T5 任何已验证结论，P-2 的"停下来"本身就是本补丁指令要求的正确终态之一，不是未完成。
 
 `e2p_final_status: P1_DONE / P2_PARTIAL_CLOSED_PENDING_FOUNDER_DECISION`
+
+### T-016.5 · E3 Static Gate（`DIYU-V1-STATIC-GATE-001`，2026-09-02）
+
+依据 `RULESIDE-2026-09-02-014` + 索引 §13。同 `task_id`、同分支续接，不新开任务，不产出 TRACE 四件套——`sku-productization/STATIC_GATE_REPORT.json`（由 `sku-productization/static_gate.py` 现场重算）是本轮唯一证据，本条只登记任务号与终态。
+
+`p0_state: NOT_READY` / `p1_state: NOT_READY` / `p1_5_state: NOT_READY`
+`model_call_budget: 0`
+`task_final_status`（T-016 整体）：维持 `DONE`——E3 是审后续接的静态门禁，未推翻 T1~T5 或 E2-P 任何结论；`PENDING_FOUNDER_DECISION` 项见 STATIC_GATE_REPORT.json 的 `SG5.plugin_normalization_mismatch`。

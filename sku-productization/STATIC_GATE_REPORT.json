@@ -1,0 +1,748 @@
+{
+  "gate": "STATIC_GATE",
+  "task_id": "DIYU-V1-STATIC-GATE-001",
+  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13",
+  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings. Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. Separately and factually: no empirical_case_ref manifest exists yet for these three SKUs to bind to even if such placeholders were registered — eval/ holds only .gitkeep, and the only populated holdout on this machine (diyu-demo-holdout-custody/) belongs to the unrelated, already-closed M5 task. Per §13.3 any DYNAMIC_ONLY without a real ref counts as BLOCKING, so inventing refs was not an option; this is disclosed rather than silently avoided.",
+  "invariants": {
+    "INV-1": {
+      "invariant": "INV-1",
+      "baseline_commit": "2a5397d",
+      "baseline_commit_rationale": "parent of e8c1838 (E1 三 SKU 统一摘取), the last commit before this task's own lineage began reading content-production/ account-operations/ decision-chain/; diffing from main (01a42b0) would misclassify DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001's earlier, unrelated, already-closed edits as violations",
+      "frozen_trees": {
+        "content-production": {
+          "baseline_tree_sha1": "39e03d4fd0610ad06d2f7cc9f62dc28c9867ba82",
+          "head_tree_sha1": "39e03d4fd0610ad06d2f7cc9f62dc28c9867ba82",
+          "match": true
+        },
+        "account-operations": {
+          "baseline_tree_sha1": "a002dd484cb180a9f003e2154dd41c66ecd636ff",
+          "head_tree_sha1": "a002dd484cb180a9f003e2154dd41c66ecd636ff",
+          "match": true
+        },
+        "decision-chain": {
+          "baseline_tree_sha1": "dc3ca1bbdb5d144603112823f5dfce17ec57a4a5",
+          "head_tree_sha1": "dc3ca1bbdb5d144603112823f5dfce17ec57a4a5",
+          "match": true
+        }
+      },
+      "frozen_files": {
+        "products/p0-publishing-packaging/SKILL_v1.4.md": {
+          "expected_sha256": "1e7a9f1a633b4fa216b55e115ad2aec45dc6822d518ff528a22ad05f734b776e",
+          "actual_sha256": "1e7a9f1a633b4fa216b55e115ad2aec45dc6822d518ff528a22ad05f734b776e",
+          "match": true
+        },
+        "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml": {
+          "expected_sha256": "82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3",
+          "actual_sha256": "82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3",
+          "match": true
+        },
+        "products/p1-creative-director/SKILL.md": {
+          "expected_sha256": "442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa",
+          "actual_sha256": "442dc1262e5d2bbc1d7509b642d34d2b63677f0690b7a325ab88839045ab08aa",
+          "match": true
+        },
+        "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml": {
+          "expected_sha256": "99e8ae5c0eab1a8751160f554e3ecd8d103a385c7a39823692cc45c5c5a574b6",
+          "actual_sha256": "99e8ae5c0eab1a8751160f554e3ecd8d103a385c7a39823692cc45c5c5a574b6",
+          "match": true
+        },
+        "products/p1_5-production-director/SKILL.md": {
+          "expected_sha256": "b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02",
+          "actual_sha256": "b48b88402cd09ea20dc4d4fb3403a451734cac0a7717328ac4c4fa6ad0b0dd02",
+          "match": true
+        },
+        "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml": {
+          "expected_sha256": "a25788a3a28108e15511142e06e822eca36a466459e7f30a8b1581412faa1c4d",
+          "actual_sha256": "a25788a3a28108e15511142e06e822eca36a466459e7f30a8b1581412faa1c4d",
+          "match": true
+        }
+      },
+      "git_diff_intersection": [],
+      "pass": true,
+      "issues": []
+    },
+    "INV-2": {
+      "invariant": "INV-2",
+      "sealed_roots": {
+        "/home/faye/diyu-demo/eval": "EXISTS_INSIDE_ALLOWED_ROOT_BUT_EMPTY",
+        "/home/faye/diyu-demo-holdout-custody": "OUTSIDE_ALLOWED_ROOT"
+      },
+      "read_attempts_into_sealed_roots": [],
+      "network_guard_installed": true,
+      "pass": true
+    }
+  },
+  "skus": [
+    {
+      "sku": "P0",
+      "capability": "PUBLISHING_PACKAGING",
+      "q_comm_doc": "Q-COMM-04",
+      "state": "NOT_READY",
+      "blockers": [
+        {
+          "id": "SG5.plugin_normalization_mismatch",
+          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'temperature', 'thinking', 'top_p'] but the deepseek plugin silently strips ['temperature', 'top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "skill_llm",
+            "line": null,
+            "declared_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "temperature": 0,
+              "thinking": true,
+              "top_p": 1
+            },
+            "actual_effective_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true
+            }
+          }
+        }
+      ],
+      "dynamic_only": [],
+      "findings": [
+        {
+          "id": "SG1.advisory.顾问性②",
+          "verdict": "PASS",
+          "summary": "advisory criterion 顾问性② carried as a self-check item",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/SKILL_v2.0.md",
+            "line": 768
+          }
+        },
+        {
+          "id": "SG1.advisory.顾问性③",
+          "verdict": "PASS",
+          "summary": "advisory criterion 顾问性③ carried as a self-check item",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/SKILL_v2.0.md",
+            "line": 769
+          }
+        },
+        {
+          "id": "SG1.G0.single_highest_value_gap_no_fabrication",
+          "verdict": "PASS",
+          "summary": "component_return asks exactly the single most discriminating missing item and returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "component_return",
+            "line": 120
+          }
+        },
+        {
+          "id": "SG1.G1.fact_verification",
+          "verdict": "PASS",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline carried by node `fact_verification`",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "fact_verification",
+            "title": "事实核验（B-02，代码判定，可复用单元）"
+          }
+        },
+        {
+          "id": "SG1.G1.market_claim_scan",
+          "verdict": "PASS",
+          "summary": "no unverifiable current-market claim carried by node `market_claim_scan`",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "market_claim_scan",
+            "title": "市场断言检测（B-04，独立模式文件，可复用单元）"
+          }
+        },
+        {
+          "id": "SG1.G0.applicable_not_applicable",
+          "verdict": "PASS",
+          "summary": "APPLICABLE/NOT_APPLICABLE determination mechanism present (16 occurrences)",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/SKILL_v2.0.md",
+            "line": 469
+          }
+        },
+        {
+          "id": "SG2.execution_path",
+          "verdict": "PASS",
+          "summary": "reachability=True dominance=True fail_closed=True (entry->delivery paths=2, fail_branch->delivery paths=0)",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "entry": "1788000000001",
+            "guard": "gate_sufficiency",
+            "delivery": "end_ok",
+            "fail_branch": "component_return"
+          }
+        },
+        {
+          "id": "SG3.schema_and_reachability",
+          "verdict": "PASS",
+          "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.tautological_or_hardcoded_gate",
+          "verdict": "PASS",
+          "summary": "no if/while with a compile-time-constant test (literal True/False or a constant-vs-constant comparison) in any code node",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.unknown_fact_misuse",
+          "verdict": "PASS",
+          "summary": "no code path silently rewrites UNKNOWN to FACT",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.guard_variable_source",
+          "verdict": "PASS",
+          "summary": "gate_sufficiency condition reads a genuinely computed field (envelope_check.can_run), not a literal",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "gate_sufficiency"
+          }
+        },
+        {
+          "id": "SG5.assembled_prompt_matches_skill_md",
+          "verdict": "PASS",
+          "summary": "assembled system prompt equals SKILL.md + fixed appendix, byte for byte",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "skill_llm",
+            "assembled_sha256": "5d2f340d8406822983d1fab7263d99d5f888e1835ca4434f72a4356cac05bb30",
+            "skill_md_sha256": "2f25ce977f4b88edccab76909cd896fe7abdf3b6640bd2a8e6c04d07f65c66c2"
+          }
+        },
+        {
+          "id": "SG5.plugin_normalization_mismatch",
+          "verdict": "BLOCKING",
+          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'temperature', 'thinking', 'top_p'] but the deepseek plugin silently strips ['temperature', 'top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "skill_llm",
+            "line": null,
+            "declared_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "temperature": 0,
+              "thinking": true,
+              "top_p": 1
+            },
+            "actual_effective_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true
+            }
+          }
+        },
+        {
+          "id": "SG5.reference_provenance",
+          "verdict": "PASS",
+          "summary": "all 3 declared reference file(s) sha256-match current source content (CF-04 folded in)",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "projection_record",
+            "verified_paths": [
+              "content-production/skills/packaging-content-for-release/references/platforms.md",
+              "content-production/skills/packaging-content-for-release/references/industry-conditions.md",
+              "content-production/skills/packaging-content-for-release/references/examples.md"
+            ]
+          }
+        },
+        {
+          "id": "SG5.no_dependency_on_frozen_old_system",
+          "verdict": "PASS",
+          "summary": "v2.0 DSL sources its live reference content from content-production/skills/packaging-content-for-release/ (shared, current), not from the frozen v1.x baseline file(s) ['products/p0-publishing-packaging/SKILL_v1.4.md', 'products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml']",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "projection_record"
+          }
+        },
+        {
+          "id": "SG6.schema_and_dangling_defects",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.sg2_execution_path",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.tautological_gate_scan",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG4.evidence_and_authority",
+          "verdict": "PASS",
+          "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
+        }
+      ]
+    },
+    {
+      "sku": "P1",
+      "capability": "CREATIVE_SCRIPT",
+      "q_comm_doc": "Q-COMM-05",
+      "state": "NOT_READY",
+      "blockers": [
+        {
+          "id": "SG5.plugin_normalization_mismatch",
+          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "skill_llm",
+            "line": null,
+            "declared_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "actual_effective_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true
+            }
+          }
+        }
+      ],
+      "dynamic_only": [],
+      "findings": [
+        {
+          "id": "SG1.advisory.顾问性②",
+          "verdict": "PASS",
+          "summary": "advisory criterion 顾问性② carried as a self-check item",
+          "evidence": {
+            "file": "products/p1-creative-director/SKILL_v2.0.md",
+            "line": 503
+          }
+        },
+        {
+          "id": "SG1.advisory.顾问性③",
+          "verdict": "PASS",
+          "summary": "advisory criterion 顾问性③ carried as a self-check item",
+          "evidence": {
+            "file": "products/p1-creative-director/SKILL_v2.0.md",
+            "line": 504
+          }
+        },
+        {
+          "id": "SG1.G0.single_highest_value_gap_no_fabrication",
+          "verdict": "PASS",
+          "summary": "component_return asks exactly the single most discriminating missing item and returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "component_return",
+            "line": 120
+          }
+        },
+        {
+          "id": "SG1.G1.fact_verification",
+          "verdict": "PASS",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline carried by node `fact_verification`",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "fact_verification",
+            "title": "事实核验（B-02，代码判定，可复用单元）"
+          }
+        },
+        {
+          "id": "SG1.G1.market_claim_scan",
+          "verdict": "PASS",
+          "summary": "no unverifiable current-market claim carried by node `market_claim_scan`",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "market_claim_scan",
+            "title": "市场断言检测（B-04，独立模式文件，可复用单元）"
+          }
+        },
+        {
+          "id": "SG1.G0.applicable_not_applicable",
+          "verdict": "PASS",
+          "summary": "Q-COMM-05 does not structure requirements as an itemized APPLICABLE/NOT_APPLICABLE output list; not applicable to this SKU",
+          "evidence": {
+            "file": null,
+            "reason": "Q-COMM-05 §1/§4 has no itemized-output-with-applicability requirement (verified by direct read of the standard)"
+          }
+        },
+        {
+          "id": "SG2.execution_path",
+          "verdict": "PASS",
+          "summary": "reachability=True dominance=True fail_closed=True (entry->delivery paths=2, fail_branch->delivery paths=0)",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "entry": "1788000000001",
+            "guard": "gate_sufficiency",
+            "delivery": "end_ok",
+            "fail_branch": "component_return"
+          }
+        },
+        {
+          "id": "SG3.schema_and_reachability",
+          "verdict": "PASS",
+          "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.tautological_or_hardcoded_gate",
+          "verdict": "PASS",
+          "summary": "no if/while with a compile-time-constant test (literal True/False or a constant-vs-constant comparison) in any code node",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.unknown_fact_misuse",
+          "verdict": "PASS",
+          "summary": "no code path silently rewrites UNKNOWN to FACT",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.guard_variable_source",
+          "verdict": "PASS",
+          "summary": "gate_sufficiency condition reads a genuinely computed field (envelope_check.can_run), not a literal",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "gate_sufficiency"
+          }
+        },
+        {
+          "id": "SG5.assembled_prompt_matches_skill_md",
+          "verdict": "PASS",
+          "summary": "assembled system prompt equals SKILL.md + fixed appendix, byte for byte",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "skill_llm",
+            "assembled_sha256": "ca94f8f47d717a4aeb67ead327016acbcec7fd80bc50d1f85770ef05cafc63be",
+            "skill_md_sha256": "c909900cda1406c51fb9ca49a3efe554db7065e7cdd50e946a70d5eeee0d3706"
+          }
+        },
+        {
+          "id": "SG5.plugin_normalization_mismatch",
+          "verdict": "BLOCKING",
+          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "skill_llm",
+            "line": null,
+            "declared_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "actual_effective_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true
+            }
+          }
+        },
+        {
+          "id": "SG5.reference_provenance",
+          "verdict": "PASS",
+          "summary": "all 3 declared reference file(s) sha256-match current source content (CF-04 folded in)",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "projection_record",
+            "verified_paths": [
+              "content-production/skills/writing-creative-scripts/references/platforms.md",
+              "content-production/skills/writing-creative-scripts/references/industry-conditions.md",
+              "content-production/skills/writing-creative-scripts/references/examples.md"
+            ]
+          }
+        },
+        {
+          "id": "SG5.no_dependency_on_frozen_old_system",
+          "verdict": "PASS",
+          "summary": "v2.0 DSL sources its live reference content from content-production/skills/writing-creative-scripts/ (shared, current), not from the frozen v1.x baseline file(s) ['products/p1-creative-director/SKILL.md', 'products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml']",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "projection_record"
+          }
+        },
+        {
+          "id": "SG6.schema_and_dangling_defects",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.sg2_execution_path",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.tautological_gate_scan",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG4.evidence_and_authority",
+          "verdict": "PASS",
+          "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
+        }
+      ]
+    },
+    {
+      "sku": "P1_5",
+      "capability": "PRODUCTION_DIRECTOR",
+      "q_comm_doc": "Q-COMM-06",
+      "state": "NOT_READY",
+      "blockers": [
+        {
+          "id": "SG5.plugin_normalization_mismatch",
+          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "skill_llm",
+            "line": null,
+            "declared_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "actual_effective_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true
+            }
+          }
+        }
+      ],
+      "dynamic_only": [],
+      "findings": [
+        {
+          "id": "SG1.advisory.顾问性②",
+          "verdict": "PASS",
+          "summary": "advisory criterion 顾问性② carried as a self-check item",
+          "evidence": {
+            "file": "products/p1_5-production-director/SKILL_v2.0.md",
+            "line": 534
+          }
+        },
+        {
+          "id": "SG1.advisory.顾问性③",
+          "verdict": "PASS",
+          "summary": "advisory criterion 顾问性③ carried as a self-check item",
+          "evidence": {
+            "file": "products/p1_5-production-director/SKILL_v2.0.md",
+            "line": 535
+          }
+        },
+        {
+          "id": "SG1.G0.single_highest_value_gap_no_fabrication",
+          "verdict": "PASS",
+          "summary": "component_return asks exactly the single most discriminating missing item and returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "component_return",
+            "line": 120
+          }
+        },
+        {
+          "id": "SG1.G1.fact_verification",
+          "verdict": "PASS",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline carried by node `fact_verification`",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "fact_verification",
+            "title": "事实核验（B-02，代码判定，可复用单元）"
+          }
+        },
+        {
+          "id": "SG1.G1.market_claim_scan",
+          "verdict": "PASS",
+          "summary": "no unverifiable current-market claim carried by node `market_claim_scan`",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "market_claim_scan",
+            "title": "市场断言检测（B-04，独立模式文件，可复用单元）"
+          }
+        },
+        {
+          "id": "SG1.G0.applicable_not_applicable",
+          "verdict": "PASS",
+          "summary": "APPLICABLE/NOT_APPLICABLE determination mechanism present (3 occurrences)",
+          "evidence": {
+            "file": "products/p1_5-production-director/SKILL_v2.0.md",
+            "line": 128
+          }
+        },
+        {
+          "id": "SG2.execution_path",
+          "verdict": "PASS",
+          "summary": "reachability=True dominance=True fail_closed=True (entry->delivery paths=2, fail_branch->delivery paths=0)",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "entry": "1788000000001",
+            "guard": "gate_sufficiency",
+            "delivery": "end_ok",
+            "fail_branch": "component_return"
+          }
+        },
+        {
+          "id": "SG3.schema_and_reachability",
+          "verdict": "PASS",
+          "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.tautological_or_hardcoded_gate",
+          "verdict": "PASS",
+          "summary": "no if/while with a compile-time-constant test (literal True/False or a constant-vs-constant comparison) in any code node",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.unknown_fact_misuse",
+          "verdict": "PASS",
+          "summary": "no code path silently rewrites UNKNOWN to FACT",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.guard_variable_source",
+          "verdict": "PASS",
+          "summary": "gate_sufficiency condition reads a genuinely computed field (envelope_check.can_run), not a literal",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "gate_sufficiency"
+          }
+        },
+        {
+          "id": "SG5.assembled_prompt_matches_skill_md",
+          "verdict": "PASS",
+          "summary": "assembled system prompt equals SKILL.md + fixed appendix, byte for byte",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "skill_llm",
+            "assembled_sha256": "2c2b7bc4686216215164a6f91ee4b49e5c67ad220e8b3964f560dc28c662e95a",
+            "skill_md_sha256": "d23c6b0acf3241232bacd1e4d16eda8cb1ae8ccb0468cfad8133855d920049bd"
+          }
+        },
+        {
+          "id": "SG5.plugin_normalization_mismatch",
+          "verdict": "BLOCKING",
+          "summary": "provider=langgenius/deepseek/deepseek thinking=True declares ['max_tokens', 'reasoning_effort', 'thinking', 'top_p'] but the deepseek plugin silently strips ['top_p'] at send time; actual effective params={'max_tokens': 384000, 'reasoning_effort': 'low', 'thinking': True}",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "skill_llm",
+            "line": null,
+            "declared_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true,
+              "top_p": 0.8
+            },
+            "actual_effective_completion_params": {
+              "max_tokens": 384000,
+              "reasoning_effort": "low",
+              "thinking": true
+            }
+          }
+        },
+        {
+          "id": "SG5.reference_provenance",
+          "verdict": "PASS",
+          "summary": "all 3 declared reference file(s) sha256-match current source content (CF-04 folded in)",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "projection_record",
+            "verified_paths": [
+              "content-production/skills/directing-content-production/references/platforms.md",
+              "content-production/skills/directing-content-production/references/industry-conditions.md",
+              "content-production/skills/directing-content-production/references/examples.md"
+            ]
+          }
+        },
+        {
+          "id": "SG5.no_dependency_on_frozen_old_system",
+          "verdict": "PASS",
+          "summary": "v2.0 DSL sources its live reference content from content-production/skills/directing-content-production/ (shared, current), not from the frozen v1.x baseline file(s) ['products/p1_5-production-director/SKILL.md', 'products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml']",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "projection_record"
+          }
+        },
+        {
+          "id": "SG6.schema_and_dangling_defects",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.sg2_execution_path",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.tautological_gate_scan",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG4.evidence_and_authority",
+          "verdict": "PASS",
+          "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
+        }
+      ]
+    }
+  ]
+}
