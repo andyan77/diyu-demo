@@ -1708,3 +1708,67 @@ unnecessary_complexity_remaining:
 `evidence_refs`：[pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md)、[pp-remediation/BLOCKER_CLOSURE_v1.0.json](../pp-remediation/BLOCKER_CLOSURE_v1.0.json)、[pp-remediation/CHANGE_TRACE.md](../pp-remediation/CHANGE_TRACE.md) 勘误 001 章节、[account-operations/tools/dify_client.py](../account-operations/tools/dify_client.py)（新增 `import_dsl`/`publish_workflow`）。
 
 **终态判定（复核）**：6 条阻断中 5 条 `CLOSED`、1 条 `CLOSED_AT_CONFIG_LAYER_ONLY`（结果稳定性判据已按勘误 001 预先写死的规则记录，未事后放宽）。`task_final_status` 维持 `DONE`；`checkpoint: null`。
+
+## §T-014 · `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001`
+
+### T-014.1 Task Contract（稳定合同）
+
+| 项 | 值 |
+|---|---|
+| `task_id` | `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001` |
+| `task_type` | `INDEPENDENT_STATIC_REVERIFICATION`（对 S1-S4 阻断修复结果做独立复验，非复读；核心问题只回答"能不能开始花 token"） |
+| `risk_level` | `LOW`（只读、零模型调用、零文件修改） |
+| 起算基线 | 从 `task/pp-blocker-remediation-s1-s4-v1` 分支起分支，新建任务分支 `task/pp-architecture-reverification-v1` |
+| core_problem | v1_4 的 B-01~B-06 六条阻断是否真的被关闭（不采信 S1-S4 自查结论，从 v1_4 的图本身独立重新推导） |
+| 治理绑定 | `Q-COMM-04_P0_...验收标准_v1.0.md`（sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397` 现场复算一致）；`pp-architecture/BLOCKING_LIST_v1.0.json`（sha256 `8407e363adcd6386a0ff1c5c7ae0767cfebbbdc799a8ceb22352204621237d94` 现场复算一致）；被验对象 `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`（sha256 `82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3`，205504 字节，现场复算一致）；`pp-remediation/BLOCKER_CLOSURE_v1.0.json`／`CHANGE_TRACE.md` 只读，只作待验证声明，不作证据 |
+| allowed_delta | 新文件 `pp-architecture/REVERIFICATION_REPORT_v1.0.md`、`pp-architecture/BLOCKER_RECLOSURE_v1.0.json`；collab-ledger 三本账追加式登记；新建任务分支 |
+| protected_assets | `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`（冻结基线）；被验对象 v1_4.yml 本身（只读，不得修改）；规则仓库（只读）；`main` |
+| explicitly_not_authorized | 修改任何文件（DSL/代码/Skill/守卫）；任何模型调用；新建/发布 Dify 应用；产品/商业结论、PP 质量评价；顺手修复发现的问题；合并 main |
+| model_call_budget | `0`——本任务全程不调 LLM |
+| remote_target | `branch: task/pp-architecture-reverification-v1`；`push: AUTHORIZED`；`merge_main: NOT_AUTHORIZED` |
+
+### T-014.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| R0（原样重跑 P0-1~P0-8） | `DONE`——P0-3(a)(b) 两处原有缺口方向性关闭（标签字段/Layer A 数据通路），P0-3(c)/P0-7 与 v1_3 代码字节级相同未变，P0-4 发现新事实（见 R2），P0-5/P0-6 各有窄范围部分缓解，见 [pp-architecture/REVERIFICATION_REPORT_v1.0.md](../pp-architecture/REVERIFICATION_REPORT_v1.0.md) §R0 |
+| R1（B-01~B-06 逐条独立复验） | `DONE`——6 条状态标签与 BLOCKER_CLOSURE 全部一致（5 条 `CLOSED`、1 条 `CLOSED_AT_CONFIG_LAYER_ONLY`），但 B-01 根因诊断存在实质分歧（插件层参数剔除，非仅浮点非结合性），见同报告 §R1 与 [pp-architecture/BLOCKER_RECLOSURE_v1.0.json](../pp-architecture/BLOCKER_RECLOSURE_v1.0.json) |
+| R2（采样参数是否真的生效） | `DONE`——静态确认 `thinking:true` 时插件源码会剔除 `temperature`/`top_p` 等四项，从不发给上游 API；B-01 配置层修复对 31% 篇幅摆动无效；枚举四类约束选项不做取舍，见同报告 §R2 |
+| R3（G2 计分门篇幅稳定性缺口） | `DONE`——无篇幅上下界约束（唯一下限形同虚设）；M2/M3/M4/M5/M6 五维度受篇幅波动直接影响；无可直接复用的现成约束机制，见同报告 §R3 |
+| R4（判定） | `DONE`——`READY_FOR_EMPIRICAL_TESTING`（按本任务原始冻结判据） |
+| R5（结转清单 CF-01~CF-05，母 Prompt 中途更正新增） | `DONE`——CF-01/02 不适用推迟阶段三；CF-03 部分已处理推迟阶段三；CF-04 推迟 S6 不阻断；**CF-05 独立静态检查**：①③无承载，②仅平台数值参数场景窄范围局部承载；参考文档明文声明 CF-05 无承载时"阻断实测"，时点"S5 判定之后、阶段三之前"，**R4 判定范围不含 CF-05、不因此回改，但已完整披露该独立阻断项**，见同报告 §R5 |
+| v1_3 冻结基线复算 | 开工前/任务结束两次复算均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变 |
+| Checkpoint | 无。任务一次直达，未被中断（含母 Prompt 中途两次更正/追加，均在同一轮次内完整消化，未产生续跑点） |
+
+### T-014.3 COMPLETION CHECK
+
+```yaml
+real_behavior_verified:
+  - 三份治理绑定文件 sha256 现场复算与授权值逐字节一致: PASS
+  - v1_4 全部节点/边结构化解析核对，新增/变更节点代码用独立构造测试向量直接 exec 执行验证: PASS
+  - B-03/B-04 用逐字节 diff／列表级相等性比较（非仅 sha256）独立核实嵌入内容: PASS
+  - B-01 根因通过读取本机实际部署插件包源码确认，非猜测非文档: PASS
+validator_discrimination_verified:
+  - fact_verification/market_claim_scan/delivery_finalize 独立测试均同时覆盖应放行与应阻断两类用例且结果不同: PASS
+core_problem_solved:
+  - "能不能开始花 token"按 R4 冻结判据独立回答: READY_FOR_EMPIRICAL_TESTING；R5 另发现 CF-05 独立阻断项，
+    已完整披露，未因不在 R4 范围内而淡化
+protected_targets_unchanged_or_authorized:
+  - 被验对象 v1_4.yml/Q-COMM-04/BLOCKING_LIST_v1.0.json: 全程只读未修改
+  - v1_3_TEST.yml 冻结基线: 两次复算一致
+  - 规则仓库: 全程只读
+evidence_refs:
+  - pp-architecture/REVERIFICATION_REPORT_v1.0.md
+  - pp-architecture/BLOCKER_RECLOSURE_v1.0.json
+unnecessary_complexity_remaining:
+  - 未发现。独立测试脚本用后即弃，未落入仓库；未新增评分器/知识库/RAG/第二套工作流引擎
+disclosed_anomalies_not_hidden:
+  - B-01 根因诊断与 BLOCKER_CLOSURE 存在实质分歧
+  - B-06/CF-05 均属"字段或声明存在但无代码/承载校验"同型缺口，已分别披露、未混同、未夸大
+  - P0-7 输入契约命名不对齐问题原样未修复，未算作新增阻断
+```
+
+**终态判定**：R0~R5 全部完成，COMPLETION CHECK 全项 PASS。
+
+`task_final_status: DONE`
+`execution_disposition`: 不适用（一次直达，非中断态；母 Prompt 中途两次更正在同一轮次内完整消化）

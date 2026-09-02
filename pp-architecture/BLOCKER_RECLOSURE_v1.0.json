@@ -1,0 +1,180 @@
+{
+  "task_id": "DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001",
+  "report_date": "2026-09-02",
+  "nature": "独立复验（非复读）：BLOCKER_CLOSURE_v1.0.json 只作待验证声明读取，不作证据。全部结论重新从 v1_4 的图本身、插件包源码与仓库源文件独立推导，方法与证据见 pp-architecture/REVERIFICATION_REPORT_v1.0.md",
+  "based_on": {
+    "acceptance_baseline": "Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md",
+    "acceptance_baseline_sha256_recomputed": "55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397",
+    "blocking_list_source": "pp-architecture/BLOCKING_LIST_v1.0.json",
+    "blocking_list_sha256_recomputed": "8407e363adcd6386a0ff1c5c7ae0767cfebbbdc799a8ceb22352204621237d94",
+    "tested_object": "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml",
+    "tested_object_sha256_recomputed": "82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3",
+    "tested_object_bytes": 205504,
+    "reference_only_not_evidence": {
+      "pp-remediation/BLOCKER_CLOSURE_v1.0.json": "e07534323963d94cb654099e6d118d38f3535e39a862ab98efc6109556d12c52",
+      "pp-remediation/CHANGE_TRACE.md": "fb243ca70576b0fb4df8ffdfe9398b000998e6b7ef2141ae0ebbd540ecbcf612"
+    },
+    "frozen_v1_3_baseline": "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml",
+    "frozen_v1_3_baseline_sha256_at_open": "daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e"
+  },
+  "reverification_method": "yaml.safe_load 结构化解析全部节点/边/变量引用链；新增或变更节点的 Python 代码用独立构造的测试向量（非复用 BLOCKER_CLOSURE 已有用例）直接 exec 执行验证真实行为；嵌入字节做逐文件 diff（非仅 sha256 比对）；模式清单做列表级相等性比较（非仅 sha256 比对）；B-01 的 provider 支持性与参数剔除行为直接读取本机实际部署的插件包源码（非文档、非猜测）。零模型调用，零文件修改。",
+  "blockers": [
+    {
+      "id": "B-01",
+      "category": "配置",
+      "closure_claim_status": "CLOSED_AT_CONFIG_LAYER_ONLY",
+      "my_independent_verdict": "CLOSED_AT_CONFIG_LAYER_ONLY",
+      "status_label_consistent_with_blocker_closure": true,
+      "root_cause_diagnosis_consistent_with_blocker_closure": false,
+      "verification_performed": [
+        "现场核对 completion_params：temperature=0、top_p=1（较 v1_3 未设置/0.8 确有改动），frequency_penalty/presence_penalty/seed 未加入",
+        "独立读取本机部署的 langgenius/deepseek-0.0.20@850efe73.../models/llm/deepseek-v4-flash.yaml，确认 parameter_rules 只有 6 项，不含上述三项，独立确认非漏钉",
+        "全文档 grep 确认 &id001/*id001 锚点仅一次定义、一次引用，两个 LLM 节点字节级共享",
+        "新增独立发现：读取本机部署插件包源码 models/llm/llm.py 的 _normalize_model_parameters()，确认 thinking 启用时会把 temperature/top_p/presence_penalty/frequency_penalty 全部从 model_parameters 中 pop() 移除，从不发给上游 API"
+      ],
+      "discrepancy_with_blocker_closure": "BLOCKER_CLOSURE / DETERMINISM_SMOKE_v1.0.md 把 31% 篇幅差异归因于'温度=0 的贪心解码……浮点非结合性 + thinking 推理段的已知成因'，暗示 temperature=0 确实被应用只是仍有微小浮点误差。独立复验通过读取插件源码证明：temperature/top_p 在当前 thinking:true 配置下根本没有被发送到 DeepSeek API，B-01 的配置层修复对该变异源完全无效，v1_4 与 v1_3 在此变异链路上运行时效果几乎无差异。这是比 BLOCKER_CLOSURE 已披露内容更根本的机制，非同一事实的更精确表述。",
+      "evidence_ref": "pp-architecture/REVERIFICATION_REPORT_v1.0.md R1·B-01 与 R2(a)"
+    },
+    {
+      "id": "B-02",
+      "category": "结构",
+      "closure_claim_status": "CLOSED",
+      "my_independent_verdict": "CLOSED",
+      "status_label_consistent_with_blocker_closure": true,
+      "root_cause_diagnosis_consistent_with_blocker_closure": true,
+      "verification_performed": [
+        "从图边确认 fact_verification 位于 final_extract 与 market_claim_scan/returns_adapter 之间，非旁路",
+        "从 returns_adapter.variables 确认 final_text 输入源于 market_claim_scan.verified_text，间接串联到 fact_verification.verified_text",
+        "独立构造 4 组测试向量（非复用 BLOCKER_CLOSURE 用例）直接 exec 执行节点代码：fact_id 可解析时不阻断，不可解析时阻断且用户交付块被真实替换",
+        "独立执行 delivery_finalize 代码，确认 fact_gate_blocked=true 时 delivery_outcome 被强制改写为 NOT_DELIVERED_FACT_CHECK_BLOCKED"
+      ],
+      "scope_limitation_disclosed": "只核验已登记进 FACT_LEDGER 的条目引用是否可解析，不核验陈述真实性；模型若选择不登记某条事实性陈述，该陈述完全绕过此核验——此限制由节点自身 fact_check_scope_note 字段披露，独立复验确认披露准确，非隐藏缺口。FACT_LEDGER 块整体缺失/损坏时按 fail-closed 处理，比 v1_3（无此概念）更安全。",
+      "evidence_ref": "pp-architecture/REVERIFICATION_REPORT_v1.0.md R1·B-02 与 P0-5"
+    },
+    {
+      "id": "B-03",
+      "category": "依赖",
+      "closure_claim_status": "CLOSED",
+      "my_independent_verdict": "CLOSED",
+      "status_label_consistent_with_blocker_closure": true,
+      "root_cause_diagnosis_consistent_with_blocker_closure": true,
+      "verification_performed": [
+        "提取 ref_projection 模板中 platforms.md/examples.md 全文与 industry-conditions.md 五个行业段落，与仓库当前源文件逐字节 diff（非仅 sha256），确认内容一致（除提取方式产生的结尾换行符伪差异外无差异）",
+        "projection_record 记录的三元组 sha256（86fc2cc7.../b085f121.../635c86e1...）与仓库源文件现场复算 sha256 逐一核对一致，确认当前时点未漂移"
+      ],
+      "scope_limitation_disclosed": "构建期字节快照嵌入，非运行时检索；未来源文件更新后若不同步重新生成 DSL，会产生漂移且当前架构无自动检测机制（即 FU-01 指出的问题），但本次复验确认截至当前复验时点未发生漂移。",
+      "evidence_ref": "pp-architecture/REVERIFICATION_REPORT_v1.0.md R1·B-03"
+    },
+    {
+      "id": "B-04",
+      "category": "契约",
+      "closure_claim_status": "CLOSED",
+      "my_independent_verdict": "CLOSED",
+      "status_label_consistent_with_blocker_closure": true,
+      "root_cause_diagnosis_consistent_with_blocker_closure": true,
+      "verification_performed": [
+        "对 market_claim_scan 节点硬编码的中文 54 条 + 英文 16 条模式列表，与外部文件 MARKET_CLAIM_PATTERNS_v1.0.json 的 patterns.zh/patterns.en 数组做列表级相等性比较（非仅 sha256），逐项相同",
+        "独立构造测试文本验证：命中模式的文本被正确阻断且正文被替换，干净文本不受影响",
+        "独立执行 delivery_finalize 确认命中时 delivery_outcome 被强制改写为 NOT_DELIVERED_MARKET_CLAIM_BLOCKED"
+      ],
+      "scope_limitation_disclosed": "字符串命中检测，不做语义消歧（清单自身 scope_note 已披露）；仅扫描 ---M4_USER_DELIVERY--- 块，ARTIFACT 块不扫描但该块本身不直接展示给用户，架构设计上一致，非缺口。",
+      "evidence_ref": "pp-architecture/REVERIFICATION_REPORT_v1.0.md R1·B-04"
+    },
+    {
+      "id": "B-05",
+      "category": "契约",
+      "closure_claim_status": "CLOSED",
+      "my_independent_verdict": "CLOSED",
+      "status_label_consistent_with_blocker_closure": true,
+      "root_cause_diagnosis_consistent_with_blocker_closure": true,
+      "verification_performed": [
+        "提取 skill_llm.prompt_template[0].text（实际发给模型的 system prompt 全文），sha256 现场复算 df4a69b6... 与声称值一致",
+        "确认该文本逐字节等于 SKILL_v1.4.md 全文 + 分隔符 + 原尾部参考投影段说明，证明字段要求真实进入实际 prompt，非仅存在于未被引用的源文件",
+        "确认自检第 15 条同步存在"
+      ],
+      "scope_limitation_disclosed": "无代码节点校验 hashtags_topics 是否真的出现在最终产出中，完全依赖模型遵守提示词——与本架构中绝大多数专业判据字段的执行方式一致，非 B-05 独有缺口，B-05 原始定义只要求字段存在，已满足。",
+      "evidence_ref": "pp-architecture/REVERIFICATION_REPORT_v1.0.md R1·B-05"
+    },
+    {
+      "id": "B-06",
+      "category": "结构",
+      "closure_claim_status": "CLOSED",
+      "my_independent_verdict": "CLOSED",
+      "status_label_consistent_with_blocker_closure": true,
+      "root_cause_diagnosis_consistent_with_blocker_closure": true,
+      "verification_performed": [
+        "同 B-05 方法确认 release_decision 字段定义（三态枚举、推导规则、fact_check_status=FAIL 强制 DO_NOT_PUBLISH、必须原样出现在用户交付块正文里、不删除既有信号）真实进入实际 system prompt",
+        "确认自检第 16 条同步存在",
+        "diff 确认 SKILL_v1.4.md 相对冻结的 packaging-content-for-release-m4/SKILL.md 只有纯增量（除 1 行版本号字符串外无任何删除/修改）"
+      ],
+      "scope_limitation_disclosed": "重点披露（呼应任务给出的怀疑点）：全文档搜索确认没有任何代码节点校验 release_decision 是否真的出现在最终 ---M4_USER_DELIVERY--- 正文里——'必须原样出现'只是提示词层面的要求，架构上无强制。这与 B-02/B-04（均有独立代码节点强制执行）形成明显反差。不构成 B-06 重新开放（B-06 原始缺口是'无单一汇聚字段'，已关闭），但若未来要求汇聚结论必须真的出现在正文里这件事本身要有代码保证，仍是待办项。",
+      "evidence_ref": "pp-architecture/REVERIFICATION_REPORT_v1.0.md R1·B-06"
+    }
+  ],
+  "summary": {
+    "status_label_matches_blocker_closure": 6,
+    "status_label_mismatches_blocker_closure": 0,
+    "root_cause_or_scope_discrepancies_flagged": 1,
+    "root_cause_discrepancy_items": ["B-01"],
+    "scope_limitation_notes_added_not_contradicting_status": ["B-02", "B-06"]
+  },
+  "r0_new_architecture_gaps_found": {
+    "found_new_blocking_item_requiring_new_id": false,
+    "notable_carryover_not_new": [
+      {
+        "item": "P0-7 输入契约命名不对齐：envelope_check/gate_sufficiency/component_return 三节点代码与 v1_3 逐字节相同，Q-COMM-04 §1.2 自然语言最低输入与六个英文字面 key 仍不对齐，裸给最低输入大概率被短路到 component_return",
+        "status": "原样存在，未被本次改动触及，非 B-01~B-06 之一，v1_3 报告已登记的既有观察，非本轮新发现"
+      }
+    ],
+    "notable_partial_improvements_not_full_closure": [
+      {
+        "item": "P0-5/P0-6：fact_verification 新增后对'UNKNOWN 悄悄变成 FACT'提供窄范围部分缓解（只覆盖编号可解析性，不覆盖模型选择不登记的路径）",
+        "status": "非结构性解决，已在 R0/P0-5/P0-6 完整限定边界，不构成新增独立阻断"
+      }
+    ]
+  },
+  "r2_summary": {
+    "sampling_params_effective_under_thinking_true": false,
+    "finding": "本机部署的 langgenius/deepseek-0.0.20 插件包源码 models/llm/llm.py 的 _normalize_model_parameters() 在 thinking 启用时会剔除 temperature/top_p/presence_penalty/frequency_penalty，v1_4 completion_params 里钉死的 temperature=0/top_p=1 从未发送到上游 API；provider/插件文档未披露此行为。B-01 的配置层修复对 31% 篇幅摆动这一变异源无效。",
+    "mitigation_options_enumerated_without_choosing": [
+      "关闭 thinking（可恢复采样参数透传，但会失去推理链路且 reasoning_effort 同时失效）",
+      "更换 provider/model（需重新做供应商可靠性核实与能力面评估）",
+      "输出契约新增篇幅上下界（无代码强制，效果取决于模型服从度）",
+      "新增节点级篇幅后处理（可能需要额外模型调用做多数表决，与零模型调用/实测预算冲突）"
+    ],
+    "does_not_independently_gate_this_round": true
+  },
+  "r3_summary": {
+    "output_length_bounds_exist": "仅一处形同虚设的下限（returns_adapter.MIN_ARTIFACT_CHARS=400，判断近乎空产出，非篇幅质量控制），无任何上限约束",
+    "g2_dimensions_affected_by_length_variance": ["M2", "M3", "M4", "M5", "M6"],
+    "existing_length_constraint_mechanism_reusable": "仅 MIN_ARTIFACT_CHARS 一处，需改造语义与阈值才能派上篇幅稳定性用场，非零改动可用",
+    "does_not_independently_gate_this_round": true
+  },
+  "r4_verdict": "READY_FOR_EMPIRICAL_TESTING",
+  "r4_criteria_check": {
+    "b02_to_b06_all_independently_confirmed_closed": true,
+    "b01_closed_at_config_layer_only_acceptable": true,
+    "r0_found_new_blocking_gap": false,
+    "r2_r3_independently_gate": false
+  },
+  "r4_verdict_scope_note": "R4 判定按本任务原始 Execution Prompt v1.0 冻结的判据范围计算，不包含 CF-05（结转清单第 5 项，见 R5）。R5 独立发现 CF-05（顾问性三条判据）在 v1_4 内无覆盖整个判断面的承载机制，参考文档《笛语商业SKU验收体系_索引与启动规则_v1.0.md》§10 CF-05 自身明文声明此项'是否阻断实测：是'，指定生效时点为'S5 判定之后、阶段三之前'。因此：R4 在其自身判据范围内的结论不变（READY_FOR_EMPIRICAL_TESTING）；但实际进入阶段三花 token 做实测前，CF-05 的承载机制仍须建立，详见 pp-architecture/REVERIFICATION_REPORT_v1.0.md R5。",
+  "r5_summary": {
+    "cf01": "不适用于本任务，推迟到阶段三实测设计",
+    "cf02": "不适用于本任务，推迟到阶段三评测设计",
+    "cf03": "部分已处理（R3 已交付静态事实输入），判据设计本身推迟到阶段三",
+    "cf04": "推迟到 S6（阶段二目录重构），不阻断本任务/不阻断实测",
+    "cf05": {
+      "disposition": "已完成静态承载检查，承载机制未建设，推迟到 S5 判定之后、阶段三之前",
+      "criterion_1_wrong_question_framing_but_still_answer": "无承载",
+      "criterion_2_concrete_method_without_fabricated_precision": "局部承载，范围窄（仅覆盖平台数值参数场景，v1_4.yml 第 1507-1535 行 / 内嵌 platforms.md 第 610-628 行），不覆盖整个判断面",
+      "criterion_3_stance_without_stubbornness": "无承载",
+      "blocks_phase_three_per_reference_document": true
+    }
+  },
+  "v1_3_baseline_recheck_at_close": {
+    "path": "content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml",
+    "sha256_at_open": "daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e",
+    "sha256_at_close": "daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e",
+    "unchanged": true
+  }
+}

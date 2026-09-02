@@ -2129,3 +2129,66 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
   未用于评价输出好坏，只用于比对是否逐字节相同）。
 - **终态**：`task_final_status` 维持 `DONE`；`checkpoint: null`。6 条阻断最终分布：`CLOSED` 5 条、
   `CLOSED_AT_CONFIG_LAYER_ONLY` 1 条（B-01）；无 `PARTIALLY_CLOSED`、无 `NOT_CLOSED`。
+
+## 十七、`DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001`
+
+### ATT-001（一次直达，`DONE`；独立复验非复读，B-02~B-06 独立确认 `CLOSED`，B-01 独立确认 `CLOSED_AT_CONFIG_LAYER_ONLY`，判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项）
+
+- **输入与授权**：治理绑定两份 —— `Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md`
+  （sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397` 现场复算一致，只读）；
+  `pp-architecture/BLOCKING_LIST_v1.0.json`（sha256 `8407e363adcd6386a0ff1c5c7ae0767cfebbbdc799a8ceb22352204621237d94`
+  现场复算一致）。被验对象 `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`
+  （sha256 `82cadc343ecdf9bfd3d8346f94141403d9d2aa95b41b4866f3cd4f2b48f520c3`，205504 字节，现场复算一致）。
+  从 `task/pp-blocker-remediation-s1-s4-v1` 分支起分支，新建任务分支 `task/pp-architecture-reverification-v1`。
+  `pp-remediation/BLOCKER_CLOSURE_v1.0.json`／`CHANGE_TRACE.md` 只作**待验证声明**读取，不作证据。
+- **性质**：独立复验，非复读——本会话与做 S1-S4 施工的会话同源，独立性不靠换会话保证，改用逐条出处强制
+  （节点名/字段路径/行号），指不到 v1_4 具体位置的结论一律记 `NOT_VERIFIED`，不得记 `CLOSED`。
+- **方法**：`yaml.safe_load` 结构化解析 v1_4 全部节点/边/变量引用链；对新增/变更节点代码用**独立构造**的测试向量
+  （非复用 BLOCKER_CLOSURE 已有用例）直接 `exec` 执行验证真实行为；嵌入字节做逐文件 `diff`（非仅 sha256）；
+  模式清单做列表级相等性比较（非仅 sha256）；B-01 的 provider 支持性与参数剔除行为直接读取本机实际部署的
+  `langgenius/deepseek-0.0.20@850efe73...` 插件包源码（非文档、非猜测）。零模型调用，零文件修改。
+- **R0（原样重跑 P0-1~P0-8）**：P0-1/P0-2/P0-8 判定方式与 v1_3 报告一致；P0-3(a)(b) 两处原有缺口
+  （§1.3 第 9 项标签字段缺失、Layer A 数据通路未接入）独立确认方向性关闭；P0-3(c) 六项外壳必填闸
+  代码字节级比对 v1_3 完全相同，未变；P0-4 独立确认 `temperature=0`/`top_p=1` 已写入且 provider 确实不支持
+  `frequency_penalty`/`presence_penalty`/`seed`，但发现新事实（见下）；P0-5/P0-6 各有一项窄范围、非结构性的
+  部分缓解（`fact_verification` 只审计已登记条目，不覆盖"压根不登记"路径），已如实限定边界；P0-7
+  （输入契约字面 key 不对齐）代码字节级比对 v1_3 完全相同，原样存在，非新增缺口。
+- **R1（B-01~B-06 逐条独立复验）**：B-02~B-06 用独立构造测试向量 `exec` 执行 `fact_verification`/
+  `market_claim_scan`/`delivery_finalize` 三节点代码，确认代码级阻断链路真实生效（非表面存在）；B-03 用
+  逐字节 `diff`（非仅 sha256）确认三份参考文件嵌入内容与仓库当前源文件一致；B-04 用列表级相等性比较
+  确认模式清单（中文 54+英文 16）与外部 JSON 文件逐项相同；B-05/B-06 用 `yaml.safe_load` 提取实际
+  `skill_llm.prompt_template[0].text` 逐字节核对确认字段真实送达模型。5 条状态标签与 BLOCKER_CLOSURE
+  **完全一致**（均独立复验为 `CLOSED`）。B-01 状态标签同样与 BLOCKER_CLOSURE 一致（`CLOSED_AT_CONFIG_LAYER_ONLY`），
+  但**根因诊断存在实质分歧**：独立读取本机部署插件包源码 `models/llm/llm.py` 发现
+  `_normalize_model_parameters()` 在 `thinking` 启用时会把 `temperature`/`top_p`/`presence_penalty`/
+  `frequency_penalty` 全部从请求参数剔除、从不发给上游 API——v1_4 DSL 钉死的 `temperature=0`/`top_p=1`
+  在当前配置下对最终发给模型的请求**没有可验证的效果**，这比 `DETERMINISM_SMOKE_v1.0.md` 归因的
+  "浮点非结合性 + thinking 推理段的已知成因"更根本、更严重。另指出 B-06 的"必须原样出现在用户交付块正文里"
+  这一要求全架构无任何代码校验，完全依赖模型遵守提示词（不构成 B-06 重新开放，仅精确刻画执行层面）。
+- **R2（采样参数是否真的生效）**：静态可判——`thinking:true` 时 `temperature`/`top_p` 确实不会被传递给
+  上游 API（插件源码 `_THINKING_UNSUPPORTED_PARAMETERS` 逐项 `pop()`，见上）；插件/provider 文档未披露
+  此行为；已如实登记 B-01 配置层修复对 31% 篇幅摆动这一变异源无效，并枚举四类可选约束机制（图内现成机制/
+  可配置项/结构性约束/节点级后处理）及各自代价，不做取舍。未调用模型。
+- **R3（G2 计分门篇幅稳定性缺口）**：v1_4 无任何篇幅上限约束，唯一下限（`MIN_ARTIFACT_CHARS=400`）
+  形同虚设；M2/M3/M4/M5/M6 五个 G2 维度均直接受篇幅波动影响（只列对应关系，未打分）；图内无可直接复用的
+  篇幅约束机制。
+- **R4（判定）**：`READY_FOR_EMPIRICAL_TESTING`——按本任务原始冻结判据（B-02~B-06 独立确认关闭、B-01
+  `CLOSED_AT_CONFIG_LAYER_ONLY` 可接受、R0 未发现需新增阻断 ID 的缺口、R2/R3 不单独构成 `NOT_READY`）计算。
+- **R5（结转清单 CF-01~CF-05 逐条处置，母 Prompt 中途更正新增）**：治理绑定
+  `笛语商业SKU验收体系_索引与启动规则_v1.0.md` §10（只读当前版本，任务未要求复算 sha256）。
+  CF-01/CF-02 不适用于本任务，推迟到阶段三实测/评测设计；CF-03 部分已处理（R3 已交付静态事实输入），
+  判据设计推迟到阶段三；CF-04（原 FU-01）推迟到 S6，不阻断；**CF-05（顾问性三条判据）独立静态检查**：
+  ①"识别错误提问方式但不拒绝回答"无承载；②"给方法但不伪造精度"仅在平台数值参数场景有窄范围局部承载
+  （v1_4.yml 第 1507–1535 行）；③"有立场但不固执"无承载——与参考文档自身"没有任何一处为顾问性做承载"
+  的判断方向一致。**该参考文档明文声明 CF-05 无承载机制时"是否阻断实测：是"**，指定时点"S5 判定之后、
+  阶段三之前"。**R4 判定不因此回改**（判据范围冻结，不含 CF-05），但已在报告与本条如实披露：CF-05
+  是独立于 R4 范围之外、由规则侧文档自身声明的阶段三前置阻断项，实际进入阶段三花 token 前仍须解决。
+- **过程更正**：任务执行中途，母 Prompt 收到用户两次更正/追加消息——(1) 更正 R2(c) 与 R4 末条的原文措辞
+  （以后一版为准：R2(c) 要求枚举约束选项而非评估对 §21 的意义；R4 末条明确 R2/R3 是"下一轮修复+阶段三"的
+  输入）；(2) 追加要求逐条结论必须附 v1_4 具体出处（节点名/字段路径/行号）、追加 R5 一节。均已在报告正文
+  与本条完整体现，未静默处理。
+- **模型调用实际使用**：`0`（本任务 `model_call_budget = 0`，全程未调用）。
+- **v1_3 冻结基线复算**：开工前与任务结束各复算一次 sha256，两次均为
+  `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变。
+- **终态**：`task_final_status = DONE`。不产生任何产品/商业结论，不评价 PP 效果好坏，未修改任何文件
+  （DSL/代码/Skill/守卫/规则仓库全程只读）。

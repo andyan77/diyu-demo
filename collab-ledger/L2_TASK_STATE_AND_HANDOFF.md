@@ -27,6 +27,7 @@
 | `DIYU-V1-M1-NATURAL-CONTEXT-001` | **已终结 `DONE`**（Founder 2026-08-26 实测 ACCEPT + CTA 授权语义裁决，见 [L2 §四 Checkpoint](#四非终态-checkpoint-区)） | [L3 §十四 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md) · [evidence §19.5](../decision-chain/evidence/V1_M1_CANDIDATE_RUN_001.md) · [最终技术回执](../decision-chain/evidence/V1_M1_FINAL_TECHNICAL_RECEIPT_v1.4.1.yaml) | `main @ 0de99930ff5da5c24aa2fbe34615abe52cc6c7db`（起算基线；已经 `DIYU-V1-M1-MODULE-LANDING-001` 合并进 `main`，不再是"未合入 main"，见 [L1 新增行](L1_TASK_MANIFESTS.md) 与 `decision-chain/evidence/V1_M1_MODULE_LANDING_RECEIPT_v1.0.md`） |
 | `DIYU-V1-PP-ARCHITECTURE-EXTRACTION-AND-VERIFICATION-001` | **已终结 `DONE`**（见 §一.17；纯静态架构审查，零模型调用，不改变任何 M1–M5 既有状态） | [L1 §T-012](L1_TASK_MANIFESTS.md) · [L3 §十五](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `main @ 01a42b0ed97344a67302ecb6778ae4a772eb28b2`；任务分支 `task/pp-architecture-verification-v1` |
 | `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`——字节级确定性不可得，降级为结果稳定性判据，已排入阶段三） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
+| `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001` | **已终结 `DONE`**（见 §一.19；独立复验非复读，B-01~B-06 全部状态标签独立确认与 BLOCKER_CLOSURE 一致，但 B-01 根因诊断存在实质分歧；判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项，须在阶段三之前解决） | [L1 §T-014](L1_TASK_MANIFESTS.md) · [L3 §十七](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `task/pp-blocker-remediation-s1-s4-v1` 分支起分支；任务分支 `task/pp-architecture-reverification-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -247,6 +248,26 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | 不构成 | 任何产品/商业结论；提升文案质量或改 Skill 专业判断内容（未做）；对 6 条以外任何内容的改动（CHANGE_TRACE 逐条可核） |
 | 已裁定（勘误 001） | CHANGE_TRACE.md 原列出的 3 处越界嫌疑（`app.name`/`app.description`/`skill_llm` 节点标题改名；`binding_record.RECORD` 新增 4 个纯自报追溯字段）——**全部判定不越界，保留，不必回退**；S4/B-03 构建期快照认定满足标准，不必改，防陈旧机制列为跟进项 `FU-01`（排入阶段二 S6，不阻断） |
 | 下一步（不在本任务内） | ① 若需为阶段三 k 次判据设计补一组 empirical 样本，需另行授权第 4 次模型调用（本任务 `model_calls_max: 3` 已用满）；② `FU-01` 防陈旧机制排入阶段二目录重构（S6）；③ 若 6 条确认关闭已足够，下一步是进入 Q-COMM-04 §21 的实测阶段，同样需要独立 Execution Prompt 与授权 |
+
+### 一.19 `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001`（`DONE`；独立复验，B-01~B-06 状态标签全部确认，判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项）
+
+完整过程见 [L1 §T-014](L1_TASK_MANIFESTS.md)（Task Contract、R0~R5 逐项完成、COMPLETION CHECK）与
+[L3 §十七 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)。本条只登记收尾事实。
+
+| 项 | 值 |
+|---|---|
+| 性质 | 独立复验非复读——本会话与做 S1-S4 施工的会话同源，独立性不靠换会话保证，改用逐条出处强制（v1_4 节点名/字段路径/行号），指不到具体位置的结论一律记 `NOT_VERIFIED`，不得记 `CLOSED`；BLOCKER_CLOSURE/CHANGE_TRACE 只作待验证声明读取，不作证据 |
+| 交付物 | [`pp-architecture/REVERIFICATION_REPORT_v1.0.md`](../pp-architecture/REVERIFICATION_REPORT_v1.0.md)（R0~R5 全文，含 R1 出处索引附录）、[`pp-architecture/BLOCKER_RECLOSURE_v1.0.json`](../pp-architecture/BLOCKER_RECLOSURE_v1.0.json)（六条阻断独立复验结论结构化记录） |
+| R1 结论 | B-02~B-06 独立复验状态标签与 BLOCKER_CLOSURE **完全一致**（均 `CLOSED`，用独立构造测试向量 `exec` 执行代码验证真实生效，非表面存在）；B-01 状态标签同样一致（`CLOSED_AT_CONFIG_LAYER_ONLY`），但**根因诊断存在实质分歧**——独立读取本机部署插件包源码发现 `thinking:true` 时 `temperature`/`top_p` 等四项会被插件代码剔除、从不发给上游 API，B-01 配置层修复对 31% 篇幅摆动这一变异源实际无效，比 `DETERMINISM_SMOKE_v1.0.md` 归因的"浮点非结合性"更根本 |
+| R0 结论 | 未发现需新增阻断 ID 的架构缺口；P0-3(a)(b) 两处原缺口（标签字段、Layer A 数据通路）方向性关闭；P0-5/P0-6 各有窄范围部分缓解；P0-7（输入契约字面 key 不对齐）原样存在，非新增 |
+| R2/R3 结论 | R2：静态确认采样参数在 thinking 模式下不生效，枚举四类约束选项不做取舍；R3：v1_4 无篇幅上下界约束，M2/M3/M4/M5/M6 五个 G2 维度受篇幅波动直接影响。两者均不单独构成 `NOT_READY`（按冻结判据） |
+| R4 判定 | `READY_FOR_EMPIRICAL_TESTING`（按本任务原始冻结判据） |
+| R5 结论（母 Prompt 中途更正新增） | 治理绑定 `笛语商业SKU验收体系_索引与启动规则_v1.0.md` §10。CF-01/02 不适用推迟阶段三；CF-03 部分已处理（R3 已交付静态事实）推迟阶段三；CF-04（原 FU-01）推迟 S6 不阻断；**CF-05（顾问性三条判据）独立静态检查**：①"识别错误提问但不拒绝"无承载、②"给方法不伪造精度"仅平台数值参数场景窄范围局部承载、③"有立场不固执"无承载——与参考文档自身"没有任何一处为顾问性做承载"方向一致。**该参考文档明文声明 CF-05 无承载时"阻断实测"，时点"S5 判定之后、阶段三之前"**。R4 判定范围不含 CF-05、不因此回改，但已完整披露：**实际进入阶段三花 token 前，CF-05 的承载机制仍须建立** |
+| v1_3 冻结基线 | 开工前/任务结束两次复算均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，逐字节未变 |
+| 任务终态 | `task_final_status = DONE`；`checkpoint = null`；`execution_disposition` 不适用（一次直达；母 Prompt 中途两次更正/追加均在同一轮次内完整消化，未产生续跑点） |
+| 不构成 | 任何产品/商业结论；不评价 PP 效果好坏；不代表 CF-05 承载机制已建立（本任务受零改动约束，只做检查登记，不顺手建） |
+| Checkpoint | 无。任务已终结，全程未被中断 |
+| 下一步（不在本任务内） | ① CF-05 承载机制须在"S5 判定之后、阶段三之前"建立，需独立 Execution Prompt 与授权；② CF-01/02/03 的判据设计推迟到阶段三测试协议设计；③ CF-04 防陈旧机制排入阶段二目录重构（S6）；④ 若 CF-05 建立后确认无新增阻断，下一步是进入 Q-COMM-04 §21 的实测阶段 |
 
 ---
 
