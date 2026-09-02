@@ -1843,3 +1843,79 @@ disclosed_anomalies_not_hidden:
 
 `task_final_status: DONE`
 `execution_disposition`: 不适用（一次直达，非中断态；母 Prompt 中途三处补丁在同一轮次内完整消化）
+
+
+## §T-016 · `DIYU-V1-THREE-SKU-PRODUCTIZATION-001`
+
+### T-016.1 Task Contract（稳定合同）
+
+| 项 | 值 |
+|---|---|
+| `task_id` | `DIYU-V1-THREE-SKU-PRODUCTIZATION-001` |
+| `task_type` | `STATIC_PRODUCTIZATION`（在 E1 摘出的三个产品目录内做字段/机制层面的产品化改造：拆除跨组件协作残留、移植两道防编造代码关卡、补一个缺失输出字段；零模型调用） |
+| `risk_level` | `LOW`（只改 `products/` 下新增版本文件，原树与 E1 六份基线只读不动，零模型调用，零平台写操作） |
+| 起算基线 | 从 `task/three-sku-extraction-v1` 分支起分支，新建任务分支 `task/three-sku-productization-v1` |
+| core_problem | 把 E1 摘出的三个产品（P0/P1/P1.5）里"服务产品间协作、客户用不上"的机制拆掉（T1），把 P0 已有、另两个没有的两道代码级防编造关卡照搬给 P1/P1.5（T2），把 P1 缺失的"什么条件会反转"输出补上（T3）——都是把已确认的差距落地为改动，不是新做判断 |
+| 治理绑定 | `Q-COMM-04`/`Q-COMM-05`/`Q-COMM-06` 三份验收标准（同 T-015 三个 sha256）现场复算一致；`sku-extraction/CONTRACT_ALIGNMENT_P0_v1.0.md`/`_P1_v1.0.md`/`_P1_5_v1.0.md` 三份 E1 产出现场复算 sha256 与母 Prompt 给出值一致 |
+| allowed_delta | `products/` 下六个新增文件（三对 `SKILL_v2.0.md`／`*_v2_0.yml`，不覆盖 E1 基线）；新目录 `sku-productization/` 五份交付物；collab-ledger 三本账追加式登记；新建任务分支 |
+| protected_assets | `content-production/`、`account-operations/`、`decision-chain/` 原树；E1 摘出的六份基线文件（`products/` 下的 `v1_4.yml`/`v1_3_TEST.yml`/`SKILL.md`/`SKILL_v1.4.md`，均只读，任务结束复算确认逐字节未变）；规则仓库（只读）；`main` |
+| explicitly_not_authorized | 修改原树 `content-production/`／`account-operations/`／`decision-chain/` 任何一字；覆盖 E1 六份基线；任何模型调用、建应用、发布工作流；评价任何 SKU 质量、给商业结论、打分；合并 main；force push；改写历史；扩大拆除范围超出三张对齐表 `OUT_OF_CONTRACT` 条目 |
+| model_call_budget | `0`——本任务全程不调 LLM，四项 T2 接线要求均以直接执行节点 Python 代码（`exec()` + 独立构造测试向量）验证，非模型判断 |
+| remote_target | `branch: task/three-sku-productization-v1`；`push: AUTHORIZED`；`merge_main: NOT_AUTHORIZED` |
+
+### T-016.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| 停下来问 | 开工前用 `AskUserQuestion` 一次问了三点：① P1.5 对齐表第 3 项（`subject_domain`/`content_origin_mode[]` 透传，正文①②③未列出）是否本轮一并拆——`裁决：拆`；② P0「局部失效与不反向传播」节的切分边界（表格 vs「发布实例纪律」子节）——`裁决：表格拆、发布实例纪律留`；③ 删字段后正文里的悬空引用怎么处理——`裁决：改写为面向用户的等价表述，判断保留，机制名去掉`。Founder 同时给出两条通用口径：对齐表本身是拆除权威清单（正文①②③是举例不是穷举）；拆的是机制/协议/字段不是判断 |
+| T1 拆除 | `DONE`——P0 删 9 处 SKILL.md 内容 + 11 处 DSL 代码/节点/提示词；P1 删 10 处 SKILL.md 内容（含二次残留排查新发现 4 处）+ 10 处 DSL；P1.5 删 9 处 SKILL.md 内容（含二次残留排查新发现 3 处）+ 6 处 DSL；两个已知坑均核对未踩（P0 CTA 三级接缝完整保留；P1 三种运行模式完整保留，只删表格里的 `ENTRY-04`/`ENTRY-05` 标签列）；发现"Return 闭环"不只是 SKILL.md 文字，`returns_adapter`/`delivery_finalize` 里确有真实代码解析 `---M4_RETURNS---` 块并据此计算交付状态，删除范围据此扩大到运行时代码，三个 SKU 同型重构；详见 [sku-productization/REMOVAL_TRACE.md](../sku-productization/REMOVAL_TRACE.md) |
+| T2 移植 | `DONE`——`fact_verification`（B-02）与 `market_claim_scan`（B-04）两个 code 节点从 P0 逐字节复制到 P1、P1.5，接线位置 `final_extract→fact_verification→market_claim_scan→returns_adapter`；四条接线要求（不可旁路／下游读关卡处理后文本／命中即真实阻断／P1.5 事实登记格式等价物确认已存在）用独立构造测试向量（正向控制 + 2 组负向控制）直接执行节点代码验证，P1、P1.5 全部通过；P1.5 无需新增事实登记格式（`fact_refs[].type` 已作为上游输入继承存在）；详见 [sku-productization/PORT_TRACE.md](../sku-productization/PORT_TRACE.md) |
+| T3 新字段 | `DONE`——P1 新增 `reversal_conditions[]`（「输出」块 `creative_concept` 之后），取材于 CS-1 已有的"未选候选……适用条件"，候选数=1 时不留空；自检新增第 10 条；DSL 系统提示词随 SKILL_v2.0.md 重新派生同步（`grep` 确认出现 2 处）；详见 [sku-productization/P1_REVERSAL_FIELD.md](../sku-productization/P1_REVERSAL_FIELD.md) |
+| T4 静态自查 | `DONE`——四项检查全部 `PASS`：REMOVAL_TRACE 逐条可追溯判据；两个坑未踩；三份 DSL 经 `yaml.safe_load` 结构解析确认无悬空引用无断边（各 16 节点 16 边）；T2 四条接线要求逐条实测通过；详见 [sku-productization/STATIC_SELFCHECK_v1.0.md](../sku-productization/STATIC_SELFCHECK_v1.0.md) |
+| T5 结转清单 | `DONE`——CF-01/02/03 不适用（本任务零模型调用，与 empirical 跑测/盲评/计分门运行期一致性无关）；CF-04 推迟 S6（未改动任何 references 加载/构建流程）；CF-05 维持 E1 结论"推迟到共用层改造"，同时如实记账 T3 的 `reversal_conditions[]` 客观加深了③判据的承载但不构成"已处理"；CF-06 已处理（本轮层面）——未触发拆分，`eval/` 顶层位置未受影响；详见 [sku-productization/CF_DISPOSITION_v1.0.md](../sku-productization/CF_DISPOSITION_v1.0.md) |
+| 原树与 E1 基线复算 | 开工前与任务结束两次复算：`content-production/` 全部 8 份被摘对象原始文件、`products/` 下 E1 摘出的六份基线文件，sha256 均与 E1 `EXTRACTION_MANIFEST_v1.0.json` 登记值一致，逐字节未变；`git status --short` 核对 `content-production/`／`account-operations/`／`decision-chain/` 无任何 `M`（modified）标记 |
+| Checkpoint | 无。任务一次直达，未被中断 |
+
+### T-016.3 COMPLETION CHECK
+
+```yaml
+real_behavior_verified:
+  - 三张对齐表 OUT_OF_CONTRACT 条目逐一定位到 SKILL.md/DSL 具体行并删除或改写，非批量猜测: PASS
+  - 三份 DSL 经 yaml.safe_load 结构化解析，节点/边/variables/outputs 交叉核验无悬空引用无断边: PASS
+  - T2 四条接线要求用独立构造测试向量直接 exec() 执行节点代码验证（正向控制 + 2 组负向控制）: PASS
+  - T3 新字段在 SKILL_v2.0.md 与 DSL 系统提示词两处均确认存在: PASS
+validator_discrimination_verified:
+  - 负向控制 A（伪造不可解析 fact_id）与负向控制 B（注入市场断言短语）分别触发不同的
+    delivery_outcome（NOT_DELIVERED_FACT_CHECK_BLOCKED / NOT_DELIVERED_MARKET_CLAIM_BLOCKED），
+    非同一个笼统的失败状态: PASS
+  - 正向控制（合法输入）与两组负向控制的 delivery_outcome 明确不同（DELIVERED vs NOT_DELIVERED_*）: PASS
+core_problem_solved:
+  - P0/P1/P1.5 三个产品目录内跨组件协作残留已按对齐表逐条拆除，两个已知坑与运行中新发现的
+    subject_domain 双重用途、returns_adapter 代码级 Return 解析均已正确处理: DONE
+  - P1/P1.5 已获得与 P0 同型的两道代码级防编造关卡，四条接线要求实测通过: DONE
+  - P1 的"什么条件会反转"缺口已补上，取材于已有信息而非新造判断: DONE
+protected_targets_unchanged_or_authorized:
+  - content-production/、account-operations/、decision-chain/ 原树: 未改动，两次复算确认
+  - E1 摘出的六份基线文件: 未覆盖，两次复算确认逐字节未变
+  - 规则仓库: 全程只读
+evidence_refs:
+  - sku-productization/REMOVAL_TRACE.md
+  - sku-productization/PORT_TRACE.md
+  - sku-productization/P1_REVERSAL_FIELD.md
+  - sku-productization/STATIC_SELFCHECK_v1.0.md
+  - sku-productization/CF_DISPOSITION_v1.0.md
+unnecessary_complexity_remaining:
+  - 未发现。未新增任何未被明确要求的字段、节点或抽象层；delivery_finalize/returns_adapter
+    的重构范围严格限定在"Return 协议相关代码路径"，未顺手重构其余逻辑
+disclosed_anomalies_not_hidden:
+  - returns_adapter/delivery_finalize 里存在真实代码解析 Return 分隔块并影响交付状态计算，
+    这一点未被任务正文预先点名，发现后主动扩大删除范围至运行时代码并在 REMOVAL_TRACE 中说明理由，
+    未只删 SKILL.md 文字留下"名亡实存"的机制
+  - CF-05 与 T3 新字段的关系已如实记账为"客观加深承载但不构成已处理"，未借 T3 的副作用
+    宣称 CF-05 提前解决
+```
+
+**终态判定**：T1~T5 全部完成，COMPLETION CHECK 全项 PASS。
+
+`task_final_status: DONE`
+`execution_disposition`: 不适用（一次直达，非中断态）

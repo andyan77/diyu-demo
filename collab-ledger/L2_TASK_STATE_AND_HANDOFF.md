@@ -29,6 +29,7 @@
 | `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`——字节级确定性不可得，降级为结果稳定性判据，已排入阶段三） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
 | `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001` | **已终结 `DONE`**（见 §一.19；独立复验非复读，B-01~B-06 全部状态标签独立确认与 BLOCKER_CLOSURE 一致，但 B-01 根因诊断存在实质分歧；判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项，须在阶段三之前解决） | [L1 §T-014](L1_TASK_MANIFESTS.md) · [L3 §十七](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `task/pp-blocker-remediation-s1-s4-v1` 分支起分支；任务分支 `task/pp-architecture-reverification-v1` |
 | `DIYU-V1-THREE-SKU-EXTRACTION-001` | **已终结 `DONE`**（见 §一.20；P0/P1/P1.5 三 SKU 统一摘取完成，共用件清单 6/0/2 分布，三张产品合同对齐表各自差距已登记，CF-05 在三 SKU 上呈现完全一致的缺口分布） | [L1 §T-015](L1_TASK_MANIFESTS.md) · [L3 §十八](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-extraction/](../sku-extraction/) | `task/pp-architecture-reverification-v1` 分支起分支；任务分支 `task/three-sku-extraction-v1` |
+| `DIYU-V1-THREE-SKU-PRODUCTIZATION-001` | **已终结 `DONE`**（见 §一.21；P0/P1/P1.5 三 SKU 产品化改造完成——按对齐表拆除跨组件协作残留、给 P1/P1.5 移植两道防编造代码关卡、给 P1 补齐反转条件字段；两个已知坑均未踩，另发现 `returns_adapter`/`delivery_finalize` 代码级 Return 解析并一并拆除） | [L1 §T-016](L1_TASK_MANIFESTS.md) · [L3 §十九](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-productization/](../sku-productization/) | `task/three-sku-extraction-v1` 分支起分支；任务分支 `task/three-sku-productization-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -289,6 +290,27 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | 不构成 | 任何产品/商业结论；不评价三 SKU 质量；不代表任何差距已修复（全部登记不修，修复属阶段二之后） |
 | Checkpoint | 无。任务已终结，全程未被中断 |
 | 下一步（不在本任务内） | ① 阶段二：对摘出的三个 SKU 各自跑一遍 P0-1~P0-8 静态验证（P0 只做摘取后等价复验，P1/P1.5 走完整八项）；② CF-05 承载机制建设需独立 Execution Prompt；③ P2 的路径选择（重建 M4 形态 / 另起）需 Founder 裁决后另立任务；④ `core/expert-core/`、`adapters/` 子目录若未来比出可复制的共用真源或可分离适配层，需另行补建，本任务不预留空壳 |
+
+---
+
+### 一.21 `DIYU-V1-THREE-SKU-PRODUCTIZATION-001`（`DONE`；三 SKU 产品化改造完成）
+
+完整过程见 [L1 §T-016](L1_TASK_MANIFESTS.md)（Task Contract、T1~T5 逐项完成、COMPLETION CHECK）与
+[L3 §十九 ATT-001](L3_ATTEMPTS_AND_EVIDENCE.md)。本条只登记收尾事实。
+
+| 项 | 值 |
+|---|---|
+| 性质 | 在 E1 摘出的三个产品目录内做字段/机制层面的产品化改造，只改 `products/` 下新增版本文件（三对 `SKILL_v2.0.md`／`*_v2_0.yml`），不覆盖 E1 六份基线，不改任何原树内容 |
+| 停下来问 | 开工前一次 `AskUserQuestion` 问了三点（P1.5 第三项 OUT_OF_CONTRACT 范围／P0 局部失效节切分边界／悬空引用处理方式），Founder 裁决后给出两条通用口径：对齐表本身是拆除权威清单；拆机制不拆判断 |
+| T1 拆除 | `DONE`——按三张对齐表 `OUT_OF_CONTRACT` 条目逐条拆除，P0/P1/P1.5 共 20 余处 SKILL.md 内容改动（含两轮残留排查新发现的多处悬空引用）+ 三份 DSL 同型代码重构（`binding_record` 整节点删除、`envelope_check` 按 SKU 差异化去除 `entry`/`run_mode`、`returns_adapter`/`delivery_finalize` 去除 Return 协议运行时代码）；两个已知坑（P0 CTA、P1 三种运行模式）均核对未踩 |
+| T2 移植 | `DONE`——`fact_verification`（B-02）、`market_claim_scan`（B-04）从 P0 逐字节移植到 P1、P1.5，四条接线要求用独立构造测试向量直接执行节点代码验证全部通过；P1.5 无需新增事实登记格式（`fact_refs[].type` 已作为继承输入存在） |
+| T3 新字段 | `DONE`——P1 新增 `reversal_conditions[]`，取材于 CS-1 已有的未选候选适用条件，DSL 系统提示词同步确认 |
+| T4/T5 | `DONE`——静态自查四项全 `PASS`（含图结构完整性 16 节点/16 边核验）；CF-01~06 逐条处置，CF-05 沿用 E1"推迟到共用层"结论并如实记账 T3 副作用，CF-06 确认未触发拆分 |
+| 过程发现（未被任务正文预先点名） | `returns_adapter`/`delivery_finalize` 存在真实代码解析 `---M4_RETURNS---` 块并影响交付状态计算，只删 SKILL.md 文字会让机制"名亡实存"，据此扩大删除范围到运行时代码，三 SKU 同型处理 |
+| 原树与 E1 基线复算 | 开工前/任务结束两次复算，`content-production/` 全部被摘对象与 `products/` 下六份 E1 基线 sha256 均与 `EXTRACTION_MANIFEST_v1.0.json` 登记值一致，逐字节未变 |
+| 不构成 | 任何产品/商业结论；不评价三 SKU 质量；不代表 CF-04/CF-05 已解决（均按 §10 原文时点推迟） |
+| Checkpoint | 无。任务已终结，全程未被中断 |
+| 下一步（不在本任务内） | ① 阶段二完整八项静态验证（P1/P1.5）与 P0 摘取后等价复验；② CF-05 共用层承载机制建设需独立 Execution Prompt；③ CF-04 参考文件防陈旧机制需在 S6 目录重构时一并做 |
 
 ---
 
