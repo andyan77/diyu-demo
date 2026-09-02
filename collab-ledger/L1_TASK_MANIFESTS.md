@@ -1919,3 +1919,21 @@ disclosed_anomalies_not_hidden:
 
 `task_final_status: DONE`
 `execution_disposition`: 不适用（一次直达，非中断态）
+
+### T-016.4 · E2-P 补丁（跨组件残留收尾，2026-09-02）
+
+Founder 对 T-016 交付做独立复核（E2）后确认通过，但另指出两处跨组件残留未清净，指示开补丁收尾；同 `task_id`、同分支继续，不新开任务、不算 `REBASE`。
+
+| 项 | 值 |
+|---|---|
+| 触发 | Founder E2 复核：E1 六份基线与原树复算通过、两个坑未踩、T2/T3 均就位——**但**发现 P-1（历史改动日志表随 SKILL.md 全文被逐字节拼进 DSL 系统提示词，表内已删字段文字被模型当作现行要求读）与 P-2（`return_id`/`envelope_hash`/`professional_input_hash` 这条链未被 T1 点名，疑似 `binding_record` 同族残留）两处 |
+| P-1 处置 | `DONE`——三份 `SKILL_v2.0.md` 的"本版改了什么"历史表整段移出（不改写、只搬运），逐字迁入新文件 `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md`；随后重跑 `resync_prompts.py` 重新派生三份 DSL 系统提示词；复核 `grep` 三份 `SKILL_v2.0.md` + 三份 `_v2_0.yml` 均 0 命中，图结构复验 `nodes=16 edges=16` 三份一致（无节点边变化） |
+| P-2 处置 | `PARTIAL`——先查后动：`professional_input_hash` 逐节点扫描确认全图零读者（三份文件一致）→ 判定死代码，**已删**（`envelope_check` 计算行 + `outputs` schema 声明）；`envelope_hash`/`return_id` 经核查发现**有读者**（`component_return` 读 `envelope_hash` 构造 `return_id`，`return_id` 随七字段 `ret` 对象被 `json.dumps` 成 `returns_json`，经 `end_component_return` 暴露为该分支 API 级输出）——按指令"有人读→不删、停下来报告"，**未删除**，作为第三个发现记入 [sku-productization/REMOVAL_TRACE.md](../sku-productization/REMOVAL_TRACE.md) §四，留待 Founder 裁决 |
+| 停下来问 | 本补丁内 0 次 `AskUserQuestion`——P-1 是直接执行（指令本身已给出判据与处置方式，"先确认是否参与运行时喂入"这一步已用 `resync_prompts.py` 机制现场核实为"是"，处置随之确定）；P-2 的"有人读"分支按指令本身就是"停下来报告"而非再问一轮，已在 REMOVAL_TRACE 里落笔报告 |
+| 验证 | 三份 DSL 图结构复验（16/16，两轮均一致）；全库范围 grep 十项关键词，六份目标文件仅 `envelope_hash` 非零命中（18 处，逐条核对为 P-2 保留项，非残留）；E1 六份基线 sha256 现场复算与既有记录逐字节一致；`content-production/`／`account-operations/`／`decision-chain/` 原树 `git status`/`git diff` 均干净；`git status --short` 确认本补丁改动范围仅 6 份 `products/` 下 v2.0 文件 + 1 份新增文档 |
+| model_call_budget | `0`（延续 T-016 全程约束） |
+| Checkpoint | 无，一次直达 |
+
+**终态判定**：P-1 `DONE`；P-2 `PARTIAL_CLOSED`（专业输入哈希已清，`return_id`/`envelope_hash` 链确认有读者后主动停止并转交 Founder 裁决，不视为遗留缺陷，视为按指令正确执行的"停"）。T-016 整体 `task_final_status` 维持 `DONE`——E2-P 是审后发现的收尾补丁，未推翻 T1~T5 任何已验证结论，P-2 的"停下来"本身就是本补丁指令要求的正确终态之一，不是未完成。
+
+`e2p_final_status: P1_DONE / P2_PARTIAL_CLOSED_PENDING_FOUNDER_DECISION`

@@ -29,7 +29,7 @@
 | `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` | **已终结 `DONE`**（见 §一.18；5/6 条阻断 `CLOSED`，B-01 勘误 001 补验后终态 `CLOSED_AT_CONFIG_LAYER_ONLY`——字节级确定性不可得，降级为结果稳定性判据，已排入阶段三） | [L1 §T-013](L1_TASK_MANIFESTS.md) · [L3 §十六](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-remediation/](../pp-remediation/) | `task/pp-architecture-verification-v1` 分支起分支；任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
 | `DIYU-V1-PP-ARCHITECTURE-REVERIFICATION-001` | **已终结 `DONE`**（见 §一.19；独立复验非复读，B-01~B-06 全部状态标签独立确认与 BLOCKER_CLOSURE 一致，但 B-01 根因诊断存在实质分歧；判定 `READY_FOR_EMPIRICAL_TESTING`；另发现 CF-05 独立阻断项，须在阶段三之前解决） | [L1 §T-014](L1_TASK_MANIFESTS.md) · [L3 §十七](L3_ATTEMPTS_AND_EVIDENCE.md) · [pp-architecture/](../pp-architecture/) | `task/pp-blocker-remediation-s1-s4-v1` 分支起分支；任务分支 `task/pp-architecture-reverification-v1` |
 | `DIYU-V1-THREE-SKU-EXTRACTION-001` | **已终结 `DONE`**（见 §一.20；P0/P1/P1.5 三 SKU 统一摘取完成，共用件清单 6/0/2 分布，三张产品合同对齐表各自差距已登记，CF-05 在三 SKU 上呈现完全一致的缺口分布） | [L1 §T-015](L1_TASK_MANIFESTS.md) · [L3 §十八](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-extraction/](../sku-extraction/) | `task/pp-architecture-reverification-v1` 分支起分支；任务分支 `task/three-sku-extraction-v1` |
-| `DIYU-V1-THREE-SKU-PRODUCTIZATION-001` | **已终结 `DONE`**（见 §一.21；P0/P1/P1.5 三 SKU 产品化改造完成——按对齐表拆除跨组件协作残留、给 P1/P1.5 移植两道防编造代码关卡、给 P1 补齐反转条件字段；两个已知坑均未踩，另发现 `returns_adapter`/`delivery_finalize` 代码级 Return 解析并一并拆除） | [L1 §T-016](L1_TASK_MANIFESTS.md) · [L3 §十九](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-productization/](../sku-productization/) | `task/three-sku-extraction-v1` 分支起分支；任务分支 `task/three-sku-productization-v1` |
+| `DIYU-V1-THREE-SKU-PRODUCTIZATION-001` | **已终结 `DONE`**（见 §一.21；P0/P1/P1.5 三 SKU 产品化改造完成——按对齐表拆除跨组件协作残留、给 P1/P1.5 移植两道防编造代码关卡、给 P1 补齐反转条件字段；两个已知坑均未踩，另发现 `returns_adapter`/`delivery_finalize` 代码级 Return 解析并一并拆除。**E2-P 补丁已续接**：历史改动日志表已搬出系统提示词；`return_id`/`envelope_hash` 链核查后确认有读者，未删、转交 Founder 裁决——`PENDING_FOUNDER_DECISION`） | [L1 §T-016.4](L1_TASK_MANIFESTS.md) · [L3 §十九 ATT-002](L3_ATTEMPTS_AND_EVIDENCE.md) · [sku-productization/REMOVAL_TRACE.md §四](../sku-productization/REMOVAL_TRACE.md) | `task/three-sku-extraction-v1` 分支起分支；任务分支 `task/three-sku-productization-v1` |
 
 ### 一.1 `COLLAB-LEDGER-BOOTSTRAP-001`
 
@@ -310,7 +310,13 @@ M2 工程任务的完整过程见 [L1 §T-011～§T-011.6](L1_TASK_MANIFESTS.md)
 | 原树与 E1 基线复算 | 开工前/任务结束两次复算，`content-production/` 全部被摘对象与 `products/` 下六份 E1 基线 sha256 均与 `EXTRACTION_MANIFEST_v1.0.json` 登记值一致，逐字节未变 |
 | 不构成 | 任何产品/商业结论；不评价三 SKU 质量；不代表 CF-04/CF-05 已解决（均按 §10 原文时点推迟） |
 | Checkpoint | 无。任务已终结，全程未被中断 |
-| 下一步（不在本任务内） | ① 阶段二完整八项静态验证（P1/P1.5）与 P0 摘取后等价复验；② CF-05 共用层承载机制建设需独立 Execution Prompt；③ CF-04 参考文件防陈旧机制需在 S6 目录重构时一并做 |
+| 下一步（不在本任务内） | ① 阶段二完整八项静态验证（P1/P1.5）与 P0 摘取后等价复验；② CF-05 共用层承载机制建设需独立 Execution Prompt；③ CF-04 参考文件防陈旧机制需在 S6 目录重构时一并做；④ `component_return` 内 `return_id`/`envelope_hash`/`returns_json`→`end_component_return` 这条链是否属于对齐表意义上的 OUT_OF_CONTRACT，需要 Founder 单独裁决（见下方 E2-P 行） |
+
+**E2-P 补丁（2026-09-02，同 `task_id` 续接）**：Founder 复核 E2 通过后指出两处残留，同会话开补丁，未新开任务：
+- **P-1**（历史改动日志表随系统提示词泄漏）：`DONE`。三份 `SKILL_v2.0.md` 的"本版改了什么"历史表整段移出，逐字迁入 `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md`；`resync_prompts.py` 重新派生三份 DSL 系统提示词；复核 grep 0 命中，图结构 `16/16` 不变。
+- **P-2**（`return_id` 链核查）：`PARTIAL_CLOSED`。`professional_input_hash` 核实全图零读者，判死代码，已删（三份文件各两处）。`envelope_hash`/`return_id` 核实后确认有读者——`component_return` 用 `envelope_hash` 构造 `return_id`，经 `returns_json` 由 `end_component_return`（该分支 API 级终态输出节点）读取——按指令"有人读→不删、报告"处理，**未删除**，作为第三个发现完整记入 [sku-productization/REMOVAL_TRACE.md](../sku-productization/REMOVAL_TRACE.md) §四，等待 Founder 就"`component_return` 这个同形七字段对象算不算 OUT_OF_CONTRACT"单独裁决。
+- 验证：三份图结构复验一致；十项关键词 grep 六份目标文件仅 `envelope_hash`（18 处，逐条核对为主动保留项）非零；E1 六份基线复算逐字节一致；原树 `git status`/`git diff` 干净；本补丁改动范围仅 6 份 `products/` 文件 + 1 份新增文档。
+- `task_final_status` 维持 `DONE`（E2-P 未推翻 T1~T5 任何结论）；P-2 的"停下来"状态标 `PENDING_FOUNDER_DECISION`，下一次继续本任务时先读这一行。
 
 ---
 

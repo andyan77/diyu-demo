@@ -29,7 +29,7 @@ note: 拆的是机制、协议、字段，不是判断——判断因机制被�
 | 7 | 「与统一能力接缝的对接」节"独有停止边界"句 | "需要改正文语义的，走 `Return`，不在这里改" → 改写为"这不是本 Skill 的职责范围——必须在交付里明确说明这一点，不在这里改" | ① | **悬空引用修复**：判断本身（"改正文语义不是 PP 的职责，PP 不能自己动手改"）保留，机制名（走 Return）去掉 |
 | 8 | 「只读继承的两项」节 | "无权改目标时只做局部 `Return`，不静默改写" → 改写为"无权改目标时不得自行决定，必须在交付里明确说明这处冲突，不静默改写" | ① | **悬空引用修复**：判断（无权时不能静默改写）保留 |
 | 9 | 「包装候选：数量由真实取舍决定」节 | "要改题材、钩子或叙事机制的，走 `Return`，不在包装层用换标题的方式假装解决" → 改写为"这不属于本 Skill 的职责范围，需要在交付里明确说明该回到内容制作环节处理，不在包装层用换标题的方式假装解决" | ① | 同上 |
-| — | 「本版改了什么」「v1.4 在 v1.3 基础上改了什么」两张历史改动日志表 | **不动**（表内仍有 `return_to_script[]` 等字样） | — | 历史记录，不是现行机制说明；日志描述"v1.3→v1.4 曾经改了什么"这一事实本身不因 v2.0 的删除而失真，改写日志等于篡改历史 |
+| — | 「本版改了什么」「v1.4 在 v1.3 基础上改了什么」两张历史改动日志表 | **文档判定不变（历史记录，不因 v2.0 删除而失真，不得改写）；物理位置按 E2-P 搬走**——两表已整段移出 `SKILL_v2.0.md`（原第 21–57 行），逐字迁入 `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md`；理由：`SKILL_v2.0.md` 全文经 `resync_prompts.py` 逐字节拼入 DSL `skill_llm` 系统提示词，表内 `return_to_script[]` 等已删字段的文字会被模型当作现行输出要求读——判定对**文档**成立，对**系统提示词**不成立，故搬而不改 | — | 历史记录，不是现行机制说明；日志描述"v1.3→v1.4 曾经改了什么"这一事实本身不因 v2.0 的删除而失真，改写日志等于篡改历史（E2-P：本判定继续有效，但其载体不能同时是运行时喂入文件，故物理搬迁） |
 
 ### DSL（`DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml` → `_v2_0.yml`）
 
@@ -73,7 +73,7 @@ note: 拆的是机制、协议、字段，不是判断——判断因机制被�
 | 8 | 「与统一能力接缝的对接」节 | "目标与事实、权限或边界冲突时只做局部 `Return`，不静默改写" → "……不得自行决定，必须在交付里明确说明这处冲突，不静默改写" | ①（悬空引用修复） |
 | 9 | CS-4 节 | "回改走 `return_to_script`" → "这类回改不属于本 Skill 职责范围，需要在交付里明确说明" | ①（悬空引用修复，二次排查发现） |
 | 10 | 整节「下游失效」 | 表格（内容承诺/节拍/事实引用等变化→PD/PP 哪部分失效）+ "已发布内容保留为历史，不因上游后来变化而失效或被改写" 一句，全部删除 | ① | 表格是纯粹的跨组件失效传播路由；"已发布内容"指的是 Publishing 的发布历史（P1 本身不发布任何东西），保护另一组件的历史记录属跨组件协作，不是 P1 对自己客户的承诺 |
-| — | 「本版改了什么」历史改动日志表 | 不动 | — | 历史记录 |
+| — | 「本版改了什么」历史改动日志表 | **文档判定不变；物理位置按 E2-P 搬走**——已整段移出 `SKILL_v2.0.md`（原第 24–38 行），逐字迁入 `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md`，理由同 P0 表末条 | — | 历史记录（E2-P：判定继续有效，物理搬迁） |
 
 ### DSL（`DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml` → `_v2_0.yml`）
 
@@ -113,7 +113,7 @@ note: 拆的是机制、协议、字段，不是判断——判断因机制被�
 | 7 | 「默认失败模式对照」表 | 删除两行："发出回改建议之后，自动把上游重跑一遍 \| Return 闭环"、"Return 解析失败，输出一个空数组当作'没有回改' \| Return 闭环" | ① | 这两条失败模式描述的正是被删除的 Return 协议本身如何被误用，机制不存在，失败模式随之不适用（二次排查发现） |
 | 8 | 自检第 16 条（原为最后一条，删除后无需改编号） | "每条 `return_to_script[]` 七项都写满了吗……" | ①（二次排查发现） |
 | 9 | 「与统一能力接缝的对接」节 | "本段无权改目标，冲突时只做局部 `Return`，不静默改写" → "……冲突时不得自行决定，必须在交付里明确说明这处冲突，不静默改写" | ①（悬空引用修复） |
-| — | 「本版改了什么」历史改动日志表 | 不动 | — | 历史记录 |
+| — | 「本版改了什么」历史改动日志表 | **文档判定不变；物理位置按 E2-P 搬走**——已整段移出 `SKILL_v2.0.md`（原第 16–28 行），逐字迁入 `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md`，理由同 P0 表末条 | — | 历史记录（E2-P：判定继续有效，物理搬迁） |
 | — | 「与统一能力接缝的对接」节"本段不调用任何其它能力应用。组合由上层接缝按显式计划编排" | **不动** | — | 未被对齐表点名；陈述的是"本段自己不会去调别的能力"这一边界事实，即便"上层接缝"字面提到编排层，句子本身对客户是有效信息（本组件不会暗自串联别的组件），删除会制造误导 |
 
 ### DSL（`DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml` → `_v2_0.yml`）
@@ -146,3 +146,51 @@ note: 拆的是机制、协议、字段，不是判断——判断因机制被�
 - 一个字段可能同时有"内部专业判断输入"与"跨组件透传输出"两种用途（如 P1.5 的 `subject_domain`）：只拆输出用途那一行，不動该字段在其他地方的合法输入用途。
 - 悬空引用（判断规则原本靠"走 Return"这类机制名给出落点）一律改写为面向用户的等价表述，不随机制一起删；每处改写在本文档逐条记录「原判断是什么 → 改成了什么」。
 - 「默认失败模式对照」这类举例表格里，如果某个失败案例本身就是"如何误用被删除的机制"，案例连同其失效同伴一起删，不保留空对照。
+
+---
+
+## 四、E2-P 补丁（跨组件残留收尾）
+
+Founder 2026-09-02 复核 E2 通过后，指出两处跨组件残留未清净，开本补丁；同会话继续，不新开 `task_id`。
+
+### P-1 · 历史改动日志表移出系统提示词
+
+**处置**：搬走，不改写。见上文一/二/三节末条「不动」行的修订注记（已标注为按 E2-P 搬走）。
+
+| SKU | 原位置（`SKILL_v2.0.md`） | 迁入位置 |
+|---|---|---|
+| P0 | 第 21–57 行（"本版改了什么" + "v1.4 在 v1.3 基础上改了什么"两表） | `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md` §一 |
+| P1 | 第 24–38 行（"本版改了什么"表） | 同上 §二 |
+| P1.5 | 第 16–28 行（"本版改了什么"表） | 同上 §三 |
+
+**验证参与运行时喂入**：三份 DSL `skill_llm` 系统角色提示词均由 `resync_prompts.py` 生成——`prompt_template[0].text = SKILL_v2.0.md 全文 + "\n---\n\n# 本次运行注入的参考文件片段" 起的固定附录`；搬迁前 `grep -n "本版改了什么"` 对三份 `_v2_0.yml` 均有命中（P0:1306、P1:730、P1.5:749），证实确实参与喂入，故不是"若不参与则保留"的分支。
+
+**执行**：按精确行号删除（Python 行区间删除，非字符串替换，避免格式误伤），随后重跑 `resync_prompts.py` 重新派生三份系统提示词。搬迁后复核：`grep -n "本版改了什么\|v1.4 在 v1.3 基础上改了什么"` 对三份 `SKILL_v2.0.md` 与三份 `_v2_0.yml` 均为 0 命中；`resync_prompts.py` 内建的 `check_graph_integrity` 对三份图结构复验通过（均 nodes=16 edges=16，与 T1 收尾时一致，无边无节点变化——本次只改字符串内容）。
+
+### P-2 · `return_id` 链核查
+
+**动手前核查结果**（三份 SKU 一致，逐节点核实，非猜测）：
+
+| 项 | 计算位置 | 读者 | 结论 |
+|---|---|---|---|
+| `professional_input_hash` | `envelope_check` 节点 `_sha(prof)`（P0 第 435 行、P1 第 452 行、P1.5 第 472 行，删除前） | **无**——对三份 `_v2_0.yml` 逐节点扫描 `value_selector`/`outputs` 引用，零命中 | 无人读，纯死代码 → **已删**（`envelope_check` 返回字典对应行 + `outputs` schema 声明，两处，三份文件各一次） |
+| `envelope_hash` | `envelope_check` 节点 `_sha(env)` | `component_return` 节点读取（`variables` 绑定 `['envelope_check', 'envelope_hash']`，三份文件一致） | **有人读** |
+| `return_id`（`"M4-RET-%s-%s" % (CAPABILITY, envelope_hash[:8])`） | **`component_return` 节点**（P0 第 3009 行、P1 第 1823 行、P1.5 第 1883 行——**不在 `delivery_finalize`**，与本补丁指令原文描述的节点名有出入，以代码实测为准） | `component_return` 把含 `return_id` 的七字段 `ret` 对象 `json.dumps` 成 `returns_json`；`returns_json` 由 **`end_component_return`**（三份文件的 `outputs` 列表均含 `['component_return', 'returns_json']`）读取，是该分支的终态 API 输出字段之一 | **有人读** → 按指令不删，停下来报告 |
+
+**报告（第三个发现，本补丁不处置）**：
+
+`component_return`（"组件级 Return"，T1 已判定 §1.2 `MATCH`、非 `OUT_OF_CONTRACT`，职责是"结构缺项→自然语言追问"）内部仍在构造一个与已删除的跨组件 Return 闭环**同形**的七字段对象（`source`/`highest_damaged_layer`/`precise_gap`/`affected_objects`/`proposed_disposition`/`needs_user_decision`/`downstream_stale`），并把它连同 `return_id` 一起 `json.dumps` 进 `returns_json`，经 `end_component_return` 暴露为该分支的 API 级输出字段之一。`end_component_return` 的其余输出里，`user_delivery`／`single_most_discriminating_question` 明显面向客户（自然语言追问），但 `return_status`／`branch_result`／`is_task_terminal_state`／`triggers_downstream_invalidation`／`downstream_invoked`／`returns_json` look 更像面向"调用本能力的上层接缝/编排方"的工程状态字段——服务客户还是服务协作，本次未见对齐表明确点名，也未见 Founder 就此单独裁决，按判据"分不清 → 停"处理，不在本补丁内删除或改写 `component_return`/`envelope_hash`/`return_id`，原样保留待后续裁决。
+
+**未处置的具体范围**：`envelope_check` 的 `envelope_hash` 计算与其 `outputs` 声明、`component_return` 的 `return_id` 构造与其在 `ret`/`returns_json` 中的位置、`end_component_return` 对 `returns_json` 的读取——三份文件均原样未动。
+
+### 验证结果
+
+- **图结构完整性**：三份 `_v2_0.yml` 经 `check_graph_integrity` 复验，均 `nodes=16 edges=16`，无悬空引用、无未声明的 `value_selector` 引用（P-1 只改字符串、P-2 只删两行死代码+两行 schema，均不改节点数与边数）。
+- **全库 grep 命中核查**（`return_to_script`／`return_to_production`／`stale_set`／`binding_record`／`envelope_hash`／`professional_input_hash`／`system_prompt_sha256`／`task_contract_hash`／`ENTRY-07`／`DERIVE_MODE_AND_PACKAGE`，范围：三份 `_v2_0.yml` + 三份 `SKILL_v2.0.md`）：除 `envelope_hash`（18 处命中，P0/P1/P1.5 各 6 处：`_sha(env)` 计算行、`outputs` schema 声明、`component_return` 的 `main()` 形参、`return_id` 构造行、`variables` 的 `value_selector`/`variable` 两行）外，其余全部 0 命中。`envelope_hash` 非零命中的合法性理由见上表——它是本补丁 P-2 明确核查后判定"有人读、停下来报告"而保留的项，不是残留疏漏。
+- **E1 六份基线复算**：`sha256sum` 现场重算，六份文件哈希与既有记录逐字节一致——
+  `SKILL_v1.4.md`=`1e7a9f1a...776e`、`DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`=`82cadc34...20c3`、
+  `SKILL.md`(P1)=`442dc126...b08aa`、`DIYU_M4_TOOL_CREATIVE_SCRIPT_v1_3_TEST.yml`=`99e8ae5c...574b6`、
+  `SKILL.md`(P1.5)=`b48b8840...b0dd02`、`DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v1_3_TEST.yml`=`a25788a3...faa1c4d`。
+- **原树未变**：`git status --short content-production/ account-operations/ decision-chain/` 与 `git diff --stat <T1收尾提交> -- content-production/ account-operations/ decision-chain/` 均为空。
+- **本补丁改动范围**：`git status --short` 确认——仅 6 份 `products/` 下 v2.0 文件（3×`SKILL_v2.0.md` + 3×`_v2_0.yml`）被修改，新增 1 份 `sku-productization/E2P_RELOCATED_CHANGELOG_TABLES_v1.0.md`；本文件（`REMOVAL_TRACE.md`）本身的修订记为账本更新，不计入"产品文件改动范围"。
+- 本补丁零模型调用（全部为确定性脚本/grep/hash 复算）。
