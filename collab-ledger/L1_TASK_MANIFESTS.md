@@ -1631,3 +1631,67 @@ disclosed_anomalies_not_hidden:
 
 `task_final_status: DONE`
 `execution_disposition`: 不适用（一次直达，非中断态）
+
+## §T-013 · `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001`
+
+### T-013.1 Task Contract（稳定合同）
+
+| 项 | 值 |
+|---|---|
+| `task_id` | `DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001` |
+| `task_type` | `ENGINEERING_REMEDIATION`（关闭 B-01～B-06 六条架构阻断，使 PP 结构上够得着验收标准） |
+| `risk_level` | `MEDIUM`（改动被测面本身，但新文件承接、冻结基线不动、model_call_budget 极小） |
+| 起算基线 | 从 `task/pp-architecture-verification-v1` 分支（不是 `main`），因为要读它产出的阻断清单；新建任务分支 `task/pp-blocker-remediation-s1-s4-v1` |
+| core_problem | `pp-architecture/BLOCKING_LIST_v1.0.json` 的 B-01～B-06 六条阻断能否被真实关闭（不是让清单变绿，是让判定可信） |
+| 治理绑定 | `Q-COMM-04_P0_...验收标准_v1.0.md`（sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397` 现场复算一致，唯一验收基准）；`pp-architecture/BLOCKING_LIST_v1.0.json`（sha256 `8407e363adcd6386a0ff1c5c7ae0767cfebbbdc799a8ceb22352204621237d94` 现场复算一致，本任务工作清单，6 条一条不多一条不少） |
+| allowed_delta | 新文件 `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`；新文件 `content-production/skills/packaging-content-for-release-m4/SKILL_v1.4.md`；新文件 `content-production/shared/fact-and-market-guards/MARKET_CLAIM_PATTERNS_v1.0.json`；新目录 `pp-remediation/`；collab-ledger 三本账追加式登记 |
+| protected_assets | `content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`（冻结基线，逐字节不变）；`content-production/skills/packaging-content-for-release-m4/SKILL.md`（m4-v1.3 后继版，冻结资产）；`content-production/skills/packaging-content-for-release/SKILL.md`（源 Skill，冻结资产）；`content-production/skills/packaging-content-for-release/references/*.md`（冻结资产）；规则仓库（只读）；`main` |
+| explicitly_not_authorized | 提升文案质量/优化提示词表达/改 Skill 专业判断内容；`model_calls_max` 之外的任何模型调用；改写 6 条以外的任何内容；合并 main；force push；改写历史 |
+| model_call_budget | `3`——只能用于 S1 确定性冒烟，不得用于任何其它目的，不得用于评价输出好坏 |
+| remote_target | `branch: task/pp-blocker-remediation-s1-s4-v1`；`push: AUTHORIZED`；`merge_main: NOT_AUTHORIZED` |
+
+### T-013.2 当前 Manifest
+
+| 项 | 值 |
+|---|---|
+| S1 · B-01 配置层 | `PARTIALLY_CLOSED`——`completion_params` 已按 provider 真实支持范围钉到最大可复现性（`temperature=0`/`top_p=1`；`frequency_penalty`/`presence_penalty`/`seed` 经核实该 provider/model 不支持，如实登记不冒充钉死）；S1 唯一允许的模型调用（同输入连跑 3 次字节比对）**未执行**——两条触达本机真实 Docker Dify 实例的路径均被本次会话 auto-mode 权限分类器拒绝，需 Founder 显式授权后补做，见 [pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md) |
+| S2 · B-02 事实核验代码判定 | `CLOSED`——新增独立 code 节点 `fact_verification`；4 组静态单测（合法引用/非法引用/缺失登记块/自报与代码不一致）全部按预期通过，代码判定并覆写 `fact_check_status`，Critical Error 时改写用户交付块并强制 `delivery_outcome`，见 [pp-remediation/BLOCKER_CLOSURE_v1.0.json](../pp-remediation/BLOCKER_CLOSURE_v1.0.json) |
+| S2 · B-04 市场断言检测 | `CLOSED`——新增独立 code 节点 `market_claim_scan`；模式清单外置为独立带版本文件（中文 54 条+英文 16 条），70 条构造用例全部命中；受 Dify 沙箱无仓库文件系统访问限制，节点内嵌入该文件已知版本号的字节快照，已如实登记同步纪律 |
+| S3 · B-05 标签/话题字段 | `CLOSED`——`SKILL_v1.4.md`（`packaging-content-for-release-m4/SKILL.md` 后继版本，逐字节保留原文）新增 `hashtags_topics` 字段，`APPLICABLE \| NOT_APPLICABLE` 判定可产出 |
+| S3 · B-06 发布判断汇聚字段 | `CLOSED`——`SKILL_v1.4.md` 新增 `release_decision` 单一显式汇聚字段，要求原样出现在用户交付块正文里，既有分散信号（`release_check`/`fact_check_status`/`missing[]`/组件级 Return）逐字保留未删 |
+| S4 · B-03 Layer A 真实接入 | `CLOSED`——`ref_projection` 从"只描述该不该加载"改为 DSL 构建期真实字节嵌入（`platforms.md` 全文、`industry-conditions.md` 按 `subject_domain` 选段、`examples.md` 全文按需），`projection_record` 同步记录 path/sha256/embedded_at 三元组；受 Dify 沙箱限制未能做到"零改图更新"，已如实登记为构建期快照嵌入模式 |
+| S5 · 自查 | `DONE`——见 [pp-remediation/BLOCKER_CLOSURE_v1.0.json](../pp-remediation/BLOCKER_CLOSURE_v1.0.json) 逐条证据；B-01 之外的 5 条均以零模型调用的静态单测/离线渲染验证，未放宽判定标准 |
+| Checkpoint | 无。B-01 的 empirical 复验是**下一个任务的输入**（需要 Founder 授权后单独执行），不是本任务被中断的续跑点——本任务在其被授权的动作范围内已经做到能做的全部，如实终结 |
+
+### T-013.3 COMPLETION CHECK
+
+```yaml
+real_behavior_verified:
+  - v1_3_TEST.yml 冻结基线 sha256 任务结束时复算与开工前一致: PASS（daa8365d...b635e）
+  - 5 条阻断（B-02~B-06）以零模型调用的静态单测/离线渲染验证，非自述: PASS
+  - B-01 配置层真实生效（YAML 锚点，两个 LLM 节点共享同一 completion_params）: PASS
+validator_discrimination_verified:
+  - fact_verification 单测同时覆盖"应该放行"与"应该阻断"两类用例，且两类结果不同: PASS
+  - market_claim_scan 用清单全部 70 条模式逐条构造用例，全部命中且不误伤干净文本: PASS
+core_problem_solved:
+  - 6 条阻断中 5 条真实关闭，1 条（B-01）配置层完成但 empirical 证据缺失，如实登记为
+    PARTIALLY_CLOSED，未通过放宽判据或自我声明让它显示为 CLOSED
+protected_targets_unchanged_or_authorized:
+  - v1_3_TEST.yml: 未改动（协议要求，已复算确认）
+  - packaging-content-for-release-m4/SKILL.md（m4-v1.3 后继版）: 未改动（sha256 复算确认）
+  - packaging-content-for-release/SKILL.md（源 Skill）: 未触碰
+  - references/*.md 三份文件: 未写入，仅只读嵌入投影
+  - main: 未动
+evidence_refs:
+  - pp-remediation/CHANGE_TRACE.md（15 条改动逐条追溯到 B-xx，另有 3 处越界嫌疑待 Founder 裁定）
+  - pp-remediation/BLOCKER_CLOSURE_v1.0.json（6 条阻断的关闭状态与证据）
+  - pp-remediation/DETERMINISM_SMOKE_v1.0.md（B-01 的配置证据与未执行 empirical 冒烟的完整披露）
+unnecessary_complexity_remaining:
+  - 未发现。fact_verification / market_claim_scan 按"独立可复用单元"要求各自单一职责；
+    未新建评分器、知识库、RAG、第二套工作流引擎
+```
+
+**终态判定**：S1~S4 全部按 CHANGE_TRACE 完成或如实披露未完成部分；S5 自查全部落盘；6 条阻断中 5 条 `CLOSED`、1 条 `PARTIALLY_CLOSED`（非隐瞒式，需 Founder 授权后续验）。
+
+`task_final_status: DONE`（任务在被授权动作范围内已完整终结；B-01 的 empirical 复验是需要新授权的后续动作，不构成本任务的未完成）
+`execution_disposition`: 不适用（一次直达，非中断态）

@@ -2029,3 +2029,66 @@ Founder 明确授权按 `M2_POST_DONE_REBASE_EXECUTION_PROMPT_v1.2.md`（`sha256
   已承担实际的业务成功判定，属信号冗余而非误导，不计入阻断清单。
 - **终态**：`task_final_status = DONE`。不产生任何产品/商业结论，不评价 PP 效果好坏，不代表已修复
   报告登记的任何缺口。
+
+## 十六、`DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001`
+
+### ATT-001（一次直达，`DONE`；关闭 5/6 条阻断，B-01 因环境访问受阻 `PARTIALLY_CLOSED`）
+
+- **输入与授权**：治理绑定两份 —— 唯一验收基准 `Q-COMM-04_P0_内容发布包装助手商业化评价验收标准_v1.0.md`
+  （sha256 `55bcfa4001668dd23614459cb502aca30286e62894670a911a68de17528cb397` 现场复算一致，只读）；
+  本任务工作清单 `pp-architecture/BLOCKING_LIST_v1.0.json`（sha256
+  `8407e363adcd6386a0ff1c5c7ae0767cfebbbdc799a8ceb22352204621237d94` 现场复算一致，6 条一条不多一条不少）。
+  从 `task/pp-architecture-verification-v1` 分支起分支（不是 `main`），因为要读它产出的阻断清单。
+- **冻结基线核验**：`content-production/workflows/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_3_TEST.yml`
+  开工前与任务结束时各复算一次 sha256，两次均为 `daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e`，
+  逐字节未变。改动一律写进新文件 `DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml`。
+- **冻结资产识别与处置**：核实 `content-production/skills/packaging-content-for-release-m4/SKILL.md`
+  （m4-v1.3 后继版，DSL system prompt 的真实派生源，非猜测——现场核对 `binding_record.RECORD.successor_skill_sha256`
+  与该文件实测 sha256 逐字节一致）属 CLAUDE.md §6「冻结资产零改动」的 `skills` 类别，因此 B-05/B-06 需要的
+  两个新增输出字段**未直接改写该文件**，而是另建后继版本 `SKILL_v1.4.md`（逐字节保留原文，只增补），
+  与 `v1_3_TEST.yml` → `v1_4.yml` 同一处置原则的下一层应用。
+- **方法**：15 处改动逐条落 [pp-remediation/CHANGE_TRACE.md](../pp-remediation/CHANGE_TRACE.md)，
+  每条都能说出关闭的是哪一条 B-xx；说不出理由的一处未出现（3 处不追溯到单一 B-xx 的纯标识/追溯性
+  改动已单独列出请 Founder 裁定，未静默算作合规）。DSL 结构性改动全部经程序化校验：`yaml.safe_load`
+  全量解析、全部 code 节点 `ast.parse` 语法核验、全部 `variables[].value_selector` 解析到存在节点、
+  图从 `start` 节点可达性核验、主链路顺序核验，逐项 PASS。
+- **B-01～B-06 逐条结果**（完整证据见
+  [pp-remediation/BLOCKER_CLOSURE_v1.0.json](../pp-remediation/BLOCKER_CLOSURE_v1.0.json)）：
+  - **B-01（配置，`PARTIALLY_CLOSED`）**：`completion_params` 钉 `temperature=0`/`top_p=1`；
+    `frequency_penalty`/`presence_penalty`/`seed` 经核实（直接读取本机真实运行的 Docker Dify
+    实例挂载的 `langgenius/deepseek:0.0.20` 插件包 `deepseek-v4-flash.yaml` 的 `parameter_rules`
+    字段）该 provider/model **不支持**这三项，如实登记不冒充钉死。S1 唯一允许的模型调用（同输入
+    连跑 3 次字节比对）**未执行**——两条触达路径（`docker exec docker-api-1 curl .../console/api/setup`
+    只读探测；仓库既有 `account-operations/tools/dify_client.py` 只读探测）均被本次会话的 auto-mode
+    权限分类器拒绝，未强行寻找绕过方式。见
+    [pp-remediation/DETERMINISM_SMOKE_v1.0.md](../pp-remediation/DETERMINISM_SMOKE_v1.0.md) 完整披露。
+  - **B-02（结构，`CLOSED`）**：新增独立 code 节点 `fact_verification`，代码判定并覆写
+    `fact_check_status`；4 组静态单测（合法引用放行、非法引用阻断、缺失登记块阻断、模型自报
+    PASS 但代码判定 FAIL 时以代码为准）全部按预期通过，零模型调用。
+  - **B-03（依赖，`CLOSED`）**：`ref_projection` 改为 DSL 构建期真实字节嵌入三份参考文件；
+    离线 Jinja 渲染测试（`jinja2.Environment().from_string()`）确认渲染结果含真实平台表格行、
+    正确匹配的单一行业段落、且不误含其余四个行业段落。受 Dify code 节点沙箱无出站网络/无仓库
+    文件系统访问限制，未能做到"零改图更新"，已如实登记为构建期快照嵌入模式。
+  - **B-04（契约，`CLOSED`）**：新增独立 code 节点 `market_claim_scan`；模式清单外置为独立带
+    版本文件 `content-production/shared/fact-and-market-guards/MARKET_CLAIM_PATTERNS_v1.0.json`
+    （中文 54 条+英文 16 条），用清单**全部 70 条**逐条构造独立用例调用，全部命中，干净文本不误伤。
+  - **B-05（契约，`CLOSED`）**：`SKILL_v1.4.md` 新增 `hashtags_topics` 字段，
+    `APPLICABLE | NOT_APPLICABLE` 判定可产出。
+  - **B-06（结构，`CLOSED`）**：`SKILL_v1.4.md` 新增 `release_decision` 单一显式汇聚字段，要求
+    原样出现在用户交付块正文里；既有分散信号（`release_check`/`fact_check_status`/`missing[]`/
+    组件级 Return）逐字保留，未删除、未顶替。
+- **过程中发现并当场修正的两处自查漏洞（如实披露，不是"一次做对"）**：①首版 `market_claim_scan`
+  的阻断说明文字里使用了模式清单自身的两条精确措辞（"现在最火"「现在是最佳发布时间"）作举例，
+  单测断言"改写后的正文不应仍含原始触发词"因此失败——判断为真实的表述缺陷（阻断说明不应该复读
+  自己正要拦截的确切短语），已改写为不含清单精确条目的概括性措辞，重新验证通过；②`SKILL_v1.4.md`
+  delta 说明表里 `hashtags_topics` 一行误用「/」分隔枚举值（应与字段正式定义一致用「|」），单测
+  按第一处命中位置断言时判定不一致——修正后重新计算并同步更新 `SKILL_v1.4.md` 与
+  `DIYU_M4_TOOL_PUBLISHING_PACKAGING_v1_4.yml` 两处 sha256（`system_prompt_sha256` 由
+  `591f479d...` 改为 `df4a69b6...`；`m4_v1_4_successor_sha256` 由 `42bc9ec7...` 改为 `1e7a9f1a...`），
+  两处保持 100% 一致。两处均未影响任何路由/阻断逻辑，纯文本层修正。
+- **越界嫌疑（请求 Founder 裁定，未自行判定合规）**：`app.name`/`app.description`/`skill_llm` 节点
+  标题的 v1.3→v1.4 改名，以及 `binding_record.RECORD` 新增的 4 个纯自报追溯字段——均不追溯到单一
+  B-xx，理由与撤销方式已列在 CHANGE_TRACE.md 末节，未静默视为已获授权。
+- **模型调用实际使用**：`0 / 3`（budget 未用，因 B-01 empirical 冒烟被环境访问阻断，未挪作它用）。
+- **终态**：`task_final_status = DONE`。5/6 条阻断真实关闭，1 条如实登记为 `PARTIALLY_CLOSED`
+  并给出复验所需的最小动作，未通过放宽判据或自我声明让它显示为已关闭。
