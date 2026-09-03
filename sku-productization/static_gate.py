@@ -1852,6 +1852,33 @@ def run_sg6(sku, yml_data, skill_md_text):
 
     findings.append(_sg6_verdict("code_node_syntax_warnings", pos20, neg20, offlist20_caught))
 
+    # --- detector: SG8.contract_seam_closure (E8/DIYU-V1-P0-CONTRACT-SEAM-001;
+    # same function SG8 runs in production). pos24 uses this SKU's own
+    # good_data as-is — for P1/P1.5 that correctly stays imperfect (known,
+    # disclosed, unfixed contract-seam gaps, same pattern as
+    # end_node_output_name_collisions's pos19 above), so their
+    # SG6.contract_seam_closure legitimately shows BLOCKING too. This is not
+    # a bug in the self-test; it's the same "only P0 gets fixed" scoping
+    # surfacing consistently in the self-test layer. ---
+    pos24 = run_sg8(sku, good_data)["verdict"] == "PASS"
+
+    bad24 = copy.deepcopy(good_data)
+    bad24_llm = node_by_id(bad24, "skill_llm")
+    bad24_llm["data"]["prompt_template"][0]["text"] = bad24_llm["data"]["prompt_template"][0]["text"].replace(
+        "不是一份独立外部登记表", "XXXXXXXXXXXXXXXX")
+    neg24 = run_sg8(sku, bad24)["verdict"] == "BLOCKING"
+
+    # Off-list: a different concept/category than neg24 (fact_id-vs-claim
+    # consumption gap, not the fact_refs upstream-supply gap) must also be
+    # independently catchable — proves SG8 isn't hardcoded to one row.
+    offlist24 = copy.deepcopy(good_data)
+    offlist24_fv = node_by_id(offlist24, "fact_verification")
+    offlist24_fv["data"]["code"] = offlist24_fv["data"]["code"].replace(
+        "_claim_grounded", "_claim_grounded_DISABLED")
+    offlist24_caught = run_sg8(sku, offlist24)["verdict"] == "BLOCKING"
+
+    findings.append(_sg6_verdict("contract_seam_closure", pos24, neg24, offlist24_caught))
+
     return findings
 
 
@@ -2033,6 +2060,210 @@ EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD = {
 }
 
 
+# ---------------------------------------------------------------------------
+# SG8 · Contract Seam Correctness（DIYU-V1-P0-CONTRACT-SEAM-001）。
+#
+# S0-S14（既有全部检测器）验证 Layer Correctness——生产者会生产、消费者会
+# 消费。缺的是 Contract Seam Correctness——生产者生产的，是不是恰好就是
+# 消费者以为自己会收到的东西。本轮 D-1/D-2/D-3 暴露的三条缺陷全是这一类，
+# 每一层单独审都 PASS，接缝没有主人。
+#
+# 概念清单人工定版一次并冻结（下面这份字面量），不靠启发式自动抽取；之后
+# 每次运行只是对这份冻结清单逐条做机械核验，不重新发现概念。清单规模远
+# 低于 30 条上限——只登记本轮真正调查、有真实证据支撑的跨层概念，不为凑
+# 覆盖率把每个名词都登记进来。
+#
+# 三个问题：
+#   A. Upstream Supply Closure —— 提示词向模型声称"调用方已提供 X"，上游
+#      真实调用链给得出 X 吗？给不出 → UNSATISFIED_PROMPT_INPUT
+#   B. Downstream Consumption Closure —— 提示词要求模型产出 Y，后面的代码
+#      是不是按同一个 Y 接？接不上 → UNCONSUMED_REQUIRED_OUTPUT
+#   C. Transformation Preservation —— 起点有、提示词也要、消费者也认识，
+#      但中间被改名/改结构/改语义/删掉 → SEMANTIC_TRANSFORM_MISMATCH；
+#      特例：治理关卡的前置条件在真实链路上永不可达 →
+#      UNREACHABLE_GOVERNANCE_PRECONDITION
+#
+# 能力边界（如实写入报告，不得声称已突破）：SG8 能证明"调用方确实能提供
+# 提示词所要求的信息""提示词确实要求模型按消费者能理解的格式输出""中间
+# 没有在不被发现的情况下改变关键概念""治理关卡的前置条件在真实链路上可
+# 达"。不能证明"真实模型一定会遵守这些要求"——那是 Behavioral
+# Correctness，只能由真实调用回答。
+
+
+def _sg8_concept_fact_refs_upstream_supply(sku, yml_data):
+    """概念：fact_refs[]／已登记的事实。producer：（P0 独立调用时应为
+    professional_input/capability_call 原文本身，无上游）；carrier：
+    professional_input/capability_call；consumer：fact_verification 的
+    claim 核验。违规类别：UNSATISFIED_PROMPT_INPUT——提示词把 fact_refs[]
+    当外部登记表要求模型引用，但 start 节点从未提供这样的输入。"""
+    llm_node = node_by_id(yml_data, "skill_llm")
+    text = llm_node["data"]["prompt_template"][0]["text"]
+    start_node = node_by_id(yml_data, sku["entry_id"])
+    start_vars = {v["variable"] for v in start_node["data"]["variables"]}
+    references_fact_refs = ("fact_refs[]" in text) or ("used_fact_refs" in text)
+    has_disclaimer = "不是一份独立外部登记表" in text
+    upstream_supplies_it = "fact_refs" in start_vars
+    violated = references_fact_refs and not has_disclaimer and not upstream_supplies_it
+    return {
+        "concept": "fact_refs[] ／ 已登记的事实",
+        "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）"
+                    if has_disclaimer else "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+        "carrier": "professional_input / capability_call",
+        "transform": "无" if has_disclaimer else "无——问题正在于从未有过供给，不是变换环节出错",
+        "consumer": "fact_verification.factual_claim 核验" if has_disclaimer else "fact_verification.fact_id 子串核验（旧契约）",
+        "semantics_match": not violated,
+        "category": "UNSATISFIED_PROMPT_INPUT" if violated else None,
+    }
+
+
+def _sg8_concept_deliverable_field_format(sku, yml_data):
+    """概念：十二项标准交付物字段值格式（cover/first_frame/... 允许换行
+    展开或括号注释）。producer：skill_llm 提示词自身的输出格式说明（字段
+    名+多行内容是提示词认可的写法）；carrier：ARTIFACT 块文本；consumer：
+    returns_adapter._field_value_lines。违规类别：
+    UNCONSUMED_REQUIRED_OUTPUT——消费者只认单行值，产出的合法多行/括号
+    注释格式接不住。P1/P1.5 不含这套十二项标准交付物机制，本概念对它们
+    N/A（不同的产出结构，不是同一概念的两个实例）。"""
+    ra_node = node_by_id(yml_data, "returns_adapter")
+    code = ra_node["data"]["code"]
+    if "STANDARD_DELIVERABLE_FIELDS" not in code:
+        return {
+            "concept": "十二项标准交付物字段值格式",
+            "producer": "N/A", "carrier": "N/A", "transform": "N/A", "consumer": "N/A",
+            "semantics_match": None, "category": None, "not_applicable": True,
+        }
+    # Call-site-specific, not a bare helper-name presence check (same
+    # rationale as the fact_id-vs-claim concept below).
+    has_fix = "pat = re.compile(r\"^%s(.*)$\" % _field_key_pattern(key)" in code
+    return {
+        "concept": "十二项标准交付物字段值格式",
+        "producer": "skill_llm 提示词的输出格式说明（cover/first_frame 等允许多行展开）",
+        "carrier": "ARTIFACT 块文本（cover:/first_frame: 等字段）",
+        "transform": "无" if has_fix else "消费者把提示词认可的多行/括号注释格式窄化成了单行值假设",
+        "consumer": "returns_adapter._field_value_lines" + ("（已改为块级取值）" if has_fix else "（仅同一行）"),
+        "semantics_match": has_fix,
+        "category": None if has_fix else "UNCONSUMED_REQUIRED_OUTPUT",
+    }
+
+
+def _sg8_concept_fact_id_vs_claim(sku, yml_data):
+    """概念：FACT_LEDGER 的核验对象。producer：模型按 LEDGER_FIELDS 同时
+    产出 factual_claim 与 fact_id；consumer：核验逻辑应该查哪一个。违规
+    类别：UNCONSUMED_REQUIRED_OUTPUT——factual_claim 被解析、被强制非空，
+    然后代码核验挑了 fact_id（编号，内部句柄），不是 factual_claim（事实
+    内容本身，真正需要能回指用户原文的东西）。"""
+    fv_node = node_by_id(yml_data, "fact_verification")
+    code = fv_node["data"]["code"]
+    # Call-site-specific substring, not a bare function-name presence check —
+    # a mutation that renames the function (e.g. to "_claim_grounded_X") would
+    # still contain "_claim_grounded" as a substring and slip past a naive
+    # check; this pattern requires the actual invocation shape to survive.
+    has_fix = "_claim_grounded(e.get(" in code
+    return {
+        "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+        "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+        "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+        "transform": "无" if has_fix else "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+        "consumer": "fact_verification._claim_grounded" if has_fix else "fact_verification（fid not in blob）",
+        "semantics_match": has_fix,
+        "category": None if has_fix else "UNCONSUMED_REQUIRED_OUTPUT",
+    }
+
+
+def _sg8_concept_think_boundary(sku, yml_data):
+    """概念：<think>/</think> 边界。producer：deepseek 在 thinking:enabled
+    下模型自己手写的 think 标签（非 provider 结构化字段，reasoning_content
+    观测到为空——见 p0-empirical-r1/raw/ 真实调用）；carrier：skill_llm 原始
+    text；consumer：final_extract 用 split('</think>')|last 取尾部。
+    这不是一个可以静态判定"通过/未通过"的契约槽位：真实证据显示 </think>
+    字面标记本身只出现一次、split 机制没有失效，但真正的"是否已经想清楚
+    再输出"是模型行为，SG8 的静态能力边界本就声明"不能证明模型一定遵守"。
+    如实登记为待真实调用验证，不计入四个门条件的任何一类——不是漏洞，是
+    诚实标注能力边界，避免把 Behavioral Correctness 冒充成 Contract Seam
+    问题（那会引入本轮明确禁止的开放式判断）。"""
+    return {
+        "concept": "<think>/</think> 边界（final_extract 分割点）",
+        "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+        "carrier": "skill_llm.text",
+        "transform": "final_extract: text.split('</think>')|last",
+        "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+        "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+        "category": None,
+        "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；"
+                "是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，"
+                "按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。",
+    }
+
+
+def _sg8_concept_final_mode_reachability(sku, yml_data):
+    """概念：mode=FINAL 分支的可达性。producer：SKILL 提示词的三级 mode
+    判据（PRE/MIXED/FINAL）；触发 FINAL 需要 beat 级 realization_manifest
+    或 M4 四类合法等价证据之一。P0 独立调用（无 CS-1/PD 上游）时的真实
+    输入是纯自然语言口述，从不构成这四类证据中的任何一类（E4 阶段C 12次
+    真实调用，无一次不是 PRE）。这是已知限制，不是本轮修复范围（D-1 明确
+    限定只改 fact_refs[]/script_beats[] 两行，不重写整套 mode 判据），
+    如实登记为已知限制，不计入四个门条件。"""
+    return {
+        "concept": "mode=FINAL 分支可达性",
+        "producer": "skill_llm 提示词的三级 mode 判据",
+        "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+        "transform": "无",
+        "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+        "semantics_match": "KNOWN_LIMITATION",
+        "category": None,
+        "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，"
+                "FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上"
+                "实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套"
+                "mode 判据，本项如实登记为已知限制，不在本轮修复范围内。",
+    }
+
+
+_SG8_CONCEPT_CHECKS = [
+    _sg8_concept_fact_refs_upstream_supply,
+    _sg8_concept_deliverable_field_format,
+    _sg8_concept_fact_id_vs_claim,
+    _sg8_concept_think_boundary,
+    _sg8_concept_final_mode_reachability,
+]
+
+_SG8_VIOLATION_CATEGORIES = [
+    "UNSATISFIED_PROMPT_INPUT",
+    "UNCONSUMED_REQUIRED_OUTPUT",
+    "UNREACHABLE_GOVERNANCE_PRECONDITION",
+    "SEMANTIC_TRANSFORM_MISMATCH",
+]
+
+
+def contract_seam_matrix(sku, yml_data):
+    rows = [check(sku, yml_data) for check in _SG8_CONCEPT_CHECKS]
+    counts = {c: 0 for c in _SG8_VIOLATION_CATEGORIES}
+    for r in rows:
+        if r.get("category"):
+            counts[r["category"]] += 1
+    return rows, counts
+
+
+def run_sg8(sku, yml_data):
+    rows, counts = contract_seam_matrix(sku, yml_data)
+    total_violations = sum(counts.values())
+    if total_violations:
+        summary = "; ".join("%s=%d" % (k, v) for k, v in counts.items() if v)
+        return finding(
+            "SG8.contract_seam_closure", "BLOCKING",
+            "CONTRACT_SEAM_MATRIX has %d row(s) in violation: %s" % (total_violations, summary),
+            evidence={"counts": counts, "matrix": rows},
+        )
+    return finding(
+        "SG8.contract_seam_closure", "PASS",
+        "all %d registered cross-layer concepts closed (0/0/0/0 across the four violation "
+        "categories); SG8 proves supply/consumption/transformation closure for the registered "
+        "concepts only — it does NOT prove the model will actually comply (Behavioral "
+        "Correctness), see CONTRACT_SEAM_MATRIX rows marked PENDING_EMPIRICAL_VERIFICATION / "
+        "KNOWN_LIMITATION for the disclosed residual scope",
+        evidence={"counts": counts, "matrix": rows},
+    )
+
+
 def run_dynamic_only_registrations(sku):
     return [
         finding(
@@ -2084,6 +2315,7 @@ def run_sku(sku):
     sg6_findings = run_sg6(sku, yml_data, skill_md_text)
     findings += sg6_findings
     findings += run_r0_fixtures(sku, yml_data, sg6_findings)
+    findings.append(run_sg8(sku, yml_data))
     findings += run_dynamic_only_registrations(sku)
 
     # SG4 · Evidence & Authority — meta-validate the findings this run just produced.
@@ -2282,19 +2514,35 @@ def main():
                            "路上顺手修的缺陷处理。",
     }
 
+    # SG8（DIYU-V1-P0-CONTRACT-SEAM-001）：每个 SKU 自己的 CONTRACT_SEAM_MATRIX
+    # 就是它的 SG8.contract_seam_closure finding 的 evidence.matrix——这里
+    # 汇总成顶层字段，不重新计算，避免两份数据分叉。SG8 与 Gate 其余检查器
+    # 一样 SKU 无关，三个 SKU 都跑；P0 本轮全部闭合，P1/P1.5 按裁决只登记不修。
+    contract_seam_matrix_by_sku = {}
+    for r in results:
+        sg8f = next((f for f in r["findings"] if f["id"] == "SG8.contract_seam_closure"), None)
+        if sg8f:
+            contract_seam_matrix_by_sku[r["sku"]] = {
+                "verdict": sg8f["verdict"],
+                "counts": sg8f["evidence"]["counts"],
+                "rows": sg8f["evidence"]["matrix"],
+            }
+
     report = {
         "gate": "STATIC_GATE",
         "task_id": "DIYU-V1-STATIC-GATE-001",
         "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 "
                       "+ DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）"
                       "+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）"
-                      "+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）",
+                      "+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）"
+                      "+ DIYU-V1-P0-CONTRACT-SEAM-001（E8 跨层契约缺陷定位与修复，本轮新增 SG8）",
         "dynamic_only_scope_note": dynamic_only_scope_note,
         "reasoning_effort_note": reasoning_effort_note,
         "static_detector_capability_notice": static_detector_capability_notice,
         "residual_remediation_transferred_out_note": residual_remediation_transferred_out_note,
         "e5_residual_written_off": e5_residual_written_off,
         "sg14_execution_parity_gap": sg14_execution_parity_gap,
+        "CONTRACT_SEAM_MATRIX": contract_seam_matrix_by_sku,
         "invariants": {"INV-1": inv1, "INV-2": inv2},
         "skus": results,
     }

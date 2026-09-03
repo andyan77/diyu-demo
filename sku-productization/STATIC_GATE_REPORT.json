@@ -1,7 +1,7 @@
 {
   "gate": "STATIC_GATE",
   "task_id": "DIYU-V1-STATIC-GATE-001",
-  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）",
+  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）+ DIYU-V1-P0-CONTRACT-SEAM-001（E8 跨层契约缺陷定位与修复，本轮新增 SG8）",
   "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, the specific E4-first-call condition it is bound to) can be pinned now without waiting for the case itself to exist. The market-claim item's case_id has been backfilled per A-7 (DIYU-V1-P0-EMPIRICAL-R1-001): eval/ now holds the first real case set (EVAL-P0-R1-001~003, manifest-vetted under INV-2), and case_id=EVAL-P0-R1-001 replaces the former PENDING_EVAL_MANIFEST placeholder. PENDING_E4_FIRST_CALL for the payload item remains a placeholder — must be backfilled once E4 阶段 B's first real call happens, not left indefinitely.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
   "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage (DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose.",
@@ -42,6 +42,184 @@
     ],
     "residual_blind_spot": "两个已知实例均已补齐检测器并通过 SG6 三控自测，SG3 判定在这两点上已与Dify 真实沙箱对齐。但这不反证'不存在第三个未知的判定分歧点'——static_gate.py 使用裸 compile/exec 而非真实沙箱本身仍是结构性差距，如实登记为'只能由真实发布/调用暴露'的已知盲区，不在静态侧声称已穷尽真实沙箱的全部拒绝条件。",
     "founder_ruling": "2026-09-03：dec7f61 与 9eae1bc 正式登记为 SG14 parity gap 实例，不再只当路上顺手修的缺陷处理。"
+  },
+  "CONTRACT_SEAM_MATRIX": {
+    "P0": {
+      "verdict": "PASS",
+      "counts": {
+        "UNSATISFIED_PROMPT_INPUT": 0,
+        "UNCONSUMED_REQUIRED_OUTPUT": 0,
+        "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+        "SEMANTIC_TRANSFORM_MISMATCH": 0
+      },
+      "rows": [
+        {
+          "concept": "fact_refs[] ／ 已登记的事实",
+          "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）",
+          "carrier": "professional_input / capability_call",
+          "transform": "无",
+          "consumer": "fact_verification.factual_claim 核验",
+          "semantics_match": true,
+          "category": null
+        },
+        {
+          "concept": "十二项标准交付物字段值格式",
+          "producer": "skill_llm 提示词的输出格式说明（cover/first_frame 等允许多行展开）",
+          "carrier": "ARTIFACT 块文本（cover:/first_frame: 等字段）",
+          "transform": "无",
+          "consumer": "returns_adapter._field_value_lines（已改为块级取值）",
+          "semantics_match": true,
+          "category": null
+        },
+        {
+          "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+          "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+          "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+          "transform": "无",
+          "consumer": "fact_verification._claim_grounded",
+          "semantics_match": true,
+          "category": null
+        },
+        {
+          "concept": "<think>/</think> 边界（final_extract 分割点）",
+          "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+          "carrier": "skill_llm.text",
+          "transform": "final_extract: text.split('</think>')|last",
+          "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+          "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+          "category": null,
+          "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+        },
+        {
+          "concept": "mode=FINAL 分支可达性",
+          "producer": "skill_llm 提示词的三级 mode 判据",
+          "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+          "transform": "无",
+          "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+          "semantics_match": "KNOWN_LIMITATION",
+          "category": null,
+          "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+        }
+      ]
+    },
+    "P1": {
+      "verdict": "BLOCKING",
+      "counts": {
+        "UNSATISFIED_PROMPT_INPUT": 1,
+        "UNCONSUMED_REQUIRED_OUTPUT": 1,
+        "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+        "SEMANTIC_TRANSFORM_MISMATCH": 0
+      },
+      "rows": [
+        {
+          "concept": "fact_refs[] ／ 已登记的事实",
+          "producer": "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+          "carrier": "professional_input / capability_call",
+          "transform": "无——问题正在于从未有过供给，不是变换环节出错",
+          "consumer": "fact_verification.fact_id 子串核验（旧契约）",
+          "semantics_match": false,
+          "category": "UNSATISFIED_PROMPT_INPUT"
+        },
+        {
+          "concept": "十二项标准交付物字段值格式",
+          "producer": "N/A",
+          "carrier": "N/A",
+          "transform": "N/A",
+          "consumer": "N/A",
+          "semantics_match": null,
+          "category": null,
+          "not_applicable": true
+        },
+        {
+          "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+          "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+          "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+          "transform": "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+          "consumer": "fact_verification（fid not in blob）",
+          "semantics_match": false,
+          "category": "UNCONSUMED_REQUIRED_OUTPUT"
+        },
+        {
+          "concept": "<think>/</think> 边界（final_extract 分割点）",
+          "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+          "carrier": "skill_llm.text",
+          "transform": "final_extract: text.split('</think>')|last",
+          "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+          "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+          "category": null,
+          "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+        },
+        {
+          "concept": "mode=FINAL 分支可达性",
+          "producer": "skill_llm 提示词的三级 mode 判据",
+          "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+          "transform": "无",
+          "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+          "semantics_match": "KNOWN_LIMITATION",
+          "category": null,
+          "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+        }
+      ]
+    },
+    "P1_5": {
+      "verdict": "BLOCKING",
+      "counts": {
+        "UNSATISFIED_PROMPT_INPUT": 1,
+        "UNCONSUMED_REQUIRED_OUTPUT": 1,
+        "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+        "SEMANTIC_TRANSFORM_MISMATCH": 0
+      },
+      "rows": [
+        {
+          "concept": "fact_refs[] ／ 已登记的事实",
+          "producer": "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+          "carrier": "professional_input / capability_call",
+          "transform": "无——问题正在于从未有过供给，不是变换环节出错",
+          "consumer": "fact_verification.fact_id 子串核验（旧契约）",
+          "semantics_match": false,
+          "category": "UNSATISFIED_PROMPT_INPUT"
+        },
+        {
+          "concept": "十二项标准交付物字段值格式",
+          "producer": "N/A",
+          "carrier": "N/A",
+          "transform": "N/A",
+          "consumer": "N/A",
+          "semantics_match": null,
+          "category": null,
+          "not_applicable": true
+        },
+        {
+          "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+          "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+          "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+          "transform": "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+          "consumer": "fact_verification（fid not in blob）",
+          "semantics_match": false,
+          "category": "UNCONSUMED_REQUIRED_OUTPUT"
+        },
+        {
+          "concept": "<think>/</think> 边界（final_extract 分割点）",
+          "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+          "carrier": "skill_llm.text",
+          "transform": "final_extract: text.split('</think>')|last",
+          "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+          "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+          "category": null,
+          "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+        },
+        {
+          "concept": "mode=FINAL 分支可达性",
+          "producer": "skill_llm 提示词的三级 mode 判据",
+          "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+          "transform": "无",
+          "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+          "semantics_match": "KNOWN_LIMITATION",
+          "category": null,
+          "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+        }
+      ]
+    }
   },
   "invariants": {
     "INV-1": {
@@ -697,6 +875,16 @@
           }
         },
         {
+          "id": "SG6.contract_seam_closure",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "R0.FX01_natural_language_admission",
           "verdict": "PASS",
           "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
@@ -837,6 +1025,68 @@
           }
         },
         {
+          "id": "SG8.contract_seam_closure",
+          "verdict": "PASS",
+          "summary": "all %d registered cross-layer concepts closed (0/0/0/0 across the four violation categories); SG8 proves supply/consumption/transformation closure for the registered concepts only — it does NOT prove the model will actually comply (Behavioral Correctness), see CONTRACT_SEAM_MATRIX rows marked PENDING_EMPIRICAL_VERIFICATION / KNOWN_LIMITATION for the disclosed residual scope",
+          "evidence": {
+            "counts": {
+              "UNSATISFIED_PROMPT_INPUT": 0,
+              "UNCONSUMED_REQUIRED_OUTPUT": 0,
+              "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+              "SEMANTIC_TRANSFORM_MISMATCH": 0
+            },
+            "matrix": [
+              {
+                "concept": "fact_refs[] ／ 已登记的事实",
+                "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）",
+                "carrier": "professional_input / capability_call",
+                "transform": "无",
+                "consumer": "fact_verification.factual_claim 核验",
+                "semantics_match": true,
+                "category": null
+              },
+              {
+                "concept": "十二项标准交付物字段值格式",
+                "producer": "skill_llm 提示词的输出格式说明（cover/first_frame 等允许多行展开）",
+                "carrier": "ARTIFACT 块文本（cover:/first_frame: 等字段）",
+                "transform": "无",
+                "consumer": "returns_adapter._field_value_lines（已改为块级取值）",
+                "semantics_match": true,
+                "category": null
+              },
+              {
+                "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+                "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+                "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+                "transform": "无",
+                "consumer": "fact_verification._claim_grounded",
+                "semantics_match": true,
+                "category": null
+              },
+              {
+                "concept": "<think>/</think> 边界（final_extract 分割点）",
+                "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+                "carrier": "skill_llm.text",
+                "transform": "final_extract: text.split('</think>')|last",
+                "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "category": null,
+                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+              },
+              {
+                "concept": "mode=FINAL 分支可达性",
+                "producer": "skill_llm 提示词的三级 mode 判据",
+                "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+                "transform": "无",
+                "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+                "semantics_match": "KNOWN_LIMITATION",
+                "category": null,
+                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+              }
+            ]
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -918,6 +1168,77 @@
             "positive_control": false,
             "negative_control": true,
             "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.contract_seam_closure",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG8.contract_seam_closure",
+          "summary": "CONTRACT_SEAM_MATRIX has 2 row(s) in violation: UNSATISFIED_PROMPT_INPUT=1; UNCONSUMED_REQUIRED_OUTPUT=1",
+          "evidence": {
+            "counts": {
+              "UNSATISFIED_PROMPT_INPUT": 1,
+              "UNCONSUMED_REQUIRED_OUTPUT": 1,
+              "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+              "SEMANTIC_TRANSFORM_MISMATCH": 0
+            },
+            "matrix": [
+              {
+                "concept": "fact_refs[] ／ 已登记的事实",
+                "producer": "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+                "carrier": "professional_input / capability_call",
+                "transform": "无——问题正在于从未有过供给，不是变换环节出错",
+                "consumer": "fact_verification.fact_id 子串核验（旧契约）",
+                "semantics_match": false,
+                "category": "UNSATISFIED_PROMPT_INPUT"
+              },
+              {
+                "concept": "十二项标准交付物字段值格式",
+                "producer": "N/A",
+                "carrier": "N/A",
+                "transform": "N/A",
+                "consumer": "N/A",
+                "semantics_match": null,
+                "category": null,
+                "not_applicable": true
+              },
+              {
+                "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+                "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+                "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+                "transform": "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+                "consumer": "fact_verification（fid not in blob）",
+                "semantics_match": false,
+                "category": "UNCONSUMED_REQUIRED_OUTPUT"
+              },
+              {
+                "concept": "<think>/</think> 边界（final_extract 分割点）",
+                "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+                "carrier": "skill_llm.text",
+                "transform": "final_extract: text.split('</think>')|last",
+                "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "category": null,
+                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+              },
+              {
+                "concept": "mode=FINAL 分支可达性",
+                "producer": "skill_llm 提示词的三级 mode 判据",
+                "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+                "transform": "无",
+                "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+                "semantics_match": "KNOWN_LIMITATION",
+                "category": null,
+                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+              }
+            ]
           }
         }
       ],
@@ -1493,6 +1814,79 @@
           }
         },
         {
+          "id": "SG6.contract_seam_closure",
+          "verdict": "BLOCKING",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG8.contract_seam_closure",
+          "verdict": "BLOCKING",
+          "summary": "CONTRACT_SEAM_MATRIX has 2 row(s) in violation: UNSATISFIED_PROMPT_INPUT=1; UNCONSUMED_REQUIRED_OUTPUT=1",
+          "evidence": {
+            "counts": {
+              "UNSATISFIED_PROMPT_INPUT": 1,
+              "UNCONSUMED_REQUIRED_OUTPUT": 1,
+              "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+              "SEMANTIC_TRANSFORM_MISMATCH": 0
+            },
+            "matrix": [
+              {
+                "concept": "fact_refs[] ／ 已登记的事实",
+                "producer": "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+                "carrier": "professional_input / capability_call",
+                "transform": "无——问题正在于从未有过供给，不是变换环节出错",
+                "consumer": "fact_verification.fact_id 子串核验（旧契约）",
+                "semantics_match": false,
+                "category": "UNSATISFIED_PROMPT_INPUT"
+              },
+              {
+                "concept": "十二项标准交付物字段值格式",
+                "producer": "N/A",
+                "carrier": "N/A",
+                "transform": "N/A",
+                "consumer": "N/A",
+                "semantics_match": null,
+                "category": null,
+                "not_applicable": true
+              },
+              {
+                "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+                "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+                "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+                "transform": "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+                "consumer": "fact_verification（fid not in blob）",
+                "semantics_match": false,
+                "category": "UNCONSUMED_REQUIRED_OUTPUT"
+              },
+              {
+                "concept": "<think>/</think> 边界（final_extract 分割点）",
+                "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+                "carrier": "skill_llm.text",
+                "transform": "final_extract: text.split('</think>')|last",
+                "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "category": null,
+                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+              },
+              {
+                "concept": "mode=FINAL 分支可达性",
+                "producer": "skill_llm 提示词的三级 mode 判据",
+                "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+                "transform": "无",
+                "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+                "semantics_match": "KNOWN_LIMITATION",
+                "category": null,
+                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+              }
+            ]
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -1574,6 +1968,77 @@
             "positive_control": false,
             "negative_control": true,
             "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.contract_seam_closure",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG8.contract_seam_closure",
+          "summary": "CONTRACT_SEAM_MATRIX has 2 row(s) in violation: UNSATISFIED_PROMPT_INPUT=1; UNCONSUMED_REQUIRED_OUTPUT=1",
+          "evidence": {
+            "counts": {
+              "UNSATISFIED_PROMPT_INPUT": 1,
+              "UNCONSUMED_REQUIRED_OUTPUT": 1,
+              "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+              "SEMANTIC_TRANSFORM_MISMATCH": 0
+            },
+            "matrix": [
+              {
+                "concept": "fact_refs[] ／ 已登记的事实",
+                "producer": "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+                "carrier": "professional_input / capability_call",
+                "transform": "无——问题正在于从未有过供给，不是变换环节出错",
+                "consumer": "fact_verification.fact_id 子串核验（旧契约）",
+                "semantics_match": false,
+                "category": "UNSATISFIED_PROMPT_INPUT"
+              },
+              {
+                "concept": "十二项标准交付物字段值格式",
+                "producer": "N/A",
+                "carrier": "N/A",
+                "transform": "N/A",
+                "consumer": "N/A",
+                "semantics_match": null,
+                "category": null,
+                "not_applicable": true
+              },
+              {
+                "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+                "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+                "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+                "transform": "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+                "consumer": "fact_verification（fid not in blob）",
+                "semantics_match": false,
+                "category": "UNCONSUMED_REQUIRED_OUTPUT"
+              },
+              {
+                "concept": "<think>/</think> 边界（final_extract 分割点）",
+                "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+                "carrier": "skill_llm.text",
+                "transform": "final_extract: text.split('</think>')|last",
+                "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "category": null,
+                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+              },
+              {
+                "concept": "mode=FINAL 分支可达性",
+                "producer": "skill_llm 提示词的三级 mode 判据",
+                "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+                "transform": "无",
+                "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+                "semantics_match": "KNOWN_LIMITATION",
+                "category": null,
+                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+              }
+            ]
           }
         }
       ],
@@ -2146,6 +2611,79 @@
             "positive_control": true,
             "negative_control": true,
             "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.contract_seam_closure",
+          "verdict": "BLOCKING",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG8.contract_seam_closure",
+          "verdict": "BLOCKING",
+          "summary": "CONTRACT_SEAM_MATRIX has 2 row(s) in violation: UNSATISFIED_PROMPT_INPUT=1; UNCONSUMED_REQUIRED_OUTPUT=1",
+          "evidence": {
+            "counts": {
+              "UNSATISFIED_PROMPT_INPUT": 1,
+              "UNCONSUMED_REQUIRED_OUTPUT": 1,
+              "UNREACHABLE_GOVERNANCE_PRECONDITION": 0,
+              "SEMANTIC_TRANSFORM_MISMATCH": 0
+            },
+            "matrix": [
+              {
+                "concept": "fact_refs[] ／ 已登记的事实",
+                "producer": "提示词假设的上游登记表（未定义来源，start 节点未提供）",
+                "carrier": "professional_input / capability_call",
+                "transform": "无——问题正在于从未有过供给，不是变换环节出错",
+                "consumer": "fact_verification.fact_id 子串核验（旧契约）",
+                "semantics_match": false,
+                "category": "UNSATISFIED_PROMPT_INPUT"
+              },
+              {
+                "concept": "十二项标准交付物字段值格式",
+                "producer": "N/A",
+                "carrier": "N/A",
+                "transform": "N/A",
+                "consumer": "N/A",
+                "semantics_match": null,
+                "category": null,
+                "not_applicable": true
+              },
+              {
+                "concept": "FACT_LEDGER 核验对象（fact_id vs factual_claim）",
+                "producer": "skill_llm：used_fact_refs[] 同时给 factual_claim 与 fact_id",
+                "carrier": "FACT_LEDGER 块（output_location/factual_claim/fact_id 三格）",
+                "transform": "factual_claim 被解析、被强制非空，随后核验路径改查 fact_id，忽略了已经解析出来的 factual_claim",
+                "consumer": "fact_verification（fid not in blob）",
+                "semantics_match": false,
+                "category": "UNCONSUMED_REQUIRED_OUTPUT"
+              },
+              {
+                "concept": "<think>/</think> 边界（final_extract 分割点）",
+                "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
+                "carrier": "skill_llm.text",
+                "transform": "final_extract: text.split('</think>')|last",
+                "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
+                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "category": null,
+                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+              },
+              {
+                "concept": "mode=FINAL 分支可达性",
+                "producer": "skill_llm 提示词的三级 mode 判据",
+                "carrier": "realization_manifest / M4 四类合法等价兑现证据",
+                "transform": "无",
+                "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
+                "semantics_match": "KNOWN_LIMITATION",
+                "category": null,
+                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+              }
+            ]
           }
         },
         {
