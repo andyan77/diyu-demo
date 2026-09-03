@@ -1,0 +1,73 @@
+{
+  "task_id": "DIYU-V1-P0-EMPIRICAL-R1-001",
+  "phase": "B",
+  "status": "STOPPED_PENDING_FOUNDER_RULING",
+  "reason": "SG7.real_provider_payload_verification 逐字段比对发现 thinking 字段真实值与 static_gate.py._actual_completion_params() 模拟值不一致；不一致→按 Execution Prompt 明文要求立即停止，不跑阶段C对照，等裁决。",
+  "real_call": {
+    "case_id": "EVAL-P0-R1-001",
+    "tier": "low",
+    "k": 1,
+    "workflow_run_id": "1beff598-8602-46ab-b35c-e767e8962866",
+    "app": "app-4LLHCyCpIuKw9xDjMfJJpSH8 (DIYU M4 v2.0 · Publishing & Packaging)",
+    "status": "succeeded",
+    "elapsed_time_s": 174.288039,
+    "total_tokens": 34526,
+    "prompt_tokens": 18460,
+    "completion_tokens": 16066,
+    "raw_sse_file": "p0-empirical-r1/raw/EVAL-P0-R1-001_low_k1.sse",
+    "note": "这是本轮第一次成功的真实付费调用（此前两次尝试分别被 Dify 发布前校验的跨End节点撞名、以及 envelope_check 的 SyntaxWarning 拦在到达LLM节点之前，均零成本，已各自修复并提交：dec7f61, 9eae1bc）。"
+  },
+  "plugin_identity": {
+    "installed_for_tenant": "tenant_id=09758721-a8d3-4f01-b0f2-c69c82a11568",
+    "plugin_unique_identifier": "langgenius/deepseek:0.0.20@850efe73fb62bbe7ab2229116086596596297a77174fb86f73e1363b99a24116",
+    "source_of_truth": "docker exec docker-db_postgres-1 psql -d dify_plugin -c \"SELECT plugin_unique_identifier FROM plugin_installations WHERE plugin_id='langgenius/deepseek'\"",
+    "note": "确认与 E4 Prompt 引用的基线（deepseek-0.0.20 models/llm/llm.py:127）版本一致，不是 0.0.21（同容器内另有缓存但未绑定本 tenant）。"
+  },
+  "source_files_copied_from_live_container": {
+    "models/llm/llm.py": {
+      "container_path": "/app/storage/cwd/langgenius/deepseek-0.0.20@850efe73.../models/llm/llm.py",
+      "local_copy": "p0-empirical-r1/raw/deepseek-0.0.20_llm.py",
+      "sha256": "af4e09b3ee2913189cecab1b3e00e0b98cd94d307825e0482dd3d0fef8e0e524"
+    },
+    ".venv/.../openai_compatible/llm.py": {
+      "container_path": "/app/storage/cwd/langgenius/deepseek-0.0.20@850efe73.../.venv/lib/python3.12/site-packages/dify_plugin/interfaces/model/openai_compatible/llm.py",
+      "local_copy": "p0-empirical-r1/raw/deepseek-0.0.20_oai_compatible_llm.py",
+      "sha256": "ec1395a95745384f9d7fc05a29e4581ceb7d006b4cb0cc2a59d0de1b7ed23358",
+      "role": "OAICompatLargeLanguageModel._generate — data = {model, stream, **model_parameters} 后 json.dumps(data) 直接作为 requests.post 的请求体，thinking 字段未经任何进一步转换，逐字节透传到出站 HTTP JSON。"
+    }
+  },
+  "why_dify_api_response_was_insufficient": "streaming SSE 的 node_finished(skill_llm) 与数据库 workflow_node_executions.process_data 均只含 model_mode/prompts/usage/finish_reason/model_provider/model_name，process_data_truncated=false（不是截断，是 Dify 本就不落这一层），从不记录 model_parameters/completion_params 本身，无法从 Dify 自己暴露的任何 API/DB 记录里拿到最终 model_parameters 或出站 payload。plugin_daemon 的 docker logs 与容器内 /app/storage/logs/server.log 在当前 LOG_LEVEL=INFO 下也只有一行结构化摘要（method/path/status/latency_ms），不含请求体。",
+  "method": "未改动任何真实基础设施（未提权、未改 LOG_LEVEL、未重启容器）。从活的 plugin_daemon 容器里 docker cp 出该 tenant 实际绑定版本（0.0.20）的两份真实源码，用正则从第一份文件里逐字提取 _normalize_model_parameters 方法体原文（非重新实现），在存根基类下 exec 后用 P0 DSL 里真实声明的 completion_params 实际调用它，并读第二份文件确认其输出如何被拼进最终 HTTP body。这是对已部署真实代码的一次真实执行观察，不是重新阅读源码后的人工推演。",
+  "declared_completion_params": {
+    "max_tokens": 384000,
+    "reasoning_effort": "low",
+    "thinking": true
+  },
+  "real_normalize_model_parameters_output": {
+    "max_tokens": 384000,
+    "reasoning_effort": "low",
+    "thinking": {
+      "type": "enabled"
+    }
+  },
+  "static_gate_actual_completion_params_output": {
+    "max_tokens": 384000,
+    "reasoning_effort": "low",
+    "thinking": true
+  },
+  "comparison": {
+    "key_set_matches": true,
+    "key_set_verdict": "SG5/SG7 的 _plugin_normalization_mismatch() 只算 set(declared) - set(actual)（哪些键被静默丢弃），这一属性两边完全一致：当前 P0 声明的 completion_params 本就不含 temperature/top_p/presence_penalty/frequency_penalty（Founder此前裁决已删），真实代码与模拟代码对这一具体判据的结论相同，均为“无键被静默丢弃”。",
+    "field_value_diffs": [
+      {
+        "field": "thinking",
+        "real": {
+          "type": "enabled"
+        },
+        "simulated": true,
+        "assessment": "真实值与模拟值不同形——真实代码把 Dify UI 层的布尔开关转换成 DeepSeek API 实际期望的 {type: enabled/disabled} 结构，这个转换后的字典被逐字节透传进最终 出站 JSON（已核验 openai_compatible/llm.py 的 data = {**model_parameters} 环节，thinking 字段之后再无任何改动）。这是一次真实、确认的“逐字段”不一致，但只影响 thinking 这一个字段的取值表示，不影响 SG5/SG7 当前唯一在用的判据（哪些键被丢弃）的结论方向。"
+      }
+    ]
+  },
+  "disposition": "按 Execution Prompt 原文：不一致→立即停止，不跑阶段C对照，报告差异，等裁决。本记录即该报告的证据体；阶段C（3案例×2档位×k=3=18次真实付费调用）在此裁决前不发起。"
+}
