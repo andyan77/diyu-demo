@@ -20,6 +20,7 @@ import re
 import socket
 import subprocess
 import sys
+import warnings
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -876,6 +877,33 @@ def _end_node_output_name_collisions(yml_data):
     return {k: v for k, v in names.items() if len(v) > 1}
 
 
+# 阶段 B（DIYU-V1-P0-EMPIRICAL-R1-001）：P0 第一次真实 Dify 调用在
+# envelope_check 节点上失败——`_find_scalar` 的 docstring（E7 M-1 修复时新增
+# 的说明文字）是非 raw 三引号字符串，其中含未转义的 `\s`，编译时触发
+# `SyntaxWarning: invalid escape sequence '\s'`。static_gate.py 自身此前
+# 只用裸 `compile()`/`exec()`（find_tautologies、component_return 执行等），
+# 从不检查警告，本地跑永远"成功"；Dify 真实沙箱执行器把这类警告当失败处理，
+# 节点直接 status=failed，工作流在到达任何 LLM 节点前就整体失败（零成本，
+# 但会让阶段 B/C 的每一次真实调用全部白费）。用 git show HEAD 回放修复前的
+# 源码验证过：确实且仅触发这一条 SyntaxWarning，与 Dify 报的错文字完全一致；
+# P1/P1_5 现场核验过，无此缺陷（M-1 的这段说明文字是 P0 专属新增，未同步过去）。
+def _code_node_syntax_warnings(yml_data):
+    hits = {}
+    for n in yml_data["workflow"]["graph"]["nodes"]:
+        if n["data"]["type"] != "code":
+            continue
+        code = n["data"]["code"]
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            try:
+                compile(code, n["id"], "exec")
+            except SyntaxError:
+                continue
+        if caught:
+            hits[n["id"]] = [str(w.message) for w in caught]
+    return hits
+
+
 def run_sg3(sku, yml_data):
     findings = []
     defects = schema_and_dangling_defects(yml_data)
@@ -900,6 +928,22 @@ def run_sg3(sku, yml_data):
         findings.append(finding(
             "SG3.end_node_output_name_uniqueness", "PASS",
             "every output variable name is declared by exactly one End node",
+            evidence={"file": sku["yml_path"]},
+        ))
+
+    syntax_warnings = _code_node_syntax_warnings(yml_data)
+    if syntax_warnings:
+        findings.append(finding(
+            "SG3.code_node_compiles_without_warnings", "BLOCKING",
+            "code node source triggers a Python warning at compile time (e.g. an invalid "
+            "escape sequence in a non-raw string) — Dify's real sandboxed executor fails the "
+            "node on this even though a bare compile()/exec() does not: %s" % syntax_warnings,
+            evidence={"file": sku["yml_path"], "detail": syntax_warnings},
+        ))
+    else:
+        findings.append(finding(
+            "SG3.code_node_compiles_without_warnings", "PASS",
+            "every code node compiles with zero Python warnings",
             evidence={"file": sku["yml_path"]},
         ))
 
@@ -1715,6 +1759,29 @@ def run_sg6(sku, yml_data, skill_md_text):
     offlist19_caught = len(_end_node_output_name_collisions(offlist19)) > 0
 
     findings.append(_sg6_verdict("end_node_output_name_collisions", pos19, neg19, offlist19_caught))
+
+    # --- detector: code_node_syntax_warnings (阶段 B / 真实发布首次暴露；
+    # same function SG3 runs in production) ---
+    pos20 = len(_code_node_syntax_warnings(good_data)) == 0
+
+    bad20 = copy.deepcopy(good_data)
+    bad20_node = node_by_id(bad20, "envelope_check")
+    bad20_node["data"]["code"] = bad20_node["data"]["code"].replace(
+        'def _norm(s):', 'X_BAD = "\\s literal, non-raw, invalid escape"\n\n\ndef _norm(s):', 1
+    )
+    neg20 = len(_code_node_syntax_warnings(bad20)) > 0
+
+    # Off-list: a DIFFERENT invalid escape sequence (\\d in a plain string,
+    # not \\s), in a DIFFERENT node, to prove the scan is not hardcoded to
+    # the one literal case that was actually caught.
+    offlist20 = copy.deepcopy(good_data)
+    offlist20_node = node_by_id(offlist20, "fact_verification")
+    offlist20_node["data"]["code"] = (
+        'X_OFFLIST_BAD = "\\d literal, non-raw, invalid escape"\n\n\n' + offlist20_node["data"]["code"]
+    )
+    offlist20_caught = len(_code_node_syntax_warnings(offlist20)) > 0
+
+    findings.append(_sg6_verdict("code_node_syntax_warnings", pos20, neg20, offlist20_caught))
 
     return findings
 

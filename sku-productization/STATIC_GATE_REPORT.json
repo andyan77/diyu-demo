@@ -102,7 +102,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "b5869aa1824ee4800ffa79e0a63f443b3a3ef4702a3dc1b7e54d0dba3704ad39",
+      "dsl_sha256": "45601124498ae9cb1f54f97b6498483282674de4deac8655d14c72e605edaa3d",
       "blockers": [],
       "dynamic_only": [
         {
@@ -244,6 +244,14 @@
           "id": "SG3.end_node_output_name_uniqueness",
           "verdict": "PASS",
           "summary": "every output variable name is declared by exactly one End node",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.code_node_compiles_without_warnings",
+          "verdict": "PASS",
+          "summary": "every code node compiles with zero Python warnings",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
           }
@@ -625,6 +633,16 @@
           }
         },
         {
+          "id": "SG6.code_node_syntax_warnings",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "R0.FX01_natural_language_admission",
           "verdict": "PASS",
           "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
@@ -979,6 +997,14 @@
                 "end_component_return"
               ]
             }
+          }
+        },
+        {
+          "id": "SG3.code_node_compiles_without_warnings",
+          "verdict": "PASS",
+          "summary": "every code node compiles with zero Python warnings",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
           }
         },
         {
@@ -1351,6 +1377,16 @@
           }
         },
         {
+          "id": "SG6.code_node_syntax_warnings",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -1565,6 +1601,14 @@
                 "end_component_return"
               ]
             }
+          }
+        },
+        {
+          "id": "SG3.code_node_compiles_without_warnings",
+          "verdict": "PASS",
+          "summary": "every code node compiles with zero Python warnings",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
           }
         },
         {
@@ -1932,6 +1976,16 @@
           "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
           "evidence": {
             "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.code_node_syntax_warnings",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
             "negative_control": true,
             "off_list_constructed_bad_case": true
           }
