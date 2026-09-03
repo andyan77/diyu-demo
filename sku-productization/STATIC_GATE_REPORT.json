@@ -126,7 +126,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "45601124498ae9cb1f54f97b6498483282674de4deac8655d14c72e605edaa3d",
+      "dsl_sha256": "30bff7260a283c1d66c1cd07948c2b67c75f48e0e7ea89931c0950fdb77ff37e",
       "blockers": [],
       "dynamic_only": [
         {
@@ -159,7 +159,7 @@
           "summary": "advisory criterion 顾问性② carried as a self-check item",
           "evidence": {
             "file": "products/p0-publishing-packaging/SKILL_v2.0.md",
-            "line": 768
+            "line": 774
           }
         },
         {
@@ -168,7 +168,7 @@
           "summary": "advisory criterion 顾问性③ carried as a self-check item",
           "evidence": {
             "file": "products/p0-publishing-packaging/SKILL_v2.0.md",
-            "line": 769
+            "line": 775
           }
         },
         {
@@ -220,7 +220,7 @@
           "summary": "APPLICABLE/NOT_APPLICABLE determination mechanism present (16 occurrences)",
           "evidence": {
             "file": "products/p0-publishing-packaging/SKILL_v2.0.md",
-            "line": 469
+            "line": 471
           }
         },
         {
@@ -325,8 +325,8 @@
               "prefix_matches": true,
               "tail_matches": true,
               "tail_sha256": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
-              "assembled_sha256": "5d2f340d8406822983d1fab7263d99d5f888e1835ca4434f72a4356cac05bb30",
-              "skill_md_sha256": "2f25ce977f4b88edccab76909cd896fe7abdf3b6640bd2a8e6c04d07f65c66c2"
+              "assembled_sha256": "681eb76269f5ebdbe43c453ae96a84cb53cc27131a17c6f8752f7cc4dc296d02",
+              "skill_md_sha256": "389257a0a8acf412755a7dfcc2d2878b63b4a52f4073a2973074e7b1f8caa8aa"
             }
           }
         },
@@ -740,7 +740,7 @@
         {
           "id": "R0.FX06_fact_verification_accept_all_trap",
           "verdict": "PASS",
-          "summary": "row 6 (fact_verification 换成 accept-all 空函数): expected 必须被检出 — verified by direct execution of the real node code extracted from the DSL",
+          "summary": "row 6 (fact_verification 换成 accept-all 空函数；E8（DIYU-V1-P0-CONTRACT-SEAM-001）裁决后变体兄弟：核验对象从 fact_id 换成 factual_claim（实质性词元覆盖），四个变体——同义改写（应放行）/ 凭空编造（应拦截）/ 空白符（经既有 PARSE_FAILED 路径拦截）/ 引用输入里不存在的数值（应拦截）。根因：SKILL 提示词要求 fact_id 写 `BRF-XXX-NNN-XXX` 登记全称，但 P0 独立调用时从无上游提供这份登记表，模型只能自造编号，自造编号永远不是用户原文子串，旧实现（核验 fact_id）因此对任何合法陈述都必然误判 FAIL——已用 git show HEAD 回放旧实现确认同义改写这一步在修复前确实被误拦。): expected 必须被检出；同义改写不得被拦截（这是本轮要修的误报本身），凭空编造/引用不存在的数值/空白符必须继续拦截 — verified by direct execution of the real node code extracted from the DSL",
           "evidence": {
             "fixture_file": "fixtures/FX06_fact_verification_accept_all_trap.json"
           }
@@ -815,7 +815,7 @@
         {
           "id": "R0.FX15_standard_deliverables_completeness",
           "verdict": "PASS",
-          "summary": "row B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单） (空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同；M-2（E7 收口追加）变体兄弟：即便十二个字段名逐一都写了，只要值是空的或占位符，_standard_deliverables_missing 的原实现（纯字段名存在性查找）照样判定齐全): expected 必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行；M-2 变体（有名无值/值为空白符/值为占位符/十二项中只空一项）同样必须判定缺失 — verified by direct execution of the real node code extracted from the DSL",
+          "summary": "row B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单） (空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同；M-2（E7 收口追加）变体兄弟：即便十二个字段名逐一都写了，只要值是空的或占位符，_standard_deliverables_missing 的原实现（纯字段名存在性查找）照样判定齐全；E8（DIYU-V1-P0-CONTRACT-SEAM-001）变体兄弟：字段名后换行接列表/代码块展开的块级值（如 `cover:\\n- ...`），以及字段名后紧跟 `[]` 和/或中英文括号注释再接冒号（如 `release_check（草案）:`），此前旧实现连同一行值判据都套不上——这不是'值是空的或占位符'，是模型真实给出了实质内容，旧实现却因为格式假设过窄直接判'未提及'。E4 阶段C 12次真实调用里4次因此被错误 LOCAL_STRUCTURE_BLOCKED（详见 p0-empirical-r1/），逐字核对模型真实输出确认内容本身完整。): expected 必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行；M-2 变体（有名无值/值为空白符/值为占位符/十二项中只空一项）同样必须判定缺失；块级值与括号/`[]`注释后缀必须被识别为有效值（不得因格式误判为缺失），同一段混排文本里真正留空的字段（同行无值且下一个已知字段名之间也无内容）仍必须正确判定为缺失，两者不得互相干扰 — verified by direct execution of the real node code extracted from the DSL",
           "evidence": {
             "fixture_file": "fixtures/FX15_standard_deliverables_completeness.json"
           }
@@ -873,6 +873,19 @@
       "dsl_sha256": "6d3ac8df66c4772a38049d9d7c738579737e1dc472a43911378c07d680ca8954",
       "blockers": [
         {
+          "id": "SG1.G1.fact_verification",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline's real executed behavior fails expectation: {'not_blocked_when_resolvable': False, 'blocked_when_unresolvable': True, 'pass': False}",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "fact_verification",
+            "detail": {
+              "not_blocked_when_resolvable": false,
+              "blocked_when_unresolvable": true,
+              "pass": false
+            }
+          }
+        },
+        {
           "id": "SG3.end_node_output_name_uniqueness",
           "summary": "output variable name(s) declared by more than one End node — Dify's own pre-publish validator rejects this at publish time: {'user_delivery': ['end_ok', 'end_component_return'], 'user_delivery_leaks': ['end_ok', 'end_component_return']}",
           "evidence": {
@@ -887,6 +900,15 @@
                 "end_component_return"
               ]
             }
+          }
+        },
+        {
+          "id": "SG6.fact_verification_behavior",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
           }
         },
         {
@@ -959,15 +981,15 @@
         },
         {
           "id": "SG1.G1.fact_verification",
-          "verdict": "PASS",
-          "summary": "verified by direct execution (not carrier-existence alone): no-fabrication / UNKNOWN-FACT discipline real behavior matches expectation: {'not_blocked_when_resolvable': True, 'blocked_when_unresolvable': True, 'pass': True}",
+          "verdict": "BLOCKING",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline's real executed behavior fails expectation: {'not_blocked_when_resolvable': False, 'blocked_when_unresolvable': True, 'pass': False}",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
             "node": "fact_verification",
             "detail": {
-              "not_blocked_when_resolvable": true,
+              "not_blocked_when_resolvable": false,
               "blocked_when_unresolvable": true,
-              "pass": true
+              "pass": false
             }
           }
         },
@@ -1372,10 +1394,10 @@
         },
         {
           "id": "SG6.fact_verification_behavior",
-          "verdict": "PASS",
-          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "verdict": "BLOCKING",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
           "evidence": {
-            "positive_control": true,
+            "positive_control": false,
             "negative_control": true,
             "off_list_constructed_bad_case": true
           }
@@ -1507,6 +1529,19 @@
       "dsl_sha256": "b016f7e88d3fb8be59c8eec90c0a37407ca971881fd0b309e2dabebfcf476e91",
       "blockers": [
         {
+          "id": "SG1.G1.fact_verification",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline's real executed behavior fails expectation: {'not_blocked_when_resolvable': False, 'blocked_when_unresolvable': True, 'pass': False}",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "fact_verification",
+            "detail": {
+              "not_blocked_when_resolvable": false,
+              "blocked_when_unresolvable": true,
+              "pass": false
+            }
+          }
+        },
+        {
           "id": "SG3.end_node_output_name_uniqueness",
           "summary": "output variable name(s) declared by more than one End node — Dify's own pre-publish validator rejects this at publish time: {'user_delivery': ['end_ok', 'end_component_return'], 'user_delivery_leaks': ['end_ok', 'end_component_return']}",
           "evidence": {
@@ -1521,6 +1556,15 @@
                 "end_component_return"
               ]
             }
+          }
+        },
+        {
+          "id": "SG6.fact_verification_behavior",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
           }
         },
         {
@@ -1593,15 +1637,15 @@
         },
         {
           "id": "SG1.G1.fact_verification",
-          "verdict": "PASS",
-          "summary": "verified by direct execution (not carrier-existence alone): no-fabrication / UNKNOWN-FACT discipline real behavior matches expectation: {'not_blocked_when_resolvable': True, 'blocked_when_unresolvable': True, 'pass': True}",
+          "verdict": "BLOCKING",
+          "summary": "no-fabrication / UNKNOWN-FACT discipline's real executed behavior fails expectation: {'not_blocked_when_resolvable': False, 'blocked_when_unresolvable': True, 'pass': False}",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
             "node": "fact_verification",
             "detail": {
-              "not_blocked_when_resolvable": true,
+              "not_blocked_when_resolvable": false,
               "blocked_when_unresolvable": true,
-              "pass": true
+              "pass": false
             }
           }
         },
@@ -2006,10 +2050,10 @@
         },
         {
           "id": "SG6.fact_verification_behavior",
-          "verdict": "PASS",
-          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "verdict": "BLOCKING",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
           "evidence": {
-            "positive_control": true,
+            "positive_control": false,
             "negative_control": true,
             "off_list_constructed_bad_case": true
           }

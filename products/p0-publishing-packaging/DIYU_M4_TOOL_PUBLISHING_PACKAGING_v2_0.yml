@@ -1524,7 +1524,7 @@ workflow:
 
             1. 读 **beat 级**的 `realization_manifest`——哪条 beat 由哪段素材覆盖（对位是上游做的，不在这里重做）
             2. 逐条比对 `script_beats[]`：**哪些 beat 在 manifest 里没有对应项**——那就是没拍到的
-            3. 逐条比对 `fact_refs[]`：**哪些事实真有画面支撑，哪些只剩口说**
+            3. 逐条核对**已登记的事实**（即 `professional_input` 原文里的陈述）：**哪些事实真有画面支撑，哪些只剩口说**
             4. 归纳出 `realized_payoff` = 这条片子**实际兑现了什么**
             5. **然后**才开始做包装，上限是第 4 步的结论
 
@@ -1540,12 +1540,13 @@ workflow:
 
             | 槽位 | 缺了怎么办 |
             |---|---|
-            | `script_beats[]` ＋ `content_promise` | **无法工作**，回退上游 |
+            | `content_promise` | **无法工作**，回退上游——没有内容对观众的承诺，无法判断标题/封面该建立什么期待 |
+            | `script_beats[]` 正式脚本节拍 | **不是 P0 独立调用时的唯一合法输入**——E8 裁决：P0 可独立调用，此时唯一真实存在的输入是 `professional_input`（专业人士自然语言口述）。缺 `script_beats[]` 时不触发"回退上游"（独立调用没有可回退的上游节点），按"没有 beat 级 `realization_manifest`"处理，直接走 mode 判据第一级 PRE，以 `professional_input` 原文本身作为唯一依据 |
             | `realization_manifest` 或 `realization_plan` | 只有 `plan`、没有 beat 级 manifest ＝ **第一级 PRE**。有 manifest 时按三级判据往下判，**不是有 manifest 就 FINAL**。资产级的清单不算 manifest |
             | `subject_domain` 行业／赛道 | 由上游原样透传。**决定加载 `references/industry-conditions.md` 的哪一段**——缺了就按通用处理并在 `assumptions[]` 声明，**不要挑一个"最像的"套上去** |
             | `expression_subject` 五类之一 | **问**／默认从脚本口吻反推，标为推断。不同类型的"人物一致性"判据不同 |
             | `audience_shift` | 从 `content_promise` 反推，声明是推断。**三段共用一个落点** |
-            | `fact_refs[]` | 无来源的事实**不得写进标题和封面**——标题是承诺，承诺不能建在没有出处的说法上 |
+            | **已登记的事实**（E8 裁决：P0 独立调用时 ＝ `professional_input` ／ `capability_call` 原文本身，不是一份独立外部登记表；上游确有更结构化的事实清单时可叠加使用，但不是前提） | 无来源的事实**不得写进标题和封面**——标题是承诺，承诺不能建在没有出处的说法上 |
             | `platform` | **问**／默认出平台中立母版，不出正式平台包装 |
             | `account_positioning` 对标什么类型账号 | 自选并声明，同时给出"换一种定位会怎样" |
             | `cta_contract` 有无 CTA、动作是什么 | 默认无 CTA —— **不得自己创造业务动作** |
@@ -1553,10 +1554,11 @@ workflow:
             | `duration_band` 短（≤60s）／长（>60s） | **问**／默认短档。长档的完播、收藏、"会不会存下来"逻辑与短档完全不同——长档的收藏动机通常来自可复用的信息，短档来自一句能复述的话 |
             | `explicit_non_promise[]` | 只读继承。**包装阶段是最容易把承诺加回来的地方**——上游明说不给结论，标题就不能暗示有结论 |
             | `constraints[]` | 只读继承。第三方入镜边界同样约束封面与首帧选帧 |
-            | `content_origin_mode[]` ＋ `fact_refs[]` | 按 type 区别对待，见下 |
+            | `content_origin_mode[]` ＋ **已登记的事实**（定义同上） | 按 type 区别对待，见下 |
 
-            > **M4 注解（不改上表任何一行）**：第 2 行「`realization_manifest`」的取值面扩展为「beat 级 `realization_manifest`，**或**「合法等价兑现证据与直达」一节四类等价证据之一」。判据一字不变：**能按 beat／等价内容单元逐条回答支撑程度的才算，资产级清单仍然不算。**
+            > **M4 注解**：第 2 行「`realization_manifest`」的取值面扩展为「beat 级 `realization_manifest`，**或**「合法等价兑现证据与直达」一节四类等价证据之一」。判据一字不变：**能按 beat／等价内容单元逐条回答支撑程度的才算，资产级清单仍然不算。**
             > 另外，`cs_final` 与 `pd_final` **不是本表的槽位**，缺了它们不构成任何一格的「缺」。
+            > **E8 注解**：`script_beats[]` 与 `fact_refs[]`（现「已登记的事实」）两行按 E8 裁决更新——E4 阶段 C 真实调用暴露 P0 独立调用（无上游 `script_beats[]`／`fact_refs[]` 供给）时 100% 交付阻断，原表两行是对着一个不存在的调用方写的。其余各行不改。
 
             ---
 
@@ -1743,11 +1745,11 @@ workflow:
 
             **只有同时满足三条才允许使用**：
 
-            1. `fact_refs[]` 里**存在**对应的那条事实；
-            2. 它有**明确的 `fact_id`**；
+            1. **已登记的事实**（`professional_input` 原文）里**存在**对应的那条事实；
+            2. 能明确指出它对应用户原文的**具体内容**（回指，不是编号）；
             3. 该事实**确实没有进入成片**（进了成片就不是"没说的"）。
 
-            **没有对应 `fact_id`，一律不得生成**：内部争论、内部讨论、投票、表决、
+            **指不出对应的用户原文，一律不得生成**：内部争论、内部讨论、投票、表决、
             人物的停顿或表情、任何人的原话、以及其他任何"已经发生过"的事件。
             **想不出可写的，就不用这个结构** —— 用不上它不算缺陷，编一件事出来才是。
 
@@ -1756,16 +1758,16 @@ workflow:
             > ❌ 「今天给大家分享初秋通勤的六件单品，分别是……」——口播稿的复述。
             >
             > ❌ 「片子里没说的是：那一件我们内部争了很久。」
-            > ——`fact_refs[]` 里没有任何一条登记过"内部争论"这件事。**这句是凭空造出来的。**
+            > ——用户原文里没有任何一句提到过"内部争论"这件事。**这句是凭空造出来的。**
             > 它之所以危险，是因为读起来完全像真的：没有夸张词、没有数字、没有引号，
             > 一条只查触发词的扫描器对它是瞎的。
             >
-            > ✅ 「片子里没说的是：〈`FACT-ID-X` 登记的那条事实，且它确实没剪进成片〉。」
+            > ✅ 「片子里没说的是：〈用户原文里那条被登记下来的事实，且它确实没剪进成片〉。」
             > 「〈同一条事实里被登记下来的取舍或条件〉。」
-            > 「〈最终选择，以及它依据的是哪条已登记事实〉。」
+            > 「〈最终选择，以及它依据的是用户原文哪一句〉。」
             > 「〈一个能一句话回答的具体问题〉」
             >
-            > 写这四行时，**每一行都要能在 `used_fact_refs[]` 里挂上 `fact_id`**。挂不上的那行删掉。
+            > 写这四行时，**每一行都要能在 `used_fact_refs[]` 里指出对应用户原文的具体内容**。指不出的那行删掉。
 
             ---
 
@@ -1924,14 +1926,18 @@ workflow:
                                       **FINAL 下每一项必须写出已完成的处置结果，不得有 OPEN 项**
             used_fact_refs[]          事实回指。逐条写三格：
                                         output_location   这句话出现在产出的哪一处
-                                        factual_claim     这一处做了什么事实性陈述
-                                        fact_id[]         它依据 `fact_refs[]` 里的哪一条或哪几条
+                                        factual_claim     这一处做了什么事实性陈述——**用能在用户原文
+                                                          （`professional_input` ／ `capability_call`）
+                                                          里找到实质对应内容的说法写**，不是复制粘贴
+                                                          原句，但读者要能一眼看出它对应用户说过的
+                                                          哪件事
+                                        fact_id[]         内部句柄，仅用于同一交付物内部去重与引用同
+                                                          一条事实——**自选简写即可（如 `F01`），不要求
+                                                          外部登记全称**；真正被核验的是 `factual_claim`
+                                                          能不能对应回用户原文，不是这个编号本身
 
-                                      **编号必须写登记全称，一个字符都不能省。**
-                                      ✅ `BRF-SUHE-001-F02`　`BRF-SUHE-001-A01`
-                                      ❌ `F02`　`A01`　`F2`　「第二条」　「商品那条」
-                                      简写、自造编号、以及 `fact_refs[]` 里根本不存在的编号，
-                                      **一律按没有回指处理**。
+                                      **`factual_claim` 对不上用户原文的任何内容，一律按没有回指处理**——
+                                      判断标准从"编号对不对"变成"这件事用户是不是真的说过"。
 
                                       **必须覆盖这六处**：
                                         1. `realized_payoff`
@@ -1948,7 +1954,7 @@ workflow:
                                       一个事实可以对应多个 `fact_id`；**纯创意执行指令**（怎么排版、
                                       什么语气、镜头怎么切、字幕怎么断句）不强制绑定。
 
-                                      **找不到对应 `fact_id` 时，只有一条路：不生成它。**
+                                      **`factual_claim` 找不到对应的用户原文时，只有一条路：不生成它。**
                                       不得改写成"可能发生过""据说""印象中"这类模糊措辞继续保留；
                                       不得挪到别的字段里继续保留；不得先写下来再说"这条没有依据"。
                                       **想不出可写的就不写** —— 少一句不是缺陷，编一句才是。
@@ -2083,7 +2089,7 @@ workflow:
             ### 自检和自述都不是完成证据
 
             > **你在自检、`used_fact_refs[]` 或任何说明文字里声称「已删除」「已处理」「已核实」，
-            > 不构成完成证据。最终判定以用户交付块的实际文本、以及有效的 `fact_id` 对应关系为准。**
+            > 不构成完成证据。最终判定以用户交付块的实际文本、以及 `factual_claim` 能否对应回用户原文为准。**
 
             **不得用自我声明覆盖实际正文。** 说了删，正文里还在，那就是没删 —— 而且比不说更糟，
             因为它会让下游以为这一处已经清理过了。
@@ -2109,12 +2115,12 @@ workflow:
             7. mode 是**按三级判据依次**推出来的，还是拍脑袋填的？判 FINAL 之前，`uncovered_beats[]` 里每一项**都写出已完成的处置结果**了吗——还剩一项 OPEN 就该是 MIXED。PRE／MIXED 里仍悬着的那部分产出，有没有全部标注为草案？
             8. FINAL 模式下，`realized_payoff` 是从 **beat 级** manifest 归纳出来的，还是拿一句"拍了 42 分钟"当依据？
             8b. `used_fact_refs[]` 里，`realized_payoff`／推荐标题／封面／发布文案／评论区事实陈述，
-                **五处都回指到具体 `fact_id` 了吗**？有没有哪一句是事实性表达却挂不上任何 `fact_id`——
-                挂不上就不能留在定稿里。
-            8c. `used_fact_refs[]` 里的编号，**每一个都是 `BRF-SUHE-001-XXX` 这样的登记全称**吗？
-                有没有写成 `F02` 这种简写、或者一个 `fact_refs[]` 里根本没有的号？
+                **五处的 `factual_claim` 都能在用户原文里找到实质对应了吗**？有没有哪一句是事实性表达
+                却对不上用户原文的任何内容——对不上就不能留在定稿里。
+            8c. `used_fact_refs[]` 里的 `factual_claim`，是不是**真的复述了用户说过的具体内容**，
+                而不是听起来像事实、实际是自己补充或推断出来的一句话？
                 另外——产出里**每一处"某人做了某事／某人说了某句话／我们当时怎么决定的"**，
-                都在表里挂上号了吗？漏的那几处，就是最可能编出来的那几处。
+                都在表里对应上用户原文了吗？漏的那几处，就是最可能编出来的那几处。
             9. `explicit_non_promise[]` 里的东西，标题、封面、置顶评论有没有把它悄悄承诺回来？
             9b. 上游 `constraints[]` 里的禁令，**封面和首帧的选帧**守住了吗？——第三方入镜、未成年人不露正脸这类禁令，最容易在封面上破功
             10. 平台规格拿不到时，出的是**条件式改写**（分支型）与**定性制作要求**（数值型），
@@ -2308,11 +2314,26 @@ workflow:
           import re
 
           # B-02：事实核验必须由代码判定，不能由模型自报（阻断修复任务 S2）。
-          # 只做"引用可解析性"这一件事：FACT_LEDGER 里的每一个 fact_id，必须能在本次
-          # 输入原文（capability_call + professional_input）里找到。找不到 = Critical
-          # Error = 阻断交付。做不到、也不冒充能做到的事：判断一条事实性陈述是否
-          # "实际为真"——那仍然是模型的语义核验职责，本节点只堵一个可机械核验的漏洞：
-          # 编号对不上号，或者压根没有登记事实核验的可回指结构。
+          # 只做"回指可核验性"这一件事：FACT_LEDGER 里的每一条 factual_claim，必须能
+          # 在本次输入原文（capability_call + professional_input）里找到实质性词元
+          # 覆盖。找不到 = Critical Error = 阻断交付。做不到、也不冒充能做到的事：
+          # 判断一条事实性陈述是否"实际为真"——那仍然是模型的语义核验职责，本节点
+          # 只堵一个可机械核验的漏洞：claim 对不上用户原文，或者压根没有登记事实
+          # 核验的可回指结构。
+          #
+          # E8（DIYU-V1-P0-CONTRACT-SEAM-001）裁决：核验对象从 fact_id 换成
+          # factual_claim。根因是 SKILL 提示词要求模型给 fact_id 编写
+          # "BRF-XXX-NNN-XXX" 登记全称，但 P0 独立调用时从无上游提供这份登记表
+          # （见 D-1，SKILL_v2.0.md 已同步改写）——模型只能自造编号，自造编号必然
+          # 不是用户原文的子串，此前的核验方式（比对 fact_id）因此必然 FAIL，与
+          # claim 内容是否真的有依据无关。factual_claim 才是"这一处做了什么事实性
+          # 陈述"本身，fact_id 降级为内部句柄（去重/引用用途），不再是可解析性
+          # 判据。匹配方式是确定性的实质性词元覆盖（数字/英文单词精确匹配，中文
+          # 按标点切出子串后做字符 n-gram 覆盖度比对），不是开放语义比对——像
+          # "老手艺""值得信任"这类纯风格评价词不构成事实性陈述，不在本节点核验
+          # 范围，那部分开放语义完备性仍登记 DYNAMIC_ONLY（与
+          # SG7.semantic_market_claim_coverage 同类处置，绑定判分位而非在这里冒充
+          # 已解决）。
 
           A_OPEN, A_CLOSE = "---M4_ARTIFACT---", "---END_M4_ARTIFACT---"
           FL_OPEN, FL_CLOSE = "---M4_FACT_LEDGER---", "---END_M4_FACT_LEDGER---"
@@ -2349,6 +2370,61 @@ workflow:
               r"|[一二两三四五六七八九十百千万]+成"
               r"|[一二两三四五六七八九十百千万]+分之[一二两三四五六七八九十百千万]+"
           )
+
+          # E8：实质性词元覆盖——确定性手段，不是开放语义比对。数字与英文
+          # 单词要求逐一在 blob 里精确出现（数字是精确事实，不允许"大致
+          # 对"）；中文部分按标点/空白切出子串后，再用固定窗口的字符 n-gram
+          # 比对覆盖度，容忍模型合理的同义改写/轻度转述，不要求逐字复制
+          # 原文，但也不做任何词义/同义词判断——纯字符层面的重合度。
+          _NUMBER_TOKEN_RE = re.compile(r"[\d０-９]+(?:[.．][\d０-９]+)?")
+          _ENGLISH_TOKEN_RE = re.compile(r"[A-Za-z]{2,}")
+          _CJK_CHUNK_RE = re.compile(r"[\u4e00-\u9fff]{2,}")
+          _SHINGLE_SIZE = 4
+          _SHINGLE_COVERAGE_THRESHOLD = 0.5
+
+
+          def _shingles(s, k=_SHINGLE_SIZE):
+              if len(s) < k:
+                  return {s} if s else set()
+              return {s[i:i + k] for i in range(len(s) - k + 1)}
+
+
+          def _cjk_chunk_grounded(chunk, blob):
+              if chunk in blob:
+                  return True
+              claim_shingles = _shingles(chunk)
+              if not claim_shingles:
+                  return False
+              blob_shingles = _shingles(blob)
+              hit = len(claim_shingles & blob_shingles) / len(claim_shingles)
+              return hit >= _SHINGLE_COVERAGE_THRESHOLD
+
+
+          def _claim_grounded(claim, blob):
+              """claim 里的每个数字/英文词元必须精确出现在 blob 里；每个
+              中文子串（按标点/空白切分）需达到字符 n-gram 覆盖度阈值。
+              claim 为空、或不含任何可核验的实质性词元时，视为未回指——
+              不得靠一句没有实质内容的话绕过核验。"""
+              c = claim or ""
+              if not c.strip():
+                  return False
+              checked_any = False
+              for tok in _NUMBER_TOKEN_RE.findall(c):
+                  checked_any = True
+                  if tok not in blob:
+                      return False
+              for tok in _ENGLISH_TOKEN_RE.findall(c):
+                  checked_any = True
+                  if tok not in blob:
+                      return False
+              for chunk in re.split(r"[，。！？；：、\s,.!?;:()（）\[\]「」『』\"'\-—]+", c):
+                  chunk = chunk.strip()
+                  if len(chunk) < 2 or not _CJK_CHUNK_RE.search(chunk):
+                      continue
+                  checked_any = True
+                  if not _cjk_chunk_grounded(chunk, blob):
+                      return False
+              return checked_any
 
 
           def _between(text, a, b):
@@ -2436,11 +2512,11 @@ workflow:
 
               unresolved = []
               for e in entries:
-                  bad_ids = [fid for fid in e["fact_id"] if fid not in blob]
-                  if bad_ids:
+                  if not _claim_grounded(e.get("factual_claim"), blob):
                       unresolved.append({
                           "output_location": e["output_location"],
-                          "unresolved_fact_id": bad_ids,
+                          "factual_claim": e.get("factual_claim"),
+                          "fact_id": e["fact_id"],
                       })
 
               # M-4：仅在 ledger_status == NONE 时扫描 USER_DELIVERY 正文；
@@ -2498,15 +2574,15 @@ workflow:
                       ) % "、".join(ledger_none_contradiction_hits[:5])
                   else:
                       detail = "；".join(
-                          "%s → %s" % (u["output_location"], "|".join(u["unresolved_fact_id"]))
+                          "%s → 「%s」" % (u["output_location"], u["factual_claim"])
                           for u in unresolved[:5]
                       )
-                      reason = "有 %d 处事实性陈述的引用编号，在本次登记的事实里找不到对应项：%s" % (len(unresolved), detail)
+                      reason = "有 %d 处事实性陈述，在用户原文里找不到实质对应内容：%s" % (len(unresolved), detail)
                   override = (
                       "这一次的发布判断被系统拦下，不能直接使用。\n\n"
                       "原因：%s。按规则，找不到来源的事实性陈述不能进入可发布结果——这不是文案问题，是事实核验没过。\n\n"
-                      "专业判断本身没有丢：完整记录留在内部产出里。需要的是把引用编号核对清楚，"
-                      "或者把对应的事实正式登记进来，然后重新走一次。\n\n"
+                      "专业判断本身没有丢：完整记录留在内部产出里。需要的是把这几处事实性陈述"
+                      "改成用户原文真的说过的内容，或者补充真实依据后重新走一次。\n\n"
                       "这次不算发布就绪，请不要把它当成可以直接使用的结果。"
                   ) % reason
                   verified_text = _replace_between(raw, U_OPEN, U_CLOSE, override)
@@ -2912,11 +2988,42 @@ workflow:
               return True
 
 
+          def _field_key_pattern(key):
+              return r"[ \t]*%s[ \t]*(?:\[\])?(?:[（(][^）)]*[）)])?[ \t]*[:：][ \t]*" % re.escape(key)
+
+
+          _ALL_DELIVERABLE_KEYS = sorted(
+              {k for _, keys in STANDARD_DELIVERABLE_FIELDS for k in keys}, key=len, reverse=True)
+          _ANY_DELIVERABLE_FIELD_LINE_RE = re.compile(
+              r"^(?:%s)" % "|".join(_field_key_pattern(k) for k in _ALL_DELIVERABLE_KEYS),
+              re.IGNORECASE | re.MULTILINE)
+
+
           def _field_value_lines(text, key):
-              """M-2：同一行冒号后的值——与 envelope_check._find_scalar（M-5）
-              同一纪律，值必须与字段名同一行，不吞并下一行内容。"""
-              pat = re.compile(r"^[ \t]*%s[ \t]*[:：][ \t]*(.*)$" % re.escape(key), re.IGNORECASE | re.MULTILINE)
-              return [m.group(1).strip() for m in pat.finditer(text)]
+              """E8（DIYU-V1-P0-CONTRACT-SEAM-001）：原判据只认"字段名[:：]同一行值"
+              这一种格式。真实模型对结构化字段习惯写成两种同样合理的形态——
+              "字段名:\n- 子项…"（换行展开）、"字段名（备注）:"（字段名后紧跟中/英文
+              括号注释，旧正则连字段名本身都匹配不上，因为 key 后面必须立刻是
+              空白+冒号）。E4 阶段C 12 次真实调用里 4 次被误判 LOCAL_STRUCTURE_BLOCKED，
+              逐字核对模型真实输出（不是提示词自己的示例）确认这 4 次模型其实完整
+              覆盖了全部字段，只是被这两种写法拦下——不是 M-2 要堵的"字段名齐全但
+              确实无值"那种漏洞（那种情况下一个字段名后面直接跟着下一个已知字段名，
+              中间没有任何内容，下面的分块逻辑依然会把它判成没有值，M-2 修复意图
+              不受影响）。
+              字段名后允许可选的 `[]` 与/或中英文括号注释；同行有值按原逻辑；
+              同行为空则取"这一行结束"到"下一个已知字段名行开始（或文本结尾）"
+              之间的整块，块内有非空、非占位符内容才算有值。"""
+              pat = re.compile(r"^%s(.*)$" % _field_key_pattern(key), re.IGNORECASE | re.MULTILINE)
+              values = []
+              for m in pat.finditer(text):
+                  same_line = m.group(1).strip()
+                  if same_line:
+                      values.append(same_line)
+                      continue
+                  next_m = _ANY_DELIVERABLE_FIELD_LINE_RE.search(text, m.end())
+                  block_end = next_m.start() if next_m else len(text)
+                  values.append(text[m.end():block_end].strip())
+              return values
 
 
           def _standard_deliverables_missing(artifact_text):

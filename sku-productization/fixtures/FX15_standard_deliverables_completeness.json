@@ -2,8 +2,8 @@
   "id": "FX15_standard_deliverables_completeness",
   "kind": "node_exec",
   "table_row": "B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单）",
-  "mechanism": "空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同；M-2（E7 收口追加）变体兄弟：即便十二个字段名逐一都写了，只要值是空的或占位符，_standard_deliverables_missing 的原实现（纯字段名存在性查找）照样判定齐全",
-  "expected_behavior": "必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行；M-2 变体（有名无值/值为空白符/值为占位符/十二项中只空一项）同样必须判定缺失",
+  "mechanism": "空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同；M-2（E7 收口追加）变体兄弟：即便十二个字段名逐一都写了，只要值是空的或占位符，_standard_deliverables_missing 的原实现（纯字段名存在性查找）照样判定齐全；E8（DIYU-V1-P0-CONTRACT-SEAM-001）变体兄弟：字段名后换行接列表/代码块展开的块级值（如 `cover:\\n- ...`），以及字段名后紧跟 `[]` 和/或中英文括号注释再接冒号（如 `release_check（草案）:`），此前旧实现连同一行值判据都套不上——这不是'值是空的或占位符'，是模型真实给出了实质内容，旧实现却因为格式假设过窄直接判'未提及'。E4 阶段C 12次真实调用里4次因此被错误 LOCAL_STRUCTURE_BLOCKED（详见 p0-empirical-r1/），逐字核对模型真实输出确认内容本身完整。",
+  "expected_behavior": "必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行；M-2 变体（有名无值/值为空白符/值为占位符/十二项中只空一项）同样必须判定缺失；块级值与括号/`[]`注释后缀必须被识别为有效值（不得因格式误判为缺失），同一段混排文本里真正留空的字段（同行无值且下一个已知字段名之间也无内容）仍必须正确判定为缺失，两者不得互相干扰",
   "source": "STATIC_AUDIT_REPORT.md 第二节第4组 + Founder 2026-09-02 消息 B-1a：E5 原文已指出'没有任何一行代码去检查'，此前 E6 R0-R7 首轮遗漏了这一项，Founder 指出后本轮补上",
   "chain": [
     {
@@ -45,6 +45,13 @@
       "node": "returns_adapter",
       "inputs": {
         "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check:\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover:\n- 画面描述占位，足够长的一段实质内容用来证明块级取值生效块级取值生效块级取值生效\nfirst_frame:\ntitles[]（占位，测试 [] 后缀）: 标题占位\npublish_copy（全文占位）:\n```\n正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\n```\ncaption_rules: 断句占位\nsound_placement（草案）:\n- 声音占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants[]（抖音）:\n- 平台改写占位\nrelease_check（草案，因缺素材确认，不能判通过）:\n1. 结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
         "cta_level": "NO_CTA"
       }
     }
@@ -119,6 +126,20 @@
     },
     {
       "step": 5,
+      "field": "local_block",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 6,
+      "field": "standard_deliverables_missing",
+      "op": "eq",
+      "value": [
+        "first_frame"
+      ]
+    },
+    {
+      "step": 6,
       "field": "local_block",
       "op": "eq",
       "value": "true"

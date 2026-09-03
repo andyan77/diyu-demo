@@ -2,8 +2,8 @@
   "id": "FX06_fact_verification_accept_all_trap",
   "kind": "node_exec",
   "table_row": 6,
-  "mechanism": "fact_verification 换成 accept-all 空函数",
-  "expected_behavior": "必须被检出",
+  "mechanism": "fact_verification 换成 accept-all 空函数；E8（DIYU-V1-P0-CONTRACT-SEAM-001）裁决后变体兄弟：核验对象从 fact_id 换成 factual_claim（实质性词元覆盖），四个变体——同义改写（应放行）/ 凭空编造（应拦截）/ 空白符（经既有 PARSE_FAILED 路径拦截）/ 引用输入里不存在的数值（应拦截）。根因：SKILL 提示词要求 fact_id 写 `BRF-XXX-NNN-XXX` 登记全称，但 P0 独立调用时从无上游提供这份登记表，模型只能自造编号，自造编号永远不是用户原文子串，旧实现（核验 fact_id）因此对任何合法陈述都必然误判 FAIL——已用 git show HEAD 回放旧实现确认同义改写这一步在修复前确实被误拦。",
+  "expected_behavior": "必须被检出；同义改写不得被拦截（这是本轮要修的误报本身），凭空编造/引用不存在的数值/空白符必须继续拦截",
   "e5_source": "STATIC_AUDIT_REPORT.md 第二节第7组：把事实核验节点整个换成一个什么都不检查、永远说没问题的空函数——审查通过",
   "note": "这条 fixture 每次 Gate 运行都会用一个真实的引用编号找不到对应登记事实的输入去执行当前提交里的真实 fact_verification 代码。只要有人把这个节点改成 accept-all 空函数（不再是这段真实逻辑），这条 fixture 就会转红——这就是它作为常设回归检测的作用，不是一次性人工验证。",
   "chain": [
@@ -14,9 +14,70 @@
         "capability_call": "",
         "professional_input": ""
       }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\noutput_location: 正文第2句\nfactual_claim: 面料含毛量35%左右\nfact_id: F01\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这件衣服含毛量35%。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "我们家的面料含毛量在35%左右，都是真实数据，可以随时提供质检报告。",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\noutput_location: 正文第2句\nfactual_claim: 老板亲口说这批货是内部员工连夜手工缝制的\nfact_id: F02\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这件衣服含毛量35%。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "我们家的面料含毛量在35%左右，都是真实数据，可以随时提供质检报告。",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\noutput_location: 正文第2句\nfactual_claim:    \nfact_id: F03\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这件衣服含毛量35%。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "我们家的面料含毛量在35%左右，都是真实数据，可以随时提供质检报告。",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\noutput_location: 正文第2句\nfactual_claim: 面料含毛量高达80%\nfact_id: F04\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这件衣服含毛量35%。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "我们家的面料含毛量在35%左右，都是真实数据，可以随时提供质检报告。",
+        "professional_input": ""
+      }
     }
   ],
   "assert": [
-    {"step": 0, "field": "fact_gate_blocked", "op": "eq", "value": "true"}
+    {
+      "step": 0,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 1,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 2,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 3,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 4,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    }
   ]
 }

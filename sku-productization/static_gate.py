@@ -658,14 +658,21 @@ def _component_return_behavior_check(yml_data):
 # 新增的字段——P1/P1_5 的这两个节点本轮未改动，检查必须对三份 SKU 都通用，
 # 已现场对三份 DSL 分别执行验证。
 def _fact_verification_behavior_check(yml_data):
+    """E8（DIYU-V1-P0-CONTRACT-SEAM-001）裁决后：核验对象从 fact_id 换成
+    factual_claim。ok_raw 此前靠 fact_id="FACT_001" 字面等于 capability_call
+    的内容通过——这正是旧契约本身（BRF-XXX-NNN-XXX 式流水号必须是原文子串）
+    的产物，不是这个行为检查该验的东西。现在 blob 里放的是真实、会被
+    factual_claim 同义改写引用的自然语言，验证的是"合法改写不被拦"，
+    不是"编号抄对了"。"""
     main_fn = _extract_node_main(yml_data, "fact_verification")
 
     ok_raw = (
-        "---M4_FACT_LEDGER---\noutput_location: 正文第1句\nfactual_claim: 面料含毛量35%\n"
-        "fact_id: FACT_001\n---END_M4_FACT_LEDGER---\n"
+        "---M4_FACT_LEDGER---\noutput_location: 正文第1句\nfactual_claim: 面料含毛量35%左右\n"
+        "fact_id: F01\n---END_M4_FACT_LEDGER---\n"
         "---M4_USER_DELIVERY---\n含毛量35%。\n---END_M4_USER_DELIVERY---\n"
     )
-    r_ok = main_fn(raw_text=ok_raw, capability_call="FACT_001", professional_input="")
+    r_ok = main_fn(raw_text=ok_raw, capability_call="我们家的面料含毛量在35%左右，可以随时核实。",
+                   professional_input="")
     not_blocked_when_resolvable = r_ok.get("fact_gate_blocked") == "false"
 
     bad_raw = (
@@ -1644,7 +1651,8 @@ def run_sg6(sku, yml_data, skill_md_text):
     bad11 = copy.deepcopy(good_data)
     fv11 = node_by_id(bad11, "fact_verification")
     fv11["data"]["code"] = fv11["data"]["code"].replace(
-        'bad_ids = [fid for fid in e["fact_id"] if fid not in blob]', 'bad_ids = []')
+        'if not _claim_grounded(e.get("factual_claim"), blob):',
+        'if False:')
     neg11 = not _fact_verification_behavior_check(bad11)["pass"]
 
     # Off-list: a different failure mode than "never blocks" — tamper the
