@@ -2198,23 +2198,40 @@ def _sg8_concept_think_boundary(sku, yml_data):
 def _sg8_concept_final_mode_reachability(sku, yml_data):
     """概念：mode=FINAL 分支的可达性。producer：SKILL 提示词的三级 mode
     判据（PRE/MIXED/FINAL）；触发 FINAL 需要 beat 级 realization_manifest
-    或 M4 四类合法等价证据之一。P0 独立调用（无 CS-1/PD 上游）时的真实
-    输入是纯自然语言口述，从不构成这四类证据中的任何一类（E4 阶段C 12次
-    真实调用，无一次不是 PRE）。这是已知限制，不是本轮修复范围（D-1 明确
-    限定只改 fact_refs[]/script_beats[] 两行，不重写整套 mode 判据），
-    如实登记为已知限制，不计入四个门条件。"""
+    或 M4 四类合法等价证据之一。P0 独立调用（无 CS-1/PD 上游）时，本轮
+    三个 eval 案例的真实输入都是纯自然语言口述，都没有构成这四类证据中的
+    任何一类（E4 阶段C 12次真实调用，无一次不是 PRE）。
+
+    E9/F-4（规则侧 2026-09-03 读提示词原文后纠偏）：这不等于结构性不可达。
+    SKILL_v2.0.md「合法等价兑现证据与直达」节明文"本 Skill 不要求上游必须
+    物理产出 cs_final 与 pd_final"，四类合法等价兑现证据里的②类"用户提供
+    的 beat 兑现清单"可以直接用自然语言写，不需要任何物理文件产出——FINAL
+    分支在结构上是可达的。三个 eval 案例恰好都没带这类清单：案例001 给的
+    是"拍了一段约40秒"，属于 SKILL 原文明写的"只给资产级数量的，不成立
+    ……按没有 manifest 处理，走 PRE"这一情形，模型判 PRE 是严格执行规则，
+    不是回避 FINAL。另外 Q-COMM-04（P0 商业化验收标准）全文没有对 mode /
+    FINAL / realized_payoff 提出任何要求，不构成外部强制覆盖它的理由。
+    据此改判为"本轮三个案例未覆盖"，不是"不可达"，不计入四个门条件——
+    它本来就不是契约缺口，只是实测集的覆盖空白（另见 E10 登记）。"""
     return {
         "concept": "mode=FINAL 分支可达性",
         "producer": "skill_llm 提示词的三级 mode 判据",
         "carrier": "realization_manifest / M4 四类合法等价兑现证据",
         "transform": "无",
         "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-        "semantics_match": "KNOWN_LIMITATION",
+        "semantics_match": "NOT_COVERED_BY_EVAL_SET",
         "category": None,
-        "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，"
-                "FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上"
-                "实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套"
-                "mode 判据，本项如实登记为已知限制，不在本轮修复范围内。",
+        "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后"
+                "纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md"
+                "「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法"
+                "等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；"
+                "②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量"
+                "（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，"
+                "模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/"
+                "realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判"
+                "「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没"
+                "触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未"
+                "被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。",
     }
 
 
@@ -2419,6 +2436,49 @@ def main():
         "limitation, narrowing deferred to whoever holds E4's actual three cases."
     )
 
+    # E9/F-5（DIYU-V1-P0-CONTRACT-SEAM-001 续，规则侧 2026-09-03）：mode 治理
+    # 整套判据只活在提示词里，六个代码节点里只有 envelope_check/returns_adapter
+    # 各恰好一次的字面命中（都是巧合子串——CTA 分级枚举里的 "MIXED"、失败兜底
+    # 字符串里的 "FINAL"——不是真的在读模型自报的 mode），其余四个代码节点、
+    # uncovered_beats[]、realized_payoff 全图零读取，end_ok 原 15 项输出里也
+    # 没有 mode。后果：真实调用时无法机械核对"模型自称走 PRE"与"它是否真的
+    # 守了 PRE 纪律"——这一轮能确认走了 PRE，是规则侧逐字读了 5000 字
+    # ARTIFACT，18 次矩阵这么读不现实。
+    #
+    # 本项只给 P0 DSL（DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml）新增一个
+    # 只读诊断输出 returns_adapter.reported_mode → end_ok.reported_mode（现
+    # 16 项输出），复用十二项标准交付物已有的 _field_value_lines/
+    # _deliverable_value_ok 取值逻辑，不新增任何 mode 专属解析或治理代码。
+    # 三条边界：①不接任何拦截开关，不影响 local_block/blocked/
+    # delivery_outcome，Q-COMM-04 本就不要求 FINAL；②不新增 mode 相关的治理
+    # 逻辑、分支或检测器——本条故意只加输出、不加代码读者；③解析不到记
+    # 字面值 "ABSENT"，不猜、不默认 "PRE"（同 N-12"解析失败 != NONE"）。
+    reported_mode_diagnostic_field_note = (
+        "P0 only. New read-only field returns_adapter.reported_mode -> end_ok.reported_mode "
+        "(15 -> 16 outputs), parsed from the ARTIFACT block's self-reported `mode` line by "
+        "reusing the existing _field_value_lines/_deliverable_value_ok helpers (same mechanism "
+        "already used for the twelve standard deliverable fields) — no new mode-specific parsing "
+        "or governance code was added. This field is INTENTIONALLY declared with no code reader "
+        "anywhere in this DSL or in static_gate.py: its only intended reader is human G1 empirical "
+        "scoring, to check the model's self-declared mode against what it actually delivered across "
+        "the 18-run real-call matrix without requiring a full manual re-read of the ~5000-char "
+        "ARTIFACT text each time. Explicitly out of scope: no interception switch reads it, it does "
+        "not affect local_block/blocked/delivery_outcome, and no new mode-governance branch or "
+        "detector was added anywhere (Q-COMM-04 does not require FINAL). On parse failure the value "
+        "is the literal string 'ABSENT' — never guessed, never defaulted to 'PRE'. Verified against "
+        "real captured data (p0-empirical-r1/raw/EVAL-P0-R1-001_low_k1.sse): the model wrote "
+        "'mode: **PRE**' same-line, and reported_mode correctly extracted '**PRE**' (markdown "
+        "asterisks passed through verbatim — this is a human-facing diagnostic, not a machine-"
+        "matched enum, so no mode-specific cleanup regex was added either). Known residual "
+        "imprecision, disclosed rather than fixed (fixing it would require a mode-specific block "
+        "terminator, i.e. new mode-related logic this round explicitly forbids): if the model ever "
+        "writes 'mode:' with an empty same-line value (block-expansion form), the block-boundary "
+        "heuristic falls back to the twelve standard-deliverable-field key list as the terminator "
+        "('mode' is not itself in that list), so it could scoop in trailing fields (evidence_basis / "
+        "realized_payoff / uncovered_beats[] / used_fact_refs[]) until the first standard-deliverable "
+        "field line — not yet observed in the one real call captured so far."
+    )
+
     reasoning_effort_note = (
         "All six skill_llm/component_return completion_params blocks (two per SKU) declare "
         "reasoning_effort: low. This is a product tuning choice, not a determinism defect: "
@@ -2537,6 +2597,7 @@ def main():
                       "+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）"
                       "+ DIYU-V1-P0-CONTRACT-SEAM-001（E8 跨层契约缺陷定位与修复，本轮新增 SG8）",
         "dynamic_only_scope_note": dynamic_only_scope_note,
+        "reported_mode_diagnostic_field_note": reported_mode_diagnostic_field_note,
         "reasoning_effort_note": reasoning_effort_note,
         "static_detector_capability_notice": static_detector_capability_notice,
         "residual_remediation_transferred_out_note": residual_remediation_transferred_out_note,

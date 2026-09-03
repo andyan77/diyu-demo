@@ -3,6 +3,7 @@
   "task_id": "DIYU-V1-STATIC-GATE-001",
   "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）+ DIYU-V1-P0-CONTRACT-SEAM-001（E8 跨层契约缺陷定位与修复，本轮新增 SG8）",
   "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, the specific E4-first-call condition it is bound to) can be pinned now without waiting for the case itself to exist. The market-claim item's case_id has been backfilled per A-7 (DIYU-V1-P0-EMPIRICAL-R1-001): eval/ now holds the first real case set (EVAL-P0-R1-001~003, manifest-vetted under INV-2), and case_id=EVAL-P0-R1-001 replaces the former PENDING_EVAL_MANIFEST placeholder. PENDING_E4_FIRST_CALL for the payload item remains a placeholder — must be backfilled once E4 阶段 B's first real call happens, not left indefinitely.",
+  "reported_mode_diagnostic_field_note": "P0 only. New read-only field returns_adapter.reported_mode -> end_ok.reported_mode (15 -> 16 outputs), parsed from the ARTIFACT block's self-reported `mode` line by reusing the existing _field_value_lines/_deliverable_value_ok helpers (same mechanism already used for the twelve standard deliverable fields) — no new mode-specific parsing or governance code was added. This field is INTENTIONALLY declared with no code reader anywhere in this DSL or in static_gate.py: its only intended reader is human G1 empirical scoring, to check the model's self-declared mode against what it actually delivered across the 18-run real-call matrix without requiring a full manual re-read of the ~5000-char ARTIFACT text each time. Explicitly out of scope: no interception switch reads it, it does not affect local_block/blocked/delivery_outcome, and no new mode-governance branch or detector was added anywhere (Q-COMM-04 does not require FINAL). On parse failure the value is the literal string 'ABSENT' — never guessed, never defaulted to 'PRE'. Verified against real captured data (p0-empirical-r1/raw/EVAL-P0-R1-001_low_k1.sse): the model wrote 'mode: **PRE**' same-line, and reported_mode correctly extracted '**PRE**' (markdown asterisks passed through verbatim — this is a human-facing diagnostic, not a machine-matched enum, so no mode-specific cleanup regex was added either). Known residual imprecision, disclosed rather than fixed (fixing it would require a mode-specific block terminator, i.e. new mode-related logic this round explicitly forbids): if the model ever writes 'mode:' with an empty same-line value (block-expansion form), the block-boundary heuristic falls back to the twelve standard-deliverable-field key list as the terminator ('mode' is not itself in that list), so it could scoop in trailing fields (evidence_basis / realized_payoff / uncovered_beats[] / used_fact_refs[]) until the first standard-deliverable field line — not yet observed in the one real call captured so far.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
   "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage (DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose.",
   "residual_remediation_transferred_out_note": "E7 §四 lists four items explicitly out of this round's scope, 登记清楚 (clearly recorded), not silently dropped: ①真实 Provider Payload — the only one of the four whose disposition is literally '登记 DYNAMIC_ONLY'; see finding SG7.real_provider_payload_verification (empirical_case_ref=EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD, bound to E4's first real call). ②最高价值缺口是否真的'最高价值' — SG1.G0.single_highest_value_gap_no_fabrication (B-3/C-3) only verifies real, non-fabricated behavior (the question genuinely changes with miss[0]); it does NOT verify that missing[0] is the semantically highest-value gap to ask about — that is a product judgment, transferred to G1, not registered as a separate DYNAMIC_ONLY finding because no verified Q-COMM-04 scoring position for it was read this round. ③事实性陈述的开放语义完备性 — see fact_verification.main()'s own fact_check_scope_note field and the M-4 code comment: ledger_status=NONE now gets a closed-set high-signal scan (number+unit / Chinese fraction-percent expressions), not open semantic judgment of 'does this sentence constitute a factual claim at all' — that open question stays with the model's own semantic verification, transferred to G1. ④subject_domain 同义表达 — no canonical-alias table was added this round (unlike platform's _PLATFORM_CANONICAL): E7 §四 asks for aliases only for 'the three cases E4 will actually use', which are not knowable from this static-only task; adding a broader alias table now would be exactly the open-world synonym engine §四 explicitly forbids. subject_domain currently resolves via _find_scalar / semantic anchors with no alias normalization — recorded here as a known limitation, narrowing deferred to whoever holds E4's actual three cases.",
@@ -96,9 +97,9 @@
           "carrier": "realization_manifest / M4 四类合法等价兑现证据",
           "transform": "无",
           "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-          "semantics_match": "KNOWN_LIMITATION",
+          "semantics_match": "NOT_COVERED_BY_EVAL_SET",
           "category": null,
-          "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+          "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
         }
       ]
     },
@@ -155,9 +156,9 @@
           "carrier": "realization_manifest / M4 四类合法等价兑现证据",
           "transform": "无",
           "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-          "semantics_match": "KNOWN_LIMITATION",
+          "semantics_match": "NOT_COVERED_BY_EVAL_SET",
           "category": null,
-          "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+          "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
         }
       ]
     },
@@ -214,9 +215,9 @@
           "carrier": "realization_manifest / M4 四类合法等价兑现证据",
           "transform": "无",
           "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-          "semantics_match": "KNOWN_LIMITATION",
+          "semantics_match": "NOT_COVERED_BY_EVAL_SET",
           "category": null,
-          "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+          "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
         }
       ]
     }
@@ -304,7 +305,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "30bff7260a283c1d66c1cd07948c2b67c75f48e0e7ea89931c0950fdb77ff37e",
+      "dsl_sha256": "9f57f2ef5b5cb09911aeb1db7084b00bf321b8ca2c57cb8adff41351d1a69d19",
       "blockers": [],
       "dynamic_only": [
         {
@@ -1079,9 +1080,9 @@
                 "carrier": "realization_manifest / M4 四类合法等价兑现证据",
                 "transform": "无",
                 "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-                "semantics_match": "KNOWN_LIMITATION",
+                "semantics_match": "NOT_COVERED_BY_EVAL_SET",
                 "category": null,
-                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+                "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
               }
             ]
           }
@@ -1234,9 +1235,9 @@
                 "carrier": "realization_manifest / M4 四类合法等价兑现证据",
                 "transform": "无",
                 "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-                "semantics_match": "KNOWN_LIMITATION",
+                "semantics_match": "NOT_COVERED_BY_EVAL_SET",
                 "category": null,
-                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+                "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
               }
             ]
           }
@@ -1879,9 +1880,9 @@
                 "carrier": "realization_manifest / M4 四类合法等价兑现证据",
                 "transform": "无",
                 "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-                "semantics_match": "KNOWN_LIMITATION",
+                "semantics_match": "NOT_COVERED_BY_EVAL_SET",
                 "category": null,
-                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+                "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
               }
             ]
           }
@@ -2034,9 +2035,9 @@
                 "carrier": "realization_manifest / M4 四类合法等价兑现证据",
                 "transform": "无",
                 "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-                "semantics_match": "KNOWN_LIMITATION",
+                "semantics_match": "NOT_COVERED_BY_EVAL_SET",
                 "category": null,
-                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+                "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
               }
             ]
           }
@@ -2679,9 +2680,9 @@
                 "carrier": "realization_manifest / M4 四类合法等价兑现证据",
                 "transform": "无",
                 "consumer": "skill_llm 自身的 mode 推导 + uncovered_beats[] OPEN 项治理关卡",
-                "semantics_match": "KNOWN_LIMITATION",
+                "semantics_match": "NOT_COVERED_BY_EVAL_SET",
                 "category": null,
-                "note": "P0 独立调用（无上游 CS-1/PD）时的输入从未构成 FINAL 所需的兑现证据，FINAL 分支及其治理关卡（uncovered_beats[] 不得有 OPEN 项）在这条真实链路上实际不可达。E8 明确限定 D-1 只改 fact_refs[]/script_beats[] 两行，不重写整套mode 判据，本项如实登记为已知限制，不在本轮修复范围内。"
+                "note": "曾误判为 KNOWN_LIMITATION（实际不可达）；规则侧核对 SKILL_v2.0.md 原文后纠偏为 NOT_COVERED_BY_EVAL_SET（实测集未覆盖），三条证据：①SKILL_v2.0.md「合法等价兑现证据与直达」节明文不要求物理产出 cs_final/pd_final，四类合法等价证据的②类（用户提供的 beat 兑现清单）可用自然语言表达，FINAL 结构上可达；②本轮三个 eval 案例恰好都未提供这类清单——案例001 给的是资产级数量（\"拍了一段约40秒\"），SKILL 原文明写这种情形按没有 manifest 处理、走 PRE，模型判 PRE 是严格执行规则，不是缺陷；③Q-COMM-04 全文未对 mode/FINAL/realized_payoff 提出任何要求。教训：\"不可达\"与\"没试过\"不是一回事——判「不可达」必须给结构性证据（无输入面可承载／无可达路径），\"三个案例都没触发\"只能判「未覆盖」。仍不计入四个门条件（不是契约缺口）；FINAL/MIXED 从未被真实跑过一次，第四个案例已登记为 E10 触发项，不在本轮（E9）新增。"
               }
             ]
           }

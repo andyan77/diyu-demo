@@ -3124,6 +3124,20 @@ workflow:
               _sub = (artifact_out or "").strip()
               _needs = (user_status != "OK" or not (user_out or "").strip()) and len(_sub) >= MIN_ARTIFACT_CHARS
 
+              # E9/F-5（DIYU-V1-P0-CONTRACT-SEAM-001 续）：只读诊断字段，把模型
+              # 自报的 mode 从 ARTIFACT 原文暴露出来，唯一读者是 G1 实测人工判分
+              # ——核对模型有没有真的守住它自己推导出的 mode，不是代码判定的一环。
+              # 复用已有的 _field_value_lines/_deliverable_value_ok（十二项标准
+              # 交付物同一套取值逻辑），不新增 mode 专属的解析或治理机制；不接
+              # 任何拦截开关，不影响 local_block/blocked 判定。解析不到时记
+              # ABSENT，不猜、不默认 PRE（同 N-12"解析失败 != NONE"）。
+              reported_mode = "ABSENT"
+              if artifact is not None:
+                  for v in _field_value_lines(artifact_out, "mode"):
+                      if _deliverable_value_ok(v):
+                          reported_mode = v
+                          break
+
               return {
                   "artifact": artifact_out,
                   "artifact_status": artifact_status,
@@ -3139,6 +3153,7 @@ workflow:
                   "structure_notes": structure_notes,
                   "capability": CAPABILITY,
                   "dsl_version": DSL_VERSION,
+                  "reported_mode": reported_mode,
               }
         code_language: python3
         desc: 确定性 Returns / 交付分离。解析失败置 PARSE_FAILED 并保留原文，绝不伪装成 NONE。
@@ -3168,6 +3183,9 @@ workflow:
             children: null
             type: string
           raw_preserved:
+            children: null
+            type: string
+          reported_mode:
             children: null
             type: string
           standard_deliverables_missing:
@@ -3713,6 +3731,10 @@ workflow:
           - envelope_check
           - cta_level_declared_illegal
           variable: cta_level_declared_illegal
+        - value_selector:
+          - returns_adapter
+          - reported_mode
+          variable: reported_mode
         selected: false
         title: 结束
         type: end
