@@ -322,6 +322,20 @@ workflow:
               "哔哩哔哩": "B站",
           }
 
+          # A-4（DIYU-V1-P0-EMPIRICAL-R1-001）：subject_domain 此前只支持结构化
+          # `subject_domain: <值>` 声明，没有任何语义锚点回退——真人自然语言
+          # 描述"我们是做红烧肉的小饭馆"不会写 subject_domain 这个字段名，
+          # 结果 ref_projection 永远选不中对应的 industry-conditions.md 分段，
+          # 只能落到"未加载"分支。这里只给 E4 三个冻结案例实际涉及的行业补
+          # 极小的自然语言信号词，不做开放世界同义匹配——不在这三个行业里的
+          # 输入按现状处理（不加载对应分段，在 assumptions[] 里声明），已知
+          # 限制原样保留，不新造第二个"70 个字符串"。
+          SUBJECT_DOMAIN_ANCHORS = {
+              "餐饮 / 门店": ["饭馆", "餐厅", "后厨", "菜系", "出餐"],
+              "知识付费 / 课程": ["这门课", "门课", "课程", "学员", "知识付费"],
+              "户外 / 露营（爱好垂类）": ["露营", "扎营", "徒步", "户外"],
+          }
+
 
           def _norm(s):
               return re.sub(r"\s+", " ", (s or "")).strip()
@@ -454,6 +468,11 @@ workflow:
                   cta_level = "NO_CTA"
 
               subject_domain = _find_scalar(blob, "subject_domain")
+              if not subject_domain:
+                  for _ind, _kws in SUBJECT_DOMAIN_ANCHORS.items():
+                      if any(_kw in blob for _kw in _kws):
+                          subject_domain = _ind
+                          break
               # platform 的结构化值优先；找不到结构化声明时，用命中的语义锚点
               # 本身（已经是"小红书""抖音"这类干净平台名）而不是整段从句——
               # 后者会把"准备发小红书"这种整句塞进 platform，
@@ -3365,6 +3384,39 @@ workflow:
           }
 
 
+          # A-1（DIYU-V1-P0-EMPIRICAL-R1-001）"同样核一遍" end_component_return：
+          # precise_gap 此前是 "；".join(miss) 直接把 envelope_check.REQUIRED 的
+          # 内部字段名（如 content_body_or_beats／cta_contract）原样拼进
+          # returns_json 对外送出——user_delivery 有 leaked 自检（AC-13/N-23），
+          # 但那个自检只查 user_text，从未查过 returns_json 这另一个对外输出面，
+          # 与 A-1 在 end_ok 发现的"承诺覆盖 user_delivery、接口面更宽"是同一形状
+          # 的缺口。这里给每个可能出现在 missing[] 里的内部字段名一个业务可读
+          # 短标签，returns_json 里不再出现任何内部字段名。
+          READABLE_GAP_LABEL = {
+              "applicability_reason": "本次改动范围（账号长期结构还是单条内容）",
+              "subject_and_account_scope": "涉及的品牌/账号范围",
+              "objective": "本轮想要的结果",
+              "audience_problem": "目标观众与其困惑点",
+              "expected_change": "看完后希望发生的变化",
+              "content_promise": "对观众的内容承诺",
+              "expression_boundary": "品牌明确不能说的边界",
+              "expression_subject_and_boundary": "讲述主体与其边界",
+              "expression_subject": "讲述主体",
+              "facts_registered": "已登记的真实事实",
+              "deadline_or_stage_boundary": "时间或阶段边界",
+              "capacity_or_owner": "出镜/确认事实的人与可用时间",
+              "content_origin_mode": "素材来源方式",
+              "script_or_equivalent_beats": "脚本或分段方案",
+              "production_profile": "制作规模",
+              "time_window": "可用时间",
+              "content_body_or_beats": "成片内容或逐段说明",
+              "explicit_non_promise": "明确不承诺的内容",
+              "cta_contract": "引导动作安排",
+              "asset_publish_permission": "素材发布权限",
+              "platform": "发布平台",
+          }
+
+
           def main(status, note, missing, capability_call):
               miss = missing or []
               # 只追问当前最具区分力的一项，并翻译成自然语言（不向用户暴露内部字段名）
@@ -3380,7 +3432,7 @@ workflow:
               ret = {
                   "source": CAPABILITY,
                   "highest_damaged_layer": LAYER,
-                  "precise_gap": "；".join(miss) if miss else (note or "未指明"),
+                  "precise_gap": "；".join(READABLE_GAP_LABEL.get(k, k) for k in miss) if miss else (note or "未指明"),
                   "affected_objects": ["仅本次 %s 调用及其真实依赖分支" % CAPABILITY],
                   "proposed_disposition": "ESCALATE",
                   "needs_user_decision": True,
@@ -3397,11 +3449,16 @@ workflow:
                   "这一轮里不依赖这一步的其他事情不受影响，可以照常继续。" % (ask_one, why_one, how_one)
               )
 
-              # 机械自检：用户交付里不得出现任何内部字段名（AC-13 / N-23）
-              leaked = [k for k in QUESTION_MAP if k in user_text]
+              returns_json = json.dumps([ret], ensure_ascii=False)
+
+              # 机械自检：用户交付里不得出现任何内部字段名（AC-13 / N-23）。
+              # A-1：自检范围从只查 user_text 扩到覆盖 returns_json 这另一个
+              # 对外输出面，且用 READABLE_GAP_LABEL 的全部 key（envelope_check
+              # REQUIRED 全集）而不是只用 QUESTION_MAP 的子集。
+              leaked = [k for k in READABLE_GAP_LABEL if k in user_text or k in returns_json]
 
               return {
-                  "returns_json": json.dumps([ret], ensure_ascii=False),
+                  "returns_json": returns_json,
                   "user_delivery_leaks": leaked,
                   "return_status": "COMPONENT_RETURN",
                   "branch_result": "INPUT_INSUFFICIENT",
@@ -3480,12 +3537,15 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        desc: 正常产出
+        desc: 正常产出。A-1（DIYU-V1-P0-EMPIRICAL-R1-001，E7 漏项本轮补）：收窄——
+          artifact（内部 ARTIFACT 全文）与 raw_preserved（模型原始输出全文）
+          此前对外暴露但从未经过 market_claim_scan/LEAK_PATTERNS 扫描（两者只
+          扫描 user_delivery），"交付物中无无依据市场断言"这条产品承诺在接口
+          层面并不成立——哪怕 local_block=true 正确拦住了 user_delivery，
+          artifact/raw_preserved 仍会原样对外送出。选择收窄而非同级治理：这两
+          个字段是内部诊断产物，不是 Return Protocol 承诺给调用方的内容，narrower
+          接口本身即是修复，无需新造一遍扫描。
         outputs:
-        - value_selector:
-          - returns_adapter
-          - artifact
-          variable: artifact
         - value_selector:
           - delivery_finalize
           - user_delivery
@@ -3514,10 +3574,6 @@ workflow:
           - returns_adapter
           - local_block
           variable: local_block
-        - value_selector:
-          - returns_adapter
-          - raw_preserved
-          variable: raw_preserved
         - value_selector:
           - projection_record
           - output

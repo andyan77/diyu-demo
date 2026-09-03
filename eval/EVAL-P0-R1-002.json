@@ -1,0 +1,30 @@
+{
+  "case_id": "EVAL-P0-R1-002",
+  "sku": "P0",
+  "capability_call": "",
+  "professional_input": "我想发一条笔记，讲讲我们这门课怎么帮大家理清楚财务规划这件事。最近好多人问我这个问题，想着做条内容说说。发小红书。",
+  "example_reference_requested": "",
+  "expected_platform": "小红书",
+  "expected_subject_domain": "知识付费 / 课程",
+  "expected_minimum_handling": "至少要处理到：(1) can_run=false，走组件级 Return（component_return）分支，不生成假产出、不硬停整个任务；(2) 只追问一项最具区分力的缺口，用自然语言问，不出现内部字段名；(3) 交付给用户的说明包含「缺什么/为什么/怎么补」三段式；(4) 不构造 return_id 等技术性内部字段。",
+  "designed_flaw_target": "本案例设计目的：这是三案例中唯一故意输入不足的一个，用来跑通「组件级 Return」整条真实路径——重点观察 miss[0]（真实运行下最终追问的那一项）落在 REQUIRED 七项中的哪一项、问法是否真的是这次判断里最关键的那个缺口，还是只是 REQUIRED 列表里排序最靠前的那个（E7 转出项②已如实登记：静态层只证明了「不是编造」，没有也不可能证明「就是最高价值」——这是留给这次真实调用的唯一一手证据，虽然仍不构成完整证明，但至少能看到一次真实取值）。",
+  "admission_preverification": {
+    "can_run": false,
+    "status": "INSUFFICIENT",
+    "missing_before_padding": [
+      "content_body_or_beats",
+      "content_promise",
+      "explicit_non_promise",
+      "facts_registered",
+      "cta_contract",
+      "asset_publish_permission"
+    ],
+    "missing_after_padding": null,
+    "padding_added": [],
+    "padding_needed": false,
+    "note": "本案例按设计保持不足，未做任何补话——这正是它的用途；管理员未额外补充任何字段。",
+    "anchors_matched": {
+      "platform": "小红书（唯一命中的必填项）"
+    }
+  }
+}

@@ -1,11 +1,24 @@
 {
   "gate": "STATIC_GATE",
   "task_id": "DIYU-V1-STATIC-GATE-001",
-  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复，本轮扩充）",
-  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, the specific E4-first-call condition it is bound to) can be pinned now without waiting for the case itself to exist; only the case id is a placeholder — PENDING_EVAL_MANIFEST (eval/ currently only .gitkeep; the only populated holdout on this machine, diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) for the market-claim item, PENDING_E4_FIRST_CALL for the payload item — must be backfilled once the real case/call exists, not left as a placeholder indefinitely.",
+  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）",
+  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, the specific E4-first-call condition it is bound to) can be pinned now without waiting for the case itself to exist. The market-claim item's case_id has been backfilled per A-7 (DIYU-V1-P0-EMPIRICAL-R1-001): eval/ now holds the first real case set (EVAL-P0-R1-001~003, manifest-vetted under INV-2), and case_id=EVAL-P0-R1-001 replaces the former PENDING_EVAL_MANIFEST placeholder. PENDING_E4_FIRST_CALL for the payload item remains a placeholder — must be backfilled once E4 阶段 B's first real call happens, not left indefinitely.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
   "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage (DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose.",
   "residual_remediation_transferred_out_note": "E7 §四 lists four items explicitly out of this round's scope, 登记清楚 (clearly recorded), not silently dropped: ①真实 Provider Payload — the only one of the four whose disposition is literally '登记 DYNAMIC_ONLY'; see finding SG7.real_provider_payload_verification (empirical_case_ref=EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD, bound to E4's first real call). ②最高价值缺口是否真的'最高价值' — SG1.G0.single_highest_value_gap_no_fabrication (B-3/C-3) only verifies real, non-fabricated behavior (the question genuinely changes with miss[0]); it does NOT verify that missing[0] is the semantically highest-value gap to ask about — that is a product judgment, transferred to G1, not registered as a separate DYNAMIC_ONLY finding because no verified Q-COMM-04 scoring position for it was read this round. ③事实性陈述的开放语义完备性 — see fact_verification.main()'s own fact_check_scope_note field and the M-4 code comment: ledger_status=NONE now gets a closed-set high-signal scan (number+unit / Chinese fraction-percent expressions), not open semantic judgment of 'does this sentence constitute a factual claim at all' — that open question stays with the model's own semantic verification, transferred to G1. ④subject_domain 同义表达 — no canonical-alias table was added this round (unlike platform's _PLATFORM_CANONICAL): E7 §四 asks for aliases only for 'the three cases E4 will actually use', which are not knowable from this static-only task; adding a broader alias table now would be exactly the open-world synonym engine §四 explicitly forbids. subject_domain currently resolves via _find_scalar / semantic anchors with no alias normalization — recorded here as a known limitation, narrowing deferred to whoever holds E4's actual three cases.",
+  "e5_residual_written_off": {
+    "adjudicator": "Founder",
+    "date": "2026-09-02",
+    "scope": [
+      "E5 报告 §三「剩余 P1/P2 发现一览」全部条目（S0/S1、S2、S3、S4、S7、S8、S9、S10、S11、S12、S13、S14，及'未知盲区扫描新发现'一段）——p0-static-audit/STATIC_AUDIT_REPORT.md §三",
+      "E5 报告 §二第 8 组（治理拦截后原文与命中规则不可追回，E5 自评降级为 P1）——p0-static-audit/STATIC_AUDIT_REPORT.md §二「8. 一处存在分歧的发现，我给出裁定」"
+    ],
+    "reasons": [
+      "均为 P1/P2 级，RULESIDE-2026-09-02-014 当时的判断即为不追；",
+      "详情随 E5 审查会话丢失，不可恢复，重建成本等于重做一次 E5；",
+      "标题保留在 p0-static-audit/STATIC_AUDIT_REPORT.md §三，将来实测出现对应症状时回查即有线索。"
+    ]
+  },
   "invariants": {
     "INV-1": {
       "invariant": "INV-1",
@@ -69,8 +82,14 @@
     "INV-2": {
       "invariant": "INV-2",
       "sealed_roots": {
-        "/home/faye/diyu-demo/eval": "EXISTS_INSIDE_ALLOWED_ROOT_BUT_EMPTY",
+        "/home/faye/diyu-demo/eval": "EXISTS_INSIDE_ALLOWED_ROOT_WITH_CONTENT_FULLY_VETTED",
         "/home/faye/diyu-demo-holdout-custody": "OUTSIDE_ALLOWED_ROOT"
+      },
+      "sealed_root_vetting": {
+        "/home/faye/diyu-demo/eval": {
+          "unvetted_files": [],
+          "hash_mismatches": []
+        }
       },
       "read_attempts_into_sealed_roots": [],
       "network_guard_installed": true,
@@ -83,7 +102,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "39fc5403fe2ed1af564ab25135bac4afb28da0fbecce0bbfd9e1114b0d8964c9",
+      "dsl_sha256": "b2b5772c4fb0b1dd7f6b04ae06a6a13fa07e1d2fe43aec5e26666561bcf4e970",
       "blockers": [],
       "dynamic_only": [
         {
@@ -93,8 +112,8 @@
           "empirical_case_ref": {
             "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-            "case_id": "PENDING_EVAL_MANIFEST",
-            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+            "case_id": "EVAL-P0-R1-001",
+            "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST"
           }
         },
         {
@@ -528,6 +547,66 @@
           }
         },
         {
+          "id": "SG6.advisory_marker_present",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.applicable_not_applicable_present",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.unknown_fact_misuse_scan",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.guard_variable_source_hardcoded",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.reference_provenance_check",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.evidence_and_authority_check",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "R0.FX01_natural_language_admission",
           "verdict": "PASS",
           "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
@@ -674,8 +753,8 @@
           "empirical_case_ref": {
             "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-            "case_id": "PENDING_EVAL_MANIFEST",
-            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+            "case_id": "EVAL-P0-R1-001",
+            "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST"
           }
         },
         {
@@ -711,8 +790,8 @@
           "empirical_case_ref": {
             "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-            "case_id": "PENDING_EVAL_MANIFEST",
-            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+            "case_id": "EVAL-P0-R1-001",
+            "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST"
           }
         },
         {
@@ -1139,14 +1218,74 @@
           }
         },
         {
+          "id": "SG6.advisory_marker_present",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.applicable_not_applicable_present",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.unknown_fact_misuse_scan",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.guard_variable_source_hardcoded",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.reference_provenance_check",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.evidence_and_authority_check",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
           "empirical_case_ref": {
             "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-            "case_id": "PENDING_EVAL_MANIFEST",
-            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+            "case_id": "EVAL-P0-R1-001",
+            "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST"
           }
         },
         {
@@ -1182,8 +1321,8 @@
           "empirical_case_ref": {
             "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-            "case_id": "PENDING_EVAL_MANIFEST",
-            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+            "case_id": "EVAL-P0-R1-001",
+            "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST"
           }
         },
         {
@@ -1610,14 +1749,74 @@
           }
         },
         {
+          "id": "SG6.advisory_marker_present",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.applicable_not_applicable_present",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.unknown_fact_misuse_scan",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.guard_variable_source_hardcoded",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.reference_provenance_check",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.evidence_and_authority_check",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
           "empirical_case_ref": {
             "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-            "case_id": "PENDING_EVAL_MANIFEST",
-            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+            "case_id": "EVAL-P0-R1-001",
+            "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST"
           }
         },
         {

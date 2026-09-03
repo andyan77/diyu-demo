@@ -1,0 +1,36 @@
+{
+  "case_id": "EVAL-P0-R1-001",
+  "sku": "P0",
+  "capability_call": "cta_level: LOW_RISK_INTERACTION",
+  "professional_input": "我们是做本帮红烧肉的小饭馆，就开在老城区那条巷子里，8张桌子。已经拍了一段红烧肉出锅的过程，大概40秒，这个月想发抖音，勾一下食欲。这道菜我们家已经卖了十二年了，用的是自己家腌的黄酒糟卤打底，这两年在美团上一直是那条街同类菜系销量第一。红烧肉用的五花肉是本地菜场买的，质检合格证都留着。想让观众知道这道菜真的是老手艺，不是随便炒的，看完能来店里尝一下，最好能顺便办张储值卡，不办卡也没关系，别老逼着人办卡就行。不能说什么祖传秘方，我们家开店才十二年，说祖传不合适。素材是我自己拍的，都在后厨，没有别人出镜，可以随便发。",
+  "example_reference_requested": "",
+  "expected_platform": "抖音",
+  "expected_subject_domain": "餐饮 / 门店",
+  "expected_minimum_handling": "至少要处理到：(1) 能生成一版可用的发布包（标题/封面或首帧/正文/字幕规则等）；(2) 不得把\"祖传秘方\"这类被明确禁止的说法写进任何交付内容；(3) \"这两年在美团上一直是那条街同类菜系销量第一\"这句无法验证的市场地位断言，要么被登记进 FACT_LEDGER 并标明来源不可验证，要么被市场断言/事实核验机制拦下，不能被当成已核实事实原样写进正文对外发布。",
+  "designed_flaw_target": "本案例设计目的：测试 market_claim_scan 的固定模式字符串匹配（MARKET_CLAIM_PATTERNS_ZH/EN）能否识别一句用真实商业语言写的、不落在既定关键词模式里的市场地位断言（\"这两年在美团上一直是那条街同类菜系销量第一\"——不匹配\"现在最火/当前爆款\"这类固定短语，但同样是无实时数据支撑的当前市场地位断言）。这正是 static_detector_capability_notice 里已披露、SG7.semantic_market_claim_coverage 登记为 DYNAMIC_ONLY 的那类同义改写风险——本案例提供该风险的第一份真实实测证据，不是伪造的攻击样本，是一句真实小店主会写的话。",
+  "admission_preverification": {
+    "can_run": true,
+    "status": "SUFFICIENT",
+    "missing_before_padding": [
+      "content_body_or_beats",
+      "facts_registered",
+      "asset_publish_permission"
+    ],
+    "missing_after_padding": [],
+    "padding_added": [
+      "content_body_or_beats：原句「想把红烧肉出锅的过程拍一拍」（未来时，尚未拍摄）改为「已经拍了一段红烧肉出锅的过程，大概40秒」（过去时，命中锚点「已经拍」）",
+      "facts_registered：新增「红烧肉用的五花肉是本地菜场买的，质检合格证都留着」（命中锚点「质检」）",
+      "asset_publish_permission：原句「我自己在后厨用手机拍的」（「自己」与「拍」不连续，未命中锚点）改为「素材是我自己拍的，都在后厨」（命中锚点「自己拍」）"
+    ],
+    "padding_needed": true,
+    "anchors_matched": {
+      "content_body_or_beats": "已经拍",
+      "content_promise": "让观众知道（首稿即命中）",
+      "explicit_non_promise": "不能说（首稿即命中）",
+      "facts_registered": "质检",
+      "cta_contract": "首稿即通过（capability_call 结构化 cta_level: LOW_RISK_INTERACTION）",
+      "asset_publish_permission": "自己拍",
+      "platform": "抖音（首稿即命中）"
+    }
+  }
+}

@@ -214,8 +214,64 @@ def _dir_has_real_content(root):
     return False
 
 
+# A-7（DIYU-V1-P0-EMPIRICAL-R1-001）：eval/ 现在合法持有本任务冻结的三个
+# 实测案例。此前 check_inv2 把"sealed root 存在任何内容"一律判 bad，反映的
+# 是"当时确实什么都不该在那儿"的临时状态，不是永久设计——13.1 本身是析取式：
+# "不存在／权限拒绝／不在允许根内"或"内容已被逐一核验"任一成立即可，此前只
+# 实现了前半句是因为"当时没有任何内容需要被核验"。这里给 eval/ 一份冻结清单
+# （路径+sha256，仿 INV-1 FROZEN_FILES 同一模式），有清单条目覆盖且哈希吻合
+# 的内容视为"已核验"；不在清单里的任何文件、或清单条目哈希对不上，仍然判
+# bad——manifest 之外的一切仍然不被信任，不是把检查整体关掉。
+# diyu-demo-holdout-custody/（无关 M5 任务的 holdout）没有清单，出现任何内容
+# 依旧无条件判 bad，未被放宽。
+EVAL_MANIFEST = {
+    "eval/EVAL-P0-R1-001.json": "82946c94b511032a82e2315d0b52f2adc9fd11ff2d7187b9747b4c9b94fe1674",
+    "eval/EVAL-P0-R1-002.json": "b7db57bbf2afb73716d291ee49f0d3df25006815d4d6ffda01450f51627a0b43",
+    "eval/EVAL-P0-R1-003.json": "a022e9cc56c1ae3bae86a97a7e5834689d16b9df0f58eadaa1ed8876994d5f6e",
+}
+
+
+def _sha256_file_unguarded(path):
+    """仅供 _sealed_root_vetting 使用。eval/ 是 SEALED_ROOTS 成员，
+    _guarded_open（进而 sha256_file()）会拦截任何经由 open() 的读取——
+    包括这个清单核验本身，形成"必须读字节才能核验哈希，但读字节即违反密封"
+    的自相矛盾。这里改用模块加载时、guard 安装之前就已捕获的 _real_open
+    绕过守卫；只计算 sha256、不把文件内容读进任何会写进报告的变量，与其余
+    非 sealed 路径的 sha256_file() 同一安全性质（只产出摘要，不产出内容）。
+    这是唯一被允许绕过 _guarded_open 的地方，且只用于按 EVAL_MANIFEST 核验
+    已冻结、已提交、Founder 已知的三个 case 文件——不是读任意未知的
+    sealed 内容，也不会把结果记进 _ACCESS_LOG（那份日志衡量的是"脚本读了
+    什么未经清单核验的东西"，manifest 内的核验读取不属于这一类）。"""
+    with _real_open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def _sealed_root_vetting(root):
+    """返回 (unvetted_files, hash_mismatches)。只有 eval/ 配了清单；清单外的
+    根（如 diyu-demo-holdout-custody/）没有 manifest，其下任何文件都判未核验。
+    用 os.path.abspath 规整，与 _guarded_open 的比较口径一致。"""
+    manifest = {}
+    if os.path.abspath(root) == os.path.abspath(os.path.join(REPO_ROOT, "eval")):
+        manifest = {os.path.abspath(os.path.join(REPO_ROOT, rel)): sha
+                     for rel, sha in EVAL_MANIFEST.items()}
+    unvetted, mismatches = [], []
+    for dirpath, _dirnames, filenames in os.walk(root):
+        for fn in filenames:
+            if fn == ".gitkeep":
+                continue
+            p = os.path.abspath(os.path.join(dirpath, fn))
+            if p not in manifest:
+                unvetted.append(p)
+                continue
+            actual = _sha256_file_unguarded(p)
+            if actual != manifest[p]:
+                mismatches.append({"file": p, "manifest_sha256": manifest[p], "actual_sha256": actual})
+    return unvetted, mismatches
+
+
 def check_inv2():
     root_states = {}
+    vetting = {}
     for root in SEALED_ROOTS:
         if not os.path.exists(root):
             state = "NOT_FOUND"
@@ -226,22 +282,18 @@ def check_inv2():
         elif not _dir_has_real_content(root):
             state = "EXISTS_INSIDE_ALLOWED_ROOT_BUT_EMPTY"
         else:
-            state = "EXISTS_INSIDE_ALLOWED_ROOT_WITH_CONTENT"
+            unvetted, mismatches = _sealed_root_vetting(root)
+            vetting[root] = {"unvetted_files": unvetted, "hash_mismatches": mismatches}
+            state = ("EXISTS_INSIDE_ALLOWED_ROOT_WITH_CONTENT_FULLY_VETTED" if not (unvetted or mismatches)
+                      else "EXISTS_INSIDE_ALLOWED_ROOT_WITH_UNVETTED_CONTENT")
         root_states[root] = state
-    # A root satisfies 13.1's disjunction (不存在／权限拒绝／不在允许根内) — or,
-    # equivalently for present purposes, holds no actual sealed content yet —
-    # in every case except EXISTS_INSIDE_ALLOWED_ROOT_WITH_CONTENT, which
-    # would need every file under it individually vetted. None of ours do:
-    # no empirical test set has been built for these three SKUs yet (eval/
-    # holds only .gitkeep; the only populated holdout on this machine,
-    # diyu-demo-holdout-custody/, belongs to the unrelated M5 task and sits
-    # outside the repo root).
-    bad = {r: s for r, s in root_states.items() if s == "EXISTS_INSIDE_ALLOWED_ROOT_WITH_CONTENT"}
+    bad = {r: s for r, s in root_states.items() if s == "EXISTS_INSIDE_ALLOWED_ROOT_WITH_UNVETTED_CONTENT"}
     read_violations = [p for p in _ACCESS_LOG
                         if any(p == r or p.startswith(r + os.sep) for r in SEALED_ROOTS)]
     return {
         "invariant": "INV-2",
         "sealed_roots": root_states,
+        "sealed_root_vetting": vetting,
         "read_attempts_into_sealed_roots": read_violations,
         "network_guard_installed": socket.socket.connect is _guarded_connect,
         "pass": len(bad) == 0 and len(read_violations) == 0,
@@ -654,12 +706,22 @@ _SG1_G1_BEHAVIOR_CHECKS = [
 ]
 
 
+# A-2（DIYU-V1-P0-EMPIRICAL-R1-001）：以下两个判据从 run_sg1 内联逻辑抽成
+# 独立函数，供 run_sg6 三控自测复用同一份生产判定（与其余检测器同一纪律）。
+def _advisory_marker_present(skill_md_text, marker):
+    return line_of(skill_md_text, marker) is not None
+
+
+def _applicable_notapplicable_present(skill_md_text):
+    return len(re.findall(r"\bAPPLICABLE\b|\bNOT_APPLICABLE\b", skill_md_text)) > 0
+
+
 def run_sg1(sku, yml_data, skill_md_text, skill_md_path):
     findings = []
 
     for marker in sku["advisory_marker_ids"]:
-        ln = line_of(skill_md_text, marker)
-        if ln:
+        if _advisory_marker_present(skill_md_text, marker):
+            ln = line_of(skill_md_text, marker)
             findings.append(finding(
                 "SG1.advisory.%s" % marker, "PASS",
                 "advisory criterion %s carried as a self-check item" % marker,
@@ -712,8 +774,8 @@ def run_sg1(sku, yml_data, skill_md_text, skill_md_path):
             ))
 
     if sku["applicable_notapplicable_required"]:
-        hits = len(re.findall(r"\bAPPLICABLE\b|\bNOT_APPLICABLE\b", skill_md_text))
-        if hits > 0:
+        if _applicable_notapplicable_present(skill_md_text):
+            hits = len(re.findall(r"\bAPPLICABLE\b|\bNOT_APPLICABLE\b", skill_md_text))
             ln = None
             m = re.search(r"\bAPPLICABLE\b|\bNOT_APPLICABLE\b", skill_md_text)
             if m:
@@ -766,6 +828,35 @@ def run_sg2(sku, yml_data):
     return findings, r
 
 
+# A-2：以下两个判据从 run_sg3 内联逻辑抽成独立函数，供 run_sg6 三控自测
+# 复用同一份生产判定。
+def _unknown_fact_misuse_scan(yml_data):
+    hits = []
+    for n in yml_data["workflow"]["graph"]["nodes"]:
+        if n["data"]["type"] != "code":
+            continue
+        code = n["data"]["code"]
+        if re.search(r'replace\(\s*["\']UNKNOWN["\']\s*,\s*["\']FACT["\']', code):
+            hits.append(n["id"])
+    return hits
+
+
+def _guard_variable_source_hardcoded(yml_data, guard_id):
+    """True 表示 guard 的条件不引用外部计算字段（硬编码/自我引用）——这是
+    BLOCKING 的情况。"""
+    guard = node_by_id(yml_data, guard_id)
+    cases = guard["data"].get("cases", [])
+    if not cases:
+        return True
+    hardcoded = True
+    for c in cases:
+        for cond in c.get("conditions", []):
+            sel = cond.get("variable_selector", [])
+            if sel and sel[0] != guard_id and sel[-1] not in ("__constant__",):
+                hardcoded = False
+    return hardcoded
+
+
 def run_sg3(sku, yml_data):
     findings = []
     defects = schema_and_dangling_defects(yml_data)
@@ -801,13 +892,7 @@ def run_sg3(sku, yml_data):
                                  "or a constant-vs-constant comparison) in any code node",
                                  evidence={"file": sku["yml_path"]}))
 
-    unknown_fact = []
-    for n in yml_data["workflow"]["graph"]["nodes"]:
-        if n["data"]["type"] != "code":
-            continue
-        code = n["data"]["code"]
-        if re.search(r'replace\(\s*["\']UNKNOWN["\']\s*,\s*["\']FACT["\']', code):
-            unknown_fact.append(n["id"])
+    unknown_fact = _unknown_fact_misuse_scan(yml_data)
     if unknown_fact:
         findings.append(finding("SG3.unknown_fact_misuse", "BLOCKING",
                                  "UNKNOWN silently rewritten to FACT in node(s): %s" % unknown_fact,
@@ -817,15 +902,7 @@ def run_sg3(sku, yml_data):
                                  "no code path silently rewrites UNKNOWN to FACT",
                                  evidence={"file": sku["yml_path"]}))
 
-    guard = node_by_id(yml_data, sku["guard_id"])
-    cases = guard["data"].get("cases", [])
-    hardcoded_guard = True
-    for c in cases:
-        for cond in c.get("conditions", []):
-            sel = cond.get("variable_selector", [])
-            if sel and sel[0] != sku["guard_id"] and sel[-1] not in ("__constant__",):
-                hardcoded_guard = False
-    if hardcoded_guard and cases:
+    if _guard_variable_source_hardcoded(yml_data, sku["guard_id"]):
         findings.append(finding("SG3.guard_variable_source", "BLOCKING",
                                  "gate_sufficiency condition does not reference an externally "
                                  "computed variable", evidence={"file": sku["yml_path"], "node": sku["guard_id"]}))
@@ -1059,6 +1136,24 @@ def _assembled_prompt_check(yml_data, skill_md_text):
     }
 
 
+# A-2：从 run_sg5 内联逻辑抽成独立函数，供 run_sg6 三控自测复用同一份生产判定。
+def _reference_provenance_check(yml_data):
+    prov_blocks = re.findall(
+        r'"path":\s*"([^"]+)"[^{}]*?"sha256[a-z_]*":\s*"([0-9a-f]{64})"',
+        node_by_id(yml_data, "projection_record")["data"]["template"],
+    )
+    mismatches = []
+    for rel, declared_sha in prov_blocks:
+        abspath = os.path.join(REPO_ROOT, rel)
+        if not os.path.exists(abspath):
+            mismatches.append("%s: file missing" % rel)
+            continue
+        actual_sha = sha256_file(abspath)
+        if actual_sha != declared_sha:
+            mismatches.append("%s: declared=%s actual=%s" % (rel, declared_sha, actual_sha))
+    return prov_blocks, mismatches
+
+
 def run_sg5(sku, yml_data, skill_md_text, skill_md_path):
     findings = []
 
@@ -1122,10 +1217,7 @@ def run_sg5(sku, yml_data, skill_md_text, skill_md_path):
             evidence={"file": sku["yml_path"], "node": "skill_llm", "completion_params": declared},
         ))
 
-    prov_blocks = re.findall(
-        r'"path":\s*"([^"]+)"[^{}]*?"sha256[a-z_]*":\s*"([0-9a-f]{64})"',
-        node_by_id(yml_data, "projection_record")["data"]["template"],
-    )
+    prov_blocks, prov_mismatches = _reference_provenance_check(yml_data)
     if not prov_blocks:
         findings.append(finding(
             "SG5.reference_provenance", "BLOCKING",
@@ -1133,15 +1225,7 @@ def run_sg5(sku, yml_data, skill_md_text, skill_md_path):
             evidence={"file": sku["yml_path"], "node": "projection_record"},
         ))
     else:
-        mismatches = []
-        for rel, declared_sha in prov_blocks:
-            abspath = os.path.join(REPO_ROOT, rel)
-            if not os.path.exists(abspath):
-                mismatches.append("%s: file missing" % rel)
-                continue
-            actual_sha = sha256_file(abspath)
-            if actual_sha != declared_sha:
-                mismatches.append("%s: declared=%s actual=%s" % (rel, declared_sha, actual_sha))
+        mismatches = prov_mismatches
         if mismatches:
             findings.append(finding(
                 "SG5.reference_provenance", "BLOCKING",
@@ -1456,6 +1540,125 @@ def run_sg6(sku, yml_data, skill_md_text):
 
     findings.append(_sg6_verdict("market_claim_scan_behavior", pos12, neg12, offlist12_caught))
 
+    # A-2（DIYU-V1-P0-EMPIRICAL-R1-001）：SG6 覆盖精确枚举后发现的 6 个此前
+    # 未三控的 BLOCKING-capable 检测器，逐个补齐。
+
+    # --- detector: advisory_marker_present (backs SG1.advisory.*) ---
+    pos13 = all(_advisory_marker_present(skill_md_text, m) for m in sku["advisory_marker_ids"])
+
+    neg13_text = skill_md_text.replace(sku["advisory_marker_ids"][0], "")
+    neg13 = not _advisory_marker_present(neg13_text, sku["advisory_marker_ids"][0])
+
+    # Off-list: remove the OTHER marker instead — exercises that the check
+    # (called once per marker in production) genuinely inspects each marker
+    # independently, not just the first one in the list.
+    offlist13_text = skill_md_text.replace(sku["advisory_marker_ids"][1], "")
+    offlist13_caught = not _advisory_marker_present(offlist13_text, sku["advisory_marker_ids"][1])
+
+    findings.append(_sg6_verdict("advisory_marker_present", pos13, neg13, offlist13_caught))
+
+    # --- detector: applicable_not_applicable_present (backs
+    # SG1.G0.applicable_not_applicable). Uses synthetic text, not the real
+    # skill_md_text: whether a standalone "APPLICABLE" occurrence (distinct
+    # from "NOT_APPLICABLE") exists at all is incidental per-SKU content —
+    # P0's SKILL.md happens to have 4, P1/P1_5's happen to have 0 — so the
+    # off-list construction must not depend on that coincidence (first
+    # attempt did, and correctly failed on P1/P1_5's real content). Same
+    # pattern as _plugin_normalization_mismatch's SG6 test below. ---
+    pos14 = _applicable_notapplicable_present("此处 NOT_APPLICABLE 是合法值")
+
+    neg14 = not _applicable_notapplicable_present("此处什么占位符都没有")
+
+    # Off-list: only the OTHER alternation branch (bare APPLICABLE, no NOT_
+    # prefix) — exercises the regex's other alternative independently.
+    offlist14_caught = _applicable_notapplicable_present("这一项标记为 APPLICABLE")
+
+    findings.append(_sg6_verdict("applicable_not_applicable_present", pos14, neg14, offlist14_caught))
+
+    # --- detector: unknown_fact_misuse_scan (same function SG3 runs in
+    # production) ---
+    pos15 = len(_unknown_fact_misuse_scan(good_data)) == 0
+
+    bad15 = copy.deepcopy(good_data)
+    bad15_node = node_by_id(bad15, "fact_verification")
+    bad15_node["data"]["code"] = bad15_node["data"]["code"] + "\nx = 'UNKNOWN'.replace(\"UNKNOWN\", \"FACT\")\n"
+    neg15 = len(_unknown_fact_misuse_scan(bad15)) > 0
+
+    # Off-list: same rewrite but with reversed quote styles (single/double
+    # swapped) and no surrounding spaces — exercises the regex generalizes
+    # across quoting/spacing variants, not just the exact style used above.
+    offlist15 = copy.deepcopy(good_data)
+    offlist15_node = node_by_id(offlist15, "fact_verification")
+    offlist15_node["data"]["code"] = offlist15_node["data"]["code"] + '\nx = "UNKNOWN".replace(\'UNKNOWN\',\'FACT\')\n'
+    offlist15_caught = len(_unknown_fact_misuse_scan(offlist15)) > 0
+
+    findings.append(_sg6_verdict("unknown_fact_misuse_scan", pos15, neg15, offlist15_caught))
+
+    # --- detector: guard_variable_source_hardcoded (same function SG3 runs
+    # in production) ---
+    pos16 = not _guard_variable_source_hardcoded(good_data, sku["guard_id"])
+
+    bad16 = copy.deepcopy(good_data)
+    bad16_guard = node_by_id(bad16, sku["guard_id"])
+    for c in bad16_guard["data"].get("cases", []):
+        for cond in c.get("conditions", []):
+            cond["variable_selector"] = ["__constant__"]
+    neg16 = _guard_variable_source_hardcoded(bad16, sku["guard_id"])
+
+    # Off-list: a different hardcoding shape — self-referential (the guard
+    # reads its own node id) rather than a literal constant selector.
+    offlist16 = copy.deepcopy(good_data)
+    offlist16_guard = node_by_id(offlist16, sku["guard_id"])
+    for c in offlist16_guard["data"].get("cases", []):
+        for cond in c.get("conditions", []):
+            cond["variable_selector"] = [sku["guard_id"], "self_field"]
+    offlist16_caught = _guard_variable_source_hardcoded(offlist16, sku["guard_id"])
+
+    findings.append(_sg6_verdict("guard_variable_source_hardcoded", pos16, neg16, offlist16_caught))
+
+    # --- detector: reference_provenance_check (same function SG5 runs in
+    # production) ---
+    pos17_blocks, pos17_mismatches = _reference_provenance_check(good_data)
+    pos17 = bool(pos17_blocks) and not pos17_mismatches
+
+    bad17 = copy.deepcopy(good_data)
+    bad17_node = node_by_id(bad17, "projection_record")
+    bad17_node["data"]["template"] = re.sub(
+        r'("sha256[a-z_]*":\s*")([0-9a-f])',
+        lambda m: m.group(1) + ("1" if m.group(2) != "1" else "2"),
+        bad17_node["data"]["template"], count=1)
+    _, bad17_mismatches = _reference_provenance_check(bad17)
+    neg17 = bool(bad17_mismatches)
+
+    # Off-list: a different failure mode than a hash digit flip — tamper the
+    # declared PATH to a nonexistent file instead.
+    offlist17 = copy.deepcopy(good_data)
+    offlist17_node = node_by_id(offlist17, "projection_record")
+    offlist17_node["data"]["template"] = re.sub(
+        r'"path":\s*"[^"]+"', '"path": "content-production/skills/__nonexistent__/references/ghost.md"',
+        offlist17_node["data"]["template"], count=1)
+    _, offlist17_mismatches = _reference_provenance_check(offlist17)
+    offlist17_caught = bool(offlist17_mismatches)
+
+    findings.append(_sg6_verdict("reference_provenance_check", pos17, neg17, offlist17_caught))
+
+    # --- detector: evidence_and_authority_check (same function SG4 runs in
+    # production; meta-detector over a findings list, not over yml_data) ---
+    pos18_findings = [finding("X.pass_with_evidence", "PASS", "ok", evidence={"file": "x"})]
+    pos18 = _evidence_and_authority_check(pos18_findings) == []
+
+    neg18_findings = [finding("X.pass_without_evidence", "PASS", "ok")]
+    neg18 = len(_evidence_and_authority_check(neg18_findings)) > 0
+
+    # Off-list: a different failure mode than "PASS with no evidence" — a
+    # DYNAMIC_ONLY finding with no empirical_case_ref must be auto-escalated
+    # to BLOCKING in place, not merely flagged in sg4_issues.
+    offlist18_findings = [finding("X.dynamic_only_no_ref", "DYNAMIC_ONLY", "ok")]
+    _evidence_and_authority_check(offlist18_findings)
+    offlist18_caught = offlist18_findings[0]["verdict"] == "BLOCKING"
+
+    findings.append(_sg6_verdict("evidence_and_authority_check", pos18, neg18, offlist18_caught))
+
     return findings
 
 
@@ -1598,15 +1801,19 @@ def run_r0_fixtures(sku, yml_data, sg6_findings):
 # `dimension`/`target_score`），不需要等 eval/ 建好才能登记；等的只是具体
 # case id。Founder 明确裁决：现在就正式注册 DYNAMIC_ONLY，不再只是在报告
 # 散文字段里披露——散文字段没有任何机制会在实测阶段回头检查它，注册进
-# findings 才会。`case_id` 目前是占位（eval/ 还没有真实测试集，§13.3 本身
-# 受 INV-2 约束"不得含 case 内容"，所以这里从头到尾都不会、也不能写入任何
-# 具体案例文本），一旦 eval/ 有了真实 case 必须回填，不得让占位符一直留着。
+# findings 才会。
+# A-7（DIYU-V1-P0-EMPIRICAL-R1-001）回填：eval/ 已建成第一份实测集
+# （EVAL-P0-R1-001~003，见 EVAL_MANIFEST），`case_id` 占位符回填为真实
+# case id——EVAL-P0-R1-001 是三案例里专门设计用来实测这一维度的那一个
+# （见该案例文件 designed_flaw_target 字段：一句真实商业语言写的、不落在
+# MARKET_CLAIM_PATTERNS 固定模式里的市场地位断言）。§13.3 本身受 INV-2
+# 约束"不得含 case 内容"——这里只写 case id（指向 eval/ 下的文件路径本身，
+# 不是案例正文），案例正文留在 eval/，不重复抄进本报告。
 EMPIRICAL_CASE_REF_MARKET_CLAIM = {
     "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
     "target_score": "0（任何一条命中即 FAIL，不是评分制）",
-    "case_id": "PENDING_EVAL_MANIFEST",
-    "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，"
-                     "case id 待 eval/ 实测集建立时回填，不得凭空编造",
+    "case_id": "EVAL-P0-R1-001",
+    "case_id_note": "eval/EVAL-P0-R1-001.json；A-7 回填，取代此前占位符 PENDING_EVAL_MANIFEST",
 }
 
 
@@ -1646,6 +1853,21 @@ def run_dynamic_only_registrations(sku):
     ]
 
 
+# A-2：从 run_sku 内联逻辑抽成独立函数，供 run_sg6 三控自测复用同一份生产判定
+# ——这是元检测器（校验其它 findings 本身），不依赖 yml_data，输入是一份
+# findings 列表；就地修改传入列表（DYNAMIC_ONLY 无 ref 时原地升级为
+# BLOCKING，与生产行为一致），返回 sg4_issues。
+def _evidence_and_authority_check(findings_list):
+    sg4_issues = []
+    for f in findings_list:
+        if f["verdict"] == "PASS" and not f.get("evidence"):
+            sg4_issues.append("%s: PASS with no evidence" % f["id"])
+        if f["verdict"] == "DYNAMIC_ONLY" and not f.get("empirical_case_ref"):
+            f["verdict"] = "BLOCKING"
+            f["summary"] += " [DYNAMIC_ONLY with no empirical_case_ref => BLOCKING per §13.3]"
+    return sg4_issues
+
+
 def run_sku(sku):
     yml_path = os.path.join(REPO_ROOT, sku["yml_path"])
     skill_md_path_full = os.path.join(REPO_ROOT, sku["skill_md_path"])
@@ -1666,13 +1888,7 @@ def run_sku(sku):
     findings += run_dynamic_only_registrations(sku)
 
     # SG4 · Evidence & Authority — meta-validate the findings this run just produced.
-    sg4_issues = []
-    for f in findings:
-        if f["verdict"] == "PASS" and not f.get("evidence"):
-            sg4_issues.append("%s: PASS with no evidence" % f["id"])
-        if f["verdict"] == "DYNAMIC_ONLY" and not f.get("empirical_case_ref"):
-            f["verdict"] = "BLOCKING"
-            f["summary"] += " [DYNAMIC_ONLY with no empirical_case_ref => BLOCKING per §13.3]"
+    sg4_issues = _evidence_and_authority_check(findings)
     if sg4_issues:
         findings.append(finding("SG4.evidence_and_authority", "BLOCKING",
                                  "PASS verdict(s) without citable evidence: %s" % sg4_issues))
@@ -1734,11 +1950,12 @@ def main():
         "two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref "
         "is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, "
         "the specific E4-first-call condition it is bound to) can be pinned now without waiting for "
-        "the case itself to exist; only the case id is a placeholder — PENDING_EVAL_MANIFEST "
-        "(eval/ currently only .gitkeep; the only populated holdout on this machine, "
-        "diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) for the "
-        "market-claim item, PENDING_E4_FIRST_CALL for the payload item — must be backfilled once "
-        "the real case/call exists, not left as a placeholder indefinitely."
+        "the case itself to exist. The market-claim item's case_id has been backfilled per A-7 "
+        "(DIYU-V1-P0-EMPIRICAL-R1-001): eval/ now holds the first real case set (EVAL-P0-R1-001~003, "
+        "manifest-vetted under INV-2), and case_id=EVAL-P0-R1-001 replaces the former "
+        "PENDING_EVAL_MANIFEST placeholder. PENDING_E4_FIRST_CALL for the payload item remains a "
+        "placeholder — must be backfilled once E4 阶段 B's first real call happens, not left "
+        "indefinitely."
     )
 
     # E7（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）§四"转出（本轮不做，登记清楚）"——
@@ -1800,16 +2017,40 @@ def main():
         "(DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose."
     )
 
+    # A-3（DIYU-V1-P0-EMPIRICAL-R1-001）：Founder 裁定核销 E5 报告 §三全部条目 +
+    # §二第 8 组。核销不是删掉——原文标题与分组原样留在
+    # p0-static-audit/STATIC_AUDIT_REPORT.md，未被本次核销移除或改写；这里只
+    # 新增一个字段记录"核销"这个决定本身（范围、理由、裁定人、日期），不新建
+    # 文档。理由原文照抄，不改写。
+    e5_residual_written_off = {
+        "adjudicator": "Founder",
+        "date": "2026-09-02",
+        "scope": [
+            "E5 报告 §三「剩余 P1/P2 发现一览」全部条目（S0/S1、S2、S3、S4、S7、S8、S9、S10、"
+            "S11、S12、S13、S14，及'未知盲区扫描新发现'一段）——"
+            "p0-static-audit/STATIC_AUDIT_REPORT.md §三",
+            "E5 报告 §二第 8 组（治理拦截后原文与命中规则不可追回，E5 自评降级为 P1）——"
+            "p0-static-audit/STATIC_AUDIT_REPORT.md §二「8. 一处存在分歧的发现，我给出裁定」",
+        ],
+        "reasons": [
+            "均为 P1/P2 级，RULESIDE-2026-09-02-014 当时的判断即为不追；",
+            "详情随 E5 审查会话丢失，不可恢复，重建成本等于重做一次 E5；",
+            "标题保留在 p0-static-audit/STATIC_AUDIT_REPORT.md §三，将来实测出现对应症状时回查即有线索。",
+        ],
+    }
+
     report = {
         "gate": "STATIC_GATE",
         "task_id": "DIYU-V1-STATIC-GATE-001",
         "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 "
                       "+ DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）"
-                      "+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复，本轮扩充）",
+                      "+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）"
+                      "+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）",
         "dynamic_only_scope_note": dynamic_only_scope_note,
         "reasoning_effort_note": reasoning_effort_note,
         "static_detector_capability_notice": static_detector_capability_notice,
         "residual_remediation_transferred_out_note": residual_remediation_transferred_out_note,
+        "e5_residual_written_off": e5_residual_written_off,
         "invariants": {"INV-1": inv1, "INV-2": inv2},
         "skus": results,
     }

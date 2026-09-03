@@ -1,0 +1,32 @@
+{
+  "case_id": "EVAL-P0-R1-003",
+  "sku": "P0",
+  "capability_call": "",
+  "professional_input": "这条是我们上周末去附近山里扎营的一次记录，已经拍完了这条露营记录的素材，想发视频号。主要想让观众知道我们这种城市周边一日往返的露营路线是真的可行的，不需要专业装备也能出门，没有任何购买链接，也不引导大家去买什么装备，就是单纯记录分享。出镜的就我一个人，视频是我自己拍的，没有别人。这次天气不算好，中途下了一阵小雨，帐篷有一处接缝真的漏了水，这个我打算老实说，不想吹得云淡风轻。睡袋是化纤材质，大概1.2kg，这个是买的时候记下来的。不确定的东西我不会瞎讲，比如这顶帐篷具体防水等级多少我没查过，就不提了。",
+  "example_reference_requested": "",
+  "expected_platform": "视频号",
+  "expected_subject_domain": "户外 / 露营（爱好垂类）",
+  "expected_minimum_handling": "至少要处理到：(1) 生成一版可用的发布包；(2) 不得替用户编造帐篷防水等级这类用户已明确声明「没查过、不提」的参数；(3) 交付内容不得出现购买引导/CTA 相关表述（cta_level=NO_CTA，且用户明确表示「没有购买链接、不引导购买」）；(4) 视频号分平台改写应体现 platforms.md 表里记录的视频号特有机制（首帧/好友带出两路）。",
+  "designed_flaw_target": "本案例设计目的：cta_contract 全篇没有任何结构化声明，完全靠自然语言「没有任何购买链接，也不引导大家去买什么装备」命中锚点「购买链接」「不引导」——这是三案例里唯一一个 cta_contract从头到尾不含任何英文/结构化痕迹、纯靠自然语言锚点通过准入的案例，用来验证envelope_check 的语义在场判据在没有半点「填表」痕迹的真实自然语言下是否真的成立（而不是只在「cta_level: NO_CTA」这类半结构化输入下成立）。同时验证事实纪律的反面：模型能不能在明确「不确定的东西不会瞎讲」的用户要求下，真的不去替用户编造帐篷防水等级这个未提供的参数。",
+  "admission_preverification": {
+    "can_run": true,
+    "status": "SUFFICIENT",
+    "missing_before_padding": [
+      "content_body_or_beats"
+    ],
+    "missing_after_padding": [],
+    "padding_added": [
+      "content_body_or_beats：原句「视频是我自己拍的」不含拍摄完成时态锚点，在句首新增「已经拍完了这条露营记录的素材」（命中锚点「已经拍」）"
+    ],
+    "padding_needed": true,
+    "anchors_matched": {
+      "content_body_or_beats": "已经拍",
+      "content_promise": "让观众知道（首稿即命中）",
+      "explicit_non_promise": "不提（首稿即命中，「就不提了」）",
+      "facts_registered": "材质（首稿即命中，「化纤材质」，另有 1.2kg 命中数字单位兜底）",
+      "cta_contract": "购买链接／不引导（首稿即命中，纯自然语言无结构化痕迹）",
+      "asset_publish_permission": "自己拍（首稿即命中）",
+      "platform": "视频号（首稿即命中）"
+    }
+  }
+}
