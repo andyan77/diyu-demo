@@ -2,9 +2,9 @@
   "gate": "STATIC_GATE",
   "task_id": "DIYU-V1-STATIC-GATE-001",
   "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复，本轮扩充）",
-  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings. Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. Separately and factually: no empirical_case_ref manifest exists yet for these three SKUs to bind to even if such placeholders were registered — eval/ holds only .gitkeep, and the only populated holdout on this machine (diyu-demo-holdout-custody/) belongs to the unrelated, already-closed M5 task. Per §13.3 any DYNAMIC_ONLY without a real ref counts as BLOCKING, so inventing refs was not an option; this is disclosed rather than silently avoided.",
+  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage is the one deliberate exception — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score) can be pinned now without waiting for eval/ to hold a real case; only the case id is a placeholder (PENDING_EVAL_MANIFEST) pending eval/ (currently only .gitkeep; the only populated holdout on this machine, diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) — must be backfilled once a real case exists, not left as a placeholder indefinitely.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
-  "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage (semantic_market_claim_coverage) is DYNAMIC_ONLY-eligible under §13.3 once eval/ holds a real case to bind empirical_case_ref to; none exists yet (see dynamic_only_scope_note), so it is disclosed here rather than registered as a ref-less DYNAMIC_ONLY finding, which §13.3 would otherwise force to BLOCKING.",
+  "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage (DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose.",
   "invariants": {
     "INV-1": {
       "invariant": "INV-1",
@@ -80,9 +80,21 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "acf1e5c9f9585021941c00e62fea016a4b81846bbf1128657cedd76cdf9b6a8b",
+      "dsl_sha256": "f19bba88352b4248229b38fb83d8dfd87c2227b4602780c5ad8e6e1d6ee7a7aa",
       "blockers": [],
-      "dynamic_only": [],
+      "dynamic_only": [
+        {
+          "id": "SG7.semantic_market_claim_coverage",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+          "empirical_case_ref": {
+            "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+            "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+            "case_id": "PENDING_EVAL_MANIFEST",
+            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        }
+      ],
       "findings": [
         {
           "id": "SG1.advisory.顾问性②",
@@ -105,11 +117,16 @@
         {
           "id": "SG1.G0.single_highest_value_gap_no_fabrication",
           "verdict": "PASS",
-          "summary": "component_return asks exactly the single most discriminating missing item and returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
+          "summary": "verified by direct execution (not source-string matching): component_return's real question genuinely changes with miss[0]={'single_gap_ask_real': True, 'three_part_real': True, 'no_return_id_real': True, 'pass': True}, real output carries the 缺什么/为什么/怎么补 structure, no return_id-shaped value in any real output field",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
             "node": "component_return",
-            "line": 120
+            "detail": {
+              "single_gap_ask_real": true,
+              "three_part_real": true,
+              "no_return_id_real": true,
+              "pass": true
+            }
           }
         },
         {
@@ -144,7 +161,7 @@
         {
           "id": "SG2.execution_path",
           "verdict": "PASS",
-          "summary": "reachability=True dominance=True fail_closed=True (entry->delivery paths=2, fail_branch->delivery paths=0)",
+          "summary": "reachability=True dominance=True fail_closed=True (entry->delivery paths=1, fail_branch->delivery paths=0)",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
             "entry": "1788000000001",
@@ -408,6 +425,16 @@
           }
         },
         {
+          "id": "SG6.component_return_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "R0.FX01_natural_language_admission",
           "verdict": "PASS",
           "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
@@ -524,6 +551,33 @@
           }
         },
         {
+          "id": "R0.FX15_standard_deliverables_completeness",
+          "verdict": "PASS",
+          "summary": "row B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单） (空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同): expected 必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX15_standard_deliverables_completeness.json"
+          }
+        },
+        {
+          "id": "R0.FX16_cta_content_vs_declared_level",
+          "verdict": "PASS",
+          "summary": "row B-1b（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单） (cta_level 声明为 NO_CTA，但实际交付内容出现业务动作引导词（此前只做了来源隔离，没做内容一致性核对）): expected 必须拦截；同一词表出现在 cta_level 非 NO_CTA（已授权）时不得误判 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX16_cta_content_vs_declared_level.json"
+          }
+        },
+        {
+          "id": "SG7.semantic_market_claim_coverage",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+          "empirical_case_ref": {
+            "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+            "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+            "case_id": "PENDING_EVAL_MANIFEST",
+            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
           "id": "SG4.evidence_and_authority",
           "verdict": "PASS",
           "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
@@ -537,7 +591,19 @@
       "state": "READY_FOR_EMPIRICAL_TESTING",
       "dsl_sha256": "6d3ac8df66c4772a38049d9d7c738579737e1dc472a43911378c07d680ca8954",
       "blockers": [],
-      "dynamic_only": [],
+      "dynamic_only": [
+        {
+          "id": "SG7.semantic_market_claim_coverage",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+          "empirical_case_ref": {
+            "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+            "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+            "case_id": "PENDING_EVAL_MANIFEST",
+            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        }
+      ],
       "findings": [
         {
           "id": "SG1.advisory.顾问性②",
@@ -560,11 +626,16 @@
         {
           "id": "SG1.G0.single_highest_value_gap_no_fabrication",
           "verdict": "PASS",
-          "summary": "component_return asks exactly the single most discriminating missing item and returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
+          "summary": "verified by direct execution (not source-string matching): component_return's real question genuinely changes with miss[0]={'single_gap_ask_real': True, 'three_part_real': True, 'no_return_id_real': True, 'pass': True}, real output carries the 缺什么/为什么/怎么补 structure, no return_id-shaped value in any real output field",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
             "node": "component_return",
-            "line": 120
+            "detail": {
+              "single_gap_ask_real": true,
+              "three_part_real": true,
+              "no_return_id_real": true,
+              "pass": true
+            }
           }
         },
         {
@@ -856,6 +927,27 @@
           }
         },
         {
+          "id": "SG6.component_return_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG7.semantic_market_claim_coverage",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+          "empirical_case_ref": {
+            "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+            "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+            "case_id": "PENDING_EVAL_MANIFEST",
+            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
           "id": "SG4.evidence_and_authority",
           "verdict": "PASS",
           "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
@@ -869,7 +961,19 @@
       "state": "READY_FOR_EMPIRICAL_TESTING",
       "dsl_sha256": "b016f7e88d3fb8be59c8eec90c0a37407ca971881fd0b309e2dabebfcf476e91",
       "blockers": [],
-      "dynamic_only": [],
+      "dynamic_only": [
+        {
+          "id": "SG7.semantic_market_claim_coverage",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+          "empirical_case_ref": {
+            "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+            "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+            "case_id": "PENDING_EVAL_MANIFEST",
+            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        }
+      ],
       "findings": [
         {
           "id": "SG1.advisory.顾问性②",
@@ -892,11 +996,16 @@
         {
           "id": "SG1.G0.single_highest_value_gap_no_fabrication",
           "verdict": "PASS",
-          "summary": "component_return asks exactly the single most discriminating missing item and returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
+          "summary": "verified by direct execution (not source-string matching): component_return's real question genuinely changes with miss[0]={'single_gap_ask_real': True, 'three_part_real': True, 'no_return_id_real': True, 'pass': True}, real output carries the 缺什么/为什么/怎么补 structure, no return_id-shaped value in any real output field",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
             "node": "component_return",
-            "line": 120
+            "detail": {
+              "single_gap_ask_real": true,
+              "three_part_real": true,
+              "no_return_id_real": true,
+              "pass": true
+            }
           }
         },
         {
@@ -1185,6 +1294,27 @@
             "positive_control": true,
             "negative_control": true,
             "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.component_return_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG7.semantic_market_claim_coverage",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+          "empirical_case_ref": {
+            "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+            "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+            "case_id": "PENDING_EVAL_MANIFEST",
+            "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
           }
         },
         {

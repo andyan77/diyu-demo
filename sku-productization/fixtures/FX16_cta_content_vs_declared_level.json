@@ -1,0 +1,21 @@
+{
+  "id": "FX16_cta_content_vs_declared_level",
+  "kind": "node_exec",
+  "table_row": "B-1b（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单）",
+  "mechanism": "cta_level 声明为 NO_CTA，但实际交付内容出现业务动作引导词（此前只做了来源隔离，没做内容一致性核对）",
+  "expected_behavior": "必须拦截；同一词表出现在 cta_level 非 NO_CTA（已授权）时不得误判",
+  "source": "STATIC_AUDIT_REPORT.md 第二节第3组 + Founder 2026-09-02 消息 B-1a：E5 原文'至少要有一个确定性的代码检查，去核对交付内容是否符合声明的授权级别'，此前只做了前半句（来源隔离）",
+  "chain": [
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n看完这条内容，欢迎到店咨询，加微信领取福利，名额有限。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "cta_authorization_mismatch", "op": "eq", "value": "true"},
+    {"step": 0, "field": "local_block", "op": "eq", "value": "true"}
+  ]
+}

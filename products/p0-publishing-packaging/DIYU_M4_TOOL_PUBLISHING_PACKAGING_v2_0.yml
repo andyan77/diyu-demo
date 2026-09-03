@@ -179,32 +179,10 @@ workflow:
     - data:
         isInIteration: false
         sourceType: code
-        targetType: if-else
-      id: returns_adapter-source-projection_gate-target
+        targetType: code
+      id: returns_adapter-source-delivery_finalize-target
       source: returns_adapter
       sourceHandle: source
-      target: projection_gate
-      targetHandle: target
-      type: custom
-      zIndex: 0
-    - data:
-        isInIteration: false
-        sourceType: if-else
-        targetType: code
-      id: projection_gate-recover-delivery_finalize-target
-      source: projection_gate
-      sourceHandle: recover
-      target: delivery_finalize
-      targetHandle: target
-      type: custom
-      zIndex: 0
-    - data:
-        isInIteration: false
-        sourceType: if-else
-        targetType: code
-      id: projection_gate-false-delivery_finalize-target
-      source: projection_gate
-      sourceHandle: 'false'
       target: delivery_finalize
       targetHandle: target
       type: custom
@@ -2712,6 +2690,45 @@ workflow:
           MIN_ARTIFACT_CHARS = 400
           CHECK_WINDOW = 200
 
+          # Founder 裁决 B-1a（E6 收口追加）：Q-COMM-04 §1.3 十二项标准交付物，
+          # 此前没有任何代码检查是否全部被判过 APPLICABLE/NOT_APPLICABLE
+          # （E5 第 4 组："一份完全没有标题、没有封面、没有发布结论的空洞交付物，
+          # 和一份内容齐全的交付物，在系统看来是完全相同的成功状态"）。
+          # 字段名直接取自本 SKILL 上文档明的内部 Artifact 结构（master_package
+          # 下各字段 + release_check/release_decision），不是新造的判据。
+          # 检测只问"这个字段在内部 Artifact 里有没有被提到过一次"（内容或
+          # NOT_APPLICABLE 都算），不判断内容质量——质量判断仍属 G2 评分层，
+          # 不是这里的职责；不强求每个任务都覆盖 12 项（那违反 §1.3"不是所有
+          # 任务强制出现全部12项"），只挡"某一项在 Artifact 里从未出现过一次"
+          # 这种彻底沉默的情况。
+          STANDARD_DELIVERABLE_FIELDS = [
+              ("titles_or_recommended_title", ["titles", "recommended_title"]),
+              ("cover", ["cover"]),
+              ("first_frame", ["first_frame"]),
+              ("publish_copy", ["publish_copy"]),
+              ("caption_rules", ["caption_rules"]),
+              ("sound_placement", ["sound_placement"]),
+              ("comment_design", ["comment_design"]),
+              ("cta_surface", ["cta_surface"]),
+              ("hashtags_topics", ["hashtags_topics"]),
+              ("platform_variants", ["platform_variants"]),
+              ("release_check", ["release_check"]),
+              ("release_decision", ["release_decision"]),
+          ]
+
+          # Founder 裁决 B-1b（E6 收口追加）：CTA 分级此前只做了来源隔离
+          # （cta_level 只从 capability_call 解析），没有做"交付内容是否符合
+          # 声明的授权级别"这一半（R2 prose 的"要么…要么"要求）。词表直接取自
+          # 本 SKILL 上文"无 CTA 时，评论区能做什么、不能做什么"一节明文列出
+          # 的禁止动作原句，不是新造的产品判断——只在 cta_level=NO_CTA 时启用，
+          # 这是文档里唯一给出了具体禁止词的场景。
+          CTA_PROHIBITED_ACTION_PHRASES = [
+              "抽奖", "猜对有惊喜", "答对送",
+              "评论区领", "私信我领", "扣1发你", "扣一发你",
+              "关注看答案", "下条揭晓",
+              "到店", "预约", "购买", "下单", "加微信", "咨询",
+          ]
+
 
           def _has_backref(text):
               head = (text or "")[:CHECK_WINDOW]
@@ -2755,7 +2772,17 @@ workflow:
               return text[i + len(a):j].strip(), dup
 
 
-          def main(final_text):
+          def _standard_deliverables_missing(artifact_text):
+              text = artifact_text or ""
+              missing = []
+              for label, keys in STANDARD_DELIVERABLE_FIELDS:
+                  found = any(re.search(r'\b%s\b' % re.escape(k), text, re.IGNORECASE) for k in keys)
+                  if not found:
+                      missing.append(label)
+              return missing
+
+
+          def main(final_text, cta_level):
               raw = final_text or ""
 
               artifact, artifact_dup = _between(raw, A_OPEN, A_CLOSE)
@@ -2793,11 +2820,37 @@ workflow:
                   user_out = user_delivery
                   user_status = _user_status_of(user_delivery)
 
+              # B-1a：十二项标准交付物，只要 Artifact 有实质内容（非缺失/非
+              # 结构损坏）就检查是否每一项都至少被提到过一次。
+              deliverables_missing = (
+                  _standard_deliverables_missing(artifact_out) if artifact is not None else []
+              )
+              if deliverables_missing:
+                  structure_notes.append(
+                      "标准交付物疑似完全未处理（既非有内容也未标 NOT_APPLICABLE）：%s"
+                      % ", ".join(deliverables_missing)
+                  )
+
+              # B-1b：cta_level=NO_CTA 时，交付内容不得出现文档明文列出的
+              # 业务动作引导词——只在这一种声明级别下启用，避免对其余级别
+              # 做没有文档依据的猜测式判断。
+              cta_level_norm = str(cta_level or "").strip().upper()
+              cta_hits = []
+              if cta_level_norm == "NO_CTA":
+                  cta_hits = [p for p in CTA_PROHIBITED_ACTION_PHRASES if user_delivery and p in user_delivery]
+              cta_authorization_mismatch = bool(cta_hits)
+              if cta_authorization_mismatch:
+                  structure_notes.append(
+                      "cta_level=NO_CTA 但交付内容命中文档明禁的业务动作引导词：%s" % ", ".join(cta_hits)
+                  )
+
               blocked = (
                   artifact_status != "OK"
                   or user_status != "OK"
                   or artifact_dup
                   or user_dup
+                  or bool(deliverables_missing)
+                  or cta_authorization_mismatch
               )
 
               # AC-31 修复：专业内容已生成但用户交付块缺失/为空/回指 ⇒ 需要一次有界用户投影。
@@ -2815,6 +2868,8 @@ workflow:
                   "user_delivery_leaks": leaks,
                   "raw_preserved": raw,
                   "local_block": "true" if blocked else "false",
+                  "standard_deliverables_missing": deliverables_missing,
+                  "cta_authorization_mismatch": "true" if cta_authorization_mismatch else "false",
                   "structure_notes": structure_notes,
                   "capability": CAPABILITY,
                   "dsl_version": DSL_VERSION,
@@ -2829,6 +2884,9 @@ workflow:
             children: null
             type: string
           capability:
+            children: null
+            type: string
+          cta_authorization_mismatch:
             children: null
             type: string
           dsl_version:
@@ -2846,6 +2904,9 @@ workflow:
           raw_preserved:
             children: null
             type: string
+          standard_deliverables_missing:
+            children: null
+            type: array[string]
           structure_notes:
             children: null
             type: array[string]
@@ -2866,6 +2927,10 @@ workflow:
           - market_claim_scan
           - verified_text
           variable: final_text
+        - value_selector:
+          - envelope_check
+          - cta_level
+          variable: cta_level
       height: 100
       id: returns_adapter
       position:
@@ -2873,35 +2938,6 @@ workflow:
         y: 220
       positionAbsolute:
         x: 2140
-        y: 220
-      selected: false
-      sourcePosition: right
-      targetPosition: left
-      type: custom
-      width: 244
-      zIndex: 0
-    - data:
-        cases:
-        - case_id: recover
-          conditions:
-          - comparison_operator: is
-            value: 'true'
-            variable_selector:
-            - returns_adapter
-            - needs_projection
-          logical_operator: and
-        desc: 专业内容已生成但用户交付块缺失/为空/回指 ⇒ 走一次有界用户投影；否则直通收口。
-        logical_operator: and
-        selected: false
-        title: 交付缺失判定
-        type: if-else
-      height: 100
-      id: projection_gate
-      position:
-        x: 2440
-        y: 220
-      positionAbsolute:
-        x: 2440
         y: 220
       selected: false
       sourcePosition: right

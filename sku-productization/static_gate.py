@@ -13,6 +13,7 @@ fully recomputable from the source tree by re-running this file.
 import ast
 import builtins
 import hashlib
+import inspect
 import json
 import os
 import re
@@ -509,6 +510,62 @@ def line_of(text, needle):
     return text.count("\n", 0, idx) + 1
 
 
+# Founder 裁决 B-3（E6 收口追加）：run_sg1 此前判定
+# SG1.G0.single_highest_value_gap_no_fabrication 的方式是在 component_return
+# 源码字符串里找 `ask_key = miss[0] if miss else ""` 等几个特定片段——这正是
+# fixture 13 修的那类漏洞（挖空真实逻辑、留一句匹配字符串在死代码/注释里，
+# 检测照样通过）。改为真正 exec 该节点当前代码、用两组不同的 miss[] 顺序
+# 调用 main()，断言返回的问题会随 miss[0] 真的变化（不是常量/写死文案）、
+# 真的输出三段式结构、真的不构造 return_id——检查的是行为，不是源码文本。
+# component_return.main()'s signature is not identical across the three SKUs
+# (P1_5 carries an extra `entry_resolved` param) — build kwargs from the
+# function's own declared parameter names instead of hardcoding positional
+# args, so this check works unmodified across SKUs.
+_COMPONENT_RETURN_TEST_KWARGS = {
+    "status": "INSUFFICIENT",
+    "note": "note",
+    "capability_call": "",
+    "entry_resolved": "",
+}
+
+
+def _component_return_behavior_check(yml_data):
+    node = node_by_id(yml_data, "component_return")
+    ns = {}
+    exec(compile(node["data"]["code"], "component_return", "exec"), ns)
+    main_fn = ns["main"]
+    params = set(inspect.signature(main_fn).parameters)
+
+    def call(missing_list):
+        kwargs = {k: v for k, v in _COMPONENT_RETURN_TEST_KWARGS.items() if k in params}
+        kwargs["missing"] = missing_list
+        return main_fn(**kwargs)
+
+    r_a = call(["content_body_or_beats", "cta_contract"])
+    r_b = call(["cta_contract", "content_body_or_beats"])
+    r_c = call([])
+
+    q_a = r_a.get("single_most_discriminating_question") or ""
+    q_b = r_b.get("single_most_discriminating_question") or ""
+    single_gap_ask_real = bool(q_a) and bool(q_b) and q_a != q_b
+
+    ud_a = r_a.get("user_delivery") or ""
+    three_part_real = all(marker in ud_a for marker in ("缺什么", "为什么", "怎么补"))
+
+    no_return_id_real = not any(
+        "return_id" in str(v)
+        for r in (r_a, r_b, r_c)
+        for v in r.values()
+    )
+
+    return {
+        "single_gap_ask_real": single_gap_ask_real,
+        "three_part_real": three_part_real,
+        "no_return_id_real": no_return_id_real,
+        "pass": bool(single_gap_ask_real and three_part_real and no_return_id_real),
+    }
+
+
 def run_sg1(sku, yml_data, skill_md_text, skill_md_path):
     findings = []
 
@@ -526,25 +583,21 @@ def run_sg1(sku, yml_data, skill_md_text, skill_md_path):
                 "advisory criterion %s has no carrier in SKILL.md self-check list" % marker,
             ))
 
-    cr_node = node_by_id(yml_data, "component_return")
-    cr_code = cr_node["data"]["code"]
-    has_single_gap_ask = "ask_key = miss[0] if miss else" in cr_code
-    has_three_part = ('"why"' in cr_code and '"how"' in cr_code and "为什么：%s" in cr_code and "怎么补：%s" in cr_code)
-    no_return_id = "return_id" not in cr_code
-    ln = line_of(cr_code, "ask_key = miss[0] if miss else")
-    if has_single_gap_ask and has_three_part and no_return_id:
+    cr_behavior = _component_return_behavior_check(yml_data)
+    if cr_behavior["pass"]:
         findings.append(finding(
             "SG1.G0.single_highest_value_gap_no_fabrication", "PASS",
-            "component_return asks exactly the single most discriminating missing item and "
-            "returns 缺什么/为什么/怎么补 to the customer; no return_id fabrication-adjacent field",
-            evidence={"file": sku["yml_path"], "node": "component_return", "line": ln},
+            "verified by direct execution (not source-string matching): component_return's real "
+            "question genuinely changes with miss[0]=%s, real output carries the 缺什么/为什么/怎么补 "
+            "structure, no return_id-shaped value in any real output field" % cr_behavior,
+            evidence={"file": sku["yml_path"], "node": "component_return", "detail": cr_behavior},
         ))
     else:
         findings.append(finding(
             "SG1.G0.single_highest_value_gap_no_fabrication", "BLOCKING",
-            "component_return missing single-gap-ask, three-part customer message, "
-            "or still constructs return_id",
-            evidence={"file": sku["yml_path"], "node": "component_return"},
+            "component_return's real executed behavior fails single-gap-ask, three-part customer "
+            "message, or no-fabrication invariant: %s" % cr_behavior,
+            evidence={"file": sku["yml_path"], "node": "component_return", "detail": cr_behavior},
         ))
 
     node_ids = {n["id"] for n in yml_data["workflow"]["graph"]["nodes"]}
@@ -1135,6 +1188,25 @@ def run_sg6(sku, yml_data, skill_md_text):
 
     findings.append(_sg6_verdict("skill_source_hash_declarations", pos9, neg9, offlist9_caught))
 
+    # --- detector: component_return real-behavior check (B-3; same function
+    # SG1 runs in production) ---
+    pos10 = _component_return_behavior_check(good_data)["pass"]
+
+    bad10 = copy.deepcopy(good_data)
+    cr10 = node_by_id(bad10, "component_return")
+    cr10["data"]["code"] = cr10["data"]["code"].replace(
+        'ask_key = miss[0] if miss else ""', 'ask_key = ""')
+    neg10 = not _component_return_behavior_check(bad10)["pass"]
+
+    # Off-list: a different failure mode than "always ask the same thing" —
+    # drop one of the three required customer-message sections instead.
+    offlist10 = copy.deepcopy(good_data)
+    cr10b = node_by_id(offlist10, "component_return")
+    cr10b["data"]["code"] = cr10b["data"]["code"].replace('"怎么补：%s\\n\\n"', '"How to fix: %s\\n\\n"')
+    offlist10_caught = not _component_return_behavior_check(offlist10)["pass"]
+
+    findings.append(_sg6_verdict("component_return_behavior", pos10, neg10, offlist10_caught))
+
     return findings
 
 
@@ -1272,6 +1344,33 @@ def run_r0_fixtures(sku, yml_data, sg6_findings):
     return findings
 
 
+# Founder 裁决 B-2（E6 收口追加）：§13.3 的 empirical_case_ref = "case id +
+# 判分位"。判分位现在就能钉死（下面 EMPIRICAL_CASE_REF_MARKET_CLAIM 的
+# `dimension`/`target_score`），不需要等 eval/ 建好才能登记；等的只是具体
+# case id。Founder 明确裁决：现在就正式注册 DYNAMIC_ONLY，不再只是在报告
+# 散文字段里披露——散文字段没有任何机制会在实测阶段回头检查它，注册进
+# findings 才会。`case_id` 目前是占位（eval/ 还没有真实测试集，§13.3 本身
+# 受 INV-2 约束"不得含 case 内容"，所以这里从头到尾都不会、也不能写入任何
+# 具体案例文本），一旦 eval/ 有了真实 case 必须回填，不得让占位符一直留着。
+EMPIRICAL_CASE_REF_MARKET_CLAIM = {
+    "dimension": "Q-COMM-04 §6.1 / G1 / Unsupported_Current_Market_Claim",
+    "target_score": "0（任何一条命中即 FAIL，不是评分制）",
+    "case_id": "PENDING_EVAL_MANIFEST",
+    "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，"
+                     "case id 待 eval/ 实测集建立时回填，不得凭空编造",
+}
+
+
+def run_dynamic_only_registrations(sku):
+    return [finding(
+        "SG7.semantic_market_claim_coverage", "DYNAMIC_ONLY",
+        "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 "
+        "static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，"
+        "移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+        empirical_case_ref=EMPIRICAL_CASE_REF_MARKET_CLAIM,
+    )]
+
+
 def run_sku(sku):
     yml_path = os.path.join(REPO_ROOT, sku["yml_path"])
     skill_md_path_full = os.path.join(REPO_ROOT, sku["skill_md_path"])
@@ -1289,6 +1388,7 @@ def run_sku(sku):
     sg6_findings = run_sg6(sku, yml_data, skill_md_text)
     findings += sg6_findings
     findings += run_r0_fixtures(sku, yml_data, sg6_findings)
+    findings += run_dynamic_only_registrations(sku)
 
     # SG4 · Evidence & Authority — meta-validate the findings this run just produced.
     sg4_issues = []
@@ -1347,7 +1447,7 @@ def main():
         results.append(r)
 
     dynamic_only_scope_note = (
-        "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings. Rationale: "
+        "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: "
         "per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), "
         "this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/"
         "instruction exist to carry a requirement at all) — not the empirical scoring "
@@ -1355,12 +1455,13 @@ def main():
         "rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT "
         "of the empirical phase this Gate exists to unblock, not inputs the Gate itself "
         "adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. "
-        "Separately and factually: no empirical_case_ref manifest exists yet for these three "
-        "SKUs to bind to even if such placeholders were registered — eval/ holds only "
-        ".gitkeep, and the only populated holdout on this machine "
-        "(diyu-demo-holdout-custody/) belongs to the unrelated, already-closed M5 task. "
-        "Per §13.3 any DYNAMIC_ONLY without a real ref counts as BLOCKING, so inventing refs "
-        "was not an option; this is disclosed rather than silently avoided."
+        "SG7.semantic_market_claim_coverage is the one deliberate exception — per Founder "
+        "2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the "
+        "判分位 (dimension + target score) can be pinned now without waiting for eval/ to "
+        "hold a real case; only the case id is a placeholder (PENDING_EVAL_MANIFEST) pending "
+        "eval/ (currently only .gitkeep; the only populated holdout on this machine, "
+        "diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) — must "
+        "be backfilled once a real case exists, not left as a placeholder indefinitely."
     )
 
     reasoning_effort_note = (
@@ -1377,12 +1478,10 @@ def main():
     # "静态确定性检测器声称自己能做到什么"。market_claim_scan / LEAK 系列
     # 检测器是固定模式的字符串/关键词匹配，本质是 defense-in-depth：命中的
     # 已知模式必须拦，但未命中不构成"内容语义安全"的证明，尤其是同义改写。
-    # 语义层面的完备覆盖（semantic_market_claim_coverage）本该按 §13.3 登记
-    # DYNAMIC_ONLY + empirical_case_ref，但 eval/ 目前没有任何真实 case 可绑
-    # （见上面 dynamic_only_scope_note）——伪造一个 ref 比不登记更糟，因此
-    # 与 SG1/SG3/SG5 同一处理：此处披露，不注册成会被 §13.3 判 BLOCKING 的
-    # 无主 DYNAMIC_ONLY 条目；一旦 eval/ 有了真实 case，必须补登记并绑定
-    # empirical_case_ref。
+    # Founder 2026-09-02 B-2 裁决：语义层面的完备覆盖不再只在这段散文里披露，
+    # 已正式登记为 SG7.semantic_market_claim_coverage（DYNAMIC_ONLY，见
+    # EMPIRICAL_CASE_REF_MARKET_CLAIM）——散文字段没有机制会在实测阶段被
+    # 回头检查，登记进 findings 才会。
     static_detector_capability_notice = (
         "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, "
         "returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth "
@@ -1390,10 +1489,8 @@ def main():
         "semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) "
         "is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 "
         "and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic "
-        "market-claim coverage (semantic_market_claim_coverage) is DYNAMIC_ONLY-eligible under §13.3 once "
-        "eval/ holds a real case to bind empirical_case_ref to; none exists yet (see dynamic_only_scope_note), "
-        "so it is disclosed here rather than registered as a ref-less DYNAMIC_ONLY finding, which §13.3 "
-        "would otherwise force to BLOCKING."
+        "market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage "
+        "(DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose."
     )
 
     report = {
