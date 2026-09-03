@@ -19,6 +19,30 @@
       "标题保留在 p0-static-audit/STATIC_AUDIT_REPORT.md §三，将来实测出现对应症状时回查即有线索。"
     ]
   },
+  "sg14_execution_parity_gap": {
+    "index_ref": "笛语商业SKU验收体系_索引与启动规则_v1.0.md §13.2 SG14 —— mock/direct/runtime/public-entry 四条路径不得悄悄使用不同治理逻辑",
+    "mechanism_gap": "static_gate.py 对 code 节点源码统一用裸 compile()/exec()（Python 标准库直接编译执行），不经过 Dify 发布前校验与真实沙箱执行器；已知在两点上二者判定不同",
+    "known_instances": [
+      {
+        "constraint": "End 节点输出变量名跨节点必须全局唯一",
+        "real_platform_behavior": "Dify 发布前校验直接拒绝发布",
+        "static_gate_pre_fix_behavior": "裸 compile/exec 不检查变量名跨节点唯一性，完全不拦截",
+        "discovered_via": "E4 阶段 B 第一次真实发布尝试（本轮，commit dec7f61）",
+        "now_statically_simulable": true,
+        "detector": "_end_node_output_name_collisions —— SG3 生产检测 + SG6 三控 (pos19/neg19/offlist19)"
+      },
+      {
+        "constraint": "code 节点源码编译期产生 SyntaxWarning（如未加 r 前缀的正则转义反斜杠）即判该节点执行失败",
+        "real_platform_behavior": "Dify 真实沙箱执行器把 SyntaxWarning 当节点失败处理",
+        "static_gate_pre_fix_behavior": "裸 compile() 遇到 SyntaxWarning 只打印警告后继续，从不据此判失败",
+        "discovered_via": "E4 阶段 B 第二次真实发布尝试（本轮，envelope_check._find_scalar docstring 内非 raw 字符串 \\s，commit 9eae1bc）",
+        "now_statically_simulable": true,
+        "detector": "_code_node_syntax_warnings —— SG3 生产检测 + SG6 三控 (pos20/neg20/offlist20)"
+      }
+    ],
+    "residual_blind_spot": "两个已知实例均已补齐检测器并通过 SG6 三控自测，SG3 判定在这两点上已与Dify 真实沙箱对齐。但这不反证'不存在第三个未知的判定分歧点'——static_gate.py 使用裸 compile/exec 而非真实沙箱本身仍是结构性差距，如实登记为'只能由真实发布/调用暴露'的已知盲区，不在静态侧声称已穷尽真实沙箱的全部拒绝条件。",
+    "founder_ruling": "2026-09-03：dec7f61 与 9eae1bc 正式登记为 SG14 parity gap 实例，不再只当路上顺手修的缺陷处理。"
+  },
   "invariants": {
     "INV-1": {
       "invariant": "INV-1",
@@ -123,8 +147,8 @@
           "empirical_case_ref": {
             "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
             "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-            "case_id": "PENDING_E4_FIRST_CALL",
-            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
+            "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+            "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7.plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS 下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。"
           }
         }
       ],
@@ -473,6 +497,36 @@
           }
         },
         {
+          "id": "SG6.plugin_normalization_thinking_absent",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.plugin_normalization_thinking_disabled",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.plugin_normalization_thinking_dict_enabled",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG6.guard_branch_semantics",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
@@ -800,8 +854,8 @@
           "empirical_case_ref": {
             "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
             "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-            "case_id": "PENDING_E4_FIRST_CALL",
-            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
+            "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+            "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7.plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS 下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。"
           }
         },
         {
@@ -864,8 +918,8 @@
           "empirical_case_ref": {
             "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
             "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-            "case_id": "PENDING_E4_FIRST_CALL",
-            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
+            "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+            "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7.plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS 下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。"
           }
         }
       ],
@@ -1217,6 +1271,36 @@
           }
         },
         {
+          "id": "SG6.plugin_normalization_thinking_absent",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.plugin_normalization_thinking_disabled",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.plugin_normalization_thinking_dict_enabled",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG6.guard_branch_semantics",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
@@ -1404,8 +1488,8 @@
           "empirical_case_ref": {
             "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
             "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-            "case_id": "PENDING_E4_FIRST_CALL",
-            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
+            "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+            "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7.plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS 下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。"
           }
         },
         {
@@ -1468,8 +1552,8 @@
           "empirical_case_ref": {
             "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
             "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-            "case_id": "PENDING_E4_FIRST_CALL",
-            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
+            "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+            "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7.plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS 下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。"
           }
         }
       ],
@@ -1821,6 +1905,36 @@
           }
         },
         {
+          "id": "SG6.plugin_normalization_thinking_absent",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.plugin_normalization_thinking_disabled",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.plugin_normalization_thinking_dict_enabled",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG6.guard_branch_semantics",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
@@ -2008,8 +2122,8 @@
           "empirical_case_ref": {
             "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
             "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-            "case_id": "PENDING_E4_FIRST_CALL",
-            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
+            "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+            "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7.plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS 下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。"
           }
         },
         {

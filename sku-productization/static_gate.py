@@ -992,8 +992,27 @@ def run_sg3(sku, yml_data):
     return findings
 
 
+# Founder 裁决 2026-09-03（E4 阶段 B 真实调用后）：此前只镜像了
+# thinking:true 一个分支；真实 deepseek-0.0.20 models/llm/llm.py:127
+# _normalize_model_parameters() 的完整逻辑（p0-empirical-r1/raw/
+# deepseek-0.0.20_llm.py，E4 阶段 B 从活容器里取出并真实执行确认）是：
+#   thinking 缺省 → 视为 True（bool→dict 转换：enabled）
+#   thinking 为 bool → 转换为 {"type": "enabled"/"disabled"}
+#   thinking 为 dict → 直接按 "type" 判定
+#   type == "disabled" → 只弹 reasoning_effort
+#   type == "enabled"  → 弹 DEEPSEEK_THINKING_STRIPPED_KEYS 四项
+# 旧实现对"缺省"和"false"两个分支都错误地判定为不剥（等价于
+# declared.get("thinking") is True 缺省时为 False），对 dict 形态则整支
+# 未处理——三处都会让 SG5/SG7 的模拟结论静默偏离真实行为。
 def _actual_completion_params(declared):
-    if declared.get("thinking") is True:
+    thinking = declared.get("thinking", True)
+    if isinstance(thinking, bool):
+        thinking = {"type": "enabled" if thinking else "disabled"}
+    if not isinstance(thinking, dict):
+        return dict(declared)
+    if thinking.get("type") == "disabled":
+        return {k: v for k, v in declared.items() if k != "reasoning_effort"}
+    if thinking.get("type") == "enabled":
         return {k: v for k, v in declared.items() if k not in DEEPSEEK_THINKING_STRIPPED_KEYS}
     return dict(declared)
 
@@ -1415,6 +1434,48 @@ def run_sg6(sku, yml_data, skill_md_text):
         {"max_tokens": 384000, "reasoning_effort": "low", "thinking": True, "presence_penalty": 0.1})
 
     findings.append(_sg6_verdict("plugin_normalization_mismatch", pos4, neg4, offlist4))
+
+    # --- detectors: the three _actual_completion_params() branches Founder's
+    # 2026-09-03 ruling found un-mirrored (thinking absent / thinking:false /
+    # thinking as dict). Control 4 above only ever exercised thinking:True —
+    # these three never fired before, "但正是 SG5 存在的意义" (Founder's own
+    # words). Each asserts on _actual_completion_params()'s exact key set
+    # directly, not just the coarser _plugin_normalization_mismatch() boolean
+    # — that boolean can't distinguish "stripped the right key" from
+    # "stripped the wrong key", which is exactly the bug class here.
+
+    # thinking absent from declared at all (real code defaults to True).
+    pos21 = set(_actual_completion_params(
+        {"max_tokens": 384000, "reasoning_effort": "low"})) == {"max_tokens", "reasoning_effort"}
+    neg21 = "top_p" not in _actual_completion_params(
+        {"max_tokens": 384000, "reasoning_effort": "low", "top_p": 0.8})
+    # Off-list: a different member of DEEPSEEK_THINKING_STRIPPED_KEYS than neg21.
+    offlist21 = "presence_penalty" not in _actual_completion_params(
+        {"max_tokens": 384000, "reasoning_effort": "low", "presence_penalty": 0.1})
+    findings.append(_sg6_verdict("plugin_normalization_thinking_absent", pos21, neg21, offlist21))
+
+    # thinking: False (bool) — real code pops ONLY reasoning_effort, and must
+    # NOT touch the four thinking-unsupported keys (that's the disabled
+    # branch's whole point; conflating it with the enabled branch is the
+    # plausible bug this guards against).
+    decl22_pos = {"thinking": False, "top_p": 0.8}
+    pos22 = _actual_completion_params(decl22_pos) == decl22_pos
+    neg22 = "reasoning_effort" not in _actual_completion_params(
+        {"thinking": False, "reasoning_effort": "low"})
+    offlist22_actual = _actual_completion_params(
+        {"thinking": False, "top_p": 0.8, "presence_penalty": 0.1})
+    offlist22 = "top_p" in offlist22_actual and "presence_penalty" in offlist22_actual
+    findings.append(_sg6_verdict("plugin_normalization_thinking_disabled", pos22, neg22, offlist22))
+
+    # thinking already a dict ({"type": "enabled"}) — must be judged directly
+    # by "type", not funneled through the isinstance(thinking, bool) branch.
+    decl23_pos = {"thinking": {"type": "enabled"}, "max_tokens": 384000, "reasoning_effort": "low"}
+    pos23 = _actual_completion_params(decl23_pos) == decl23_pos
+    neg23 = "top_p" not in _actual_completion_params(
+        {"thinking": {"type": "enabled"}, "top_p": 0.8})
+    offlist23 = "frequency_penalty" not in _actual_completion_params(
+        {"thinking": {"type": "enabled"}, "frequency_penalty": 0.2})
+    findings.append(_sg6_verdict("plugin_normalization_thinking_dict_enabled", pos23, neg23, offlist23))
 
     # --- detector: guard_branch_semantics (R6 / R0 fixture #5) ---
     pos5 = guard_branch_semantics(good_data, sku["guard_id"], sku["delivery_id"], sku["fail_branch_id"])["pass"]
@@ -1952,9 +2013,15 @@ EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD = {
     "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 "
                   "本地声明是否一致",
     "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
-    "case_id": "PENDING_E4_FIRST_CALL",
-    "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对"
-                     "首次真实 payload，跑一次即永久闭合，不是重复验收项",
+    "case_id": "EVAL-P0-R1-001/low/k1 · workflow_run_id=1beff598-8602-46ab-b35c-e767e8962866",
+    "case_id_note": "回填，取代此前占位符 PENDING_E4_FIRST_CALL；见 "
+                     "p0-empirical-r1/PHASE_B_PAYLOAD_VERIFICATION.json。键集合层面（SG5/SG7."
+                     "plugin_normalization_mismatch 唯一在用的判据）一致；thinking 字段的取值表示"
+                     "本身不一致（真实 {\"type\":\"enabled\"} vs 模拟布尔 True）——Founder 2026-09-03 "
+                     "裁决：不构成需要重估既有 SG5 结论的不一致（转换发生在剥离判定之前，剥离判定"
+                     "本身两边一致），但据此发现 _actual_completion_params() 另有三条未镜像分支"
+                     "（thinking 缺省/false/dict 形态），已修复，见 DEEPSEEK_THINKING_STRIPPED_KEYS "
+                     "下方注释与 SG6.plugin_normalization_thinking_* 三个新检测器。本项就此闭合。",
 }
 
 
@@ -2163,6 +2230,50 @@ def main():
         ],
     }
 
+    # Founder 裁决 2026-09-03：dec7f61（End 节点输出变量名全局唯一）与
+    # 9eae1bc（SyntaxWarning 即节点失败）是同一类问题——static_gate.py 对
+    # code 节点源码统一用裸 compile()/exec()，不经过 Dify 真实沙箱的发布前
+    # 校验与运行时执行路径，两者在这两点上判定不同，且已被 E4 阶段 B 的
+    # 两次真实发布尝试实际撞见（不是假设）。索引 §13.2 SG14 要求
+    # mock/direct/runtime/public-entry 四条路径不得悄悄使用不同治理逻辑——
+    # 这里如实登记该 parity gap，不当作路上顺手修的缺陷处理掉。
+    sg14_execution_parity_gap = {
+        "index_ref": "笛语商业SKU验收体系_索引与启动规则_v1.0.md §13.2 SG14 —— "
+                      "mock/direct/runtime/public-entry 四条路径不得悄悄使用不同治理逻辑",
+        "mechanism_gap": "static_gate.py 对 code 节点源码统一用裸 compile()/exec()（Python 标准库直接"
+                          "编译执行），不经过 Dify 发布前校验与真实沙箱执行器；已知在两点上二者判定不同",
+        "known_instances": [
+            {
+                "constraint": "End 节点输出变量名跨节点必须全局唯一",
+                "real_platform_behavior": "Dify 发布前校验直接拒绝发布",
+                "static_gate_pre_fix_behavior": "裸 compile/exec 不检查变量名跨节点唯一性，完全不拦截",
+                "discovered_via": "E4 阶段 B 第一次真实发布尝试（本轮，commit dec7f61）",
+                "now_statically_simulable": True,
+                "detector": "_end_node_output_name_collisions —— SG3 生产检测 + SG6 三控 "
+                            "(pos19/neg19/offlist19)",
+            },
+            {
+                "constraint": "code 节点源码编译期产生 SyntaxWarning（如未加 r 前缀的正则转义反斜杠）"
+                              "即判该节点执行失败",
+                "real_platform_behavior": "Dify 真实沙箱执行器把 SyntaxWarning 当节点失败处理",
+                "static_gate_pre_fix_behavior": "裸 compile() 遇到 SyntaxWarning 只打印警告后继续，"
+                                                 "从不据此判失败",
+                "discovered_via": "E4 阶段 B 第二次真实发布尝试（本轮，envelope_check._find_scalar "
+                                   "docstring 内非 raw 字符串 \\s，commit 9eae1bc）",
+                "now_statically_simulable": True,
+                "detector": "_code_node_syntax_warnings —— SG3 生产检测 + SG6 三控 "
+                            "(pos20/neg20/offlist20)",
+            },
+        ],
+        "residual_blind_spot": "两个已知实例均已补齐检测器并通过 SG6 三控自测，SG3 判定在这两点上已与"
+                                "Dify 真实沙箱对齐。但这不反证'不存在第三个未知的判定分歧点'——"
+                                "static_gate.py 使用裸 compile/exec 而非真实沙箱本身仍是结构性差距，"
+                                "如实登记为'只能由真实发布/调用暴露'的已知盲区，不在静态侧声称已穷尽"
+                                "真实沙箱的全部拒绝条件。",
+        "founder_ruling": "2026-09-03：dec7f61 与 9eae1bc 正式登记为 SG14 parity gap 实例，不再只当"
+                           "路上顺手修的缺陷处理。",
+    }
+
     report = {
         "gate": "STATIC_GATE",
         "task_id": "DIYU-V1-STATIC-GATE-001",
@@ -2175,6 +2286,7 @@ def main():
         "static_detector_capability_notice": static_detector_capability_notice,
         "residual_remediation_transferred_out_note": residual_remediation_transferred_out_note,
         "e5_residual_written_off": e5_residual_written_off,
+        "sg14_execution_parity_gap": sg14_execution_parity_gap,
         "invariants": {"INV-1": inv1, "INV-2": inv2},
         "skus": results,
     }

@@ -69,5 +69,19 @@
       }
     ]
   },
-  "disposition": "按 Execution Prompt 原文：不一致→立即停止，不跑阶段C对照，报告差异，等裁决。本记录即该报告的证据体；阶段C（3案例×2档位×k=3=18次真实付费调用）在此裁决前不发起。"
+  "disposition": "按 Execution Prompt 原文：不一致→立即停止，不跑阶段C对照，报告差异，等裁决。本记录即该报告的证据体；阶段C（3案例×2档位×k=3=18次真实付费调用）在此裁决前不发起。",
+  "founder_ruling_2026_09_03": {
+    "adjudicator": "Founder",
+    "date": "2026-09-03",
+    "verdict": "thinking 表示差异不构成需要重估 SG5 的不一致，放行阶段 C",
+    "reasoning": "该 bool→dict 转换发生在剥离判定之前，转换后立即以 type==\"enabled\" 触发剥离；SG5/SG7._plugin_normalization_mismatch() 唯一在用的判据是键集合差异，两边（真实执行 vs 模拟）在这一判据上结论相同，未受影响。当前三份 DSL 均显式声明布尔 thinking:true，走的正是这条已验证一致的路径。",
+    "additional_finding": "Founder 逐分支核对真实 _normalize_model_parameters() 后指出，模拟侧 _actual_completion_params() 除已验证的 thinking:true 外，还有三个分支未镜像且其中两个会咬人：thinking 缺省（真实剥四项，旧模拟不剥）、thinking:false（真实只剥 reasoning_effort，旧模拟不剥）、thinking 为 dict 形态（真实按 type 判定剥四项，旧模拟不剥）。根因：真实代码首行是 model_parameters.get(\"thinking\", True)，缺省即 True；旧模拟用 declared.get(\"thinking\") is True，缺省时直接落到“什么都不剥”。",
+    "required_actions_before_phase_c": [
+      "_actual_completion_params() 改为忠实镜像真实函数全部分支 —— DONE，见 static_gate.py",
+      "SG6 补三控覆盖 thinking 缺省/false/dict 形态 —— DONE，SG6.plugin_normalization_thinking_absent/disabled/dict_enabled 三个新检测器，各自 pos/neg/offlist 三控全绿",
+      "回填 SG7.real_provider_payload_verification 的 case_id —— DONE，见该 finding"
+    ],
+    "sg14_parity_registration": "dec7f61（End 节点输出变量名全局唯一）与 9eae1bc（SyntaxWarning 即节点失败）正式登记为 STATIC_GATE_REPORT.json 顶层 sg14_execution_parity_gap 字段下的两个已知实例，不再只当路上顺手修的缺陷处理。",
+    "disposition": "1-3 项修复完成、整体重跑无回归（P0 仍 READY_FOR_EMPIRICAL_TESTING，17/17 R0 fixture PASS，24/24 SG6 三控 PASS）后，阶段 C 正式发起。"
+  }
 }
