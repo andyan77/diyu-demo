@@ -1,0 +1,22 @@
+{
+  "id": "FX02_backref_placeholder_rejected",
+  "kind": "node_exec",
+  "table_row": 2,
+  "mechanism": "空占位符（\"见上\"之类）",
+  "expected_behavior": "必须被拒",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第1组：把6个英文变量名填成'见上'这种两个字的占位符，系统反而判定'充分'",
+  "chain": [
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "cta_level: NO_CTA",
+        "professional_input": "content_body_or_beats: 见上\ncontent_promise: 见上\nexplicit_non_promise: 同上\nfacts_registered: 同上文\ncta_contract: 如上所述\nasset_publish_permission: 即上方\nplatform: 见上文",
+        "example_reference_requested": ""
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "can_run", "op": "eq", "value": "false"},
+    {"step": 0, "field": "status", "op": "eq", "value": "INSUFFICIENT"}
+  ]
+}

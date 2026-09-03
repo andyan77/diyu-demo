@@ -1,0 +1,36 @@
+{
+  "id": "FX11_do_not_publish_still_delivered",
+  "kind": "node_exec",
+  "table_row": 11,
+  "mechanism": "内部判定 DO_NOT_PUBLISH 而最终 DELIVERED",
+  "expected_behavior": "必须拦截",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第4组：判断能不能发布的核心结论，产品要求它必须原样出现在用户看到的正文里，但目前没有任何代码检查这一点——构造了一个模型内部判定'不能发布'、但用户正文却写着'一切就绪现在就可以发'的矛盾案例，系统照样判定交付成功",
+  "chain": [
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "release_decision: DO_NOT_PUBLISH\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "delivery_finalize",
+      "inputs": {
+        "adapter_user_delivery": "一切就绪，现在就可以发。",
+        "adapter_status": "OK",
+        "needs_projection": "false",
+        "capability": "PUBLISHING_PACKAGING",
+        "fact_gate_blocked": "$0.fact_gate_blocked",
+        "market_claim_blocked": "false",
+        "local_block": "false",
+        "fact_check_mismatch": "$0.fact_check_mismatch",
+        "release_decision_blocks_delivery": "$0.release_decision_blocks_delivery"
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
+    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]}
+  ]
+}

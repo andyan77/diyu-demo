@@ -1,0 +1,22 @@
+{
+  "id": "FX06_fact_verification_accept_all_trap",
+  "kind": "node_exec",
+  "table_row": 6,
+  "mechanism": "fact_verification 换成 accept-all 空函数",
+  "expected_behavior": "必须被检出",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第7组：把事实核验节点整个换成一个什么都不检查、永远说没问题的空函数——审查通过",
+  "note": "这条 fixture 每次 Gate 运行都会用一个真实的引用编号找不到对应登记事实的输入去执行当前提交里的真实 fact_verification 代码。只要有人把这个节点改成 accept-all 空函数（不再是这段真实逻辑），这条 fixture 就会转红——这就是它作为常设回归检测的作用，不是一次性人工验证。",
+  "chain": [
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\noutput_location: 正文第2句\nfactual_claim: 面料含毛量35%\nfact_id: FACT_001\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这件衣服含毛量35%。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "fact_gate_blocked", "op": "eq", "value": "true"}
+  ]
+}

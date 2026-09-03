@@ -1,0 +1,22 @@
+{
+  "id": "FX04_cta_illegal_enum_flagged",
+  "kind": "node_exec",
+  "table_row": 4,
+  "mechanism": "CTA 非法枚举值",
+  "expected_behavior": "不得静默降级 NO_CTA，须显式标记",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第3组 + 三、S4：CTA 授权级别只要不是完全精确匹配的枚举值，就会静默降级为'无CTA'，不会有任何提示",
+  "chain": [
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "content_body_or_beats: 已完成成片\ncontent_promise: 讲清楚一个知识点\nexplicit_non_promise: 不承诺效果\nfacts_registered: 材质为纯棉100%\ncta_contract: 无CTA\ncta_level: 高风险\nasset_publish_permission: 已获授权\nplatform: 抖音",
+        "professional_input": "",
+        "example_reference_requested": ""
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "cta_level", "op": "eq", "value": "NO_CTA"},
+    {"step": 0, "field": "cta_level_declared_illegal", "op": "eq", "value": "true"}
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "FX10_self_report_mismatch_still_delivered",
+  "kind": "node_exec",
+  "table_row": 10,
+  "mechanism": "模型自评与代码判定不一致仍交付",
+  "expected_behavior": "必须拦截",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第4组：模型自己在草稿里写'我这次的事实核验结论是 FAIL'，系统的确记录到了这个自我报告和代码判断不一致，但决定要不要拦截的开关只看代码自己的判断，从不看模型的自我报告",
+  "chain": [
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "fact_check_status: FAIL\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "delivery_finalize",
+      "inputs": {
+        "adapter_user_delivery": "这是正常交付正文，内容充分完整可以直接使用。",
+        "adapter_status": "OK",
+        "needs_projection": "false",
+        "capability": "PUBLISHING_PACKAGING",
+        "fact_gate_blocked": "$0.fact_gate_blocked",
+        "market_claim_blocked": "false",
+        "local_block": "false",
+        "fact_check_mismatch": "$0.fact_check_mismatch",
+        "release_decision_blocks_delivery": "$0.release_decision_blocks_delivery"
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "fact_gate_blocked", "op": "eq", "value": "false"},
+    {"step": 0, "field": "fact_check_mismatch", "op": "eq", "value": "true"},
+    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]}
+  ]
+}

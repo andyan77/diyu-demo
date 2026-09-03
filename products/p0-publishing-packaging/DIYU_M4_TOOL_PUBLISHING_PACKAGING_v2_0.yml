@@ -1,10 +1,10 @@
 app:
-  description: M4 统一能力接缝后继测试应用（PUBLISHING_PACKAGING）。task_id=V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001。system prompt 由后继 SKILL 字节派生；reference 按统一合同 §12 加载矩阵确定性投影；不足只出组件级 Return，不全局硬停；不调用任何其他能力应用。 v1.4：remediation_task_id=DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001，在 v1.3 冻结基线（sha256 daa8365de26f9b280e2ea72707aa85ce445edd2b8bcdaa54350ecce9797b635e，逐字节不变，另存不改）之上关闭 B-01~B-06 六条阻断，详见仓库 pp-remediation/CHANGE_TRACE.md。
+  description: DIYU M4 v2.0（PUBLISHING_PACKAGING，DIYU-V1-P0-ROOT-REMEDIATION-001 起与冻结的 v1.4 基线不再逐字节相同）。M4 统一能力接缝后继测试应用。task_id=V1-M4-CAPABILITY-SEAMS-RUNTIME-INTEGRATION-001。system prompt 由后继 SKILL 字节派生；reference 按统一合同 §12 加载矩阵确定性投影；不足只出组件级 Return，不全局硬停；不调用任何其他能力应用。 沿革：v1.4（remediation_task_id=DIYU-V1-PP-BLOCKER-REMEDIATION-S1-S4-001，在 v1.3 冻结基线上关闭 B-01~B-06 六条阻断，详见仓库 pp-remediation/CHANGE_TRACE.md）→ v2.0（本轮，root-cause remediation，见 sku-productization/STATIC_GATE_REPORT.json）。
   icon: 🧩
   icon_background: '#E4FBCC'
   icon_type: emoji
   mode: workflow
-  name: DIYU M4 v1.4 · Publishing & Packaging (B-01~B-06 remediated)
+  name: DIYU M4 v2.0 · Publishing & Packaging
   use_icon_as_answer_icon: false
 dependencies:
 - current_identifier: null
@@ -190,11 +190,11 @@ workflow:
     - data:
         isInIteration: false
         sourceType: if-else
-        targetType: llm
-      id: projection_gate-recover-recovery_llm-target
+        targetType: code
+      id: projection_gate-recover-delivery_finalize-target
       source: projection_gate
       sourceHandle: recover
-      target: recovery_llm
+      target: delivery_finalize
       targetHandle: target
       type: custom
       zIndex: 0
@@ -205,17 +205,6 @@ workflow:
       id: projection_gate-false-delivery_finalize-target
       source: projection_gate
       sourceHandle: 'false'
-      target: delivery_finalize
-      targetHandle: target
-      type: custom
-      zIndex: 0
-    - data:
-        isInIteration: false
-        sourceType: llm
-        targetType: code
-      id: recovery_llm-source-delivery_finalize-target
-      source: recovery_llm
-      sourceHandle: source
       target: delivery_finalize
       targetHandle: target
       type: custom
@@ -292,8 +281,14 @@ workflow:
           # 语义单薄（N-34「极薄字段齐全」）的最终裁决属于业务判断，
           # 由本能力的后继 Skill 正文负责；本节点只置 vacuity_flags 供其判断，
           # 不代替 Skill 作专业裁决（统一能力合同 §1.2.4）。
+          #
+          # R2（DIYU-V1-P0-ROOT-REMEDIATION-001）：准入判据从「6 个英文变量名
+          # 字面出现」改为按 Q-COMM-04 §1.2 五要素做语义在场判断——结构化
+          # key: value 写法仍受支持（向后兼容既有操作者输入），新增一组自然
+          # 语言语义锚点，命中任一即视为在场。这仍是关键词/正则层面的确定性
+          # 判断，不是语义理解；零外部 LLM 调用的边界不变。
 
-          REQUIRED = ["content_body_or_beats", "content_promise", "explicit_non_promise", "facts_registered", "cta_contract", "asset_publish_permission"]
+          REQUIRED = ["content_body_or_beats", "content_promise", "explicit_non_promise", "facts_registered", "cta_contract", "asset_publish_permission", "platform"]
           CAPABILITY = "PUBLISHING_PACKAGING"
           VACUOUS = [
               "做一条好内容", "提升影响力", "让大家更了解我们", "顾客不了解我们",
@@ -301,10 +296,53 @@ workflow:
               "更好", "更专业", "待定", "无", "n/a", "none", "tbd",
           ]
 
+          # R0 fixture #2：反指但本次调用无所指的空占位符（"见上"之类）必须被拒，
+          # 不是「结构在场、语义单薄留给 Skill 裁决」那一档——它根本没有指向
+          # 任何真实内容。
+          BACKREF_PLACEHOLDERS = [
+              "见上", "见上文", "如上", "如上所述", "同上", "同上文", "即上方",
+              "即以上", "参见上文", "见上方", "如前所述",
+          ]
+
           GOAL_FAMILIES = ["LONG_TERM_VALUE", "ACCOUNT_STARTUP", "FOLLOWER_GROWTH", "TRAFFIC",
                            "GMV", "LEADS", "STORE_VISIT", "MIXED"]
           CTA_LEVELS = ["NO_CTA", "LOW_RISK_INTERACTION", "BUSINESS_HANDOFF",
                         "HIGH_RISK", "KNOWN_BUT_NOT_AUTHORIZED"]
+
+          # 每个必填要素的自然语言语义锚点（Q-COMM-04 §1.2 五要素 + 本外壳既有
+          # 两项）。命中任一锚点即视为该要素结构性在场。词表取自
+          # component_return.py QUESTION_MAP 的官方措辞与 §1.2 原文用词。
+          SEMANTIC_ANCHORS = {
+              "content_body_or_beats": ["成片", "已经拍", "已拍完", "已经剪", "剪好",
+                                         "分镜", "逐段", "素材已经", "已经有内容",
+                                         "拍到了", "脚本已经"],
+              "content_promise": ["承诺是", "看完就", "看完能", "让观众知道",
+                                   "让她知道", "想让人明白", "希望观众", "对观众的承诺"],
+              "explicit_non_promise": ["不能说", "不得说", "不承诺", "不宣传",
+                                        "不出现", "不提", "禁止说", "不可以说", "不允许说"],
+              "facts_registered": ["含量", "含毛量", "缩水率", "材质", "成分", "质检",
+                                    "检测报告", "克重", "尺码", "参数是", "实测"],
+              "cta_contract": ["到店", "预约", "私信", "加微信", "留电话", "不留电话",
+                                "cta", "引导", "咨询", "下单", "购买链接", "不引导", "无cta"],
+              "asset_publish_permission": ["自己拍", "自己出镜", "公开发布",
+                                            "没有其他人出镜", "版权", "肖像权",
+                                            "不涉及第三方", "授权"],
+              "platform": ["小红书", "抖音", "视频号", "微信视频号", "b站", "哔哩哔哩",
+                           "微博", "淘宝", "instagram", "tiktok", "youtube", "公众号",
+                           "知乎", "快手"],
+          }
+          # facts_registered 额外接受「数字 + 计量单位」作为事实性内容的通用信号
+          _FACT_NUMBER_RE = re.compile(r"\d+(\.\d+)?\s*(%|cm|mm|g|kg|克|毫米|厘米|折)", re.IGNORECASE)
+
+          _KEYLIKE_LINE_RE = re.compile(r"^\s*[A-Za-z_][A-Za-z0-9_]*\s*:\s")
+
+          # 语义锚点命中平台要素时，还原成 platforms.md 用于查表的干净平台名，
+          # 而不是整段从句（例如"准备发小红书"），否则会破坏按平台名查表。
+          _PLATFORM_CANONICAL = {
+              "微信视频号": "视频号",
+              "b站": "B站",
+              "哔哩哔哩": "B站",
+          }
 
 
           def _norm(s):
@@ -312,24 +350,31 @@ workflow:
 
 
           def _find_scalar(text, key):
-              """从外壳文本里取一个标量语义值。容忍 YAML / JSON / Markdown 三种写法，
-              因为统一外壳**不强制物理字段名**（统一能力合同 §1.1）。"""
+              """从外壳文本里取一个标量语义值。容忍 YAML / JSON 两种结构化写法。
+              R2：去掉原第三条"反引号 + 冒号"模式——那条模式会把 SKILL 文档里
+              `key`：说明 这种纯文档引用误判成值声明（引用自身文档即判通过，
+              E5 第 1 组）。反引号是文档强调惯例，不是操作者声明值的方式。"""
               if not text:
                   return ""
               pats = [
                   r'"%s"\s*:\s*"([^"]*)"' % re.escape(key),
-                  r"^\s*%s\s*:\s*[\"']?([^\"'\n]+)[\"']?\s*$" % re.escape(key),
-                  r"`%s`\s*[:：]\s*([^\n]+)" % re.escape(key),
+                  r"^\s*%s\s*:\s*(.+?)\s*$" % re.escape(key),
               ]
               for p in pats:
                   m = re.search(p, text, re.MULTILINE)
                   if m:
-                      return _norm(m.group(1))
+                      v = m.group(1).strip()
+                      # 只剥离首尾成对的引号，不再整体排除值内部出现引号——
+                      # 带引号的正常中英混排（E5 第 1 组）此前会让整行匹配失败。
+                      if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+                          v = v[1:-1].strip()
+                      return _norm(v)
               return ""
 
 
           def _present(text, key):
-              """语义在场判据：能取到标量值，或存在以该 key 起头的非空块。"""
+              """语义在场判据：能取到标量值，或存在以该 key 起头的非空块，
+              或命中该要素的自然语言语义锚点。"""
               v = _find_scalar(text, key)
               if v and v.lower() not in ("", "null", "none"):
                   return True, v
@@ -344,10 +389,32 @@ workflow:
                           continue
                       if not line.startswith((" ", "\t", "-")):
                           break
+                      # R2：跨行渗漏防护（E5 第 1 组）——block 续行本应只承接
+                      # 同一个空字段自己的延续内容；一行如果长得像另一个字段
+                      # 的声明（`key: ...` 形态，不论有没有缩进），就不是延续
+                      # 内容，停止吸收，避免把下一字段的值错吞成本字段的值。
+                      if _KEYLIKE_LINE_RE.match(line):
+                          break
                       block.append(line.strip())
                   if block:
                       return True, " ".join(block)[:400]
+              for anchor in SEMANTIC_ANCHORS.get(key, []):
+                  idx = (text or "").lower().find(anchor.lower())
+                  if idx >= 0:
+                      window = text[max(0, idx - 20):idx + 60]
+                      for clause in re.split(r"[。！？；\n]", window):
+                          if anchor.lower() in clause.lower():
+                              return True, clause.strip()
+                      return True, anchor
+              if key == "facts_registered":
+                  m = _FACT_NUMBER_RE.search(text or "")
+                  if m:
+                      return True, text[max(0, m.start() - 10):m.end() + 10].strip()
               return False, ""
+
+
+          def _is_backref_placeholder(v):
+              return _norm(v) in BACKREF_PLACEHOLDERS
 
 
           def _vacuous(v):
@@ -373,6 +440,10 @@ workflow:
                   ok, val = _present(blob, key)
                   if not ok:
                       missing.append(key)
+                  elif _is_backref_placeholder(val):
+                      # R2 / R0 fixture #2：反指但无所指的占位符在准入层面
+                      # 等同缺失，不是"结构在场、语义单薄留给 Skill 裁决"。
+                      missing.append(key)
                   elif _vacuous(val):
                       vacuity_flags.append(key)
 
@@ -380,12 +451,33 @@ workflow:
               if goal_family not in GOAL_FAMILIES:
                   goal_family = "UNDECLARED"
 
-              cta_level = (_find_scalar(blob, "cta_level") or _find_scalar(blob, "cta_contract") or "").upper()
+              # R2（E5 第 3 组）：cta_level 只从 capability_call（统一业务能力
+              # 外壳，真正的授权来源）解析，不再从 professional_input（用户
+              # 粘贴的专业输入，可能带第三方文案模板或上游组件回显）解析——
+              # 避免粘贴材料里偶然出现的 cta_level/cta_contract 字样冒充授权，
+              # 覆盖操作者在真正授权字段里写的值。
+              cta_raw = _find_scalar(env, "cta_level") or _find_scalar(env, "cta_contract") or ""
+              cta_level = cta_raw.upper()
+              cta_level_declared_illegal = bool(cta_raw) and cta_level not in CTA_LEVELS
               if cta_level not in CTA_LEVELS:
+                  # R2（E5 第 3/4 组）：非法枚举值仍降级为 NO_CTA 这个 fail-safe
+                  # 默认值（不能把未识别的值当成任何一种真实授权），但
+                  # cta_level_declared_illegal 把"这里发生过一次静默降级"
+                  # 显式标出，并通过 skill_llm 提示词让下游可见。
                   cta_level = "NO_CTA"
 
               subject_domain = _find_scalar(blob, "subject_domain")
-              platform = _find_scalar(blob, "platform") or "NOT_LOCKED"
+              # platform 的结构化值优先；找不到结构化声明时，用命中的语义锚点
+              # 本身（已经是"小红书""抖音"这类干净平台名）而不是整段从句——
+              # 后者会把"准备发小红书"这种整句塞进 platform，
+              # 破坏 platforms.md 的按平台名查表。
+              platform = _find_scalar(blob, "platform")
+              if not platform:
+                  for _name in SEMANTIC_ANCHORS["platform"]:
+                      if _name.lower() in blob.lower():
+                          platform = _PLATFORM_CANONICAL.get(_name, _name)
+                          break
+              platform = platform or "NOT_LOCKED"
               duration_band = (_find_scalar(blob, "duration_band") or "SHORT").upper()
               equivalence_basis = _find_scalar(blob, "equivalence_basis") or "NOT_STATED"
               source_kind = (_find_scalar(blob, "source_kind") or "UNDECLARED").upper()
@@ -421,6 +513,7 @@ workflow:
                   "conditionalized_text": "；".join(conditionalized) if conditionalized else "无",
                   "goal_family": goal_family,
                   "cta_level": cta_level,
+                  "cta_level_declared_illegal": "true" if cta_level_declared_illegal else "false",
                   "source_kind": source_kind,
                   "subject_domain": subject_domain,
                   "platform": platform,
@@ -442,6 +535,9 @@ workflow:
             children: null
             type: string
           cta_level:
+            children: null
+            type: string
+          cta_level_declared_illegal:
             children: null
             type: string
           duration_band:
@@ -2152,7 +2248,7 @@ workflow:
             两块内容有重复不是问题，**回指和留空才是问题**。
             4. `---M4_FACT_LEDGER---` 里的每一条，是不是跟正文 `used_fact_refs[]` 里的记录**同一件事**——不是另写一份、也不是随手编几条充数。`fact_id` 写的是不是登记全称，不是简写。没有任何事实性陈述时，是不是显式写了 `NONE`，而不是留空。
         selected: false
-        title: DIYU M4 v1.4 · Publishing & Packaging
+        title: DIYU M4 v2.0 · Publishing & Packaging
         type: llm
         vision:
           enabled: false
@@ -2218,16 +2314,29 @@ workflow:
           LEDGER_FIELDS = ["output_location", "factual_claim", "fact_id"]
 
           STATUS_RE = re.compile(r"fact_check_status\s*[:：]\s*(PASS|FAIL|NOT_VERIFIED)", re.IGNORECASE)
+          # R1（DIYU-V1-P0-ROOT-REMEDIATION-001）：release_decision 是模型在正文里
+          # 自报的单一汇聚结论（标准 §1.3 第 12 项）。此前没有任何代码核对它——
+          # 一个内部判定 DO_NOT_PUBLISH 的产出仍可能被交付收口判定为 DELIVERED
+          # （R0 fixture #11）。这里只做「自报了 DO_NOT_PUBLISH 就必须拦」这一件
+          # 机械核验，不代替模型做 release_decision 本身的专业判断。
+          RELEASE_RE = re.compile(r"release_decision\s*[:：]\s*(READY_TO_PUBLISH|HOLD_FOR_FIX|DO_NOT_PUBLISH)", re.IGNORECASE)
 
 
           def _between(text, a, b):
+              """返回 (block, duplicate_marker_found)。
+              R6（E5 第 7 组 / R0 fixture #8）：此前只取 text.find(a) 命中的第一组
+              标记，一段伪造的、无害的标记块只要抢先出现在真实标记块之前，
+              就会让解析悄悄读到假块、放过真正有问题的内容。现在额外检测
+              「同一个开始标记是否出现了不止一次」，出现即标记 duplicate=True，
+              交给调用方按无法确定真伪处理，不再默认第一个为真。"""
               i = text.find(a)
               if i < 0:
-                  return None
+                  return None, False
+              dup = text.find(a, i + len(a)) >= 0
               j = text.find(b, i + len(a))
               if j < 0:
-                  return None
-              return text[i + len(a):j].strip()
+                  return None, dup
+              return text[i + len(a):j].strip(), dup
 
 
           def _replace_between(text, a, b, new_inner):
@@ -2278,8 +2387,16 @@ workflow:
               raw = raw_text or ""
               blob = (capability_call or "") + "\n" + (professional_input or "")
 
-              ledger_block = _between(raw, FL_OPEN, FL_CLOSE)
-              entries, ledger_status, ledger_note = _parse_ledger(ledger_block)
+              ledger_block, ledger_dup = _between(raw, FL_OPEN, FL_CLOSE)
+              if ledger_dup:
+                  # 不止一组 FACT_LEDGER 标记：无法确定哪一组是真实的，
+                  # 不取第一个当真——按结构无法解析处理。
+                  entries, ledger_status, ledger_note = [], "PARSE_FAILED", (
+                      "检测到不止一组 M4_FACT_LEDGER 标记，无法确定哪一组是真实的；"
+                      "按结构无法解析处理，不取第一个当真"
+                  )
+              else:
+                  entries, ledger_status, ledger_note = _parse_ledger(ledger_block)
 
               unresolved = []
               for e in entries:
@@ -2302,6 +2419,10 @@ workflow:
               )
 
               fact_gate_blocked = (fact_check_status_code == "FAIL")
+
+              rm = RELEASE_RE.search(raw)
+              release_decision_self_reported = rm.group(1).upper() if rm else "ABSENT"
+              release_decision_blocks_delivery = (release_decision_self_reported == "DO_NOT_PUBLISH")
 
               if fact_gate_blocked:
                   if ledger_status == "PARSE_FAILED" and not unresolved:
@@ -2338,6 +2459,8 @@ workflow:
                   "ledger_entries_count": len(entries),
                   "unresolved_entries": unresolved,
                   "fact_gate_blocked": "true" if fact_gate_blocked else "false",
+                  "release_decision_self_reported": release_decision_self_reported,
+                  "release_decision_blocks_delivery": "true" if release_decision_blocks_delivery else "false",
               }
         code_language: python3
         desc: B-02：代码判定事实引用可解析性并覆写 fact_check_status；Critical Error 阻断交付（改写用户交付块），不只是记一笔。
@@ -2364,6 +2487,12 @@ workflow:
             children: null
             type: string
           self_reported_status:
+            children: null
+            type: string
+          release_decision_self_reported:
+            children: null
+            type: string
+          release_decision_blocks_delivery:
             children: null
             type: string
           unresolved_entries:
@@ -2445,13 +2574,18 @@ workflow:
 
 
           def _between(text, a, b):
+              """返回 (block, duplicate_marker_found)。
+              R6（E5 第 7 组）：同一套"伪造/重复标记块抢占解析位"攻击面对
+              USER_DELIVERY 标记同样成立——与 fact_verification._between
+              同一处理：出现不止一组开始标记时不取第一个当真。"""
               i = text.find(a)
               if i < 0:
-                  return None
+                  return None, False
+              dup = text.find(a, i + len(a)) >= 0
               j = text.find(b, i + len(a))
               if j < 0:
-                  return None
-              return text[i + len(a):j].strip()
+                  return None, dup
+              return text[i + len(a):j].strip(), dup
 
 
           def _replace_between(text, a, b, new_inner):
@@ -2464,11 +2598,14 @@ workflow:
 
           def main(text_in):
               raw = text_in or ""
-              ud = _between(raw, U_OPEN, U_CLOSE) or ""
+              ud, ud_dup = _between(raw, U_OPEN, U_CLOSE)
+              ud = ud or ""
               ud_lower = ud.lower()
 
               hits = [p for p in MARKET_CLAIM_PATTERNS_ZH if p in ud]
               hits += [p for p in MARKET_CLAIM_PATTERNS_EN if p.lower() in ud_lower]
+              if ud_dup:
+                  hits = hits + ["__DUPLICATE_USER_DELIVERY_MARKER__"]
 
               blocked = bool(hits)
 
@@ -2548,6 +2685,12 @@ workflow:
           #           绝不伪装成空数组或 NONE。
 
           CAPABILITY = "PUBLISHING_PACKAGING"
+          # R5（DIYU-V1-P0-ROOT-REMEDIATION-001）：v2.0 与冻结的 v1.4 基线此前
+          # 应用名/描述/图标逐字节相同（E5 第 2 组），任何一次真实运行的产出都
+          # 无法证明跑的是哪个版本。这里把版本标识写进每一次运行都会产出的
+          # 字段——运行记录本身即可证明跑的是 v2.0；具体是哪一份 DSL 字节，
+          # 由 static_gate.py 每次运行独立计算并记录的 dsl_sha256 交叉核对。
+          DSL_VERSION = "P0_v2.0"
 
           A_OPEN, A_CLOSE = "---M4_ARTIFACT---", "---END_M4_ARTIFACT---"
           U_OPEN, U_CLOSE = "---M4_USER_DELIVERY---", "---END_M4_USER_DELIVERY---"
@@ -2600,28 +2743,38 @@ workflow:
 
 
           def _between(text, a, b):
+              """返回 (block, duplicate_marker_found)——R6（E5 第 7 组）同一处理：
+              出现不止一组开始标记时不取第一个当真。"""
               i = text.find(a)
               if i < 0:
-                  return None
+                  return None, False
+              dup = text.find(a, i + len(a)) >= 0
               j = text.find(b, i + len(a))
               if j < 0:
-                  return None
-              return text[i + len(a):j].strip()
+                  return None, dup
+              return text[i + len(a):j].strip(), dup
 
 
           def main(final_text):
               raw = final_text or ""
 
-              artifact = _between(raw, A_OPEN, A_CLOSE)
-              user_delivery = _between(raw, U_OPEN, U_CLOSE)
+              artifact, artifact_dup = _between(raw, A_OPEN, A_CLOSE)
+              user_delivery, user_dup = _between(raw, U_OPEN, U_CLOSE)
 
               structure_notes = []
               if artifact is None:
                   structure_notes.append("缺少 ARTIFACT 块")
               if user_delivery is None:
                   structure_notes.append("缺少 USER_DELIVERY 块")
+              if artifact_dup:
+                  structure_notes.append("检测到不止一组 M4_ARTIFACT 标记，不取第一个当真")
+              if user_dup:
+                  structure_notes.append("检测到不止一组 M4_USER_DELIVERY 标记，不取第一个当真")
 
-              leaks = [p for p in LEAK_PATTERNS if user_delivery and p in user_delivery]
+              # R7：泄漏词清单大小写敏感会被大小写变体绕过（比如 stale / Stale）——
+              # 匹配统一按大小写不敏感处理；中文词条不受影响。
+              _ud_lower = (user_delivery or "").lower()
+              leaks = [p for p in LEAK_PATTERNS if user_delivery and p.lower() in _ud_lower]
 
               if artifact is None:
                   artifact_out = raw if raw.strip() else "MODEL_OUTPUT_NO_FINAL"
@@ -2643,6 +2796,8 @@ workflow:
               blocked = (
                   artifact_status != "OK"
                   or user_status != "OK"
+                  or artifact_dup
+                  or user_dup
               )
 
               # AC-31 修复：专业内容已生成但用户交付块缺失/为空/回指 ⇒ 需要一次有界用户投影。
@@ -2662,6 +2817,7 @@ workflow:
                   "local_block": "true" if blocked else "false",
                   "structure_notes": structure_notes,
                   "capability": CAPABILITY,
+                  "dsl_version": DSL_VERSION,
               }
         code_language: python3
         desc: 确定性 Returns / 交付分离。解析失败置 PARSE_FAILED 并保留原文，绝不伪装成 NONE。
@@ -2673,6 +2829,9 @@ workflow:
             children: null
             type: string
           capability:
+            children: null
+            type: string
+          dsl_version:
             children: null
             type: string
           local_block:
@@ -2751,99 +2910,36 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        context:
-          enabled: false
-          variable_selector: []
-        desc: 有界用户投影：只把已生成的专业产出讲给用户听，不新增事实、不重做生产。
-        memory: null
-        model:
-          completion_params:
-            max_tokens: 384000
-            reasoning_effort: low
-            thinking: true
-          mode: chat
-          name: deepseek-v4-flash
-          provider: langgenius/deepseek/deepseek
-        prompt_template:
-        - role: system
-          text: |
-            你要做的**只有一件事**：把下面这份已经写好的专业产出，投影成一份**给用户看的自然语言正文**。
-
-            ## 硬约束
-
-            1. **不得新增任何业务事实。** 只能用下面这份产出里已经存在的内容。产出里没有的商品、价格、面料、顾客、数字、平台数据，一个都不许补。
-            2. **不得重新做一次专业生产。** 不重新判断、不换方向、不补候选、不改结论。你不是在写一份新的产出，你是在把已有的产出讲给用户听。
-            3. **不得把整份原文抄过来。** 用户要的是能读、能判断、能据此行动的那部分，不是内部留档。
-            4. **不得出现任何内部技术词**：字段名、状态码、节点名、哈希、trace、系统提示、自检过程、被淘汰的候选及其淘汰原因、`PARSE_FAIL`、`NOT_APPLICABLE`、`STALE` 之类。
-            5. **不得省掉用户必须知道的东西**：结论、成立条件、限制、必要的选择、下一步。「不泄露内部」不等于「少给用户」。
-            6. 如果原文本身就是一次**阻断**（资料不足、权限不成立、无法安全产出），那就如实把阻断讲清楚：缺什么、为什么卡住、需要补什么，用自然语言说。
-
-            ## 写法
-
-            - 直接开始写正文，不要写「好的」「以下是」这类开场；
-            - 不要标题党，不要总结这份任务；
-            - 该分段就分段，该列点就列点；
-            - 用用户能懂的话，不用工程化表达。
-
-            ## 已写好的专业产出
-
-            {{#returns_adapter.projection_source#}}
-        selected: false
-        title: 用户交付投影（一次有界恢复）
-        type: llm
-        vision:
-          enabled: false
-      height: 120
-      id: recovery_llm
-      position:
-        x: 2740
-        y: 120
-      positionAbsolute:
-        x: 2740
-        y: 120
-      selected: false
-      sourcePosition: right
-      targetPosition: left
-      type: custom
-      width: 244
-      zIndex: 0
-    - data:
         code: |2
 
           import json
 
           # AC-31 交付收口：无论走哪条路径，用户都必须拿到非空正文。
           # 技术运行 succeeded != 业务交付成功；两者在此显式分离。
-
-          LEAK = ["PARSE_FAIL", "SEAM_COMPLETENESS_GUARD", "NOT_APPLICABLE", "STALE",
-                  "NOT_VERIFIED", "returns_json", "artifact_status", "user_delivery_status",
-                  "system prompt", "goal_family", "capability_call", "professional_payload",
-                  # M4-FND-029：恢复正文里绝不允许出现模型的内部推理段
-                  "<think>", "</think>", "dify-deepseek-reasoning"]
-
-
-          def _strip_thinking(text):
-              """剥离模型 thinking 段，取最终正文。
-
-              缺陷 M4-FND-029：专业链的 final_extract 会做这一步，但 v1.4 新增的恢复路径没有做，
-              于是 recovery_llm 的整段内部推理被原样当成用户正文交付出去。
-              该缺陷此前无法被发现——recovery_llm 在 v1.4 的 13 次 Runtime 运行中触发 0 次。
-              剥离规则与 final_extract 模板逐条等价，不另立第二套。
-              """
-              raw = (text or "").strip()
-              if "</think>" in raw:
-                  return raw.split("</think>")[-1].strip()
-              return raw
-
+          #
+          # R3（DIYU-V1-P0-ROOT-REMEDIATION-001）：recovery_llm 节点已删除
+          # （其产出从不经过 fact_verification / market_claim_scan，是比正门
+          # 弱得多且此前从未被检查过的第二套治理，见 E5 第 5 组）。本节点随之
+          # 删除 recovered_text 参数、rec 分支、_strip_thinking()、只服务补救
+          # 路径的 LEAK 清单。投影失败时直接走下面「仍必须给用户非空说明」的
+          # 分支——这条分支此前就已经是 PROJECTION_FAILED 行为，无需新写。
+          #
+          # R1：此前 returns_adapter.local_block（内部说明泄漏等局部结构问题）、
+          # fact_verification.fact_check_mismatch（模型自评与代码判定不一致）、
+          # release_decision_blocks_delivery（模型自报 DO_NOT_PUBLISH）都已经
+          # 被正确计算，但没有一个接到这里的拦截开关上——检测到但照样交付
+          # （E5 第 4 组，R0 fixture #9/#10/#11）。现在三者都在这里读取并拦截。
 
           def main(adapter_user_delivery, adapter_status, needs_projection,
-                   recovered_text, capability,
-                   fact_gate_blocked, market_claim_blocked):
+                   capability, fact_gate_blocked, market_claim_blocked,
+                   local_block, fact_check_mismatch, release_decision_blocks_delivery):
               ud = (adapter_user_delivery or "").strip()
-              rec = _strip_thinking(recovered_text)
               need = str(needs_projection or "").strip().lower() == "true"
               fact_blocked = str(fact_gate_blocked or "").strip().lower() == "true"
               market_blocked = str(market_claim_blocked or "").strip().lower() == "true"
+              struct_blocked = str(local_block or "").strip().lower() == "true"
+              mismatch_blocked = str(fact_check_mismatch or "").strip().lower() == "true"
+              release_blocked = str(release_decision_blocks_delivery or "").strip().lower() == "true"
 
               # B-02 / B-04：代码判定的阻断在这里必须体现在 delivery_outcome 本身，
               # 不能只体现在 user_delivery 的文字里——不是记一笔然后照常交付。
@@ -2861,20 +2957,39 @@ workflow:
                           "user_delivery_status": adapter_status or "OK",
                           "recovery_used": "false"}
 
+              # R1 / R0 fixture #9：returns_adapter 已经判定内部说明泄漏或标记
+              # 重复等局部结构问题（local_block），此前这个信号只被暴露在
+              # end_ok 的输出里供事后查看，从不影响 delivery_outcome。
+              if struct_blocked:
+                  return {"user_delivery": "这一次的发布判断被系统拦下，不能直接使用。",
+                          "delivery_outcome": "NOT_DELIVERED_LOCAL_STRUCTURE_BLOCKED",
+                          "user_delivery_status": adapter_status or "OK",
+                          "recovery_used": "false"}
+
+              # R1 / R0 fixture #10：模型在正文里自报的 fact_check_status 与
+              # 代码判定的结果不一致——此前只记录 mismatch，从不影响是否交付。
+              if mismatch_blocked:
+                  return {"user_delivery": "这一次的发布判断被系统拦下，不能直接使用。",
+                          "delivery_outcome": "NOT_DELIVERED_SELF_REPORT_MISMATCH_BLOCKED",
+                          "user_delivery_status": adapter_status or "OK",
+                          "recovery_used": "false"}
+
+              # R1 / R0 fixture #11：模型自报 release_decision: DO_NOT_PUBLISH，
+              # 但没有任何代码核对这一条与最终是否交付是否一致（E5 第 4 组第 4 点）。
+              if release_blocked:
+                  return {"user_delivery": "这一次的发布判断被系统拦下，不能直接使用。",
+                          "delivery_outcome": "NOT_DELIVERED_MODEL_SELF_ASSESSED_DO_NOT_PUBLISH",
+                          "user_delivery_status": adapter_status or "OK",
+                          "recovery_used": "false"}
+
               if not need and ud:
                   return {"user_delivery": ud, "delivery_outcome": "DELIVERED",
                           "user_delivery_status": adapter_status or "OK",
                           "recovery_used": "false"}
 
-              # ── 有界局部恢复：最多一次，已在上游完成 ──
-              if rec and len(rec) >= 80:
-                  leaked = [w for w in LEAK if w in rec]
-                  if not leaked:
-                      return {"user_delivery": rec, "delivery_outcome": "DELIVERED_AFTER_RECOVERY",
-                              "user_delivery_status": "RECOVERED",
-                              "recovery_used": "true"}
-
-              # ── 恢复失败：仍然必须给用户非空自然语言说明，且业务状态不是成功 ──
+              # ── 需要投影但已无补救路径：仍然必须给用户非空自然语言说明，
+              # 且业务状态不是成功。recovery_used 恒为 false——补救路径已删除，
+              # 保留字段名只是为了不动 end_ok 的输出形状。──
               msg = (
                   "这一次没有成功给出可用的结果。\n\n"
                   "系统在内部已经把专业判断做出来了，但在整理成给你看的那一份时出了问题，"
@@ -2886,7 +3001,7 @@ workflow:
               )
               return {"user_delivery": msg, "delivery_outcome": "NOT_DELIVERED",
                       "user_delivery_status": "PROJECTION_FAILED",
-                      "recovery_used": "attempted"}
+                      "recovery_used": "false"}
         code_language: python3
         desc: 交付收口：保证用户正文非空；技术运行完成 != 业务交付成功。
         outputs:
@@ -2919,10 +3034,6 @@ workflow:
           - needs_projection
           variable: needs_projection
         - value_selector:
-          - recovery_llm
-          - text
-          variable: recovered_text
-        - value_selector:
           - returns_adapter
           - capability
           variable: capability
@@ -2934,6 +3045,18 @@ workflow:
           - market_claim_scan
           - market_claim_blocked
           variable: market_claim_blocked
+        - value_selector:
+          - returns_adapter
+          - local_block
+          variable: local_block
+        - value_selector:
+          - fact_verification
+          - fact_check_mismatch
+          variable: fact_check_mismatch
+        - value_selector:
+          - fact_verification
+          - release_decision_blocks_delivery
+          variable: release_decision_blocks_delivery
       height: 100
       id: delivery_finalize
       position:
@@ -3239,6 +3362,18 @@ workflow:
           - envelope_check
           - conditionalized_text
           variable: conditionalized
+        - value_selector:
+          - returns_adapter
+          - dsl_version
+          variable: dsl_version
+        - value_selector:
+          - envelope_check
+          - cta_level
+          variable: cta_level
+        - value_selector:
+          - envelope_check
+          - cta_level_declared_illegal
+          variable: cta_level_declared_illegal
         selected: false
         title: 结束
         type: end

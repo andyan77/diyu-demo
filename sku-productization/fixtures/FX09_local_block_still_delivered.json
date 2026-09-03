@@ -1,0 +1,34 @@
+{
+  "id": "FX09_local_block_still_delivered",
+  "kind": "node_exec",
+  "table_row": 9,
+  "mechanism": "local_block = true 仍尝试交付",
+  "expected_behavior": "必须拦截",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第4组：内部草稿被检测出'内容里出现了不该出现的内部说明'，这个检测结果被正确记录成了'局部阻断=真'，但这个开关同样接不到任何东西上",
+  "chain": [
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\n专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容专业内容\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n这句话是原方案里已删除的内容，现在重新贴出来。\n---END_M4_USER_DELIVERY---\n"
+      }
+    },
+    {
+      "node": "delivery_finalize",
+      "inputs": {
+        "adapter_user_delivery": "$0.user_delivery",
+        "adapter_status": "$0.user_delivery_status",
+        "needs_projection": "$0.needs_projection",
+        "capability": "$0.capability",
+        "fact_gate_blocked": "false",
+        "market_claim_blocked": "false",
+        "local_block": "$0.local_block",
+        "fact_check_mismatch": "false",
+        "release_decision_blocks_delivery": "false"
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "local_block", "op": "eq", "value": "true"},
+    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]}
+  ]
+}

@@ -1,9 +1,10 @@
 {
   "gate": "STATIC_GATE",
   "task_id": "DIYU-V1-STATIC-GATE-001",
-  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13",
+  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复，本轮扩充）",
   "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings. Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. Separately and factually: no empirical_case_ref manifest exists yet for these three SKUs to bind to even if such placeholders were registered — eval/ holds only .gitkeep, and the only populated holdout on this machine (diyu-demo-holdout-custody/) belongs to the unrelated, already-closed M5 task. Per §13.3 any DYNAMIC_ONLY without a real ref counts as BLOCKING, so inventing refs was not an option; this is disclosed rather than silently avoided.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
+  "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage (semantic_market_claim_coverage) is DYNAMIC_ONLY-eligible under §13.3 once eval/ holds a real case to bind empirical_case_ref to; none exists yet (see dynamic_only_scope_note), so it is disclosed here rather than registered as a ref-less DYNAMIC_ONLY finding, which §13.3 would otherwise force to BLOCKING.",
   "invariants": {
     "INV-1": {
       "invariant": "INV-1",
@@ -79,6 +80,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
+      "dsl_sha256": "acf1e5c9f9585021941c00e62fea016a4b81846bbf1128657cedd76cdf9b6a8b",
       "blockers": [],
       "dynamic_only": [],
       "findings": [
@@ -152,9 +154,38 @@
           }
         },
         {
+          "id": "SG2.guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "guard's own true-case (sourceHandle=run) target reaches delivery=True; false-branch target is fail-closed=True",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "guard": "gate_sufficiency",
+            "detail": {
+              "true_handle": "run",
+              "true_targets": [
+                "ref_projection"
+              ],
+              "false_targets": [
+                "component_return"
+              ],
+              "true_reaches_delivery": true,
+              "false_is_fail_closed": true,
+              "pass": true
+            }
+          }
+        },
+        {
           "id": "SG3.schema_and_reachability",
           "verdict": "PASS",
           "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.dangling_template_reference",
+          "verdict": "PASS",
+          "summary": "no {{#node.field#}} interpolation inside template/prompt text bodies references a missing node or undeclared output",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
           }
@@ -187,12 +218,66 @@
         {
           "id": "SG5.assembled_prompt_matches_skill_md",
           "verdict": "PASS",
-          "summary": "assembled system prompt equals SKILL.md + fixed appendix, byte for byte",
+          "summary": "assembled system prompt prefix equals SKILL.md (prefix_matches=True) and fixed tail equals its frozen sha256 (tail_matches=True)",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
             "node": "skill_llm",
-            "assembled_sha256": "5d2f340d8406822983d1fab7263d99d5f888e1835ca4434f72a4356cac05bb30",
-            "skill_md_sha256": "2f25ce977f4b88edccab76909cd896fe7abdf3b6640bd2a8e6c04d07f65c66c2"
+            "detail": {
+              "assembled_matches": true,
+              "prefix_matches": true,
+              "tail_matches": true,
+              "tail_sha256": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+              "assembled_sha256": "5d2f340d8406822983d1fab7263d99d5f888e1835ca4434f72a4356cac05bb30",
+              "skill_md_sha256": "2f25ce977f4b88edccab76909cd896fe7abdf3b6640bd2a8e6c04d07f65c66c2"
+            }
+          }
+        },
+        {
+          "id": "SG5.embedded_reference_bytes",
+          "verdict": "PASS",
+          "summary": "hash of the byte snapshot actually embedded in ref_projection's template (not the disk source file) vs. current disk source file, normalized-whitespace compare: [{'file': 'content-production/skills/packaging-content-for-release/references/platforms.md', 'embedded_sha256_normalized': 'bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793', 'source_sha256_normalized': 'bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793', 'match': True}, {'file': 'content-production/skills/packaging-content-for-release/references/examples.md', 'embedded_sha256_normalized': '5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90', 'source_sha256_normalized': '5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90', 'match': True}]",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "ref_projection",
+            "detail": [
+              {
+                "file": "content-production/skills/packaging-content-for-release/references/platforms.md",
+                "embedded_sha256_normalized": "bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793",
+                "source_sha256_normalized": "bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793",
+                "match": true
+              },
+              {
+                "file": "content-production/skills/packaging-content-for-release/references/examples.md",
+                "embedded_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "source_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "match": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "SG5.skill_source_hash_declarations",
+          "verdict": "PASS",
+          "summary": "source_skill_sha256 / m4_v1_3_successor_sha256 self-declarations in the system prompt vs. actual current sha256 of the declared source files: [{'declaration': 'source_skill', 'file': 'content-production/skills/packaging-content-for-release/SKILL.md', 'declared_sha256': '0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07', 'actual_sha256': '0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07', 'match': True}, {'declaration': 'm4_v1_3_successor', 'file': 'content-production/skills/packaging-content-for-release-m4/SKILL.md', 'declared_sha256': 'c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574', 'actual_sha256': 'c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574', 'match': True}]",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "skill_llm",
+            "detail": [
+              {
+                "declaration": "source_skill",
+                "file": "content-production/skills/packaging-content-for-release/SKILL.md",
+                "declared_sha256": "0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07",
+                "actual_sha256": "0c91a8efb0583523af8abc80dd1238b24d15791c1d0b0cef425eade6b277cc07",
+                "match": true
+              },
+              {
+                "declaration": "m4_v1_3_successor",
+                "file": "content-production/skills/packaging-content-for-release-m4/SKILL.md",
+                "declared_sha256": "c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574",
+                "actual_sha256": "c56fe9cdaca173bc656b1045d050bdd9226485fa9eff690cc883e69e721f5574",
+                "match": true
+              }
+            ]
           }
         },
         {
@@ -273,6 +358,172 @@
           }
         },
         {
+          "id": "SG6.guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.dangling_template_reference",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.embedded_reference_bytes",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.prompt_tail_integrity",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.skill_source_hash_declarations",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "R0.FX01_natural_language_admission",
+          "verdict": "PASS",
+          "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX01_natural_language_admission.json"
+          }
+        },
+        {
+          "id": "R0.FX02_backref_placeholder_rejected",
+          "verdict": "PASS",
+          "summary": "row 2 (空占位符（\"见上\"之类）): expected 必须被拒 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX02_backref_placeholder_rejected.json"
+          }
+        },
+        {
+          "id": "R0.FX03_cta_source_conflict",
+          "verdict": "PASS",
+          "summary": "row 3 (CTA 来源冲突（正文里出现 cta_level: 高风险，授权字段写无 CTA）): expected 以授权源为准，不得被正文抬高 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX03_cta_source_conflict.json"
+          }
+        },
+        {
+          "id": "R0.FX04_cta_illegal_enum_flagged",
+          "verdict": "PASS",
+          "summary": "row 4 (CTA 非法枚举值): expected 不得静默降级 NO_CTA，须显式标记 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX04_cta_illegal_enum_flagged.json"
+          }
+        },
+        {
+          "id": "R0.FX05_guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "row 5 (gate_sufficiency 真假分支反接（好输入送去拒绝页，坏输入送去生成；节点数/边数不变）): expected 必须被检出 — covered by SG6.guard_branch_semantics's three-control self-test (positive/negative/off-list), all satisfied",
+          "evidence": {
+            "fixture_file": "fixtures/FX05_guard_branch_semantics.json",
+            "sg6_finding": "SG6.guard_branch_semantics"
+          }
+        },
+        {
+          "id": "R0.FX06_fact_verification_accept_all_trap",
+          "verdict": "PASS",
+          "summary": "row 6 (fact_verification 换成 accept-all 空函数): expected 必须被检出 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX06_fact_verification_accept_all_trap.json"
+          }
+        },
+        {
+          "id": "R0.FX07_market_claim_scan_accept_all_trap",
+          "verdict": "PASS",
+          "summary": "row 7 (market_claim_scan 换成 accept-all 空函数): expected 必须被检出 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX07_market_claim_scan_accept_all_trap.json"
+          }
+        },
+        {
+          "id": "R0.FX08_forged_duplicate_marker_block",
+          "verdict": "PASS",
+          "summary": "row 8 (伪造/重复标记块（假标记抢占解析位）): expected 必须被检出 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX08_forged_duplicate_marker_block.json"
+          }
+        },
+        {
+          "id": "R0.FX09_local_block_still_delivered",
+          "verdict": "PASS",
+          "summary": "row 9 (local_block = true 仍尝试交付): expected 必须拦截 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX09_local_block_still_delivered.json"
+          }
+        },
+        {
+          "id": "R0.FX10_self_report_mismatch_still_delivered",
+          "verdict": "PASS",
+          "summary": "row 10 (模型自评与代码判定不一致仍交付): expected 必须拦截 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX10_self_report_mismatch_still_delivered.json"
+          }
+        },
+        {
+          "id": "R0.FX11_do_not_publish_still_delivered",
+          "verdict": "PASS",
+          "summary": "row 11 (内部判定 DO_NOT_PUBLISH 而最终 DELIVERED): expected 必须拦截 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX11_do_not_publish_still_delivered.json"
+          }
+        },
+        {
+          "id": "R0.FX12_embedded_reference_byte_tamper",
+          "verdict": "PASS",
+          "summary": "row 12 (嵌入的 reference 字节改一个字): expected 必须 fail-closed — covered by SG6.embedded_reference_bytes's three-control self-test (positive/negative/off-list), all satisfied",
+          "evidence": {
+            "fixture_file": "fixtures/FX12_embedded_reference_byte_tamper.json",
+            "sg6_finding": "SG6.embedded_reference_bytes"
+          }
+        },
+        {
+          "id": "R0.FX13_prompt_tail_tamper",
+          "verdict": "PASS",
+          "summary": "row 13 (system prompt 尾部追加篡改指令): expected 必须被检出 — covered by SG6.prompt_tail_integrity's three-control self-test (positive/negative/off-list), all satisfied",
+          "evidence": {
+            "fixture_file": "fixtures/FX13_prompt_tail_tamper.json",
+            "sg6_finding": "SG6.prompt_tail_integrity"
+          }
+        },
+        {
+          "id": "R0.FX14_dangling_template_variable",
+          "verdict": "PASS",
+          "summary": "row 14 (悬空模板变量引用): expected 必须被检出 — covered by SG6.dangling_template_reference's three-control self-test (positive/negative/off-list), all satisfied",
+          "evidence": {
+            "fixture_file": "fixtures/FX14_dangling_template_variable.json",
+            "sg6_finding": "SG6.dangling_template_reference"
+          }
+        },
+        {
           "id": "SG4.evidence_and_authority",
           "verdict": "PASS",
           "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
@@ -284,6 +535,7 @@
       "capability": "CREATIVE_SCRIPT",
       "q_comm_doc": "Q-COMM-05",
       "state": "READY_FOR_EMPIRICAL_TESTING",
+      "dsl_sha256": "6d3ac8df66c4772a38049d9d7c738579737e1dc472a43911378c07d680ca8954",
       "blockers": [],
       "dynamic_only": [],
       "findings": [
@@ -357,9 +609,38 @@
           }
         },
         {
+          "id": "SG2.guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "guard's own true-case (sourceHandle=run) target reaches delivery=True; false-branch target is fail-closed=True",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "guard": "gate_sufficiency",
+            "detail": {
+              "true_handle": "run",
+              "true_targets": [
+                "ref_projection"
+              ],
+              "false_targets": [
+                "component_return"
+              ],
+              "true_reaches_delivery": true,
+              "false_is_fail_closed": true,
+              "pass": true
+            }
+          }
+        },
+        {
           "id": "SG3.schema_and_reachability",
           "verdict": "PASS",
           "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.dangling_template_reference",
+          "verdict": "PASS",
+          "summary": "no {{#node.field#}} interpolation inside template/prompt text bodies references a missing node or undeclared output",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
           }
@@ -392,12 +673,59 @@
         {
           "id": "SG5.assembled_prompt_matches_skill_md",
           "verdict": "PASS",
-          "summary": "assembled system prompt equals SKILL.md + fixed appendix, byte for byte",
+          "summary": "assembled system prompt prefix equals SKILL.md (prefix_matches=True) and fixed tail equals its frozen sha256 (tail_matches=True)",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
             "node": "skill_llm",
-            "assembled_sha256": "ca94f8f47d717a4aeb67ead327016acbcec7fd80bc50d1f85770ef05cafc63be",
-            "skill_md_sha256": "c909900cda1406c51fb9ca49a3efe554db7065e7cdd50e946a70d5eeee0d3706"
+            "detail": {
+              "assembled_matches": true,
+              "prefix_matches": true,
+              "tail_matches": true,
+              "tail_sha256": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+              "assembled_sha256": "ca94f8f47d717a4aeb67ead327016acbcec7fd80bc50d1f85770ef05cafc63be",
+              "skill_md_sha256": "c909900cda1406c51fb9ca49a3efe554db7065e7cdd50e946a70d5eeee0d3706"
+            }
+          }
+        },
+        {
+          "id": "SG5.embedded_reference_bytes",
+          "verdict": "PASS",
+          "summary": "hash of the byte snapshot actually embedded in ref_projection's template (not the disk source file) vs. current disk source file, normalized-whitespace compare: [{'file': 'content-production/skills/packaging-content-for-release/references/platforms.md', 'embedded_sha256_normalized': 'bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793', 'source_sha256_normalized': 'bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793', 'match': True}, {'file': 'content-production/skills/packaging-content-for-release/references/examples.md', 'embedded_sha256_normalized': '5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90', 'source_sha256_normalized': '5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90', 'match': True}]",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "ref_projection",
+            "detail": [
+              {
+                "file": "content-production/skills/packaging-content-for-release/references/platforms.md",
+                "embedded_sha256_normalized": "bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793",
+                "source_sha256_normalized": "bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793",
+                "match": true
+              },
+              {
+                "file": "content-production/skills/packaging-content-for-release/references/examples.md",
+                "embedded_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "source_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "match": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "SG5.skill_source_hash_declarations",
+          "verdict": "PASS",
+          "summary": "source_skill_sha256 / m4_v1_3_successor_sha256 self-declarations in the system prompt vs. actual current sha256 of the declared source files: [{'declaration': 'source_skill', 'file': 'content-production/skills/writing-creative-scripts/SKILL.md', 'declared_sha256': 'd0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a', 'actual_sha256': 'd0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a', 'match': True}]",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "skill_llm",
+            "detail": [
+              {
+                "declaration": "source_skill",
+                "file": "content-production/skills/writing-creative-scripts/SKILL.md",
+                "declared_sha256": "d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a",
+                "actual_sha256": "d0f78a480f58d494a29d3a34e35106ba0ff48719052361748ed513c721fc7b6a",
+                "match": true
+              }
+            ]
           }
         },
         {
@@ -478,6 +806,56 @@
           }
         },
         {
+          "id": "SG6.guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.dangling_template_reference",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.embedded_reference_bytes",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.prompt_tail_integrity",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.skill_source_hash_declarations",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG4.evidence_and_authority",
           "verdict": "PASS",
           "summary": "every PASS in this run carries file/node/field evidence; no ref-less DYNAMIC_ONLY survived"
@@ -489,6 +867,7 @@
       "capability": "PRODUCTION_DIRECTOR",
       "q_comm_doc": "Q-COMM-06",
       "state": "READY_FOR_EMPIRICAL_TESTING",
+      "dsl_sha256": "b016f7e88d3fb8be59c8eec90c0a37407ca971881fd0b309e2dabebfcf476e91",
       "blockers": [],
       "dynamic_only": [],
       "findings": [
@@ -562,9 +941,38 @@
           }
         },
         {
+          "id": "SG2.guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "guard's own true-case (sourceHandle=run) target reaches delivery=True; false-branch target is fail-closed=True",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "guard": "gate_sufficiency",
+            "detail": {
+              "true_handle": "run",
+              "true_targets": [
+                "ref_projection"
+              ],
+              "false_targets": [
+                "component_return"
+              ],
+              "true_reaches_delivery": true,
+              "false_is_fail_closed": true,
+              "pass": true
+            }
+          }
+        },
+        {
           "id": "SG3.schema_and_reachability",
           "verdict": "PASS",
           "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.dangling_template_reference",
+          "verdict": "PASS",
+          "summary": "no {{#node.field#}} interpolation inside template/prompt text bodies references a missing node or undeclared output",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
           }
@@ -597,12 +1005,59 @@
         {
           "id": "SG5.assembled_prompt_matches_skill_md",
           "verdict": "PASS",
-          "summary": "assembled system prompt equals SKILL.md + fixed appendix, byte for byte",
+          "summary": "assembled system prompt prefix equals SKILL.md (prefix_matches=True) and fixed tail equals its frozen sha256 (tail_matches=True)",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
             "node": "skill_llm",
-            "assembled_sha256": "2c2b7bc4686216215164a6f91ee4b49e5c67ad220e8b3964f560dc28c662e95a",
-            "skill_md_sha256": "d23c6b0acf3241232bacd1e4d16eda8cb1ae8ccb0468cfad8133855d920049bd"
+            "detail": {
+              "assembled_matches": true,
+              "prefix_matches": true,
+              "tail_matches": true,
+              "tail_sha256": "7ca62d87eabc6c197674b4c2968a8579476c94e1c99c909e9fbb37e9b433af0c",
+              "assembled_sha256": "2c2b7bc4686216215164a6f91ee4b49e5c67ad220e8b3964f560dc28c662e95a",
+              "skill_md_sha256": "d23c6b0acf3241232bacd1e4d16eda8cb1ae8ccb0468cfad8133855d920049bd"
+            }
+          }
+        },
+        {
+          "id": "SG5.embedded_reference_bytes",
+          "verdict": "PASS",
+          "summary": "hash of the byte snapshot actually embedded in ref_projection's template (not the disk source file) vs. current disk source file, normalized-whitespace compare: [{'file': 'content-production/skills/packaging-content-for-release/references/platforms.md', 'embedded_sha256_normalized': 'bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793', 'source_sha256_normalized': 'bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793', 'match': True}, {'file': 'content-production/skills/packaging-content-for-release/references/examples.md', 'embedded_sha256_normalized': '5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90', 'source_sha256_normalized': '5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90', 'match': True}]",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "ref_projection",
+            "detail": [
+              {
+                "file": "content-production/skills/packaging-content-for-release/references/platforms.md",
+                "embedded_sha256_normalized": "bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793",
+                "source_sha256_normalized": "bba3f40dd04f326d8484524124db4e7183f164252677f4b41da5fe83a4141793",
+                "match": true
+              },
+              {
+                "file": "content-production/skills/packaging-content-for-release/references/examples.md",
+                "embedded_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "source_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "match": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "SG5.skill_source_hash_declarations",
+          "verdict": "PASS",
+          "summary": "source_skill_sha256 / m4_v1_3_successor_sha256 self-declarations in the system prompt vs. actual current sha256 of the declared source files: [{'declaration': 'source_skill', 'file': 'content-production/skills/directing-content-production/SKILL.md', 'declared_sha256': '87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c', 'actual_sha256': '87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c', 'match': True}]",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "skill_llm",
+            "detail": [
+              {
+                "declaration": "source_skill",
+                "file": "content-production/skills/directing-content-production/SKILL.md",
+                "declared_sha256": "87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c",
+                "actual_sha256": "87acc4a082500190f3b4454c088d95c6a60dce4062e5be120bb6f5b3adfdae3c",
+                "match": true
+              }
+            ]
           }
         },
         {
@@ -674,6 +1129,56 @@
         },
         {
           "id": "SG6.plugin_normalization_mismatch",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.guard_branch_semantics",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.dangling_template_reference",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.embedded_reference_bytes",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.prompt_tail_integrity",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.skill_source_hash_declarations",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
           "evidence": {

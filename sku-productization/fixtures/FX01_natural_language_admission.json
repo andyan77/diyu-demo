@@ -1,0 +1,21 @@
+{
+  "id": "FX01_natural_language_admission",
+  "kind": "node_exec",
+  "table_row": 1,
+  "mechanism": "正常自然语言输入",
+  "expected_behavior": "必须通过准入",
+  "e5_source": "STATIC_AUDIT_REPORT.md 第二节第1组：准入门槛和产品合同完全倒挂",
+  "chain": [
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "到店试穿但不留联系电话，cta_level: NO_CTA",
+        "professional_input": "已经剪好一条48秒的成片，准备发小红书。面料含毛量35%，缩水率控制在3%以内，这两个数字来自质检报告。文案里不能说打折，也不能说库存一定有货。这条内容想让观众看完就知道这件衣服到底暖不暖、缩不缩水。素材都是我们自己拍摄的，没有其他人出镜。",
+        "example_reference_requested": ""
+      }
+    }
+  ],
+  "assert": [
+    {"step": 0, "field": "can_run", "op": "eq", "value": "true"}
+  ]
+}
