@@ -1,0 +1,114 @@
+{
+  "id": "FX17_fact_ledger_none_contradicted_by_body",
+  "kind": "node_exec",
+  "table_row": "M-4（E7 收口追加，DIYU-V1-P0-RESIDUAL-REMEDIATION-001）",
+  "mechanism": "FACT_LEDGER 显式声明 NONE（本次没有需要登记的事实性陈述），但用户正文里明显含数字化事实性数据——此前只核验已登记 fact_id 能否解析，从未核对 NONE 这个声明本身是否与正文矛盾",
+  "expected_behavior": "必须拦截；变体兄弟（全角数字/中文成数分数表达/数字与单位跨空白或换行/PARSE_FAILED 时同样成立）同样必须拦截或维持既有阻断",
+  "e7_source": "E7_P0残余确定性缺陷修复_EXECUTION_PROMPT_v1.0.md M-4：ledger_status==NONE 时对 USER_DELIVERY 做封闭集合高信号扫描（数值+计量单位、成数/分数），不做开放语义判断；已用仓库真实 fact_verification 代码逐变体现场核验，且与既有 PARSE_FAILED 阻断路径互不冲突",
+  "chain": [
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这件外套含80%羊毛，缩水率低于3%，售价899元。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这条内容整体氛围轻松，没有列举任何具体数据。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n含毛量约８０％。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这批货八成新，大概三分之一已经卖出。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n重量约 500\n克，别的没什么好说的。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\n正文内容占位\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\n\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这批货含80%羊毛。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    }
+  ],
+  "assert": [
+    {
+      "step": 0,
+      "field": "ledger_none_contradicted",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 0,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 1,
+      "field": "ledger_none_contradicted",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 1,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 2,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 3,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 4,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 5,
+      "field": "ledger_status",
+      "op": "eq",
+      "value": "PARSE_FAILED"
+    },
+    {
+      "step": 5,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "true"
+    }
+  ]
+}

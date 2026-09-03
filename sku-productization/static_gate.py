@@ -156,6 +156,34 @@ def check_inv1():
     if diff_files:
         issues.append("git diff against baseline touches frozen tree paths: %s" % diff_files)
 
+    # C-2（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：以上只核对已提交历史
+    # （baseline..HEAD 的 git diff），从未核对工作区与暂存区里尚未提交的
+    # 改动——E5 那次误提交事故能够发生、Gate 却仍判"树未改动"，技术原因
+    # 正在这里：一次已经写进工作区或暂存区、但还没 commit 的冻结路径改动，
+    # 上面的检查完全看不见。这里补两条独立核验，覆盖对象是
+    # INV1_FROZEN_TREES 与 INV1_FROZEN_FILES 的并集：未暂存的工作区改动
+    # （`git diff`）、已暂存但未提交的改动（`git diff --cached`）。已用真实
+    # 改动现场验证：临时改动一个冻结文件（工作区/暂存区各一次）均被下面
+    # 两条检查捕获，revert 后恢复干净——不是纸面推导。
+    frozen_paths = list(INV1_FROZEN_TREES) + list(INV1_FROZEN_FILES)
+    try:
+        wt_out = git("diff", "--name-only", "--", *frozen_paths)
+    except subprocess.CalledProcessError as e:
+        wt_out = None
+        issues.append("git diff (working tree) failed: %s" % e.stderr)
+    working_tree_diff = [l for l in (wt_out or "").splitlines() if l.strip()]
+    if working_tree_diff:
+        issues.append("uncommitted working-tree changes touch frozen paths: %s" % working_tree_diff)
+
+    try:
+        staged_out = git("diff", "--cached", "--name-only", "--", *frozen_paths)
+    except subprocess.CalledProcessError as e:
+        staged_out = None
+        issues.append("git diff --cached failed: %s" % e.stderr)
+    staged_diff = [l for l in (staged_out or "").splitlines() if l.strip()]
+    if staged_diff:
+        issues.append("staged (uncommitted) changes touch frozen paths: %s" % staged_diff)
+
     return {
         "invariant": "INV-1",
         "baseline_commit": INV1_BASELINE_COMMIT,
@@ -169,6 +197,8 @@ def check_inv1():
         "frozen_trees": tree_results,
         "frozen_files": file_results,
         "git_diff_intersection": diff_files,
+        "working_tree_diff_intersection": working_tree_diff,
+        "staged_diff_intersection": staged_diff,
         "pass": len(issues) == 0,
         "issues": issues,
     }
@@ -566,6 +596,64 @@ def _component_return_behavior_check(yml_data):
     }
 
 
+# C-3（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：run_sg1 此前对 fact_verification /
+# market_claim_scan 的判据是"节点是否存在于图里"——把节点整个换成一个什么都
+# 不查、永远说没问题的空函数（accept-all stub）也会判 PASS，与 B-3 修 component_return
+# 之前的同一漏洞类别。这里同一手法：真正 exec 该节点当前代码、用构造输入调用
+# main()，断言真实返回值。两个检查只用三份 SKU 共有的字段
+# （fact_gate_blocked / market_claim_blocked）与共有的标记格式，不依赖 P0 本轮
+# 新增的字段——P1/P1_5 的这两个节点本轮未改动，检查必须对三份 SKU 都通用，
+# 已现场对三份 DSL 分别执行验证。
+def _fact_verification_behavior_check(yml_data):
+    main_fn = _extract_node_main(yml_data, "fact_verification")
+
+    ok_raw = (
+        "---M4_FACT_LEDGER---\noutput_location: 正文第1句\nfactual_claim: 面料含毛量35%\n"
+        "fact_id: FACT_001\n---END_M4_FACT_LEDGER---\n"
+        "---M4_USER_DELIVERY---\n含毛量35%。\n---END_M4_USER_DELIVERY---\n"
+    )
+    r_ok = main_fn(raw_text=ok_raw, capability_call="FACT_001", professional_input="")
+    not_blocked_when_resolvable = r_ok.get("fact_gate_blocked") == "false"
+
+    bad_raw = (
+        "---M4_FACT_LEDGER---\noutput_location: 正文第1句\nfactual_claim: 编造的事实\n"
+        "fact_id: FACT_GHOST\n---END_M4_FACT_LEDGER---\n"
+        "---M4_USER_DELIVERY---\n含编造事实的正文。\n---END_M4_USER_DELIVERY---\n"
+    )
+    r_bad = main_fn(raw_text=bad_raw, capability_call="", professional_input="")
+    blocked_when_unresolvable = r_bad.get("fact_gate_blocked") == "true"
+
+    return {
+        "not_blocked_when_resolvable": not_blocked_when_resolvable,
+        "blocked_when_unresolvable": blocked_when_unresolvable,
+        "pass": bool(not_blocked_when_resolvable and blocked_when_unresolvable),
+    }
+
+
+def _market_claim_scan_behavior_check(yml_data):
+    main_fn = _extract_node_main(yml_data, "market_claim_scan")
+
+    clean = "---M4_USER_DELIVERY---\n这是一条正常内容，不含任何市场热度断言。\n---END_M4_USER_DELIVERY---\n"
+    r_clean = main_fn(text_in=clean)
+    not_blocked_when_clean = r_clean.get("market_claim_blocked") == "false"
+
+    dirty = "---M4_USER_DELIVERY---\n现在最火的话题就是这个，赶紧发。\n---END_M4_USER_DELIVERY---\n"
+    r_dirty = main_fn(text_in=dirty)
+    blocked_when_hit = r_dirty.get("market_claim_blocked") == "true"
+
+    return {
+        "not_blocked_when_clean": not_blocked_when_clean,
+        "blocked_when_hit": blocked_when_hit,
+        "pass": bool(not_blocked_when_clean and blocked_when_hit),
+    }
+
+
+_SG1_G1_BEHAVIOR_CHECKS = [
+    ("fact_verification", _fact_verification_behavior_check, "no-fabrication / UNKNOWN-FACT discipline"),
+    ("market_claim_scan", _market_claim_scan_behavior_check, "no unverifiable current-market claim"),
+]
+
+
 def run_sg1(sku, yml_data, skill_md_text, skill_md_path):
     findings = []
 
@@ -601,19 +689,26 @@ def run_sg1(sku, yml_data, skill_md_text, skill_md_path):
         ))
 
     node_ids = {n["id"] for n in yml_data["workflow"]["graph"]["nodes"]}
-    for nid, label in [("fact_verification", "no-fabrication / UNKNOWN-FACT discipline"),
-                        ("market_claim_scan", "no unverifiable current-market claim")]:
-        if nid in node_ids:
-            n = node_by_id(yml_data, nid)
+    for nid, check_fn, label in _SG1_G1_BEHAVIOR_CHECKS:
+        if nid not in node_ids:
+            findings.append(finding(
+                "SG1.G1.%s" % nid, "BLOCKING",
+                "%s has no carrier node in this SKU's graph" % label,
+            ))
+            continue
+        behavior = check_fn(yml_data)
+        if behavior["pass"]:
             findings.append(finding(
                 "SG1.G1.%s" % nid, "PASS",
-                "%s carried by node `%s`" % (label, nid),
-                evidence={"file": sku["yml_path"], "node": nid, "title": n["data"].get("title")},
+                "verified by direct execution (not carrier-existence alone): %s real behavior "
+                "matches expectation: %s" % (label, behavior),
+                evidence={"file": sku["yml_path"], "node": nid, "detail": behavior},
             ))
         else:
             findings.append(finding(
                 "SG1.G1.%s" % nid, "BLOCKING",
-                "%s has no carrier node in this SKU's graph" % label,
+                "%s's real executed behavior fails expectation: %s" % (label, behavior),
+                evidence={"file": sku["yml_path"], "node": nid, "detail": behavior},
             ))
 
     if sku["applicable_notapplicable_required"]:
@@ -833,6 +928,81 @@ def _embedded_reference_bytes_check(yml_data):
     return results
 
 
+# C-1（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：R4 当时明写"industry-conditions.md
+# 是按 subject_domain 选段嵌入，粒度与'整份文件 sha256'不同，不在本轮处理范围"——
+# 于是三份参考文件里唯二被字节锁定的只有 platforms.md / examples.md 两份整份
+# 加载的文件，"喂给模型的 reference 全部被字节锁定"这句话并不成立。这里补上
+# 第三份：industry-conditions.md 按 subject_domain 分五段加载，锁定粒度改成
+# "每个行业分段独立核对"——ref_projection 模板里每个 `{%- if/elif
+# subject_domain == "X" %}...{%- elif/endif %}` 分支的表格内容，与磁盘源文件里
+# `## X` 标题到下一个 `---` 分隔线之间的同一段表格内容，逐段字节对比（同样只
+# 归一化首尾空白）。五个行业段落已现场验证：归一化后逐字节相同。
+INDUSTRY_CONDITIONS_INDS = ["服装 / 门店零售", "餐饮 / 门店", "知识付费 / 课程",
+                            "动漫 / 原创 IP", "户外 / 露营（爱好垂类）"]
+
+_INDUSTRY_BRANCH_RE = re.compile(
+    r'\{%-\s*(?:if|elif)\s+subject_domain\s*==\s*"([^"]+)"\s*%\}(.*?)(?=\{%-\s*(?:elif|endif))',
+    re.DOTALL)
+_INDUSTRY_SECTION_RE = re.compile(r'^## (.+?)\n(.*?)\n---\n', re.DOTALL | re.MULTILINE)
+_INDUSTRY_TRAILING_DASH_RE = re.compile(r'\n-{3,}\n\s*$')
+
+
+def _industry_branch_span(template, industry):
+    """返回 (start, end)：模板里该行业分支正文（不含 `{% %}` 标签本身）的
+    字符跨度，供检测函数与 SG6 自测的 byte-flip 共用同一份定位逻辑。"""
+    pat = r'\{%-\s*(?:if|elif)\s+subject_domain\s*==\s*"' + re.escape(industry) + r'"\s*%\}'
+    m = re.search(pat, template)
+    if not m:
+        return None
+    start = m.end()
+    end_m = re.search(r'\{%-\s*(?:elif|endif)', template[start:])
+    if not end_m:
+        return None
+    return start, start + end_m.start()
+
+
+def _industry_conditions_bytes_check(yml_data, skill_source_dir):
+    """路径按 SKU 自己的 skill_source_dir 现读，不硬编码 P0 的目录——
+    三份 Skill 下的 industry-conditions.md 目前字节相同，但各自独立存放，
+    硬编码单一路径会在其中一份未来独立漂移时误判其余两份仍然一致
+    （与 SG5.skill_source_hash_declarations 当初的同类教训一致）。"""
+    node = node_by_id(yml_data, "ref_projection")
+    tpl = node["data"]["template"]
+    branches = {m.group(1): m.group(2) for m in _INDUSTRY_BRANCH_RE.finditer(tpl)}
+
+    source_rel = "content-production/skills/%s/references/industry-conditions.md" % skill_source_dir
+    abspath = os.path.join(REPO_ROOT, source_rel)
+    if not os.path.exists(abspath):
+        return [{"industry": ind, "match": False, "reason": "source file missing: %s" % source_rel}
+                for ind in INDUSTRY_CONDITIONS_INDS]
+    with open(abspath, encoding="utf-8") as f:
+        disk = f.read()
+    sections = {m.group(1).strip(): m.group(2) for m in _INDUSTRY_SECTION_RE.finditer(disk)}
+
+    results = []
+    for ind in INDUSTRY_CONDITIONS_INDS:
+        b = branches.get(ind)
+        s = sections.get(ind)
+        if b is None:
+            results.append({"industry": ind, "match": False,
+                             "reason": "branch not found in ref_projection template"})
+            continue
+        if s is None:
+            results.append({"industry": ind, "match": False,
+                             "reason": "section not found in source file"})
+            continue
+        b_table = _INDUSTRY_TRAILING_DASH_RE.sub("", b)
+        embedded_sha256 = hashlib.sha256(b_table.strip().encode()).hexdigest()
+        source_sha256 = hashlib.sha256(s.strip().encode()).hexdigest()
+        results.append({
+            "industry": ind,
+            "embedded_sha256_normalized": embedded_sha256,
+            "source_sha256_normalized": source_sha256,
+            "match": embedded_sha256 == source_sha256,
+        })
+    return results
+
+
 def _skill_source_hash_declarations_check(system_text):
     """m4_v1_3_successor* 这一对声明只有部分 SKU 使用（是否存在两跳血缘
     声明因 SKU 而异）；两个字段都不存在时，视为这个 SKU 不使用该声明，不检查、
@@ -909,6 +1079,16 @@ def run_sg5(sku, yml_data, skill_md_text, skill_md_path):
         "hash of the byte snapshot actually embedded in ref_projection's template (not the disk "
         "source file) vs. current disk source file, normalized-whitespace compare: %s" % erb,
         evidence={"file": sku["yml_path"], "node": "ref_projection", "detail": erb},
+    ))
+
+    icb = _industry_conditions_bytes_check(yml_data, sku["skill_source_dir"])
+    icb_ok = all(r.get("match") for r in icb)
+    findings.append(finding(
+        "SG5.industry_conditions_reference_bytes", "PASS" if icb_ok else "BLOCKING",
+        "hash of each subject_domain branch's byte snapshot actually embedded in ref_projection's "
+        "template (not the disk source file) vs. the corresponding section of the current disk "
+        "source file, normalized-whitespace compare, per industry: %s" % icb,
+        evidence={"file": sku["yml_path"], "node": "ref_projection", "detail": icb},
     ))
 
     llm_node = node_by_id(yml_data, "skill_llm")
@@ -1143,6 +1323,33 @@ def run_sg6(sku, yml_data, skill_md_text):
 
     findings.append(_sg6_verdict("embedded_reference_bytes", pos7, neg7, offlist7_caught))
 
+    # --- detector: industry_conditions_reference_bytes (C-1; same function
+    # SG5 runs in production) ---
+    pos7b = all(r.get("match") for r in _industry_conditions_bytes_check(good_data, sku["skill_source_dir"]))
+
+    def _flip_industry_byte(data, industry):
+        mutated = copy.deepcopy(data)
+        rp = node_by_id(mutated, "ref_projection")
+        tpl = rp["data"]["template"]
+        span = _industry_branch_span(tpl, industry)
+        start, end = span
+        mid = (start + end) // 2
+        ch = tpl[mid]
+        repl = "X" if ch != "X" else "Y"
+        rp["data"]["template"] = tpl[:mid] + repl + tpl[mid + 1:]
+        return mutated
+
+    bad7b = _flip_industry_byte(good_data, INDUSTRY_CONDITIONS_INDS[0])
+    neg7b = not all(r.get("match") for r in _industry_conditions_bytes_check(bad7b, sku["skill_source_dir"]))
+
+    # Off-list: flip a byte in a DIFFERENT industry branch (index 3 instead of
+    # 0) — exercises that the check covers every branch independently, not
+    # just the first one in the list.
+    offlist7b = _flip_industry_byte(good_data, INDUSTRY_CONDITIONS_INDS[3])
+    offlist7b_caught = not all(r.get("match") for r in _industry_conditions_bytes_check(offlist7b, sku["skill_source_dir"]))
+
+    findings.append(_sg6_verdict("industry_conditions_reference_bytes", pos7b, neg7b, offlist7b_caught))
+
     # --- detector: prompt_tail_integrity, i.e. the non-self-referential half
     # of assembled_prompt_matches_skill_md (R6 / R0 fixture #13) ---
     pos8 = _assembled_prompt_check(good_data, skill_md_text)["assembled_matches"]
@@ -1206,6 +1413,48 @@ def run_sg6(sku, yml_data, skill_md_text):
     offlist10_caught = not _component_return_behavior_check(offlist10)["pass"]
 
     findings.append(_sg6_verdict("component_return_behavior", pos10, neg10, offlist10_caught))
+
+    # --- detector: fact_verification_behavior (C-3; same function SG1 runs
+    # in production) ---
+    pos11 = _fact_verification_behavior_check(good_data)["pass"]
+
+    bad11 = copy.deepcopy(good_data)
+    fv11 = node_by_id(bad11, "fact_verification")
+    fv11["data"]["code"] = fv11["data"]["code"].replace(
+        'bad_ids = [fid for fid in e["fact_id"] if fid not in blob]', 'bad_ids = []')
+    neg11 = not _fact_verification_behavior_check(bad11)["pass"]
+
+    # Off-list: a different failure mode than "never blocks" — tamper the
+    # FACT_LEDGER marker constant so the ledger block is never found at all,
+    # which makes ledger_status permanently PARSE_FAILED and the detector
+    # "always blocks" instead, including on the positive-control input.
+    offlist11 = copy.deepcopy(good_data)
+    fv11b = node_by_id(offlist11, "fact_verification")
+    fv11b["data"]["code"] = fv11b["data"]["code"].replace(
+        'FL_OPEN, FL_CLOSE = "---M4_FACT_LEDGER---", "---END_M4_FACT_LEDGER---"',
+        'FL_OPEN, FL_CLOSE = "---NEVER_MATCHES_OPEN---", "---NEVER_MATCHES_CLOSE---"')
+    offlist11_caught = not _fact_verification_behavior_check(offlist11)["pass"]
+
+    findings.append(_sg6_verdict("fact_verification_behavior", pos11, neg11, offlist11_caught))
+
+    # --- detector: market_claim_scan_behavior (C-3; same function SG1 runs
+    # in production) ---
+    pos12 = _market_claim_scan_behavior_check(good_data)["pass"]
+
+    bad12 = copy.deepcopy(good_data)
+    mcs12 = node_by_id(bad12, "market_claim_scan")
+    mcs12["data"]["code"] = mcs12["data"]["code"].replace(
+        "hits = [p for p in MARKET_CLAIM_PATTERNS_ZH if p in ud]", "hits = []")
+    neg12 = not _market_claim_scan_behavior_check(bad12)["pass"]
+
+    # Off-list: a different failure mode than "never blocks" — force
+    # always-blocks instead, including on the clean-text positive control.
+    offlist12 = copy.deepcopy(good_data)
+    mcs12b = node_by_id(offlist12, "market_claim_scan")
+    mcs12b["data"]["code"] = mcs12b["data"]["code"].replace("blocked = bool(hits)", "blocked = True")
+    offlist12_caught = not _market_claim_scan_behavior_check(offlist12)["pass"]
+
+    findings.append(_sg6_verdict("market_claim_scan_behavior", pos12, neg12, offlist12_caught))
 
     return findings
 
@@ -1361,14 +1610,40 @@ EMPIRICAL_CASE_REF_MARKET_CLAIM = {
 }
 
 
+# E7（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）转出项①：真实 Provider Payload。
+# "真正发给模型 provider 的字节，与本地声明的 completion_params/prompt 是否
+# 一致"这件事，只能在一次真实网络调用发生后核对——零 LLM 调用的静态阶段结构
+# 上做不到，在这里冒充能做到会是循环依赖（要验证的东西恰好是"要不要发起调用"
+# 本身）。E7 Prompt §四原话："E4 的第一个动作是截获并比对首次真实 payload…
+# 跑一次即永久闭合"——这里不是等一个 eval/ 测试集，是等 E4 的第一次真实调用
+# 本身，ref 因此绑定"E4 首次调用"而不是某个 Q-COMM 判分位。
+EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD = {
+    "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 "
+                  "本地声明是否一致",
+    "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+    "case_id": "PENDING_E4_FIRST_CALL",
+    "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对"
+                     "首次真实 payload，跑一次即永久闭合，不是重复验收项",
+}
+
+
 def run_dynamic_only_registrations(sku):
-    return [finding(
-        "SG7.semantic_market_claim_coverage", "DYNAMIC_ONLY",
-        "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 "
-        "static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，"
-        "移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
-        empirical_case_ref=EMPIRICAL_CASE_REF_MARKET_CLAIM,
-    )]
+    return [
+        finding(
+            "SG7.semantic_market_claim_coverage", "DYNAMIC_ONLY",
+            "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 "
+            "static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，"
+            "移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
+            empirical_case_ref=EMPIRICAL_CASE_REF_MARKET_CLAIM,
+        ),
+        finding(
+            "SG7.real_provider_payload_verification", "DYNAMIC_ONLY",
+            "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，"
+            "零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四"
+            "裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+            empirical_case_ref=EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD,
+        ),
+    ]
 
 
 def run_sku(sku):
@@ -1455,13 +1730,45 @@ def main():
         "rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT "
         "of the empirical phase this Gate exists to unblock, not inputs the Gate itself "
         "adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. "
-        "SG7.semantic_market_claim_coverage is the one deliberate exception — per Founder "
-        "2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the "
-        "判分位 (dimension + target score) can be pinned now without waiting for eval/ to "
-        "hold a real case; only the case id is a placeholder (PENDING_EVAL_MANIFEST) pending "
-        "eval/ (currently only .gitkeep; the only populated holdout on this machine, "
-        "diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) — must "
-        "be backfilled once a real case exists, not left as a placeholder indefinitely."
+        "SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the "
+        "two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref "
+        "is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, "
+        "the specific E4-first-call condition it is bound to) can be pinned now without waiting for "
+        "the case itself to exist; only the case id is a placeholder — PENDING_EVAL_MANIFEST "
+        "(eval/ currently only .gitkeep; the only populated holdout on this machine, "
+        "diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) for the "
+        "market-claim item, PENDING_E4_FIRST_CALL for the payload item — must be backfilled once "
+        "the real case/call exists, not left as a placeholder indefinitely."
+    )
+
+    # E7（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）§四"转出（本轮不做，登记清楚）"——
+    # 四项里只有①（真实 Provider Payload）按原文明确要求"登记 DYNAMIC_ONLY"，
+    # 见 SG7.real_provider_payload_verification。其余三项原文用的是"属产品行为，
+    # 静态不判"/"见 M-4 分层"/"不做开放世界同义匹配…登记为已知限制并写进报告"，
+    # 不是"登记 DYNAMIC_ONLY"——这里不替它们编造 Q-COMM-04 判分位（没有读到原文，
+    # 不能杜撰具体条款号），只如实指到它们各自已有的登记位置。
+    residual_remediation_transferred_out_note = (
+        "E7 §四 lists four items explicitly out of this round's scope, 登记清楚 (clearly recorded), "
+        "not silently dropped: "
+        "①真实 Provider Payload — the only one of the four whose disposition is literally '登记 "
+        "DYNAMIC_ONLY'; see finding SG7.real_provider_payload_verification "
+        "(empirical_case_ref=EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD, bound to E4's first real call). "
+        "②最高价值缺口是否真的'最高价值' — SG1.G0.single_highest_value_gap_no_fabrication (B-3/C-3) "
+        "only verifies real, non-fabricated behavior (the question genuinely changes with miss[0]); "
+        "it does NOT verify that missing[0] is the semantically highest-value gap to ask about — that "
+        "is a product judgment, transferred to G1, not registered as a separate DYNAMIC_ONLY finding "
+        "because no verified Q-COMM-04 scoring position for it was read this round. "
+        "③事实性陈述的开放语义完备性 — see fact_verification.main()'s own fact_check_scope_note field "
+        "and the M-4 code comment: ledger_status=NONE now gets a closed-set high-signal scan "
+        "(number+unit / Chinese fraction-percent expressions), not open semantic judgment of "
+        "'does this sentence constitute a factual claim at all' — that open question stays with the "
+        "model's own semantic verification, transferred to G1. "
+        "④subject_domain 同义表达 — no canonical-alias table was added this round (unlike platform's "
+        "_PLATFORM_CANONICAL): E7 §四 asks for aliases only for 'the three cases E4 will actually use', "
+        "which are not knowable from this static-only task; adding a broader alias table now would be "
+        "exactly the open-world synonym engine §四 explicitly forbids. subject_domain currently resolves "
+        "via _find_scalar / semantic anchors with no alias normalization — recorded here as a known "
+        "limitation, narrowing deferred to whoever holds E4's actual three cases."
     )
 
     reasoning_effort_note = (
@@ -1497,10 +1804,12 @@ def main():
         "gate": "STATIC_GATE",
         "task_id": "DIYU-V1-STATIC-GATE-001",
         "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 "
-                      "+ DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复，本轮扩充）",
+                      "+ DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）"
+                      "+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复，本轮扩充）",
         "dynamic_only_scope_note": dynamic_only_scope_note,
         "reasoning_effort_note": reasoning_effort_note,
         "static_detector_capability_notice": static_detector_capability_notice,
+        "residual_remediation_transferred_out_note": residual_remediation_transferred_out_note,
         "invariants": {"INV-1": inv1, "INV-2": inv2},
         "skus": results,
     }

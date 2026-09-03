@@ -2,14 +2,15 @@
   "id": "FX11_do_not_publish_still_delivered",
   "kind": "node_exec",
   "table_row": 11,
-  "mechanism": "内部判定 DO_NOT_PUBLISH 而最终 DELIVERED",
-  "expected_behavior": "必须拦截",
+  "mechanism": "内部判定 DO_NOT_PUBLISH 而最终 DELIVERED；M-1（E7 收口追加）变体兄弟：RELEASE_RE 此前搜的是整段 raw_text（实际抓到的是 ARTIFACT 块的自报值），从未检查 USER_DELIVERY 正文本身是否出现该结论",
+  "expected_behavior": "必须拦截；M-1 变体（结论只在 ARTIFACT、正文缺失 / 正文与 ARTIFACT 矛盾 / 三个枚举值各测一次 / 否定语境包裹）同样必须按对应规则处置",
   "e5_source": "STATIC_AUDIT_REPORT.md 第二节第4组：判断能不能发布的核心结论，产品要求它必须原样出现在用户看到的正文里，但目前没有任何代码检查这一点——构造了一个模型内部判定'不能发布'、但用户正文却写着'一切就绪现在就可以发'的矛盾案例，系统照样判定交付成功",
+  "e7_source": "E7_P0残余确定性缺陷修复_EXECUTION_PROMPT_v1.0.md M-1：主判据改为 USER_DELIVERY 正文；ARTIFACT 内自报值保留作对照，缺失或矛盾同样阻断；已用仓库真实 fact_verification 代码逐变体现场核验",
   "chain": [
     {
       "node": "fact_verification",
       "inputs": {
-        "raw_text": "release_decision: DO_NOT_PUBLISH\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n",
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n一切准备就绪，正文里没提发布结论。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
         "professional_input": ""
       }
@@ -17,7 +18,7 @@
     {
       "node": "delivery_finalize",
       "inputs": {
-        "adapter_user_delivery": "一切就绪，现在就可以发。",
+        "adapter_user_delivery": "一切准备就绪，正文里没提发布结论。",
         "adapter_status": "OK",
         "needs_projection": "false",
         "capability": "PUBLISHING_PACKAGING",
@@ -27,10 +28,66 @@
         "fact_check_mismatch": "$0.fact_check_mismatch",
         "release_decision_blocks_delivery": "$0.release_decision_blocks_delivery"
       }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: READY_TO_PUBLISH\n一切就绪，可以发布。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: DO_NOT_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: DO_NOT_PUBLISH\n还有问题，暂不发布。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: HOLD_FOR_FIX\n还差一点。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: HOLD_FOR_FIX\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: HOLD_FOR_FIX\n还差一点才能发。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这次并不是不能发布，一切都准备好了，可以放心发布。\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
+    },
+    {
+      "node": "fact_verification",
+      "inputs": {
+        "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n不是 release_decision: DO_NOT_PUBLISH，而是 release_decision: READY_TO_PUBLISH\n---END_M4_USER_DELIVERY---\n",
+        "capability_call": "",
+        "professional_input": ""
+      }
     }
   ],
   "assert": [
     {"step": 0, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
-    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]}
+    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]},
+    {"step": 2, "field": "release_decision_blocks_delivery", "op": "eq", "value": "false"},
+    {"step": 3, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
+    {"step": 4, "field": "release_decision_mismatch", "op": "eq", "value": "true"},
+    {"step": 4, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
+    {"step": 5, "field": "release_decision_blocks_delivery", "op": "eq", "value": "false"},
+    {"step": 6, "field": "release_decision_user_reported", "op": "eq", "value": "ABSENT"},
+    {"step": 6, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
+    {"step": 7, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"}
   ]
 }

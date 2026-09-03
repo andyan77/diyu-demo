@@ -2,9 +2,10 @@
   "id": "FX02_backref_placeholder_rejected",
   "kind": "node_exec",
   "table_row": 2,
-  "mechanism": "空占位符（\"见上\"之类）",
-  "expected_behavior": "必须被拒",
+  "mechanism": "空占位符（\"见上\"之类）；M-5（E7 收口追加）变体兄弟：_find_scalar 的跨行渗漏——空的必填项后紧跟另一行内容，被当成本字段的值吞并，本应缺失却判定在场",
+  "expected_behavior": "必须被拒；M-5 变体同样必须判定对应字段缺失，不得把下一行内容当成本字段的值",
   "e5_source": "STATIC_AUDIT_REPORT.md 第二节第1组：把6个英文变量名填成'见上'这种两个字的占位符，系统反而判定'充分'",
+  "e7_source": "E7_P0残余确定性缺陷修复_EXECUTION_PROMPT_v1.0.md M-5：_find_scalar 第二条模式冒号两侧原是 \\s*，会把换行也吞进去；改成 [ \\t]* 后值必须与字段名同一行，已用仓库真实 envelope_check 代码对旧提交 4e22738 复现（missing=[]，误判在场）与新代码核验（missing 正确列出该字段）",
   "chain": [
     {
       "node": "envelope_check",
@@ -13,10 +14,46 @@
         "professional_input": "content_body_or_beats: 见上\ncontent_promise: 见上\nexplicit_non_promise: 同上\nfacts_registered: 同上文\ncta_contract: 如上所述\nasset_publish_permission: 即上方\nplatform: 见上文",
         "example_reference_requested": ""
       }
+    },
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "",
+        "professional_input": "content_body_or_beats: 已经剪好一条48秒的成片\ncontent_promise:\nexplicit_non_promise: 不能说打折\nfacts_registered: 面料含毛量35%\ncta_contract: 到店咨询，不留电话\nasset_publish_permission: 自己拍自己出镜，不涉及第三方\nplatform: 小红书\n",
+        "example_reference_requested": ""
+      }
+    },
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "",
+        "professional_input": "content_body_or_beats: 已经剪好一条48秒的成片\ncontent_promise: 看完就知道这件衣服暖不暖\nexplicit_non_promise: 不能说打折\nfacts_registered: 面料含毛量35%\ncta_contract: 到店咨询，不留电话\nasset_publish_permission: 自己拍自己出镜，不涉及第三方\nplatform:",
+        "example_reference_requested": ""
+      }
+    },
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "",
+        "professional_input": "content_body_or_beats: 已经剪好一条48秒的成片\ncontent_promise: 看完就知道这件衣服暖不暖\nexplicit_non_promise: 不能说打折\nfacts_registered:    \ncta_contract: 到店咨询，不留电话\nasset_publish_permission: 自己拍自己出镜，不涉及第三方\nplatform: 小红书\n",
+        "example_reference_requested": ""
+      }
+    },
+    {
+      "node": "envelope_check",
+      "inputs": {
+        "capability_call": "",
+        "professional_input": "content_body_or_beats: 已经剪好一条48秒的成片\ncontent_promise: 看完就知道这件衣服暖不暖\nexplicit_non_promise:\nplatform\nfacts_registered: 面料含毛量35%\ncta_contract: 到店咨询，不留电话\nasset_publish_permission: 自己拍自己出镜，不涉及第三方\nplatform: 小红书\n",
+        "example_reference_requested": ""
+      }
     }
   ],
   "assert": [
     {"step": 0, "field": "can_run", "op": "eq", "value": "false"},
-    {"step": 0, "field": "status", "op": "eq", "value": "INSUFFICIENT"}
+    {"step": 0, "field": "status", "op": "eq", "value": "INSUFFICIENT"},
+    {"step": 1, "field": "missing", "op": "eq", "value": ["content_promise"]},
+    {"step": 2, "field": "missing", "op": "eq", "value": ["platform"]},
+    {"step": 3, "field": "missing", "op": "eq", "value": ["facts_registered"]},
+    {"step": 4, "field": "missing", "op": "eq", "value": ["explicit_non_promise"]}
   ]
 }

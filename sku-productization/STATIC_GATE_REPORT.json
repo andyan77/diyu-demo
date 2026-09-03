@@ -1,10 +1,11 @@
 {
   "gate": "STATIC_GATE",
   "task_id": "DIYU-V1-STATIC-GATE-001",
-  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复，本轮扩充）",
-  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage is the one deliberate exception — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score) can be pinned now without waiting for eval/ to hold a real case; only the case id is a placeholder (PENDING_EVAL_MANIFEST) pending eval/ (currently only .gitkeep; the only populated holdout on this machine, diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) — must be backfilled once a real case exists, not left as a placeholder indefinitely.",
+  "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复，本轮扩充）",
+  "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, the specific E4-first-call condition it is bound to) can be pinned now without waiting for the case itself to exist; only the case id is a placeholder — PENDING_EVAL_MANIFEST (eval/ currently only .gitkeep; the only populated holdout on this machine, diyu-demo-holdout-custody/, belongs to the unrelated, already-closed M5 task) for the market-claim item, PENDING_E4_FIRST_CALL for the payload item — must be backfilled once the real case/call exists, not left as a placeholder indefinitely.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
   "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage (DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose.",
+  "residual_remediation_transferred_out_note": "E7 §四 lists four items explicitly out of this round's scope, 登记清楚 (clearly recorded), not silently dropped: ①真实 Provider Payload — the only one of the four whose disposition is literally '登记 DYNAMIC_ONLY'; see finding SG7.real_provider_payload_verification (empirical_case_ref=EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD, bound to E4's first real call). ②最高价值缺口是否真的'最高价值' — SG1.G0.single_highest_value_gap_no_fabrication (B-3/C-3) only verifies real, non-fabricated behavior (the question genuinely changes with miss[0]); it does NOT verify that missing[0] is the semantically highest-value gap to ask about — that is a product judgment, transferred to G1, not registered as a separate DYNAMIC_ONLY finding because no verified Q-COMM-04 scoring position for it was read this round. ③事实性陈述的开放语义完备性 — see fact_verification.main()'s own fact_check_scope_note field and the M-4 code comment: ledger_status=NONE now gets a closed-set high-signal scan (number+unit / Chinese fraction-percent expressions), not open semantic judgment of 'does this sentence constitute a factual claim at all' — that open question stays with the model's own semantic verification, transferred to G1. ④subject_domain 同义表达 — no canonical-alias table was added this round (unlike platform's _PLATFORM_CANONICAL): E7 §四 asks for aliases only for 'the three cases E4 will actually use', which are not knowable from this static-only task; adding a broader alias table now would be exactly the open-world synonym engine §四 explicitly forbids. subject_domain currently resolves via _find_scalar / semantic anchors with no alias normalization — recorded here as a known limitation, narrowing deferred to whoever holds E4's actual three cases.",
   "invariants": {
     "INV-1": {
       "invariant": "INV-1",
@@ -60,6 +61,8 @@
         }
       },
       "git_diff_intersection": [],
+      "working_tree_diff_intersection": [],
+      "staged_diff_intersection": [],
       "pass": true,
       "issues": []
     },
@@ -80,7 +83,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "f19bba88352b4248229b38fb83d8dfd87c2227b4602780c5ad8e6e1d6ee7a7aa",
+      "dsl_sha256": "39fc5403fe2ed1af564ab25135bac4afb28da0fbecce0bbfd9e1114b0d8964c9",
       "blockers": [],
       "dynamic_only": [
         {
@@ -92,6 +95,17 @@
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
             "case_id": "PENDING_EVAL_MANIFEST",
             "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
+          "id": "SG7.real_provider_payload_verification",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+          "empirical_case_ref": {
+            "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
+            "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+            "case_id": "PENDING_E4_FIRST_CALL",
+            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
           }
         }
       ],
@@ -132,21 +146,29 @@
         {
           "id": "SG1.G1.fact_verification",
           "verdict": "PASS",
-          "summary": "no-fabrication / UNKNOWN-FACT discipline carried by node `fact_verification`",
+          "summary": "verified by direct execution (not carrier-existence alone): no-fabrication / UNKNOWN-FACT discipline real behavior matches expectation: {'not_blocked_when_resolvable': True, 'blocked_when_unresolvable': True, 'pass': True}",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
             "node": "fact_verification",
-            "title": "事实核验（B-02，代码判定，可复用单元）"
+            "detail": {
+              "not_blocked_when_resolvable": true,
+              "blocked_when_unresolvable": true,
+              "pass": true
+            }
           }
         },
         {
           "id": "SG1.G1.market_claim_scan",
           "verdict": "PASS",
-          "summary": "no unverifiable current-market claim carried by node `market_claim_scan`",
+          "summary": "verified by direct execution (not carrier-existence alone): no unverifiable current-market claim real behavior matches expectation: {'not_blocked_when_clean': True, 'blocked_when_hit': True, 'pass': True}",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
             "node": "market_claim_scan",
-            "title": "市场断言检测（B-04，独立模式文件，可复用单元）"
+            "detail": {
+              "not_blocked_when_clean": true,
+              "blocked_when_hit": true,
+              "pass": true
+            }
           }
         },
         {
@@ -267,6 +289,47 @@
                 "file": "content-production/skills/packaging-content-for-release/references/examples.md",
                 "embedded_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
                 "source_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "match": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "SG5.industry_conditions_reference_bytes",
+          "verdict": "PASS",
+          "summary": "hash of each subject_domain branch's byte snapshot actually embedded in ref_projection's template (not the disk source file) vs. the corresponding section of the current disk source file, normalized-whitespace compare, per industry: [{'industry': '服装 / 门店零售', 'embedded_sha256_normalized': '4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891', 'source_sha256_normalized': '4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891', 'match': True}, {'industry': '餐饮 / 门店', 'embedded_sha256_normalized': '496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1', 'source_sha256_normalized': '496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1', 'match': True}, {'industry': '知识付费 / 课程', 'embedded_sha256_normalized': 'fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0', 'source_sha256_normalized': 'fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0', 'match': True}, {'industry': '动漫 / 原创 IP', 'embedded_sha256_normalized': '8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5', 'source_sha256_normalized': '8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5', 'match': True}, {'industry': '户外 / 露营（爱好垂类）', 'embedded_sha256_normalized': '788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e', 'source_sha256_normalized': '788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e', 'match': True}]",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml",
+            "node": "ref_projection",
+            "detail": [
+              {
+                "industry": "服装 / 门店零售",
+                "embedded_sha256_normalized": "4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891",
+                "source_sha256_normalized": "4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891",
+                "match": true
+              },
+              {
+                "industry": "餐饮 / 门店",
+                "embedded_sha256_normalized": "496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1",
+                "source_sha256_normalized": "496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1",
+                "match": true
+              },
+              {
+                "industry": "知识付费 / 课程",
+                "embedded_sha256_normalized": "fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0",
+                "source_sha256_normalized": "fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0",
+                "match": true
+              },
+              {
+                "industry": "动漫 / 原创 IP",
+                "embedded_sha256_normalized": "8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5",
+                "source_sha256_normalized": "8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5",
+                "match": true
+              },
+              {
+                "industry": "户外 / 露营（爱好垂类）",
+                "embedded_sha256_normalized": "788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e",
+                "source_sha256_normalized": "788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e",
                 "match": true
               }
             ]
@@ -405,6 +468,16 @@
           }
         },
         {
+          "id": "SG6.industry_conditions_reference_bytes",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG6.prompt_tail_integrity",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
@@ -435,6 +508,26 @@
           }
         },
         {
+          "id": "SG6.fact_verification_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.market_claim_scan_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "R0.FX01_natural_language_admission",
           "verdict": "PASS",
           "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
@@ -445,7 +538,7 @@
         {
           "id": "R0.FX02_backref_placeholder_rejected",
           "verdict": "PASS",
-          "summary": "row 2 (空占位符（\"见上\"之类）): expected 必须被拒 — verified by direct execution of the real node code extracted from the DSL",
+          "summary": "row 2 (空占位符（\"见上\"之类）；M-5（E7 收口追加）变体兄弟：_find_scalar 的跨行渗漏——空的必填项后紧跟另一行内容，被当成本字段的值吞并，本应缺失却判定在场): expected 必须被拒；M-5 变体同样必须判定对应字段缺失，不得把下一行内容当成本字段的值 — verified by direct execution of the real node code extracted from the DSL",
           "evidence": {
             "fixture_file": "fixtures/FX02_backref_placeholder_rejected.json"
           }
@@ -494,7 +587,7 @@
         {
           "id": "R0.FX08_forged_duplicate_marker_block",
           "verdict": "PASS",
-          "summary": "row 8 (伪造/重复标记块（假标记抢占解析位）): expected 必须被检出 — verified by direct execution of the real node code extracted from the DSL",
+          "summary": "row 8 (伪造/重复标记块（假标记抢占解析位）；M-3（E7 收口追加）变体兄弟：_between 此前只检测 START 重复，END 只取 find 命中的第一个——真实边界哪一个 END 才对同样无法确定): expected 必须被检出；M-3 变体（重复 END / 交错 / 标记字符串出现在正文引用里）同样必须按无法确定真伪处理 — verified by direct execution of the real node code extracted from the DSL",
           "evidence": {
             "fixture_file": "fixtures/FX08_forged_duplicate_marker_block.json"
           }
@@ -518,7 +611,7 @@
         {
           "id": "R0.FX11_do_not_publish_still_delivered",
           "verdict": "PASS",
-          "summary": "row 11 (内部判定 DO_NOT_PUBLISH 而最终 DELIVERED): expected 必须拦截 — verified by direct execution of the real node code extracted from the DSL",
+          "summary": "row 11 (内部判定 DO_NOT_PUBLISH 而最终 DELIVERED；M-1（E7 收口追加）变体兄弟：RELEASE_RE 此前搜的是整段 raw_text（实际抓到的是 ARTIFACT 块的自报值），从未检查 USER_DELIVERY 正文本身是否出现该结论): expected 必须拦截；M-1 变体（结论只在 ARTIFACT、正文缺失 / 正文与 ARTIFACT 矛盾 / 三个枚举值各测一次 / 否定语境包裹）同样必须按对应规则处置 — verified by direct execution of the real node code extracted from the DSL",
           "evidence": {
             "fixture_file": "fixtures/FX11_do_not_publish_still_delivered.json"
           }
@@ -553,7 +646,7 @@
         {
           "id": "R0.FX15_standard_deliverables_completeness",
           "verdict": "PASS",
-          "summary": "row B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单） (空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同): expected 必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行 — verified by direct execution of the real node code extracted from the DSL",
+          "summary": "row B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单） (空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同；M-2（E7 收口追加）变体兄弟：即便十二个字段名逐一都写了，只要值是空的或占位符，_standard_deliverables_missing 的原实现（纯字段名存在性查找）照样判定齐全): expected 必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行；M-2 变体（有名无值/值为空白符/值为占位符/十二项中只空一项）同样必须判定缺失 — verified by direct execution of the real node code extracted from the DSL",
           "evidence": {
             "fixture_file": "fixtures/FX15_standard_deliverables_completeness.json"
           }
@@ -567,6 +660,14 @@
           }
         },
         {
+          "id": "R0.FX17_fact_ledger_none_contradicted_by_body",
+          "verdict": "PASS",
+          "summary": "row M-4（E7 收口追加，DIYU-V1-P0-RESIDUAL-REMEDIATION-001） (FACT_LEDGER 显式声明 NONE（本次没有需要登记的事实性陈述），但用户正文里明显含数字化事实性数据——此前只核验已登记 fact_id 能否解析，从未核对 NONE 这个声明本身是否与正文矛盾): expected 必须拦截；变体兄弟（全角数字/中文成数分数表达/数字与单位跨空白或换行/PARSE_FAILED 时同样成立）同样必须拦截或维持既有阻断 — verified by direct execution of the real node code extracted from the DSL",
+          "evidence": {
+            "fixture_file": "fixtures/FX17_fact_ledger_none_contradicted_by_body.json"
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -575,6 +676,17 @@
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
             "case_id": "PENDING_EVAL_MANIFEST",
             "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
+          "id": "SG7.real_provider_payload_verification",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+          "empirical_case_ref": {
+            "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
+            "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+            "case_id": "PENDING_E4_FIRST_CALL",
+            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
           }
         },
         {
@@ -601,6 +713,17 @@
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
             "case_id": "PENDING_EVAL_MANIFEST",
             "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
+          "id": "SG7.real_provider_payload_verification",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+          "empirical_case_ref": {
+            "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
+            "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+            "case_id": "PENDING_E4_FIRST_CALL",
+            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
           }
         }
       ],
@@ -641,21 +764,29 @@
         {
           "id": "SG1.G1.fact_verification",
           "verdict": "PASS",
-          "summary": "no-fabrication / UNKNOWN-FACT discipline carried by node `fact_verification`",
+          "summary": "verified by direct execution (not carrier-existence alone): no-fabrication / UNKNOWN-FACT discipline real behavior matches expectation: {'not_blocked_when_resolvable': True, 'blocked_when_unresolvable': True, 'pass': True}",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
             "node": "fact_verification",
-            "title": "事实核验（B-02，代码判定，可复用单元）"
+            "detail": {
+              "not_blocked_when_resolvable": true,
+              "blocked_when_unresolvable": true,
+              "pass": true
+            }
           }
         },
         {
           "id": "SG1.G1.market_claim_scan",
           "verdict": "PASS",
-          "summary": "no unverifiable current-market claim carried by node `market_claim_scan`",
+          "summary": "verified by direct execution (not carrier-existence alone): no unverifiable current-market claim real behavior matches expectation: {'not_blocked_when_clean': True, 'blocked_when_hit': True, 'pass': True}",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
             "node": "market_claim_scan",
-            "title": "市场断言检测（B-04，独立模式文件，可复用单元）"
+            "detail": {
+              "not_blocked_when_clean": true,
+              "blocked_when_hit": true,
+              "pass": true
+            }
           }
         },
         {
@@ -776,6 +907,47 @@
                 "file": "content-production/skills/packaging-content-for-release/references/examples.md",
                 "embedded_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
                 "source_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "match": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "SG5.industry_conditions_reference_bytes",
+          "verdict": "PASS",
+          "summary": "hash of each subject_domain branch's byte snapshot actually embedded in ref_projection's template (not the disk source file) vs. the corresponding section of the current disk source file, normalized-whitespace compare, per industry: [{'industry': '服装 / 门店零售', 'embedded_sha256_normalized': '4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891', 'source_sha256_normalized': '4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891', 'match': True}, {'industry': '餐饮 / 门店', 'embedded_sha256_normalized': '496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1', 'source_sha256_normalized': '496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1', 'match': True}, {'industry': '知识付费 / 课程', 'embedded_sha256_normalized': 'fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0', 'source_sha256_normalized': 'fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0', 'match': True}, {'industry': '动漫 / 原创 IP', 'embedded_sha256_normalized': '8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5', 'source_sha256_normalized': '8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5', 'match': True}, {'industry': '户外 / 露营（爱好垂类）', 'embedded_sha256_normalized': '788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e', 'source_sha256_normalized': '788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e', 'match': True}]",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "node": "ref_projection",
+            "detail": [
+              {
+                "industry": "服装 / 门店零售",
+                "embedded_sha256_normalized": "4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891",
+                "source_sha256_normalized": "4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891",
+                "match": true
+              },
+              {
+                "industry": "餐饮 / 门店",
+                "embedded_sha256_normalized": "496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1",
+                "source_sha256_normalized": "496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1",
+                "match": true
+              },
+              {
+                "industry": "知识付费 / 课程",
+                "embedded_sha256_normalized": "fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0",
+                "source_sha256_normalized": "fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0",
+                "match": true
+              },
+              {
+                "industry": "动漫 / 原创 IP",
+                "embedded_sha256_normalized": "8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5",
+                "source_sha256_normalized": "8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5",
+                "match": true
+              },
+              {
+                "industry": "户外 / 露营（爱好垂类）",
+                "embedded_sha256_normalized": "788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e",
+                "source_sha256_normalized": "788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e",
                 "match": true
               }
             ]
@@ -907,6 +1079,16 @@
           }
         },
         {
+          "id": "SG6.industry_conditions_reference_bytes",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG6.prompt_tail_integrity",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
@@ -937,6 +1119,26 @@
           }
         },
         {
+          "id": "SG6.fact_verification_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.market_claim_scan_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -945,6 +1147,17 @@
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
             "case_id": "PENDING_EVAL_MANIFEST",
             "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
+          "id": "SG7.real_provider_payload_verification",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+          "empirical_case_ref": {
+            "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
+            "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+            "case_id": "PENDING_E4_FIRST_CALL",
+            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
           }
         },
         {
@@ -971,6 +1184,17 @@
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
             "case_id": "PENDING_EVAL_MANIFEST",
             "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
+          "id": "SG7.real_provider_payload_verification",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+          "empirical_case_ref": {
+            "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
+            "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+            "case_id": "PENDING_E4_FIRST_CALL",
+            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
           }
         }
       ],
@@ -1011,21 +1235,29 @@
         {
           "id": "SG1.G1.fact_verification",
           "verdict": "PASS",
-          "summary": "no-fabrication / UNKNOWN-FACT discipline carried by node `fact_verification`",
+          "summary": "verified by direct execution (not carrier-existence alone): no-fabrication / UNKNOWN-FACT discipline real behavior matches expectation: {'not_blocked_when_resolvable': True, 'blocked_when_unresolvable': True, 'pass': True}",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
             "node": "fact_verification",
-            "title": "事实核验（B-02，代码判定，可复用单元）"
+            "detail": {
+              "not_blocked_when_resolvable": true,
+              "blocked_when_unresolvable": true,
+              "pass": true
+            }
           }
         },
         {
           "id": "SG1.G1.market_claim_scan",
           "verdict": "PASS",
-          "summary": "no unverifiable current-market claim carried by node `market_claim_scan`",
+          "summary": "verified by direct execution (not carrier-existence alone): no unverifiable current-market claim real behavior matches expectation: {'not_blocked_when_clean': True, 'blocked_when_hit': True, 'pass': True}",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
             "node": "market_claim_scan",
-            "title": "市场断言检测（B-04，独立模式文件，可复用单元）"
+            "detail": {
+              "not_blocked_when_clean": true,
+              "blocked_when_hit": true,
+              "pass": true
+            }
           }
         },
         {
@@ -1146,6 +1378,47 @@
                 "file": "content-production/skills/packaging-content-for-release/references/examples.md",
                 "embedded_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
                 "source_sha256_normalized": "5863ea61e9a7431a2472b1b55575f4150133f369d8322f242f09ef4bc7c4ea90",
+                "match": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "SG5.industry_conditions_reference_bytes",
+          "verdict": "PASS",
+          "summary": "hash of each subject_domain branch's byte snapshot actually embedded in ref_projection's template (not the disk source file) vs. the corresponding section of the current disk source file, normalized-whitespace compare, per industry: [{'industry': '服装 / 门店零售', 'embedded_sha256_normalized': '4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891', 'source_sha256_normalized': '4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891', 'match': True}, {'industry': '餐饮 / 门店', 'embedded_sha256_normalized': '496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1', 'source_sha256_normalized': '496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1', 'match': True}, {'industry': '知识付费 / 课程', 'embedded_sha256_normalized': 'fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0', 'source_sha256_normalized': 'fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0', 'match': True}, {'industry': '动漫 / 原创 IP', 'embedded_sha256_normalized': '8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5', 'source_sha256_normalized': '8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5', 'match': True}, {'industry': '户外 / 露营（爱好垂类）', 'embedded_sha256_normalized': '788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e', 'source_sha256_normalized': '788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e', 'match': True}]",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "node": "ref_projection",
+            "detail": [
+              {
+                "industry": "服装 / 门店零售",
+                "embedded_sha256_normalized": "4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891",
+                "source_sha256_normalized": "4db31cf2f9ecaf5c2d5688038a333e6b49b3dfd644f7ac9b2f8a7aef36af5891",
+                "match": true
+              },
+              {
+                "industry": "餐饮 / 门店",
+                "embedded_sha256_normalized": "496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1",
+                "source_sha256_normalized": "496dcecce7eea646393ec0c8d6b49920dd7f0c67c6c8754d9325a73f66954db1",
+                "match": true
+              },
+              {
+                "industry": "知识付费 / 课程",
+                "embedded_sha256_normalized": "fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0",
+                "source_sha256_normalized": "fc73d1fb2d7562dbe8f811668a826504e841f57f0b845fdc65a55ffda6ed67f0",
+                "match": true
+              },
+              {
+                "industry": "动漫 / 原创 IP",
+                "embedded_sha256_normalized": "8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5",
+                "source_sha256_normalized": "8790c0eba639cef9e43654bc77d5fe218a7e6fba97e3a73980d8258885aa25e5",
+                "match": true
+              },
+              {
+                "industry": "户外 / 露营（爱好垂类）",
+                "embedded_sha256_normalized": "788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e",
+                "source_sha256_normalized": "788a4bf5ce62e356b1de8846cd0d89e9daedc97a4e0ce5dc320319be1102b53e",
                 "match": true
               }
             ]
@@ -1277,6 +1550,16 @@
           }
         },
         {
+          "id": "SG6.industry_conditions_reference_bytes",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG6.prompt_tail_integrity",
           "verdict": "PASS",
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
@@ -1307,6 +1590,26 @@
           }
         },
         {
+          "id": "SG6.fact_verification_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.market_claim_scan_behavior",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -1315,6 +1618,17 @@
             "target_score": "0（任何一条命中即 FAIL，不是评分制）",
             "case_id": "PENDING_EVAL_MANIFEST",
             "case_id_note": "eval/ 目前只有 .gitkeep，没有真实测试集；判分位已钉死，case id 待 eval/ 实测集建立时回填，不得凭空编造"
+          }
+        },
+        {
+          "id": "SG7.real_provider_payload_verification",
+          "verdict": "DYNAMIC_ONLY",
+          "summary": "本地声明的 completion_params / 组装后 prompt 是否等于真实发给 provider 的字节，零 LLM 调用的静态阶段无法核验（核验本身需要发起一次真实调用）；按 E7 Prompt §四裁决正式登记 DYNAMIC_ONLY，绑定 E4 首次真实调用的截获比对，不是散文披露",
+          "empirical_case_ref": {
+            "dimension": "E4 首次真实 LLM 调用：发送 payload（prompt 组装结果 + completion_params）与 本地声明是否一致",
+            "target_score": "N/A——不是 Q-COMM 评分维度，是 E4 进入前必须闭合一次的链路前置条件",
+            "case_id": "PENDING_E4_FIRST_CALL",
+            "case_id_note": "零 LLM 调用边界内不存在、也不能伪造这次比对；E4 的第一个动作必须是截获并比对首次真实 payload，跑一次即永久闭合，不是重复验收项"
           }
         },
         {

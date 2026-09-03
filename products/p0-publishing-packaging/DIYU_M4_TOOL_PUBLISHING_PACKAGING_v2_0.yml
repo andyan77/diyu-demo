@@ -331,12 +331,21 @@ workflow:
               """从外壳文本里取一个标量语义值。容忍 YAML / JSON 两种结构化写法。
               R2：去掉原第三条"反引号 + 冒号"模式——那条模式会把 SKILL 文档里
               `key`：说明 这种纯文档引用误判成值声明（引用自身文档即判通过，
-              E5 第 1 组）。反引号是文档强调惯例，不是操作者声明值的方式。"""
+              E5 第 1 组）。反引号是文档强调惯例，不是操作者声明值的方式。
+              M-5（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：第二条模式冒号与
+              `$` 两侧原来都是 `\s*`——`\s` 含换行，`re.search` 会把这一整段
+              当成一个整体匹配：一个必填项写成 `key:` 后立刻换行，`\s*`
+              直接吞掉这个换行与下一行的前导空白，把下一行的完整内容（哪怕
+              是另一个字段的 `key: value` 声明）当成本字段的值返回，
+              `_present()` 那段专门处理"空值后接续行"的、有 KEYLIKE 防护的
+              block 逻辑（见 `_present`）因此从未被走到。改成 `[ \t]*`
+              （只匹配同一行内的横向空白），值必须与字段名同一行；空值时
+              `_find_scalar` 老实返回空串，交回 `_present` 的续行逻辑处理。"""
               if not text:
                   return ""
               pats = [
                   r'"%s"\s*:\s*"([^"]*)"' % re.escape(key),
-                  r"^\s*%s\s*:\s*(.+?)\s*$" % re.escape(key),
+                  r"^[ \t]*%s[ \t]*:[ \t]*(.+?)[ \t]*$" % re.escape(key),
               ]
               for p in pats:
                   m = re.search(p, text, re.MULTILINE)
@@ -2286,6 +2295,7 @@ workflow:
           # "实际为真"——那仍然是模型的语义核验职责，本节点只堵一个可机械核验的漏洞：
           # 编号对不上号，或者压根没有登记事实核验的可回指结构。
 
+          A_OPEN, A_CLOSE = "---M4_ARTIFACT---", "---END_M4_ARTIFACT---"
           FL_OPEN, FL_CLOSE = "---M4_FACT_LEDGER---", "---END_M4_FACT_LEDGER---"
           U_OPEN, U_CLOSE = "---M4_USER_DELIVERY---", "---END_M4_USER_DELIVERY---"
 
@@ -2293,11 +2303,33 @@ workflow:
 
           STATUS_RE = re.compile(r"fact_check_status\s*[:：]\s*(PASS|FAIL|NOT_VERIFIED)", re.IGNORECASE)
           # R1（DIYU-V1-P0-ROOT-REMEDIATION-001）：release_decision 是模型在正文里
-          # 自报的单一汇聚结论（标准 §1.3 第 12 项）。此前没有任何代码核对它——
-          # 一个内部判定 DO_NOT_PUBLISH 的产出仍可能被交付收口判定为 DELIVERED
-          # （R0 fixture #11）。这里只做「自报了 DO_NOT_PUBLISH 就必须拦」这一件
-          # 机械核验，不代替模型做 release_decision 本身的专业判断。
+          # 自报的单一汇聚结论（标准 §1.3 第 12 项）。
+          # M-1（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：R1 当时把这个正则套在整段
+          # raw_text 上——release_decision 通常只写在 ARTIFACT 内部结构块里，
+          # RELEASE_RE.search(raw) 实际抓到的是那份自报值，从未检查它是否也出现在
+          # 用户真正看到的 USER_DELIVERY 正文里；ARTIFACT 里写着 READY_TO_PUBLISH、
+          # USER_DELIVERY 只字未提能不能发的产出，此前一样判定
+          # release_decision_blocks_delivery=false。main() 里改为分别在 ARTIFACT
+          # 块与 USER_DELIVERY 块内独立搜索，USER_DELIVERY 缺失该结论（含标记
+          # 重复、无法确定归属时按缺失处理）、或它是 DO_NOT_PUBLISH、或它与
+          # ARTIFACT 的自报值互相矛盾——任一成立即阻断。
           RELEASE_RE = re.compile(r"release_decision\s*[:：]\s*(READY_TO_PUBLISH|HOLD_FOR_FIX|DO_NOT_PUBLISH)", re.IGNORECASE)
+
+          # M-4（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：FACT_LEDGER 显式声明 NONE
+          # （本次没有需要登记的事实性陈述）时，此前只核验"已登记的 fact_id 能否
+          # 解析"，从未核对 NONE 这个声明本身是否与用户正文的实际内容矛盾——正文
+          # 里写着具体的百分比、克重、价格，声明却是"没有事实性陈述"，两者直接
+          # 矛盾，但没有任何检查会发现。这里只做封闭集合的高信号扫描（数值+计量
+          # 单位、中文成数/分数表达，全角数字与数字-单位跨空白/换行都覆盖），不做
+          # 开放语义判断：判断一句话"算不算事实性陈述"仍然是模型的语义核验职责
+          # （见 §13.3 转出登记），这里只堵"声明 NONE 但正文明显有数字化事实"这
+          # 一种可机械核验的矛盾，不扩充关键词表去猜语义。
+          _FACT_SIGNAL_RE = re.compile(
+              r"[\d０-９]+(?:[.．][\d０-９]+)?\s*"
+              r"(?:%|％|克|kg|KG|Kg|mm|MM|cm|CM|毫米|厘米|元|折|人民币|块钱)"
+              r"|[一二两三四五六七八九十百千万]+成"
+              r"|[一二两三四五六七八九十百千万]+分之[一二两三四五六七八九十百千万]+"
+          )
 
 
           def _between(text, a, b):
@@ -2306,15 +2338,22 @@ workflow:
               标记，一段伪造的、无害的标记块只要抢先出现在真实标记块之前，
               就会让解析悄悄读到假块、放过真正有问题的内容。现在额外检测
               「同一个开始标记是否出现了不止一次」，出现即标记 duplicate=True，
-              交给调用方按无法确定真伪处理，不再默认第一个为真。"""
+              交给调用方按无法确定真伪处理，不再默认第一个为真。
+              M-3（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：上一版只检测 START
+              重复，END 只取 find 命中的第一个——"合法正文 + 第一个 END + 违规
+              文字 + 第二个 END" 这种输入，真实边界到底是哪一个 END 已经无法
+              确定，必须和 START 重复同等按"无法确定真伪"处理，不能因为 START
+              没重复就当没事。这里补上"第一个 END 之后是否还有下一个 END"的
+              独立检测，与 START 对称。"""
               i = text.find(a)
               if i < 0:
                   return None, False
-              dup = text.find(a, i + len(a)) >= 0
+              start_dup = text.find(a, i + len(a)) >= 0
               j = text.find(b, i + len(a))
               if j < 0:
-                  return None, dup
-              return text[i + len(a):j].strip(), dup
+                  return None, start_dup
+              end_dup = text.find(b, j + len(b)) >= 0
+              return text[i + len(a):j].strip(), (start_dup or end_dup)
 
 
           def _replace_between(text, a, b, new_inner):
@@ -2385,7 +2424,18 @@ workflow:
                           "unresolved_fact_id": bad_ids,
                       })
 
-              critical_error = (ledger_status == "PARSE_FAILED") or bool(unresolved)
+              # M-4：仅在 ledger_status == NONE 时扫描 USER_DELIVERY 正文；
+              # PARSE_FAILED 时正文事实覆盖本就不可判定，且 critical_error 已经
+              # 因 PARSE_FAILED 本身阻断，不需要也不应该再叠加一次开放式扫描。
+              artifact_block, artifact_dup = _between(raw, A_OPEN, A_CLOSE)
+              user_block, user_dup = _between(raw, U_OPEN, U_CLOSE)
+
+              ledger_none_contradiction_hits = []
+              if ledger_status == "NONE":
+                  ledger_none_contradiction_hits = _FACT_SIGNAL_RE.findall(user_block or "")
+              ledger_none_contradicted = bool(ledger_none_contradiction_hits)
+
+              critical_error = (ledger_status == "PARSE_FAILED") or bool(unresolved) or ledger_none_contradicted
               fact_check_status_code = "FAIL" if critical_error else "PASS"
 
               m = STATUS_RE.search(raw)
@@ -2398,13 +2448,35 @@ workflow:
 
               fact_gate_blocked = (fact_check_status_code == "FAIL")
 
-              rm = RELEASE_RE.search(raw)
-              release_decision_self_reported = rm.group(1).upper() if rm else "ABSENT"
-              release_decision_blocks_delivery = (release_decision_self_reported == "DO_NOT_PUBLISH")
+              # M-1：主判据改为 USER_DELIVERY 正文里是否出现 release_decision——
+              # 标记重复（user_dup）时无法确定该块的真实边界，按缺失处理，不取
+              # 第一段当真。ARTIFACT 内的自报值仍保留作对照，且与用户正文结论
+              # 矛盾时同样阻断。
+              rm_artifact = RELEASE_RE.search(artifact_block) if artifact_block else None
+              release_decision_self_reported = rm_artifact.group(1).upper() if rm_artifact else "ABSENT"
+
+              rm_user = RELEASE_RE.search(user_block) if (user_block and not user_dup) else None
+              release_decision_user_reported = rm_user.group(1).upper() if rm_user else "ABSENT"
+
+              release_decision_mismatch = (
+                  release_decision_user_reported != "ABSENT"
+                  and release_decision_self_reported != "ABSENT"
+                  and release_decision_user_reported != release_decision_self_reported
+              )
+              release_decision_blocks_delivery = (
+                  release_decision_user_reported == "ABSENT"
+                  or release_decision_user_reported == "DO_NOT_PUBLISH"
+                  or release_decision_mismatch
+              )
 
               if fact_gate_blocked:
                   if ledger_status == "PARSE_FAILED" and not unresolved:
                       reason = "FACT_LEDGER 结构无法解析（%s），无法核验任何一条事实性陈述的引用" % ledger_note
+                  elif ledger_none_contradicted:
+                      reason = (
+                          "FACT_LEDGER 声明 NONE（本次没有需要登记的事实性陈述），但用户正文里出现"
+                          "疑似事实性数据（%s），与 NONE 声明矛盾"
+                      ) % "、".join(ledger_none_contradiction_hits[:5])
                   else:
                       detail = "；".join(
                           "%s → %s" % (u["output_location"], "|".join(u["unresolved_fact_id"]))
@@ -2427,8 +2499,9 @@ workflow:
                   "fact_check_status_code": fact_check_status_code,
                   "fact_check_scope_note": (
                       "code 只核验 FACT_LEDGER 里的 fact_id 是否能在本次输入原文里找到（引用可解析性），"
+                      "以及 ledger_status=NONE 时用户正文是否出现封闭集合内的高信号事实性数据，"
                       "不核验、也无法核验事实性陈述本身是否真实——那仍然是模型语义核验的职责。PASS 在这里的准确含义是"
-                      "「未发现无法解析的引用」，不是「已证实全部为真」。"
+                      "「未发现无法解析的引用，也未发现与 NONE 矛盾的高信号数据」，不是「已证实全部为真」。"
                   ),
                   "self_reported_status": self_reported,
                   "fact_check_mismatch": "true" if mismatch else "false",
@@ -2436,8 +2509,12 @@ workflow:
                   "ledger_note": ledger_note,
                   "ledger_entries_count": len(entries),
                   "unresolved_entries": unresolved,
+                  "ledger_none_contradicted": "true" if ledger_none_contradicted else "false",
+                  "ledger_none_contradiction_hits": ledger_none_contradiction_hits,
                   "fact_gate_blocked": "true" if fact_gate_blocked else "false",
                   "release_decision_self_reported": release_decision_self_reported,
+                  "release_decision_user_reported": release_decision_user_reported,
+                  "release_decision_mismatch": "true" if release_decision_mismatch else "false",
                   "release_decision_blocks_delivery": "true" if release_decision_blocks_delivery else "false",
               }
         code_language: python3
@@ -2464,10 +2541,22 @@ workflow:
           ledger_status:
             children: null
             type: string
+          ledger_none_contradicted:
+            children: null
+            type: string
+          ledger_none_contradiction_hits:
+            children: null
+            type: array[string]
           self_reported_status:
             children: null
             type: string
           release_decision_self_reported:
+            children: null
+            type: string
+          release_decision_user_reported:
+            children: null
+            type: string
+          release_decision_mismatch:
             children: null
             type: string
           release_decision_blocks_delivery:
@@ -2555,15 +2644,21 @@ workflow:
               """返回 (block, duplicate_marker_found)。
               R6（E5 第 7 组）：同一套"伪造/重复标记块抢占解析位"攻击面对
               USER_DELIVERY 标记同样成立——与 fact_verification._between
-              同一处理：出现不止一组开始标记时不取第一个当真。"""
+              同一处理：出现不止一组开始标记时不取第一个当真。
+              M-3（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：END 同样可能重复
+              出现（合法正文 + 第一个 END + 违规文字 + 第二个 END），真实
+              边界哪一个 END 才对已经无法确定，与 START 重复同等处理——三个
+              解析器（fact_verification / market_claim_scan / returns_adapter）
+              同一处改，不各改一份。"""
               i = text.find(a)
               if i < 0:
                   return None, False
-              dup = text.find(a, i + len(a)) >= 0
+              start_dup = text.find(a, i + len(a)) >= 0
               j = text.find(b, i + len(a))
               if j < 0:
-                  return None, dup
-              return text[i + len(a):j].strip(), dup
+                  return None, start_dup
+              end_dup = text.find(b, j + len(b)) >= 0
+              return text[i + len(a):j].strip(), (start_dup or end_dup)
 
 
           def _replace_between(text, a, b, new_inner):
@@ -2761,23 +2856,68 @@ workflow:
 
           def _between(text, a, b):
               """返回 (block, duplicate_marker_found)——R6（E5 第 7 组）同一处理：
-              出现不止一组开始标记时不取第一个当真。"""
+              出现不止一组开始标记时不取第一个当真。M-3
+              （DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：END 同样可能重复出现，
+              真实边界哪一个 END 才对已经无法确定，与 START 重复同等处理。"""
               i = text.find(a)
               if i < 0:
                   return None, False
-              dup = text.find(a, i + len(a)) >= 0
+              start_dup = text.find(a, i + len(a)) >= 0
               j = text.find(b, i + len(a))
               if j < 0:
-                  return None, dup
-              return text[i + len(a):j].strip(), dup
+                  return None, start_dup
+              end_dup = text.find(b, j + len(b)) >= 0
+              return text[i + len(a):j].strip(), (start_dup or end_dup)
+
+
+          # M-2（DIYU-V1-P0-RESIDUAL-REMEDIATION-001）：占位值不算实质值——
+          # 与 envelope_check.BACKREF_PLACEHOLDERS 同一份"反指但无所指"清单
+          # 的最小子集，只挡文档里明确点名的三个词（见上/同上/待定），不扩充
+          # 猜语义。
+          _DELIVERABLE_PLACEHOLDER_VALUES = {
+              "见上", "见上文", "同上", "同上文", "如上", "待定",
+              "tbd", "n/a", "na", "none", "无",
+          }
+
+
+          def _deliverable_value_ok(v):
+              if v is None:
+                  return False
+              s = v.strip()
+              if not s:
+                  return False
+              if s.upper() == "NOT_APPLICABLE":
+                  return True
+              if s.lower() in _DELIVERABLE_PLACEHOLDER_VALUES:
+                  return False
+              return True
+
+
+          def _field_value_lines(text, key):
+              """M-2：同一行冒号后的值——与 envelope_check._find_scalar（M-5）
+              同一纪律，值必须与字段名同一行，不吞并下一行内容。"""
+              pat = re.compile(r"^[ \t]*%s[ \t]*[:：][ \t]*(.*)$" % re.escape(key), re.IGNORECASE | re.MULTILINE)
+              return [m.group(1).strip() for m in pat.finditer(text)]
 
 
           def _standard_deliverables_missing(artifact_text):
+              """M-2：原判据是 `re.search(r'\\b%s\\b', text)`——纯字段名存在性
+              查找，不看值。十二个字段名各占一行、全部无值，也会判定"齐全"
+              （FX15 base repro）。现在要求每项要么在同一行给出非空、非占位符
+              的实质值，要么显式写 NOT_APPLICABLE；只出现字段名（值为空、
+              空白符，或"见上/同上/待定"这类占位符）按缺失处理。"""
               text = artifact_text or ""
               missing = []
               for label, keys in STANDARD_DELIVERABLE_FIELDS:
-                  found = any(re.search(r'\b%s\b' % re.escape(k), text, re.IGNORECASE) for k in keys)
-                  if not found:
+                  ok = False
+                  for k in keys:
+                      for v in _field_value_lines(text, k):
+                          if _deliverable_value_ok(v):
+                              ok = True
+                              break
+                      if ok:
+                          break
+                  if not ok:
                       missing.append(label)
               return missing
 

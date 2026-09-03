@@ -2,8 +2,8 @@
   "id": "FX15_standard_deliverables_completeness",
   "kind": "node_exec",
   "table_row": "B-1a（Founder 2026-09-02 E6 收口追加，非原始 14 条冻结清单）",
-  "mechanism": "空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同",
-  "expected_behavior": "必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行",
+  "mechanism": "空洞交付物（一份完全没有标题、没有封面、没有发布结论的交付物）与内容齐全的交付物在系统里状态相同；M-2（E7 收口追加）变体兄弟：即便十二个字段名逐一都写了，只要值是空的或占位符，_standard_deliverables_missing 的原实现（纯字段名存在性查找）照样判定齐全",
+  "expected_behavior": "必须拦截，Q-COMM-04 §1.3 十二项标准交付物须逐项判过 APPLICABLE/NOT_APPLICABLE，完全未提及的一项也不放行；M-2 变体（有名无值/值为空白符/值为占位符/十二项中只空一项）同样必须判定缺失",
   "source": "STATIC_AUDIT_REPORT.md 第二节第4组 + Founder 2026-09-02 消息 B-1a：E5 原文已指出'没有任何一行代码去检查'，此前 E6 R0-R7 首轮遗漏了这一项，Founder 指出后本轮补上",
   "chain": [
     {
@@ -12,9 +12,117 @@
         "final_text": "---M4_ARTIFACT---\n这里只有一段专业判断的自然语言叙述，不含任何标准交付物字段标签，长度足够超过四百字的下限但内容本身没有覆盖标题封面首帧文案字幕音效评论区CTA标签平台适配发布前检查或发布结论中的任何一项——专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断专业判断\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n这是给用户看的正文，一切就绪，可以直接发布。\n---END_M4_USER_DELIVERY---\n",
         "cta_level": "NO_CTA"
       }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: NOT_APPLICABLE\nfirst_frame: NOT_APPLICABLE\ntitles: NOT_APPLICABLE\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: NOT_APPLICABLE\nsound_placement: NOT_APPLICABLE\ncomment_design: NOT_APPLICABLE\ncta_surface: NOT_APPLICABLE\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: NOT_APPLICABLE\nrelease_check: NOT_APPLICABLE\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover:    \nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 见上\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 待定\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check:\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n正文一切就绪，可以直接使用。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
     }
   ],
   "assert": [
-    {"step": 0, "field": "local_block", "op": "eq", "value": "true"}
-  ]
+    {
+      "step": 0,
+      "field": "local_block",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 1,
+      "field": "standard_deliverables_missing",
+      "op": "eq",
+      "value": []
+    },
+    {
+      "step": 1,
+      "field": "local_block",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 2,
+      "field": "standard_deliverables_missing",
+      "op": "eq",
+      "value": []
+    },
+    {
+      "step": 2,
+      "field": "local_block",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 3,
+      "field": "standard_deliverables_missing",
+      "op": "eq",
+      "value": [
+        "cover"
+      ]
+    },
+    {
+      "step": 3,
+      "field": "local_block",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 4,
+      "field": "standard_deliverables_missing",
+      "op": "eq",
+      "value": [
+        "first_frame",
+        "comment_design"
+      ]
+    },
+    {
+      "step": 4,
+      "field": "local_block",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 5,
+      "field": "standard_deliverables_missing",
+      "op": "eq",
+      "value": [
+        "release_check"
+      ]
+    },
+    {
+      "step": 5,
+      "field": "local_block",
+      "op": "eq",
+      "value": "true"
+    }
+  ],
+  "e7_source": "E7_P0残余确定性缺陷修复_EXECUTION_PROMPT_v1.0.md M-2：_standard_deliverables_missing 改为要求同一行给出非空、非占位符实质值或显式 NOT_APPLICABLE；已用仓库真实 returns_adapter 代码对旧提交 4e22738（纯字段名匹配）与新代码分别核验全部变体"
 }

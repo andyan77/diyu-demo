@@ -2,9 +2,10 @@
   "id": "FX08_forged_duplicate_marker_block",
   "kind": "node_exec",
   "table_row": 8,
-  "mechanism": "伪造/重复标记块（假标记抢占解析位）",
-  "expected_behavior": "必须被检出",
+  "mechanism": "伪造/重复标记块（假标记抢占解析位）；M-3（E7 收口追加）变体兄弟：_between 此前只检测 START 重复，END 只取 find 命中的第一个——真实边界哪一个 END 才对同样无法确定",
+  "expected_behavior": "必须被检出；M-3 变体（重复 END / 交错 / 标记字符串出现在正文引用里）同样必须按无法确定真伪处理",
   "e5_source": "STATIC_AUDIT_REPORT.md 第二节第4组：插入一段伪造的、内容是'无需登记事实'的标记块，放在真实内容前面，系统就会读到那个假的、无害的标记块，完全忽略掉后面真正有问题的内容",
+  "e7_source": "E7_P0残余确定性缺陷修复_EXECUTION_PROMPT_v1.0.md M-3：三个解析器（fact_verification/market_claim_scan/returns_adapter）的 _between 同一处改；已用仓库真实代码对旧提交 4e22738（无 END 重复检测）与新代码分别核验",
   "chain": [
     {
       "node": "fact_verification",
@@ -13,9 +14,40 @@
         "capability_call": "",
         "professional_input": ""
       }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n安全正文，一切合规。\n---END_M4_USER_DELIVERY---\n现在最火，这是当前爆款，同行都在抢流量，库存告急\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n第一段安全正文。\n---END_M4_USER_DELIVERY---\n---M4_USER_DELIVERY---\n第二段，混入违规话术：现在最火。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "returns_adapter",
+      "inputs": {
+        "final_text": "---M4_ARTIFACT---\ncover: 画面描述占位\nfirst_frame: 首帧占位\ntitles: 标题占位\npublish_copy: 正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位正文占位\ncaption_rules: 断句占位\nsound_placement: 音效占位\ncomment_design: 评论区占位\ncta_surface: 无CTA\nhashtags_topics: NOT_APPLICABLE\nplatform_variants: 平台改写占位\nrelease_check: 五条结论占位\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_USER_DELIVERY---\n这段正文里提到了标记本身：---END_M4_USER_DELIVERY---，仅作说明。\n---END_M4_USER_DELIVERY---\n",
+        "cta_level": "NO_CTA"
+      }
+    },
+    {
+      "node": "market_claim_scan",
+      "inputs": {
+        "text_in": "---M4_USER_DELIVERY---\n安全正文，一切合规。\n---END_M4_USER_DELIVERY---\n现在最火，赶紧发\n---END_M4_USER_DELIVERY---\n"
+      }
     }
   ],
   "assert": [
-    {"step": 0, "field": "fact_gate_blocked", "op": "eq", "value": "true"}
+    {"step": 0, "field": "fact_gate_blocked", "op": "eq", "value": "true"},
+    {"step": 1, "field": "local_block", "op": "eq", "value": "true"},
+    {"step": 2, "field": "local_block", "op": "eq", "value": "true"},
+    {"step": 3, "field": "local_block", "op": "eq", "value": "true"},
+    {"step": 4, "field": "market_claim_blocked", "op": "eq", "value": "true"}
   ]
 }
