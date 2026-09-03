@@ -3,6 +3,270 @@
   "task_id": "DIYU-V1-STATIC-GATE-001",
   "authority": "RULESIDE-2026-09-02-014 + 笛语商业SKU验收体系_索引与启动规则_v1.0.md §13 + DIYU-V1-P0-ROOT-REMEDIATION-001（R0-R7 根因修复）+ DIYU-V1-P0-RESIDUAL-REMEDIATION-001（E7 残余确定性缺陷修复）+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）+ DIYU-V1-P0-CONTRACT-SEAM-001（E8 跨层契约缺陷定位与修复，本轮新增 SG8）",
   "dynamic_only_scope_note": "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), this Gate's checkers enumerate structural *carrier* requirements (does a hook/field/instruction exist to carry a requirement at all) — not the empirical scoring dimensions Q-COMM's G2/G3/G4 sections define (quality rubrics, blind-review win rates, paid-Beta metrics, ablation/counterfactual results). Those are the SUBJECT of the empirical phase this Gate exists to unblock, not inputs the Gate itself adjudicates, and registering them as DYNAMIC_ONLY placeholders would be circular. SG7.semantic_market_claim_coverage and SG7.real_provider_payload_verification are the two deliberate exceptions — per Founder 2026-09-02 B-2 ruling, §13.3's empirical_case_ref is 'case id + 判分位', and the 判分位 (dimension + target score, or for the payload item, the specific E4-first-call condition it is bound to) can be pinned now without waiting for the case itself to exist. The market-claim item's case_id has been backfilled per A-7 (DIYU-V1-P0-EMPIRICAL-R1-001): eval/ now holds the first real case set (EVAL-P0-R1-001~003, manifest-vetted under INV-2), and case_id=EVAL-P0-R1-001 replaces the former PENDING_EVAL_MANIFEST placeholder. PENDING_E4_FIRST_CALL for the payload item remains a placeholder — must be backfilled once E4 阶段 B's first real call happens, not left indefinitely.",
+  "real_production_replay": {
+    "raw_dir": "p0-empirical-r1/raw",
+    "files_scanned": 18,
+    "files_reached_skill_llm": 12,
+    "per_file": [
+      {
+        "file": "EVAL-P0-R1-001_high_k1.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": [
+          "release_decision"
+        ]
+      },
+      {
+        "file": "EVAL-P0-R1-001_high_k2.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "OK",
+        "ledger_note": "解析出 10 条",
+        "claim_count": 10,
+        "claims_blocked": 3,
+        "deliverables_missing": []
+      },
+      {
+        "file": "EVAL-P0-R1-001_high_k3.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": []
+      },
+      {
+        "file": "EVAL-P0-R1-001_low_k1.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "OK",
+        "ledger_note": "解析出 8 条",
+        "claim_count": 8,
+        "claims_blocked": 1,
+        "deliverables_missing": [
+          "titles_or_recommended_title",
+          "cover",
+          "first_frame",
+          "publish_copy",
+          "caption_rules",
+          "sound_placement",
+          "comment_design",
+          "cta_surface",
+          "hashtags_topics"
+        ]
+      },
+      {
+        "file": "EVAL-P0-R1-001_low_k2.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "PARSE_FAILED",
+        "ledger_note": "缺少 FACT_LEDGER 块，无法判定是没有事实性陈述还是产出被截断",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": null
+      },
+      {
+        "file": "EVAL-P0-R1-001_low_k3.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": []
+      },
+      {
+        "file": "EVAL-P0-R1-002_high_k1.sse",
+        "reached_skill_llm": false
+      },
+      {
+        "file": "EVAL-P0-R1-002_high_k2.sse",
+        "reached_skill_llm": false
+      },
+      {
+        "file": "EVAL-P0-R1-002_high_k3.sse",
+        "reached_skill_llm": false
+      },
+      {
+        "file": "EVAL-P0-R1-002_low_k1.sse",
+        "reached_skill_llm": false
+      },
+      {
+        "file": "EVAL-P0-R1-002_low_k2.sse",
+        "reached_skill_llm": false
+      },
+      {
+        "file": "EVAL-P0-R1-002_low_k3.sse",
+        "reached_skill_llm": false
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k1.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": [
+          "titles_or_recommended_title",
+          "cover",
+          "first_frame",
+          "publish_copy",
+          "caption_rules",
+          "sound_placement",
+          "comment_design",
+          "cta_surface",
+          "hashtags_topics"
+        ]
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k2.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "OK",
+        "ledger_note": "解析出 4 条",
+        "claim_count": 4,
+        "claims_blocked": 4,
+        "deliverables_missing": [
+          "titles_or_recommended_title",
+          "cover",
+          "first_frame",
+          "publish_copy",
+          "caption_rules",
+          "sound_placement",
+          "comment_design",
+          "cta_surface",
+          "hashtags_topics"
+        ]
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k3.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": []
+      },
+      {
+        "file": "EVAL-P0-R1-003_low_k1.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "PARSE_FAILED",
+        "ledger_note": "缺少 FACT_LEDGER 块，无法判定是没有事实性陈述还是产出被截断",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": null
+      },
+      {
+        "file": "EVAL-P0-R1-003_low_k2.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": []
+      },
+      {
+        "file": "EVAL-P0-R1-003_low_k3.sse",
+        "reached_skill_llm": true,
+        "ledger_status": "NONE",
+        "ledger_note": "显式声明本次没有需要登记的事实性陈述",
+        "claim_count": 0,
+        "claims_blocked": 0,
+        "deliverables_missing": [
+          "titles_or_recommended_title",
+          "cover",
+          "first_frame",
+          "publish_copy",
+          "caption_rules",
+          "sound_placement",
+          "comment_design",
+          "cta_surface",
+          "hashtags_topics",
+          "platform_variants",
+          "release_check",
+          "release_decision"
+        ]
+      }
+    ],
+    "total_claims": 22,
+    "claims_blocked": 8,
+    "claims_passed": 14,
+    "blocked_claim_detail": [
+      {
+        "file": "EVAL-P0-R1-001_high_k2.sse",
+        "claim": "该店不使用祖传/秘方类表述，店史为 12 年",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-001_high_k2.sse",
+        "claim": "这道红烧肉在店内长期按同一做法持续供应；视频为店内自拍素材，可用于发布",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-001_high_k2.sse",
+        "claim": "视频素材全在后厨拍摄、无第三方入镜、店方拥有发布权限",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-001_low_k1.sse",
+        "claim": "依据用户显式约束，不以“祖传秘方”叙事、不逼办卡",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k2.sse",
+        "claim": "视频记录中的帐篷存在漏水事实，且作者选择继续过夜而不撤",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k2.sse",
+        "claim": "此次露营发生在城市周边；途中下小雨；帐篷漏了；作者没有在漏雨后立即撤走",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k2.sse",
+        "claim": "作者所带睡袋为约 1.2kg 化纤材质",
+        "grounded": false
+      },
+      {
+        "file": "EVAL-P0-R1-003_high_k2.sse",
+        "claim": "该路线为一日往返性质；天气不理想；帐篷渗漏；整体没有被劝退",
+        "grounded": false
+      }
+    ],
+    "constructed_negative_controls": [
+      {
+        "label": "数字改动",
+        "construction": "真实 claim「该店红烧肉已售卖十二年」把十二年改成二十年",
+        "claim": "该店红烧肉已售卖二十年",
+        "grounded": false,
+        "correctly_blocked": true
+      },
+      {
+        "label": "捏造荣誉",
+        "construction": "用户原文与参考资料均未提及任何评选/获奖，凭空加一条",
+        "claim": "该店红烧肉曾获市级美食评选金奖",
+        "grounded": false,
+        "correctly_blocked": true
+      },
+      {
+        "label": "捏造平台规则",
+        "construction": "听起来像 platforms.md 的平台规则，但该文件里没有这一条（专防 F-2 纳入参考资料后放宽过头）",
+        "claim": "抖音评论区置顶评论必须来自蓝V认证账号",
+        "grounded": false,
+        "correctly_blocked": true
+      },
+      {
+        "label": "空洞无内容",
+        "construction": "没有可核验实质内容的风格化评价句",
+        "claim": "这是一家很用心、很有温度的小店",
+        "grounded": false,
+        "correctly_blocked": true
+      }
+    ],
+    "negatives_all_correctly_blocked": true,
+    "standing_precondition": "今后任何对治理判定逻辑（_claim_grounded / _standard_deliverables_missing / 泄漏与市场断言扫描等）的修改，必须先过真实产出回放（replay_real_productions，本函数），再进真实调用——不得跳过回放直接花真实调用预算去试。",
+    "count_discrepancy_note": "Prompt 原文称 raw/ 下有 13 份真正到达 skill_llm 的真实产出（9 份 NOT_DELIVERED_FACT_CHECK_BLOCKED + 4 份 NOT_DELIVERED_LOCAL_STRUCTURE_BLOCKED）。本函数逐文件现场解析 18 份 raw SSE，实际到达 skill_llm 的是 12 份——如实按现场解析结果登记，不为凑 13 这个数字而调整口径；差异未深究根因（可能是统计口径不同或对文件的归类方式不同），不影响回放结论本身，回放对象是这 12 份里实际能解析出FACT_LEDGER 条目的全部 22 条 factual_claim，不是对着 13 这个数字凑数。",
+    "manual_audit_note": "对 claims_blocked 里的 8 条被拦真实 claim 逐条人工核对用户原文（未走任何自动化判据）：其中 2 条（EVAL-P0-R1-003_high_k2.sse，「视频记录中的帐篷存在漏水事实，且作者选择继续过夜而不撤」「此次露营发生在城市周边；途中下小雨；帐篷漏了；作者没有在漏雨后立即撤走」）里的「继续过夜而不撤」/「没有在漏雨后立即撤走」，用户原文（professional_input）通篇没有提到是否连夜撤离——这是模型真实添加的、用户没说过的细节，阈值继续拦下是「该拦」，不是误杀，是这次回放独立验证出的一个真实、正确的拦截，不是巧合。其余 6 条是用词差异较大的转述（不是编造，是换了词汇而非仅调整语序/写法），在纯字符匹配、禁止语义/同义词表的边界内无法进一步区分，如实记为已知残余限制。反向核对：14 条通过的 claim 里没有发现「不该拦却拦了」（会表现为明显编造却被放行）的情况——通过的都能在用户原文或参考资料原文里找到实质对应。"
+  },
+  "sg8_concept_count_justification": "SG8 五行清单本轮（F-1/F-2/F-3）复核后维持 5 行，未新增第 6 行。判据：SG8 的方法论（模块头部注释，本轮未改）是只登记'已有真实调查证据支撑的跨层概念'（本轮之前来自 D-1/D-2/D-3/E8 的具体缺陷定位），不是对提示词做穷举式概念抽取——这是既定判据，不是默认可以偷懒。逐条核对本轮新工作是否构成'新发现的跨层概念'：F-1（中文覆盖度判据从 shingle 集合交集改为贴片覆盖）和 F-2（核验来源从单一 blob 扩到 user_blob/ref_blob 两个独立来源）都是第1行（fact_refs[]／已登记的事实）与第3行（FACT_LEDGER 核验对象）已登记概念内部的算法精度/来源完整性问题——生产者仍是 professional_input/capability_call（+ F-2 起的 ref_projection）、消费者仍是 fact_verification.factual_claim 核验，接缝双方没有变，变的是判据本身的实现细度，不构成新的生产者-消费者接缝，因此不单独开一行；相应地第1行的 producer/carrier/consumer 集合已按 F-3 更正补全（见该行 note），不是漏改。逐一核对 SKILL.md 全文（约3万字符）里其余'提示词要求 X／代码消费 Y'的配对：十二项标准交付物内部字段之间的对应、mode 判据本身内部三级推导、evidence_basis/realized_payoff/uncovered_beats[] 与used_fact_refs[] 之间的关系，均属于同一次 skill_llm 提示词编译期静态绑定内部的一致性问题——生产者与消费者同属一次提示词文本，没有独立的中间层会在不被发现的情况下悄悄改变语义，不构成 SG8 定义的跨层接缝（跨的是提示词→代码这一层，不是提示词内部段落之间）。本轮模块头部三类违规定义（UNSATISFIED_PROMPT_INPUT/UNCONSUMED_REQUIRED_OUTPUT/SEMANTIC_TRANSFORM_MISMATCH，含特例 UNREACHABLE_GOVERNANCE_PRECONDITION）覆盖下未发现第 6 个有真实证据支撑的实例；30 条上限仍未触及，5 行不是凑数，也不是偷懒少列。",
   "reported_mode_diagnostic_field_note": "P0 only. New read-only field returns_adapter.reported_mode -> end_ok.reported_mode (15 -> 16 outputs), parsed from the ARTIFACT block's self-reported `mode` line by reusing the existing _field_value_lines/_deliverable_value_ok helpers (same mechanism already used for the twelve standard deliverable fields) — no new mode-specific parsing or governance code was added. This field is INTENTIONALLY declared with no code reader anywhere in this DSL or in static_gate.py: its only intended reader is human G1 empirical scoring, to check the model's self-declared mode against what it actually delivered across the 18-run real-call matrix without requiring a full manual re-read of the ~5000-char ARTIFACT text each time. Explicitly out of scope: no interception switch reads it, it does not affect local_block/blocked/delivery_outcome, and no new mode-governance branch or detector was added anywhere (Q-COMM-04 does not require FINAL). On parse failure the value is the literal string 'ABSENT' — never guessed, never defaulted to 'PRE'. Verified against real captured data (p0-empirical-r1/raw/EVAL-P0-R1-001_low_k1.sse): the model wrote 'mode: **PRE**' same-line, and reported_mode correctly extracted '**PRE**' (markdown asterisks passed through verbatim — this is a human-facing diagnostic, not a machine-matched enum, so no mode-specific cleanup regex was added either). Known residual imprecision, disclosed rather than fixed (fixing it would require a mode-specific block terminator, i.e. new mode-related logic this round explicitly forbids): if the model ever writes 'mode:' with an empty same-line value (block-expansion form), the block-boundary heuristic falls back to the twelve standard-deliverable-field key list as the terminator ('mode' is not itself in that list), so it could scoop in trailing fields (evidence_basis / realized_payoff / uncovered_beats[] / used_fact_refs[]) until the first standard-deliverable field line — not yet observed in the one real call captured so far.",
   "reasoning_effort_note": "All six skill_llm/component_return completion_params blocks (two per SKU) declare reasoning_effort: low. This is a product tuning choice, not a determinism defect: per RULESIDE-2026-09-02-014 §五 ('不影响考试信号的不得阻断'), a low reasoning-effort setting does not by itself corrupt the empirical scoring signal, so it is not raised as BLOCKING or DYNAMIC_ONLY here. Recorded for Founder visibility only.",
   "static_detector_capability_notice": "SG3 structural checks and the market-claim / internal-leak pattern lists (market_claim_scan, returns_adapter.LEAK_PATTERNS) are deterministic string/keyword matching — defense-in-depth that reliably blocks the known patterns it enumerates, not a proof that unblocked output is semantically safe. A hit must block; a miss (e.g. a paraphrase of a known market-claim pattern) is not evidence of safety. This does not lower Q-COMM-04's acceptance line: Critical Error = 0 and Unsupported Current-Market Claim = 0 remain FAIL-on-any-occurrence, unchanged. Full semantic market-claim coverage is now formally registered as SG7.semantic_market_claim_coverage (DYNAMIC_ONLY, empirical_case_ref bound — see findings), not merely disclosed in prose.",
@@ -56,12 +320,13 @@
       "rows": [
         {
           "concept": "fact_refs[] ／ 已登记的事实",
-          "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）",
-          "carrier": "professional_input / capability_call",
+          "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表） + ref_projection 参考资料原文（F-2 起，已接入 fact_verification）",
+          "carrier": "professional_input / capability_call / ref_projection.output",
           "transform": "无",
-          "consumer": "fact_verification.factual_claim 核验",
+          "consumer": "fact_verification.factual_claim 核验（用户原文 + 参考资料两个来源分别核验）",
           "semantics_match": true,
-          "category": null
+          "category": null,
+          "note": "SKILL.md §8b/§8c 自检指引仍只提用户原文，未同步提及参考资料这一类合法来源——已知的提示词表述残余，不在本轮授权改动范围，不擅自改写。"
         },
         {
           "concept": "十二项标准交付物字段值格式",
@@ -87,9 +352,9 @@
           "carrier": "skill_llm.text",
           "transform": "final_extract: text.split('</think>')|last",
           "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-          "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+          "semantics_match": "EMPIRICALLY_CONFIRMED",
           "category": null,
-          "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+          "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
         },
         {
           "concept": "mode=FINAL 分支可达性",
@@ -119,7 +384,8 @@
           "transform": "无——问题正在于从未有过供给，不是变换环节出错",
           "consumer": "fact_verification.fact_id 子串核验（旧契约）",
           "semantics_match": false,
-          "category": "UNSATISFIED_PROMPT_INPUT"
+          "category": "UNSATISFIED_PROMPT_INPUT",
+          "note": null
         },
         {
           "concept": "十二项标准交付物字段值格式",
@@ -146,9 +412,9 @@
           "carrier": "skill_llm.text",
           "transform": "final_extract: text.split('</think>')|last",
           "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-          "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+          "semantics_match": "EMPIRICALLY_CONFIRMED",
           "category": null,
-          "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+          "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
         },
         {
           "concept": "mode=FINAL 分支可达性",
@@ -178,7 +444,8 @@
           "transform": "无——问题正在于从未有过供给，不是变换环节出错",
           "consumer": "fact_verification.fact_id 子串核验（旧契约）",
           "semantics_match": false,
-          "category": "UNSATISFIED_PROMPT_INPUT"
+          "category": "UNSATISFIED_PROMPT_INPUT",
+          "note": null
         },
         {
           "concept": "十二项标准交付物字段值格式",
@@ -205,9 +472,9 @@
           "carrier": "skill_llm.text",
           "transform": "final_extract: text.split('</think>')|last",
           "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-          "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+          "semantics_match": "EMPIRICALLY_CONFIRMED",
           "category": null,
-          "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+          "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
         },
         {
           "concept": "mode=FINAL 分支可达性",
@@ -305,7 +572,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "9f57f2ef5b5cb09911aeb1db7084b00bf321b8ca2c57cb8adff41351d1a69d19",
+      "dsl_sha256": "37b7f5bde0459226a9c092ff8fb63364d89b80afa3b20ecccc857a2047b34a82",
       "blockers": [],
       "dynamic_only": [
         {
@@ -1039,12 +1306,13 @@
             "matrix": [
               {
                 "concept": "fact_refs[] ／ 已登记的事实",
-                "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）",
-                "carrier": "professional_input / capability_call",
+                "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表） + ref_projection 参考资料原文（F-2 起，已接入 fact_verification）",
+                "carrier": "professional_input / capability_call / ref_projection.output",
                 "transform": "无",
-                "consumer": "fact_verification.factual_claim 核验",
+                "consumer": "fact_verification.factual_claim 核验（用户原文 + 参考资料两个来源分别核验）",
                 "semantics_match": true,
-                "category": null
+                "category": null,
+                "note": "SKILL.md §8b/§8c 自检指引仍只提用户原文，未同步提及参考资料这一类合法来源——已知的提示词表述残余，不在本轮授权改动范围，不擅自改写。"
               },
               {
                 "concept": "十二项标准交付物字段值格式",
@@ -1070,9 +1338,9 @@
                 "carrier": "skill_llm.text",
                 "transform": "final_extract: text.split('</think>')|last",
                 "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "semantics_match": "EMPIRICALLY_CONFIRMED",
                 "category": null,
-                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+                "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
               },
               {
                 "concept": "mode=FINAL 分支可达性",
@@ -1198,7 +1466,8 @@
                 "transform": "无——问题正在于从未有过供给，不是变换环节出错",
                 "consumer": "fact_verification.fact_id 子串核验（旧契约）",
                 "semantics_match": false,
-                "category": "UNSATISFIED_PROMPT_INPUT"
+                "category": "UNSATISFIED_PROMPT_INPUT",
+                "note": null
               },
               {
                 "concept": "十二项标准交付物字段值格式",
@@ -1225,9 +1494,9 @@
                 "carrier": "skill_llm.text",
                 "transform": "final_extract: text.split('</think>')|last",
                 "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "semantics_match": "EMPIRICALLY_CONFIRMED",
                 "category": null,
-                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+                "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
               },
               {
                 "concept": "mode=FINAL 分支可达性",
@@ -1843,7 +2112,8 @@
                 "transform": "无——问题正在于从未有过供给，不是变换环节出错",
                 "consumer": "fact_verification.fact_id 子串核验（旧契约）",
                 "semantics_match": false,
-                "category": "UNSATISFIED_PROMPT_INPUT"
+                "category": "UNSATISFIED_PROMPT_INPUT",
+                "note": null
               },
               {
                 "concept": "十二项标准交付物字段值格式",
@@ -1870,9 +2140,9 @@
                 "carrier": "skill_llm.text",
                 "transform": "final_extract: text.split('</think>')|last",
                 "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "semantics_match": "EMPIRICALLY_CONFIRMED",
                 "category": null,
-                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+                "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
               },
               {
                 "concept": "mode=FINAL 分支可达性",
@@ -1998,7 +2268,8 @@
                 "transform": "无——问题正在于从未有过供给，不是变换环节出错",
                 "consumer": "fact_verification.fact_id 子串核验（旧契约）",
                 "semantics_match": false,
-                "category": "UNSATISFIED_PROMPT_INPUT"
+                "category": "UNSATISFIED_PROMPT_INPUT",
+                "note": null
               },
               {
                 "concept": "十二项标准交付物字段值格式",
@@ -2025,9 +2296,9 @@
                 "carrier": "skill_llm.text",
                 "transform": "final_extract: text.split('</think>')|last",
                 "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "semantics_match": "EMPIRICALLY_CONFIRMED",
                 "category": null,
-                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+                "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
               },
               {
                 "concept": "mode=FINAL 分支可达性",
@@ -2643,7 +2914,8 @@
                 "transform": "无——问题正在于从未有过供给，不是变换环节出错",
                 "consumer": "fact_verification.fact_id 子串核验（旧契约）",
                 "semantics_match": false,
-                "category": "UNSATISFIED_PROMPT_INPUT"
+                "category": "UNSATISFIED_PROMPT_INPUT",
+                "note": null
               },
               {
                 "concept": "十二项标准交付物字段值格式",
@@ -2670,9 +2942,9 @@
                 "carrier": "skill_llm.text",
                 "transform": "final_extract: text.split('</think>')|last",
                 "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-                "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+                "semantics_match": "EMPIRICALLY_CONFIRMED",
                 "category": null,
-                "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。"
+                "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。"
               },
               {
                 "concept": "mode=FINAL 分支可达性",

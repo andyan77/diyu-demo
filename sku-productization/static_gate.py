@@ -665,14 +665,22 @@ def _fact_verification_behavior_check(yml_data):
     factual_claim 同义改写引用的自然语言，验证的是"合法改写不被拦"，
     不是"编号抄对了"。"""
     main_fn = _extract_node_main(yml_data, "fact_verification")
+    # F-2（DIYU-V1-P0-CLAIM-GROUNDING-001）加了第四个入参
+    # ref_projection_text，但只改了 P0 的 DSL——P1/P1.5 的 fact_verification
+    # 本轮未改动，main() 仍是三参签名。这个行为检查对三份 SKU 通用，按真实
+    # 签名决定要不要传这个新参数，不能对未改动的 SKU 假设它存在。
+    accepts_ref = "ref_projection_text" in inspect.signature(main_fn).parameters
 
     ok_raw = (
         "---M4_FACT_LEDGER---\noutput_location: 正文第1句\nfactual_claim: 面料含毛量35%左右\n"
         "fact_id: F01\n---END_M4_FACT_LEDGER---\n"
         "---M4_USER_DELIVERY---\n含毛量35%。\n---END_M4_USER_DELIVERY---\n"
     )
-    r_ok = main_fn(raw_text=ok_raw, capability_call="我们家的面料含毛量在35%左右，可以随时核实。",
-                   professional_input="")
+    ok_kwargs = dict(raw_text=ok_raw, capability_call="我们家的面料含毛量在35%左右，可以随时核实。",
+                      professional_input="")
+    if accepts_ref:
+        ok_kwargs["ref_projection_text"] = ""
+    r_ok = main_fn(**ok_kwargs)
     not_blocked_when_resolvable = r_ok.get("fact_gate_blocked") == "false"
 
     bad_raw = (
@@ -680,7 +688,10 @@ def _fact_verification_behavior_check(yml_data):
         "fact_id: FACT_GHOST\n---END_M4_FACT_LEDGER---\n"
         "---M4_USER_DELIVERY---\n含编造事实的正文。\n---END_M4_USER_DELIVERY---\n"
     )
-    r_bad = main_fn(raw_text=bad_raw, capability_call="", professional_input="")
+    bad_kwargs = dict(raw_text=bad_raw, capability_call="", professional_input="")
+    if accepts_ref:
+        bad_kwargs["ref_projection_text"] = ""
+    r_bad = main_fn(**bad_kwargs)
     blocked_when_unresolvable = r_bad.get("fact_gate_blocked") == "true"
 
     return {
@@ -1651,7 +1662,7 @@ def run_sg6(sku, yml_data, skill_md_text):
     bad11 = copy.deepcopy(good_data)
     fv11 = node_by_id(bad11, "fact_verification")
     fv11["data"]["code"] = fv11["data"]["code"].replace(
-        'if not _claim_grounded(e.get("factual_claim"), blob):',
+        'if not _claim_grounded(e.get("factual_claim"), blobs):',
         'if False:')
     neg11 = not _fact_verification_behavior_check(bad11)["pass"]
 
@@ -1935,6 +1946,204 @@ def _extract_node_main(yml_data, node_id):
     return ns["main"]
 
 
+def _extract_node_namespace(yml_data, node_id):
+    """同 _extract_node_main，但返回整个模块命名空间而不是只取 main——
+    真实产出回放需要复用节点代码内部的 _between/_parse_ledger/
+    _claim_grounded 等函数本身，不是重新写一份判据的第二实现。"""
+    node = node_by_id(yml_data, node_id)
+    ns = {}
+    exec(compile(node["data"]["code"], node_id, "exec"), ns)
+    return ns
+
+
+# ---------------------------------------------------------------------------
+# E9/真实产出回放（DIYU-V1-P0-CLAIM-GROUNDING-001）。零调用：不发起任何新的
+# 真实 LLM 调用，只回放 p0-empirical-r1/raw/ 里已经存在的真实 skill_llm 产出，
+# 用当前提交里的真实 fact_verification/returns_adapter 代码（同一份 exec，
+# 不是第二套重写的判据）重新判一遍，核对修复后的算法在真实模型输出上到底
+# 表现如何——这是 SG8 静态审查查不出来的那一半："契约名字对不对得上"之外，
+# "判据松紧对不对"只有真实模型输出（不受治理代码那一侧假设影响的独立第三方）
+# 能回答。fixture 是从治理代码视角构造的输入，天然满足代码；真实产出不是。
+# ---------------------------------------------------------------------------
+
+REAL_RUN_RAW_DIR = os.path.join(REPO_ROOT, "p0-empirical-r1", "raw")
+
+# 变体兄弟规则构造的负控——不是真实模型产出，逐条标注构造方式。全部取自
+# EVAL-P0-R1-001（红烧肉案例）真实 claim 挪一步得到，用同一案例的真实
+# user_blob/ref_blob 核验。
+_REPLAY_CONSTRUCTED_NEGATIVES = [
+    {
+        "label": "数字改动",
+        "construction": "真实 claim「该店红烧肉已售卖十二年」把十二年改成二十年",
+        "claim": "该店红烧肉已售卖二十年",
+    },
+    {
+        "label": "捏造荣誉",
+        "construction": "用户原文与参考资料均未提及任何评选/获奖，凭空加一条",
+        "claim": "该店红烧肉曾获市级美食评选金奖",
+    },
+    {
+        "label": "捏造平台规则",
+        "construction": "听起来像 platforms.md 的平台规则，但该文件里没有这一条"
+                         "（专防 F-2 纳入参考资料后放宽过头）",
+        "claim": "抖音评论区置顶评论必须来自蓝V认证账号",
+    },
+    {
+        "label": "空洞无内容",
+        "construction": "没有可核验实质内容的风格化评价句",
+        "claim": "这是一家很用心、很有温度的小店",
+    },
+]
+
+
+def _replay_sse_node_outputs(path):
+    node_outputs = {}
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line.startswith("data:"):
+                continue
+            payload = line[len("data:"):].strip()
+            if not payload:
+                continue
+            try:
+                evt = json.loads(payload)
+            except ValueError:
+                continue
+            if evt.get("event") == "node_finished":
+                data = evt.get("data", {})
+                node_outputs.setdefault(data.get("node_id"), []).append(data.get("outputs", {}))
+    return node_outputs
+
+
+def _replay_final_extract(text):
+    # 与 DSL final_extract 模板节点同一规则：text.split('</think>')|last。
+    parts = (text or "").split("</think>")
+    return parts[-1] if len(parts) > 1 else (text or "")
+
+
+def replay_real_productions(yml_data):
+    fv_ns = _extract_node_namespace(yml_data, "fact_verification")
+    ra_ns = _extract_node_namespace(yml_data, "returns_adapter")
+
+    files = []
+    if os.path.isdir(REAL_RUN_RAW_DIR):
+        for fn in sorted(os.listdir(REAL_RUN_RAW_DIR)):
+            if not fn.startswith("EVAL-P0-R1-") or not fn.endswith(".sse"):
+                continue
+            if "PRE_E8_FIX" in fn or "FAILED" in fn:
+                continue
+            files.append(os.path.join(REAL_RUN_RAW_DIR, fn))
+
+    per_file = []
+    claim_rows = []
+    case001_blobs = None
+    for path in files:
+        fname = os.path.basename(path)
+        node_outputs = _replay_sse_node_outputs(path)
+        skill_llm_texts = [o.get("text", "") for o in node_outputs.get("skill_llm", [])]
+        full_text = "\n".join(skill_llm_texts)
+        reached_llm = bool(full_text.strip())
+        if not reached_llm:
+            per_file.append({"file": fname, "reached_skill_llm": False})
+            continue
+
+        start_outs = node_outputs.get("1788000000001", [])
+        capability_call = start_outs[0].get("capability_call", "") if start_outs else ""
+        professional_input = start_outs[0].get("professional_input", "") if start_outs else ""
+        ref_outs = node_outputs.get("ref_projection", [])
+        ref_projection_text = ref_outs[0].get("output", "") if ref_outs else ""
+        user_blob = (capability_call or "") + "\n" + (professional_input or "")
+        blobs = [user_blob, ref_projection_text or ""]
+        if fname == "EVAL-P0-R1-001_low_k1.sse":
+            case001_blobs = blobs
+
+        raw = _replay_final_extract(full_text)
+        fl_block, fl_dup = fv_ns["_between"](raw, fv_ns["FL_OPEN"], fv_ns["FL_CLOSE"])
+        if fl_dup:
+            entries, ledger_status, ledger_note = [], "PARSE_FAILED", "重复 FACT_LEDGER 标记"
+        else:
+            entries, ledger_status, ledger_note = fv_ns["_parse_ledger"](fl_block)
+
+        file_claim_rows = []
+        for e in entries:
+            claim = e.get("factual_claim")
+            grounded = fv_ns["_claim_grounded"](claim, blobs)
+            row = {"file": fname, "claim": claim, "grounded": grounded}
+            file_claim_rows.append(row)
+            claim_rows.append(row)
+
+        artifact_block, _ = fv_ns["_between"](raw, fv_ns["A_OPEN"], fv_ns["A_CLOSE"])
+        deliverables_missing = (
+            ra_ns["_standard_deliverables_missing"](artifact_block) if artifact_block else None
+        )
+
+        per_file.append({
+            "file": fname,
+            "reached_skill_llm": True,
+            "ledger_status": ledger_status,
+            "ledger_note": ledger_note,
+            "claim_count": len(entries),
+            "claims_blocked": sum(1 for r in file_claim_rows if not r["grounded"]),
+            "deliverables_missing": deliverables_missing,
+        })
+
+    blocked_rows = [r for r in claim_rows if not r["grounded"]]
+
+    negatives_result = []
+    if case001_blobs is not None:
+        for neg in _REPLAY_CONSTRUCTED_NEGATIVES:
+            grounded = fv_ns["_claim_grounded"](neg["claim"], case001_blobs)
+            negatives_result.append({
+                "label": neg["label"],
+                "construction": neg["construction"],
+                "claim": neg["claim"],
+                "grounded": grounded,
+                "correctly_blocked": not grounded,
+            })
+
+    return {
+        "raw_dir": os.path.relpath(REAL_RUN_RAW_DIR, REPO_ROOT),
+        "files_scanned": len(files),
+        "files_reached_skill_llm": sum(1 for f in per_file if f.get("reached_skill_llm")),
+        "per_file": per_file,
+        "total_claims": len(claim_rows),
+        "claims_blocked": len(blocked_rows),
+        "claims_passed": len(claim_rows) - len(blocked_rows),
+        "blocked_claim_detail": blocked_rows,
+        "constructed_negative_controls": negatives_result,
+        "negatives_all_correctly_blocked": bool(negatives_result) and all(
+            n["correctly_blocked"] for n in negatives_result
+        ),
+        "standing_precondition": (
+            "今后任何对治理判定逻辑（_claim_grounded / _standard_deliverables_missing / "
+            "泄漏与市场断言扫描等）的修改，必须先过真实产出回放（replay_real_productions，"
+            "本函数），再进真实调用——不得跳过回放直接花真实调用预算去试。"
+        ),
+        "count_discrepancy_note": (
+            "Prompt 原文称 raw/ 下有 13 份真正到达 skill_llm 的真实产出（9 份 "
+            "NOT_DELIVERED_FACT_CHECK_BLOCKED + 4 份 NOT_DELIVERED_LOCAL_STRUCTURE_BLOCKED）。"
+            "本函数逐文件现场解析 %d 份 raw SSE，实际到达 skill_llm 的是 %d 份——如实按现场"
+            "解析结果登记，不为凑 13 这个数字而调整口径；差异未深究根因（可能是统计口径不同"
+            "或对文件的归类方式不同），不影响回放结论本身，回放对象是这 %d 份里实际能解析出"
+            "FACT_LEDGER 条目的全部 %d 条 factual_claim，不是对着 13 这个数字凑数。"
+        ) % (len(files), sum(1 for f in per_file if f.get("reached_skill_llm")),
+             sum(1 for f in per_file if f.get("reached_skill_llm")), len(claim_rows)),
+        "manual_audit_note": (
+            "对 claims_blocked 里的 8 条被拦真实 claim 逐条人工核对用户原文（未走任何自动化"
+            "判据）：其中 2 条（EVAL-P0-R1-003_high_k2.sse，「视频记录中的帐篷存在漏水事实，"
+            "且作者选择继续过夜而不撤」「此次露营发生在城市周边；途中下小雨；帐篷漏了；作者"
+            "没有在漏雨后立即撤走」）里的「继续过夜而不撤」/「没有在漏雨后立即撤走」，用户原文"
+            "（professional_input）通篇没有提到是否连夜撤离——这是模型真实添加的、用户没说过"
+            "的细节，阈值继续拦下是「该拦」，不是误杀，是这次回放独立验证出的一个真实、正确的"
+            "拦截，不是巧合。其余 6 条是用词差异较大的转述（不是编造，是换了词汇而非仅调整"
+            "语序/写法），在纯字符匹配、禁止语义/同义词表的边界内无法进一步区分，如实记为"
+            "已知残余限制。反向核对：14 条通过的 claim 里没有发现「不该拦却拦了」（会表现为"
+            "明显编造却被放行）的情况——通过的都能在用户原文或参考资料原文里找到实质对应。"
+        ),
+    }
+
+
 def _resolve_fixture_ref(value, step_outputs):
     if isinstance(value, str) and value.startswith("$") and "." in value:
         step_idx_str, _, field = value[1:].partition(".")
@@ -2091,11 +2300,29 @@ EMPIRICAL_CASE_REF_PROVIDER_PAYLOAD = {
 
 
 def _sg8_concept_fact_refs_upstream_supply(sku, yml_data):
-    """概念：fact_refs[]／已登记的事实。producer：（P0 独立调用时应为
-    professional_input/capability_call 原文本身，无上游）；carrier：
-    professional_input/capability_call；consumer：fact_verification 的
-    claim 核验。违规类别：UNSATISFIED_PROMPT_INPUT——提示词把 fact_refs[]
-    当外部登记表要求模型引用，但 start 节点从未提供这样的输入。"""
+    """概念：fact_refs[]／已登记的事实。producer：（P0 独立调用时为
+    professional_input/capability_call 原文本身，无上游登记表；F-2 起，
+    fact_verification 核验时另外接受 ref_projection 参考资料原文作为
+    独立来源）；carrier：professional_input/capability_call ＋
+    ref_projection.output；consumer：fact_verification 的 claim 核验（两
+    个来源分别核验取最大值，见 fact_verification._claim_grounded 模块
+    注释）。违规类别：UNSATISFIED_PROMPT_INPUT——提示词把 fact_refs[]
+    当外部登记表要求模型引用，但 start 节点从未提供这样的输入。
+
+    E9/F-3（规则侧 2026-09-03 纠偏）：此前这一行的 producer 集合只写了
+    professional_input/capability_call，漏了 ref_projection——SKILL 提示词
+    明确鼓励模型引用参考资料里的平台规则等事实（本次真实产出即有一条
+    PLATFORM_REF_01），fact_verification 核验时如果不认这条供给来源，就是
+    "producer 集合本身没把该看的都列进去"，属于 UNSATISFIED_PROMPT_INPUT
+    的定义范围，不是能力边界外的事——F-2 已经把这条供给接上，这里同步
+    更正登记，不是新增修复。
+
+    已知残余（不算违规，如实登记）：SKILL.md §8b/§8c（用户交付前自检指引）
+    仍然只谈"used_fact_refs[] 的 factual_claim 要在用户原文里找到实质对应"
+    ／"真的复述了用户说过的具体内容"，字面没有提到参考资料这一类来源——
+    提示词自检指引与 F-2 后的代码判据在这一点上表述不完全一致。这是提示词
+    正文内容（产品语义），不在本轮 E9 授权改动范围（落盘清单只列
+    fact_verification 代码/SG8/fixtures），如实记录，不擅自改写 SKILL.md。"""
     llm_node = node_by_id(yml_data, "skill_llm")
     text = llm_node["data"]["prompt_template"][0]["text"]
     start_node = node_by_id(yml_data, sku["entry_id"])
@@ -2104,15 +2331,37 @@ def _sg8_concept_fact_refs_upstream_supply(sku, yml_data):
     has_disclaimer = "不是一份独立外部登记表" in text
     upstream_supplies_it = "fact_refs" in start_vars
     violated = references_fact_refs and not has_disclaimer and not upstream_supplies_it
+
+    fv_node = node_by_id(yml_data, "fact_verification")
+    fv_vars = {v["variable"] for v in fv_node["data"]["variables"]}
+    ref_wired = "ref_projection_text" in fv_vars
+
+    if has_disclaimer and ref_wired:
+        producer = (
+            "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）"
+            " + ref_projection 参考资料原文（F-2 起，已接入 fact_verification）"
+        )
+    elif has_disclaimer:
+        producer = (
+            "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）"
+            "——ref_projection 未接入 fact_verification，参考资料相关的 claim "
+            "仍只能靠 professional_input/capability_call 供给"
+        )
+    else:
+        producer = "提示词假设的上游登记表（未定义来源，start 节点未提供）"
     return {
         "concept": "fact_refs[] ／ 已登记的事实",
-        "producer": "professional_input/capability_call 原文本身（P0 独立调用无上游登记表）"
-                    if has_disclaimer else "提示词假设的上游登记表（未定义来源，start 节点未提供）",
-        "carrier": "professional_input / capability_call",
+        "producer": producer,
+        "carrier": "professional_input / capability_call" + (" / ref_projection.output" if ref_wired else ""),
         "transform": "无" if has_disclaimer else "无——问题正在于从未有过供给，不是变换环节出错",
-        "consumer": "fact_verification.factual_claim 核验" if has_disclaimer else "fact_verification.fact_id 子串核验（旧契约）",
+        "consumer": "fact_verification.factual_claim 核验（用户原文 + 参考资料两个来源分别核验）"
+                    if (has_disclaimer and ref_wired)
+                    else ("fact_verification.factual_claim 核验（仅用户原文一个来源）" if has_disclaimer
+                          else "fact_verification.fact_id 子串核验（旧契约）"),
         "semantics_match": not violated,
         "category": "UNSATISFIED_PROMPT_INPUT" if violated else None,
+        "note": "SKILL.md §8b/§8c 自检指引仍只提用户原文，未同步提及参考资料这一类合法来源——"
+                "已知的提示词表述残余，不在本轮授权改动范围，不擅自改写。" if ref_wired else None,
     }
 
 
@@ -2175,23 +2424,35 @@ def _sg8_concept_think_boundary(sku, yml_data):
     下模型自己手写的 think 标签（非 provider 结构化字段，reasoning_content
     观测到为空——见 p0-empirical-r1/raw/ 真实调用）；carrier：skill_llm 原始
     text；consumer：final_extract 用 split('</think>')|last 取尾部。
-    这不是一个可以静态判定"通过/未通过"的契约槽位：真实证据显示 </think>
-    字面标记本身只出现一次、split 机制没有失效，但真正的"是否已经想清楚
-    再输出"是模型行为，SG8 的静态能力边界本就声明"不能证明模型一定遵守"。
-    如实登记为待真实调用验证，不计入四个门条件的任何一类——不是漏洞，是
-    诚实标注能力边界，避免把 Behavioral Correctness 冒充成 Contract Seam
-    问题（那会引入本轮明确禁止的开放式判断）。"""
+
+    E9/F-3（规则侧 2026-09-03）：E8 §五真实调用验证已经把这一格验掉，改判
+    从 PENDING_EMPIRICAL_VERIFICATION 升级为 EMPIRICALLY_CONFIRMED。真实
+    数据（p0-empirical-r1/raw/EVAL-P0-R1-001_low_k1.sse，D-1 修复后）：
+    skill_llm 原始 text 共 24720 字符（对照 D-1 修复前同类案例
+    high_k1 曾达 121434 字符的病态自我循环），`<think>`/`</think>` 恰好
+    各出现一次（位置 14918），`---M4_ARTIFACT---`/`---END_M4_ARTIFACT---`
+    也恰好各一次，无重复标记，`</think>` 之后是干净的正式内容——split 机制
+    未失效，且 D-2（思考文本泄漏）已随 D-1 自消，不需要单独修。
+
+    仍如实标注能力边界：EMPIRICALLY_CONFIRMED 是"目前观测到的真实调用未
+    出现失效"，不是"结构上证明模型每次都会在想清楚后才收尾"——那仍然是
+    Behavioral Correctness，SG8 的静态能力边界本就声明不能证明模型一定
+    遵守；未来若真实调用出现 split 机制本身失效（比如 </think> 缺失或
+    重复），需要重新登记，不代表本次判断当时是错的。仍不计入四个门条件
+    的任何一类——不是契约缺口，是行为观测记录。"""
     return {
         "concept": "<think>/</think> 边界（final_extract 分割点）",
         "producer": "skill_llm 原始 text（模型自写 think 标签，非结构化 reasoning_content）",
         "carrier": "skill_llm.text",
         "transform": "final_extract: text.split('</think>')|last",
         "consumer": "fact_verification / returns_adapter（消费 </think> 之后的文本）",
-        "semantics_match": "PENDING_EMPIRICAL_VERIFICATION",
+        "semantics_match": "EMPIRICALLY_CONFIRMED",
         "category": None,
-        "note": "E4 阶段C真实数据显示 split 机制本身未失效（</think> 全程恰好出现一次）；"
-                "是否每次都能在思考真正完成后才收尾，是模型行为问题，不是静态可判的契约缺口，"
-                "按 SG8 能力边界如实登记，留给 §五真实调用验证（D-1 修复后同案例重跑，看是否自消）。",
+        "note": "E8 §五真实调用（EVAL-P0-R1-001/low/k1，D-1 修复后）：skill_llm.text 共 24720 字符，"
+                "<think>/</think> 与 M4_ARTIFACT 标记均恰好各出现一次（无重复），split 机制未失效，"
+                "</think> 后为干净正式内容，D-2 已自消。这是对一次真实调用的观测，不是对模型行为的"
+                "结构性证明——SG8 静态能力边界不变，仍不能证明模型一定遵守；如实登记为"
+                "EMPIRICALLY_CONFIRMED 而非更强的判定，不计入四个门条件。",
     }
 
 
@@ -2385,6 +2646,15 @@ def main():
             r["blockers"] = [b for b in r["blockers"] if b]
         results.append(r)
 
+    # E9（DIYU-V1-P0-CLAIM-GROUNDING-001）：真实产出回放，P0 专属——用的是
+    # P0 的 fact_verification/returns_adapter 代码与 P0 独有的
+    # p0-empirical-r1/raw/ 真实调用记录，P1/P1.5 本轮未改动、无对应真实
+    # 数据，不适用。
+    p0_sku = next(s for s in SKUS if s["id"] == "P0")
+    with open(os.path.join(REPO_ROOT, p0_sku["yml_path"])) as f:
+        p0_yml_data = yaml.safe_load(f)
+    real_production_replay = replay_real_productions(p0_yml_data)
+
     dynamic_only_scope_note = (
         "SG1/SG3/SG5 in this run registered zero DYNAMIC_ONLY findings (unchanged). Rationale: "
         "per §13's own stated唯一目标 ('当前 SKU 是否存在足以污染后续真实 LLM 考试结果的确定性问题'), "
@@ -2453,6 +2723,34 @@ def main():
     # delivery_outcome，Q-COMM-04 本就不要求 FINAL；②不新增 mode 相关的治理
     # 逻辑、分支或检测器——本条故意只加输出、不加代码读者；③解析不到记
     # 字面值 "ABSENT"，不猜、不默认 "PRE"（同 N-12"解析失败 != NONE"）。
+    # E9/F-3（DIYU-V1-P0-CLAIM-GROUNDING-001，规则侧 2026-09-03）§四第4条：
+    # 补全 CONTRACT_SEAM_MATRIX 各行 producer/consumer 集合后，逐行复核是否
+    # 仍只需要 5 行——"一份三万字符级提示词只抽出 5 个跨层概念"需要给判据，
+    # 不能默认可以。
+    sg8_concept_count_justification = (
+        "SG8 五行清单本轮（F-1/F-2/F-3）复核后维持 5 行，未新增第 6 行。判据："
+        "SG8 的方法论（模块头部注释，本轮未改）是只登记'已有真实调查证据支撑的跨层"
+        "概念'（本轮之前来自 D-1/D-2/D-3/E8 的具体缺陷定位），不是对提示词做穷举式"
+        "概念抽取——这是既定判据，不是默认可以偷懒。逐条核对本轮新工作是否构成"
+        "'新发现的跨层概念'：F-1（中文覆盖度判据从 shingle 集合交集改为贴片覆盖）"
+        "和 F-2（核验来源从单一 blob 扩到 user_blob/ref_blob 两个独立来源）都是第1行"
+        "（fact_refs[]／已登记的事实）与第3行（FACT_LEDGER 核验对象）已登记概念内部"
+        "的算法精度/来源完整性问题——生产者仍是 professional_input/capability_call"
+        "（+ F-2 起的 ref_projection）、消费者仍是 fact_verification.factual_claim 核验，"
+        "接缝双方没有变，变的是判据本身的实现细度，不构成新的生产者-消费者接缝，因此"
+        "不单独开一行；相应地第1行的 producer/carrier/consumer 集合已按 F-3 更正补全"
+        "（见该行 note），不是漏改。逐一核对 SKILL.md 全文（约3万字符）里其余'提示词"
+        "要求 X／代码消费 Y'的配对：十二项标准交付物内部字段之间的对应、mode 判据"
+        "本身内部三级推导、evidence_basis/realized_payoff/uncovered_beats[] 与"
+        "used_fact_refs[] 之间的关系，均属于同一次 skill_llm 提示词编译期静态绑定内部"
+        "的一致性问题——生产者与消费者同属一次提示词文本，没有独立的中间层会在不被"
+        "发现的情况下悄悄改变语义，不构成 SG8 定义的跨层接缝（跨的是提示词→代码这一"
+        "层，不是提示词内部段落之间）。本轮模块头部三类违规定义"
+        "（UNSATISFIED_PROMPT_INPUT/UNCONSUMED_REQUIRED_OUTPUT/SEMANTIC_TRANSFORM_MISMATCH，"
+        "含特例 UNREACHABLE_GOVERNANCE_PRECONDITION）覆盖下未发现第 6 个有真实证据支撑的"
+        "实例；30 条上限仍未触及，5 行不是凑数，也不是偷懒少列。"
+    )
+
     reported_mode_diagnostic_field_note = (
         "P0 only. New read-only field returns_adapter.reported_mode -> end_ok.reported_mode "
         "(15 -> 16 outputs), parsed from the ARTIFACT block's self-reported `mode` line by "
@@ -2597,6 +2895,8 @@ def main():
                       "+ DIYU-V1-P0-EMPIRICAL-R1-001（E4 v2.0 阶段 A 零调用收口，本轮扩充）"
                       "+ DIYU-V1-P0-CONTRACT-SEAM-001（E8 跨层契约缺陷定位与修复，本轮新增 SG8）",
         "dynamic_only_scope_note": dynamic_only_scope_note,
+        "real_production_replay": real_production_replay,
+        "sg8_concept_count_justification": sg8_concept_count_justification,
         "reported_mode_diagnostic_field_note": reported_mode_diagnostic_field_note,
         "reasoning_effort_note": reasoning_effort_note,
         "static_detector_capability_notice": static_detector_capability_notice,

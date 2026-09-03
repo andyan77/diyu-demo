@@ -12,7 +12,8 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n一切准备就绪，正文里没提发布结论。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -34,7 +35,8 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: READY_TO_PUBLISH\n一切就绪，可以发布。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -42,7 +44,8 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: DO_NOT_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: DO_NOT_PUBLISH\n还有问题，暂不发布。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -50,7 +53,8 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: HOLD_FOR_FIX\n还差一点。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -58,7 +62,8 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: HOLD_FOR_FIX\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\nrelease_decision: HOLD_FOR_FIX\n还差一点才能发。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -66,7 +71,8 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n这次并不是不能发布，一切都准备好了，可以放心发布。\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -74,20 +80,74 @@
       "inputs": {
         "raw_text": "---M4_ARTIFACT---\nrelease_decision: READY_TO_PUBLISH\n---END_M4_ARTIFACT---\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n---M4_USER_DELIVERY---\n不是 release_decision: DO_NOT_PUBLISH，而是 release_decision: READY_TO_PUBLISH\n---END_M4_USER_DELIVERY---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     }
   ],
   "assert": [
-    {"step": 0, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
-    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]},
-    {"step": 2, "field": "release_decision_blocks_delivery", "op": "eq", "value": "false"},
-    {"step": 3, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
-    {"step": 4, "field": "release_decision_mismatch", "op": "eq", "value": "true"},
-    {"step": 4, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
-    {"step": 5, "field": "release_decision_blocks_delivery", "op": "eq", "value": "false"},
-    {"step": 6, "field": "release_decision_user_reported", "op": "eq", "value": "ABSENT"},
-    {"step": 6, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"},
-    {"step": 7, "field": "release_decision_blocks_delivery", "op": "eq", "value": "true"}
+    {
+      "step": 0,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 1,
+      "field": "delivery_outcome",
+      "op": "not_in",
+      "value": [
+        "DELIVERED",
+        "DELIVERED_AFTER_RECOVERY"
+      ]
+    },
+    {
+      "step": 2,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 3,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 4,
+      "field": "release_decision_mismatch",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 4,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 5,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 6,
+      "field": "release_decision_user_reported",
+      "op": "eq",
+      "value": "ABSENT"
+    },
+    {
+      "step": 6,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 7,
+      "field": "release_decision_blocks_delivery",
+      "op": "eq",
+      "value": "true"
+    }
   ]
 }

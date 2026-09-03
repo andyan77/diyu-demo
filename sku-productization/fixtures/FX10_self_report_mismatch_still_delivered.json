@@ -11,7 +11,8 @@
       "inputs": {
         "raw_text": "fact_check_status: FAIL\n---M4_FACT_LEDGER---\nNONE\n---END_M4_FACT_LEDGER---\n",
         "capability_call": "",
-        "professional_input": ""
+        "professional_input": "",
+        "ref_projection_text": ""
       }
     },
     {
@@ -30,8 +31,26 @@
     }
   ],
   "assert": [
-    {"step": 0, "field": "fact_gate_blocked", "op": "eq", "value": "false"},
-    {"step": 0, "field": "fact_check_mismatch", "op": "eq", "value": "true"},
-    {"step": 1, "field": "delivery_outcome", "op": "not_in", "value": ["DELIVERED", "DELIVERED_AFTER_RECOVERY"]}
+    {
+      "step": 0,
+      "field": "fact_gate_blocked",
+      "op": "eq",
+      "value": "false"
+    },
+    {
+      "step": 0,
+      "field": "fact_check_mismatch",
+      "op": "eq",
+      "value": "true"
+    },
+    {
+      "step": 1,
+      "field": "delivery_outcome",
+      "op": "not_in",
+      "value": [
+        "DELIVERED",
+        "DELIVERED_AFTER_RECOVERY"
+      ]
+    }
   ]
 }

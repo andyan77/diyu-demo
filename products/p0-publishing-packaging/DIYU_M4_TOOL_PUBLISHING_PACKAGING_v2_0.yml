@@ -2371,59 +2371,187 @@ workflow:
               r"|[一二两三四五六七八九十百千万]+分之[一二两三四五六七八九十百千万]+"
           )
 
-          # E8：实质性词元覆盖——确定性手段，不是开放语义比对。数字与英文
-          # 单词要求逐一在 blob 里精确出现（数字是精确事实，不允许"大致
-          # 对"）；中文部分按标点/空白切出子串后，再用固定窗口的字符 n-gram
-          # 比对覆盖度，容忍模型合理的同义改写/轻度转述，不要求逐字复制
-          # 原文，但也不做任何词义/同义词判断——纯字符层面的重合度。
+          # E9/F-1+F-2（DIYU-V1-P0-CLAIM-GROUNDING-001）：中文覆盖度判据与
+          # 数字归一重写，核验来源从"仅用户输入"扩到"用户输入 + 实际注入
+          # 模型的参考资料原文"。
+          #
+          # F-1 根因（规则侧独立复跑 8 份真实产出、逐条人工核对后定位）：
+          # 旧判据对每个标点切出的中文子串算"整段 4-gram 集合交集比例"，
+          # 一句没有内部标点的完整转述会整体作为一个 shingle 集合去比对，
+          # 任何局部改写（哪怕只是词序调整、数字写法不同）都连带拖累整段
+          # 比例——22 条真实 factual_claim 逐条核对，21 条被误杀，包含与
+          # 用户原话几乎逐字相同的转述。
+          #
+          # 新判据：贪心最长公共子串"拼贴覆盖"——从 chunk 每个位置起，找它
+          # 在 blob 里能匹配到的最长子串，覆盖后跳到下一个未覆盖位置；未
+          # 命中的位置各自前移一位。这比"整段 shingle 集合交集"更贴近
+          # "这段话有多少内容能在 blob 里找到"本身，不受词序整体重排影响，
+          # 仍是纯字符层面的确定性比对，不引入任何语义/同义词判断。
+          #
+          # 但贴片覆盖度对"评论区""必须""来自"这类通用短词没有防御——把
+          # 参考资料整篇纳入 blob 后（F-2），这类词几乎处处能找到 2~3 字的
+          # 巧合匹配，会把一句彻底编造的话拼出过半的表面覆盖度（构造负控
+          # "抖音评论区置顶评论必须来自蓝V认证账号"实测命中 0.579，证实
+          # 这个风险是真实的，不是假设）。对策：每段匹配长度 L 只贡献
+          # (L-1) 个字符的可信度而不是 L 个——越长的连续匹配才越能证明
+          # "这确实是同一段内容"，两三字的巧合重合不该累加成通过；这个折扣
+          # 仍是纯算术调整，不是新的语义规则。
+          #
+          # 覆盖来源从单一拼接 blob 改为多个独立来源分别核验取最大值（用户
+          # 原文一份、参考资料原文一份，不拼接后再算）——拼接会让"半句巧合
+          # 来自用户原文、半句巧合来自参考资料"这种彼此独立的噪声叠加成假
+          # 的整体覆盖度，这正是 F-2 要求的负控要拦住的情形。
+          #
+          # 阈值 0.35：真实数据里，四项构造负控（数字改动/捏造荣誉/捏造
+          # 平台规则/空洞陈述）覆盖度分别为 0.182/0.133/0.316/0.143，取
+          # 最高值 0.316 定住上界；本轮两份 Prompt 明确点名的四个"应通过"
+          # 真实转述——"十二年"、"八张桌"/"8张桌子"、"同一条街同类菜系
+          # 销量第一"、参考资料原句"自动播放刷到型…首帧承担第一眼…主页
+          # 九宫格"——覆盖度分别为 0.364/0.350/0.722/0.625，全部在 0.35
+          # 以上。0.35 是同时满足"四个命名案例全过、四个构造负控全拦"的
+          # 最小值，不是拍脑袋定的。22 条真实 claim 里仍有 8 条低于阈值：
+          # 2 条（涉及帐篷"继续过夜不撤"）经人工核对确认是模型真实添加了
+          # 用户原文未提供的细节，阈值继续拦下是正确行为，不是误杀；其余
+          # 6 条是用词差异较大的转述（换了词汇而非仅调整语序/写法），在
+          # 纯字符匹配、禁止语义/同义词表的边界内无法进一步区分，如实记为
+          # 已知残余限制，见 STATIC_GATE_REPORT.json。
           _NUMBER_TOKEN_RE = re.compile(r"[\d０-９]+(?:[.．][\d０-９]+)?")
           _ENGLISH_TOKEN_RE = re.compile(r"[A-Za-z]{2,}")
           _CJK_CHUNK_RE = re.compile(r"[\u4e00-\u9fff]{2,}")
-          _SHINGLE_SIZE = 4
-          _SHINGLE_COVERAGE_THRESHOLD = 0.5
+          _CJK_COVERAGE_THRESHOLD = 0.35
+          _RUN_CREDIT_DISCOUNT = 1
+
+          _CN_DIGIT = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4,
+                       "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+          _CN_UNIT = {"十": 10, "百": 100, "千": 1000, "万": 10000}
+          _CN_NUM_RE = re.compile(r"(?:[两一二三四五六七八九十百千万零〇]){1,10}")
+          _FULLWIDTH_DIGITS = str.maketrans("０１２３４５６７８９．", "0123456789.")
 
 
-          def _shingles(s, k=_SHINGLE_SIZE):
-              if len(s) < k:
-                  return {s} if s else set()
-              return {s[i:i + k] for i in range(len(s) - k + 1)}
+          def _cn_num_to_int(s):
+              """封闭集合的中文数字转整数，支持到"万"位；不可解析返回
+              None——只是把中文数字系统本身的进位规则穷举实现一遍，不是
+              开放语义。"""
+              total, section, num, got = 0, 0, 0, False
+              for ch in s:
+                  if ch in _CN_DIGIT:
+                      num = _CN_DIGIT[ch]
+                      got = True
+                  elif ch in _CN_UNIT:
+                      unit = _CN_UNIT[ch]
+                      if num == 0:
+                          num = 1
+                      if unit == 10000:
+                          total += section + num * unit
+                          section = 0
+                          num = 0
+                      else:
+                          section += num * unit
+                          num = 0
+                      got = True
+                  else:
+                      return None
+              return (total + section + num) if got else None
 
 
-          def _cjk_chunk_grounded(chunk, blob):
-              if chunk in blob:
+          def _numbers_in_blob(blob):
+              """收集 blob 里出现过的数值（阿拉伯数字含全角、与中文数字），
+              供 claim 里的阿拉伯数字 token 做"数值相等"核验，覆盖
+              "八"↔"8"、"十二"↔"12" 这类记法差异。只在这个方向（blob 侧）
+              做中文数字抽取——不在 claim 侧做同样的抽取，因为"十分""万一"
+              这类常见非数字词会被误判成数值，而 claim 是模型输出、比
+              blob 更接近对抗条件，这个方向的开放抽取风险明显更高，予以
+              回避；claim 侧的中文数字改写（如"八张桌"）改走下面的贴片
+              覆盖，真实数据显示已有足够覆盖度余量，不需要再额外解析。"""
+              vals = set()
+              for tok in _NUMBER_TOKEN_RE.findall(blob):
+                  norm = tok.translate(_FULLWIDTH_DIGITS)
+                  if "." not in norm:
+                      try:
+                          vals.add(int(norm))
+                      except ValueError:
+                          pass
+              for m in _CN_NUM_RE.finditer(blob):
+                  v = _cn_num_to_int(m.group(0))
+                  if v is not None:
+                      vals.add(v)
+              return vals
+
+
+          def _number_grounded(tok, blobs, blob_num_vals):
+              if any(tok in b for b in blobs):
                   return True
-              claim_shingles = _shingles(chunk)
-              if not claim_shingles:
+              norm = tok.translate(_FULLWIDTH_DIGITS)
+              if "." in norm:
                   return False
-              blob_shingles = _shingles(blob)
-              hit = len(claim_shingles & blob_shingles) / len(claim_shingles)
-              return hit >= _SHINGLE_COVERAGE_THRESHOLD
+              try:
+                  v = int(norm)
+              except ValueError:
+                  return False
+              return v in blob_num_vals
 
 
-          def _claim_grounded(claim, blob):
-              """claim 里的每个数字/英文词元必须精确出现在 blob 里；每个
-              中文子串（按标点/空白切分）需达到字符 n-gram 覆盖度阈值。
-              claim 为空、或不含任何可核验的实质性词元时，视为未回指——
-              不得靠一句没有实质内容的话绕过核验。"""
+          def _tiled_coverage(chunk, blob, discount=_RUN_CREDIT_DISCOUNT):
+              """贪心最长公共子串拼贴：从每个未覆盖位置起，找它在 blob 里
+              能匹配到的最长子串，跳过去；找不到（含长度 1 的巧合）就前移
+              一位、不计入覆盖。每段匹配只按 (长度-discount) 计入可信度，
+              抑制两三字通用词的巧合命中——见模块顶部注释里的负控实测
+              数字。"""
+              n = len(chunk)
+              if n == 0:
+                  return 0.0
+              i = 0
+              credit = 0.0
+              while i < n:
+                  best = 0
+                  for l in range(n - i, 0, -1):
+                      if chunk[i:i + l] in blob:
+                          best = l
+                          break
+                  if best >= 2:
+                      credit += max(0, best - discount)
+                      i += best
+                  else:
+                      i += 1
+              return credit / n
+
+
+          def _cjk_chunk_grounded_multi(chunk, blobs):
+              return max(_tiled_coverage(chunk, b) for b in blobs)
+
+
+          def _claim_grounded(claim, blobs):
+              """claim 里的每个数字/英文词元必须在某一个来源 blob 里找到
+              （数字额外接受中文数字↔阿拉伯数字、全角↔半角的数值等价）；
+              全部中文子串合计的字符加权拼贴覆盖度需要达到阈值——不再要求
+              每个标点切出的子串各自独立过关，一处局部改写不再连带拖累
+              没有改写的其余部分。claim 为空、或不含任何可核验的实质性
+              词元时，视为未回指。blobs 是多个独立来源（不拼接），见模块
+              顶部注释。"""
               c = claim or ""
               if not c.strip():
                   return False
               checked_any = False
+              blob_num_vals = _numbers_in_blob("\n".join(blobs))
               for tok in _NUMBER_TOKEN_RE.findall(c):
                   checked_any = True
-                  if tok not in blob:
+                  if not _number_grounded(tok, blobs, blob_num_vals):
                       return False
               for tok in _ENGLISH_TOKEN_RE.findall(c):
                   checked_any = True
-                  if tok not in blob:
+                  if not any(tok in b for b in blobs):
                       return False
+              total_chars = 0
+              total_credit = 0.0
               for chunk in re.split(r"[，。！？；：、\s,.!?;:()（）\[\]「」『』\"'\-—]+", c):
                   chunk = chunk.strip()
                   if len(chunk) < 2 or not _CJK_CHUNK_RE.search(chunk):
                       continue
                   checked_any = True
-                  if not _cjk_chunk_grounded(chunk, blob):
-                      return False
+                  total_chars += len(chunk)
+                  total_credit += _cjk_chunk_grounded_multi(chunk, blobs) * len(chunk)
+              if total_chars > 0 and (total_credit / total_chars) < _CJK_COVERAGE_THRESHOLD:
+                  return False
               return checked_any
 
 
@@ -2495,9 +2623,16 @@ workflow:
               return out, "OK", "解析出 %d 条" % len(out)
 
 
-          def main(raw_text, capability_call, professional_input):
+          def main(raw_text, capability_call, professional_input, ref_projection_text):
               raw = raw_text or ""
-              blob = (capability_call or "") + "\n" + (professional_input or "")
+              # F-2：核验来源从"仅用户输入"扩到"用户输入 + 实际注入模型的
+              # 参考资料原文"（ref_projection.output——同一份 {{#ref_projection.output#}}
+              # 字节，与 skill_llm 提示词里真正嵌入的内容同源，不是磁盘上
+              # 的 references/*.md 源文件）。两个来源分别保留、不拼接，
+              # 见 _claim_grounded 顶部注释。
+              user_blob = (capability_call or "") + "\n" + (professional_input or "")
+              ref_blob = ref_projection_text or ""
+              blobs = [user_blob, ref_blob]
 
               ledger_block, ledger_dup = _between(raw, FL_OPEN, FL_CLOSE)
               if ledger_dup:
@@ -2512,7 +2647,7 @@ workflow:
 
               unresolved = []
               for e in entries:
-                  if not _claim_grounded(e.get("factual_claim"), blob):
+                  if not _claim_grounded(e.get("factual_claim"), blobs):
                       unresolved.append({
                           "output_location": e["output_location"],
                           "factual_claim": e.get("factual_claim"),
@@ -2679,6 +2814,10 @@ workflow:
           - '1788000000001'
           - professional_input
           variable: professional_input
+        - value_selector:
+          - ref_projection
+          - output
+          variable: ref_projection_text
       height: 100
       id: fact_verification
       position:
