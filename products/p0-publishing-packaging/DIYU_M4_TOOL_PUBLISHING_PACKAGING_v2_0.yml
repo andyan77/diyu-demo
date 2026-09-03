@@ -3624,12 +3624,20 @@ workflow:
       width: 244
       zIndex: 0
     - data:
-        desc: 组件级 Return 结束：本分支不足，其他诉求不受影响
+        desc: 组件级 Return 结束：本分支不足，其他诉求不受影响。阶段 B（
+          DIYU-V1-P0-EMPIRICAL-R1-001）真实发布时发现：Dify 发布前校验要求
+          输出变量名在应用内全部 End 节点范围内唯一，不是每个 End 节点各自
+          唯一——`user_delivery`/`user_delivery_leaks` 与 end_ok 撞名，
+          static_gate.py 从未建模这条平台侧约束（它只查图内部接线，不查
+          Dify 自己的发布时校验）。这里给本分支专属的两个改名加
+          `component_` 前缀，图内无任何节点读取 End 节点的输出，改名对
+          运行时接线零影响，只影响对外 API 返回的 JSON 键名——而这是本
+          应用第一次真实发布，此前从未有外部调用方依赖旧键名。
         outputs:
         - value_selector:
           - component_return
           - user_delivery
-          variable: user_delivery
+          variable: component_user_delivery
         - value_selector:
           - component_return
           - returns_json
@@ -3657,7 +3665,7 @@ workflow:
         - value_selector:
           - component_return
           - user_delivery_leaks
-          variable: user_delivery_leaks
+          variable: component_user_delivery_leaks
         - value_selector:
           - component_return
           - fabricated_artifact_produced

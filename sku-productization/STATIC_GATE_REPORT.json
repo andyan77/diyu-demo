@@ -102,7 +102,7 @@
       "capability": "PUBLISHING_PACKAGING",
       "q_comm_doc": "Q-COMM-04",
       "state": "READY_FOR_EMPIRICAL_TESTING",
-      "dsl_sha256": "b2b5772c4fb0b1dd7f6b04ae06a6a13fa07e1d2fe43aec5e26666561bcf4e970",
+      "dsl_sha256": "b5869aa1824ee4800ffa79e0a63f443b3a3ef4702a3dc1b7e54d0dba3704ad39",
       "blockers": [],
       "dynamic_only": [
         {
@@ -236,6 +236,14 @@
           "id": "SG3.schema_and_reachability",
           "verdict": "PASS",
           "summary": "no dangling edges, no undeclared value_selector references",
+          "evidence": {
+            "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.end_node_output_name_uniqueness",
+          "verdict": "PASS",
+          "summary": "every output variable name is declared by exactly one End node",
           "evidence": {
             "file": "products/p0-publishing-packaging/DIYU_M4_TOOL_PUBLISHING_PACKAGING_v2_0.yml"
           }
@@ -607,6 +615,16 @@
           }
         },
         {
+          "id": "SG6.end_node_output_name_collisions",
+          "verdict": "PASS",
+          "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
+          "evidence": {
+            "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "R0.FX01_natural_language_admission",
           "verdict": "PASS",
           "summary": "row 1 (正常自然语言输入): expected 必须通过准入 — verified by direct execution of the real node code extracted from the DSL",
@@ -779,9 +797,36 @@
       "sku": "P1",
       "capability": "CREATIVE_SCRIPT",
       "q_comm_doc": "Q-COMM-05",
-      "state": "READY_FOR_EMPIRICAL_TESTING",
+      "state": "NOT_READY",
       "dsl_sha256": "6d3ac8df66c4772a38049d9d7c738579737e1dc472a43911378c07d680ca8954",
-      "blockers": [],
+      "blockers": [
+        {
+          "id": "SG3.end_node_output_name_uniqueness",
+          "summary": "output variable name(s) declared by more than one End node — Dify's own pre-publish validator rejects this at publish time: {'user_delivery': ['end_ok', 'end_component_return'], 'user_delivery_leaks': ['end_ok', 'end_component_return']}",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "detail": {
+              "user_delivery": [
+                "end_ok",
+                "end_component_return"
+              ],
+              "user_delivery_leaks": [
+                "end_ok",
+                "end_component_return"
+              ]
+            }
+          }
+        },
+        {
+          "id": "SG6.end_node_output_name_collisions",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        }
+      ],
       "dynamic_only": [
         {
           "id": "SG7.semantic_market_claim_coverage",
@@ -916,6 +961,24 @@
           "summary": "no dangling edges, no undeclared value_selector references",
           "evidence": {
             "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.end_node_output_name_uniqueness",
+          "verdict": "BLOCKING",
+          "summary": "output variable name(s) declared by more than one End node — Dify's own pre-publish validator rejects this at publish time: {'user_delivery': ['end_ok', 'end_component_return'], 'user_delivery_leaks': ['end_ok', 'end_component_return']}",
+          "evidence": {
+            "file": "products/p1-creative-director/DIYU_M4_TOOL_CREATIVE_SCRIPT_v2_0.yml",
+            "detail": {
+              "user_delivery": [
+                "end_ok",
+                "end_component_return"
+              ],
+              "user_delivery_leaks": [
+                "end_ok",
+                "end_component_return"
+              ]
+            }
           }
         },
         {
@@ -1278,6 +1341,16 @@
           }
         },
         {
+          "id": "SG6.end_node_output_name_collisions",
+          "verdict": "BLOCKING",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
           "id": "SG7.semantic_market_claim_coverage",
           "verdict": "DYNAMIC_ONLY",
           "summary": "market_claim_scan 是固定模式字符串匹配（defense-in-depth），可被同义改写绕过——见 static_detector_capability_notice。语义层面的完备覆盖不是静态检测器能力范围内的事，移交 G1 实测判定；按 Founder 2026-09-02 裁决正式登记 DYNAMIC_ONLY 并绑定判分位",
@@ -1310,9 +1383,36 @@
       "sku": "P1_5",
       "capability": "PRODUCTION_DIRECTOR",
       "q_comm_doc": "Q-COMM-06",
-      "state": "READY_FOR_EMPIRICAL_TESTING",
+      "state": "NOT_READY",
       "dsl_sha256": "b016f7e88d3fb8be59c8eec90c0a37407ca971881fd0b309e2dabebfcf476e91",
-      "blockers": [],
+      "blockers": [
+        {
+          "id": "SG3.end_node_output_name_uniqueness",
+          "summary": "output variable name(s) declared by more than one End node — Dify's own pre-publish validator rejects this at publish time: {'user_delivery': ['end_ok', 'end_component_return'], 'user_delivery_leaks': ['end_ok', 'end_component_return']}",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "detail": {
+              "user_delivery": [
+                "end_ok",
+                "end_component_return"
+              ],
+              "user_delivery_leaks": [
+                "end_ok",
+                "end_component_return"
+              ]
+            }
+          }
+        },
+        {
+          "id": "SG6.end_node_output_name_collisions",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        }
+      ],
       "dynamic_only": [
         {
           "id": "SG7.semantic_market_claim_coverage",
@@ -1447,6 +1547,24 @@
           "summary": "no dangling edges, no undeclared value_selector references",
           "evidence": {
             "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml"
+          }
+        },
+        {
+          "id": "SG3.end_node_output_name_uniqueness",
+          "verdict": "BLOCKING",
+          "summary": "output variable name(s) declared by more than one End node — Dify's own pre-publish validator rejects this at publish time: {'user_delivery': ['end_ok', 'end_component_return'], 'user_delivery_leaks': ['end_ok', 'end_component_return']}",
+          "evidence": {
+            "file": "products/p1_5-production-director/DIYU_M4_TOOL_PRODUCTION_DIRECTOR_v2_0.yml",
+            "detail": {
+              "user_delivery": [
+                "end_ok",
+                "end_component_return"
+              ],
+              "user_delivery_leaks": [
+                "end_ok",
+                "end_component_return"
+              ]
+            }
           }
         },
         {
@@ -1804,6 +1922,16 @@
           "summary": "all three controls satisfied: {'positive_control': True, 'negative_control': True, 'off_list_constructed_bad_case': True}",
           "evidence": {
             "positive_control": true,
+            "negative_control": true,
+            "off_list_constructed_bad_case": true
+          }
+        },
+        {
+          "id": "SG6.end_node_output_name_collisions",
+          "verdict": "BLOCKING",
+          "summary": "detector has lost discriminating power ({'positive_control': False, 'negative_control': True, 'off_list_constructed_bad_case': True}) — self-blocked per §13.2",
+          "evidence": {
+            "positive_control": false,
             "negative_control": true,
             "off_list_constructed_bad_case": true
           }

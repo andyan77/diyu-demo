@@ -857,6 +857,25 @@ def _guard_variable_source_hardcoded(yml_data, guard_id):
     return hardcoded
 
 
+# 阶段 B（DIYU-V1-P0-EMPIRICAL-R1-001）：Dify 发布前校验要求输出变量名在
+# 应用内**全部** End 节点范围内唯一，不是每个 End 节点各自唯一——
+# static_gate.py 此前只查图内部接线（schema_and_dangling_defects／
+# dangling_template_references），从未建模这条平台侧发布时约束。P0 首次真实
+# 发布时被 Dify 自己的检查清单拦下（`user_delivery`/`user_delivery_leaks`
+# 同时被 end_ok 与 end_component_return 声明），现补上这条检查，通用于全部
+# SKU（不只 P0）——P1/P1_5 目前有同一个真实、未修的缺陷（现场核实，见
+# SG3.end_node_output_name_uniqueness 的真实结果），本轮不改它们的 DSL
+# （P0-only 授权范围），如实记为已知缺陷。
+def _end_node_output_name_collisions(yml_data):
+    names = {}
+    for n in yml_data["workflow"]["graph"]["nodes"]:
+        if n["data"]["type"] != "end":
+            continue
+        for o in n["data"].get("outputs", []):
+            names.setdefault(o["variable"], []).append(n["id"])
+    return {k: v for k, v in names.items() if len(v) > 1}
+
+
 def run_sg3(sku, yml_data):
     findings = []
     defects = schema_and_dangling_defects(yml_data)
@@ -868,6 +887,21 @@ def run_sg3(sku, yml_data):
         findings.append(finding("SG3.schema_and_reachability", "PASS",
                                  "no dangling edges, no undeclared value_selector references",
                                  evidence={"file": sku["yml_path"]}))
+
+    end_collisions = _end_node_output_name_collisions(yml_data)
+    if end_collisions:
+        findings.append(finding(
+            "SG3.end_node_output_name_uniqueness", "BLOCKING",
+            "output variable name(s) declared by more than one End node — Dify's own pre-publish "
+            "validator rejects this at publish time: %s" % end_collisions,
+            evidence={"file": sku["yml_path"], "detail": end_collisions},
+        ))
+    else:
+        findings.append(finding(
+            "SG3.end_node_output_name_uniqueness", "PASS",
+            "every output variable name is declared by exactly one End node",
+            evidence={"file": sku["yml_path"]},
+        ))
 
     dangling_tpl = dangling_template_references(yml_data)
     if dangling_tpl:
@@ -1658,6 +1692,29 @@ def run_sg6(sku, yml_data, skill_md_text):
     offlist18_caught = offlist18_findings[0]["verdict"] == "BLOCKING"
 
     findings.append(_sg6_verdict("evidence_and_authority_check", pos18, neg18, offlist18_caught))
+
+    # --- detector: end_node_output_name_collisions (阶段 B / 真实发布首次
+    # 暴露；same function SG3 runs in production) ---
+    pos19 = len(_end_node_output_name_collisions(good_data)) == 0
+
+    bad19 = copy.deepcopy(good_data)
+    bad19_ok = node_by_id(bad19, sku["delivery_id"])
+    bad19_cr = node_by_id(bad19, sku["fail_end_id"])
+    if bad19_ok["data"].get("outputs") and bad19_cr["data"].get("outputs"):
+        bad19_cr["data"]["outputs"][0]["variable"] = bad19_ok["data"]["outputs"][0]["variable"]
+    neg19 = len(_end_node_output_name_collisions(bad19)) > 0
+
+    # Off-list: collide a DIFFERENT pair of output slots than the first ones
+    # in each list — exercises that the scan checks every output, not just
+    # index 0.
+    offlist19 = copy.deepcopy(good_data)
+    offlist19_ok = node_by_id(offlist19, sku["delivery_id"])
+    offlist19_cr = node_by_id(offlist19, sku["fail_end_id"])
+    if len(offlist19_ok["data"].get("outputs", [])) > 1 and len(offlist19_cr["data"].get("outputs", [])) > 1:
+        offlist19_cr["data"]["outputs"][-1]["variable"] = offlist19_ok["data"]["outputs"][-1]["variable"]
+    offlist19_caught = len(_end_node_output_name_collisions(offlist19)) > 0
+
+    findings.append(_sg6_verdict("end_node_output_name_collisions", pos19, neg19, offlist19_caught))
 
     return findings
 
